@@ -130,8 +130,9 @@ showPsfrag(filename)
 \item{file}{
 }
 \item{filename}{
-character string specifying file prefix.  For \code{setps} or
-\code{setpdf} omit surrounding quotes unless \code{type="char"}.
+name or character string or character vector specifying file prefix.
+For \code{setps} or \code{setpdf specify \code{type="char"} if this is a
+character vector or a quote-delimited character string.
 }
 \item{string}{
 a character string to be processed by \code{psfrag} in LaTeX.
@@ -193,12 +194,14 @@ box type surrounding graph.  Default is \code{"l"} for \code{"L"} shape.  Use
 \code{"c"} for complete box.
 }
 \item{type}{
+For \code{ps.slide}, \code{type} is an integer.  In this case,
 set \code{type=1} to use black on white background, smaller pointsize,
 and other settings that are good for making
 overhead transparencies and graphs to include in reports.  Set \code{type=3}
 for 5" x 7" landscape plots, and \code{type=4} for overheads.
-For \code{setps} and \code{setpdf}, specifies whether \code{filename} is
-quoted or not.
+For \code{setps} and \code{setpdf}, \code{type="char"} specifies that 
+the \code{filename} argument is a character string  or vector, and 
+any other value indicates that it is an unquoted name.
 }
 \item{height}{
 defaults to 5 if \code{type=3}, otherwise no default (except for type=4)

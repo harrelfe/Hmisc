@@ -68,7 +68,7 @@ upData(object, \dots,
 
 exportDataStripped(data, \dots)
 
-csv.get(file, lowernames=FALSE, datevars=NULL, dateformat='%F', allow=NULL, \dots)
+csv.get(file, lowernames=FALSE, datevars=NULL, dateformat='\%F', allow=NULL, \dots)
 }
 \arguments{
 \item{obj}{a data frame or list}
@@ -124,7 +124,7 @@ exceeds 500,000.
 \item{datevars}{character vector of names (after \code{lowernames} is
   applied) of variables to consider as a factor or character vector
   containing dates in a format matching \code{dateformat}.  The
-default is \code{"%F"} which uses the yyyy-mm-dd format.}
+default is \code{"\%F"} which uses the yyyy-mm-dd format.}
 \item{dateformat}{for \code{cleanup.import} is the input format (see
   \code{\link{strptime}})}
 \item{\dots}{

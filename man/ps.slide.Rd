@@ -130,8 +130,8 @@ showPsfrag(filename)
 \item{file}{
 }
 \item{filename}{
-character string specifying file prefix.  For \code{setps} or \code{setpdf} omit
-surrounding quotes unless \code{type="char"}.
+character string specifying file prefix.  For \code{setps} or
+\code{setpdf} omit surrounding quotes unless \code{type="char"}.
 }
 \item{string}{
 a character string to be processed by \code{psfrag} in LaTeX.
@@ -196,7 +196,7 @@ box type surrounding graph.  Default is \code{"l"} for \code{"L"} shape.  Use
 set \code{type=1} to use black on white background, smaller pointsize,
 and other settings that are good for making
 overhead transparencies and graphs to include in reports.  Set \code{type=3}
-for 5" x 7" landscape plots, and \code{time=4} for overheads.
+for 5" x 7" landscape plots, and \code{type=4} for overheads.
 For \code{setps} and \code{setpdf}, specifies whether \code{filename} is
 quoted or not.
 }

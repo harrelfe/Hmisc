@@ -80,7 +80,7 @@ panel.xYplot <-
    else "plot.line")
   lty <- rep(lty, length = ng)
   lwd <- rep(lwd, length = ng)
-  pch <- rep(pch, length = ng)
+  if(length(rangeCex) != 1) pch <- rep(pch, length = ng)
   if(!sizeVaries) cex <- rep(cex, length = ng)
   font <- rep(font, length = ng)
   if(!length(col))
@@ -89,24 +89,32 @@ panel.xYplot <-
   col <- rep(col, length = ng)
   ## Thanks to Deepayan Sarkar for the following size code
   if(sizeVaries) {
-    srng <- range(size, na.rm=TRUE)
+    if(length(rangeCex) > 1) srng <- range(size, na.rm=TRUE)
     size <- size[subscripts]
-    cex <- rangeCex[1] + diff(rangeCex)*(size - srng[1])/diff(srng)
-    sKey <- function(x=0, y=1, cexObserved, cexCurtailed, col, pch,
-                     bty='o') {
-      oldpar <- par(usr=c(0,1,0,1),xpd=NA)
-      on.exit(par(oldpar))
-      if(is.list(x)) { y <- x[[2]]; x <- x[[1]] }
-      if(!length(x)) x <- 0
-      if(!length(y)) y <- 1  ## because of formals()
-      rlegend(x, y, legend=format(cexObserved), cex=cexCurtailed*1.4,
-              col=col, pch=pch, bty=bty)
-      invisible()
-    }
-    formals(sKey) <- list(x=NULL, y=NULL, cexObserved=srng,
-                          cexCurtailed=rangeCex,
-                          col=col[1], pch=pch, bty='o')
-    storeTemp(sKey)
+    if(length(rangeCex)==1) {
+		pch <- as.character(size)
+		cex <- rangeCex
+		sizeVaries <- FALSE
+		pchVaries  <- TRUE
+		} else {
+		pchVaries <- FALSE
+        cex <- rangeCex[1] + diff(rangeCex)*(size - srng[1])/diff(srng)
+        sKey <- function(x=0, y=1, cexObserved, cexCurtailed, col, pch,
+                         bty='o') {
+          oldpar <- par(usr=c(0,1,0,1),xpd=NA)
+          on.exit(par(oldpar))
+          if(is.list(x)) { y <- x[[2]]; x <- x[[1]] }
+          if(!length(x)) x <- 0
+          if(!length(y)) y <- 1  ## because of formals()
+          rlegend(x, y, legend=format(cexObserved), cex=cexCurtailed*1.4,
+                  col=col, pch=pch, bty=bty)
+          invisible()
+        }
+        formals(sKey) <- list(x=NULL, y=NULL, cexObserved=srng,
+                              cexCurtailed=rangeCex,
+                              col=col[1], pch=pch, bty='o')
+        storeTemp(sKey)
+		}
   }
   other <- attr(y, "other")
   if(length(other)) {
@@ -190,7 +198,7 @@ panel.xYplot <-
 
   ##The following is a fix for panel.superpose for type='b' 
   pspanel <- function(x, y, subscripts, groups, type, lwd, lty, 
-                      pch, cex, font, col, sizeVaries, ...) {
+                      pch, cex, font, col, sizeVaries, pchVaries, ...) {
     gfun <- ordGridFun(.R.)
     
 	groups <- as.numeric(groups)[subscripts]
@@ -205,7 +213,8 @@ panel.xYplot <-
 
       if(type !='l') gfun$points(x[j], y[j],
            ## size=if(.R.) unit(cex[i]*2.5, 'mm') else NULL,
-           col = col[i], pch = pch[i], cex = cex[if(sizeVaries)j else i],
+           col = col[i], pch = pch[if(pchVaries)j else i], 
+		   cex = cex[if(sizeVaries)j else i],
            font = font[i], lty=lty[i], lwd=lwd[i], ...)
 	  ## S-Plus version used type=type[i]; was type=type for points()
 	}
@@ -231,7 +240,7 @@ panel.xYplot <-
     }  ## end MB
     pspanel(x, y, subscripts, groups, lwd = lwd, lty = 
             lty, pch = pch, cex = cex, font = font, col
-            = col, type = type, sizeVaries=sizeVaries)
+            = col, type = type, sizeVaries=sizeVaries, pchVaries=pchVaries)
     if(type != "p" && !(is.logical(label.curves) && !
          label.curves)) {
       lc <- if(is.logical(label.curves))
@@ -292,7 +301,8 @@ panel.xYplot <-
                      lty = dob(lty.bands, lty, ng, j), 
                      col = dob(col.bands, col, ng, j), 
                      pch = pch, cex = cex, font = 
-                     font, type = "l", sizeVaries=sizeVaries)
+                     font, type = "l", 
+		             sizeVaries=sizeVaries, pchVaries=pchVaries)
       }
     }
     else {
@@ -454,7 +464,7 @@ xYplot <- if(.R.)
             groups, subset,
             xlab=NULL, ylab=NULL, ylim=NULL,
             panel=panel.xYplot, prepanel=prepanel.xYplot,
-            scales=NULL, minor.ticks=NULL, rangeCex=c(.5,3.5), ...) {
+            scales=NULL, minor.ticks=NULL, ...) {
   require('grid')
   require('lattice')
   yvname <- as.character(formula[2])  # tried deparse

@@ -66,6 +66,9 @@ statistic in the first column should be the measure of central tendency.
 Examples of useful \code{method} functions are those listed under the help file
 for \code{summary.formula} such as \code{smean.cl.normal}.
 
+\code{xYplot} can also produce bubble plots.  This is done when
+\code{cex} is specified to \code{xYplot} and it is a vector of the same
+lenght as the x-axis variable.
 
 \code{Dotplot} is a substitute for \code{dotplot} allowing for a matrix x-variable,
 automatic superpositioning when \code{groups} is present, and creation of a
@@ -158,7 +161,8 @@ vectors after the first two are ignored.  If drawing bars and only one
 extra variable is given in \code{\dots}, upper and lower values are
 computed as described above. If the second argument to \code{Cbind} is a
 matrix, that matrix is stored in the \code{"other"} attribute and
-arguments after the second are ignored.
+arguments after the second are ignored.  For bubble plots, name an
+argument \code{cex}.
 
 Also can be other arguments to pass to \code{labcurve} or \code{Key}.
 or extra arguments sent from \code{numericScale} to \code{axis.time}
@@ -331,6 +335,14 @@ xYplot(sin(x+shift)^p ~ x | shift, groups=p, data=d,
 Key()       # S-Plus
 Key(0,.1)   # R
 
+# Bubble plots
+x <- y <- 1:8
+x[2] <- NA
+size <- (1:8)/3
+p <- factor(rep(c('a','b'),4))
+g <- c(rep(1,7),2)
+data.frame(p, x, y, size, g)
+xYplot(y ~ x | p, groups=g, cex=size)
 
 # Show the median and quartiles of height given age, stratified 
 # by sex and race.  Draws 2 sets (male, female) of 3 lines per panel.

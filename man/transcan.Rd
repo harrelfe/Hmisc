@@ -492,7 +492,10 @@ Instead of specifying \code{where.out} you can specify an S frame
 number into which individual new imputed variables will be written.
 For example, \code{frame.out=1} is useful for putting new variables into a
 temporary local frame when \code{impute} is called within another function
-(see \code{fit.mult.impute}).  See \code{assign} for details about frames.
+(see \code{fit.mult.impute}).  See \code{assign} for details about
+frames.  For \R, \code{where.out} and \code{frame.out} are ignored and
+results are stored in \code{.GlobalEnv} when \code{list.out} is not
+specified (it is recommended to use \code{list.out=TRUE}).
 }
 \item{list.out}{
 If \code{var} is not specified, you can set \code{list.out=TRUE} to have

@@ -15,6 +15,15 @@ that do not include any ranges (i.e., variables having standard
 \code{PROC FORMAT; VALUE} label formats) will have their format labels looked
 up, and these variables are converted to S \code{factor}s.
 
+For those users having access to SAS, \code{method='csv'} is preferred
+when importing several SAS datasets.
+Run SAS macro \code{exportlib.sas} available from
+\url{http://biostat.mc.vanderbilt.edu/twiki/pub/Main/Hmisc/exportlib.sas}
+to convert all SAS datasets in a SAS data library (from any engine
+supported by your system) into \code{CSV} files.  If any customized
+formats are used, it is assumed that the \code{PROC FORMAT CNTLOUT=}
+dataset is in the data library as a regular SAS dataset, as above.
+
 \code{SASdsLabels} reads a file containing \code{PROC CONTENTS}
 printed output to parse dataset labels, assuming that \code{PROC
 CONTENTS} was run on an entire library.
@@ -29,7 +38,9 @@ sasdsLabels(file)
   \item{file}{name of a file containing the SAS transport file.
 	\code{file} may be a URL beginning with \code{http://}.  For
 \code{sasdsLabels}, \code{file} is the name of a file containing a
-\code{PROC CONTENTS} output listing.
+\code{PROC CONTENTS} output listing.  For \code{method='csv'},
+\code{file} is the name of the directory containing all the \code{CSV}
+files created by running the \code{exportlib} SAS macro.
 }
   \item{force.single}{set to \code{FALSE} to keep integer-valued
 	variables not exceeding \eqn{2^31-1} in value from being converted to

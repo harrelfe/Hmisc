@@ -32,7 +32,7 @@ CONTENTS} was run on an entire library.
 \usage{
 sasxport.get(file, force.single = TRUE,
              method=c('read.xport','dataload','csv'), formats=NULL, allow=NULL,
-             out=NULL, keep=NULL, drop=NULL, FUN=NULL)
+             out=NULL, keep=NULL, drop=NULL, as.is=0.5, FUN=NULL)
 sasdsLabels(file)
 }
 \arguments{
@@ -72,6 +72,18 @@ variable names are converted to periods as with \R before version 1.9.}
   exists, and if the kept datasets use any of its value label formats.}
   \item{drop}{a vector of names of SAS datasets to ignore (original SAS
 	upper case names)}
+  \item{as.is}{
+	SAS character variables are converted to S factor
+	objects if \code{as.is=FALSE} or if \code{as.is} is a number between
+	0 and 1 inclusive and the number of unique values of the variable is
+	less than the number of observations (\code{n}) times \code{as.is}.
+	The default if \code{as.is} is .5, so character variables are
+	converted to factors only if they have fewer than \code{n/2} unique
+	values.  The primary purpose of this is to keep unique
+	identification variables as character values in the data frame
+	instead of using more space to store both the integer factor codes
+	and the factor labels.
+  }
   \item{FUN}{an optional function that will be run on each data frame
 	created, when \code{method='csv'} and \code{out} are specified.  The
 	result of all the \code{FUN} calls is made into a list corresponding

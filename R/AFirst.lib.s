@@ -1,3 +1,4 @@
+## $Id$
 under.unix   <- !(version$os=='Microsoft Windows' ||
                   version$os=='Win32' || version$os=='mingw32')
 

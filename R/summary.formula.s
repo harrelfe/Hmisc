@@ -1645,7 +1645,7 @@ print.summary.formula.cross <- function(x, twoway=nvar==2,
     snam <- dimnames(S)[[2]]
     for(i in 1:ncol(S)) stats[[snam[i]]] <- S[,i]
   } else names(stats)[length(stats)] <- ylab
-  attr(stats,'class') <- "data.frame"
+  stats <- as.data.frame(stats)
   invisible(print(stats, ...))
 }
 

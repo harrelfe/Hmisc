@@ -104,6 +104,7 @@ latex           Convert an S object to LaTeX (R Heiberger & FE Harrell)
 ldBands         Lan-DeMets bands for group sequential tests
 list.tree       Pretty-print the structure of any data object
                     (Alan Zaslavsky, zaslavsk@hcp.med.harvard.edu)
+Load            Enhanced version of load
 mask            8-bit logical representation of a short integer value
                     (Rick Becker)
 matchCases      Match each case on one continuous variable
@@ -175,6 +176,7 @@ samplesize.bin  Sample size for 2-sample binomial problem
                     (Rick Chappell, chappell@stat.wisc.edu)
 sas.get         Convert SAS dataset to S data frame
 sasxport.get    Enhanced importing of SAS transport dataset in R
+Save            Enhanced version of save
 scat1d          Add 1-dimensional scatterplot to an axis of an existing plot
                     (like bar-codes, FEH/Martin Maechler, 
                     maechler@stat.math.ethz.ch/Jens Oehlschlaegel-Akiyoshi,

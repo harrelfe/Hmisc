@@ -1388,10 +1388,12 @@ if(.R.) {
 if(.R.) {               
 sasxport.get <- function(file, force.single=TRUE,
                          method=c('read.xport','dataload','csv'),
-                         formats=NULL, allow=NULL,
-                         keep=NULL, drop=NULL) {
+                         formats=NULL, allow=NULL, out=NULL,
+                         keep=NULL, drop=NULL, FUN=NULL) {
 
   method <- match.arg(method)
+  if(length(out) && method!='csv')
+    stop('out only applies to method="csv"')
   if(method != 'csv')
     require('foreign') || stop('foreign package is not installed')
   rootsoftware <- if(method=='dataload')'dataload' else 'sas'
@@ -1415,7 +1417,8 @@ sasxport.get <- function(file, force.single=TRUE,
   ds     <- switch(method,
                    read.xport= read.xport(file),
                    dataload  = read.xportDataload(file, whichds),
-                   csv       = readSAScsv(file, dsinfo, whichds))
+                   csv       = if(!length(out))
+                                readSAScsv(file, dsinfo, whichds))
 
   if(method=='read.xport' && (length(keep) | length(drop)))
     ds <- ds[whichds]
@@ -1435,7 +1438,8 @@ sasxport.get <- function(file, force.single=TRUE,
   
   finfo <- NULL
   if(length(formats) || length(fds)) {
-    finfo <- if(length(formats)) formats else ds[[fds]]
+    finfo <- if(length(formats)) formats else
+     if(length(out)) readSAScsv(file, dsinfo, fds) else ds[[fds]]
     ## Remove leading $ from char format names
     #  fmtname <- sub('^\\$','',as.character(finfo$FMTNAME))
     fmtname <- as.character(finfo$FMTNAME)
@@ -1462,18 +1466,24 @@ sasxport.get <- function(file, force.single=TRUE,
   which.regular <- setdiff(whichds, fds)
   dsn <- tolower(which.regular)
   
-  if(nds > 1) {
+  if((nds > 1) && !length(out)) {
     res <- vector('list', nds)
     names(res) <- gsub('_','.',dsn)
   }
 
+  if(length(FUN)) {
+    funout <- vector('list', length(dsn))
+    names(funout) <- gsub('_','.',dsn)
+  }
   j <- 0
   for(k in which.regular) {
     j   <- j + 1
-    cat('Processing SAS dataset', dsn[j], '\n')
-    w   <- if(nods==1) ds else ds[[k]]
+    cat('Processing SAS dataset', k, '\t ')
+    w   <- if(length(out)) readSAScsv(file, dsinfo, k) else
+     if(nods==1) ds else ds[[k]]
+    cat('.')
     if(!length(w)) {
-      cat('Empty dataset', dsn[j], 'ignored\n')
+      cat('Empty dataset', k, 'ignored\n')
       next
     }
     nam      <- tolower(makeNames(names(w), allow=allow))
@@ -1525,9 +1535,24 @@ sasxport.get <- function(file, force.single=TRUE,
       
       if(changed) w[[i]] <- x
     }
-    if(nds > 1) res[[j]] <- w
+    cat('.\n')
+    if(length(out)) {
+      nam <- gsub('_','.',dsn[j])
+      assign(nam, w)
+      ## ugly, but a way to get actual data frame name into first
+      ## argument of save( )
+      eval(parse(text=paste('save(',nam,', file="',
+                   paste(out, '/', nam,'.rda',sep=''),
+                   '", compress=TRUE)',sep='')))
+      if(length(FUN) && length(w)) funout[[nam]] <- FUN(w)
+      remove(nam)
+    } else if(nds > 1) res[[j]] <- w
   }
-  if(nds > 1) res else w
+  if(length(out)) {
+    names(dsinfo) <- gsub('_','.',tolower(names(dsinfo)))
+    if(length(FUN)) attr(dsinfo, 'FUN') <- funout
+    invisible(dsinfo)
+    } else if(nds > 1) res else w
 }
 
   ## Use dataload program to create a structure like read.xport does
@@ -1568,7 +1593,10 @@ lookupSASContents <- function(sasdir) {
 ## Read all SAS csv export files and store in a list
 readSAScsv <- function(sasdir, dsinfo, dsnames=names(dsinfo)) {
   sasnobs <- sapply(dsinfo, function(x)x$nobs[1])
-  w <- vector('list', length(dsnames)); names(w) <- dsnames
+  multi <- length(dsnames) > 1
+  if(multi) {
+    w <- vector('list', length(dsnames)); names(w) <- dsnames
+  }
   for(a in dsnames) {
     z <- read.csv(paste(sasdir,'/',a,'.csv', sep=''),
                   as.is=TRUE, blank.lines.skip=FALSE)
@@ -1577,9 +1605,9 @@ readSAScsv <- function(sasdir, dsinfo, dsnames=names(dsinfo)) {
       cat('\nError: NOBS reported by SAS (',sasnobs[a],') for dataset ',
           a,' is not the same as imported length (', importedLength,
           ')\n', sep='')
-    w[[a]] <- z
+    if(multi) w[[a]] <- z
   }
-  w
+  if(multi)w else z
 }
 
 NULL}

@@ -116,7 +116,7 @@ when stratifying by \code{mChoice} variables.
            overall=method=='response'|method=='cross', 
            continuous=10, na.rm=TRUE, na.include=method!='reverse', g=4, 
            quant=c(.025,.05,.125,.25,.375,.5,.625,.75,.875,.95,.975),
-           nmin=0, test=FALSE,
+           nmin=if(method=='reverse')15 else 0, test=FALSE,
            conTest=function(group,x) {
              st <- spearman2(group,x)
              list(P=st['P'], stat=st['F'],
@@ -159,7 +159,7 @@ x[i,j]
               overall=FALSE, continuous=10, na.rm=TRUE, na.include=FALSE,
               quant=c(0.025, 0.05, 0.125, 0.25, 0.375, 0.5,
                       0.625, 0.75, 0.875, 0.95, 0.975),
-              test=FALSE,
+              nmin=15, test=FALSE,
               conTest=function(group,x) {
                  st <- spearman2(group,x)
                  list(P=st['P'], stat=st['F'], df=st[c('df1','df2')],
@@ -191,7 +191,7 @@ x[i,j]
   pch=c(16,1,2,17,15,3,4,5,0), exclude1=TRUE,
   dotfont=1, main, subtitles=TRUE,
   prtest=c('P','stat','df','name'), pdig=3, eps=.001,
-  conType=c('dot','bp'), cex.means=.5, \dots)
+  conType=c('dot','bp','raw'), cex.means=.5, \dots)
 
 \method{latex}{summary.formula.reverse}(object,
      title=first.word(expr=substitute(object)), digits,
@@ -550,7 +550,9 @@ for categorical variables, continuous variables, or both (the default).
   \code{conType='bp'} to draw box-percentile plots using all the
   quantiles in \code{quant} except the outermost ones.  Means are drawn
   with a solid dot and vertical reference lines are placed at the three
-  quartiles.}
+  quartiles.  Specify \code{conType='raw'} to make a strip chart showing
+  the raw data.  This can only be used if the sample size for each
+  left-hand-side group is less than or equal to \code{nmin}.}
 \item{cex.means}{
 character size for means in box-percentile plots; default is .5}
 \item{xlim}{

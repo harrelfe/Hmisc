@@ -254,6 +254,15 @@ d <- summarize(count, llist(dx,sex), sum)
 Dotplot(dx ~ count | sex, data=d)
 }
 detach('dfr')
+
+# Run summarize on a matrix to get column means
+x <- c(1:19,NA)
+y <- 101:120
+z <- cbind(x, y)
+g <- c(rep(1, 10), rep(2, 10))
+summarize(z, g, colMeans, na.rm=TRUE, stat.name='x')
+# Also works on an all numeric data frame
+summarize(as.data.frame(z), g, colMeans, na.rm=TRUE, stat.name='x')
 }
 \keyword{category}
 \keyword{manip}

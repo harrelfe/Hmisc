@@ -68,7 +68,8 @@ the variable's axis, although this will slightly distort the histogram.
 distribution that is particularly good for very large datasets (say
 \code{n} > 1000).  By
 default, \code{histSpike} bins the continuous \code{x} variable into 100
-equal-width bins and then computes the frequency counts within bins.
+equal-width bins and then computes the frequency counts within bins
+(if \code{n} does not exceed 10, no binning is done).
 If \code{add=FALSE} (the default), the function displays either proportions or
 frequencies as in a vertical histogram.  Instead of bars, spikes are
 used to depict the frequencies.  If \code{add=FALSE}, the function assumes you

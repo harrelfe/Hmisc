@@ -684,7 +684,8 @@ latex.list <- function( object,
 ## that surrounding  by $$ is OK
 ## latexTranslate is used primarily by summary.formula
 
-latexTranslate <- function(object, inn=NULL, out=NULL, pb=FALSE, ...) {
+latexTranslate <- function(object, inn=NULL, out=NULL, pb=FALSE,
+                           greek=FALSE, ...) {
 
   text <- object
   
@@ -722,6 +723,16 @@ for(i in 1:length(text)) {
     substring2(text[i],is,ie-1) <- paste(dol,'^{',
                                         substring(text[i],is+1,ie-1),'}',
        dol,sep='')  # 25May01
+  }
+  if(greek) {
+    gl <- Cs(alpha,beta,gamma,delta,epsilon,varepsilon,zeta,eta,theta,
+             vartheta,iota,kappa,lambda,mu,nu,xi,pi,varpi,rho,varrho,
+             sigma,varsigma,tau,upsilon,phi,carphi,chi,psi,omega,Gamma,
+             Delta,Theta,Lambda,Xi,Pi,Sigma,Upsilon,Phi,Psi,Omega)
+    for(w in gl)
+      text[i] <- gsub(paste('\\b', w, '\\b', sep=''),
+                      paste('$\\\\',w,'$',   sep=''),
+                      text[i])
   }
 }
 sedit(text, 'DOLLARS', '\\$', wild.literal=TRUE)  ## 17Nov00

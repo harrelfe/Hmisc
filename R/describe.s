@@ -33,9 +33,10 @@ if(length(fmt) && (is.function(fmt) || fmt=='')) fmt <- NULL
 if(length(fmt) > 1)
   fmt <- paste(as.character(fmt[[1]]),as.character(fmt[[2]]))
   
-if(all(is.na(x)))present <- rep(FALSE,length(x))
-else if(is.character(x)) present <- x!="" & x!=" " #5Mar93
-else present <-  !is.na(x)
+present <- if(all(is.na(x))) rep(FALSE,length(x))
+else if(is.character(x))
+  (if(.R.) x!="" & x!=" " & !is.na(x) else x!="" & x!=" ")
+else !is.na(x)
 present <- present & !is.na(weights)
 
 if(length(weights) != length(x)) 

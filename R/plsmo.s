@@ -5,8 +5,6 @@ plsmo <- function(x,y,method=c("lowess","supsmu","raw"),
 		label.curves=TRUE,	datadensity=FALSE, lines.=TRUE,
 		subset=TRUE, grid=FALSE, ...) {
 
-  if(.R.) library(modreg)
-  
   gfun <- ordGridFun(grid)
   nam <- as.character(sys.call())[2:3]
   method <- match.arg(method)

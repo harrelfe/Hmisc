@@ -83,7 +83,6 @@ if(imputed.actual!='none') imputed <- TRUE
 if(impcat=='multinom') {
   if(.R.) require('nnet') else if(!existsFunction('multinom')) library(nnet)
 }
-if(.R.) require('mva')
 if(.R. & missing(data)) stop('Must specify data= when using R')  ## 11apr03
 
 formula <- nact <- NULL

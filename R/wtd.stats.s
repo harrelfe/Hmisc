@@ -150,7 +150,6 @@ wtd.loess.noiter <- function(x, y, weights=rep(1,n), robust=rep(1,n),
 							 type=c('all','ordered all','evaluate'), 
 							 evaluation=100, na.rm=TRUE) {
   type <- match.arg(type)
-  if(.R.) require('modreg')
   n <- length(y)
   if(na.rm) {
 	s <- !is.na(x+y+weights)

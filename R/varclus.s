@@ -14,8 +14,6 @@ varclus <-
   if(type!="similarity.matrix") similarity <- match.arg(similarity)
   nact <- NULL
 
-  if(.R.) require('mva')
-
   if(inherits(x,"formula")) {
     form <- x   # 20Mar01
 	oldops <- options(contrasts=c("contr.treatment","contr.poly"))

@@ -1,5 +1,4 @@
 pc1 <- function(x, hi) {
-  if(.R.) require('mva')
   p <- ncol(x)
   x <-  x[!is.na(x %*% rep(1,p)),]
   xo <- x

@@ -50,7 +50,6 @@ summary.formula <-
   
     if(test && method!='reverse')
       stop('test=TRUE only allowed for method="reverse"')
-    if(test && .R.) require('ctest')
 
     if(method!='reverse' && resp!=1) 
       stop("must have a variable on the left hand side of the formula")

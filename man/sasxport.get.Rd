@@ -5,7 +5,8 @@
 \description{
 Uses the \code{read.xport} and \code{lookup.xport} functions in the
 \code{foreign} library to import SAS datasets.  SAS date, time, and
-date/time variables are converted to the appropriate POSIX objects in R,
+date/time variables are converted to the appropriate \code{Date} or
+POSIX objects in \R, 
 variable names are converted to lower case, SAS labels are associated
 with variables, and (by default) integer-valued variables are converted
 from storage mode \code{double} to \code{integer}.  If the user ran

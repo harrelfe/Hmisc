@@ -2112,9 +2112,11 @@ if(!length(nr)) {  ## X not a matrix
               x=X, fun=FUN, ..., simplify=simplify)
   if(simplify) r <- drop(t(r))
 }
-dn <- dimnames(r)  ## 22mar03   length(dn) 29may03
+dn <- dimnames(r)
 if(length(dn) && !length(dn[[length(dn)]])) {
-  dn[[length(dn)]] <- names(FUN(X,...))  ## 18dec03
+  fx <- FUN(X,...)
+  dnl <- if(length(names(fx))) names(fx) else dimnames(fx)[[2]]
+  dn[[length(dn)]] <- dnl
   dimnames(r) <- dn
 }
 

@@ -1409,10 +1409,12 @@ sasxport.get <- function(file, force.single=TRUE,
     download.file(file, tf, mode='wb', quiet=TRUE)
     file <- tf
   }
+
   dsinfo <-
     if(method == 'csv') lookupSASContents(file) else lookup.xport(file)
 
-  whichds <- if(length(keep)) keep else setdiff(names(dsinfo), drop)
+  whichds <- if(length(keep)) keep else
+   setdiff(names(dsinfo), c(drop,'_CONTENTS_','_contents_'))
     
   ds     <- switch(method,
                    read.xport= read.xport(file),

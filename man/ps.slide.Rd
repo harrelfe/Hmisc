@@ -5,11 +5,8 @@
 \alias{topdf}
 \alias{tex}
 \alias{showPsfrag}
-\title{
-Postscript and Adobe PDF Setup for 35mm Slides and Other Formats
-}
+\title{Postscript and Adobe PDF Setup for 35mm Slides and Other Formats}
 \description{
-
 The \code{ps.slide} function has nice defaults to create postscript
 images with larger font, thicker lines, and better axis labeling.  These
 images can be used to make nice slides.  There is an option to view the
@@ -131,7 +128,7 @@ showPsfrag(filename)
 }
 \item{filename}{
 name or character string or character vector specifying file prefix.
-For \code{setps} or \code{setpdf specify \code{type="char"} if this is a
+For \code{setps} or \code{setpdf} specify \code{type="char"} if this is a
 character vector or a quote-delimited character string.
 }
 \item{string}{

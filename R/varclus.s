@@ -90,7 +90,7 @@ varclus <-
                  method=method, na.action=nact),class="varclus")
 }
 
-print.varclus <- function(x, ...) {
+print.varclus <- function(x, abbrev=FALSE, ...) {
 dput(x$call); cat("\n")
 if(length(x$na.action)) naprint(x$na.action)
 s <- c(hoeffding="30 * Hoeffding D",spearman="Spearman rho^2",
@@ -98,7 +98,8 @@ s <- c(hoeffding="30 * Hoeffding D",spearman="Spearman rho^2",
         ccbothpos="Chance-Corrected Proportion")[x$similarity]
 cat("\nSimilarity matrix (",s,")\n\n",sep="")
 k <- x$sim
-lab <- abbreviate(dimnames(k)[[2]])
+lab <- dimnames(k)[[2]]
+if(abbrev) lab <- abbreviate(lab)
 dimnames(k) <- list(lab,lab)
 print.matrix(round(k, 2))
 n <- x$n

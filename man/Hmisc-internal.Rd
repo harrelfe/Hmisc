@@ -34,6 +34,7 @@
 \alias{importConvertDateTime}
 \alias{is.category}
 \alias{is.present}
+\alias{makeNames}
 \alias{mask}
 \alias{nafitted.delete}
 \alias{na.include}

@@ -26,6 +26,7 @@ vector of logical values with length equal to length of \code{a}.
 }
 \examples{
 c('a','b','c') %nin% c('a','b')
+}
 \keyword{manip}
 \keyword{character}
 

@@ -30,7 +30,7 @@ CONTENTS} was run on an entire library.
 }
 \usage{
 sasxport.get(file, force.single = TRUE,
-             method=c('read.xport','dataload'), formats=NULL)
+             method=c('read.xport','dataload','csv'), formats=NULL)
 
 sasdsLabels(file)
 }

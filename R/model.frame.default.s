@@ -1,6 +1,7 @@
 ## $Id$
-		
-"[.factor" <- function(x, i, drop=TRUE) {  ## was ... 4nov02
+
+dropUnusedLevels <- function() {
+sf <- function(x, i, drop=TRUE) {
 ## Jens Oehlschlaegel generalized to handle drop 12Oct97
   atx <- attributes(x)
   nam <- atx$names
@@ -20,6 +21,11 @@
   } else if(length(y)) levels(y) <- levels(x)
   attributes(y) <- c(attributes(y), atx, if(ln)list(names=nam))
   y
+}
+assign('[.factor', sf, '.GlobalEnv')
+cat("\nTo revert to the R standard [.factor use remove('[.factor',pos='.GlobalEnv'),\n",
+	"or to get the default R behavior type options(drop.unused.levels=FALSE).\n")
+invisible()
 }
 
 ## Replaced with one more like default R  3nov02

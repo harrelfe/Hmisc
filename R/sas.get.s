@@ -1337,12 +1337,18 @@ exportDataStripped <- if(.R.) function(data, ...)
   }
 
 if(.R.) {
-  spss.get <- function(file, datevars=NULL,
+  spss.get <- function(file, lowernames=FALSE,
+                       datevars=NULL,
                        use.value.labels=TRUE,
                        to.data.frame=TRUE,
                        max.value.labels=Inf,
-                       force.single=TRUE) {
+                       force.single=TRUE, allow=NULL) {
     require('foreign')
+    if(length(grep('http://', file))) {
+      tf <- tempfile()
+      download.file(file, tf, mode='wb', quiet=TRUE)
+      file <- tf
+    }
     w <- read.spss(file, use.value.labels=use.value.labels,
                    to.data.frame=to.data.frame,
                    max.value.labels=max.value.labels)
@@ -1350,6 +1356,10 @@ if(.R.) {
     a   <- attributes(w)
     vl  <- a$variable.labels
     nam <- a$names
+    nam <- makeNames(a$names, unique=TRUE, allow=allow)
+    if(lowernames) nam <- casefold(nam)
+    names(w) <- nam
+
     lnam <- names(vl)
     if(length(vl)) for(i in 1:length(vl)) {
       n <- lnam[i]
@@ -1357,7 +1367,6 @@ if(.R.) {
       if(lab != '' && lab != n) label(w[[i]]) <- lab
     }
     attr(w, 'variable.labels') <- NULL
-
     if(force.single || length(datevars)) for(v in nam) {
       x <- w[[v]]
       changed <- FALSE
@@ -1628,7 +1637,7 @@ csv.get <- function(file, lowernames=FALSE, datevars=NULL,
   fixdates <- match.arg(fixdates)
   w <- read.csv(file, check.names=FALSE, ...)
   n <- names(w)
-  m <- makeNames(n, unique=TRUE)
+  m <- makeNames(n, unique=TRUE, allow=allow)
   if(lowernames) m <- casefold(m)
   changed <- any(m != n)
   if(changed) names(w) <- m

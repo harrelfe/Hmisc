@@ -278,7 +278,7 @@ summary.formula <-
           }
           n[i] <- sum(s)
           w <- w[s]
-          g <- group[s]
+          g <- group[s, drop=TRUE]
           if(is.factor(w)) {
             tab <- table(w, g)
             if(test) testresults[[i]] <- catTest(tab)

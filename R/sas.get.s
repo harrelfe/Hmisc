@@ -1389,7 +1389,7 @@ if(.R.) {
 sasxport.get <- function(file, force.single=TRUE,
                          method=c('read.xport','dataload','csv'),
                          formats=NULL, allow=NULL, out=NULL,
-                         keep=NULL, drop=NULL, FUN=NULL) {
+                         keep=NULL, drop=NULL, as.is=0.5, FUN=NULL) {
 
   method <- match.arg(method)
   if(length(out) && method!='csv')
@@ -1477,6 +1477,8 @@ sasxport.get <- function(file, force.single=TRUE,
     funout <- vector('list', length(dsn))
     names(funout) <- gsub('_','.',dsn)
   }
+  possiblyConvertChar <- (is.logical(as.is) && !as.is) ||
+   (is.numeric(as.is) && as.is > 0)
   j <- 0
   for(k in which.regular) {
     j   <- j + 1
@@ -1526,6 +1528,12 @@ sasxport.get <- function(file, force.single=TRUE,
             storage.mode(x) <- 'integer'
             changed <- TRUE
           }
+        }
+      } else if(possiblyConvertChar && is.character(x)) {
+        if((is.logical(as.is) && !as.is) || 
+		(is.numeric(as.is) && length(unique(x)) < as.is*length(x))) {
+          x <- factor(x, exclude='')
+          changed <- TRUE
         }
       }
       lz <- lab[nam[i]]

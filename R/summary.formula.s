@@ -240,7 +240,7 @@ summary.formula <-
 
     if(method=='reverse') {
       if(resp) {
-        group <- as.factor(X[[resp]])
+        group <- as.factor(X[[resp]])[,drop=TRUE]
         group.freq <- table(group)
         group.freq <- group.freq[group.freq>0]
         if(overall) group.freq <- c(group.freq,
@@ -383,6 +383,7 @@ summary.formula <-
         if(is.matrix(xi) && ncol(xi) > 1) 
           stop('matrix variables not allowed for method="cross"')
         labels[i] <- if(length(l <- attr(xi,'label')))l else nams[i]
+        if(is.factor(xi)) xi <- xi[,drop=TRUE]
         if(!is.factor(xi) && length(unique(xi[!is.na(xi)]))>=continuous)
           xi <- cut2(xi, g=g, ...)
         X[[i]] <- na.include(as.factor(xi))

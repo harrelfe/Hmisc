@@ -1,5 +1,6 @@
-# In future change grid.convert to convertUnit,
-# grid.convertX to convertX, grid.convertY to convertY
+## $Id$
+## In future change grid.convert to convertUnit,
+## grid.convertX to convertX, grid.convertY to convertY
 
 labcurve <- function(curves, labels=names(curves), 
 					 method=NULL, keys=NULL, keyloc=c('auto','none'),
@@ -692,7 +693,8 @@ putKey <- function(z, labels, type=NULL,
         viewport(x=unit(z[[1]],'native'),y=unit(z[[2]],'native'))
       z <- eval(as.call(m))
       size <- if(plot) c(NA,NA) else {
-        if(version$major=='1' && as.numeric(version$minor) > 7.1) {
+        v <- as.numeric(version$major) + as.numeric(version$minor)/100
+        if(v > 1.0709) {
           width <- getFromNamespace('width','grid')
           height <- getFromNamespace('height','grid')
         }

@@ -49,8 +49,10 @@
   right margins. It temporarily sets \code{par(xpd=NA)} if using \R.
 
   \code{sepUnitsTrans} converts character vectors containing values such
-  as \code{c("3 days","3day","4month","2 years","7")} to numeric vectors
-  (here \code{c(3,3,122,730,7)}) in a flexible fashion.  The user can specify a
+  as \code{c("3 days","3day","4month","2 years","2weeks","7")} to
+  numeric vectors 
+  (here \code{c(3,3,122,730,14,7)}) in a flexible fashion.  The user can
+  specify a 
   vector of units of measurements and conversion factors.  The units
   with a conversion factor of \code{1} are taken as the target units,
   and if those units are present in the character strings they are
@@ -102,7 +104,7 @@ matxv(a, b, kint=1)
 nomiss(x)
 outerText(string, y, setAside=string[1], side=4, space=1,
           adj=1, cex=par('cex'))
-sepUnitsTrans(x, conversion=c(day=1, month=365.25/12, year=365.25),
+sepUnitsTrans(x, conversion=c(day=1, month=365.25/12, year=365.25, week=7),
               round=FALSE, digits=0)
 trap.rule(x, y)
 trellis.strip.blank()

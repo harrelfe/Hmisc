@@ -1,3 +1,4 @@
+## $Id$
 sas.get <- if(under.unix || .R.)
   function(library, member, variables = character(0), 
 					ifs = character(0), 
@@ -1361,11 +1362,12 @@ if(.R.) {
   
 if(.R.) {               
 sasxport.get <- function(file, force.single=TRUE,
-                         method=c('read.xport','dataload'),
+                         method=c('read.xport','dataload','csv'),
                          formats=NULL) {
 
-  require('foreign') || stop('foreign package is not installed')
   method <- match.arg(method)
+  if(method != 'csv')
+    require('foreign') || stop('foreign package is not installed') 
 
   sasdateform <-
     toupper(c("date","mmddyy","yymmdd","ddmmyy","yyq","monyy",
@@ -1373,7 +1375,7 @@ sasxport.get <- function(file, force.single=TRUE,
   sastimeform     <- toupper(c("hhmm","hour","mmss","time"))
   sasdatetimeform <- toupper(c("datetime","tod"))
   days.to.adj <- as.numeric(difftime(ISOdate(1970,1,1,0,0,0) , 
-             if(method=='read.xport')ISOdate(1960,1,1,0,0,0) else
+             if(method != 'dataload')ISOdate(1960,1,1,0,0,0) else
                                      ISOdate(1600,3,1,0,0,0), 'days'))
   secs.to.adj <- days.to.adj*24*60*60
 
@@ -1382,10 +1384,12 @@ sasxport.get <- function(file, force.single=TRUE,
     download.file(file, tf, mode='wb', quiet=TRUE)
     file <- tf
   }
-  dsinfo <- lookup.xport(file)
+  dsinfo <-
+    if(method == 'csv') lookupSASContents(file) else lookup.xport(file)
   ds     <- switch(method,
                    read.xport= read.xport(file),
-                   dataload  = read.xportDataload(file, names(dsinfo)))
+                   dataload  = read.xportDataload(file, names(dsinfo)),
+                   csv       = readSAScsv(file, dsinfo))
   
   ## PROC FORMAT CNTLOUT= dataset present?
   if(!length(formats)) {
@@ -1409,11 +1413,16 @@ sasxport.get <- function(file, force.single=TRUE,
                     function(f) {
                       st <- as.character(f$START)
                       en <- as.character(f$END)
+                      lab <- as.character(f$LABEL)
+                      j <- is.na(st) | is.na(en)
+                      if(any(j)) {
+                        warning('NA in code in FORMAT definition; removed')
+                        st <- st[!j]; en <- en[!j]; lab <- lab[!j]
+                      }
                       if(!all(st==en)) return(NULL)
                       list(value = all.is.numeric(st, 'vector'),
-                           label = as.character(f$LABEL))
+                           label = lab)
                     })
-    xless(finfo)
   }
 
   ## Number of non-format datasets
@@ -1461,7 +1470,7 @@ sasxport.get <- function(file, force.single=TRUE,
           x <- as.POSIXct(format(tmp,tz='GMT'),tz='')
           changed <- TRUE
         } else if(fi %in% sastimeform) {
-          tmp <- if(method=='read.xport')
+          tmp <- if(method != 'dataload')
             structure(x, class=c('POSIXt','POSIXct')) else
             structure((x-days.to.adj)*24*60*60, class=c('POSIXt','POSIXct'))
           tmp <- as.POSIXct(format(tmp,tz='GMT'),tz='')
@@ -1515,6 +1524,38 @@ sasxport.get <- function(file, force.single=TRUE,
     }
     w
   }
+
+## Read _contents_.csv and store it like lookup.xport output
+lookupSASContents <- function(sasdir) {
+  w <- read.csv(paste(sasdir,'_contents_.csv',sep='/'), as.is=TRUE)
+  z <- tapply(w$NOBS, w$MEMNAME, function(x)x[1])
+  if(any(z == 0)) {
+    cat('\nDatasets with 0 observations ignored:\n')
+    print(names(z)[z == 0], quote=FALSE)
+    w <- subset(w, NOBS > 0)
+  }
+  w$TYPE <- ifelse(w$TYPE==1, 'numeric', 'character')
+  names(w) <- tolower(names(w))
+  unclass(split(subset(w,select=-c(memname,memlabel)), w$memname))
+}
+
+## Read all SAS csv export files and store in a list
+readSAScsv <- function(sasdir, dsinfo) {
+  dsnames <- names(dsinfo)
+  sasnobs <- sapply(dsinfo, function(x)x$nobs[1])
+  w <- vector('list', length(dsnames)); names(w) <- dsnames
+  for(a in dsnames) {
+    z <- read.csv(paste(sasdir,'/',a,'.csv', sep=''),
+                  as.is=TRUE, blank.lines.skip=FALSE)
+    importedLength <- length(z[[1]])
+    if(importedLength != sasnobs[a])
+      cat('\nError: NOBS reported by SAS (',sasnobs[a],') for dataset ',
+          a,' is not the same as imported length (', importedLength,
+          ')\n', sep='')
+    w[[a]] <- z
+  }
+  w
+}
 
 NULL}
 

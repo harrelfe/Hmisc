@@ -40,7 +40,9 @@ commands that are similar to those in the
 
 \code{latexTranslate} translates particular items in character
 strings to LaTeX format, e.g., makes \code{a^2 = a$^2$} for superscript within
-variable labels.  Math mode is inserted as needed.
+variable labels.   LaTeX names of greek letters (e.g., \code{"alpha"})
+will have backslashes added if \code{greek==TRUE}.  Math mode is
+inserted as needed. 
 \code{latexTranslate} assumes that input text always has matches,
 e.g. \code{[) [] (] ()}, and that surrounding  by \code{$$} is OK.
 
@@ -130,7 +132,7 @@ latex(object, title=first.word(deparse(substitute(object))), \dots)
 
 \method{print}{latex}(x, ...)
 
-latexTranslate(object, inn=NULL, out=NULL, pb=FALSE, \dots)
+latexTranslate(object, inn=NULL, out=NULL, pb=FALSE, greek=FALSE, \dots)
 
 latexSN(x)
 
@@ -378,6 +380,8 @@ defaults
 If \code{pb}=\code{TRUE}, \code{latexTranslate} also translates \code{[()]} to math mode using
 \code{\left, \right}.
 }
+\item{greek}{set to \code{TRUE} to have \code{latexTranslate} put names
+  for greek letters in math mode and add backslashes}
 \item{hspace}{
 horizontal space, e.g., extra left margin for verbatim text.  Default
 is none.  Use e.g. \code{hspace="10ex"} to add 10 extra spaces to the left

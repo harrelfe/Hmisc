@@ -1113,7 +1113,7 @@ testDateTime <- function(x, what=c('either','both','timeVaries')) {
   cl <- class(x)  # was oldClass 22jun03
   if(!length(cl)) return(FALSE)
 
-  dc <- if(.R.) c('POSIXt','POSIXct','dates','times','chron') else
+  dc <- if(.R.) c('Date', 'POSIXt','POSIXct','dates','times','chron') else
                 c('timeDate','date','dates','times','chron')
   dtc <- if(.R.) c('POSIXt','POSIXct','chron') else
                  c('timeDate','chron')
@@ -1121,7 +1121,8 @@ testDateTime <- function(x, what=c('either','both','timeVaries')) {
          either = any(cl %in% dc),
          both   = any(cl %in% dtc),
          timeVaries = {
-           if('chron' %in% cl || !.R.) { ## chron or S+ timeDate
+           if('chron' %in% cl || 'Date' %in% cl || !.R.) { 
+				## chron or S+ timeDate
              y <- as.numeric(x)
              length(unique(round(y - floor(y),13))) > 1
            }  else if(.R.) length(unique(format(x,'%H%M%S'))) > 1 else
@@ -1143,7 +1144,8 @@ formatDateTime <- function(x, at, roundDay=FALSE) {
     } else x
   } else if(.R.) {
     attributes(x) <- at
-    if(roundDay) as.POSIXct(round(x, 'days')) else x
+    if(roundDay && 'Date' %nin% at$class) 
+		as.POSIXct(round(x, 'days')) else x
   } else timeDate(julian=if(roundDay)round(x) else x)
   format(w)
 }

@@ -1126,17 +1126,31 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
     }
 
 	if(using.Design) options(Design.attr=da)
-    f <- if(missing(subset)) fitter(formula, data=completed.data) else
-    fitter(formula, data=completed.data[subset,])  # 10Mar01 16jul02
+    f <- if(missing(subset)) fitter(formula, data=completed.data, ...) else
+    fitter(formula, data=completed.data[subset,], ...)  # 10Mar01 16jul02
     # For some reason passing subset= causes model.frame bomb in R
 	if(fit.reps) fits[[i]] <- f
 	cof <- f$coef
-	v <- Varcov(f)
+	v <- Varcov(f, regcoef.only=FALSE)
+    ## From Rainer Dyckerhoff to work correctly with models that have
+    ## a scale parameter (e.g. psm).  Check whether length of the
+    ## coefficient vector is different from the the number of rows of
+    ## the covariance matrix. If so, the model contains scale
+    ## parameters that are not fixed at some value and we have to 
+	## append the scale parameters to the coefficient vector.
+    nvar0 <- length(cof)
+    nvar <- nrow(v)
+    if(nvar > nvar0) {
+      cof <- c(cof, log(f$scale))
+      names(cof) <- c(names(f$coef),
+                      if((nvar - nvar0) == 1), "Log(scale)" else
+                      names(f$scale))
+    }
 	if(i==1) {
 	  vavg <- 0*v
-	  p <- length(f$coef)
+	  p <- length(cof)
 	  bar <- rep(0, p)
-	  vname <- names(f$coef)
+	  vname <- names(cof)
 	  cov <- matrix(0, nrow=p, ncol=p, dimnames=list(vname,vname))
 
 	  if(inherits(f,'Design')) {

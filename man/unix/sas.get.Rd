@@ -322,11 +322,11 @@ for a discussion of the "subsetting if" statement.
 \author{
 Terry Therneau, Mayo Clinic
 \cr
-Frank Harrell, University of Virginia
+Frank Harrell, Vanderbilt University
 \cr
 Bill Dunlap, University of Washington and Insightful Corporation
 \cr
-Michael W. Kattan, Baylor University
+Michael W. Kattan, Cleveland Clinic Foundation
 }
 \references{
 SAS Institute Inc. (1990).

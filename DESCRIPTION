@@ -1,11 +1,11 @@
 Package: Hmisc
-Version: 2.1-1
-Date: 2004-04-26
+Version: 2.1-2
+Date: 2004-05-25
 Title: Harrell Miscellaneous
 Author: Frank E Harrell Jr <f.harrell@vanderbilt.edu>, with
   contributions from many other users.
 Maintainer: Frank E Harrell Jr <f.harrell@vanderbilt.edu>
-Depends: R (>= 1.8), grid, lattice, acepack
+Depends: R (>= 1.9), grid, lattice, acepack
 Description: The Hmisc library contains many functions useful for data
 	analysis, high-level graphics, utility operations, functions for
 	computing sample size and power, importing datasets,

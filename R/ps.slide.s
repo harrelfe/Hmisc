@@ -1032,11 +1032,11 @@ function(file = "", width = 0, height = 0, ratio= (1 + sqrt(5))/2,
                                file = file, horizontal = FALSE,
                                width = width, height = height,
                                pointsize = pointsize,
-                               family=font, color=color,
+                               family=font, color=color, paper='special',
                                bg=if(!color)'white' else NULL)) else
 	  postscript(file = file, horizontal = FALSE, width = width, height = height,
                  pointsize = pointsize, family=font,
-                 onefile=onefile, print.it=FALSE)	
+                 onefile=onefile, print.it=FALSE, paper='special')	
     }
     if(.R.) par(lwd=lwd, mgp=c(2.2,.45,0), tcl=-0.4,
                 mar=c(3+sublines+.25*(sublines>0),3.5+leftlines,

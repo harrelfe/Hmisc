@@ -119,7 +119,6 @@ histSpike       \tab Add high-resolution spike histograms or density estimates\c
                 \tab     to an existing plot\cr
 hoeffd          \tab Hoeffding's D test (omnibus test of independence of X and Y)\cr
 impute          \tab Impute missing data (generic method)\cr
-%in%            \tab Find out which elements a are in b : a %in% b\cr
 interaction     \tab More flexible version of builtin function\cr
 is.present      \tab Tests for non-blank character values or non-NA numeric values\cr
 james.stein     \tab James-Stein shrinkage estimates of cell means from raw data\cr

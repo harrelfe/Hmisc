@@ -291,6 +291,10 @@ Vanderbilt University
 \cr
 f.harrell@vanderbilt.edu
 }
+\references{
+  Little R, An H.  Robust likelihood-based analysis of multivariate data
+  with missing values. Statistica Sinica 14:933-952, 2004.
+  }
 \seealso{
 \code{\link{fit.mult.impute}}, \code{\link{transcan}}, \code{\link[acepack]{ace}}, \code{\link{naclus}}, \code{\link{naplot}}, \code{\link[mice]{mice}},
 \code{\link{dotchart2}}, \code{\link{ecdf}}

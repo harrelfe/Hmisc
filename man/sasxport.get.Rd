@@ -32,7 +32,7 @@ CONTENTS} was run on an entire library.
 \usage{
 sasxport.get(file, force.single = TRUE,
              method=c('read.xport','dataload','csv'), formats=NULL, allow=NULL,
-             keep=NULL, drop=NULL)
+             out=NULL, keep=NULL, drop=NULL, FUN=NULL)
 sasdsLabels(file)
 }
 \arguments{
@@ -57,17 +57,38 @@ files created by running the \code{exportlib} SAS macro.
   \item{allow}{a vector of characters allowed by \R that should not be
 converted to periods in variable names.  By default, underscores in
 variable names are converted to periods as with \R before version 1.9.}
+  \item{out}{a character string specifying a directory in which to write
+	separate \R \code{save} files (\code{.rda} files) for each regular
+	dataset.  Each file and the data frame inside it is named with the
+	SAS dataset name translated to lower case and with underscores
+	changed to periods.  The default \code{NULL} value of \code{out}
+	results in a data frame or a list of data frames being returned.
+	When \code{out} is given, \code{sasxport.get} returns only metadata (see
+	below), invisibly.
+	\code{out} only works with \code{methods='csv'}.  \code{out} should
+	not have a trailing slash.}
   \item{keep}{a vector of names of SAS datasets to process (original SAS
   upper case names).  Must include \code{PROC FORMAT} dataset if it
   exists, and if the kept datasets use any of its value label formats.}
   \item{drop}{a vector of names of SAS datasets to ignore (original SAS
 	upper case names)}
+  \item{FUN}{an optional function that will be run on each data frame
+	created, when \code{method='csv'} and \code{out} are specified.  The
+	result of all the \code{FUN} calls is made into a list corresponding
+	to the SAS datasets that are read.  This list is the \code{FUN}
+	attribute of the result returned by \code{sasxport.get}.
+	}
 }
 \value{
   If there is more than one dataset in the transport file other than the
   \code{PROC FORMAT} file, the result is a list of data frames
   containing all the non-\code{PROC FORMAT} datasets.  Otherwise the
-  result is the single data frame.  \code{sasdsLabels} returns a named
+  result is the single data frame.  There is an exception if \code{out}
+  is specified; that causes separate \R \code{save} files to be written
+  and the returned value to be a list corresponding to the SAS datasets,
+  with key \code{PROC CONTENTS} information in a data frame making up
+  each part of the list.
+  \code{sasdsLabels} returns a named
   vector of dataset labels, with names equal to the dataset names.
 }
 \details{See \code{\link{contents.list}} for a way to print the

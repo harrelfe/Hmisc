@@ -264,39 +264,22 @@ sas.get <- if(under.unix || .R.)
 			atr$imputed <- ll[dd!=0]
 			dsi <- floor(dsi)
 		  }
-		dsi <- if(.R.) {
-          ## Don MacQueen 3Apr02
-          tmpd <- structure((dsi-days.to.adj)*24*60*60,
-                            class=c('POSIXt','POSIXct'))
-          as.POSIXct(format(tmpd,tz='GMT'),tz='') } else
-        if(.SV4.) timeDate(julian=dsi,format=dateform4[m]) else
-          dates(dsi, out.format=dateform[[m]])
+		dsi <- importConvertDateTime(dsi, 'date', 'sas',
+		           format=if(.SV4.) dateform4[m] else dateform[m])
 		if(length(atr$imputed)) 
 	     attr(dsi,'class') <- c("impute",attr(dsi,'class'))
 		ff <- NULL
 	  }
 		else {
 		  if((m <- match(fname,sastimeform,0)) >0) {
-            dsi <- if(.R.) {
-              ## Don MacQueen 3Apr02
-              tmpd <- structure(dsi, class=c('POSIXt','POSIXct'))
-              tmpd <- as.POSIXct(format(tmpd,tz='GMT'),tz='')
-              structure(tmpd, class=c('timePOSIXt','POSIXt','POSIXct'))
-            }  else
-            if(.SV4.) timeDate(ms=dsi*1000, format=timeform4[m]) else
-			 chron(times=dsi/86400, out.format=timeform[m])
+            dsi <- importConvertDateTime(dsi, 'time', 'sas', 
+		             format=if(.SV4.)timeform4[m] else timeform[m])
 			ff <- NULL					
 		  }
 			else if((m <- match(fname,sasdatetimeform,0))>0) {
-			  dsi <- if(.R.) {  ## D.M. 3Apr02
-                tmpd <-	structure(dsi-secs.to.adj,
-                                  class=c('POSIXt','POSIXct'))
-                as.POSIXct(format(tmpd,tz='GMT'),tz='')
-              } else
-                if(.SV4.) timeDate(julian=dsi/86400,
-                                        format=datetimeform4[m]) else
-                chron(dsi/86400, out.format=datetimeform[[m]])
-			  ff <- NULL					
+			  dsi <- importConvertDateTime(dsi, 'datetime', 'sas',
+		             format=if(.SV4.) datetimeform4[m] else datetimeform[m])
+		    ff <- NULL					
 			}
 		}
 	  atr$format <- ff
@@ -579,19 +562,18 @@ for(i in 1:nvar) {
 	  atr$imputed <- ll[dd!=0]
 	  dsi <- floor(dsi)
       }
-      dsi <-  if(.SV4.) timeDate(julian=dsi,format=dateform4[m]) else
-        dates(dsi, out.format=dateform[[m]])
+      dsi <-  importConvertDateTime(dsi, 'date', 'sas',
+		       format=if(.SV4.) dateform4[m] else dateform[m])
       if(length(atr$imputed)) 
 	    attr(dsi,'class') <- c("impute",attr(dsi,'class'))
       ff <- NULL
     } else if((m <- match(fname,sastimeform,0)) >0) {
-      dsi <- if(.SV4.) timeDate(ms=dsi*1000, format=timeform4[m]) else
-        chron(times=dsi/86400, out.format=timeform[m])
+      dsi <- importConvertDateTime(dsi, 'time', 'sas',
+		      format=if(.SV4.) timeform4[m] else timeform[m])
       ff <- NULL
     } else if((m <- match(fname,sasdatetimeform,0))>0) {
-      dsi <- if(.SV4.) timeDate(julian=dsi/86400,
-                                format=datetimeform4[m]) else
-        chron(dsi/86400, out.format=datetimeform[[m]])
+      dsi <- importConvertDateTime(dsi, 'datetime', 'sas',
+		      format=if(.SV4.)datetimeform4[m] else datetimeform[[m]])
 	ff <- NULL
     }
     atr$format <- ff
@@ -650,6 +632,42 @@ atr$class <- "data.frame"
 attributes(ds) <- c(attributes(ds),atr)
 ds
 }
+
+importConvertDateTime <- 
+		function(x, type=c('date','time','datetime'),
+					input=c('sas','spss','dataload'), format) {
+ type <- match.arg(type)
+ input <- match.arg(input)
+
+ if(input != 'sas' && type != 'date')
+	stop('only date variables are support for spss, dataload')
+		
+ if(.R.) {
+  adjdays <- c(sas=3653, spss=140697, dataload=135080)[input]
+  ## 1970-1-1 minus 1960-1-1, 1584-10-14, or 1600-3-1
+
+ switch(type,
+		date = structure(x - adjdays, class='Date'),
+		time = {
+			  ## Don MacQueen 3Apr02
+              z <- structure(x, class=c('POSIXt','POSIXct'))
+              z <- as.POSIXct(format(z, tz='GMT'), tz='')
+              structure(z, class=c('timePOSIXt','POSIXt','POSIXct'))},
+		datetime = {
+			  z <- structure(x - adjdays*86400,
+                             class=c('POSIXt','POSIXct'))
+              as.POSIXct(format(z, tz='GMT'), tz='')})
+ } else if(.SV4.) 
+  switch(type,
+	 	 date     = timeDate(julian=x, format=format),
+		 time     = timeDate(ms=x*1000, format=format),
+		 datetime = timeDate(julian=x/86400, format=format)) else
+  switch(type,
+	 	 date = dates(x, out.format=format),
+		 time = chron(x/86400, out.format=format),
+		 datetime = chron(x/86400, out.format=format))
+}
+
 
 if(.R.) {  ## Don MacQueen 3Apr02
   ## slightly modified copy of format.POSIXct() from R base
@@ -923,7 +941,7 @@ cleanup.import <- function(obj, labels=NULL, lowernames=FALSE,
 						   big=1e20, sasdict, 
 						   pr=prod(dimobj) > 5e5,
                            datevars=NULL,
-                           dateformat='%d%b%Y') {
+                           dateformat='%F') {
   nam <- names(obj)
   dimobj <- dim(obj)
   nv <- length(nam)
@@ -998,7 +1016,7 @@ cleanup.import <- function(obj, labels=NULL, lowernames=FALSE,
       if(!is.factor(x) || is.character(x))
         stop(paste('variable',nam[i],
                    'must be a factor or character variable for date conversion'))
-      x <- as.POSIXct(strptime(as.character(x), dateformat))
+      x <- as.Date(as.character(x), format=dateformat)
       modif <- TRUE
     }
 
@@ -1308,7 +1326,6 @@ if(.R.) {
                        use.value.labels=TRUE,
                        to.data.frame=TRUE,
                        max.value.labels=Inf,
-                       typeDate=c('POSIX','chron'),
                        force.single=TRUE) {
     require('foreign')
     typeDate <- match.arg(typeDate)
@@ -1331,13 +1348,7 @@ if(.R.) {
       x <- w[[v]]
       changed <- FALSE
       if(v %in% datevars) {
-        x <- switch(typeDate,
-                    POSIX = ISOdate(1584,10,14) + x,
-                    chron = structure((unclass(ISOdate(1584,10,14)) +
-                      x ) /24/60/60 - 1,
-                      class=c('dates','times'), units=NULL,
-                      format=c(dates='day mon year'),
-                      origin=c(month=1,day=1,year=1970))   )
+		x <- importConvertDateTime(x, 'date', 'spss')
         changed <- TRUE
       } else if(all(is.na(x))) {
         storage.mode(x) <- 'integer'
@@ -1367,17 +1378,14 @@ sasxport.get <- function(file, force.single=TRUE,
 
   method <- match.arg(method)
   if(method != 'csv')
-    require('foreign') || stop('foreign package is not installed') 
+    require('foreign') || stop('foreign package is not installed')
+  rootsoftware <- if(method=='dataload')'dataload' else 'sas'
 
   sasdateform <-
     toupper(c("date","mmddyy","yymmdd","ddmmyy","yyq","monyy",
               "julian","qtr","weekdate","weekdatx","weekday","month"))
   sastimeform     <- toupper(c("hhmm","hour","mmss","time"))
   sasdatetimeform <- toupper(c("datetime","tod"))
-  days.to.adj <- as.numeric(difftime(ISOdate(1970,1,1,0,0,0) , 
-             if(method != 'dataload')ISOdate(1960,1,1,0,0,0) else
-                                     ISOdate(1600,3,1,0,0,0), 'days'))
-  secs.to.adj <- days.to.adj*24*60*60
 
   if(length(grep('http://', file))) {
     tf <- tempfile()
@@ -1467,21 +1475,13 @@ sasxport.get <- function(file, force.single=TRUE,
       }
       if(is.numeric(x)) {
         if(fi %in% sasdateform) {
-          tmp <- structure((x - days.to.adj)*24*60*60,
-                           class=c('POSIXt','POSIXct'))
-          x <- as.POSIXct(format(tmp,tz='GMT'),tz='')
+		  x <- importConvertDateTime(x, 'date', rootsoftware)
           changed <- TRUE
         } else if(fi %in% sastimeform) {
-          tmp <- if(method != 'dataload')
-            structure(x, class=c('POSIXt','POSIXct')) else
-            structure((x-days.to.adj)*24*60*60, class=c('POSIXt','POSIXct'))
-          tmp <- as.POSIXct(format(tmp,tz='GMT'),tz='')
-          x <- structure(tmp, class=c('timePOSIXt','POSIXt','POSIXct'))
+		  x <- importConvertDateTime(x, 'time', rootsoftware)
           changed <- TRUE
         } else if(fi %in% sasdatetimeform) {
-          tmp <- structure(x - secs.to.adj,
-                           class=c('POSIXt','POSIXct'))
-          x <- as.POSIXct(format(tmp,tz='GMT'),tz='')
+		  x <- importConvertDateTime(x, 'datetime', rootsoftware)
           changed <- TRUE
         } else if(force.single) {
           if(all(is.na(x))) {
@@ -1564,7 +1564,7 @@ readSAScsv <- function(sasdir, dsinfo) {
 NULL}
 
 csv.get <- function(file, lowernames=FALSE, datevars=NULL,
-                    dateformat='%d%b%Y', ...) {
+                    dateformat='%F', ...) {
   w <- read.csv(file, check.names=FALSE, ...)
   n <- names(w)
   m <- make.names(n, unique=TRUE)
@@ -1586,4 +1586,5 @@ sasdsLabels <- function(file) {
   labs
 }
 
-  
+
+		

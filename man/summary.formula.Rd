@@ -114,7 +114,7 @@ when stratifying by \code{mChoice} variables.
            fun=NULL,
            method=c('response','reverse','cross'),
            overall=method=='response'|method=='cross', 
-           continuous=10, na.rm=method=='reverse', g=4, 
+           continuous=10, na.rm=TRUE, na.include=method!='reverse', g=4, 
            quant=c(.025,.05,.125,.25,.375,.5,.625,.75,.875,.95,.975),
            nmin=0, test=FALSE,
            conTest=function(group,x) {
@@ -139,7 +139,8 @@ when stratifying by \code{mChoice} variables.
 }
 \usage{
 \method{summary}{formula}(formula, data, subset, na.action, fun, method='response',
-              overall=TRUE, continuous=10, na.rm=FALSE, g=4, nmin=0, \dots)
+              overall=TRUE, continuous=10, na.rm=FALSE, na.include=TRUE,
+g=4, nmin=0, \dots)
 \method{print}{summary.formula.response}(x, vnames=c('labels','names'), prUnits=TRUE,
       abbreviate.dimnames=FALSE,
       prefix.width, min.colwidth, formatArgs, \dots)
@@ -148,14 +149,14 @@ when stratifying by \code{mChoice} variables.
      dotfont=1, add=FALSE, main, subtitles=TRUE, xaxis=TRUE,
      \dots)
 \method{latex}{summary.formula.response}(object, title=first.word(expr=substitute(object)),
-      caption, trios, vnames=c('labels','names'), prUnits=TRUE,
+      caption, trios, vnames=c('labels','names'), prn=TRUE, prUnits=TRUE,
       rowlabel='', cdec=2, ncaption=FALSE,
       \dots)
 x[i,j]
 
 
 \method{summary}{formula}(formula, data, subset, na.action, method='reverse',
-              overall=FALSE, continuous=10, na.rm=TRUE,
+              overall=FALSE, continuous=10, na.rm=TRUE, na.include=FALSE,
               quant=c(0.025, 0.05, 0.125, 0.25, 0.375, 0.5,
                       0.625, 0.75, 0.875, 0.95, 0.975),
               test=FALSE,
@@ -204,7 +205,8 @@ x[i,j]
      prmsd=FALSE, msdsize=NULL, long=FALSE, pdig=3, eps=.001, \dots)
 
 
-\method{summary}{formula}(formula, data, subset, na.action, fun, method='cross',
+\method{summary}{formula}(formula, data, subset, na.action, fun,
+              na.rm=TRUE, na.include=TRUE, method='cross',
               overall=TRUE, continuous=10, g=4, \dots)
 \method{print}{summary.formula.cross}(x, twoway=nvar==2, prnmiss=any(x$Missing>0), prn=TRUE,
       abbreviate.dimnames=FALSE, prefix.width=max(nchar(v)), 
@@ -331,13 +333,20 @@ continuous (when there are at least \code{continuous} unique values).
 how many levels they have.
 }
 \item{na.rm}{
-for \code{method="response"}, set \code{na.rm=TRUE} to exclude missing values from
+  \code{TRUE} (the default) to exclude \code{NA}s before passing data to
+  \code{fun} to compute statistics, \code{FALSE} otherwise.
+  \code{na.rm=FALSE} is useful if the response variable is a matrix and
+  you do not wish to exclude a row of the matrix if any of the columns
+  in that row are \code{NA}.  \code{na.rm} also applies to summary
+statistic functions such as \code{smean.cl.normal}.  For these \code{na.rm}
+defaults to \code{TRUE} unlike built-in functions.
+}
+\item{na.include}{
+for \code{method="response"}, set \code{na.include=FALSE} to exclude missing values from
 being counted as their own category when subsetting the response(s)
 by levels of a categorical variable.  For \code{method="reverse"} set
-\code{na.rm=FALSE} to keep missing values of categorical variables from
-being excluded from the table.  \code{na.rm} also applies to summary
-statistic functions such as \code{smean.cl.normal}.  For these \code{na.rm}
-defaults to \code{TRUE} unlike built-in S-Plus functions.
+\code{na.include=TRUE} to keep missing values of categorical variables from
+being excluded from the table.  
 }
 \item{g}{
 number of quantile groups to use when variables are automatically
@@ -775,6 +784,53 @@ summary(y ~ age + sex, fun=roc)
 options(digits=3)
 summary(y ~ age + sex, fun=roc, method="cross")
 
+#Use stratify() to produce a table in which time intervals go down the
+#page and going across 3 continuous variables are summarized using
+#quartiles, and are stratified by two treatments
+
+set.seed(1)
+d <- expand.grid(visit=1:5, treat=c('A','B'), reps=1:100)
+d$sysbp <- rnorm(100*5*2, 120, 10)
+label(d$sysbp) <- 'Systolic BP'
+d$diasbp <- rnorm(100*5*2, 80,  7)
+d$diasbp[1] <- NA
+d$age    <- rnorm(100*5*2, 50, 12)
+g <- function(y) {
+  N <- apply(y, 2, function(w) sum(!is.na(w)))
+  h <- function(x) {
+    qu <- quantile(x, c(.25,.5,.75), na.rm=TRUE)
+    names(qu) <- c('Q1','Q2','Q3')
+    c(N=sum(!is.na(x)), qu)
+}
+  w <- as.vector(apply(y, 2, h))
+  names(w) <- as.vector( outer(c('N','Q1','Q2','Q3'), dimnames(y)[[2]],
+                                function(x,y) paste(y,x)))
+  w
+}
+#Use na.rm=FALSE to count NAs separately by column
+s <- summary(cbind(age,sysbp,diasbp) ~ visit + stratify(treat),
+             na.rm=FALSE, fun=g, data=d)
+#The result is very wide.  Re-do, putting treatment vertically
+x <- with(d, factor(paste('Visit', visit, treat)))
+summary(cbind(age,sysbp,diasbp) ~ x, na.rm=FALSE, fun=g, data=d)
+
+#Compose LaTeX code directly
+g <- function(y) {
+  h <- function(x) {
+    qu <- format(round(quantile(x, c(.25,.5,.75), na.rm=TRUE),1),nsmall=1)
+    paste('{\\scriptsize(',sum(!is.na(x)),
+          ')} \\hfill{\\scriptsize ', qu[1], '} \\textbf{', qu[2],
+          '} {\\scriptsize ', qu[3],'}', sep='')
+  }
+  apply(y, 2, h)
+}
+s <- summary(cbind(age,sysbp,diasbp) ~ visit + stratify(treat),
+             na.rm=FALSE, fun=g, data=d)
+# latex(s, prn=FALSE)
+## need option in latex to not print n
+#Put treatment vertically
+s <- summary(cbind(age,sysbp,diasbp) ~ x, fun=g, data=d, na.rm=FALSE)
+# latex(s, prn=FALSE)
 
 #Plot estimated mean life length (assuming an exponential distribution) 
 #separately by levels of 4 other variables.  Repeat the analysis

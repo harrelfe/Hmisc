@@ -31,6 +31,7 @@
 \alias{get2rowHeads}
 \alias{groupn}
 \alias{gView}
+\alias{importConvertDateTime}
 \alias{is.category}
 \alias{is.present}
 \alias{mask}

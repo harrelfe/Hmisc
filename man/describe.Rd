@@ -124,10 +124,11 @@ in weighted means, quantiles, and frequency tables.
 \item{\dots}{
   arguments passed to \code{describe.default} which are passed to calls
   to \code{format} for numeric variables.  For example if using R
-  \code{POSIXct} date/time formats, specifying
+  \code{POSIXct} or \code{Date} date/time formats, specifying
   \code{describe(d,format='\%d\%b\%y')} will print date/time variables as
   \code{"01Jan2000"}.  This is useful for omitting the time
-  component.  See the help file for \code{format.POSIXct} for more
+  component.  See the help file for \code{format.POSIXct} or
+\code{format.Date} for more
   information.  For \code{latex} methods, \dots is ignored.}
 \item{file}{
 name of output file (should have a suffix of .tex).  Default name is

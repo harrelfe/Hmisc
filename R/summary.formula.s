@@ -1236,9 +1236,9 @@ formatCats <- function(tab, nam, tr, type, group.freq,
   gnames <- names(group.freq)
   nr <- nrow(tab)
 
-  ## If there was a missing column of tab because the variable was
+  ## If there was a missing column of tab because e.g. the variable was
   ## always NA for one (or more) of the groups, add columns of NAs
-  if(ncol(tab) > 1) {  ## 23sep03
+  if(ncol(tab) < length(group.freq)) {
     tabfull <- matrix(NA,nrow=nr,ncol=length(group.freq),
                       dimnames=list(dimnames(tab)[[1]],gnames))
     tabfull[,dimnames(tab)[[2]]] <- tab

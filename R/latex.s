@@ -438,7 +438,7 @@ if (length(cgroup)) {
                            paste(sl,"let",sl,"LTmulticolumn=",sl,"multicolumn", sep=""),
                            paste(sl,"setlongtables",sep=""),
                            if(landscape) paste(sl, "begin{landscape}",sep=""),
-                           if(length(size)) paste(sl,size,'\n',sep=''),
+                           if(length(size)) paste('{',sl,size,'\n',sep=''),
                            paste(sl,"begin{longtable}{", tabular.cols, "}",sep=""),
                            sep="\n"),
                      if(caption.loc=='top' && !missing(caption))
@@ -449,6 +449,7 @@ if (length(cgroup)) {
                         paste(caption, sl,sl,"\n",sep=""),  ## 3oct03
                        if(length(insert.bottom)) insert.bottom,
                        paste(sl,"end{longtable}\n", sep=""),
+                       if(length(size)) '}',
                        if(landscape) paste(sl,"end{landscape}\n",sep=""))
   }
   

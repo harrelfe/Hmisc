@@ -1375,7 +1375,8 @@ if(.R.) {
 if(.R.) {               
 sasxport.get <- function(file, force.single=TRUE,
                          method=c('read.xport','dataload','csv'),
-                         formats=NULL, allow=NULL) {
+                         formats=NULL, allow=NULL,
+                         keep=NULL, drop=NULL) {
 
   method <- match.arg(method)
   if(method != 'csv')
@@ -1395,16 +1396,24 @@ sasxport.get <- function(file, force.single=TRUE,
   }
   dsinfo <-
     if(method == 'csv') lookupSASContents(file) else lookup.xport(file)
+
+  whichds <- if(length(keep)) keep else setdiff(names(dsinfo), drop)
+    
   ds     <- switch(method,
                    read.xport= read.xport(file),
-                   dataload  = read.xportDataload(file, names(dsinfo)),
-                   csv       = readSAScsv(file, dsinfo))
+                   dataload  = read.xportDataload(file, whichds),
+                   csv       = readSAScsv(file, dsinfo, whichds))
+
+  if(method=='read.xport' && (length(keep) | length(drop)))
+    ds <- ds[whichds]
   
   ## PROC FORMAT CNTLOUT= dataset present?
+  fds <- NULL
   if(!length(formats)) {
-    fds <- which(sapply(dsinfo, function(x)
-                        all(c('FMTNAME','START','END','MIN','MAX','FUZZ')
-                            %in% x$name)))
+    fds <- sapply(dsinfo, function(x)
+                  all(c('FMTNAME','START','END','MIN','MAX','FUZZ')
+                      %in% x$name))
+    fds <- names(fds)[fds]
     if(length(fds) > 1) {
       warning('transport file contains more than one PROC FORMAT CNTLOUT= dataset; using only the first')
       fds <- fds[1]
@@ -1435,11 +1444,10 @@ sasxport.get <- function(file, force.single=TRUE,
   }
 
   ## Number of non-format datasets
-  nods <- length(dsinfo)
+  nods <- length(whichds)
   nds  <- nods - (length(formats) == 0 && length(finfo) > 0)
-
-  which.regular <- if(length(formats)) 1:nods else setdiff(1:nods,fds)
-  dsn <- tolower(names(dsinfo)[which.regular])
+  which.regular <- setdiff(whichds, fds)
+  dsn <- tolower(which.regular)
   
   if(nds > 1) {
     res <- vector('list', nds)
@@ -1545,8 +1553,7 @@ lookupSASContents <- function(sasdir) {
 }
 
 ## Read all SAS csv export files and store in a list
-readSAScsv <- function(sasdir, dsinfo) {
-  dsnames <- names(dsinfo)
+readSAScsv <- function(sasdir, dsinfo, dsnames=names(dsinfo)) {
   sasnobs <- sapply(dsinfo, function(x)x$nobs[1])
   w <- vector('list', length(dsnames)); names(w) <- dsnames
   for(a in dsnames) {

@@ -312,7 +312,7 @@ latex.describe <- function(object, title=NULL, condense=TRUE,
                              first.word(expr=attr(object,'descript')),
                              'tex',sep='.'),
                            append=FALSE, size='small',
-                           tabular=TRUE, ...) {
+                           tabular=TRUE, greek=TRUE, ...) {
 
 at <- attributes(object)
 ct <- function(..., file, append=FALSE) {
@@ -335,7 +335,7 @@ if(length(at$dimensions)) {
 	if(length(z)==0) next
     ct('\\vbox{', file=file, append=TRUE)
 	latex.describe.single(z, condense=condense, vname=vnames[i],
-                          file=file, append=TRUE, tabular=tabular)
+                          file=file, append=TRUE, tabular=tabular, greek=.R.)
     ct('\\vspace{-.5ex}\\hrule\\smallskip}\n', file=file, append=TRUE)
   }
   if(length(mv <- at$missing.vars)) {
@@ -363,7 +363,7 @@ ct('\\end{spacing}\n', file=file, append=TRUE)
 
 latex.describe.single <- function(object, title=NULL, condense=TRUE, vname,
                                   file, append=FALSE, size='small',
-                                  tabular=TRUE, ...) {
+                                  tabular=TRUE, greek=.R., ...) {
 
 ct <- function(..., file, append=FALSE) {
   if(file=='') cat(...) else cat(..., file=file, append=append)
@@ -384,8 +384,16 @@ intFreq <- object$intervalFreq
 ## Put graph on its own line if length of label > 3.5 inches
 ## For normalsize there are 66 characters per 4.8 in. standard width
 
-des <- paste('\\textbf{',
-             latexTranslate(object$descript, '&', '\\&'),'}',sep='')
+z   <- latexTranslate(object$descript, '&', '\\&', greek=greek)
+## If any math mode ($ not preceeded by \) don't put label part in bold
+des <- if(!length(grep('[^\\]\\$', z)))
+  paste('\\textbf{', z, '}', sep='') else {
+    ## Get text before : (variable name)
+    sp <- strsplit(z, ' : ')[[1]]
+    vnm <- sp[1]
+    rem <- paste(sp[-1], collapse=':')
+    paste('\\textbf{', vnm, '}: ', rem, sep='')
+  } 
 if(length(object$units))
   des <- paste(des, '{\\smaller[1] [',
                latexTranslate(object$units),']}', sep='')

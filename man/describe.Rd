@@ -63,9 +63,9 @@ in weighted means, quantiles, and frequency tables.
 \method{print}{describe}(x, condense=TRUE, \dots)
 \method{latex}{describe}(object, title=NULL, condense=TRUE, 
       file=paste('describe',first.word(expr=attr(object,'descript')),'tex',sep='.'),
-      append=FALSE, size='small', tabular=TRUE, \dots)
+      append=FALSE, size='small', tabular=TRUE, greek=.R., \dots)
 \method{latex}{describe.single}(object, title=NULL, condense=TRUE, vname,
-      file, append=FALSE, size='small', tabular=TRUE, \dots)
+      file, append=FALSE, size='small', tabular=TRUE, greek=.R., \dots)
 }
 \arguments{
 \item{x}{
@@ -148,6 +148,10 @@ LaTeX text size (\code{"small"}, the default, or \code{"normalsize"}, \code{"tin
   set to \code{FALSE} to use verbatim rather than tabular environment
   for the summary statistics output.  By default, tabular is used if the
   output is not too wide.}
+\item{greek}{By default in \R (but not S-Plus), the \code{latex} methods
+  will change LaTeX names of greek letters that appear in variable
+  labels to appropriate LaTeX symbols in math mode unless
+  \code{greek=FALSE}.  \code{greek=TRUE} is not implemented in S-Plus.}
 \item{vname}{unused argument in \code{latex.describe.single}}
 }
 \value{

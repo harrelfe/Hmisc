@@ -1,3 +1,4 @@
+## $Id$
 ### -*-S-*- Improvements due to Martin Maechler <maechler@stat.math.ethz.ch>
 
 scat1d <- function(x, side=3, frac=.02, jitfrac=.008, tfrac, 
@@ -22,8 +23,6 @@ scat1d <- function(x, side=3, frac=.02, jitfrac=.008, tfrac,
 
   pr <- parGrid(grid)
   usr <- pr$usr; pin <- pr$pin; uin <- pr$uin
-  ## prn(usr);prn(pin);prn(uin)
-  ## Not using elegant unit() because of efficiency when n very large
 
   u <- usr[l]
   u.opp <- usr[-l]
@@ -131,13 +130,6 @@ which <- match.arg(which)
 method.cat <- match.arg(method.cat)
 maxna <- 0
 mgroup <- missing(group)  # before R changes it
-
-## Was 28aug02
-##    if(nu < 2) 'nil' else
-##    list(if(is.category(x) || is.character(x) ||
-##            nu < n.unique)
-##         'cat' else 'cont',
-##         na=sum(is.na(x)))
 
 z <-
   sapply(object, function(x, n.unique) {
@@ -299,15 +291,11 @@ histSpike <- function(x, side=1, nint=100, frac=.05, minf=NULL,
 						               density   ='Density'),
 					  y=NULL, curve=NULL, add=FALSE, 
 					  bottom.align=type=='density', 
-					  col=par('col'), lwd=par('lwd'), grid=FALSE, ...) {
+					  col=par('col'), lwd=par('lwd'), grid=FALSE, ...)
+{
   type <- match.arg(type)
   if(!add && side!=1) stop('side must be 1 if add=F')
   if(add && type=='count') warning('type="count" is ignored if add=T')
-  ## Following 4 lines deleted 12Sep00, 7 lines added after that
-#  if(length(y) > 1) stop('y must be a constant')
-#  if(length(y) && !add) stop('y may be not be given when add=F')
-#  if(type=='density' && !bottom.align) 
-#	stop('bottom.align must be T fo type="density"')
   if(length(y) > 1) {   ## 12Sep00
     if(length(y) != length(x))stop('lengths of x and y must match')
     if(length(curve))warning('curve ignored when y specified')
@@ -322,21 +310,19 @@ histSpike <- function(x, side=1, nint=100, frac=.05, minf=NULL,
   x <- x[x >= xlim[1] & x <= xlim[2]]
 
   if(type != 'density') {
-	if(is.character(nint)) {
+	if(is.character(nint) || length(x) <= 10) {
 	  f <- table(x)
 	  x <- as.numeric(names(f))
 	} else {
-	  ncut <- nint+1
-	  bins <- seq(xlim[1], xlim[2], length = ncut)
-	  delta <- (bins[2]-bins[1]) / 2
-##	  f <- if(version$major < 5) table(cut(x, c(bins[1]-delta,bins)))
-##        else table(oldCut(x, c(bins[1]-delta,bins)))   18Mar02
-      f <- if(.SV4.) table(oldCut(x, c(bins[1]-delta,bins))) else
-       table(cut(x, c(bins[1]-delta,bins)))
-	  x <- bins
-	  j <- f > 0
-	  x <- x[j]
-	  f <- f[j]
+	    ncut <- nint+1
+	    bins <- seq(xlim[1], xlim[2], length = ncut)
+	    delta <- (bins[2]-bins[1]) / 2
+        f <- if(.SV4.) table(oldCut(x, c(bins[1]-delta,bins))) else
+         table(cut(x, c(bins[1]-delta,bins)))
+	     x <- bins
+	     j <- f > 0
+	     x <- x[j]
+	     f <- f[j]
 	}
 	if(type=='proportion') f <- f / sum(f)
   } else {

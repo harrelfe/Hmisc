@@ -87,6 +87,7 @@ panel.xYplot <-
     col <- if(type == "p") plot.symbol$col else 
   plot.line$col
   col <- rep(col, length = ng)
+  pchVaries <- FALSE
   ## Thanks to Deepayan Sarkar for the following size code
   if(sizeVaries) {
     if(length(rangeCex) > 1) srng <- range(size, na.rm=TRUE)
@@ -97,7 +98,6 @@ panel.xYplot <-
 		sizeVaries <- FALSE
 		pchVaries  <- TRUE
 		} else {
-		pchVaries <- FALSE
         cex <- rangeCex[1] + diff(rangeCex)*(size - srng[1])/diff(srng)
         sKey <- function(x=0, y=1, cexObserved, cexCurtailed, col, pch,
                          bty='o') {

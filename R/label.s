@@ -13,9 +13,6 @@ label <- function(x, units=FALSE, plot=FALSE, default=NULL, grid=FALSE)  {
 
 labelPlotmath <- function(label, units=NULL, plotmath=.R., grid=FALSE)
 {
-  ## For now, Lattice/Grid in R do not support expressions
-  if(grid) plotmath <- FALSE
-
   if(!length(label)) label <- ''
   if(!length(units)) units <- ''
   g <- if(plotmath && .R.)

@@ -1231,7 +1231,8 @@ r
 }
 
 sepUnitsTrans <- function(x, 
-  conversion=c(day=1, month=365.25/12, year=365.25), round=FALSE, digits=0) {
+  conversion=c(day=1, month=365.25/12, year=365.25, week=7),
+  round=FALSE, digits=0) {
 
 if(!any(is.present(x))) return(x)
 target <- names(conversion[conversion==1])

@@ -390,6 +390,14 @@ rmse <- sqrt(sum(r^2)/(200-2))   # sqrt of residual MSE
 y[1:20] <- NA
 d <- data.frame(x,y)
 f <- aregImpute(~ x + y, n.impute=10, match='closest', data=d)
+# As an aside here is how to create a completed dataset for imputation
+# number 3 as fit.mult.impute would do automatically.  In this degenerate
+# case changing 3 to 1-2,4-10 will not alter the results.
+completed <- d
+imputed <- impute.transcan(f, imputation=3, data=d, list.out=TRUE,
+                           pr=FALSE, check=FALSE)
+completed[names(imputed)] <- imputed
+completed
 sd <- sqrt(mean(apply(f$imputed$y, 1, var)))
 
 ss <- c(0, .01, .02, seq(.05, 1, length=20))

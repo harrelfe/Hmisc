@@ -757,22 +757,15 @@ dvi.latex <- function(object, prlog=FALSE,
                                 'in,noheadfoot,margin=0in]{geometry}',sep=''))
   ## pre <- tempfile(); post <- tempfile()  # 1dec03
   tmp <- tempfile()
-  tmptex <- paste(tmp, 'tex', sep='.')  # 5dec03
-  infi <- readLines(fi)  # 1dec03, replace next 5 lines with cat after them
-  ##  cat('\\documentclass{report}',sty,'\\begin{document}',file=pre,sep='\n')
-  ##  cat('\\end{document}\n',file=post)
-  ##  if(under.unix)
-  ##    sys(paste('cat',pre,fi,post,'>',paste(tmp,'tex',sep='.')))
-  ##  else sys(paste('copy',pre,'+',fi,'+',post,paste(tmp,'tex',sep='.')))
-  cat('\\documentclass{report}', sty, '\\begin{document}', infi,
+  tmptex <- paste(tmp, 'tex', sep='.')
+  infi <- readLines(fi)
+  cat('\\documentclass{report}', sty,
+      '\\begin{document}\\pagestyle{empty}', infi,
       '\\end{document}\n', file=tmptex, sep='\n')
   
-  ## 17dec02
-  ## unlink(c(pre,post)) 1dec03
-  sc <- if(under.unix)';' else '&'   # DOS command separator #  7feb03
+  sc <- if(under.unix)';' else '&'   # DOS command separator
   sys(paste('cd',dQuote(tempdir()),sc,optionsCmds('latex'),
             '-interaction=scrollmode', dQuote(tmp)), output=FALSE)
-  ## 24nov03 dQuote   26jan04 dQuote on tempdir, nonstopmode -> scrollmode
   if(prlog) cat(scan(paste(tmp,'log',sep='.'),list(''),sep='\n')[[1]],
                 sep='\n')
   fi <- paste(tmp,'dvi',sep='.')

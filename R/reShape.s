@@ -1,5 +1,5 @@
 reShape <- function(x, ..., id, colvar, base, reps,
-                    times=1:reps, timevar='seqno') {
+                    times=1:reps, timevar='seqno', constant=NULL) {
   if(!missing(base)) {
     if(!is.list(x))
       stop('x must be a list or data frame when base is given')
@@ -51,22 +51,28 @@ reShape <- function(x, ..., id, colvar, base, reps,
 	w
 
   } else {
-	id <- as.factor(id)
+    listid <- is.list(id)
+    i <- as.factor(if(listid) do.call('paste', c(id, sep='~')) else id)
 	colvar <- as.factor(colvar)
-	m <- matrix(NA, nrow=length(levels(id)), ncol=length(levels(colvar)),
-				dimnames=list(levels(id), levels(colvar)))
+	m <- matrix(NA, nrow=length(levels(i)), ncol=length(levels(colvar)),
+				dimnames=list(levels(i), levels(colvar)))
 	dotlist <- list(...)
 	if(!length(dotlist)) {
-	  m[cbind(id, colvar)] <- x
-	  m
+	  m[cbind(i, colvar)] <- x
+      if(listid) {
+        j <- match(as.character(dimnames(m)[[1]]), as.character(i))
+        if(length(constant))
+          data.frame(id[j,,drop=FALSE], constant[j,,drop=FALSE], m)
+        else data.frame(id[j,,drop=FALSE], m)
+      } else m
 	} else {
 	res <- vector('list',nx <- 1+length(dotlist))
 	names(res) <- (as.character(sys.call())[-1])[1:nx]
 	nam2 <- names(sys.call()[-1])[1:nx]
 	if(length(nam2)) names(res) <- ifelse(nam2=='',names(res),nam2)
-	w <- m; w[cbind(id, colvar)] <- x; res[[1]] <- w
+	w <- m; w[cbind(i, colvar)] <- x; res[[1]] <- w
 	for(j in 2:nx) {
-	  w <- m; w[cbind(id, colvar)] <- dotlist[[j-1]]
+	  w <- m; w[cbind(i, colvar)] <- dotlist[[j-1]]
 	  res[[j]] <- w
 	}
 	res

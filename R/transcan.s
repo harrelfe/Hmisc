@@ -737,7 +737,7 @@ impute.transcan <-
         next
       }
 	  d <- dim(i)
-	  obsImputed <- dimnames(i)[[1]]  
+	  obsImputed <- if(length(d)) dimnames(i)[[1]] else names(i)
 		## i[,imputation] drops names if only one obs. imputed
 	  if(!missing(imputation)) {
 		if(!length(d)) 
@@ -752,6 +752,7 @@ impute.transcan <-
       if(length(namvar)) {
         sub <- match(obsImputed, namvar, nomatch=0)
         i <- i[sub > 0]
+        prn(length(i))
         sub <- sub[sub > 0]
       } else {
         if(!all.is.numeric(obsImputed))
@@ -772,8 +773,10 @@ impute.transcan <-
       ## added !.SV4. 2may03
 	  nimp[nam] <- length(i)
       if(list.out) outlist[[nam]] <- v else {
-        if(missing(frame.out)) assign(nam, v, where=where.out) else
-		assign(nam, v, frame=frame.out)
+        if(.R.) assign(nam, v, env=.GlobalEnv) else {
+          if(missing(frame.out)) assign(nam, v, where=where.out) else
+          assign(nam, v, frame=frame.out)
+        }
       }
 	}
 	if(pr) {

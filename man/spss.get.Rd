@@ -8,24 +8,21 @@ format of \code{"data.frame"}.  The \code{label} function is used to
 attach labels to individual variables instead of to the data frame as
 done by \code{read.spss}.  By default, integer-valued variables are
 converted to a storage mode of integer unless
-\code{force.single=FALSE}.  Date variables are converted to R POSIXct
-variables (or S-Plus \code{chron} variables if \code{splusdates=TRUE}).
+\code{force.single=FALSE}.  Date variables are converted to \R \code{Date}
+variables.
 }
 \usage{
 spss.get(file, datevars = NULL, use.value.labels = TRUE, to.data.frame =
-TRUE, max.value.labels = Inf, typeDate = c('POSIX','chron'), force.single=TRUE)
+TRUE, max.value.labels = Inf, force.single=TRUE)
 }
 \arguments{
   \item{file}{input SPSS save file}
   \item{datevars}{vector of variable names containing dates to be
-	converted to R or S-Plus internal format}
+	converted to \R internal format}
   \item{use.value.labels}{see \code{\link{read.spss}}}
   \item{to.data.frame}{see \code{\link{read.spss}}; default is
 	\code{TRUE} for \code{spss.get}}
   \item{max.value.labels}{see \code{\link{read.spss}}}
-  \item{typeDate}{set to \code{"chron"} to convert variables in
-	\code{datevars} to \code{chron} objects (suitable for S-Plus)
-	instead of the default of \code{"POSIX"}}
   \item{force.single}{set to \code{FALSE} to prevent integer-valued
 	variables from being converted from storage mode \code{double} to
 	\code{integer}}
@@ -38,12 +35,7 @@ TRUE, max.value.labels = Inf, typeDate = c('POSIX','chron'), force.single=TRUE)
 
 \examples{
 \dontrun{
-w <- spss.get('/tmp/my.sav', datevars=c('birthdate','deathdate'),
-              typeDate='chron')
-# Create a file S-Plus can read
-dump('w', '/tmp/w')ds
-# To read into S-Plus 6 do:
-# library(Hmisc,T); source('/tmp/w'); w <- cleanup.import(w)
+w <- spss.get('/tmp/my.sav', datevars=c('birthdate','deathdate'))
   }
 }
 \keyword{interface}

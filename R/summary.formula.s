@@ -1562,8 +1562,8 @@ latex.summary.formula.reverse <-
                       'Numbers after percents are frequencies.',
                       sep="\n")
       if(length(testUsed))
-        legend <-paste(legend,'\\\\\n','\n\n',
-                       if(length(testUsed)==1)'Test used:' else 'Tests used:',
+        legend <-paste(legend, '\n\n',
+                       if(length(testUsed)==1)'\\noindent Test used:' else 'Tests used:',
                        if(length(testUsed)==1) paste(testUsed,'test') else
                        paste(paste('$^{',1:length(testUsed),'}$',testUsed,
                                    ' test',sep=''),collapse='; '))

@@ -21,6 +21,16 @@ rows of the new matrices equals the number of unique values of \code{id},
 and the number of columns equals the number of unique values of
 \code{colvar}.
 
+When the first argument is a vector and the \code{id} is a data frame
+(even with only one variable),
+\code{reShape} will produce a data frame, and the unique groups are
+identified by combinations of the values of all variables in \code{id}.
+If a data frame \code{constant} is specified, the variables in this data
+frame are assumed to be constant within combinations of \code{id}
+variables (if not, an arbitrary observation in \code{constant} will be
+selected for each group).  A row of \code{constant} corresponding to the
+target \code{id} combination is then carried along when creating the
+data frame result.
 
 A different behavior of \code{reShape} is achieved when \code{base} and \code{reps}
 are specified.  In that case \code{x} must be a list or data frame, and
@@ -38,7 +48,7 @@ object.  See the last example.
 }
 \usage{
 reShape(x, \dots, id, colvar, base, reps, times=1:reps,
-        timevar='seqno')
+        timevar='seqno', constant=NULL)
 }
 \arguments{
 \item{x}{
@@ -49,7 +59,8 @@ other optional vectors, if \code{x} is a vector
 }
 \item{id}{
 A numeric, character, category, or factor variable containing subject
-identifiers.  Required if \code{x} is a vector, ignored otherwise.
+identifiers, or a data frame of such variables that in combination form
+groups of interest.  Required if \code{x} is a vector, ignored otherwise.
 }
 \item{colvar}{
 A numeric, character, category, or factor variable containing column
@@ -72,6 +83,12 @@ if you do not want to use consecutive integers beginning with 1.
 specifies the name of the time variable to create if \code{times} is
 given, if you do not want to use \code{seqno}
 }
+\item{constant}{
+  a data frame with the same number of rows in \code{id} and \code{x},
+  containing auxiliary information to be merged into the resulting data
+  frame.  Logically, the rows of \code{constant} within each group
+  should have the same value of all of its variables.
+}
 }
 \value{
 If \code{x} is a matrix, returns a list containing the row variable, the
@@ -80,7 +97,9 @@ calling argument was called for \code{x}.  If \code{x} is a vector and no other
 vectors were specified as \code{\dots}, the result is a matrix.  If at least
 one vector was given to \code{\dots}, the result is a list containing \code{k}
 matrices, where \code{k} one plus the number of vectors in \code{\dots}.  If \code{x}
-is a list or data frame, the same type of object is returned.
+is a list or data frame, the same type of object is returned.  If
+\code{x} is a vector and \code{id} is a data frame, a data frame will be
+the result.
 }
 \details{
 In converting \code{dimnames} to vectors, the resulting variables are
@@ -109,7 +128,7 @@ Vanderbilt University School of Medicine
 f.harrell@vanderbilt.edu
 }
 \seealso{
-\code{\link{as.vector}}, \code{\link{matrix}}, \code{\link{dimnames}}, \code{\link{outer}}, \code{\link{table}}
+\code{\link{reshape}},\code{\link{as.vector}}, \code{\link{matrix}}, \code{\link{dimnames}}, \code{\link{outer}}, \code{\link{table}}
 }
 \examples{
 if(.R.) {
@@ -148,6 +167,19 @@ detach('follow')
 # Could have done :
 # reShape(cholesterol, triglyceride=trig, id=id, colvar=month)
 
+# Create a data frame, reshaping a long dataset in which groups are
+# formed not just by subject id but by combinations of subject id and
+# visit number.  Also carry forward a variable that is supposed to be
+# constant within subject-visit number combinations.  In this example,
+# it is not constant, so an arbitrary visit number will be selected.
+w <- data.frame(id=c('a','a','a','a','b','b','b','d','d','d'),
+             visit=c(  1,  1,  2,  2,  1,  1,  2,  2,  2,  2),
+                 k=c('A','A','B','B','C','C','D','E','F','G'),
+               var=c('x','y','x','y','x','y','y','x','y','z'),
+               val=1:10)
+with(w,
+     reShape(val, id=data.frame(id,visit),
+             constant=data.frame(k), colvar=var))
 
 # Get predictions from a regression model for 2 systematically
 # varying predictors.  Convert the predictions into a matrix, with

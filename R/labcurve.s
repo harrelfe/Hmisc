@@ -489,7 +489,8 @@ if(.R.) {
             formatC), list("\n")))
     pr  <- parGrid(grid)  ## 20Mar02 FEH
     cin <- pr$cin         ## FEH
-    Cex <- cex * pr$cex   ## FEH
+    Cex <- (if(length(unique(cex)) > 1) max(1, min(cex,na.rm=TRUE))
+      else cex) * pr$cex   ## FEH
     if (!length(text.width)) ## FEH
         text.width <- max(strwidth(legend, u = "user", cex = cex))
     else if (!is.numeric(text.width) || text.width < 0) 
@@ -618,7 +619,9 @@ if(.R.) {
             xt <- xt + dx.pch
     }
     xt <- xt + x.intersp * xchar
-    if(plot)text2(xt, yt, labels = legend, adj = adj, cex = cex) ## FEH
+    if(plot)text2(xt, yt, labels = legend,
+                  adj = adj,
+                  cex = max(1,min(cex,na.rm=TRUE))) ## FEH
     invisible(list(rect = list(w = w, h = h, left = left, top = top), 
                    text = list(x = xt, y = yt)))
   }

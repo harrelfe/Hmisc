@@ -265,7 +265,7 @@ sas.get <- if(under.unix || .R.)
 			dsi <- floor(dsi)
 		  }
 		dsi <- importConvertDateTime(dsi, 'date', 'sas',
-		           format=if(.SV4.) dateform4[m] else dateform[m])
+		           form=if(.SV4.) dateform4[m] else dateform[m])
 		if(length(atr$imputed)) 
 	     attr(dsi,'class') <- c("impute",attr(dsi,'class'))
 		ff <- NULL
@@ -273,12 +273,12 @@ sas.get <- if(under.unix || .R.)
 		else {
 		  if((m <- match(fname,sastimeform,0)) >0) {
             dsi <- importConvertDateTime(dsi, 'time', 'sas', 
-		             format=if(.SV4.)timeform4[m] else timeform[m])
+		             form=if(.SV4.)timeform4[m] else timeform[m])
 			ff <- NULL					
 		  }
 			else if((m <- match(fname,sasdatetimeform,0))>0) {
 			  dsi <- importConvertDateTime(dsi, 'datetime', 'sas',
-		             format=if(.SV4.) datetimeform4[m] else datetimeform[m])
+		             form=if(.SV4.) datetimeform4[m] else datetimeform[m])
 		    ff <- NULL					
 			}
 		}
@@ -563,17 +563,17 @@ for(i in 1:nvar) {
 	  dsi <- floor(dsi)
       }
       dsi <-  importConvertDateTime(dsi, 'date', 'sas',
-		       format=if(.SV4.) dateform4[m] else dateform[m])
+		       form=if(.SV4.) dateform4[m] else dateform[m])
       if(length(atr$imputed)) 
 	    attr(dsi,'class') <- c("impute",attr(dsi,'class'))
       ff <- NULL
     } else if((m <- match(fname,sastimeform,0)) >0) {
       dsi <- importConvertDateTime(dsi, 'time', 'sas',
-		      format=if(.SV4.) timeform4[m] else timeform[m])
+		      form=if(.SV4.) timeform4[m] else timeform[m])
       ff <- NULL
     } else if((m <- match(fname,sasdatetimeform,0))>0) {
       dsi <- importConvertDateTime(dsi, 'datetime', 'sas',
-		      format=if(.SV4.)datetimeform4[m] else datetimeform[[m]])
+		      form=if(.SV4.)datetimeform4[m] else datetimeform[[m]])
 	ff <- NULL
     }
     atr$format <- ff
@@ -635,7 +635,7 @@ ds
 
 importConvertDateTime <- 
 		function(x, type=c('date','time','datetime'),
-					input=c('sas','spss','dataload'), format) {
+					input=c('sas','spss','dataload'), form) {
  type <- match.arg(type)
  input <- match.arg(input)
 
@@ -651,6 +651,7 @@ importConvertDateTime <-
 		time = {
 			  ## Don MacQueen 3Apr02
               z <- structure(x, class=c('POSIXt','POSIXct'))
+              f <- format(z, tz='GMT')
               z <- as.POSIXct(format(z, tz='GMT'), tz='')
               structure(z, class=c('timePOSIXt','POSIXt','POSIXct'))},
 		datetime = {
@@ -659,13 +660,13 @@ importConvertDateTime <-
               as.POSIXct(format(z, tz='GMT'), tz='')})
  } else if(.SV4.) 
   switch(type,
-	 	 date     = timeDate(julian=x, format=format),
-		 time     = timeDate(ms=x*1000, format=format),
-		 datetime = timeDate(julian=x/86400, format=format)) else
+	 	 date     = timeDate(julian=x, format=form),
+		 time     = timeDate(ms=x*1000, format=form),
+		 datetime = timeDate(julian=x/86400, format=form)) else
   switch(type,
-	 	 date = dates(x, out.format=format),
-		 time = chron(x/86400, out.format=format),
-		 datetime = chron(x/86400, out.format=format))
+	 	 date = dates(x, out.format=form),
+		 time = chron(x/86400, out.format=form),
+		 datetime = chron(x/86400, out.format=form))
 }
 
 

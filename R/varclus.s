@@ -125,7 +125,7 @@ plot.varclus <- function(x, ylab, abbrev=FALSE, legend.=FALSE, loc, maxlen=20,
            ccbothpos="Chance-Corrected Proportion")[x$similarity]
 #    if(s=="") s <- x$similarity  1Apr02
 #    if(is.na(s)) s <- x$similarity
-    if((is.expression(s) && s=='NULL') ||
+    if((is.expression(s) && as.character(s)=='NULL') ||
        (!is.expression(s) && (is.na(s) || s=='')))
       s <- x$similarity  ## 8may02 9sep02
     ylab <- if(.R.) s else paste("Similarity (",s,")",sep="")

@@ -575,8 +575,8 @@ latex.summary.formula.response <- function(object,
                      sep='')
 
   dm <- dimnames(stats)
-  dm[[1]] <- latexTranslate(dm[[1]])
-  dm[[2]] <- latexTranslate(dm[[2]])
+  dm[[1]] <- latexTranslate(dm[[1]], greek=.R.)
+  dm[[2]] <- latexTranslate(dm[[2]], greek=.R.)
   dimnames(stats) <- dm
   caption <- sedit(caption, "cbind", "")
   vn <- if(ul)at$vlabel else at$vname
@@ -585,7 +585,7 @@ latex.summary.formula.response <- function(object,
     vn <- ifelse(atvu=='', vn,  ## 28jan03
                  paste(vn,'~\\hfill\\tiny{', atvu, '}',sep=''))
   }
-  vn <- latexTranslate(vn)
+  vn <- latexTranslate(vn, greek=.R.)
   cdec <- rep(cdec, length=(if(missing(trios))nstat else 1+(nstat-1)/3)-1)
   cdec <- rep(c(0,cdec), ns)
 
@@ -1523,8 +1523,8 @@ latex.summary.formula.reverse <-
     if(!length(gl)) gl <- " "
 
     lab <- sedit(lab,c(" ","&"),c("~","\\&"))  #was format(lab) 21Jan99
-    lab <- latexTranslate(lab)
-    gl  <- latexTranslate(gl)
+    lab <- latexTranslate(lab, greek=.R.)
+    gl  <- latexTranslate(gl, greek=.R.)
     ## if(any(gl != " ")) gl <- paste(gl, " $(N=",x$group.freq,")$",sep="") # 3Aug01
     ## Added any( ) 26Mar02  21jan03
     extracolheads <- if(any(gl != " "))
@@ -1673,9 +1673,10 @@ latex.summary.formula.cross <-
     ars <- length(dim(S))
     inn <- c('cbind','c(','ALL',  'NA')
     out <- c('',     '(' ,'Total','Missing')
-    caption <- latexTranslate(caption, inn, out, pb=TRUE)
+    caption <- latexTranslate(caption, inn, out, pb=TRUE, greek=.R.)
 
-    if(twoway)rowlab <- if(ul) latexTranslate(a$labels[1],inn,out,pb=TRUE) else 
+    if(twoway)rowlab <-
+      if(ul) latexTranslate(a$labels[1],inn,out,pb=TRUE,greek=.R.) else 
     names(stats)[1]
 
     rvar <- stats[[1]]
@@ -1684,12 +1685,12 @@ latex.summary.formula.cross <-
     lev2 <- levels(cvar)
     if(!twoway) {
       for(i in 1:nvar) stats[[i]] <- latexTranslate(as.character(
-                              stats[[i]]),inn,out,pb=TRUE)
+                              stats[[i]]),inn,out,pb=TRUE,greek=.R.)
       ##Used to do this translating unconditionally   6Jun96
 
       if(ars) {
         stats$S <- NULL
-        snam <- latexTranslate(dimnames(S)[[2]],inn,out,pb=TRUE)
+        snam <- latexTranslate(dimnames(S)[[2]],inn,out,pb=TRUE,greek=.R.)
         for(i in 1:ncol(S)) stats[[snam[i]]] <- S[,i]
       } else names(stats)[length(stats)] <- ylab
       stats <- structure(stats, row.names=rep("",length(stats$N)),
@@ -1707,9 +1708,9 @@ latex.summary.formula.cross <-
     nc <- length(lev2)
     ns <- ncol(S)
     snam <- dimnames(S)[[2]]
-    snam <- latexTranslate(snam, inn, out, pb=TRUE)
+    snam <- latexTranslate(snam, inn, out, pb=TRUE,greek=.R.)
     dn <- if(ns > 1) rep(snam, nc) else
-    latexTranslate(lev2,inn,out,pb=TRUE) # 5Oct00
+    latexTranslate(lev2,inn,out,pb=TRUE,greek=.R.) # 5Oct00
     st <- matrix(NA, nrow=nr, ncol=nc*ns, dimnames=list(NULL,dn))
     for(i in 1:nr) {
       l <- 0
@@ -1725,8 +1726,9 @@ latex.summary.formula.cross <-
           rowlabel=if(rowlabel=='') rowlab else rowlabel,
           n.rgroup=c(nrow(st)-1,1),
           n.cgroup=if(ns>1) rep(ns,nc),  # ns>1 5Oct00
-          cgroup  =if(ns>1) latexTranslate(lev2,inn,out,pb=TRUE),
-          check.names=FALSE, rowname=latexTranslate(lev1,inn,out,pb=TRUE), ...)
+          cgroup  =if(ns>1) latexTranslate(lev2,inn,out,pb=TRUE,greek=.R.),
+          check.names=FALSE,
+          rowname=latexTranslate(lev1,inn,out,pb=TRUE,greek=.R.), ...)
   }
 
 

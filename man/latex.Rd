@@ -426,6 +426,11 @@ commands which are assumed to be in the system path.
   \code{geometry} and \code{ctable} styles in MikTeX to make optimum use
   of \code{latex()}.
 
+  System options can be used to specify external commands to be used.
+  Defaults are given by \co{options(xdvicmd='xdvi')} or
+  \co{options(xdvicmd='yap')}, \co{options(dvipscmd='dvips')},
+  \co{options(latexcmd='latex')}.
+  
   If running S-Plus and your directory for temporary files is not
   \code{/tmp} (Unix/Linux) or \code{\\windows\\temp} (Windows), add your
   own \code{tempdir} function such as \code{

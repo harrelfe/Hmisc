@@ -676,8 +676,8 @@ Vanderbilt University
 f.harrell@vanderbilt.edu
 }
 \references{
-Harrell FE (1999): Statistical tables and plots using S-Plus and LaTeX.
-Document available from hesweb1.med.virginia.edu/biostat/s.
+Harrell FE (2004): Statistical tables and plots using S and LaTeX.
+Document available from \url{http://biostat.mc.vanderbilt.edu/twiki/pub/Main/StatReport/summary.pdf}.
 }
 \seealso{
 \code{\link{smean.sd}}, \code{\link{summarize}},

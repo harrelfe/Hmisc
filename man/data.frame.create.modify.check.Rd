@@ -62,7 +62,7 @@ with the Hmisc \code{label} function are used by \code{describe},
 Alzola CF, Harrell FE (2001):
 \emph{An Introduction to S-Plus and the Hmisc and Design Libraries.}
 Chapters 3 and 4,
-hesweb1.med.virginia.edu/biostat/s/doc/splus.pdf.
+\url{http://biostat.mc.vanderbilt.edu/twiki/pub/Main/RS/sintro.pdf}.
 }
 \seealso{
 \code{\link{scan}}, \code{\link{read.table}}, \code{\link{cleanup.import}}, \code{\link{sas.get}}, \code{\link{data.frame}},

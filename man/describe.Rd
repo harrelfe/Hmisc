@@ -47,7 +47,7 @@ in its returned object the frequencies of 100 evenly spaced bins
 running from minimum observed value to the maximum.  \code{latex} inserts a
 spike histogram displaying these frequency counts in the tabular
 material using the LaTeX picture environment.  For example output see
-\url{hesweb1.med.virginia.edu/s/doc/describe.example.pdf}.
+\url{http://biostat.mc.vanderbilt.edu/twiki/pub/Main/Hmisc/counties.pdf}.
 
 Sample weights may be specified to any of the functions, resulting
 in weighted means, quantiles, and frequency tables.

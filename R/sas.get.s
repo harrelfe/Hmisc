@@ -947,7 +947,7 @@ cleanup.import <- function(obj, labels=NULL, lowernames=FALSE,
   nv <- length(nam)
 
   if(!missing(sasdict)) {
-	sasvname <- make.names(sasdict$NAME)
+	sasvname <- makeNames(sasdict$NAME)
 	if(any(w <- nam %nin% sasvname)) stop(paste(
 	 'The following variables are not in sasdict:',
 	 paste(nam[w],collapse=' ')))
@@ -1374,7 +1374,7 @@ if(.R.) {
 if(.R.) {               
 sasxport.get <- function(file, force.single=TRUE,
                          method=c('read.xport','dataload','csv'),
-                         formats=NULL) {
+                         formats=NULL, allow=NULL) {
 
   method <- match.arg(method)
   if(method != 'csv')
@@ -1459,7 +1459,7 @@ sasxport.get <- function(file, force.single=TRUE,
     dinfo    <- dsinfo[[k]]
     fmt      <- sub('^\\$','',dinfo$format)
     lab      <- dinfo$label
-    ndinfo   <- tolower(make.names(dinfo$name))
+    ndinfo   <- tolower(makeNames(dinfo$name, allow=allow))
     names(lab) <- names(fmt) <- ndinfo
     for(i in 1:length(w)) {
       changed <- FALSE
@@ -1522,7 +1522,7 @@ sasxport.get <- function(file, force.single=TRUE,
                     output=FALSE)
       if(status==0) {
         load('zzzz.rda')
-        names(zzzz) <- make.names(names(zzzz))
+        names(zzzz) <- makeNames(names(zzzz))
         w[[a]] <- zzzz
       }
     }
@@ -1564,10 +1564,10 @@ readSAScsv <- function(sasdir, dsinfo) {
 NULL}
 
 csv.get <- function(file, lowernames=FALSE, datevars=NULL,
-                    dateformat='%F', ...) {
+                    dateformat='%F', allow=NULL, ...) {
   w <- read.csv(file, check.names=FALSE, ...)
   n <- names(w)
-  m <- make.names(n, unique=TRUE)
+  m <- makeNames(n, unique=TRUE)
   if(lowernames) m <- casefold(m)
   changed <- any(m != n)
   if(changed) names(w) <- m

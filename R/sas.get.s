@@ -1446,15 +1446,17 @@ sasxport.get <- function(file, force.single=TRUE,
       cat('Empty dataset', dsn[j], 'ignored\n')
       next
     }
-    nam      <- names(w)
-    names(w) <- tolower(nam)
+    nam      <- tolower(names(w))
+    names(w) <- nam
     dinfo    <- dsinfo[[k]]
     fmt      <- sub('^\\$','',dinfo$format)
     lab      <- dinfo$label
+    ndinfo   <- tolower(make.names(dinfo$name))
+    names(lab) <- names(fmt) <- ndinfo
     for(i in 1:length(w)) {
       changed <- FALSE
       x  <- w[[i]]
-      fi <- fmt[i]
+      fi <- fmt[nam[i]]; names(fi) <- NULL
       if(fi != '' && length(finfo) && (fi %in% names(finfo))) {
         f <- finfo[[fi]]
         if(length(f)) {  ## may be NULL because had a range in format
@@ -1492,9 +1494,11 @@ sasxport.get <- function(file, force.single=TRUE,
           }
         }
       }
-      if(lab[i] != '') {
-        label(x) <- lab[i]
-        changed <- TRUE
+      lz <- lab[nam[i]]
+      if(lz != '') {
+        names(lz) <- NULL
+        label(x)  <- lz
+        changed   <- TRUE
       }
       
       if(changed) w[[i]] <- x

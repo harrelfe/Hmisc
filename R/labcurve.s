@@ -96,8 +96,8 @@ labcurve <- function(curves, labels=names(curves),
 	  if(!length(xlim)) xlim <- xlm
 	  if(!length(ylim)) ylim <- ylm
 	  namcur <- names(curves[[1]])   #13Jul97
-	  if(xlab=='' && length(namcur)) xlab <- namcur[1]
-	  if(ylab=='' && length(namcur)) ylab <- namcur[2]
+	  if(!is.expression(xlab) && xlab=='' && length(namcur)) xlab <- namcur[1]
+	  if(!is.expression(ylab) && ylab=='' && length(namcur)) ylab <- namcur[2]
       if(grid) {
         stop("grid=TRUE when pl=TRUE is not yet implemented")
       } else

@@ -237,7 +237,7 @@ set to \code{FALSE} to use single horizontal rules for styles other than
 }
 \item{rowname}{
 rownames for \code{tabular} environment.  Default is rownames of matrix or
-data.frame.
+data.frame.  Specify \code{rowname=NULL} to suppress the use of row names.
 }
 \item{cgroup.just}{
 justification for labels for column groups.  Defaults to \code{"c"}.

@@ -413,7 +413,27 @@ labcurve <- function(curves, labels=names(curves),
 # Version of legend for R that implements plot=FALSE, adds grid=TRUE
 # Also defaults lty, lwd, pch to NULL and checks for length>0 rather
 # than missing(), so it's easier to deal with non-applicable parameters
+
+# rlegendg is better to use when grid is in effect.  In R 2.0, you
+# can't use strwidth etc. after a lattice drawing has been rendered
+		
 if(.R.) {
+
+  rlegendg <- function(x, y, legend, col=pr$col[1], lty=NULL,
+	                   lwd=NULL, pch=NULL, cex=pr$cex[1], other=NULL) {
+	pr <- par()
+	if(is.list(x)) {y <- x[[2]]	;  x <- x[[1]]}
+    do.lines  <- (length(lty) && any(lty > 0)) || length(lwd)
+	do.points <- length(pch)
+	cmd <- NULL
+	if(do.lines) cmd$lines <- list(col=col, lty=lty, lwd=lwd)
+	if(do.points)cmd$points<- list(col=col, pch=pch, cex=cex)
+	cmd$text <- list(lab=legend)
+	if(length(other)) cmd <- c(cmd, other)
+	draw.key(cmd, draw=TRUE, vp=viewport(x=unit(x,'npc'),y=unit(y,'npc')))
+	invisible()
+	}
+
   rlegend <- function (x, y, legend, fill, col = "black", lty=NULL, lwd=NULL,
                        pch=NULL, angle = NULL,  
                        density = NULL, bty = "o", bg = par("bg"),

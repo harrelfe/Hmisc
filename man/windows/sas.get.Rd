@@ -23,7 +23,7 @@ There are \code{print}, \code{[]}, \code{format}, and \code{is.special.miss}
 methods for such variables.
 date, time, and date-time variables use respectively
 \code{\link{Dates}}, \code{\link{DateTimeClasses}}, and
-\code{\link{chron}} variables.
+\code{\link[chron]{chron}} variables.
 If using S-Plus 5 or 6 or later, the \code{timeDate} function is used instead.
 If a date variable represents a partial date (.5 added if
 month missing, .25 added if day missing, .75 if both), an attribute
@@ -345,8 +345,8 @@ Third Edition.
 SAS Institute Inc., Cary, North Carolina.
 }
 \seealso{
-\code{\link{data.frame}}, \code{\link{describe}},
-\code{\link{label}}, \code{\link{upData}}
+\code{\link{data.frame}}, \code{\link[Hmisc]{describe}},
+\code{\link[Hmisc]{label}}, \code{\link[Hmisc]{upData}}
 }
 \examples{
 \dontrun{

@@ -279,28 +279,6 @@ num.denom.setup \tab Set of function for obtaining weighted estimates\cr
 zoom            \tab Zoom in on any graphical display\cr \tab     (Bill Dunlap, \email{bill@statsci.com})
 }}
 
-\section{System Overrides}{
-Hmisc overrides the system function model.frame.default
-to allow for more elegant handling of NAs by allowing 
-the user to specify a global method for handling NAs
-using options(na.action='na.methodname').  Hmisc
-overrides the system subscripting method for factor
-vectors and date vectors, and it defines functions
-is.na.dates and is.na.times to check for NAs in date
-and time vectors.  The [.factor redefinition by Hmisc
-causes by default unused levels to be dropped from the
-factor vector's levels attribute when the vector is
-subscripted.  This can be overridden by using for example
-\code{x <- x[,drop=FALSE]} or by specifying a system option as
-follows: \code{options(drop.factor.levels=FALSE)}.\cr
-
-Hmisc also overrides the trelllis shingle function, which
-has a bug when its sole argument has a class (such as
-the "labelled" class created by the Hmisc label function).
-The shingle replacement has the default intervals argument
-set to sort(unique(unclass(x))) instead of sort(unique(x)).
-}
-
 \references{
 See Alzola CF, Harrell FE (2004): An Introduction to S and the
 Hmisc and Design Libraries at

@@ -752,7 +752,6 @@ impute.transcan <-
       if(length(namvar)) {
         sub <- match(obsImputed, namvar, nomatch=0)
         i <- i[sub > 0]
-        prn(length(i))
         sub <- sub[sub > 0]
       } else {
         if(!all.is.numeric(obsImputed))

@@ -373,7 +373,7 @@ oehl@psyres-stuttgart.de
 \seealso{
 \code{\link{segments}}, \code{\link{jitter}}, \code{\link{rug}}, \code{\link{plsmo}}, \code{\link{stripplot}}, 
 \code{\link{hist.data.frame}},\code{\link{ecdf}},
-\code{\link{hist}}, \code{\link{histogram}}, \code{\link{table}}, \code{\link{density}}
+\code{\link{hist}}, \code{\link[lattice]{histogram}}, \code{\link{table}}, \code{\link{density}}
 }
 \examples{
 plot(x <- rnorm(50), y <- 3*x + rnorm(50)/2 )

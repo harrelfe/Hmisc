@@ -51,7 +51,7 @@ contains \code{ftp.exe}.
 }
 \author{Frank Harrell}
 \seealso{\code{\link{download.file}}, \code{\link{cleanup.import}},
-  \code{\link{data.restore}}, \code{\link{load}}}
+  \code{\link[foreign]{data.restore}}, \code{\link{load}}}
 
 \examples{
 \dontrun{

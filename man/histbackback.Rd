@@ -66,7 +66,7 @@ London
 pburns@dorado.sbi.com
 }
 \seealso{
-\code{\link{hist}}, \code{\link{histogram}}
+\code{\link{hist}}, \code{\link[lattice]{histogram}}
 }
 \examples{
 options(digits=3)

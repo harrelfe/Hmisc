@@ -134,7 +134,7 @@ xless(x, \dots, title)
   \item{fun}{function to transform scale}
   \item{qfun}{quantiles on transformed scale}
   \item{group}{a categorical grouping variable}
-  \item{S}{a \code{\link{Surv}} object}
+  \item{S}{a \code{\link[survival]{Surv}} object}
   \item{times}{a numeric vector of times}
   \item{tolerance}{tolerance for judging singularity in matrix}
   \item{intercept}{set to \code{FALSE} to not automatically add a column

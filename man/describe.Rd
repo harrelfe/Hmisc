@@ -183,7 +183,7 @@ Vanderbilt University
 }
 \seealso{
 \code{\link{sas.get}}, \code{\link{quantile}}, \code{\link{table}}, \code{\link{summary}},  \code{\link{model.frame.default}},
-\code{\link{naprint}}, \code{\link{lapply}}, \code{\link{tapply}}, \code{\link{Surv}}, \code{\link{na.delete}}, \code{\link{na.keep}},
+\code{\link{naprint}}, \code{\link{lapply}}, \code{\link{tapply}}, \code{\link[survival]{Surv}}, \code{\link{na.delete}}, \code{\link{na.keep}},
 \code{\link{na.detail.response}}, \code{\link{latex}}
 }
 \examples{

@@ -681,7 +681,7 @@ Document available from \url{http://biostat.mc.vanderbilt.edu/twiki/pub/Main/Sta
 }
 \seealso{
 \code{\link{smean.sd}}, \code{\link{summarize}},
-\code{\link{label}}, \code{\link{strata}}, \code{\link{dotchart2}},
+\code{\link{label}}, \code{\link[survival]{strata}}, \code{\link{dotchart2}},
 \code{\link{print.char.matrix}}, \code{\link{update}},
 \code{\link{formula}}, \code{\link{cut2}}, \code{\link{llist}},
 \code{\link{format.default}}, \code{\link{latex}},

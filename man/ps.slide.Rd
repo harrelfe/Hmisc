@@ -50,7 +50,7 @@ installed and in your path (so that the \code{gs} command is available in
 UNIX or \code{gswin32c} is available for Windows/NT).  Invoke \code{topdf} by
 the command \code{topdf()}, or, if you want to convert a graphic other than
 the last one created, run \code{topdf(filename)} to convert \code{filename.ps}
-to \code{filename.pdf}.  If \code{trellis=TRUE}, \code{setps} invokes \code{trellis.device}
+to \code{filename.pdf}.  If \code{trellis=TRUE}, \code{setps} invokes \code{\link[lattice]{trellis.device}}
 with a \code{postscript} device argument, and it does not set any of the
 \code{par} parameters.  Arguments
 3, 4, 5, 7, 9, and 10 to \code{setps} are ignored if \code{trellis=TRUE}.  If
@@ -318,7 +318,7 @@ documentation is obtained by searching www.ctan.org for pfgguide.ps.
 }
 \seealso{
 \code{\link{postscript}}, \code{\link{par}}, \code{\link{ps.options}},  
-\code{\link{mgp.axis.labels}}, \code{\link{pdf}}, \code{\link{trellis.device}}, \code{\link{setTrellis}}
+\code{\link{mgp.axis.labels}}, \code{\link{pdf}}, \code{\link[lattice]{trellis.device}}, \code{\link{setTrellis}}
 }
 \examples{
 \dontrun{

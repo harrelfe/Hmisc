@@ -68,9 +68,9 @@ variable names are converted to periods as with \R before version 1.9.}
 \details{See \code{\link{contents.list}} for a way to print the
 directory of SAS datasets when more than one was imported.}
 \author{Frank E Harrell Jr}
-\seealso{\code{\link{read.xport}},\code{\link{label}},\code{\link{sas.get}},
+\seealso{\code{\link[foreign]{read.xport}},\code{\link{label}},\code{\link{sas.get}},
   \code{\link{Dates}},\code{\link{DateTimeClasses}},\code{\link[chron]{chron}},
-  \code{\link{lookup.xport}},\code{\link{contents}},\code{\link{describe}}}
+  \code{\link[foreign]{lookup.xport}},\code{\link{contents}},\code{\link{describe}}}
 \examples{
 \dontrun{
 # SAS code to generate test dataset:

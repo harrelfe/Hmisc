@@ -68,7 +68,7 @@ Montana State University.
 }
 \seealso{
 \code{\link{panel.bpplot}}, \code{\link{boxplot}}, \code{\link{ecdf}},
-\code{\link{bwplot}} 
+\code{\link[lattice]{bwplot}} 
 }
 \examples{
 set.seed(1)

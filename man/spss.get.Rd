@@ -19,10 +19,10 @@ TRUE, max.value.labels = Inf, force.single=TRUE)
   \item{file}{input SPSS save file}
   \item{datevars}{vector of variable names containing dates to be
 	converted to \R internal format}
-  \item{use.value.labels}{see \code{\link{read.spss}}}
-  \item{to.data.frame}{see \code{\link{read.spss}}; default is
+  \item{use.value.labels}{see \code{\link[foreign]{read.spss}}}
+  \item{to.data.frame}{see \code{\link[foreign]{read.spss}}; default is
 	\code{TRUE} for \code{spss.get}}
-  \item{max.value.labels}{see \code{\link{read.spss}}}
+  \item{max.value.labels}{see \code{\link[foreign]{read.spss}}}
   \item{force.single}{set to \code{FALSE} to prevent integer-valued
 	variables from being converted from storage mode \code{double} to
 	\code{integer}}
@@ -31,7 +31,7 @@ TRUE, max.value.labels = Inf, force.single=TRUE)
   a data frame or list
 }
 \author{Frank Harrell}
-\seealso{\code{\link{read.spss}},\code{\link{cleanup.import}},\code{\link{sas.get}}}
+\seealso{\code{\link[foreign]{read.spss}},\code{\link{cleanup.import}},\code{\link{sas.get}}}
 
 \examples{
 \dontrun{

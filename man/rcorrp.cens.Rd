@@ -42,7 +42,7 @@ Department of Biostatistics, Vanderbilt University
 f.harrell@vanderbilt.edu
 }
 \seealso{
-\code{\link{rcorr.cens}}, \code{\link{somers2}}, \code{\link{Surv}}
+\code{\link{rcorr.cens}}, \code{\link{somers2}}, \code{\link[survival]{Surv}}
 }
 \examples{
 set.seed(1)

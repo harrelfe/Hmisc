@@ -26,7 +26,7 @@ are more extreme in that direction.  As in boxplots, the median, 25th
 and 75th percentiles are marked with line segments across the box."
 
 \code{panel.bpplot} is a generalization of \code{bpplot} and
-\code{panel.bwplot} in 
+\code{\link[lattice]{panel.bwplot}} in 
 that it works with \code{trellis} (making the plots horizontal so that
 category labels are more visable), it allows the user to specify the
 quantiles to connect and those for which to draw reference lines, 
@@ -63,7 +63,7 @@ continuous variable whose distribution is to be examined
 grouping variable
 }
 \item{box.ratio}{
-see \code{panel.bwplot}
+see \code{\link[lattice]{panel.bwplot}}
 }
 \item{means}{
 set to \code{FALSE} to suppress drawing a character at the mean value
@@ -100,7 +100,7 @@ a list containing named arguments (without abbreviations) to pass to
 \item{font}{}
 \item{pch}{}
 \item{cex}{}
-\item{col}{see \code{\link{panel.bwplot}}}
+\item{col}{see \code{\link[lattice]{panel.bwplot}}}
 \item{\dots}{arguments passed to \code{points}}
 \item{stats}{}
 \item{xlim}{}
@@ -127,7 +127,7 @@ Department of Mathematical Sciences,
 Montana State University.
 }
 \seealso{
-\code{\link{bpplot}}, \code{\link{panel.bwplot}}, \code{\link{scat1d}}, \code{\link{quantile}}, \code{\link{ecdf}}
+\code{\link{bpplot}}, \code{\link[lattice]{panel.bwplot}}, \code{\link{scat1d}}, \code{\link{quantile}}, \code{\link{ecdf}}
 }
 \examples{
 set.seed(13)

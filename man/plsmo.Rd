@@ -26,7 +26,7 @@ single rug plot at the bottom of the graph), and (3) when
 \code{panel.plsmo} invokes \code{plsmo} it can use the "super smoother"
 (\code{supsmu} function) instead of \code{lowess}.  \code{panel.plsmo}
 senses when a \code{group} variable is specified to \code{xyplot} so
-that it can invoke \code{panel.superpose} instead of
+that it can invoke \code{\link[lattice]{panel.superpose}} instead of
 \code{panel.xyplot}.  Using \code{panel.plsmo} through \code{trellis}
 has some advantages over calling \code{plsmo} directly in that
 conditioning variables are allowed and \code{trellis} uses nicer fonts
@@ -166,7 +166,7 @@ plots, and \code{panel.plsmo} creates the \code{Key} function in the session fra
 }
 \seealso{
 \code{\link{lowess}}, \code{\link{supsmu}}, \code{\link{label}}, \code{\link{quantile}}, \code{\link{labcurve}}, \code{\link{scat1d}},
-\code{\link[lattice]{xyplot}}, \code{\link{panel.superpose}}, \code{\link[lattice]{panel.xyplot}}
+\code{\link[lattice]{xyplot}}, \code{\link[lattice]{panel.superpose}}, \code{\link[lattice]{panel.xyplot}}
 }
 \examples{
 set.seed(1)

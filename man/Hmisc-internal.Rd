@@ -15,6 +15,7 @@
 \alias{[.substi}
 \alias{[.factor}
 \alias{bpx}
+\alias{ddmmyy}
 \alias{do}
 \alias{dot.chart}
 \alias{existsFunction}
@@ -34,6 +35,7 @@
 \alias{importConvertDateTime}
 \alias{is.category}
 \alias{is.present}
+\alias{lookupSASContents}
 \alias{makeNames}
 \alias{mask}
 \alias{nafitted.delete}
@@ -52,6 +54,7 @@
 \alias{print.substi}
 \alias{print.timePOSIXt}
 \alias{read.xportDataload}
+\alias{readSAScsv}
 \alias{recode}
 \alias{rowsumFast}
 \alias{sas.get.macro}

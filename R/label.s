@@ -43,7 +43,8 @@ plotmathTranslate <- function(x) {
   specials <- c(' ','%','_')
   spec <- FALSE
   for(s in specials) if(length(grep(s,x))) spec <- TRUE
-  if(spec) x <- paste('paste("',x,'")',sep='')
+  if(spec) x <- paste('paste("',x,'")',sep='') else
+  if(substring(x,1,1)=='/') x <- paste('phantom()', x, sep='')
   x
 }
   

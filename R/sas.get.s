@@ -1454,7 +1454,7 @@ sasxport.get <- function(file, force.single=TRUE,
       cat('Empty dataset', dsn[j], 'ignored\n')
       next
     }
-    nam      <- tolower(names(w))
+    nam      <- tolower(makeNames(names(w), allow=allow))
     names(w) <- nam
     dinfo    <- dsinfo[[k]]
     fmt      <- sub('^\\$','',dinfo$format)

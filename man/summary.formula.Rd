@@ -354,7 +354,10 @@ categorized with \code{method="response"} or \code{"cross"} using \code{cut2}
 }
 \item{nmin}{
 if fewer than \code{nmin} observations exist in a category for \code{"response"}
-(over all strata combined), that category will be ignored
+(over all strata combined), that category will be ignored.  For
+\code{"reverse"}, for categories of the response variable in which there
+are less than or equal to \code{nmin} non-missing observations, the raw
+data are retained for later plotting in place of box plots.
 }
 \item{test}{
 applies if \code{method="reverse"}.  Set to \code{TRUE} to compute test

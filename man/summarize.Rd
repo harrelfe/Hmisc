@@ -73,7 +73,8 @@ statistics.
 \item{...}{extra arguments are passed to \code{FUN}}
 \item{stat.name}{
 the name to use when creating the main summary variable.  By default,
-the name of the \code{X} argument is used.
+the name of the \code{X} argument is used.  Set \code{stat.name} to
+\code{NULL} to suppress this name replacement.
 }
 \item{type}{
 Specify \code{type="matrix"} to store the summary variables (if there are

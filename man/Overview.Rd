@@ -303,10 +303,10 @@ set to sort(unique(unclass(x))) instead of sort(unique(x)).
 }
 
 \references{
-See Alzola CF, Harrell FE (2002): An Introduction to S and the
+See Alzola CF, Harrell FE (2004): An Introduction to S and the
 Hmisc and Design Libraries at
-\url{http://hesweb1.med.virginia.edu/biostat/s/doc/splus.pdf} for extensive 
-documentation and examples for the Hmisc library.
+\url{http://biostat.mc.vanderbilt.edu/twiki/pub/Main/RS/sintro.pdf}
+for extensive documentation and examples for the Hmisc package.
 }
 
 \section{Copyright Notice}{
@@ -329,8 +329,8 @@ changes to the author.\cr
 
 If this software is used is work presented for publication, kindly
 reference it using for example:\cr
- Harrell FE (2003): Hmisc S function library.
-  Programs available from \url{http://hesweb1.med.virginia.edu/biostat/s/Hmisc.html}.\cr
+ Harrell FE (2004): Hmisc S function library.
+  Programs available from \url{http://biostat.mc.vanderbilt.edu/s/Hmisc}.\cr
   Be sure to reference S-Plus or \R itself and other libraries used.
   }
 

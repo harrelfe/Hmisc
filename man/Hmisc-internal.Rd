@@ -59,6 +59,7 @@
 \alias{sas.get.macro}
 \alias{setParNro}
 \alias{stepfun.eval}
+\alias{stripChart}
 \alias{[.terms}
 \alias{termsDrop}
 \alias{testDateTime}

@@ -48,7 +48,7 @@ varclus(x, similarity=c("spearman","pearson","hoeffding","bothpos","ccbothpos"),
         type=c("data.matrix","similarity.matrix"), 
         method=if(.R.)"complete" else "compact",
         data, subset, na.action, minlev=0.05)
-\method{print}{varclus}(x, ...)
+\method{print}{varclus}(x, abbrev=FALSE, ...)
 \method{plot}{varclus}(x, ylab, abbrev=FALSE, legend.=FALSE, loc, maxlen, labels, \dots)
 
 naclus(df, method)
@@ -131,10 +131,6 @@ be kept in the model frame, with later pairwise deletion of \code{NA}s.
 \item{ylab}{
 y-axis label.  Default is constructed on the basis of \code{similarity}.
 }
-\item{abbrev}{
-set to \code{TRUE} to abbreviate variable names for plotting.  Is set to \code{TRUE}
-automatically if \code{legend=TRUE}.
-}
 \item{legend.}{
 set to \code{TRUE} to plot a legend defining the abbreviations
 }
@@ -174,6 +170,10 @@ minlev*n observations, all such cells are combined into a new cell
 labeled \code{"OTHER"}.  Otherwise, the lowest frequency cell is combined
 with the next lowest frequency cell, and the level name is the
 combination of the two old level levels.
+}
+\item{abbrev}{
+set to \code{TRUE} to abbreviate variable names for plotting or
+printing.  Is set to \code{TRUE} automatically if \code{legend=TRUE}.
 }
 \item{slim}{
 2-vector specifying the range of similarity values for scaling the

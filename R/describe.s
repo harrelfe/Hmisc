@@ -384,7 +384,8 @@ intFreq <- object$intervalFreq
 ## Put graph on its own line if length of label > 3.5 inches
 ## For normalsize there are 66 characters per 4.8 in. standard width
 
-des <- paste('\\textbf{',latexTranslate(object$descript),'}',sep='')
+des <- paste('\\textbf{',
+             latexTranslate(object$descript, '&', '\\&'),'}',sep='')
 if(length(object$units))
   des <- paste(des, '{\\smaller[1] [',
                latexTranslate(object$units),']}', sep='')

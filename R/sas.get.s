@@ -17,26 +17,18 @@ sas.get <- if(under.unix || .R.)
   if(.R. && force.single) stop('force.single does not work under R')
   dates. <- match.arg(dates.)
 
-  file.exists <- if(.R.) function(name) {
-    w <- file.access(name)==0
+  fexists <- function(name) {
+    w <- file.exists(name)
     attr(w, 'which') <- name[w]
     w
-  } else function(name)
-	{  # 22Oct00
-	  n <- length(name)
-	  w <- logical(n)
-	  for(i in 1:n) 
-		w[i] <- sys(paste("test -f", name[i], "-o -d", name[i])) == 0
-	  which <- character(0)
-	  if(any(w)) which <- name[w]
-	  attr(w, 'which') <- which
-	  w
-	}
-  file.is.dir <- if(.R.) function(name) !is.na(file.info(name)$isdir) else
-  function(name) sys(paste("test -d", name)) == 0
+  }
 
-  file.is.readable <- if(.R.) function(name) file.access(name,4)==0
-  else function(name) sys(paste("test -r", name)) == 0
+  file.is.dir <- if(.R.) function(name) !is.na(file.info(name)$isdir) else
+  function(name) is.dir(name)
+
+  file.is.readable <- function(name) if(.R.) file.access(name,4)==0
+  else
+    access(name,4)==0
 
   fileShow <- if(.R.) function(x) file.show(x) else page(filename=x)
 
@@ -45,7 +37,7 @@ sas.get <- if(under.unix || .R.)
   if(missing(formats) || formats) {
 	## *****  Next line begins mod from Mike Kattan edits 11 Sep 97
 	## Redone FEH 22Oct00
-	no.format <- all(!file.exists(paste(format.library,
+	no.format <- all(!fexists(paste(format.library,
 	 c('formats.sc2','formats.sct','formats.sct01','formats.sas7bcat'),
 	 sep='/')))
 	if(no.format) {
@@ -90,9 +82,9 @@ sas.get <- if(under.unix || .R.)
   if(library == "") {
 	if(uncompress) {  # 22Oct00
 	  unix.file <- paste(member, sasds.suffix, sep=".")
-	  if(any(fe <- file.exists(paste(unix.file,".gz",sep=""))))
+	  if(any(fe <- fexists(paste(unix.file,".gz",sep=""))))
 		sys(paste("gunzip ",attr(fe,'which'),'.gz',sep='')) else
-	  if(any(fe <- file.exists(paste(unix.file,".Z",sep=""))))
+	  if(any(fe <- fexists(paste(unix.file,".Z",sep=""))))
 		sys(paste("uncompress ",attr(fe,'which'),'.Z',sep=''))
 	}
 	cat("%sas_get(", member, " ,", sasout1, " ,", sasout2,
@@ -110,12 +102,12 @@ sas.get <- if(under.unix || .R.)
                          sep='')
       ##23Nov00
 	  if(uncompress) {  #22Oct00
-		if(any(fe <- file.exists(paste(unix.file,".gz",sep=""))))
+		if(any(fe <- fexists(paste(unix.file,".gz",sep=""))))
 		  sys(paste("gunzip ", attr(fe,'which'),'.gz',sep='')) else
-		if(any(fe <- file.exists(paste(unix.file,".Z",sep=""))))
+		if(any(fe <- fexists(paste(unix.file,".Z",sep=""))))
 		  sys(paste("uncompress ",attr(fe,'which'),'.Z',sep=''))
 	  }
-	  if(!any(fe <- file.exists(unix.file))) {
+	  if(!any(fe <- fexists(unix.file))) {
 		stop(paste(sep = "", "Unix file, \"",
 			paste(unix.file,collapse=' '), 
 				   "\", does not exist"))
@@ -150,7 +142,7 @@ sas.get <- if(under.unix || .R.)
 										#
 										# Read in the variable information
 										#
-  if(!(file.exists(sasout1) && file.exists(sasout2))) {
+  if(!(fexists(sasout1) && fexists(sasout2))) {
 	if(!quiet) fileShow(log.file)  ## 4oct03
 	stop("SAS output files not found")
   }
@@ -207,7 +199,7 @@ sas.get <- if(under.unix || .R.)
   format[format=='$'] <- ' '    # 1Mar00
   label <- vars$label
   name <- vars$name
-  esasout3 <- formats && file.exists(sasout3)   #added formats && 1/20/93
+  esasout3 <- formats && fexists(sasout3)   #added formats && 1/20/93
   if(recode && !esasout3) recode <- FALSE
   FORMATS <- NULL
 
@@ -216,7 +208,7 @@ sas.get <- if(under.unix || .R.)
 	if(length(FORMATS)==0) {FORMATS <- NULL; recode <- FALSE}	
   }
   smiss <- NULL
-  if(special.miss && file.exists(sasout4))
+  if(special.miss && fexists(sasout4))
 	smiss <- if(.R.) scan(sasout4, list(name="", code="", obs=integer(1)),
                           multi.line=FALSE, flush=TRUE, sep="\022",
                           comment.char='', quote='') else

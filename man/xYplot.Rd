@@ -69,7 +69,9 @@ for \code{summary.formula} such as \code{smean.cl.normal}.
 \code{xYplot} can also produce bubble plots.  This is done when
 \code{size} is specified to \code{xYplot}.  When \code{size} is used, a
 function \code{sKey} is generated for drawing a key to the character
-sizes.  See the bubble plot example.
+sizes.  See the bubble plot example.  \code{size} can also specify a
+vector where the first character of each observation is used as the
+plotting symbol, if \code{rangeCex} is set to a single \code{cex} value.
 
 \code{Dotplot} is a substitute for \code{dotplot} allowing for a matrix x-variable,
 automatic superpositioning when \code{groups} is present, and creation of a
@@ -277,7 +279,9 @@ matching the default colors superpose.line$col (plot.line$col)
   for the \code{size} variable (lowest first, highest second).
   \code{size} values are linearly translated to this range, based on the
   observed range of \code{size} when \code{x} and \code{y} coordinates
-  are not missing.
+  are not missing.  Specify a single numeric \code{cex} value for
+  \code{rangeCex} to use the first character of each observations's
+  \code{size} as the plotting symbol.
   }
 \item{strip.blank}{
 set to \code{FALSE} to not make the panel strip backgrounds blank 

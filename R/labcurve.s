@@ -1,6 +1,4 @@
 ## $Id$
-## In future change grid.convert to convertUnit,
-## grid.convertX to convertX, grid.convertY to convertY
 
 labcurve <- function(curves, labels=names(curves), 
 					 method=NULL, keys=NULL, keyloc=c('auto','none'),
@@ -253,11 +251,8 @@ labcurve <- function(curves, labels=names(curves),
 	  if(length(x)<2)
         stop("when specifying numeric keys (pch) you must have >=2 data points")
 	  lim <- range(x)
-      ## Next line was gun(seq())+offset,'x'  7apr03
-##	  xx <- if(grid)convertNative(gun(seq(lim[1],lim[2],by=inc) +  24feb04
-##                                  offset),'x') else
       xx <- if(grid)
-        grid.convertX(gun(seq(lim[1],lim[2],by=inc) + offset),
+        convertX(gun(seq(lim[1],lim[2],by=inc) + offset),
                           'native', valueOnly=TRUE) else
 	   seq(lim[1], lim[2], by=inc) + offset
 	  if(length(xx)>1) xx <- xx[-1]
@@ -298,9 +293,8 @@ labcurve <- function(curves, labels=names(curves),
       if(!is.na(mindiff[maxid])) 
         direction[i] <- 1-2*(mindiff[maxid]>0)  ## if 16may03 + next if
 	  yto <- yt[i] +
-#        direction[i]*(if(grid)convertNative(offset,'y') else offset) 24feb04
         direction[i]*
-          (if(grid)grid.convertY(offset,'native',valueOnly=TRUE) else offset)
+          (if(grid)convertY(offset,'native',valueOnly=TRUE) else offset)
         if(!is.na(yto)) 
       if(yto >= usr[4] || yto <= usr[3]) direction[i] <- -direction[i]
 
@@ -315,8 +309,7 @@ labcurve <- function(curves, labels=names(curves),
 			if(is.keys) 1*is.numeric(keys) + 
 			  nchar(keys[i])*is.character(keys) else nchar(labels[i])
 			w <- if(grid)
-#              nch*convertNative(unit(.75,"strwidth","m"),'x') else 24feb04
-              nch*grid.convertX(unit(.75,"strwidth","m"),
+              nch*convertX(unit(.75,"strwidth","m"),
                                 'native',valueOnly=TRUE) else
               nch*strwidth('m','user',cex)
 		  }
@@ -693,19 +686,11 @@ putKey <- function(z, labels, type=NULL,
       if(plot) m$vp <-
         viewport(x=unit(z[[1]],'native'),y=unit(z[[2]],'native'))
       z <- eval(as.call(m))
-      size <- if(plot) c(NA,NA) else {
-        v <- as.numeric(version$major) + as.numeric(version$minor)/100
-        if(v > 1.0709) {
-          width <- getFromNamespace('width','grid')
-          height <- getFromNamespace('height','grid')
-        }
-#        c(convertNative(width(z), 'x', 'dimension')[1], 24feb04
-#          convertNative(height(z),'y', 'dimension')[1])
-        c(grid.convert(width(z), 'native', 'x', 'location', 'x',
+      size <- if(plot) c(NA,NA) else 
+        c(convertUnit(grobWidth(z), 'native', 'x', 'location', 'x',
                         'dimension', valueOnly=TRUE)[1],
-          grid.convert(height(z), 'native', 'y', 'location', 'y',
+          convertUnit(grobHeight(z), 'native', 'y', 'location', 'y',
                         'dimension', valueOnly=TRUE)[1])
-      }
       return(invisible(size))
     } else {
       m$legend <- labels

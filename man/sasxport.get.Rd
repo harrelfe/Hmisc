@@ -31,7 +31,7 @@ CONTENTS} was run on an entire library.
 }
 \usage{
 sasxport.get(file, force.single = TRUE,
-             method=c('read.xport','dataload','csv'), formats=NULL)
+             method=c('read.xport','dataload','csv'), formats=NULL, allow=NULL)
 
 sasdsLabels(file)
 }
@@ -54,6 +54,9 @@ files created by running the \code{exportlib} SAS macro.
   \item{formats}{a data frame or list (like that created by
 	\code{read.xport}) containing \code{PROC FORMAT}
 	output, if such output is not stored in the main transport file.}
+  \item{allow}{a vector of characters allowed by \R that should not be
+converted to periods in variable names.  By default, underscores in
+variable names are converted to periods as with \R before version 1.9.}
 }
 \value{
   If there is more than one dataset in the transport file other than the

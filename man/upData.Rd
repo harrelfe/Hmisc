@@ -68,7 +68,7 @@ upData(object, \dots,
 
 exportDataStripped(data, \dots)
 
-csv.get(file, lowernames=FALSE, datevars=NULL, dateformat='%F', \dots)
+csv.get(file, lowernames=FALSE, datevars=NULL, dateformat='%F', allow=NULL, \dots)
 }
 \arguments{
 \item{obj}{a data frame or list}
@@ -161,6 +161,9 @@ redefining \code{levels} (in order) or another list (see
   units if \code{moveUnits=TRUE}.
 }
 \item{file}{a file name to import}
+\item{allow}{a vector of characters allowed by \R that should not be
+  converted to periods in variable names.  By default, underscores in
+  variable names are converted to periods as with \R before version 1.9.}
 }
 \value{a new data frame}
 \author{

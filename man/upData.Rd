@@ -60,7 +60,7 @@ to date variables.  \code{cleanup.import} is invoked to finish the job.
 \usage{
 cleanup.import(obj, labels, lowernames=FALSE, 
                force.single=TRUE, force.numeric=TRUE, rmnames=TRUE,
-               big=1e20, sasdict, pr, datevars=NULL, dateformat='%d%b%Y')
+               big=1e20, sasdict, pr, datevars=NULL, dateformat='%F')
 
 upData(object, \dots, 
        rename, drop, labels, units, levels,
@@ -68,7 +68,7 @@ upData(object, \dots,
 
 exportDataStripped(data, \dots)
 
-csv.get(file, lowernames=FALSE, datevars=NULL, dateformat='\%d\%b\%Y', \dots)
+csv.get(file, lowernames=FALSE, datevars=NULL, dateformat='%F', \dots)
 }
 \arguments{
 \item{obj}{a data frame or list}
@@ -123,7 +123,8 @@ exceeds 500,000.
 }
 \item{datevars}{character vector of names (after \code{lowernames} is
   applied) of variables to consider as a factor or character vector
-  containing dates in a format matching \code{dateformat}}
+  containing dates in a format matching \code{dateformat}.  The
+default is \code{"%F"} which uses the yyyy-mm-dd format.}
 \item{dateformat}{for \code{cleanup.import} is the input format (see
   \code{\link{strptime}})}
 \item{\dots}{
@@ -168,7 +169,7 @@ Frank Harrell, Vanderbilt University
 \seealso{
 \code{\link{sas.get}}, \code{\link{data.frame}}, \code{\link{describe}},
 \code{\link{label}}, \code{\link{read.csv}}, \code{\link{strptime}},
-\code{\link{POSIXct}}
+\code{\link{POSIXct}},\code{\link{Date}}
 }
 \examples{
 \dontrun{

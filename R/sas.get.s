@@ -1330,7 +1330,6 @@ if(.R.) {
                        max.value.labels=Inf,
                        force.single=TRUE) {
     require('foreign')
-    typeDate <- match.arg(typeDate)
     w <- read.spss(file, use.value.labels=use.value.labels,
                    to.data.frame=to.data.frame,
                    max.value.labels=max.value.labels)

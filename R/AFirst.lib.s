@@ -10,8 +10,9 @@ under.unix   <- !(version$os=='Microsoft Windows' ||
 if(!exists('existsFunction')) existsFunction <- function(...)
   exists(..., mode='function')
 
-.First.lib <- function(lib, pkg, verbose=TRUE, ...) {
-  if(verbose)
+.First.lib <- function(lib, pkg, ...) {
+  verbose <- .Options$Hverbose
+  if(!length(verbose) || verbose)
     cat("Hmisc library by Frank E Harrell Jr\n\n",
         "Type library(help='Hmisc'), ?Overview, or ?Hmisc.Overview')\n",
         "to see overall documentation.\n\n",

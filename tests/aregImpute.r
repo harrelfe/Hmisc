@@ -1,3 +1,5 @@
+## See Paul T von Hippel, The American Statistician 58:160-164, 2004
+
 mvector <- c(0,0)
 msigma <- matrix(c(1,0.5,0.5,1), nrow=2)
 library(mvtnorm)

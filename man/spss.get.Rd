@@ -9,14 +9,18 @@ attach labels to individual variables instead of to the data frame as
 done by \code{read.spss}.  By default, integer-valued variables are
 converted to a storage mode of integer unless
 \code{force.single=FALSE}.  Date variables are converted to \R \code{Date}
-variables.
+variables.  By default, underscores in names are converted to periods.
 }
 \usage{
-spss.get(file, datevars = NULL, use.value.labels = TRUE, to.data.frame =
-TRUE, max.value.labels = Inf, force.single=TRUE)
+spss.get(file, lowernames=FALSE, datevars = NULL,
+         use.value.labels = TRUE, to.data.frame = TRUE,
+         max.value.labels = Inf, force.single=TRUE, allow=NULL)
 }
 \arguments{
-  \item{file}{input SPSS save file}
+  \item{file}{input SPSS save file.  May be a file on the WWW, indicated
+  by \code{file} starting with \code{'http://'}.}
+  \item{lowernames}{set to \code{TRUE} to convert variable names to
+	lower case}
   \item{datevars}{vector of variable names containing dates to be
 	converted to \R internal format}
   \item{use.value.labels}{see \code{\link[foreign]{read.spss}}}
@@ -26,6 +30,9 @@ TRUE, max.value.labels = Inf, force.single=TRUE)
   \item{force.single}{set to \code{FALSE} to prevent integer-valued
 	variables from being converted from storage mode \code{double} to
 	\code{integer}}
+  \item{allow}{a vector of characters allowed by \R that should not be
+	converted to periods in variable names.  By default, underscores in
+	variable names are converted to periods as with \R before version 1.9.}
 }
 \value{
   a data frame or list

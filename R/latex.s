@@ -777,9 +777,10 @@ if(.R. && FALSE) show <- function(object) UseMethod('show')
 show.dvi <- function(object, width=5.5, height=7) {
   viewer <- optionsCmds('xdvi')
   cmd <- if(viewer=='yap') paste(viewer,object$file) else
-  paste(viewer, ' -paper ',
-        width,'x',height,'in -s 0 ',
-        object$file,' &',sep='')
+   if(viewer=='kdvi') paste(viewer,object$file,'&') else
+   paste(viewer, ' -paper ',
+         width,'x',height,'in -s 0 ',
+         object$file,' &',sep='')
   sys(cmd)
   invisible()
 }

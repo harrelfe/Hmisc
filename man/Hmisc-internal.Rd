@@ -15,7 +15,7 @@
 \alias{[.substi}
 \alias{[.factor}
 \alias{bpx}
-\alias{ddmmyy}
+\alias{ddmmmyy}
 \alias{do}
 \alias{dot.chart}
 \alias{existsFunction}

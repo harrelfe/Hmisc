@@ -943,7 +943,8 @@ cleanup.import <- function(obj, labels=NULL, lowernames=FALSE,
 						   big=1e20, sasdict, 
 						   pr=prod(dimobj) > 5e5,
                            datevars=NULL,
-                           dateformat='%F') {
+                           dateformat='%F', fixdates=c('none','year')) {
+  fixdates <- match.arg(fixdates)
   nam <- names(obj)
   dimobj <- dim(obj)
   nv <- length(nam)
@@ -1018,7 +1019,19 @@ cleanup.import <- function(obj, labels=NULL, lowernames=FALSE,
       if(!is.factor(x) || is.character(x))
         stop(paste('variable',nam[i],
                    'must be a factor or character variable for date conversion'))
-      x <- as.Date(as.character(x), format=dateformat)
+		x <- as.character(x)
+		if(fixdates != 'none') {
+		  if(dateformat %nin% c('%F','%y-%m-%d','%m/%d/%y','%m/%d/%Y'))
+		   stop('fixdates only supported for dateformat %F %y-%m-%d %m/%d/%y %m/%d/%Y')
+		  ## trim leading and trailing white space
+		  x <- sub('^[[:space:]]+','',sub('[[:space:]]+$','', x))
+		  x <- switch(dateformat,
+		              '%F'      =gsub('^([0-9]{2})-([0-9]{1,2})-([0-9]{1,2})', '20\\1-\\2-\\3',x),
+		              '%y-%m-%d'=gsub('^[0-9]{2}([0-9]{2})-([0-9]{1,2})-([0-9]{1,2})', '\\1-\\2-\\3',x),
+		              '%m/%d/%y'=gsub('^([0-9]{1,2})/([0-9]{1,2})/[0-9]{2}([0-9]{2})', '\\1/\\2/\\3',x),
+		              '%m/%d/%Y'=gsub('^([0-9]{1,2})/([0-9]{1,2})/([0-9]{2})$','\\1/\\2/20\\3',x))
+	  }
+      x <- as.Date(x, format=dateformat)
       modif <- TRUE
     }
 
@@ -1572,7 +1585,9 @@ readSAScsv <- function(sasdir, dsinfo, dsnames=names(dsinfo)) {
 NULL}
 
 csv.get <- function(file, lowernames=FALSE, datevars=NULL,
-                    dateformat='%F', allow=NULL, ...) {
+                    dateformat='%F', fixdates=c('none','year'),
+		            allow=NULL, ...) {
+  fixdates <- match.arg(fixdates)
   w <- read.csv(file, check.names=FALSE, ...)
   n <- names(w)
   m <- makeNames(n, unique=TRUE)
@@ -1580,7 +1595,7 @@ csv.get <- function(file, lowernames=FALSE, datevars=NULL,
   changed <- any(m != n)
   if(changed) names(w) <- m
   cleanup.import(w, labels=if(changed)n else NULL,
-                 datevars=datevars, dateformat=dateformat)
+                 datevars=datevars, dateformat=dateformat, fixdates=fixdates)
 }
 
 sasdsLabels <- function(file) {

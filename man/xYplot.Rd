@@ -136,7 +136,7 @@ prepanel.xYplot(x, y, \dots)
 Dotplot(formula, data = sys.frame(sys.parent()), groups, subset, 
         xlab = NULL, ylab = NULL, ylim = NULL,
         panel=panel.Dotplot, prepanel=prepanel.Dotplot,
-        scales=NULL, \dots)
+        scales=NULL, xscale=NULL, \dots)
 
 prepanel.Dotplot(x, y, \dots)
 
@@ -191,6 +191,8 @@ draw the main lines. For \code{Dotplot} the first argument to
   see \code{trellis.args}.  \code{xlab} and \code{ylab} get default values from
   \code{"label"} attributes.
 }
+\item{xscale}{allows one to use the default \code{scales} but specify
+  only the \code{x} component of it for \code{Dotplot}}
 \item{method}{
 defaults to \code{"bars"} to draw error-bar type plots.  See meaning of other
 values above.  \code{method} can be a function.  Specifying \code{method=quantile},

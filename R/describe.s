@@ -418,14 +418,14 @@ if(tabular) {
   ml <- nchar(paste(object$counts,collapse='  '))
   if(ml > 90) tabular <- FALSE else if(ml > 80) sz <- '[2]'
 }
-ct('{\\smaller', sz, sep='', file=file, append=TRUE)
+ct('{\\smaller\n', sz, sep='', file=file, append=TRUE)
 if(tabular) {
   ct('\\\\ \\begin{tabular}{',
      paste(rep('r',length(object$counts)),collapse=''),'}\n',
      file=file, append=TRUE)
   ct(paste(names(object$counts), collapse='&'), '\\\\ \n',
      file=file, append=TRUE)
-  ct(paste(object$counts, collapse='&'), '\\end{tabular}',
+  ct(paste(object$counts, collapse='&'), '\\end{tabular}\n',
      file=file, append=TRUE)
 }
 ct('\\begin{verbatim}\n', file=file, append=TRUE)
@@ -455,7 +455,7 @@ if(length(val <- object$values)) {
 	} else { cat('\n'); print(val, quote=FALSE) }
   }
 }
-cat('\\end{verbatim}}\n')
+cat('\\end{verbatim}\n}\n')
 if(file!='') sink()
 invisible()
 }

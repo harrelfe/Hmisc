@@ -99,20 +99,17 @@ panel.xYplot <-
 		pchVaries  <- TRUE
 		} else {
         cex <- rangeCex[1] + diff(rangeCex)*(size - srng[1])/diff(srng)
-        sKey <- function(x=0, y=1, cexObserved, cexCurtailed, col, pch,
-                         bty='o') {
-          oldpar <- par(usr=c(0,1,0,1),xpd=NA)
-          on.exit(par(oldpar))
-          if(is.list(x)) { y <- x[[2]]; x <- x[[1]] }
-          if(!length(x)) x <- 0
-          if(!length(y)) y <- 1  ## because of formals()
-          rlegend(x, y, legend=format(cexObserved), cex=cexCurtailed*1.4,
-                  col=col, pch=pch, bty=bty)
+        sKey <- function(x=0, y=1, cexObserved, cexCurtailed, col, pch, other) {
+          if(!length(x)) x <- 0.05
+          if(!length(y)) y <- 0.95  ## because of formals()
+		  ## had to multiply cex by 1.4 when using rlegend instead of rlegendg
+          rlegendg(x, y, legend=format(cexObserved), cex=cexCurtailed,
+                  col=col, pch=pch, other=other)
           invisible()
         }
         formals(sKey) <- list(x=NULL, y=NULL, cexObserved=srng,
                               cexCurtailed=rangeCex,
-                              col=col[1], pch=pch, bty='o')
+                              col=col[1], pch=pch, other=NULL)
         storeTemp(sKey)
 		}
   }
@@ -381,22 +378,21 @@ panel.xYplot <-
       gfun$axis(side = 1, at = minor.at, labels = 
                 minor.labs, tck = 0, cex = par("cex") * 0.5, line = 1.25)
   }
-  if(type != "l" && ng > 1) {
+#  if(type != "l" && ng > 1) {
+  if(ng > 1) {
 	##set up for key() if points plotted
     if(.R.) {
-      Key <- function(x=0, y=1, lev, cex, col, font, pch, ...) {
-        oldpar <- par(usr=c(0,1,0,1),xpd=NA)
-        on.exit(par(oldpar))
-        if(is.list(x)) { y <- x[[2]]; x <- x[[1]] }
+      Key <- function(x=0, y=1, lev, cex, col, font, pch, other) {
         ## Even though par('usr') shows 0,1,0,1 after lattice draws
         ## its plot, it still needs resetting
-        if(!length(x)) x <- 0
-        if(!length(y)) y <- 1  ## because of formals()
-        rlegend(x, y, legend=lev, cex=cex, col=col, pch=pch)
+        if(!length(x)) x <- 0.05
+        if(!length(y)) y <- 0.95  ## because of formals()
+        rlegendg(x, y, legend=lev, cex=cex, col=col, pch=pch, other=other)
         invisible()
       }
  } else {
-   Key <- function(x=NULL, y=NULL, lev, cex, col, font, pch, ... ) {
+   Key <- function(x=NULL, y=NULL, lev, cex, col, font, pch, other) {
+	## other currently ignored for S-Plus
      if(length(x)) {
        if(is.list(x)) {
          y <- x$y
@@ -404,39 +400,38 @@ panel.xYplot <-
        }
        key(x = x, y = y, text = list(lev, col = col),
            points = list(cex = cex, col = col, font = font,
-             pch = pch), transparent = TRUE, ...)
+             pch = pch), transparent = TRUE)
      }
      else key(text = list(lev, col = col),
               points  = list(cex = cex, col = col,
                 font = font, pch = pch), transparent =
-              TRUE, ...)
+              TRUE)
      invisible()
    }
  }
     formals(Key) <- list(x=NULL,y=NULL,lev=levels(groups),
                          cex=if(sizeVaries) 1 else cex,
-                         col=col, font=font, pch=pch)  #, ...=NULL)
+                         col=col, font=font, pch=pch, other=NULL)
     storeTemp(Key)
   }
   if(!missing(abline))
     do.call("panel.abline", abline)
   if(type == "l" && ng > 1) {
-    ## Set up for legend (key() or rlegend()) if lines drawn
+    ## Set up for legend (key() or rlegendg()) if lines drawn
     if(.R.) {
-      Key <- function(x=0, y=1, lev, cex, col, lty, lwd, ...) {
-        oldpar <- par(usr=c(0,1,0,1),xpd=NA)
-        on.exit(par(oldpar))
-        if(is.list(x)) { y <- x[[2]]; x <- x[[1]] }
+      Key <- function(x=0, y=1, lev, cex, col, lty, lwd, other) {
         ## Even though par('usr') shows 0,1,0,1 after lattice draws
         ## its plot, it still needs resetting
-        if(!length(x)) x <- 0
-        if(!length(y)) y <- 1  ## because of formals()
-        rlegend(x, y, legend=lev, cex=cex, col=col, lty=lty, lwd=lwd)
+        if(!length(x)) x <- 0.05
+        if(!length(y)) y <- 0.95  ## because of formals()
+        rlegendg(x, y, legend=lev, cex=cex, col=col, lty=lty, lwd=lwd,
+	             other=other)
         invisible()
     }
  } else {
-   Key <- function(x=NULL, y=NULL, lev, col, lty, lwd, ...)
+   Key <- function(x=NULL, y=NULL, lev, col, lty, lwd, other)
      {
+	## other currently ignored for S-Plus
        if(length(x)) {
          if(is.list(x)) {
            y <- x$y
@@ -445,16 +440,16 @@ panel.xYplot <-
          key(x = x, y = y,
              text = list(lev, col = col),
              lines = list(col = col, lty = lty, lwd = lwd),
-             transparent  = TRUE, ...)
+             transparent  = TRUE)
        }
        else key(text = list(lev, col = col),
                 lines = list(col = col, lty = lty, lwd = lwd),
-                transparent = TRUE, ...)
+                transparent = TRUE)
        invisible()
      }
  }
     formals(Key) <- list(x=NULL,y=NULL,lev=levels(groups), col=col,
-                         lty=lty, lwd=lwd)  #, ...=NULL)
+                         lty=lty, lwd=lwd, other=NULL)
     storeTemp(Key)
   }
 }
@@ -609,17 +604,13 @@ prepanel.Dotplot <- function(x, y, ...) {
      panel.dotplot(x, y, pch=pch, col=col, cex=cex, font=font, ...)
    }
  if(gp) {
-     if(.R.) Key <- function(x=0, y=1, lev, cex, col, font, pch, ...) {
-       oldpar <- par(usr=c(0,1,0,1),xpd=NA)
-       on.exit(par(oldpar))
-       if(is.list(x)) { y <- x[[2]]; x <- x[[1]] }
-       ## Even though par('usr') shows 0,1,0,1 after lattice draws
-       ## its plot, it still needs resetting
-       if(!length(x)) x <- 0
-       if(!length(y)) y <- 1  ## because of formals()
-       rlegend(x, y, legend=lev, cex=cex, col=col, pch=pch)
+     if(.R.) Key <- function(x=0, y=1, lev, cex, col, font, pch, other) {
+       if(!length(x)) x <- 0.05
+       if(!length(y)) y <- 0.95  ## because of formals()
+       rlegendg(x, y, legend=lev, cex=cex, col=col, pch=pch, other=other)
        invisible()
-     } else Key <- function(x=NULL, y=NULL, lev, cex, col, font, pch) { #, ...)
+     } else Key <- function(x=NULL, y=NULL, lev, cex, col, font, pch, other) { 
+		## other currently ignored for S-Plus
        if(length(x)) {
          if(is.list(x)) {y <- x$y; x <- x$x}
          key(x=x, y=y, text=list(lev, col=col), 
@@ -634,7 +625,7 @@ prepanel.Dotplot <- function(x, y, ...) {
      ng <- length(lev)
      formals(Key) <- list(x=NULL,y=NULL,lev=lev,
                           cex=cex[1:ng], col=col[1:ng],
-                          font=font[1:ng], pch=pch[1:ng])   #,...=NULL)
+                          font=font[1:ng], pch=pch[1:ng], other=NULL)
      storeTemp(Key)
    }
  }

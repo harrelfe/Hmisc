@@ -24,7 +24,8 @@ methods for such variables.
 The \code{chron} function is used to set up date, time, and date-time variables.
 If using S-Plus 5 or 6 or later, the \code{timeDate} function is used
 instead.
-Under R, POSIXct is used for dates and date-times.  For times without
+Under R, \code{\link{Dates}} is used for dates and \code{\link{chron}}
+for date-times.  For times without
 dates, these still need to be stored in date-time format in POSIX.
 Such SAS time variables are given a major class of \code{timePOSIXt} and a
 \code{format.timePOSIXt} function so that the date portion (which will

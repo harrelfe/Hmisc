@@ -21,8 +21,9 @@ of each variable having special missing values.  This attribute is
 called \code{special.miss}, and such variables are given class \code{special.miss}.
 There are \code{print}, \code{[]}, \code{format}, and \code{is.special.miss}
 methods for such variables.
-The \code{chron} function is used to set up date, time, and date-time
-variables.
+date, time, and date-time variables use respectively
+\code{\link{Dates}}, \code{\link{DateTimeClasses}}, and
+\code{\link{chron}} variables.
 If using S-Plus 5 or 6 or later, the \code{timeDate} function is used instead.
 If a date variable represents a partial date (.5 added if
 month missing, .25 added if day missing, .75 if both), an attribute

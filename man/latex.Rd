@@ -368,9 +368,10 @@ instead use the LaTeX \code{verbatim} environment.
 }
 \item{\dots}{
 other arguments are accepted and ignored except that \code{latex}
-passes arguments to \code{format.df}.  For \code{latexVerbatim} these
-arguments are passed to the \code{print} function.  Ignored for
-\code{latexTranslate}.
+passes arguments to \code{format.df} (e.g., \code{col.just} and other
+formatting options like \code{dec}, \code{rdec}, and \code{cdec}).  For
+\code{latexVerbatim} these arguments are passed to the \code{print}
+function.  Ignored for \code{latexTranslate}.
 }
 \item{inn, out}{
 specify additional input and translated strings over the usual

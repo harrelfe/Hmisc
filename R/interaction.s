@@ -14,9 +14,6 @@ interaction <- function(..., drop = FALSE, sep=".", left=FALSE)
 		what <- factor(what)
 	levs <- oldUnclass(what) - 1
 	labs <- g(levels(what))
-#	for(what in rev(allf[ - nterms])) {Thanks Rich Calaway <rich@insightful.com>
-#		if(is.null(levels(what)))      24Jul01
-#			what <- factor(what)
     rev.allf <- rev(allf[ - nterms])
     for(k in seq(along = rev.allf)) {
       what <- as.factor(rev.allf[[k]])
@@ -32,7 +29,7 @@ interaction <- function(..., drop = FALSE, sep=".", left=FALSE)
       labs <- labs[ulevs]
     }
 	levels(levs) <- labs
-#    structure(levs, class='factor')  17Jul01
+    storage.mode(levs) <- 'integer'
     oldClass(levs) <- 'factor'
     levs
 }

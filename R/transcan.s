@@ -1,65 +1,67 @@
-# 7Apr95 - predict.transcan: maxiter=1 if imp.con
+## $Id$
 
-transcan <- function(x, method=c("canonical","pc"),
-					 categorical=NULL, asis=NULL, nk, 
-					 imputed=FALSE, n.impute, 
-					 boot.method=c('approximate bayesian', 'simple'),
-					 trantab=FALSE, transformed=FALSE,
-                     impcat=c("score","multinom","rpart","tree"),
-					 mincut=40,
-                     inverse=c('linearInterp','sample'), tolInverse=.05,
-                     pr=TRUE, pl=TRUE, allpl=FALSE, show.na=TRUE,
-                     imputed.actual=c('none','datadensity','hist','qq','ecdf'),
-					 iter.max=50, eps=.1, curtail=TRUE, 
-					 imp.con=FALSE, shrink=FALSE, init.cat="mode",
-                     nres=if(boot.method=='simple')200 else 400,
-					 data, subset, na.action, treeinfo=FALSE,
-                     rhsImp=c('mean','random'),
-                     details.impcat='', ...) {
-#This is a non-.Internal version of the approx function.  The
-#S-Plus version of approx sometimes bombs with a bus error.
+transcan <-
+  function(x, method=c("canonical","pc"),
+           categorical=NULL, asis=NULL, nk, 
+           imputed=FALSE, n.impute, 
+           boot.method=c('approximate bayesian', 'simple'),
+           trantab=FALSE, transformed=FALSE,
+           impcat=c("score","multinom","rpart","tree"),
+           mincut=40,
+           inverse=c('linearInterp','sample'), tolInverse=.05,
+           pr=TRUE, pl=TRUE, allpl=FALSE, show.na=TRUE,
+           imputed.actual=c('none','datadensity','hist','qq','ecdf'),
+           iter.max=50, eps=.1, curtail=TRUE, 
+           imp.con=FALSE, shrink=FALSE, init.cat="mode",
+           nres=if(boot.method=='simple')200 else 400,
+           data, subset, na.action, treeinfo=FALSE,
+           rhsImp=c('mean','random'),
+           details.impcat='', ...) {
+
+    ##This is a non-.Internal version of the approx function.  The
+    ##S-Plus version of approx sometimes bombs with a bus error.
 
   asing <- if(.R.) function(x)x else as.single
   
-if(version$major < 4 && !.R.)
-  approx <- function(x, y, xout, method = "linear", n = 50, rule = 1, f = 0) {
-	nx <- length(x)
-	if(any(is.na(x)) || any(is.na(y)))
+  if(version$major < 4 && !.R.)
+    approx <- function(x, y, xout, method = "linear", n = 50, rule = 1, f = 0) {
+      nx <- length(x)
+      if(any(is.na(x)) || any(is.na(y)))
 		stop("Missing values not allowed")
-	if(nx != length(y))
+      if(nx != length(y))
 		stop("Lengths of x and y must match")
-	if(nx < 2)
+      if(nx < 2)
 		stop("need at least 2 points")
-	i <- order(x)
-	x <- x[i]
-	y <- y[i]
-	if(missing(xout))
+      i <- order(x)
+      x <- x[i]
+      y <- y[i]
+      if(missing(xout))
 		xout <- seq(x[1], x[nx], length = n)
-	else n <- length(xout)
-	methods <- c("linear", "constant")
-	if(!(imeth <- pmatch(method, methods, nomatch = 0)))
+      else n <- length(xout)
+      methods <- c("linear", "constant")
+      if(!(imeth <- pmatch(method, methods, nomatch = 0)))
 		stop("method must be \"linear\" or \"constant\"")
-	method <- methods[imeth]
-	if(method == "linear") {
+      method <- methods[imeth]
+      if(method == "linear") {
 		f <- -1
-	}
-	else if(method == "constant") {
+      }
+      else if(method == "constant") {
 		if(f < 0 || f > 1)
-			stop("f must be in [0,1]")
-	}
-	val <-  .Fortran("approx",
-		x = as.single(x),
-		y = as.single(y),
-		nx = as.integer(nx),
-		xout = as.single(xout),
-		m = as.integer(n),
-		rule = as.integer(rule),
-		f = as.single(f),
-		yout = single(n),
-		iscr = single(n))[c("xout", "yout")]
-	names(val) <- c("x", "y")
-	val
-}
+          stop("f must be in [0,1]")
+      }
+      val <-  .Fortran("approx",
+                       x = as.single(x),
+                       y = as.single(y),
+                       nx = as.integer(nx),
+                       xout = as.single(xout),
+                       m = as.integer(n),
+                       rule = as.integer(rule),
+                       f = as.single(f),
+                       yout = single(n),
+                       iscr = single(n))[c("xout", "yout")]
+      names(val) <- c("x", "y")
+      val
+    }
 
 call        <- match.call()
 method      <- match.arg(method)
@@ -694,11 +696,12 @@ print.transcan <- function(x, long=FALSE, ...) {
   invisible()
 }
 
-impute.transcan <- function(x, var, imputation,
-							name=as.character(substitute(var)),
-							where.in, data, where.out=1, frame.out,
-                            list.out=FALSE,
-                            pr=TRUE, check=TRUE, ...) {
+impute.transcan <-
+  function(x, var, imputation,
+           name=as.character(substitute(var)),
+           where.in, data, where.out=1, frame.out,
+           list.out=FALSE,
+           pr=TRUE, check=TRUE, ...) {
   if(!missing(imputation) && length(imputation)>1)
 	stop('imputation must be a single number')
   ## Check for old style yNov00
@@ -735,6 +738,8 @@ impute.transcan <- function(x, var, imputation,
         next
       }
 	  d <- dim(i)
+	  obsImputed <- dimnames(i)[[1]]  
+		## i[,imputation] drops names if only one obs. imputed
 	  if(!missing(imputation)) {
 		if(!length(d)) 
 		  stop('imputation can only be given when transcan used n.impute')
@@ -743,19 +748,18 @@ impute.transcan <- function(x, var, imputation,
 		i <- i[,imputation]
 	  } else if(length(d)) 
 		stop('imputation must be specified when transcan used n.impute')
-
 	  v <- if(missing(data)) get(nam, where.in) else data[[nam]] # 18Sep01
       ## Below was names(i) instead of match(...)  5Feb02
       if(length(namvar)) {
-        sub <- match(names(i), namvar, nomatch=0)
+        sub <- match(obsImputed, namvar, nomatch=0)
         i <- i[sub > 0]
         sub <- sub[sub > 0]
       } else {
-        if(!all.is.numeric(names(i)))
+        if(!all.is.numeric(obsImputed))
           stop(paste('names attribute of ',nam,
                      ' is not all numeric\n',
                      'and original observations did not have names',sep=''))
-        sub <- as.integer(names(i))
+        sub <- as.integer(obsImputed)
       }
 	  if(check)
 		if((missing(imputation) || imputation==1) &&
@@ -786,7 +790,6 @@ impute.transcan <- function(x, var, imputation,
     }
 	return(invisible(nimp))
   }
-
   impval <- imp[[name]]
   if(name %nin% names(imp))
     warning(paste('Variable',name,

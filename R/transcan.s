@@ -1143,7 +1143,7 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
     if(nvar > nvar0) {
       cof <- c(cof, log(f$scale))
       names(cof) <- c(names(f$coef),
-                      if((nvar - nvar0) == 1), "Log(scale)" else
+                      if((nvar - nvar0) == 1) "Log(scale)" else
                       names(f$scale))
     }
 	if(i==1) {

@@ -14,7 +14,7 @@ to use is \code{rlegendg}, which calls the \code{lattice}
 \usage{
 rlegend(x, y, legend, fill, col = "black", lty = NULL, lwd = NULL, pch = NULL, angle = NULL, density = NULL, bty = "o", bg = par("bg"), pt.bg = NA, cex = 1, xjust = 0, yjust = 1, x.intersp = 1, y.intersp = 1, adj = 0, text.width = NULL, merge = do.lines && has.pch, trace = FALSE, ncol = 1, horiz = FALSE, plot = TRUE, grid = FALSE, ...)
 
-rlegendg(x, y, legend, legend, col=pr$col[1], lty=NULL,
+rlegendg(x, y, legend, col=pr$col[1], lty=NULL,
          lwd=NULL, pch=NULL, cex=pr$cex[1], other=NULL) 
 }
 \arguments{

@@ -20,9 +20,9 @@ for(i in (1:p)[!(nam %in% binary)])	{
   if(nam[i] %in% monotonic) im <- c(0, im)
   if(nam[i] %in% categorical) ic <- c(0, ic)
   m <- 10*(length(im)>0)+(length(ic)>0)
-  if(m==11) a <- ace(x[,-i], x[,i], monotone=im, categorical=ic)
-  else if (m==10) a <- ace(x[,-i], x[,i], monotone=im)
-  else if(m==1) a <- ace(x[,-i], x[,i], categorical=ic)
+  if(m==11) a <- ace(x[,-i], x[,i], mon=im, cat=ic)
+  else if (m==10) a <- ace(x[,-i], x[,i], mon=im)
+  else if(m==1) a <- ace(x[,-i], x[,i], cat=ic)
   else a <- ace(x[,-i], x[,i])
   xt[,i] <- a$ty
   rsq[i] <- a$rsq
@@ -30,6 +30,7 @@ for(i in (1:p)[!(nam %in% binary)])	{
 }	
 
 cat("R-squared achieved in predicting each variable:\n\n")
+print(rsq)
 
 attr(xt, "rsq") <- rsq
 attr(xt, "omitted") <- omitted

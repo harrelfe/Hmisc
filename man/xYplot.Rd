@@ -537,7 +537,7 @@ s <- with(d,
           summarize(y, llist(continent,year),
                     function(y) {
                      n <- sum(!is.na(y))
-                     s <- sum(y, na.rm=T)
+                     s <- sum(y, na.rm=TRUE)
                      binconf(s, n)
                     }, type='matrix')
 )

@@ -1088,7 +1088,7 @@ nam <- names(trantab)
 for(w in nam) {
   z <- trantab[[w]]
   plot(z, xlab=w, ylab=paste('Transformed',w))
-  title(sub=paste('R2=',format(round(at$rsq[w],2)),sep=''),cex=.4,adj=0)
+  title(sub=paste('R2=',format(round(x$rsq[w],2)),sep=''),cex=.4,adj=0)
   if(length(imputed)) {
     m <- imputed[[w]]
     if(L <- length(m)) {

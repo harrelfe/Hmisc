@@ -1275,3 +1275,22 @@ makeNames <- function(names, unique=FALSE, allow=NULL) {
  if(!length(allow)) n <- gsub('_', '.', n)
  n
 }
+
+
+Load <- function(object) {
+  nam <- deparse(substitute(object))
+  path <- .Options$LoadPath
+  if(length(path)) path <- paste(path,'/',sep='')
+  file <- paste(path, nam, '.rda', sep='')
+  load(file, .GlobalEnv)
+}
+
+Save <- function(object) {
+  .ObjectName <- deparse(substitute(object))
+  path <- .Options$LoadPath
+  if(length(path)) path <- paste(path, '/', sep='')
+  .FileName <- paste(path, .ObjectName, '.rda', sep='')
+  assign(.ObjectName, object)
+  eval(parse(text=paste('save(', .ObjectName, ', file="',
+               .FileName, '", compress=TRUE)', sep='')))
+}

@@ -613,7 +613,7 @@ prepanel.Dotplot <- function(x, y, ...) {
                     groups, subset,
                     xlab=NULL, ylab=NULL, ylim=NULL,
                     panel=panel.Dotplot, prepanel=prepanel.Dotplot,
-                    scales=NULL, ...) {
+                    scales=NULL, xscale=NULL, ...) {
 
     require('grid')
   require('lattice')
@@ -628,9 +628,10 @@ prepanel.Dotplot <- function(x, y, ...) {
     yother <- attr(yv,'other')
     if(length(yother)) ylim <- range(yv, yother, na.rm=TRUE)
   }
-  if(is.character(yv)) yv <- factor(yv)
-  if(!length(scales) && is.factor(yv))
-    scales <- list(y=list(at=1:length(levels(yv)),labels=levels(yv)))
+    if(is.character(yv)) yv <- factor(yv)
+    if(!length(scales) && is.factor(yv))
+      scales <- list(y=list(at=1:length(levels(yv)),labels=levels(yv)))
+    if(length(xscale)) scales$x <- xscale
   
   xvname <- formula[[3]]
   if(length(xvname)>1 && as.character(xvname[[1]])=='|') 

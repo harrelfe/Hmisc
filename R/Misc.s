@@ -733,8 +733,10 @@ parGrid <- function(grid=FALSE) {
   lwd <- pr$lwd
   if(grid) {
     require('grid') || stop('grid package not available')
-	cvp <- current.viewport()
-    usr <- c(cvp$xscale, cvp$yscale)
+	## cvp <- current.viewport()
+    ## usr <- c(cvp$xscale, cvp$yscale)
+	usr <- c(convertX(unit(0:1, "npc"), "native", valueOnly=TRUE),
+             convertY(unit(0:1, "npc"), "native", valueOnly=TRUE))
 
     pin <- 
       c(convertWidth(unit(1, "npc"), "inches", valueOnly=TRUE),

@@ -1,5 +1,5 @@
-# In future change grid.convertX to convertX, same for Y
-
+## $Id$
+		
 prn <- function(x, txt) {
   calltext <- as.character(sys.call())[2]
 
@@ -13,9 +13,6 @@ prn <- function(x, txt) {
 }
 
 format.sep <- function(x, digits, ...) {
-#  .Options$digits <- digits  14Sep00
-#  old <- options(digits=digits)
-#  on.exit(options(old))
   y <- character(length(x))
   for(i in 1:length(x)) y[i] <- if(missing(digits)) format(x[i], ...) else
                                 format(x[i],digits=digits, ...)  ## 17Apr02
@@ -96,16 +93,6 @@ km.quick <- function(S, times, q) {
   approx(tt, ss, xout=times, method='constant', f=0)$y
 }
 
-if(FALSE) changecase <- function(string, which=c('lower','upper')) {
-  which <- match.arg(which)
-  .C('S_casefold', result=string, as.integer(length(string)), 
-	 as.integer(which=='upper'))$result
-} #superceded by casefold
-
-#if(.R. && !existsFunction('casefold'))  # not needed - added to R 1.4
-#  casefold <- function(cv, upper=FALSE)
-#   if(upper) toupper(cv) else tolower(cv)
-
 oPar <- function() {
   ## Saves existing state of par() and makes changes suitable
   ## for restoring at the end of a high-level graphics functions
@@ -140,9 +127,6 @@ mgp.axis.labels <- function(value,type=c('xy','x','y','x and y')) {
   if(value[1]=='default') value <- c(.7,.7)
   ##c(.6, if(par('las')==1) 1.3 else .6)
   options(mgp.axis.labels=value, TEMPORARY=FALSE)
-#  mgp <- par('mgp')
-#  mgp[2] <- max(value)
-#  par(mgp=mgp)
   invisible()
 }
 
@@ -693,65 +677,33 @@ ordGridFun <- function(grid) {
          axis     = function(...) axis(...) ) else {
            require('grid') || stop('grid package not available')
      list(lines = function(x, y, ...) {
-    ##    if(type!='l') warning(paste('type="',type,
-    ##         '" not implemented in grid.lines',sep=''))
     if(is.list(x)) { y <- x[[2]]; x <- x[[1]] }
-##    llines(if(is.unit(x))convertNative(x, 'x') else x,  21feb04
-##           if(is.unit(y))convertNative(y, 'y') else y, ...)},
     llines(if(is.unit(x))
-           grid.convertX(x, 'native', valueOnly=TRUE) else x,
+           convertX(x, 'native', valueOnly=TRUE) else x,
            if(is.unit(y))
-           grid.convertY(y, 'native', valueOnly=TRUE) else y,
+           convertY(y, 'native', valueOnly=TRUE) else y,
            ...)},
-       ##    grid.lines(x, y, default.units='native', gp=gpar(...))},
-       ##       
        points = function(x, y, ...) {
-         ##       function(x, y, pch=1, size=unit(1,'char'), type=NULL,
-         ##  col=NULL, cex=NULL, ...) {
          if(is.list(x)) { y <- x[[2]]; x <- x[[1]] }
-##         lpoints(if(is.unit(x))convertNative(x, 'x') else x, 21feb04
-##                 if(is.unit(y))convertNative(y, 'y') else y, ...)},
          lpoints(if(is.unit(x))
-                 grid.convertX(x, 'native', valueOnly=TRUE) else x,
+                 convertX(x, 'native', valueOnly=TRUE) else x,
                  if(is.unit(y))
-                 grid.convertY(y, 'native', valueOnly=TRUE) else y, ...)},
-#      gp <- gpar(...)
-#      if(length(gp)) { # grid.points fails to work if these present
-#        if(length(gp$lty)) gp$lty <- NULL
-#        if(length(gp$lwd)) gp$lwd <- NULL
-#      }
-#      prn(pch)
-#      lpoints(x, y, col=col, pch=pch, cex=cex, ...)
-#      grid.points(x, y, pch=pch, size=size,
-#                  default.units='native', gp=gpar(...))
-#      if(length(type) && type=='b')
-#        grid.lines(x, y, gp=gpar(...))
-#    },
+                 convertY(y, 'native', valueOnly=TRUE) else y, ...)},
 
        text = function(x, y, ...) {
          if(is.list(x)) {
-           ##           if(missing(labels)) labels <- y
            y <- x[[2]]; x <- x[[1]]
          }
-#         ltext(if(is.unit(x)) convertNative(x, 'x') else x,  21feb04
-#               if(is.unit(y)) convertNative(y, 'y') else y, ...)},
          ltext(if(is.unit(x))
-               grid.convertX(x, 'native', valueOnly=TRUE) else x,
+               convertX(x, 'native', valueOnly=TRUE) else x,
                if(is.unit(y))
-               grid.convertY(y, 'native', valueOnly=TRUE) else y, ...)},
-#      just <- if(adj==.5)'centre' else if(adj==0)'left' else 'right'
-#      grid.text(label=labels, x, y, just=just,
-#                default.units='native', gp=gpar(...)) },
+               convertY(y, 'native', valueOnly=TRUE) else y, ...)},
 
        segments = function(x0, y0, x1, y1, ...) {
          grid.segments(x0, y0, x1, y1, default.units='native',
                        gp=gpar(...))},
        
        arrows = function(...) larrows(...),
-#    arrows= function(x0, y0, x1, y1, length, angle, code, open, size, ...) {
-#      warning('grid.arrows not yet implemented.  Using grid.segments')
-#      grid.segments(x0, y0, x1, y1, gp=gpar(...))
-#    },
 
        rect = function(xleft, ybottom, xright, ytop, density, angle,
          border, xpd, ...) {
@@ -781,25 +733,16 @@ parGrid <- function(grid=FALSE) {
   lwd <- pr$lwd
   if(grid) {
     require('grid') || stop('grid package not available')
-    cvp <- current.viewport()
+	cvp <- current.viewport()
     usr <- c(cvp$xscale, cvp$yscale)
-    
-    v <- as.numeric(version$major) + as.numeric(version$minor)/100
-    pin <- if(v < 1.08101) c(cvp$cur.width.cm, cvp$cur.height.cm)/2.54 else
-    if(existsFunction('convertWidth'))
+
+    pin <- 
       c(convertWidth(unit(1, "npc"), "inches", valueOnly=TRUE),
-        convertHeight(unit(1, "npc"), "inches", valueOnly=TRUE)) else
-      c(as.numeric(grid.convertX(unit(1,'npc'),'inches')),
-        as.numeric(grid.convertY(unit(1,'npc'),'inches')))
-    ## Thanks: Paul Murrell 11feb04
-    ## Note until devel version of grid is used, convertWidth etc
-    ## don't exist
-    uin <- if(v < 1.08101) pin/c(usr[2]-usr[1], usr[4]-usr[3]) else
-    if(existsFunction('convertWidth'))
+        convertHeight(unit(1, "npc"), "inches", valueOnly=TRUE))
+
+    uin <- 
       c(convertWidth(unit(1, "native"), "inches", valueOnly=TRUE),
-        convertHeight(unit(1, "native"), "inches", valueOnly=TRUE)) else
-    c(as.numeric(grid.convertX(unit(1,'native'),'inches')),
-      as.numeric(grid.convertY(unit(1,'native'),'inches')))
+        convertHeight(unit(1, "native"), "inches", valueOnly=TRUE))
     
   } else {
     usr <- pr$usr

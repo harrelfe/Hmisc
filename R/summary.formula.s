@@ -5,7 +5,8 @@ summary.formula <-
            fun=NULL,
            method=c('response','reverse','cross'),
            overall=method=='response'|method=='cross', 
-           continuous=10, na.rm=method=='reverse', g=4, 
+           continuous=10, na.rm=TRUE, na.include=method!='reverse',
+           g=4, 
            quant=c(.025,.05,.125,.25,.375,.5,.625,.75,.875,.95,.975),
            nmin=0, test=FALSE,
            conTest=function(group,x) {
@@ -32,7 +33,7 @@ summary.formula <-
     method <- match.arg(method)
     
     X <- match.call(expand=FALSE)
-    X$fun <- X$method <- X$na.rm <- X$g <- 
+    X$fun <- X$method <- X$na.rm <- X$na.include <- X$g <- 
       X$overall <- X$continuous <- X$quant <- X$nmin <- X$test <-
         X$conTest <- X$catTest <- X$... <- NULL
     if(missing(na.action)) X$na.action <- na.retain
@@ -135,7 +136,7 @@ summary.formula <-
 
     if(method=='response') {
       X[[resp]] <- NULL   # remove response var
-      s <- if(inherits(Y,'Surv'))
+      s <- if(!na.rm) FALSE else if(inherits(Y,'Surv'))
         as.vector((1 * is.na(unclass(Y))) %*% rep(1, ncol(Y)) > 0) else
       ((if(is.character(Y)) Y==''|Y=='NA' else is.na(Y)) %*% 
        rep(1,ncol(Y))) > 0
@@ -174,7 +175,7 @@ summary.formula <-
                 factor(x,labels=c('No','Yes')) else
               factor(x)}  else cut2(x, g=g, ...)
           }
-          if(!na.rm && any(s)) {
+          if(na.include && any(s)) {
             x <- na.include(x)
             if(.R.) levels(x)[is.na(levels(x))] <- 'NA'
             ## R 1.5 and later has NA as level not 'NA', satisfies is.na
@@ -200,7 +201,7 @@ summary.formula <-
           r <- NULL
           for(js in levels(strat)) {
             j <- if(ismc) strat==js  & x[,lx] else strat==js & x==lx
-            if(na.rm) j[is.na(j)] <- FALSE
+            if(!na.include) j[is.na(j)] <- FALSE
             nj <- sum(j)
             f <- if(nj) {
               statz <- unlist(fun(Y[j,,drop=FALSE]))
@@ -269,7 +270,7 @@ summary.formula <-
           if(!is.factor(w) && length(unique(w[!is.na(w)])) < continuous) 
             w <- as.factor(w)
           s <- !is.na(w)
-          if(!na.rm && !all(s) && length(levels(w))) {
+          if(na.include && !all(s) && length(levels(w))) {
             w <- na.include(w)
             if(.R.) levels(w)[is.na(levels(w))] <- 'NA'
             s <- rep(TRUE,length(s))
@@ -410,7 +411,7 @@ summary.formula <-
         df1 <- as.character(df[[1]]); x1 <- X[[1]]
         for(i in 1:nl) {
           s <- df1[i]=='ALL' | x1==df1[i]
-          w <- s & !na
+          w <- if(na.rm) s & !na else s
           N[i] <- sum(w)
           Missing[i] <- sum(na[s])
           S[i,] <- if(any(w))chk(fun(Y[w,,drop=FALSE]),nstats) else
@@ -421,7 +422,7 @@ summary.formula <-
         x1 <- X[[1]]; x2 <- X[[2]]
         for(i in 1:nl) {
           s <- (df1[i]=='ALL' | x1==df1[i]) & (df2[i]=='ALL' | x2==df2[i])
-          w <- s & !na
+          w <- if(na.rm) s & !na else s
           N[i] <- sum(w)
           Missing[i] <- sum(na[s])
           S[i,] <- if(any(w))chk(fun(Y[w,,drop=FALSE]),nstats) else
@@ -434,7 +435,7 @@ summary.formula <-
         for(i in 1:nl) {
           s <- (df1[i]=='ALL' | x1==df1[i]) & (df2[i]=='ALL' | x2==df2[i]) &
           (df3[i]=='ALL' | x3==df3[i])
-          w <- s & !na
+          w <- if(na.rm) s & !na else s
           N[i] <- sum(w)
           Missing[i] <- sum(na[s])
           S[i,] <- if(any(w))chk(fun(Y[w,,drop=FALSE]),nstats) else
@@ -542,16 +543,17 @@ print.summary.formula.response <- function(x,
 
 latex.summary.formula.response <- function(object, 
   title=first.word(deparse(substitute(object))), caption,
-  trios, vnames=c('labels','names'), prUnits=TRUE,
+  trios, vnames=c('labels','names'), prn=TRUE, prUnits=TRUE,
   rowlabel='', cdec=2,
   ncaption=TRUE, ...) {
   stats <- object
 
   title <- title   # otherwise problem with lazy evaluation 25May01
   stats <- oldUnclass(stats)
+  at <- attributes(stats)
+  if(!prn) stats <- stats[,dimnames(stats)[[2]]!='N',drop=FALSE]
   vnames <- match.arg(vnames)
   ul <- vnames=='labels'
-  at <- attributes(stats)
   ns <- length(at$strat.levels)
   nstat <- ncol(stats)/ns
   if(!missing(trios)) {
@@ -584,7 +586,7 @@ latex.summary.formula.response <- function(object,
   }
   vn <- latexTranslate(vn, greek=.R.)
   cdec <- rep(cdec, length=(if(missing(trios))nstat else 1+(nstat-1)/3)-1)
-  cdec <- rep(c(0,cdec), ns)
+  cdec <- rep(c(if(prn)0 else NULL,cdec), ns)
 
   if(missing(trios)) cstats <- oldUnclass(stats) else {
     fmt <- function(z, cdec) ifelse(is.na(z), '', format(round(z,cdec)))
@@ -601,7 +603,7 @@ latex.summary.formula.response <- function(object,
         m <- m+2
       }
     }
-    names(cstats) <- rep(c('N', trios), ns)
+    names(cstats) <- rep(c(if(prn)'N' else NULL, trios), ns)
     attr(cstats, 'row.names') <- dm[[1]]
     attr(cstats,'class') <- 'data.frame'
     nstat <- 2  # for n.cgroup below

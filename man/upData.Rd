@@ -60,7 +60,8 @@ to date variables.  \code{cleanup.import} is invoked to finish the job.
 \usage{
 cleanup.import(obj, labels, lowernames=FALSE, 
                force.single=TRUE, force.numeric=TRUE, rmnames=TRUE,
-               big=1e20, sasdict, pr, datevars=NULL, dateformat='%F')
+               big=1e20, sasdict, pr, datevars=NULL, dateformat='%F',
+               fixdates=c('none','year'))
 
 upData(object, \dots, 
        rename, drop, labels, units, levels,
@@ -68,7 +69,8 @@ upData(object, \dots,
 
 exportDataStripped(data, \dots)
 
-csv.get(file, lowernames=FALSE, datevars=NULL, dateformat='\%F', allow=NULL, \dots)
+csv.get(file, lowernames=FALSE, datevars=NULL, dateformat='\%F',
+        fixdates=c('none','year'), allow=NULL, \dots)
 }
 \arguments{
 \item{obj}{a data frame or list}
@@ -127,6 +129,19 @@ exceeds 500,000.
 default is \code{"\%F"} which uses the yyyy-mm-dd format.}
 \item{dateformat}{for \code{cleanup.import} is the input format (see
   \code{\link{strptime}})}
+\item{fixdates}{for any of the variables listed in \code{datevars}
+that have a \code{dateformat} that \code{cleanup.import} understands,
+specifying \code{fixdates} allows corrections of certain formatting
+inconsistencies before the fields are attempted to be converted to
+dates (the default is to assume that the \code{dateformat} is followed
+for all observation for \code{datevars}).  Currently
+\code{fixdates='year'} is implemented, which will cause 2-digit or
+4-digit years to be shifted to the alternate number of digits when
+\code{dateform} is the default \code{"\%F"} or is \code{"\%y-\%m-%d"},
+\code{"\%m/\%d/\%y"}, or \code{"\%m/\%d/\%Y"}.  Two-digits years are padded with \code{20}
+on the left.  Set \code{dateformat} to the desired format, not the
+exceptional format.
+}
 \item{\dots}{
 for \code{upData}, one or more expressions of the form
 \code{variable=expression}, to derive new variables or change old ones.
@@ -179,6 +194,9 @@ Frank Harrell, Vanderbilt University
 dat <- read.table('myfile.asc')
 dat <- cleanup.import(dat)
 }
+dat <- data.frame(a=1:3, d=c('01/02/2004',' 1/3/04',''))
+cleanup.import(dat, datevars='d', dateformat='%m/%d/%y', fixdates='year')
+
 dat <- data.frame(a=(1:3)/7, y=c('a','b1','b2'), z=1:3)
 dat2 <- upData(dat, x=x^2, x=x-5, m=x/10, 
                rename=c(a='x'), drop='z',

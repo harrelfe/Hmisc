@@ -18,7 +18,7 @@ summary.formula <-
                   plotmathstat='F[df]')
            },
            catTest=function(tab) {
-             st <- if(!is.matrix(tab) || nrow(tab) < 2)
+             st <- if(!is.matrix(tab) || nrow(tab) < 2 | ncol(tab) < 2)
                list(p.value=NA, statistic=NA, parameter=NA) else
              chisq.test(tab, correct=FALSE)
              list(P=st$p.value, stat=st$statistic,
@@ -800,8 +800,7 @@ plot.summary.formula.reverse <-
                      rep(if(.R.)expression('') else '',nr-exc-1))
       }
     }
-#  dimnames(z)[[1]] <- lab
-  dimnames(z) <- list(lab, dimnames(z)[[2]])  ## 22sep02
+  dimnames(z) <- list(lab, dimnames(z)[[2]])
   for(i in 1:nw) {
     zi <- z[,i]
     if(any(prtest == 'none') || i > 1)
@@ -816,9 +815,13 @@ plot.summary.formula.reverse <-
   }
   if(main!='') title(main)
   npages <- npages + 1
-  setParNro(opar)  ## 1sep01
-
-    if(nw > 1) { ##set up for key() if > 1 column
+  setParNro(opar)
+  ## Dummy key if only one column, so won't use another Key from an
+  ## earlier run
+  if(nw < 2) {
+    Key <- function(...)invisible(NULL)
+    storeTemp(Key)
+  } else { ##set up for key() if > 1 column
       Key <- if(.R.) function(x=NULL, y=NULL, lev, pch) { ## 1sep02 22jan03
         oldpar <- par(usr=c(0,1,0,1),xpd=NA)
         on.exit(par(oldpar))

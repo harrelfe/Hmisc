@@ -67,8 +67,9 @@ Examples of useful \code{method} functions are those listed under the help file
 for \code{summary.formula} such as \code{smean.cl.normal}.
 
 \code{xYplot} can also produce bubble plots.  This is done when
-\code{cex} is specified to \code{xYplot} and it is a vector of the same
-lenght as the x-axis variable.
+\code{size} is specified to \code{xYplot}.  When \code{size} is used, a
+function \code{sKey} is generated for drawing a key to the character
+sizes.  See the bubble plot example.
 
 \code{Dotplot} is a substitute for \code{dotplot} allowing for a matrix x-variable,
 automatic superpositioning when \code{groups} is present, and creation of a
@@ -132,7 +133,8 @@ panel.xYplot(x, y, subscripts, groups=NULL,
              lwd=plot.line$lwd, lty=plot.line$lty, pch=plot.symbol$pch, 
              cex=plot.symbol$cex, font=plot.symbol$font, col=NULL, 
              lwd.bands=NULL, lty.bands=NULL, col.bands=NULL, 
-             minor.ticks=NULL, col.fill=NULL, \dots)
+             minor.ticks=NULL, col.fill=NULL,
+             size=NULL, rangeCex=c(.5,3), \dots)
 
 prepanel.xYplot(x, y, \dots)
 
@@ -265,6 +267,18 @@ elements corresponds to the different \code{groups}, regardless of how many
 bands are drawn.  The default colors for 'filled bands' are pastel colors
 matching the default colors superpose.line$col (plot.line$col)
 }
+\item{size}{
+  a vector the same length as \code{x} giving a variable whose values
+  are a linear function of the size of the symbol drawn.  This is used
+  for example for bubble plots.
+}
+\item{rangeCex}{
+  a vector of two values specifying the range in character sizes to use
+  for the \code{size} variable (lowest first, highest second).
+  \code{size} values are linearly translated to this range, based on the
+  observed range of \code{size} when \code{x} and \code{y} coordinates
+  are not missing.
+  }
 \item{strip.blank}{
 set to \code{FALSE} to not make the panel strip backgrounds blank 
 }
@@ -338,11 +352,14 @@ Key(0,.1)   # R
 # Bubble plots
 x <- y <- 1:8
 x[2] <- NA
-size <- (1:8)/3
+units(x) <- 'cm^2'
+z <- 101:108
 p <- factor(rep(c('a','b'),4))
 g <- c(rep(1,7),2)
-data.frame(p, x, y, size, g)
-xYplot(y ~ x | p, groups=g, cex=size)
+data.frame(p, x, y, z, g)
+xYplot(y ~ x | p, groups=g, size=z)
+Key()           # draw key for colors
+sKey(0,.9)# draw key for character sizes
 
 # Show the median and quartiles of height given age, stratified 
 # by sex and race.  Draws 2 sets (male, female) of 3 lines per panel.

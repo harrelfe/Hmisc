@@ -1,3 +1,4 @@
+## $Id$
 describe <- function(x, ...) UseMethod("describe")  #13Mar99
 
 
@@ -137,7 +138,7 @@ if(n.unique>=20) {
   lo <- x.unique[1:5]; hi <- x.unique[(n.unique-4):n.unique]
   fval <- if(isdot)
     formatDateTime(c(oldUnclass(lo),oldUnclass(hi)), atx, !timeUsed) else
-    format(c(lo,hi), ...)
+    format(c(format(lo),format(hi)), ...)  # inner format 21apr04
   counts <- fval
   names(counts) <- c("L1","L2","L3","L4","L5","H5","H4","H3","H2","H1")
 }

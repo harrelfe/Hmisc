@@ -1,0 +1,334 @@
+#Added since sent to statlib:
+# Fixed match.arg(type)
+varclus <-
+  function(x,
+           similarity=c("spearman","pearson","hoeffding",
+             "bothpos","ccbothpos"), 
+           type=c("data.matrix","similarity.matrix"),
+           method=if(.R.)"complete" else "compact",
+           data, subset, na.action, minlev=.05) {
+
+
+  call <- match.call()
+  type <- match.arg(type)  #moved from 2 lines down 2Apr95
+  if(type!="similarity.matrix") similarity <- match.arg(similarity)
+  nact <- NULL
+
+  if(.R.) require('mva')
+
+  if(inherits(x,"formula")) {
+    form <- x   # 20Mar01
+	oldops <- options(contrasts=c("contr.treatment","contr.poly"))
+	y <- match.call(expand=FALSE)
+	y$x <- y$similarity <- y$type <- y$method <- y$minlev <- NULL
+	y$formula <- x
+	if(missing(na.action)) y$na.action <- na.retain
+	y[[1]] <- as.name("model.frame")
+    #See if Des argument exists in current model.frame.default
+    #    if(length(model.frame.default$Des)) y$Des  <- F   #turn off Design
+	x <- eval(y, sys.parent())
+	drop <- NULL; nam <- names(x)
+    nv <- length(x)  ## 8may02 - R redefines length if change list below
+	if(minlev > 0) for(i in 1:length(x)) {
+	  if(is.character(x[[i]])) x[[i]] <- as.factor(x[[i]])
+	  if(is.factor(x[[i]])) {
+		x[[i]] <- combine.levels(x[[i]],minlev)
+		if(length(levels(x[[i]]))<2) {
+##		  x[[i]] <- NULL  8may02  model.matrix will drop these
+		  drop <- c(drop,i)
+		  warning(paste('variable',nam[i],
+'ignored since it has no level with relative frequency of\nat least',
+						format(minlev)))
+		}
+	  }
+	}
+	Terms <- attr(x,'terms')
+	if(length(drop)) Terms <- Terms[-drop]
+#    if(length(drop)) Terms <- termsDrop(Terms, drop, data=x)
+	nact <- attr(x,"na.action")
+	x <- model.matrix(Terms, x)
+#	if(attr(x,"term.labels")[1]=="(Intercept)") x <- x[,-1]  #20Mar01 for R
+    if(dimnames(x)[[2]][1]=='(Intercept)') x <- x[,-1] # was [[1]] 3May01
+	form <- TRUE
+	options(oldops)
+	type <- "data.matrix"
+  }
+  else form <- FALSE
+  n <- NULL
+  if(mode(x)!="numeric") stop("x matrix must be numeric")
+  if(type=="data.matrix") {       # assume not a correlation matrix
+    if(similarity %in% c("bothpos","ccbothpos")) {
+      isthere <- 1*(!is.na(x))
+      x[is.na(x)] <- 0
+      x[x > 0] <- 1
+      n <- crossprod(isthere)
+      x <- crossprod(x)/n
+      if(similarity=='ccbothpos') {
+        cc <- diag(x) %*% t(diag(x))
+        cc[row(cc)==col(cc)] <- 0
+        x <- x - cc
+      }
+    } else if(similarity=="hoeffding") {
+	D <- hoeffd(x); x <- D$D; n <- D$n 
+    } else {
+      D <- rcorr(x, type=similarity)
+      x <- (D$r)^2
+      n <- D$n
+    }
+  } else if(diff(dim(x))!=0) 
+	stop("x must be square to be a similarity matrix")
+  if(any(is.na(x))) {
+      cat("Part of the similarity matrix could not be computed:\n")
+      x[x<.01] <- 0
+      print(x, digits=2)
+      stop()
+    }
+  if(similarity=='ccbothpos') w <- NULL else
+  w <- if(.R.) hclust(as.dist(1-x), method=method) else
+  hclust(sim=x, method=method)
+  structure(list(call=call, sim=x, n=n, hclust=w, similarity=similarity,
+                 method=method, na.action=nact),class="varclus")
+}
+
+print.varclus <- function(x, ...) {
+dput(x$call); cat("\n")
+if(length(x$na.action)) naprint(x$na.action)
+s <- c(hoeffding="30 * Hoeffding D",spearman="Spearman rho^2",
+		pearson="Pearson r^2",bothpos="Proportion",
+        ccbothpos="Chance-Corrected Proportion")[x$similarity]
+cat("\nSimilarity matrix (",s,")\n\n",sep="")
+k <- x$sim
+lab <- abbreviate(dimnames(k)[[2]])
+dimnames(k) <- list(lab,lab)
+print.matrix(round(k, 2))
+n <- x$n
+if(length(n)) {
+  if(length(n)==1) cat("\nNo. of observations used=", n,"\n\n") else {
+    cat("\nNo. of observations used for each pair:\n\n")
+    dimnames(n) <- list(lab,lab)
+    print(n)
+  }
+}
+cat("\nhclust results (method=",x$method,")\n\n",sep="")
+print(x$hclust)
+invisible()
+}
+
+plot.varclus <- function(x, ylab, abbrev=FALSE, legend.=FALSE, loc, maxlen=20,
+                         labels=NULL, ...) {
+  if(missing(ylab)) {
+    s <- c(hoeffding="30 * Hoeffding D",
+           spearman=if(.R.)expression(paste(Spearman,~rho^2)) else
+           "Spearman rho^2",
+		pearson=if(.R.)expression(paste(Pearson,~r^2)) else "Pearson r^2",
+           bothpos="Proportion",
+           ccbothpos="Chance-Corrected Proportion")[x$similarity]
+#    if(s=="") s <- x$similarity  1Apr02
+#    if(is.na(s)) s <- x$similarity
+    if((is.expression(s) && s=='NULL') ||
+       (!is.expression(s) && (is.na(s) || s=='')))
+      s <- x$similarity  ## 8may02 9sep02
+    ylab <- if(.R.) s else paste("Similarity (",s,")",sep="")
+  }
+  if(legend.) abbrev <- TRUE
+  if(!length(labels)) labels <- dimnames(x$sim)[[2]]
+  olabels <- labels
+  if(abbrev) labels <- abbreviate(labels)
+  if(!length(x$hclust))
+    stop('clustering was not done on similarity="ccbothpos"')
+  p <- if(.R.) {
+    ## if(T & existsFunction('plclust'))  - didn't help with similarities
+    #  plclust(x$hclust, labels=labels, ylab=ylab, ...) else {
+        plot(x$hclust, labels=labels, ann=FALSE, axes=FALSE, ...)
+        ya <- pretty(range(1-x$hclust$height))
+        axis(2, at=1-ya, labels=format(ya))
+        title(ylab=ylab)
+  } else plclust(x$hclust, labels=labels, ylab=ylab, ...)
+  s <- labels != olabels
+  if(legend. && any(s)) {
+      if(missing(loc)) {
+        cat("Click mouse at upper left corner of legend\n")
+        loc <- locator(1)
+      }
+      olabels <- ifelse(nchar(olabels)>maxlen, substring(olabels,1,maxlen),
+	olabels)
+      text(loc, paste(paste(labels[s],":",olabels[s],"\n"),
+	collapse=""), adj=0)
+  }
+  invisible(p)
+}
+
+na.retain <- function(mf) mf
+
+
+naclus <- function(df, method=if(.R.)"complete" else "compact") {
+  ismiss <- function(x) if(is.character(x))x=='' else is.na(x) 
+  na <- sapply(df, ismiss)*1
+
+#  y <- apply(na, 2, sum)
+  n <- nrow(na)
+#  i <- y==0 | y==n
+#  if(any(i)) warning(paste("The following variables are always or\nnever missing and were excluded from consideration:\n",
+#	paste(dimnames(na)[[2]][i],collapse=" ")))
+#  if(all(i)) NULL else   was varclus(na[,!i]...
+  sim <- crossprod(na)/n
+  res <- varclus(sim, type="similarity.matrix", similarity="Fraction Missing",
+				 method=method)
+  na.per.obs <- apply(na, 1, sum)
+  nc <- ncol(na)
+  mean.na <- rep(NA, nc)
+  names(mean.na) <- dimnames(na)[[2]]
+  for(i in 1:nc) {
+	y <- na[,i]==1
+	if(any(y)) mean.na[i] <- mean(na.per.obs[y]) - 1
+	NULL
+  }
+  res$na.per.obs <- na.per.obs
+  res$mean.na    <- mean.na
+  res
+}
+
+naplot <- function(obj, which=c('all','na per var','na per obs','mean na',
+						  'na per var vs mean na'),
+				   ...) {
+  which <- match.arg(which)
+  tab <- table(obj$na.per.obs)
+  na.per.var <- diag(obj$sim)
+  names(na.per.var) <- dimnames(obj$sim)[[2]]
+  mean.na <- obj$mean.na
+
+  if(which %in% c('all','na per var'))
+	dotchart(sort(na.per.var), xlab='Fraction of NAs', 
+			 main='Fraction of NAs in each Variable', ...)
+
+  if(which %in% c('all','na per obs'))
+	dotchart2(tab, auxdata=tab, reset.par=TRUE,
+	   xlab='Frequency', 
+	   main='Number of Missing Variables Per Observation', ...)
+
+  if(which %in% c('all','mean na'))
+	dotchart(sort(mean.na), 
+			 xlab='Mean Number of NAs',
+	 main='Mean Number of Other Variables Missing for\nObservations where Indicated Variable is NA',
+			 ...)
+
+  if(which %in% c('all','na per var vs mean na')) {
+    if(.R.) { # 31jul02
+      xpd <- par('xpd')
+      par(xpd=NA)
+      on.exit(par(xpd=xpd))
+    }
+	plot(na.per.var, mean.na, xlab='Fraction of NAs for Single Variable',
+		 ylab='Mean # Other Variables Missing', type='p')
+	usr <- par('usr')
+	eps <- .015*diff(usr[1:2]); epsy <- .015*diff(usr[3:4])
+	s <- (1:length(na.per.var))[!is.na(mean.na)]
+	taken.care.of <- NULL
+	for(i in s) {
+	  if(i %in% taken.care.of) next
+	  w <- s[s > i & abs(na.per.var[s]-na.per.var[i]) < eps &
+	    abs(mean.na[s]-mean.na[i]) < epsy]
+	  if(any(w)) {
+		taken.care.of <- c(taken.care.of, w)
+		text(na.per.var[i]+eps, mean.na[i],
+			 paste(names(na.per.var[c(i,w)]),collapse='\n'),adj=0)
+	  } else text(na.per.var[i]+eps, mean.na[i], names(na.per.var)[i], adj=0)
+	}
+  }
+
+  invisible(tab)
+}
+
+combine.levels <- function(x, minlev=.05) {
+  x <- as.factor(x)
+  lev <- levels(x)
+  f <- table(x)/sum(!is.na(x))
+  i <- f < minlev
+  si <- sum(i)
+  if(si==0) return(x)
+  if(.R.) {
+    comb <- if(si==1) names(sort(f))[1:2] else names(f)[i]
+    keepsep <- setdiff(names(f), comb)
+    names(keepsep) <- keepsep
+    w <- c(list(OTHER=comb), keepsep)
+    levels(x) <- w
+  } else levels(x) <- if(si==1) list(OTHER=names(sort(f))[1:2]) else
+  list(OTHER=names(f)[i])
+  ## added OTHER in first list() 16Apr02.  Thanks: Peter Malewski
+  x
+}
+
+plotMultSim <- function(s, x=1:dim(s)[3],
+                        slim=range(pretty(c(0,max(s,na.rm=TRUE)))),
+                        slimds=FALSE,
+                        add=FALSE, lty=par('lty'), col=par('col'),
+                        lwd=par('lwd'), vname=NULL, h=.5, w=.75,
+                        u=.05, labelx=TRUE, xspace=.35) {
+if(!length(vname)) vname <- dimnames(s)[[1]]
+p <- dim(s)[1]
+if(length(vname) != p) stop('wrong length for vname')
+if(p != dim(s)[2]) stop('similarity matrix not square')
+if(length(x) != dim(s)[3])
+  stop('length of x differs from extent of 3rd dimension of s')
+
+if(!add) {
+#  omar <- par('mar')
+#  mar <- omar
+#  mar[c(1,2,4)] <- 0
+#  par(mar=mar)
+#  on.exit(par(mar=omar))   first arg to plot was .25 1oct02
+  plot(c(-xspace,p+.5),c(.5,p+.25), type='n', axes=FALSE, xlab='',ylab='')
+  if(labelx) text(1:p, rep(.6,p), vname, adj=.5)
+  text(rep(.5,p), 1:p, vname, adj=1)
+}
+
+scaleit <- function(x, xlim, lim) lim[1] +
+  (x-xlim[1])/diff(xlim) * diff(lim)
+
+if(slimds) {
+  slim.diag <- -1e10
+  for(k in 1:length(x)) {
+    sk <- s[,,k]
+    r <- max(diag(sk))
+    slim.diag <- max(slim.diag, r)
+  }
+  slim.diag <- range(pretty(c(0,slim.diag)))
+  slim.offdiag <- slim.diag - diff(slim.diag)/2
+}
+
+rx  <- range(x)
+rxe <- c(rx[1]-u*diff(rx), rx[2]+u*diff(rx))
+
+for(i in 1:p) {
+  for(j in 1:p) {
+    if((i==j) && all(s[i,j,]==1)) next
+    sl <- if(slimds) if(i==j) slim.diag else slim.offdiag else slim
+    sle <- c(sl[1]-u*diff(sl), sl[2]+u*diff(sl))
+
+    if(!add) {
+      lines(c(i-w/2,i+w/2,i+w/2,
+              i-w/2,i-w/2),
+            c(j-h/2,j-h/2,j+h/2,
+              j+h/2,j-h/2), col=if(.R.)gray(.5) else .5, lwd=.65)
+      xc <- rep(i-w/2-u/3,2)
+      yc <- scaleit(sl, sle, c(j-h/2,j+h/2))
+#      if((!slimds && i==1 && j==1) || (slimds && (i==1 & j<=2))) {
+      if(i==1 && j<=2) {
+        text(xc, yc,
+             format(sl,digits=2), adj=1, cex=.7)
+        segments(rep(xc+u/8,2),yc,
+                 rep(xc+u/3,2),yc)
+      }
+    }
+    lines(scaleit(x, rxe, c(i-w/2,i+w/2)),
+          scaleit(s[i,j,], sle, c(j-h/2,j+h/2)),
+          lty=lty, lwd=lwd, col=col)
+    if(!add && slimds && (i!=j))
+      lines(c(i-w/2,i+w/2),
+            rep(scaleit(0, sle, c(j-h/2,j+h/2)),2),
+            col=if(.R.)gray(.5) else .5)
+  }
+}
+invisible(slim)
+}
+

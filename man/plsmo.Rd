@@ -1,0 +1,223 @@
+\name{plsmo}
+\alias{plsmo}
+\alias{panel.plsmo}
+\title{
+Plot smoothed estimates
+}
+\description{
+
+  Plot smoothed estimates of x vs. y, handling missing data for lowess
+  or supsmu, and adding axis labels.  Optionally suppresses plotting
+  extrapolated estimates.  An optional \code{group} variable can be
+  specified to compute and plot the smooth curves by levels of
+  \code{group}.  When \code{group} is present, the \code{datadensity}
+  option will draw tick marks showing the location of the raw
+  \code{x}-values, separately for each curve.  \code{plsmo} has an
+  option to plot connected points for raw data, with no smoothing.
+
+\code{panel.plsmo} is a \code{panel} function for \code{trellis} for the
+\code{xyplot} function that uses \code{plsmo} and its options to draw
+one or more nonparametric function estimates on each panel.  This has
+advantages over using \code{xyplot} with \code{panel.xyplot} and
+\code{panel.loess}: (1) by default it will invoke \code{labcurve} to
+label the curves where they are most separated, (2) the
+\code{datadensity} option will put rug plots on each curve (instead of a
+single rug plot at the bottom of the graph), and (3) when
+\code{panel.plsmo} invokes \code{plsmo} it can use the "super smoother"
+(\code{supsmu} function) instead of \code{lowess}.  \code{panel.plsmo}
+senses when a \code{group} variable is specified to \code{xyplot} so
+that it can invoke \code{panel.superpose} instead of
+\code{panel.xyplot}.  Using \code{panel.plsmo} through \code{trellis}
+has some advantages over calling \code{plsmo} directly in that
+conditioning variables are allowed and \code{trellis} uses nicer fonts
+etc.
+
+When a \code{group} variable was used, \code{panel.plsmo} creates a function
+\code{Key} in the session frame that the user can invoke to draw a key for
+individual data point symbols used for the \code{group}s.  
+By default, the key is positioned at the upper right
+corner of the graph.  If \code{Key(locator(1))} is specified, the key will
+appear so that its upper left corner is at the coordinates of the
+mouse click.
+}
+\usage{
+plsmo(x, y, method=c("lowess","supsmu","raw"), xlab, ylab, 
+      add=FALSE, lty=1:nlev, col=par("col"), lwd=par("lwd"),
+      iter=if(length(unique(y))>2) 3 else 0, bass=0, trim, 
+      fun, group, prefix, xlim, ylim, 
+      label.curves=TRUE, datadensity=FALSE, lines.=TRUE, subset=TRUE,
+      grid=FALSE, \dots)
+
+
+#To use panel function:
+#xyplot(formula=y ~ x | conditioningvars, groups,
+#       panel=panel.plsmo, type='b', 
+#       label.curves=TRUE,
+#       lwd = superpose.line$lwd, 
+#       lty = superpose.line$lty, 
+#       pch = superpose.symbol$pch, 
+#       cex = superpose.symbol$cex, 
+#       font = superpose.symbol$font, 
+#       col = NULL, \dots)
+}
+\arguments{
+\item{x}{
+vector of x-values, NAs allowed
+}
+\item{y}{
+vector of y-values, NAs allowed
+}
+\item{method}{
+"lowess" (the default), "supsmu", or "raw" to not smooth at all
+}
+\item{xlab}{
+x-axis label iff add=F.  Defaults of label(x) or argument name.
+}
+\item{ylab}{
+y-axis label, like xlab.
+}
+\item{add}{
+Set to T to call lines instead of plot.  Assumes axes already labeled.
+}
+\item{lty}{
+line type, default=1,2,3,\dots, corresponding to \code{group}
+}
+\item{col}{
+color for each curve, corresponding to \code{group}.  Default is
+current \code{par("col")}. 
+}
+\item{lwd}{
+vector of line widths for the curves, corresponding to \code{group}.
+Default is current \code{par("lwd")}. 
+\code{lwd} can also be specified as an element of \code{label.curves} if
+\code{label.curves} is a list.
+}
+\item{iter}{
+iter parameter if method="lowess", default=0 if \code{y} is binary, and 3 otherwise.
+}
+\item{bass}{
+bass parameter if method="bass", default=0.
+}
+\item{trim}{
+only plots smoothed estimates between trim and 1-trim quantiles
+of x.  Default is to use 10th smallest to 10th largest x in the group if the number of observations in the group exceeds 200 (0 otherwise).
+Specify trim=0 to plot over entire range.
+}
+\item{fun}{
+after computing the smoothed estimates, if \code{fun} is given the y-values
+are transformed by \code{fun()}
+}
+\item{group}{
+a variable, either a \code{factor} vector or one that will be converted to
+\code{factor} by \code{plsmo}, that is used to stratify the data so that separate
+smooths may be computed
+}
+\item{prefix}{
+a character string to appear in group of group labels.  The presence of
+\code{prefix} ensures that \code{labcurve} will be called even when \code{add=TRUE}.
+}
+\item{xlim}{
+a vector of 2 x-axis limits.  Default is observed range.
+}
+\item{ylim}{
+a vector of 2 y-axis limits.  Default is observed range.
+}
+\item{label.curves}{
+set to \code{FALSE} to prevent \code{labcurve} from being called to label multiple
+curves corresponding to \code{group}s.  Set to a list to pass options to
+\code{labcurve}.  \code{lty} and \code{col} are passed to \code{labcurve} automatically.
+}
+\item{datadensity}{
+set to \code{TRUE} to draw tick marks on each curve, using x-coordinates
+of the raw data \code{x} values.  This is done using \code{scat1d}.
+}
+\item{lines.}{
+set to \code{FALSE} to suppress smoothed curves from being drawn.  This can
+make sense if \code{datadensity=TRUE}.
+}
+\item{subset}{
+a logical or integer vector specifying a subset to use for processing,
+with respect too all variables being analyzed
+}
+\item{grid}{
+  set to \code{TRUE} if the \R \code{grid} package drew the current plot}
+\item{\dots}{
+  optional arguments that are passed to \code{scat1d},
+  or optional parameters to pass to \code{plsmo} from
+  \code{panel.plsmo}.  See optional arguments for \code{plsmo} above.
+}
+\item{type}{
+set to \code{p} to have \code{panel.plsmo} plot points (and not call \code{plsmo}), 
+\code{l} to call \code{plsmo} and not plot points, or use the default \code{b} to plot both.
+}
+\item{pch}{}
+\item{cex}{}
+\item{font}{
+vectors of graphical parameters corresponding to the \code{group}s (scalars
+if \code{group} is absent).  By default, the parameters set up by
+\code{trellis} will be used.
+}
+}
+\value{
+\code{plsmo} returns a list of curves (x and y coordinates) that was passed to \code{labcurve}
+}
+\section{Side Effects}{
+plots, and \code{panel.plsmo} creates the \code{Key} function in the session frame.
+}
+\seealso{
+\code{\link{lowess}}, \code{\link{supsmu}}, \code{\link{label}}, \code{\link{quantile}}, \code{\link{labcurve}}, \code{\link{scat1d}},
+\code{\link[lattice]{xyplot}}, \code{\link{panel.superpose}}, \code{\link[lattice]{panel.xyplot}}
+}
+\examples{
+set.seed(1)
+x <- 1:100
+y <- x + runif(100, -10, 10)
+plsmo(x,y,"supsmu",xlab="Time of Entry") 
+#Use label(y) or "y" for ylab
+
+
+plsmo(x,y,add=TRUE,lty=2)
+#Add lowess smooth to existing plot, with different line type
+
+
+age <- rnorm(500, 50, 15)
+survival.time <- rexp(500)
+sex <- sample(c('female','male'), 500, TRUE)
+race <- sample(c('black','non-black'), 500, TRUE)
+plsmo(age, survival.time < 1, fun=qlogis, group=sex) # plot logit by sex
+
+
+#Plot points and smooth trend line using trellis 
+# (add type='l' to suppress points or type='p' to suppress trend lines)
+if(.R.) library(lattice)
+xyplot(survival.time ~ age, panel=panel.plsmo)
+
+
+#Do this for multiple panels
+xyplot(survival.time ~ age | sex, panel=panel.plsmo)
+
+
+#Do this for subgroups of points on each panel, show the data
+#density on each curve, and draw a key at the default location
+xyplot(survival.time ~ age | sex, groups=race, panel=panel.plsmo,
+       datadensity=TRUE)
+Key()
+
+
+#Use wloess.noiter to do a fast weighted smooth
+plot(x, y)
+lines(wtd.loess.noiter(x, y))
+lines(wtd.loess.noiter(x, y, weights=c(rep(1,50), 100, rep(1,49))), col=2)
+points(51, y[51], pch=18)   # show overly weighted point
+#Try to duplicate this smooth by replicating 51st observation 100 times
+lines(wtd.loess.noiter(c(x,rep(x[51],99)),c(y,rep(y[51],99)),
+      type='ordered all'), col=3)
+#Note: These two don't agree exactly
+}
+\keyword{smooth}
+\keyword{nonparametric}
+\keyword{hplot}
+\concept{trellis}
+\concept{lattice}
+
+

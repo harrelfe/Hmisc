@@ -1,0 +1,52 @@
+\name{rlegend}
+\alias{rlegend}
+\title{Special Version of legend for R}
+\description{
+\code{rlegend} is a version of \code{legend} for \R that implements
+\code{plot=FALSE}, adds \code{grid=TRUE}, and defaults \code{lty, lwd,
+  pch} to \code{NULL} and checks for \code{length>0} rather than
+\code{missing()}, so it's easier to deal with non-applicable
+parameters.
+}
+\usage{
+rlegend(x, y, legend, fill, col = "black", lty = NULL, lwd = NULL, pch = NULL, angle = NULL, density = NULL, bty = "o", bg = par("bg"), pt.bg = NA, cex = 1, xjust = 0, yjust = 1, x.intersp = 1, y.intersp = 1, adj = 0, text.width = NULL, merge = do.lines && has.pch, trace = FALSE, ncol = 1, horiz = FALSE, plot = TRUE, grid = FALSE, ...)
+}
+\arguments{
+  \item{x}{}
+  \item{y}{}
+  \item{legend}{}
+  \item{fill}{}
+  \item{col}{}
+  \item{lty}{}
+  \item{lwd}{}
+  \item{pch}{}
+  \item{angle}{}
+  \item{density}{}
+  \item{bty}{}
+  \item{bg}{}
+  \item{pt.bg}{}
+  \item{cex}{}
+  \item{xjust}{}
+  \item{yjust}{}
+  \item{x.intersp}{}
+  \item{y.intersp}{}
+  \item{adj}{}
+  \item{text.width}{}
+  \item{merge}{}
+  \item{trace}{}
+  \item{ncol}{}
+  \item{horiz}{see \code{\link{legend}}}
+  \item{plot}{set to \code{FALSE} to suppress drawing the legend.  This
+	is used the compute the size needed for when the legend is drawn
+	with a later call to \code{rlegend}.}
+  \item{grid}{set to \code{TRUE} if the \code{grid} package is in effect}
+  \item{\dots}{see \code{legend}}
+}
+\value{
+  a list with elements \code{rect} and \code{text}.  \code{rect} has
+  elements \code{w, h, left, top} with size/position information.
+}
+\author{Frank Harrell and R-Core}
+\seealso{\code{\link{legend}}}
+\keyword{aplot}
+

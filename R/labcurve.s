@@ -106,7 +106,8 @@ labcurve <- function(curves, labels=names(curves),
       plot(0, 0, xlim=xlim, ylim=ylim, xlab=xlab, ylab=ylab,
            type='n', xaxt='n')  ## xaxt 15jun02
       if(inherits(xlim,'POSIXt') || inherits(xlim,'POSIXct'))
-        axis.POSIXct(1) else axis(1)   ## 15jun02 18sep02
+        axis.POSIXct(1) else 
+		if(inherits(xlim,'Date')) axis.Date(1) else axis(1)  ## 15jun02 18sep02
             
 	  pr <- par(c('cex','col','lwd','lty'))
 	}

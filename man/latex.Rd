@@ -429,7 +429,8 @@ commands which are assumed to be in the system path.
   System options can be used to specify external commands to be used.
   Defaults are given by \co{options(xdvicmd='xdvi')} or
   \co{options(xdvicmd='yap')}, \co{options(dvipscmd='dvips')},
-  \co{options(latexcmd='latex')}.
+  \co{options(latexcmd='latex')}.  For MacOS specify
+  \co{options(xdvicmd='MacdviX')}.
   
   If running S-Plus and your directory for temporary files is not
   \code{/tmp} (Unix/Linux) or \code{\\windows\\temp} (Windows), add your

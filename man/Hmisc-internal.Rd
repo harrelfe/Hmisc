@@ -13,7 +13,6 @@
 \alias{substi}
 \alias{substi.source}
 \alias{[.substi}
-\alias{[.factor}
 \alias{bpx}
 \alias{ddmmmyy}
 \alias{do}

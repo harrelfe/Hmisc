@@ -8,7 +8,7 @@ summary.formula <-
            continuous=10, na.rm=TRUE, na.include=method!='reverse',
            g=4, 
            quant=c(.025,.05,.125,.25,.375,.5,.625,.75,.875,.95,.975),
-           nmin=0, test=FALSE,
+           nmin=if(method=='reverse') 15 else 0, test=FALSE,
            conTest=function(group,x) {
              st <- spearman2(group,x)
              list(P=st['P'], stat=st['F'],
@@ -253,8 +253,8 @@ summary.formula <-
       n <- integer(nv)
       type <- n
       nams <- names(X)
-      comp <- vector("list",nv)
-      names(comp) <- if(resp)nams[-1] else nams
+      comp <- dat <- vector("list",nv)
+      names(comp) <- names(dat) <- if(resp)nams[-1] else nams
       labels <- Units <- vector("character",nv)
       if(test) {
         testresults <- vector('list', nv)
@@ -265,7 +265,6 @@ summary.formula <-
         w <- X[[resp+i]]
         if(length(attr(w,"label"))) labels[i] <- attr(w,"label")
         if(length(attr(w,'units'))) Units[i]  <- attr(w,'units')
-        ## length added 7Jun01
         if(!is.matrix(w)) {
           if(!is.factor(w) && length(unique(w[!is.na(w)])) < continuous) 
             w <- as.factor(w)
@@ -313,6 +312,11 @@ summary.formula <-
             comp[[i]] <- matrix(unlist(qu),ncol=length(quant)+2,byrow=TRUE,
                                 dimnames=list(names(qu),
                                   c(format(quant),'Mean','SD')))
+            if(any(group.freq <= nmin))
+              dat[[i]] <-
+                lapply(split(x,g),nmin=nmin,
+                       function(x,nmin)
+                        if(length(x) <= nmin)x else NULL)
             type[i] <- 2
           }
         } else {  ## matrix: multiple choice variables
@@ -361,7 +365,8 @@ summary.formula <-
                             group.label=ylabel,
                             group.freq=group.freq,
                             labels=labels, units=Units,
-                            quant=quant, N=sum(!is.na(group)), n=n,
+                            quant=quant, data=dat,
+                            N=sum(!is.na(group)), n=n,
                             testresults=if(test)testresults else NULL,
                             call=call, formula=formula), 
                        class="summary.formula.reverse"))
@@ -721,7 +726,7 @@ plot.summary.formula.reverse <-
            pch=c(if(FALSE)183 else 16,1,2,17,15,3,4,5,0), exclude1=TRUE,
            dotfont=1, main, subtitles=TRUE,
            prtest=c('P','stat','df','name'), pdig=3, eps=.001,
-           conType=c('dot','bp'), cex.means=.5, ...) {
+           conType=c('dot','bp','raw'), cex.means=.5, ...) {
 
     obj <- x
     vnames <- match.arg(vnames)
@@ -885,7 +890,9 @@ plot.summary.formula.reverse <-
                       dotfont=dotfont[1],
                       add=j > 1)
           }
-        } else bpplt(st, xlab=nam, cex.points=cex.means)
+        } else if(conType=='bp')
+          bpplt(st, xlab=nam, cex.points=cex.means) else
+        stripChart(obj$data[[i]], xlab=nam)
         if(all(prtest != 'none')) {
           fts <- formatTestStats(test[[varNames[i]]], prtest=prtest,
                                  plotmath=.R.,
@@ -2141,5 +2148,43 @@ matrix2dataFrame <- function(x, at, restoreAll=TRUE) {
     w[[i]] <- xi
   }
   structure(w, class='data.frame', row.names=d[[1]])
+}
+
+
+stripChart <- function(x, xlim, xlab='', pch=1,
+                       cex.labels=par('cex'), cex.points=.5,
+                       lcolor=if(.R.)'gray' else par('col'), grid=FALSE) {
+
+  groups <- names(x)
+  if(missing(xlim)) xlim <- range(unlist(x),na.rm=TRUE)
+  i <- integer(0)
+
+  if(grid) {lines <- llines; points <- lpoints; segments <- lsegments}
+
+  if(.R.) plot.new()
+  mai <- omai <- par('mai')
+  on.exit(par(mai=omai))
+  mxlab <- .3+max(strwidth(groups, units='inches', cex=cex.labels))
+  mai[2] <- mxlab
+  par(mai=mai, new=TRUE)
+  
+  plot(xlim, c(.5,length(groups)+.5), xlim=xlim, xlab='', ylab='',
+       axes=FALSE, type='n')
+  box()
+  mgp.axis(1, axistitle=xlab)
+
+  if(.R.) mtext(paste(groups,''), 2, 0, at=length(groups):1,
+                adj=1, las=1, cex=cex.labels) else
+  mtext(paste(groups,''), 2, 0, at=length(groups):1,
+        adj=1, srt=0, cex=cex.labels)
+
+  y <- 0
+  abline(h = 1:length(groups), lty = 1, lwd=1, col=lcolor)
+
+  for(Y in length(groups):1) {
+    y <- y + 1
+    X <- x[[y]]
+    if(length(X)) points(X, rep(Y, length(X)), pch=pch)
+  }
 }
 

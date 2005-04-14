@@ -227,6 +227,8 @@ latex.default <-
            rowlabel=title, rowlabel.just="l", cgroup=NULL, n.cgroup=NULL,
            rgroup=NULL, n.rgroup=NULL,
            rowname, cgroup.just=rep("c",length(n.cgroup)),
+           rgroupTexCmd="bfseries", # Added by David Whiting 2005-04-14
+           labTexCmd="bfseries", # Added by David Whiting 2005-04-14
            colheads=dimnames(cx)[[2]],
            extracolheads=NULL, extracolsize='scriptsize',
            dcolumn=FALSE, numeric.dollar=!dcolumn, cdot=FALSE,
@@ -460,7 +462,8 @@ if (length(cgroup)) {
     cvbar[1] <- paste(vbar, cvbar[1], sep="")
     cvbar[-length(cvbar)] <- paste(cvbar[-length(cvbar)], vbar, sep="")
     slmc <- paste(sl,"multicolumn{",sep="")
-    labs <- paste(sl, "bf ", cgroup, sep="")
+    ## labs <- paste(sl, "bf ", cgroup, sep="") Replaced with line below
+    labs <- paste(sl, labTexCmd, " ", cgroup, sep="")  # David Whiting 2005-04-14
     if(multicol) ## SSJ 17nov03
       labs <- paste(slmc, n.cgroup, "}{", cvbar, "}{", labs, "}", sep="")
 
@@ -542,7 +545,8 @@ if (length(cgroup)) {
       rg.end   <- cumsum(n.rgroup)
       rg.start <- rg.end-n.rgroup+1
       if(!length(rgroup)) rgroup <- rep("",length(n.rgroup))
-      else rgroup <- paste("{",sl,"bf ",rgroup,"}",sep="")
+      else rgroup <- paste("{",sl, rgroupTexCmd," ",rgroup,"}",sep="") # David Whiting 2005-04-14
+      ## else rgroup <- paste("{",sl,"bf ",rgroup,"}",sep="") Replaced by line above.
       seq.rgroup <- seq(along=n.rgroup)
     }
     else {

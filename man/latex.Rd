@@ -96,6 +96,8 @@ latex(object, title=first.word(deparse(substitute(object))), \dots)
     rowlabel=title, rowlabel.just="l",
     cgroup=NULL, n.cgroup=NULL, rgroup=NULL, n.rgroup=NULL,
     rowname, cgroup.just=rep("c",length(n.cgroup)),
+    rgroupTexCmd="bfseries", 
+    labTexCmd="bfseries",
     colheads=dimnames(cx)[[2]],
     extracolheads=NULL, extracolsize='scriptsize',
     dcolumn=FALSE, numeric.dollar=!dcolumn,
@@ -222,6 +224,22 @@ is not specified, \code{n.rgroup} is just used to divide off blocks of
 rows by horizontal lines. If \code{rgroup} is given but \code{n.rgroup} is omitted,
 \code{n.rgroup} will default so that each row group contains the same number
 of rows.
+}
+\item{rgroupTexCmd}{
+a vector of character strings of LaTeX commands to format
+the \code{rgroup} labels. The default, bfseries, selects 'bold'. LaTeX
+commands should be specified without the leading backslash. Only one
+LaTeX  command can be specified per label. To combine effects define new LaTeX
+commands in the preamble,
+e.g. \code{\newcommand{\rowLabel}{\color{red}\scshape}}
+to create a command \code{rowLabel} to format the labels in red
+small-caps. If \code{length(rgroupTexCmd) < length(n.rgroups)}
+values are recycled in the normal way.
+}
+\item{labTexCmd}{
+a LaTeX command to format the \code{cgroup} labels. See
+\code{rgroupTexCmd}. Note that attempting to format each column label
+differently doesn't quite work as might be expected.
 }
 \item{na.blank}{
 Set to \code{TRUE} to use blanks rather than \code{NA} for missing values.

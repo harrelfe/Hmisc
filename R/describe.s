@@ -335,7 +335,7 @@ if(length(at$dimensions)) {
 	if(length(z)==0) next
     ct('\\vbox{', file=file, append=TRUE)
 	latex.describe.single(z, condense=condense, vname=vnames[i],
-                          file=file, append=TRUE, tabular=tabular, greek=.R.)
+                          file=file, append=TRUE, tabular=tabular, greek=greek)
     ct('\\vspace{-.5ex}\\hrule\\smallskip}\n', file=file, append=TRUE)
   }
   if(length(mv <- at$missing.vars)) {

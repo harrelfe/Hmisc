@@ -22,7 +22,11 @@ collection of functions includes all of
 Harrell's submissions to statlib other than 
 the functions in the Design and display 
 libraries.  A few of the functions do not 
-have "Help" documentation.}
+have "Help" documentation.
+
+To make Hmisc load silently, issue \code{options(Hverbose=FALSE)} before
+\code{library(Hmisc)}.
+}
 
 \section{Functions}{
 \tabular{ll}{

@@ -363,7 +363,7 @@ ct('\\end{spacing}\n', file=file, append=TRUE)
 
 latex.describe.single <- function(object, title=NULL, condense=TRUE, vname,
                                   file, append=FALSE, size='small',
-                                  tabular=TRUE, greek=.R., ...) {
+                                  tabular=TRUE, greek=TRUE, ...) {
 
 ct <- function(..., file, append=FALSE) {
   if(file=='') cat(...) else cat(..., file=file, append=append)

@@ -96,8 +96,11 @@ latex(object, title=first.word(deparse(substitute(object))), \dots)
     rowlabel=title, rowlabel.just="l",
     cgroup=NULL, n.cgroup=NULL, rgroup=NULL, n.rgroup=NULL,
     rowname, cgroup.just=rep("c",length(n.cgroup)),
-    rgroupTexCmd="bfseries", 
-    labTexCmd="bfseries",
+    cgroupTexCmd="bfseries",
+    rgroupTexCmd="bfseries",
+    rownamesTexCmd=NULL, 
+    colnamesTexCmd=NULL,
+    cellTexCmds=NULL,
     colheads=dimnames(cx)[[2]],
     extracolheads=NULL, extracolsize='scriptsize',
     dcolumn=FALSE, numeric.dollar=!dcolumn,
@@ -225,21 +228,53 @@ rows by horizontal lines. If \code{rgroup} is given but \code{n.rgroup} is omitt
 \code{n.rgroup} will default so that each row group contains the same number
 of rows.
 }
-\item{rgroupTexCmd}{
-a vector of character strings of LaTeX commands to format
-the \code{rgroup} labels. The default, bfseries, selects 'bold'. LaTeX
-commands should be specified without the leading backslash. Only one
-LaTeX  command can be specified per label. To combine effects define new LaTeX
-commands in the preamble,
-e.g. \code{\newcommand{\rowLabel}{\color{red}\scshape}}
-to create a command \code{rowLabel} to format the labels in red
-small-caps. If \code{length(rgroupTexCmd) < length(n.rgroups)}
-values are recycled in the normal way.
+\item{cgroupTexCmd}{A character string specifying a LaTeX command to be
+used to format column group labels.  The default, "bfseries", sets
+the current font to 'bold'.  It is possible to supply a vector of
+strings so that each column group label is formatted differently.
+Please note that the first item of the vector is used to format the
+title (even if a title is not used), and that there is an empty
+column between each column group. Currently the user needs to handle
+these issues.  Multiple effects can be achieved by creating custom
+LaTeX commands; for example,
+\code{\providecommand{\redscshape}{\color{red}\scshape}} creates a
+LaTeX command called \code{redscshape} that formats the text in red
+small-caps.
 }
-\item{labTexCmd}{
-a LaTeX command to format the \code{cgroup} labels. See
-\code{rgroupTexCmd}. Note that attempting to format each column label
-differently doesn't quite work as might be expected.
+\item{rgroupTexCmd}{A character string specifying a LaTeX command to be
+used to format row group labels.  The default, "bfseries", sets the
+current font to 'bold'.  A vector of strings can be supplied to
+format each row group label differently.  Normal recycling applies
+if the vector is shorter than \code{n.rgroups}.  See also
+\code{cgroupTexCmd} above regarding multiple effects.
+}
+\item{rownamesTexCmd}{A character string specifying a LaTeX
+command to be used to format rownames. The default, NULL, applies no
+command.  A vector of different commands can also be supplied.
+See also \code{cgroupTexCmd} above regarding multiple effects.
+}
+\item{colnamesTexCmd}{A character string specifying a LaTeX command to be
+used to format column labels. The default, NULL, applies no command.
+It is possible to supply a vector of strings to format each column
+label differently. If column groups are not used, the first item in
+the vector will be used to format the title. Please note that if
+column groups are used the first item of \code{cgroupTexCmd} and not
+\code{colnamesTexCmd} is used to format the title, and that there
+are empty columns between each group. The user needs to allow for
+these issues when supplying a vector of commands.  See also
+\code{cgroupTexCmd} above regarding multiple effects.
+}
+\item{cellTexCmds}{A matrix of character strings which are LaTeX
+  commands to be
+used to format each element, or cell, of the object.  The matrix
+must have the same NROW() and NCOL() as the object.  The default,
+NULL, applies no formats.  Empty strings also apply no formats, and
+one way to start might be to create a matrix of empty strings with
+\code{matrix(rep("", NROW(x) * NCOL(x)), nrow=NROW(x))} and then
+selectively change appropriate elements of the matrix.  Note that
+you might need to set \code{numeric.dollar=FALSE} (to disable math
+mode) for some effects to work. See also \code{cgroupTexCmd} above
+regarding multiple effects.
 }
 \item{na.blank}{
 Set to \code{TRUE} to use blanks rather than \code{NA} for missing values.
@@ -477,6 +512,14 @@ Department of Statistics,
 Temple University, Philadelphia, PA.
 \cr
 \code{rmh@astro.ocis.temple.edu}
+
+David R. Whiting,
+\cr
+School of Clinical Medical Sciences (Diabetes),
+\cr
+University of Newcastle upon Tyne, UK.
+\cr
+\code{david.whiting@ncl.ac.uk}
 
 
 }

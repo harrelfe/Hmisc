@@ -226,9 +226,12 @@ latex.default <-
            append=FALSE, label=title,
            rowlabel=title, rowlabel.just="l", cgroup=NULL, n.cgroup=NULL,
            rgroup=NULL, n.rgroup=NULL,
+           cgroupTexCmd="bfseries",
+           rgroupTexCmd="bfseries",
+           rownamesTexCmd=NULL, 
+           colnamesTexCmd=NULL,
+           cellTexCmds=NULL,
            rowname, cgroup.just=rep("c",length(n.cgroup)),
-           rgroupTexCmd="bfseries", # Added by David Whiting 2005-04-14
-           labTexCmd="bfseries", # Added by David Whiting 2005-04-14
            colheads=dimnames(cx)[[2]],
            extracolheads=NULL, extracolsize='scriptsize',
            dcolumn=FALSE, numeric.dollar=!dcolumn, cdot=FALSE,
@@ -289,6 +292,71 @@ if (length(cgroup)) {
     midrule <- bottomrule <- paste(sl,"hline",sep="")
   }
 
+
+
+
+  
+  ## ################ CELL AND ROWNAMES FORMATS ###################
+  ## If no formats are specified for the rownames and cells there is
+  ## nothing to do. If only one is specified then the other must
+  ## faked. But rownamesTexCmd should only be faked if rownames is
+  ## not NULL.
+
+  ## Check to make sure the dimensions of the cell formats
+  ## match the dimensions of the object to be formatted.
+  if (!is.null(cellTexCmds) &
+      !(all(dim(cx) == dim(cellTexCmds)) &
+        length(dim(cx)) == length(dim(cellTexCmds)))) {
+
+    msg <- "The dimensions of cellTexCmds must be:"
+    msg1 <- paste(dim(cx), collapse=" x ")
+    msg <- paste(msg, msg1)
+    msg <- paste(msg, ", but you gave me: ")
+    msg1 <- paste(dim(cellTexCmds), collapse=" x ")
+    msg <- paste(msg, msg1, sep="")
+    stop(msg)
+  }
+  
+  ## If there are column groups, add a blank column
+  ## of formats between the groups.
+  if (length(cgroup) & !is.null(cellTexCmds)) {
+    my.index <- cumsum(n.cgroup)
+    new.index <- NULL
+    new.col <- dim(cx)[2] + 1
+    for (i in seq(along=my.index)) new.index <- c(new.index, my.index[i], new.col)
+    new.index <- new.index[-length(new.index)]
+    cellTexCmds <- cbind(cellTexCmds, "")[, new.index]
+  }
+
+  if (!is.null(cellTexCmds) | !is.null(rownamesTexCmd)) {
+    ## LaTeX commands have been specified for either the rownames or
+    ## the cells.
+    ## Fake rownamesTexCmd if it is NULL and if rowname exists.
+    if (is.null(rownamesTexCmd) & !is.null(rowname)) rownamesTexCmd <- rep("", nr)
+    ## Fake cellTexCmds if it is NULL.
+    if (is.null(cellTexCmds)) {
+      cellTexCmds <- rep("", dim(cx)[1] * dim(cx)[2])
+      dim(cellTexCmds) <- dim(cx)
+    }
+    ## Create a combined rowname and cell format object.
+    rcellTexCmds <- cbind(rownamesTexCmd, cellTexCmds)
+    thisDim <- dim(rcellTexCmds)
+    ## Prefix the latex commands with slashes.
+    rcellTexCmds <- paste(sl, rcellTexCmds, sep="")
+    ## Remove slashes from elements where no format was specified.
+    rcellTexCmds[rcellTexCmds == sl] <- ""
+    ## Restore the dimensions of the matrix (paste loses them).
+    dim(rcellTexCmds) <- thisDim
+  } else {
+    rcellTexCmds <- NULL
+  } ############## END OF CELL AND ROWNAMES FORMATS ###############
+
+
+
+  
+
+
+  
 #if (!vbar && length(cgroup)) {
   if (length(cgroup)) {
 	last.col <- cumsum(n.cgroup)
@@ -462,8 +530,8 @@ if (length(cgroup)) {
     cvbar[1] <- paste(vbar, cvbar[1], sep="")
     cvbar[-length(cvbar)] <- paste(cvbar[-length(cvbar)], vbar, sep="")
     slmc <- paste(sl,"multicolumn{",sep="")
-    ## labs <- paste(sl, "bf ", cgroup, sep="") Replaced with line below
-    labs <- paste(sl, labTexCmd, " ", cgroup, sep="")  # David Whiting 2005-04-14
+    ##labs <- paste(sl, "bf ", cgroup, sep="") 
+    if (!is.null(cgroupTexCmd)) labs <- paste(sl, cgroupTexCmd, " ", cgroup, sep="") # DRW 12apr05.
     if(multicol) ## SSJ 17nov03
       labs <- paste(slmc, n.cgroup, "}{", cvbar, "}{", labs, "}", sep="")
 
@@ -488,6 +556,7 @@ if (length(cgroup)) {
     slmc1 <- paste(sl, "multicolumn{1}{", sep="")
 #    labs <- dimnames(cx)[[2]]   ## 28apr03 and next 5  15jul03 next 2
     labs <- colheads
+    if (!is.null(colnamesTexCmd)) labs <- paste(sl, colnamesTexCmd, " ", labs, sep="") # DRW 12apr05.
     if(length(labs)) {
       if(!length(extracolheads)) {
         heads <- get2rowHeads(labs)
@@ -544,9 +613,16 @@ if (length(cgroup)) {
     if (length(n.rgroup)) {
       rg.end   <- cumsum(n.rgroup)
       rg.start <- rg.end-n.rgroup+1
-      if(!length(rgroup)) rgroup <- rep("",length(n.rgroup))
-      else rgroup <- paste("{",sl, rgroupTexCmd," ",rgroup,"}",sep="") # David Whiting 2005-04-14
-      ## else rgroup <- paste("{",sl,"bf ",rgroup,"}",sep="") Replaced by line above.
+      if(!length(rgroup)) {
+        rgroup <- rep("",length(n.rgroup))
+      } else {
+        if (!is.null(rgroupTexCmd)) { # DRW 12apr05. This if block.
+          rgroup <- paste("{",sl, rgroupTexCmd, " ", rgroup,"}",sep="") 
+        } else {
+          rgroup <- paste("{", rgroup,"}",sep="") 
+        }
+      }
+      ##else rgroup <- paste("{",sl,"bf ",rgroup,"}",sep="") 
       seq.rgroup <- seq(along=n.rgroup)
     }
     else {
@@ -568,6 +644,10 @@ if (length(cgroup)) {
         ## eol was sl,sl 13dec02
         linecnt <- linecnt+1
       }
+
+      ## Write the object (and it's formatting instructions)
+      ## to the output.
+      ## Loop through the rows of the object.
       for(i in rg.start[j]:rg.end[j]) {
         if (!length(n.rgroup)) {
           if(longtable && linecnt>0 && (linecnt+1 > lines.page)) {
@@ -575,12 +655,29 @@ if (length(cgroup)) {
             linecnt <- 0						
           }
         }
-        cat(cx[i,], file=file, sep="&", append=file!='')
+
+        ## Loop through the columns of the object
+        ## write each value (and it's format if there
+        ## is one). 
+        ## DRW 12apr05. This if/else block.
+        if (!is.null(rcellTexCmds)) {
+          num.cols <- ncol(cx)
+          for (colNum in 1:num.cols) {
+            cat(rcellTexCmds[i, colNum], " ", cx[i, colNum], file=file, append=file!='')
+            if (colNum < num.cols) cat(" & ", file=file, append=file!='')
+          }
+        } else {
+          ## Original code that writes object to output.
+          cat(cx[i,], file=file, sep="&", append=file!='')
+        } 
+        
         cat(if(!ctable || i < rg.end[j]) eol,
             "\n", sep="",file=file, append=file!='')
         ## eol was sl,sl  added if( ) 13dec02
         linecnt <- linecnt+1
-      }
+      }  ## End of for loop that writes the object.
+
+      
       cat(bottomrule, "\n", sep="",file=file, append=file!='')
     }
   }

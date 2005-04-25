@@ -5,7 +5,8 @@ Title: Harrell Miscellaneous
 Author: Frank E Harrell Jr <f.harrell@vanderbilt.edu>, with
   contributions from many other users.
 Maintainer: Charles Dupont <charles.dupont@vanderbilt.edu>
-Depends: R, lattice, grid, nnet, acepack, foreign, chron
+Depends: R
+Suggests: lattice, grid, nnet, acepack, foreign, chron
 Description: The Hmisc library contains many functions useful for data
 	analysis, high-level graphics, utility operations, functions for
 	computing sample size and power, importing datasets,

@@ -964,7 +964,23 @@ NULL
 }
 
 if(!existsFunction('tempdir')) {
-  tempdir <- function() if(under.unix) '/tmp' else '/windows/temp'
+    tempdir <- function() {
+        if(.R.) {
+            if(under.unix) tmp <- sub("/[^/]*$","", tempfile())
+            else tmp <- sub("\\[^\\]*$","", tempfile())
+        }
+        else {
+            if(under.unix) {
+                tmp <- getenv("S_TMPDIR")
+                if(identical(tmp, "")) {
+                    warning("S_TMPDIR not set, using old Splus startup script?  Will use unsafe S_TMPDIR=/tmp.")
+                    tmp <- "/tmp"
+                }
+            }
+            else tmp <- "/windows/temp" 
+        }
+        tmp
+    }
 }
 
 #xedit <- function(file, header, title, delete.file=FALSE) {

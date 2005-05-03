@@ -100,6 +100,11 @@ xtype <- if(is.list(x)) 1 else if(length(dim(x))) 2 else 3
 #xtype <- if(is.list(x))1 else if(length(atx$dim))2 else 3
 ncx <- if(xtype==1) length(x) else if(xtype==2)ncol(x) else 1
 nams <- if(xtype==1) names(x) else if(xtype==2)dimnames(x)[[2]] else ''
+# Added Check to see that if the user passed col.just into format.df
+# that the length of col.just if >= ncx 29apr05
+if(!missing(col.just) && (length(col.just) < ncx)) {
+    stop('col.just needs the same number of elements as number of columns')
+}
 if(!length(nams)) nams <- rep('', ncx)  ## 19apr03
 nrx <- if(xtype==1) {
   if(length(d <- dim(x[[1]]))) d[1] else length(x[[1]])
@@ -870,7 +875,7 @@ dvi.latex <- function(object, prlog=FALSE,
   ## pre <- tempfile(); post <- tempfile()  # 1dec03
   tmp <- tempfile()
   tmptex <- paste(tmp, 'tex', sep='.')
-  infi <- readLines(fi)
+  infi <- readLines(fi, n=-1)       # Splus 7 doesn't default to read to EOF 3may05
   cat('\\documentclass{report}', sty,
       '\\begin{document}\\pagestyle{empty}', infi,
       '\\end{document}\n', file=tmptex, sep='\n')

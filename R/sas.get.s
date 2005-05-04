@@ -30,7 +30,7 @@ sas.get <- if(under.unix || .R.)
   else
     access(name,4)==0
 
-  fileShow <- if(.R.) function(x) file.show(x) else page(filename=x)
+  fileShow <- if(.R.) function(x) file.show(x) else function(x) page(filename=x)
 
   if(recode) formats <- TRUE
 

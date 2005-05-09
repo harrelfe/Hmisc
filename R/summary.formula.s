@@ -1670,7 +1670,10 @@ latex.summary.formula.cross <-
       } else names(stats)[length(stats)] <- ylab
       stats <- structure(stats, row.names=rep("",length(stats$N)),
                          class="data.frame")
-      return(latex(stats, title=title, caption=caption, rowlabel=rowlabel, 
+      if(hasArg(col.just)) {
+          return(latex(stats, title=title, caption=caption, rowlabel=rowlabel, ...))
+      }
+      else return(latex(stats, title=title, caption=caption, rowlabel=rowlabel, 
                    col.just=c("l","l",rep("r",length(stats)-2)), ...))
     }
 

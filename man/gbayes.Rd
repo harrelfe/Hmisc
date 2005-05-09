@@ -2,7 +2,6 @@
 \alias{gbayes}
 \alias{plot.gbayes}
 \alias{gbayes2}
-\alias{plot.gbayes}
 \alias{gbayesMixPredNoData}
 \alias{gbayesMixPost}
 \alias{gbayesMixPowerNP}

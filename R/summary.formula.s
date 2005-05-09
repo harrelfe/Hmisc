@@ -314,7 +314,7 @@ summary.formula <-
                                   c(format(quant),'Mean','SD')))
             if(any(group.freq <= nmin))
               dat[[i]] <-
-                lapply(split(x,g),nmin=nmin,
+                lapply(split(w,g),nmin=nmin,
                        function(x,nmin)
                         if(length(x) <= nmin)x else NULL)
             type[i] <- 2

@@ -1,4 +1,3 @@
-#useless comment
 Make latex use options(latexcmd, dvipscmd)
 
 See if R mailbox has generalization of var.inner in

@@ -1452,7 +1452,7 @@ sasxport.get <- function(file, force.single=TRUE,
                       st <- as.character(f$START)
                       en <- as.character(f$END)
                       lab <- as.character(f$LABEL)
-                      j <- is.na(st) | is.na(en)
+                      j <- is.na(st) | is.na(en) | st=='' | en==''
                       if(any(j)) {
                         warning('NA in code in FORMAT definition; removed')
                         st <- st[!j]; en <- en[!j]; lab <- lab[!j]

@@ -399,6 +399,7 @@ if (length(cgroup)) {
 	nc <- ncol(cx)
   }
 
+  cline <- NULL
   if (length(rowname)) {
     cx <- cbind(rowname, cx)
     dimnames(cx)[[2]][1] <- rowlabel
@@ -407,10 +408,7 @@ if (length(cgroup)) {
       extracolheads <- c('', extracolheads)  ## 16jun03
     
     collabel.just <- c(rowlabel.just, collabel.just)
-    if (!length(cgroup)) {
-      n.cgroup <- c(1, nc)
-      cline <- NULL
-    }
+    if (!length(cgroup)) n.cgroup <- c(1, nc)
     else {
       cgroup <- c(rowlabel, cgroup)
       dimnames(cx)[[2]][1] <- ""

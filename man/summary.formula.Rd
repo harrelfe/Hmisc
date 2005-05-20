@@ -202,7 +202,8 @@ x[i,j]
      middle.bold=FALSE, outer.size='scriptsize',
      caption, rowlabel='', insert.bottom=TRUE, dcolumn=FALSE,
      prtest=c('P','stat','df','name'),
-     prmsd=FALSE, msdsize=NULL, long=FALSE, pdig=3, eps=.001, \dots)
+     prmsd=FALSE, msdsize=NULL, long=FALSE, pdig=3, eps=.001,
+     auxCol=NULL, \dots)
 
 
 \method{summary}{formula}(formula, data, subset, na.action, fun,
@@ -527,6 +528,16 @@ print any tests.  This applies to \code{print}, \code{latex}, and
 \item{eps}{
   P-values less than \code{eps} will be printed as \code{< eps}.  See
   \code{format.pval}.
+}
+\item{auxCol}{
+  an optional auxiliary column of information, right justified, to add
+  in front of statistics typeset by
+  \code{latex.summary.formula.reverse}.  This argument is a list with a
+  single element that has a name specifying the column heading.  If this
+  name includes a newline character, the portions of the string before
+  and after the newline form respectively the main heading and the
+  subheading (typically set in smaller font), respectively.  See the
+  \code{extracolheads} argument to \code{latex.default}.
   }
 \item{what}{
 for \code{method="reverse"} specifies whether proportions or percentages

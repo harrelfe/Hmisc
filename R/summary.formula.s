@@ -1430,7 +1430,7 @@ latex.summary.formula.reverse <-
 		   caption, rowlabel="",
            insert.bottom=TRUE, dcolumn=FALSE,
            prtest=c('P','stat','df','name'), prmsd=FALSE, msdsize=NULL,
-           long=FALSE, pdig=3, eps=.001, ...) {
+           long=FALSE, pdig=3, eps=.001, auxCol=NULL, ...) {
     x      <- object
     npct   <- match.arg(npct)
     vnames <- match.arg(vnames)
@@ -1543,6 +1543,18 @@ latex.summary.formula.reverse <-
                        paste(paste('$^{',1:length(testUsed),'}$',testUsed,
                                    ' test',sep=''),collapse='; '))
       ## added rowname=lab 12aug02  added '\n\n' 4mar03 for ctable=T
+    }
+    if(length(auxCol)) {
+      if(length(auxCol[[1]]) != nrow(cstats))
+        stop(paste('length of auxCol (',length(auxCol[[1]]),
+                   ') is not equal to number or rows in table (',
+                   nrow(cstats),').', sep=''))
+      cstats <- cbind(auxCol[[1]], cstats)
+      nax <- names(auxCol)
+      heads <- get2rowHeads(nax)
+      names(cstats)[1] <- heads[[1]]
+      if(length(col.just)) col.just <- c('r', col.just)
+      if(length(extracolheads)) extracolheads <- c(heads[2], extracolheads)
     }
     latex.default(cstats, title=title, caption=caption, rowlabel=rowlabel,
                   col.just=col.just, numeric.dollar=FALSE, 

@@ -2,7 +2,8 @@ hist.data.frame <- function(x, n.unique=3, nclass="compute", na.big=FALSE,
 							rugs=FALSE, mtitl=FALSE, ...) {
   oldmf  <- par('mfrow')
   oldoma <- par('oma')
-  on.exit(par(mfrow=oldmf, oma=oldoma))
+  oldmar <- par('mar')  # resetting mfrow causes a new mar
+  on.exit(par(mfrow=oldmf, oma=oldoma, mar=oldmar))
   mf <- oldmf
   if(length(mf)==0) mf <- c(1,1)
   automf <- FALSE  ## 22sep02
@@ -18,9 +19,16 @@ hist.data.frame <- function(x, n.unique=3, nclass="compute", na.big=FALSE,
   j <- 0
   for(v in x) {
 	j <- j+1
-	if(!is.character(v)) {
-      type <- if(inherits(v,'factor'))'factor' else
-      if(inherits(v,'dates'))'date' else 'none'
+    type <- if(is.character(v) || is.factor(v)) 'cat' else
+     if(inherits(v,'dates')) 'date' else 'none'
+    lab <- attr(v,"label")
+    lab <- if(length(lab) && nchar(lab) > 35) nam[j] else
+     label(v, units=TRUE, plot=type!='cat', default=nam[j])
+    if(type=='cat') {
+      tab <- -sort(-table(v))
+      dotchart2(tab, xlab=paste('Frequencies for', lab), reset.par=TRUE)
+    } else {
+      type <- if(inherits(v,'dates')) 'date' else 'none'
       if(type!='none') v <- oldUnclass(v)
       w <- v[!is.na(v)]
       n <- length(w)
@@ -28,11 +36,6 @@ hist.data.frame <- function(x, n.unique=3, nclass="compute", na.big=FALSE,
         i <- i+1
         if(is.numeric(nclass)) nc <- nclass else
         if(nclass=="compute") nc <- max(2,trunc(min(n/10,25*logb(n,10))/2))
-        lab <- attr(v,"label")
-        lab <- if(length(lab) && nchar(lab) > 35) nam[j] else
-        label(v, units=TRUE, plot=TRUE, default=nam[j])
-        ##	nl <- if(is.null(lab)) 0 else nchar(lab)  26sep02
-        ##	if(nl==0 | nl>20)lab <- nam[j]
         if(.R.) {
           if(nclass!="default")hist(v,nclass=nc,xlab=lab,
                axes=type!='date',main='')

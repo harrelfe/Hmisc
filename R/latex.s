@@ -936,7 +936,7 @@ dvigv.latex <- function(object, ...) invisible(dvigv.dvi(dvi.latex(object),...))
 
 html <- function(object, ...) UseMethod('html')
                  
-html.latex <- function(object, ...) {
+html.latex <- function(object, file, ...) {
   fi  <- object$file
   sty <- object$style
   
@@ -953,11 +953,28 @@ html.latex <- function(object, ...) {
   ## 17dec02
   ##  unlink(c(pre,post))
   sc <- if(under.unix)';' else '&'  # 7feb03
-  sys(paste('cd ',dQuote(tempdir()),sc,
-            ' hevea ',dQuote(tmptex), sep=''))
+
+  ## Create system call to hevea to convert temporary latex file to html.
+  cmd <- if(missing(file)) {
+    paste(optionsCmds('hevea'), dQuote(tmptex))
+  }else {
+    paste(optionsCmds('hevea'), '-o', file, dQuote(tmptex))
+  }
+    
+  ## perform system call
+  sys(cmd)
   ## 24nov03 dQuote
-  fi <- paste(tmp,'html',sep='.')
-  structure(list(file=fi), class='html')
+
+  ## Check to see if .html tag exist and add it if
+  ## if does not
+  if(missing(file)) {
+    file <- paste(tmp,'html',sep='.')
+  } else {
+    if(!length(grep(".*\\.html", file))) {
+      file <- paste(file, 'html', sep='.')
+    }
+  }
+  structure(list(file=file), class='html')
 }
 
 html.data.frame <-

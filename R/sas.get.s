@@ -1449,10 +1449,15 @@ sasxport.get <- function(file, force.single=TRUE,
     finfo <- split(finfo[c('START','END','LABEL')], fmtname)
     finfo <- lapply(finfo,
                     function(f) {
-                      st <- as.character(f$START)
-                      en <- as.character(f$END)
-                      lab <- as.character(f$LABEL)
-                      j <- is.na(st) | is.na(en) | st=='' | en==''
+                      rb <- function(a) {  # remove leading + trailing blanks
+                        a <- sub('[[:space:]]+$', '', as.character(a))
+                        sub('^[[:space:]]+', '', a)
+                      }
+                      st <- rb(f$START)
+                      en <- rb(f$END)
+                      lab <- rb(f$LABEL)
+                      j <- is.na(st) | is.na(en) |
+                       st %in% c('','.','NA') | en %in% c('','.','NA')
                       if(any(j)) {
                         warning('NA in code in FORMAT definition; removed')
                         st <- st[!j]; en <- en[!j]; lab <- lab[!j]

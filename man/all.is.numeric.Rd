@@ -7,12 +7,14 @@ vector are legal numeric values, or optionally converts the vector to a
 numeric vector.
 }
 \usage{
-all.is.numeric(x, what = c("test", "vector"))
+all.is.numeric(x, what = c("test", "vector"), extras=c('.','NA'))
 }
 \arguments{
   \item{x}{a character vector}
   \item{what}{specify \code{what="vector"} to return a numeric vector if
-  it passes the test, or the original character vector otherwise}
+	it passes the test, or the original character vector otherwise}
+  \item{extras}{a vector of character strings to count as numeric
+	values, other than \code{""} and \code{" "}.}
 }
 \value{a logical value if \code{what="test"} or a vector otherwise}
 \author{Frank Harrell}
@@ -22,5 +24,6 @@ all.is.numeric(c('1','1.2','3'))
 all.is.numeric(c('1','1.2','3a'))
 all.is.numeric(c('1','1.2','3'),'vector')
 all.is.numeric(c('1','1.2','3a'),'vector')
+all.is.numeric(c('1','','.'),'vector')
 }
 \keyword{character}

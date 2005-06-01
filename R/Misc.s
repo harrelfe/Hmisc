@@ -232,7 +232,9 @@ all.is.numeric <- function(x, what=c('test','vector'), extras=c('.','NA')) {
   old <- options(warn=-1)
   on.exit(options(old))
 #  .Options$warn <- -1  6Aug00
-  xs <- x[x %nin% c('',' ',extras)]
+  x <- sub('[[:space:]]+$', '', x)
+  x <- sub('^[[:space:]]+', '', x)
+  xs <- x[x %nin% c('',extras)]
   isnum <- !any(is.na(as.numeric(xs)))
   if(what=='test') isnum else if(isnum) as.numeric(x) else x
 }

@@ -178,8 +178,8 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
     }
     loandhi <- x.unique[c(1:5,(n.unique-4):n.unique)]
     fval <-
-      if(isdot) {
-        formatDateTime(oldUnclass(loandhi), atx, !timeUsed)
+      if(isdot && (class(loandhi) %nin% 'timeDate')) {
+        formatDateTime(oldUnclass(loandhi), at=atx, roundDay=!timeUsed)
       } else {
         format(format(loandhi), ...)  # inner format 21apr04
       }

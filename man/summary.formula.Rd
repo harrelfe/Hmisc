@@ -537,7 +537,9 @@ print any tests.  This applies to \code{print}, \code{latex}, and
   name includes a newline character, the portions of the string before
   and after the newline form respectively the main heading and the
   subheading (typically set in smaller font), respectively.  See the
-  \code{extracolheads} argument to \code{latex.default}.
+  \code{extracolheads} argument to \code{latex.default}.  \code{auxCol}
+  is filled with blanks when a variable being summarized takes up more
+  than one row in the output.  This happens with categorical variables.
   }
 \item{what}{
 for \code{method="reverse"} specifies whether proportions or percentages

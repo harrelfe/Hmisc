@@ -1464,9 +1464,10 @@ latex.summary.formula.reverse <-
     
     bld <- if(middle.bold) '\\bf ' else ''
     cstats <- NULL
-    testUsed <- character(0)
+    testUsed <- auxc <- character(0)
 
     for(i in 1:nv) {
+      if(length(auxCol)) auxc <- c(auxc, auxCol[[1]][i])
       nn <- c(nn, n[i])   ## 12aug02
       nam <- if(vnames=="names") nams[i] else labels[i]
       if(prUnits && nchar(Units[i]) > 0)
@@ -1489,9 +1490,10 @@ latex.summary.formula.reverse <-
                               pdig=pdig, eps=eps, footnoteTest=gt1.test)
                               
       cstats <- rbind(cstats, cs)
+      if(length(auxc) && nrow(cstats) > 1) auxc <- c(auxc, rep(NA, nrow(cs)-1))
     }
 
-        lab <- dimnames(cstats)[[1]]
+    lab <- dimnames(cstats)[[1]]
     gl <- names(x$group.freq)
     ##gl <- if(length(gl)) paste(gl, " $(N=",x$group.freq,")$",sep="") else " "
     ## Thanks: Eran Bellin <ebellin@montefiore.org>   3Aug01
@@ -1544,12 +1546,14 @@ latex.summary.formula.reverse <-
                                    ' test',sep=''),collapse='; '))
       ## added rowname=lab 12aug02  added '\n\n' 4mar03 for ctable=T
     }
-    if(length(auxCol)) {
-      if(length(auxCol[[1]]) != nrow(cstats))
+    if(length(auxc)) {
+      if(length(auxc) != nrow(cstats))
         stop(paste('length of auxCol (',length(auxCol[[1]]),
-                   ') is not equal to number or rows in table (',
-                   nrow(cstats),').', sep=''))
-      cstats <- cbind(auxCol[[1]], cstats)
+                   ') is not equal to number or variables in table (',
+                   nv,').', sep=''))
+      auxcc <- format(auxc)
+      auxcc[is.na(auxc)] <- ''
+      cstats <- cbind(auxcc, cstats)
       nax <- names(auxCol)
       heads <- get2rowHeads(nax)
       names(cstats)[1] <- heads[[1]]

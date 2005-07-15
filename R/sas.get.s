@@ -767,9 +767,10 @@ importConvertDateTime <-
   if(input != 'sas' && type != 'date')
     stop('only date variables are support for spss, dataload')
 		
-  if(.R.) {
+ if(.R.) {
     adjdays <- c(sas=3653, spss=140697, dataload=135080)[input]
    ## 1970-1-1 minus 1960-1-1, 1584-10-14, or 1600-3-1
+   if(input=='spss') x <- x/86400
 
     switch(type,
            date = structure(x - adjdays, class='Date'),

@@ -86,11 +86,19 @@ spearman2.default <- function(x, y, p=1, minlev=0,
   
   n <- sum(s)
   ## 28Apr99:
+  ## If number of non-NA values is less then 3 then return a NA
+  ## value.
   if(n < 3)
     return(c(rho2=NA,F=NA,df1=0,df2=n,P=NA,n=n,'Adjusted rho2'=NA))
-  
+
+  ## Remove NAs from x and y
   x <- x[s]; y <- y[s]
+
+  ## Find the number of unique values in x
   u <- length(unique(x))
+
+  ## If is a factor and unique values are greater then 2 then find the
+  ## lm.fit.qr.bare without an intercept.
   if(is.category(x) && u > 2) {
     if(minlev > 0) {
       x <- combine.levels(x, minlev)

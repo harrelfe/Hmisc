@@ -683,8 +683,6 @@ latex.default <-
     
     latex.end <- paste(if(caption.loc=='bottom' && !missing(caption))
                          paste(caption, sl,sl,"\n",sep=""),  ## 3oct03
-                       if(length(insert.bottom))
-                         insert.bottom,
                        paste(sl,"end{longtable}\n", sep=""),
                        if(length(size))
                          '}',
@@ -786,8 +784,15 @@ latex.default <-
           sep="",file=file, append=file!='')
       cat(midrule, "\n", sep="",file=file, append=file!='')
       cat(labs, file=file, sep="&", append=file!='')
-      cat(sl,sl," ",midrule, "\n",sl,"endhead",midrule,sl,"endfoot\n",
-          sep="",file=file, append=file!='')
+      cat(sl, sl, " ", midrule, "\n", sl, "endhead", midrule, "\n",
+          sep="", file=file, append=file!='')
+      if(length(insert.bottom)) {
+        cat(sl, 'multicolumn{', nc, '}{l}{', sl, "parbox[t]", sl, 'LTcapwidth{',
+            insert.bottom, '}}', sl, sl, '\n',
+            sep="", file=file, append=file!='')
+      }
+    
+      cat(sl,"endfoot\n", sep="",file=file, append=file!='')
       cat(sl,"label{", label, "}\n", sep="", file=file, append=file!='')
     }
   }

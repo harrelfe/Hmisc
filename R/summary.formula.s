@@ -1972,16 +1972,37 @@ latex.summary.formula.reverse <-
                             if(prmsd) '~~$x\\pm s$ represents $\\bar{X}\\pm 1$ SD.'
                             else '',
                             '\\\\', sep="")
-                    },
+                    } else NULL,
                     if(prn) '$N$\\ is the number of non--missing values.\\\\',
                     if(any(type==1) && npct=='numerator')
-                      'Numbers after percents are frequencies.',
+                      'Numbers after percents are frequencies.\\\\',
                     sep="\n")
+    legend <- NULL
+    if(any(type==2)) {
+      legend <- paste("\\noindent {\\", outer.size, " $a$\\ }{", bld,
+                      "$b$\\ }{\\", outer.size,
+                      " $c$\\ } represent the lower quartile $a$, the median $b$, and the upper quartile $c$\\ for continuous variables.",
+                      if(prmsd) '~~$x\\pm s$ represents $\\bar{X}\\pm 1$ SD.'
+                      else '',
+                      '\\\\\n', sep="")
+    }
+    
+    if(prn) {
+      legend <- paste(legend,
+                      '$N$\\ is the number of non--missing values.\\\\\n',
+                      sep='')
+    }
 
+    if(any(type==1) && npct=='numerator') {
+      legend <- paste(legend,
+                      'Numbers after percents are frequencies.\\\\\n',
+                      sep='')
+    }
+      
     if(length(testUsed))
-      legend <-paste(legend, '\n\n',
+      legend <-paste(legend,
                      if(length(testUsed)==1)'\\noindent Test used:'
-                     else 'Tests used:',
+                     else '\\indent Tests used:',
                      if(length(testUsed)==1) paste(testUsed,'test')
                      else
                        paste(paste('$^{',1:length(testUsed),'}$',testUsed,

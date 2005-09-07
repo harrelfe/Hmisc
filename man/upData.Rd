@@ -2,7 +2,6 @@
 \alias{cleanup.import}
 \alias{upData}
 \alias{exportDataStripped}
-\alias{csv.get}
 \title{
 Update a Data Frame or Cleanup a Data Frame after Importing
 }
@@ -50,12 +49,6 @@ exporting of data to other systems
 by removing attributes \code{label, imputed, format, units}, and
 \code{comment}.  It calls \code{exportData} after stripping these
 attributes.  Otherwise \code{exportData} will fail.
-
-\code{csv.get} reads comma-separated text data files, allowing optional
-translation to lower case for variable names after making them valid S
-names.  Original possibly non-legal names are taken to be variable
-labels.  Character or factor variables containing dates can be converted
-to date variables.  \code{cleanup.import} is invoked to finish the job.
 }
 \usage{
 cleanup.import(obj, labels, lowernames=FALSE, 
@@ -68,9 +61,6 @@ upData(object, \dots,
        force.single=TRUE, lowernames=FALSE, moveUnits=FALSE)
 
 exportDataStripped(data, \dots)
-
-csv.get(file, lowernames=FALSE, datevars=NULL, dateformat='\%F',
-        fixdates=c('none','year'), allow=NULL, \dots)
 }
 \arguments{
 \item{obj}{a data frame or list}
@@ -146,8 +136,7 @@ exceptional format.
 for \code{upData}, one or more expressions of the form
 \code{variable=expression}, to derive new variables or change old ones.
 For \code{exportDataStripped}, optional arguments that are passed to
-\code{exportData}.  For \code{csv.get}, arguments to pass to
-\code{read.csv}.
+\code{exportData}.
 }
 \item{rename}{
 list or named vector specifying old and new names for variables.  Variables are
@@ -175,19 +164,15 @@ redefining \code{levels} (in order) or another list (see
   in a label is enclosed in parentheses or brackets it is assumed to be
   units if \code{moveUnits=TRUE}.
 }
-\item{file}{a file name to import}
-\item{allow}{a vector of characters allowed by \R that should not be
-  converted to periods in variable names.  By default, underscores in
-  variable names are converted to periods as with \R before version 1.9.}
 }
 \value{a new data frame}
 \author{
 Frank Harrell, Vanderbilt University
 }
 \seealso{
-\code{\link{sas.get}}, \code{\link{data.frame}}, \code{\link{describe}},
-\code{\link{label}}, \code{\link{read.csv}}, \code{\link{strptime}},
-\code{\link{POSIXct}},\code{\link{Date}}
+  \code{\link{sas.get}}, \code{\link{data.frame}}, \code{\link{describe}},
+  \code{\link{label}}, \code{\link{read.csv}}, \code{\link{strptime}},
+  \code{\link{POSIXct}},\code{\link{Date}}
 }
 \examples{
 \dontrun{

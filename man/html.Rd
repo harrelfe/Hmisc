@@ -21,7 +21,7 @@ runs \code{html.data.frame}.
 }
 \usage{
 html(object, \dots)
-\method{html}{latex}(object, ...)
+\method{html}{latex}(object, file, ...)
 \method{html}{data.frame}(object,
   file=paste(first.word(deparse(substitute(object))),'html',sep='.'),
      append=FALSE, link=NULL, linkCol=1, linkType=c('href','name'), \dots)

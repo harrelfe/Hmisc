@@ -6,7 +6,7 @@
 ###  gettextf, and ngettext
 
 
-if(!exists(sprintf)) sprintf <- function(fmt, ...) {
+if(!exists("sprintf")) sprintf <- function(fmt, ...) {
   ldots <- list(...)
 
   text <- vector("character")
@@ -48,15 +48,15 @@ if(!exists(sprintf)) sprintf <- function(fmt, ...) {
   return(paste(output, text[length(text)], sep=''))
 }
 
-if(!exists(gettext)) gettext <- function(..., domain=NULL)
+if(!exists("gettext")) gettext <- function(..., domain=NULL)
     return(unlist(list(...)))
 
 
-if(!exists(gettextf)) gettextf <- function(fmt, ..., domain=NULL) {
+if(!exists("gettextf")) gettextf <- function(fmt, ..., domain=NULL) {
   return(sprintf(fmt, ...))
 }
 
-if(!exists(ngettext)) ngettext <- function(n, msg1, msg2, domain = NULL) {
+if(!exists("ngettext")) ngettext <- function(n, msg1, msg2, domain = NULL) {
   if(n == 1)
     return(msg1)
   return(msg2)

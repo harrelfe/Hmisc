@@ -1718,8 +1718,9 @@ if(.R.) {
                         st <- rb(f$START)
                         en <- rb(f$END)
                         lab <- rb(f$LABEL)
-                        j <- is.na(st) | is.na(en) |
-                        st %in% c('','.','NA') | en %in% c('','.','NA')
+                        ##j <- is.na(st) | is.na(en)
+                        ##  st %in% c('','.','NA') | en %in% c('','.','NA')
+                        j <- is.na(st) | is.na(en) | st == '' | en == ''
                         if(any(j)) {
                           warning('NA in code in FORMAT definition; removed')
                           st <- st[!j]; en <- en[!j]; lab <- lab[!j]
@@ -1897,12 +1898,15 @@ if(.R.) {
     sasnobs <- sapply(dsinfo, function(x)x$nobs[1])
     multi <- length(dsnames) > 1
     if(multi) {
-      w <- vector('list', length(dsnames)); names(w) <- dsnames
+      w <- vector('list', length(dsnames))
+      names(w) <- dsnames
     }
 
     for(a in dsnames) {
       z <- read.csv(paste(sasdir,'/',a,'.csv', sep=''),
-                    as.is=TRUE, blank.lines.skip=FALSE)
+                    as.is=TRUE, blank.lines.skip=FALSE,
+                    comment.char="")
+
       importedLength <- length(z[[1]])
       if(importedLength != sasnobs[a])
         cat('\nError: NOBS reported by SAS (',sasnobs[a],') for dataset ',

@@ -1,258 +1,132 @@
-abs.error.pred  Computes various indexes of predictive accuracy based
-                    on absolute errors, for linear models
-all.is.numeric  Check if character strings are legal numerics
-approxExtrap    Linear extrapolation
-aregImpute      Multiple imputation based on additive regression,
-                    bootstrapping, and predictive mean matching
-areg.boot       Nonparametrically estimate transformations for both
-                    sides of a multiple additive regression, and
-                    bootstrap these estimates and R^2
-ballocation     Optimum sample allocations in 2-sample proportion test
-binconf         Exact confidence limits for a proportion and more accurate
-                    (narrower!) score stat.-based Wilson interval
-                    (Rollin Brant, mod. FEH)
-bootkm          Bootstrap Kaplan-Meier survival or quantile estimates
-bpower          Approximate power of 2-sided test for 2 proportions
-                    Includes bpower.sim for exact power by simulation
-bpplot          Box-Percentile plot 
-                    (Jeffrey Banfield, umsfjban@bill.oscs.montana.edu)
-bsamsize        Sample size requirements for test of 2 proportions
-bystats         Statistics on a single variable by levels of >=1 factors
-bystats2        2-way statistics
-calltree        Calling tree of functions 
-                    (David Lubinsky, david@hoqax.att.com)
-character.table Shows numeric equivalents of all latin characters
-                    Useful for putting many special chars. in graph titles
-                    (Pierre Joyet, pierre.joyet@bluewin.ch)
-ciapower        Power of Cox interaction test
-cleanup.import  More compactly store variables in a data frame, and clean up
-                    problem data when e.g. Excel spreadsheet had a non-
-                    numeric value in a numeric column
-combine.levels  Combine infrequent levels of a categorical variable
-comment         Attach a comment attribute to an object:
-                    comment(fit) <- 'Used old data'
-                    comment(fit)   # prints comment
-confbar         Draws confidence bars on an existing plot using multiple
-                    confidence levels distinguished using color or gray scale
-contents        Print the contents (variables, labels, etc.) of a data frame
-cpower          Power of Cox 2-sample test allowing for noncompliance
-Cs              Vector of character strings from list of unquoted names
-csv.get         Enhanced importing of comma separated files labels
-cut2            Like cut with better endpoint label construction and allows
-                    construction of quantile groups or groups with given n
-datadensity     Snapshot graph of distributions of all variables in
-                    a data frame.  For continuous variables uses scat1d.
-dataRep         Quantify representation of new observations in a database
-ddmmmyy         SAS "date7" output format for a chron object
-deff            Kish design effect and intra-cluster correlation
-describe        Function to describe different classes of objects.
-                    Invoke by saying describe(object). It calls one of the
-                    following:
-describe.data.frame
-                Describe all variables in a data frame (generalization
-                    of SAS UNIVARIATE)
-describe.default
-                Describe a variable (generalization of SAS UNIVARIATE)
-do              Assists with batch analyses
-dot.chart       Dot chart for one or two classification variables
-Dotplot         Enhancement of Trellis dotplot allowing for matrix
-                    x-var., auto generation of Key function, superposition
-drawPlot        Simple mouse-driven drawing program, including a function
-                    for fitting Bezier curves
-ecdf            Empirical cumulative distribution function plot
-eip             Edit an object "in-place" (may be dangerous!), e.g.
-                    eip(sqrt) will replace the builtin sqrt function
-errbar          Plot with error bars (Charles Geyer, U. Chi., mod FEH)
-event.chart     Plot general event charts (Jack Lee, jjlee@mdanderson.org, 
-                    Ken Hess, Joel Dubin; Am Statistician 54:63-70,2000)
-event.history	Event history chart with time-dependent cov. status
-                    (Joel Dubin, joel.dubin@yale.edu)
-find.matches    Find matches (with tolerances) between columns of 2 matrices
-first.word      Find the first word in an S expression (R Heiberger)
-fit.mult.impute Fit most regression models over multiple transcan imputations,
-                    compute imputation-adjusted variances and avg. betas
-format.df       Format a matrix or data frame with much user control
-                    (R Heiberger and FE Harrell)
-ftupwr          Power of 2-sample binomial test using Fleiss, Tytun, Ury
-ftuss           Sample size for 2-sample binomial test using  "  "  "  "
-                    (Both by Dan Heitjan, dheitjan@biostats.hmc.psu.edu)
-gbayes          Bayesian posterior and predictive distributions when both
-                the prior and the likelihood are Gaussian
-getHdata        Fetch and list datasets on our web site
-gs.slide        Sets nice defaults for graph sheets for S-Plus 4.0 for
-                copying graphs into Microsoft applications
-hdquantile      Harrell-Davis nonparametric quantile estimator with s.e.
-histbackback    Back-to-back histograms (Pat Burns, Salomon Smith
-                    Barney, London, pburns@dorado.sbi.com)
-hist.data.frame Matrix of histograms for all numeric vars. in data frame
-                    Use hist.data.frame(data.frame.name)
-histSpike       Add high-resolution spike histograms or density estimates
-                    to an existing plot
-hoeffd          Hoeffding's D test (omnibus test of independence of X and Y)
-impute          Impute missing data (generic method)
-%in%            Find out which elements a are in b : a %in% b
-interaction     More flexible version of builtin function
-is.present      Tests for non-blank character values or non-NA numeric values
-james.stein     James-Stein shrinkage estimates of cell means from raw data
-km.quick        Quick computation of Kaplan-Meier estimates without strata
-labcurve        Optimally label a set of curves that have been drawn on
-                    an existing plot, on the basis of gaps between curves.
-                    Also position legends automatically at emptiest rectangle.
-label           Set or fetch a label for an S-object
-Lag             Lag a vector, padding on the left with NA or ''
-latex           Convert an S object to LaTeX (R Heiberger & FE Harrell)
-ldBands         Lan-DeMets bands for group sequential tests
-list.tree       Pretty-print the structure of any data object
-                    (Alan Zaslavsky, zaslavsk@hcp.med.harvard.edu)
-Load            Enhanced version of load
-mask            8-bit logical representation of a short integer value
-                    (Rick Becker)
-matchCases      Match each case on one continuous variable
-matxv           Fast matrix * vector, handling intercept(s) and NAs
-mem             mem() types quick summary of memory used during session
-mgp.axis        Version of axis() that uses appropriate mgp from 
-                    mgp.axis.labels and gets around bug in axis(2, ...)
-                    that causes it to assume las=1
-mgp.axis.labels
-                Used by survplot and plot in Design library (and other
-                    functions in the future) so that different spacing
-                    between tick marks and axis tick mark labels may be
-                    specified for x- and y-axes.  ps.slide, win.slide,
-                    gs.slide set up nice defaults for mgp.axis.labels.
-                    Otherwise use mgp.axis.labels('default') to set defaults.
-                    Users can set values manually using 
-                    mgp.axis.labels(x,y) where x and y are 2nd value of
-                    par('mgp') to use.  Use mgp.axis.labels(type=w) to
-                    retrieve values, where w='x', 'y', 'x and y', 'xy',
-                    to get 3 mgp values (first 3 types) or 2 mgp.axis.labels.
-minor.tick      Add minor tick marks to an existing plot
-mtitle          Add outer titles and subtitles to a multiple plot layout
-mulbar.chart    Multiple bar chart for one or two classification variables
-na.delete       Functions for handling NAs in models
-na.detail.response
-na.keep
-%nin%           Opposite of %in%
-nomiss          Return a matrix after excluding any row with an NA
-panel.bpplot    Panel function for trellis bwplot - box-percentile plots
-panel.plsmo     Panel function for trellis xyplot - uses plsmo
-pc1             Compute first prin. component and get coefficients on
-                    original scale of variables
-plotCorrPrecision  Plot precision of estimate of correlation coefficient
-plsmo           Plot smoothed x vs. y with labeling and exclusion of NAs
-                    Also allows a grouping variable and plots unsmoothed data
-popower         Power and sample size calculations for ordinal responses
-                    (two treatments, proportional odds model)
-prn             prn(expression) does print(expression) but titles the
-                    output with 'expression'.  Do prn(expression,txt) to add
-                    a heading ('txt') before the 'expression' title
-p.sunflowers    Sunflower plots (Andreas Ruckstuhl, Werner Stahel,
-                    Martin Maechler, Tim Hesterberg)
-ps.slide        Set up postcript() using nice defaults for different types
-                    of graphics media
-pstamp          Stamp a plot with date in lower right corner (pstamp())
-                    Add ,pwd=T and/or ,time=T to add current directory 
-                     name or time
-                    Put additional text for label as first argument, e.g.
-                    pstamp('Figure 1')  will draw 'Figure 1  date'
-putKey          Different way to use key()
-putKeyEmpty     Put key at most empty part of existing plot
-rcorr           Pearson or Spearman correlation matrix with pairwise deletion
-                    of missing data
-rcorr.cens      Somers' Dyx rank correlation with censored data
-rcorrp.cens     Assess difference in concordance for paired predictors
-rcspline.eval   Evaluate restricted cubic spline design matrix
-rcspline.plot   Plot spline fit with nonparametric smooth and grouped estimates
-rcspline.restate
-                Restate restricted cubic spline in unrestricted form, and
-                    create TeX expression to print the fitted function
-recode          Recodes variables
-reorder.factor  Reorder levels of factor var. by values of another var.
-reShape         Reshape a matrix into 3 vectors, reshape serial data
-rm.boot         Bootstrap spline fit to repeated measurements model,
-                    with simultaneous confidence region - least
-                    squares using spline function in time
-rMultinom       Generate multinomial random variables with varying prob.
-samplesize.bin  Sample size for 2-sample binomial problem
-                    (Rick Chappell, chappell@stat.wisc.edu)
-sas.get         Convert SAS dataset to S data frame
-sasxport.get    Enhanced importing of SAS transport dataset in R
-Save            Enhanced version of save
-scat1d          Add 1-dimensional scatterplot to an axis of an existing plot
-                    (like bar-codes, FEH/Martin Maechler, 
-                    maechler@stat.math.ethz.ch/Jens Oehlschlaegel-Akiyoshi,
-                    oehl@psyres-stuttgart.de)
-score.binary    Construct a score from a series of binary variables or
-                    expressions
-sedit           A set of character handling functions written entirely
-                    in S.  sedit() does much of what the UNIX sed
-                    program does.  Other functions included are
-                    substring.location, substring<-, replace.string.wild,
-                    and functions to check if a string is numeric or
-                    contains only the digits 0-9
-setpdf          Adobe PDF graphics setup for including graphics in books
-                    and reports with nice defaults, minimal wasted space
-setps           Postscript graphics setup for including graphics in books
-                    and reports with nice defaults, minimal wasted space
-                    Internally uses psfig function by
-                    Antonio Possolo (antonio@atc.boeing.com).
-                    setps works with Ghostscript to convert .ps to .pdf
-setTrellis      Set Trellis graphics to use blank conditioning panel strips,
-                    line thickness 1 for dot plot reference lines: 
-                    setTrellis(); 3 optional arguments
-show.col        Show colors corresponding to col=0,1,...,99
-show.pch        Show all plotting characters specified by pch=.
-                    Just type show.pch() to draw the table on the 
-                    current device.  
-showPsfrag      Use LaTeX to compile, and dvips and ghostview to
-                   display a postscript graphic containing psfrag strings
-solvet          Version of solve with argument tol passed to qr
-somers2         Somers' rank correlation and c-index for binary y
-spearman        Spearman rank correlation coefficient  spearman(x,y)
-spearman.test   Spearman 1 d.f. and 2 d.f. rank correlation test
-spearman2       Spearman multiple d.f. rho^2, adjusted rho^2, Wilcoxon-Kruskal-
-                    Wallis test, for multiple predictors
-spower          Simulate power of 2-sample test for survival under
-                    complex conditions
-                    Also contains the Gompertz2,Weibull2,Lognorm2 functions.
-spss.get        Enhanced importing of SPSS files using R's read.spss function
-src             src(name) = source("name.s") with memory
-store           store an object permanently (easy interface to assign function)
-strmatch        Shortest unique identifier match 
-                    (Terry Therneau, therneau@mayo.edu)
-substi          Substitute one var for another when observations NA
-summarize       Generate a data frame containing stratified summary
-                    statistics.  Useful for passing to trellis.
-summary.formula General table making and plotting functions for summarizing
-                    data
-symbol.freq     X-Y Frequency plot with circles' area prop. to frequency
-sys             Execute unix() or dos() depending on what's running
-tex             Enclose a string with the correct syntax for using
-                   with the LaTeX psfrag package, for postscript graphics
-transace        ace() packaged for easily automatically transforming all
-                    variables in a matrix
-transcan        automatic transformation and imputation of NAs for a
-                    series of predictor variables
-trap.rule       Area under curve defined by arbitrary x and y vectors,
-                using trapezoidal rule
-trellis.strip.blank
-                To make the strip titles in trellis more visible, you can 
-                    make the backgrounds blank by saying trellis.strip.blank().
-                    Use before opening the graphics device.
-t.test.cluster  2-sample t-test for cluster-randomized observations
-uncbind         Form individual variables from a matrix
-units           Set or fetch "units" attribute - units of measurement for var.
-upData          Update a data frame (change names, labels, remove vars, etc.)
-varclus         Graph hierarchical clustering of variables using squared
-                Pearson or Spearman correlations or Hoeffding D as similarities
-                Also includes the naclus function for examining similarities in
-                patterns of missing values across variables.
-xy.group        Compute mean x vs. function of y by groups of x
-xYplot          Like trellis xyplot but supports error bars and multiple
-                    response variables that are connected as separate lines
-whichClosePW    Weighted sampling of close elements in a vector
-whichClosest    Find the closest element in a vector
-wtd.mean, wtd.var, wtd.quantile, wtd.ecdf, wtd.table, wtd.rank,
-wtd.loess.noiter, num.denom.setup
-                Set of function for obtaining weighted estimates
-zoom            Zoom in on any graphical display
-                    (Bill Dunlap, bill@statsci.com)
+abs.error.pred          Indexes of Absolute Prediction Error for Linear
+                        Models
+all.is.numeric          Check if All Elements in Character Vector are
+                        Numeric
+approxExtrap            Linear Extrapolation
+aregImpute              Multiple Imputation using Additive Regression,
+                        Bootstrapping, and Predictive Mean Matching
+binconf                 Confidence Intervals for Binomial Probabilities
+bootkm                  Bootstrap Kaplan-Meier Estimates
+bpower                  Power and Sample Size for Two-Sample Binomial
+                        Test
+bpplot                  Box-percentile plots
+bystats                 Statistics by Categories
+ciapower                Power of Interaction Test for Exponential
+                        Survival
+confbar                 Miscellaneous Functions
+contents                Metadata for a Data Frame
+cpower                  Power of Cox/log-rank Two-Sample Test
+Cs                      Character strings from unquoted names
+csv.get                 Read Comma-Separated Text Data Files
+cut2                    Cut a Numeric Variable into Intervals
+data.frame.create.modify.check
+                        Tips for Creating, Modifying, and Checking Data
+                        Frames
+dataRep                 Representativeness of Observations in a Data
+                        Set
+deff                    Design Effect and Intra-cluster Correlation
+describe                Concise Statistical Description of a Vector,
+                        Matrix, Data Frame, or Formula
+dotchart2               Enhanced Dot Chart
+dropUnusedLevels        Create Temporary Factor Subsetting Function
+ecdf                    Empirical Cumulative Distribution Plot
+eip                     Edit In Place
+errbar                  Plot Error Bars
+event.chart             Flexible Event Chart for Time-to-Event Data
+event.history           Produces event.history graph for survival data
+find.matches            Find Close Matches
+first.word              First Word in a String or Expression
+format.df               Format a Data Frame or Matrix for LaTeX or HTML
+gbayes                  Gaussian Bayesian Posterior and Predictive
+                        Distributions
+getHdata                Download and Install Datasets for Hmisc,
+                        Design, and Statistical Modeling
+hdquantile              Harrell-Davis Distribution-Free Quantile
+                        Estimator
+histbackback            Back to Back Histograms
+hist.data.frame         Histograms for Variables in a Data Frame
+hoeffd                  Matrix of Hoeffding's D Statistics
+html                    Convert an S object to HTML
+impute                  Generic Functions and Methods for Imputation
+labcurve                Label Curves, Make Keys, and Interactively Draw
+                        Points and Curves
+label                   Label Attribute of an Object
+Lag                     Lag a Numeric, Character, or Factor Vector
+latex                   Convert an S object to LaTeX, and Related
+                        Utilities
+ldBands                 Group Sequential Boundaries using the
+                        Lan-DeMets Approach
+list.tree               Pretty-print the Structure of a Data Object
+mgp.axis                Draw Axes With Side-Specific mgp Parameters
+minor.tick              Minor Tick Marks
+mtitle                  Margin Titles
+na.delete               Row-wise Deletion na.action
+na.detail.response      Detailed Response Variable Information
+na.keep                 Do-nothing na.action
+Overview                Overview of Hmisc Library
+panel.bpplot            Box-Percentile Panel Function for Trellis
+pc1                     First Principal Component
+plotCorrPrecision       Plot Precision of Estimate of Pearson
+                        Correlation Coefficient
+plsmo                   Plot smoothed estimates
+popower                 Power and Sample Size for Ordinal Response
+print.char.matrix       Function to print a matrix with stacked cells
+prn                     Print and Object with its Name
+ps.slide                Postscript and Adobe PDF Setup for 35mm Slides
+                        and Other Formats
+pstamp                  Date/Time/Directory Stamp the Current Plot
+rcorr                   Matrix of Correlations and Generalized Spearman
+                        Rank Correlation
+rcorr.cens              Rank Correlation for Censored Data
+rcorrp.cens             Rank Correlation for Paired Predictors with a
+                        Censored Response
+rcspline.eval           Restricted Cubic Spline Design Matrix
+rcspline.plot           Plot Restricted Cubic Spline Function
+rcspline.restate        Re-state Restricted Cubic Spline Function
+reorder.factor          Reorder Factor Levels
+reShape                 Reshape Matrices and Serial Data
+rlegend                 Special Version of legend for R
+rm.boot                 Bootstrap Repeated Measurements Model
+rMultinom               Generate Multinomial Random Variables with
+                        Varying Probabilities
+samplesize.bin          Sample Size for 2-sample Binomial
+sas.get                 Convert a SAS Dataset to an S Data Frame
+sasxport.get            Enhanced Importing of SAS Transport Files using
+                        read.xport
+Save                    Faciliate Use of save and load to Remote
+                        Directories
+scat1d                  One-Dimensional Scatter Diagram, Spike
+                        Histogram, or Density
+score.binary            Score a Series of Binary Variables
+sedit                   Character String Editing and Miscellaneous
+                        Character Handling Functions
+show.pch                Display Colors, Plotting Symbols, and Symbol
+                        Numeric Equivalents
+smean.sd                Compute Summary Statistics on a Vector
+solvet                  solve Function with tol argument
+somers2                 Somers' Dxy Rank Correlation
+spower                  Simulate Power of 2-Sample Test for Survival
+                        under Complex Conditions
+spss.get                Enhanced Importing of SPSS Files
+src                     Source a File from the Current Working
+                        Directory
+store                   Store an Object Permanently
+summarize               Summarize Scalars or Matrices by
+                        Cross-Classification
+summary.formula         Summarize Data for Making Tables and Plots
+symbol.freq             Graphic Representation of a Frequency Table
+sys                     Run Unix or Dos Depending on System
+transace                Additive Regression and Transformations using
+                        ace or avas
+transcan                Transformations/Imputations using Canonical
+                        Variates
+translate               Translate Vector or Matrix of Text Strings
+t.test.cluster          t-test for Clustered Data
+units                   Units Attribute of a Vector
+upData                  Update a Data Frame or Cleanup a Data Frame
+                        after Importing
+varclus                 Variable Clustering
+wtd.mean                Weighted Statistical Estimates
+xy.group                Mean x vs. function of y in groups of x
+xYplot                  xyplot and dotplot with Matrix Variables to
+                        Plot Error Bars and Bands

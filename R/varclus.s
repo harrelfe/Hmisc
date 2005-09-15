@@ -123,7 +123,7 @@ print.varclus <- function(x, abbrev=FALSE, ...)
     lab <- abbreviate(lab)
 
   dimnames(k) <- list(lab,lab)
-  print.matrix(round(k, 2))
+  print.default(round(k, 2))
   n <- x$n
   if(length(n)) {
     if(length(n)==1)

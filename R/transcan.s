@@ -783,7 +783,7 @@ print.transcan <- function(x, long=FALSE, ...)
   dput(cal); cat("\n")
   if(length(trans)) {
     if(long) print(oldUnclass(x))
-    else print.matrix(trans)
+    else print.default(trans)
   }
 
   invisible()

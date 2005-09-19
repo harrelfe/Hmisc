@@ -1,6 +1,8 @@
 bystats <- function(y, ..., fun, nmiss, subset)
 {
-  x <- interaction(..., drop=TRUE, sep=" ", left=TRUE)
+  ## Fri, 16 Sep 2005 - Shawn@ori.org removed left argument to
+  ## interaction
+  x <- interaction(..., drop=TRUE, sep=" ")
   l <- levels(x)
   if(any(is.na(x))) {
     l <- c(l, "NA")

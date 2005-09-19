@@ -1036,7 +1036,7 @@ impute.transcan <-
 
 predict.transcan <- function(object, newdata=NULL, iter.max=50, eps=.01, 
                              curtail=TRUE, type=c("transformed","original"),
-                             inverse, tolInverse, ...)
+                             inverse, tolInverse, check=FALSE, ...)
 {
   type <- match.arg(type)
   
@@ -1048,6 +1048,7 @@ predict.transcan <- function(object, newdata=NULL, iter.max=50, eps=.01,
   ranges <- object$ranges
   scale  <- object$scale
   imp.con<- object$imp.con
+  rhsImp <- object$rhsImp
   trantab<- object$trantab
   categorical <- object$categorical
   formula <- object$formula
@@ -1098,8 +1099,8 @@ predict.transcan <- function(object, newdata=NULL, iter.max=50, eps=.01,
 
   ##only 1 iteration needed if no NAs   (imp.con)
   xt <- newdata
-  nam <- dimnames(object)[[2]]
-  if(ncol(object)!=p)
+  nam <- dimnames(ranges)[[2]]
+  if(ncol(ranges)!=p)
     stop("wrong number of columns in newdata")
 
   if(is.null(dimnames(xt)[[2]]))

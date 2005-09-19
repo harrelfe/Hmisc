@@ -1304,7 +1304,6 @@ upData <- function(object, ...,
                    force.single=TRUE, lowernames=FALSE,
                    moveUnits=FALSE)
 {
-  no <- names(object)
   n  <- nrow(object)
   if(!length(n)) {
     x <- object[[1]]
@@ -1316,7 +1315,8 @@ upData <- function(object, ...,
   rnames <- row.names(object)
 
   if(lowernames)
-    names(obj) <- casefold(nam)
+    names(object) <- casefold(names(object))
+  no <- names(object)
 
   cat('Input object size:\t',object.size(object),'bytes;\t',
       length(no),'variables\n')

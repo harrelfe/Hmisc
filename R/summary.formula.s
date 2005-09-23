@@ -1483,7 +1483,8 @@ print.summary.formula.reverse <-
           else NULL
 
     if(type[i]==1 || type[i]==3) {
-      cs <- formatCats(stats[[i]], nam, tr, type[i], x$group.freq,
+      cs <- formatCats(stats[[i]], nam, tr, type[i],
+                       if(length(x$group.freq)) x$group.freq else x$n,
                        npct, pctdig, exclude1, long, prtest,
                        pdig=pdig, eps=eps)
       nn <- c(nn, rep(NA, nrow(cs)-1))
@@ -1567,9 +1568,9 @@ formatCats <- function(tab, nam, tr, type, group.freq,
   }
 
   denom <- if(type==1) apply(tab, 2, sum)
-           else group.freq ## 17Jan99
+           else group.freq
 
-  pct <- 100*sweep(tab, 2, denom, FUN='/')
+  pct <- 100*(if(ncol(tab) > 1)sweep(tab, 2, denom, FUN='/') else tab/denom)
   cpct <- paste(format(round(pct, pctdig)),
                 if(latex)"\\%"
                 else "%",
@@ -1902,7 +1903,8 @@ latex.summary.formula.reverse <-
       testUsed <- unique(c(testUsed, tr$testname))
 
     if(type[i]==1 || type[i]==3) {
-      cs <- formatCats(stats[[i]], nam, tr, type[i], x$group.freq,
+      cs <- formatCats(stats[[i]], nam, tr, type[i],
+                       if(length(x$group.freq)) x$group.freq else x$n,
                        npct, pctdig, exclude1, long, prtest,
                        latex=TRUE, testUsed=testUsed,
                        npct.size=npct.size,

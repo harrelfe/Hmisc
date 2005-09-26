@@ -1484,7 +1484,7 @@ print.summary.formula.reverse <-
 
     if(type[i]==1 || type[i]==3) {
       cs <- formatCats(stats[[i]], nam, tr, type[i],
-                       if(length(x$group.freq)) x$group.freq else x$n,
+                       if(length(x$group.freq)) x$group.freq else x$n[i],
                        npct, pctdig, exclude1, long, prtest,
                        pdig=pdig, eps=eps)
       nn <- c(nn, rep(NA, nrow(cs)-1))
@@ -1904,7 +1904,7 @@ latex.summary.formula.reverse <-
 
     if(type[i]==1 || type[i]==3) {
       cs <- formatCats(stats[[i]], nam, tr, type[i],
-                       if(length(x$group.freq)) x$group.freq else x$n,
+                       if(length(x$group.freq)) x$group.freq else x$n[i],
                        npct, pctdig, exclude1, long, prtest,
                        latex=TRUE, testUsed=testUsed,
                        npct.size=npct.size,

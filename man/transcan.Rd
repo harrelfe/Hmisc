@@ -173,7 +173,7 @@ fit.mult.impute(formula, fitter, xtrans, data, n.impute, fit.reps=FALSE,
 
 \method{predict}{transcan}(object, newdata, iter.max=50, eps=0.01, curtail=TRUE, 
         type=c("transformed","original"),
-        inverse, tolInverse, ...)
+        inverse, tolInverse, check=FALSE, ...)
 
 Function(object, \dots)
 

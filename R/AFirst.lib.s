@@ -7,8 +7,9 @@ under.unix <- !(version$os=='Microsoft Windows' ||
 
 .noGenenerics <- TRUE  # faster loading as new methods not used
 
-if(!exists('existsFunction')) existsFunction <- function(...)
-  exists(..., mode='function')
+if(!exists('existsFunction')) {
+  existsFunction <- function(...) exists(..., mode='function')
+}
 
 .First.lib <- function(lib, pkg, ...)
 {

@@ -3,7 +3,7 @@
 \title{Enhanced Importing of SPSS Files}
 \description{
 \code{spss.get} invokes the \code{read.spss} function in the
-\code{foreign} package to read an SPSS file, with a default output
+\pkg{foreign} package to read an SPSS file, with a default output
 format of \code{"data.frame"}.  The \code{label} function is used to
 attach labels to individual variables instead of to the data frame as
 done by \code{read.spss}.  By default, integer-valued variables are
@@ -47,3 +47,5 @@ w <- spss.get('/tmp/my.sav', datevars=c('birthdate','deathdate'))
 }
 \keyword{interface}
 \keyword{manip}
+\keyword{file}
+\concept{SPSS data file}

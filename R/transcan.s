@@ -25,8 +25,7 @@ transcan <-
   
   if(version$major < 4 && !.R.)
     approx <- function(x, y, xout, method = "linear", n = 50, rule =
-                       1, f = 0)
-    {
+                       1, f = 0){
       nx <- length(x)
       if(any(is.na(x)) || any(is.na(y)))
         stop("Missing values not allowed")
@@ -124,9 +123,20 @@ transcan <-
     y <- eval(y, sys.parent())
     nact <- attr(y,"na.action")
     d <- dim(y)
-    nam <- if(.R.)var.inner(formula)
-           else attr(terms.inner(formula),'term.labels')
 
+    # Error if user is trying to use a non-allowed formula
+    if(length(attr(y, "terms")) > 2)
+      stop('transcan does not support a left hand side variable in the formula')
+
+
+    nam <- if(.R.)var.inner(attr(y, "terms"))
+           else attr(terms.inner(terms(y)),'term.labels')
+
+    # Error if user has passed an invalid formula
+    if(length(nam) != d[2])
+      stop(paste('Formula', formula,
+                 'does not have a dominant inner variable.'))
+    
     if(!length(asis)) {
       Terms <- terms(formula, specials='I')
       asis <- nam[attr(Terms,'specials')$I]

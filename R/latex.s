@@ -1122,8 +1122,8 @@ dvi.latex <- function(object, prlog=FALSE,
     else
       '&'   # DOS command separator
   
-  sys(paste('cd',dQuote(tempdir()),sc,optionsCmds('latex'),
-            '-interaction=scrollmode', dQuote(tmp)), output=FALSE)
+  sys(paste('cd',shQuote(tempdir()),sc,optionsCmds('latex'),
+            '-interaction=scrollmode', shQuote(tmp)), output=FALSE)
   
   if(prlog)
     cat(scan(paste(tmp,'log',sep='.'),list(''),sep='\n')[[1]],

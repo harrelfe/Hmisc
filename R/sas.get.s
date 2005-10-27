@@ -1928,10 +1928,10 @@ if(.R.) {
 
 csv.get <- function(file, lowernames=FALSE, datevars=NULL,
                     dateformat='%F', fixdates=c('none','year'),
-                    allow=NULL, ...)
+                    comment.char = "", autodates=TRUE, allow=NULL, ...)
 {
   fixdates <- match.arg(fixdates)
-  w <- read.csv(file, check.names=FALSE, ...)
+  w <- read.csv(file, check.names=FALSE, comment.char=comment.char, ...)
   n <- names(w)
   m <- makeNames(n, unique=TRUE, allow=allow)
   if(lowernames)
@@ -1940,7 +1940,18 @@ csv.get <- function(file, lowernames=FALSE, datevars=NULL,
   changed <- any(m != n)
   if(changed)
     names(w) <- m
-  
+
+  if(autodates) {
+    tmp <- w
+    names(tmp) <- NULL
+
+    for(i in 1:length(tmp)) {
+      if(! is.character(tmp[[1]]))
+        next
+
+      
+    }
+  }
   cleanup.import(w,
                  labels=if(changed)n
                         else NULL,

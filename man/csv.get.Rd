@@ -7,7 +7,8 @@
 }
 \usage{
 csv.get(file, lowernames=FALSE, datevars=NULL, dateformat='\%F',
-        fixdates=c('none','year'), allow=NULL, \dots)
+        fixdates=c('none','year'), comment.char="", autodates=TRUE,
+        allow=NULL, \dots)
 }
 \arguments{
   \item{file}{the file name for import.}
@@ -31,6 +32,11 @@ csv.get(file, lowernames=FALSE, datevars=NULL, dateformat='\%F',
     \code{"\%m/\%d/\%y"}, or \code{"\%m/\%d/\%Y"}.  Two-digits years are padded with \code{20}
     on the left.  Set \code{dateformat} to the desired format, not the
     exceptional format.}
+  \item{comment.char}{a character vector of length one containing a
+    single character or an empty string.  Use '""' to turn off the
+    interpretation of comments altogether.}
+  \item{autodates}{Set to true to allow function to guess at which
+    variables are dates}
   \item{allow}{a vector of characters allowed by \R that should not be
     converted to periods in variable names.  By default, underscores in
     variable names are converted to periods as with \R before version

@@ -1,7 +1,5 @@
 subplot <- function(fun, x, y=NULL, size=c(1,1), vadj=0.5, hadj=0.5,
                     pars=NULL){
-  require('TeachingDemos')
-
   old.par <- par(no.readonly=TRUE)
   on.exit(par(old.par))
 

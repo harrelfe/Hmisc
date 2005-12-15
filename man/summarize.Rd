@@ -266,6 +266,7 @@ summarize(as.data.frame(z), g, colMeans, na.rm=TRUE, stat.name='x')
 }
 \keyword{category}
 \keyword{manip}
+\keyword{multivariate}
 \concept{grouping}
 \concept{stratification}
 \concept{aggregation}

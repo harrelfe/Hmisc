@@ -99,12 +99,17 @@ sas.get <- if(under.unix || .R.)
         sys(paste("uncompress ",attr(fe,'which'),'.Z',sep=''))
     }
 
-    cat("%sas_get(", member, " ,", sasout1, " ,", sasout2,
-        " ,", sasout3, " ,", sasout4,
-        ", dates=", dates., ", vars=", varstring, ", ifs=",
-        ifs, ", formats=", as.integer(formats),
-        ", specmiss=", as.integer(special.miss),
-        ");\n", file = sasin, append = TRUE, sep = "")
+    cat("%sas_get(", member, ",\n",
+        "  ", sasout1, ",\n",
+        "  ", sasout2, ",\n",
+        "  ", sasout3, ",\n",
+        "  ", sasout4, ",\n",
+        "  dates=", dates., ",\n",
+        "  vars=",  varstring, ",\n",
+        "  ifs=",   ifs, ",\n",
+        "  formats=", as.integer(formats), "\n,",
+        "  specmiss=", as.integer(special.miss), ");\n",
+        file = sasin, append = TRUE, sep = "")
   } else {
     if(!file.is.dir(library))
       stop(paste(sep = "", "library, \"", library, 
@@ -140,12 +145,17 @@ sas.get <- if(under.unix || .R.)
     ## formats used by this dataset.  It must be present.
     cat("libname library '", format.library, "';\n", file = sasin,
         append = TRUE, sep = "")
-    cat("%sas_get(temp.", member, " ,", sasout1, " ,", sasout2,
-        " ,", sasout3,", ",sasout4,
-        ", dates=", dates., ", vars=", varstring, ", ifs=",
-        ifs, ", formats=",as.integer(formats),
-        ", specmiss=", as.integer(special.miss),
-        ");\n", file = sasin, append = TRUE, sep = "")
+    cat("%sas_get(temp.", member, ",\n",
+        "  ", sasout1, ",\n",
+        "  ", sasout2, ",\n",
+        "  ", sasout3, ",\n",
+        "  ", sasout4, ",\n",
+        "  dates=", dates., ",\n",
+        "  vars=",  varstring, ",\n",
+        "  ifs=",   ifs, ",\n",
+        "  formats=", as.integer(formats), "\n,",
+        "  specmiss=", as.integer(special.miss), ");\n",
+        file = sasin, append = TRUE, sep = "")
   }
   
   status <- sys(paste(sasprog, sasin, "-log", log.file), output=FALSE)
@@ -518,13 +528,17 @@ sas.get <- if(under.unix || .R.)
     ## formats used by this dataset.
     cat("libname library '", format.library, "';\n", file = sasin,
 	append = TRUE, sep = "")
-    cat("%sas_get(temp.", member, " ,", sasout[1], " ,", sasout[2],
-        " ,", sasout[3],", ",sasout[4],
-        ", dates=sas, vars=", varstring, 
-        ", ifs=", ifs, 
-        ", formats=",as.integer(formats),
-        ", specmiss=", as.integer(special.miss),
-        ");\n", file = sasin, append = TRUE, sep = "")
+    cat("%sas_get(temp.", member, ",\n",
+        "  ", sasout[1], ",\n",
+        "  ", sasout[2], ",\n",
+        "  ", sasout[3], ",\n",
+        "  ", sasout[4], ",\n",
+        "  dates=sas\n",
+        "  vars=",  varstring, ",\n",
+        "  ifs=",   ifs, ",\n",
+        "  formats=", as.integer(formats), "\n,",
+        "  specmiss=", as.integer(special.miss), ");\n",
+        file = sasin, append = TRUE, sep = "")
     
     cat('Invoking SAS for Windows.  Click the SAS icon if you want to watch.\n')
     win3(paste(sasprog, sasin, "-log", log.file, "-icon"))

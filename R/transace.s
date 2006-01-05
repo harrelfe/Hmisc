@@ -693,12 +693,15 @@ plot.areg.boot <- function(x, ylim, boot=TRUE,
     }
 
     if(boot>0)
-      for(j in 1:boot)
-        if(i==1)
+      for(j in 1:boot) {
+        if(i==1) {
+          if(any(is.na(booti[1:lx,j]))) next
           lines(xx, approxExtrap(fiti, xout=booti[1:lx,j])$y,   # 14may02
                 col=col.boot, lwd=lwd.boot)
+        }
         else
           lines(xx, booti[1:lx,j], col=col.boot, lwd=lwd.boot)  # 5Mar01
+      }
 
     if(!(is.logical(conf.int) && !conf.int)) {
       quant <- apply(booti[1:lx,],1,quantile,

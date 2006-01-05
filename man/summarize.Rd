@@ -1,6 +1,5 @@
 \name{summarize}
 \alias{summarize}
-\alias{mApply}
 \alias{asNumericMatrix}
 \alias{matrix2dataFrame}
 \alias{subsAttr}
@@ -22,26 +21,20 @@ will remain a numeric variable in the collapsed data frame.
 function for displaying multiple summaries of a single variable on each
 panel, such as means and upper and lower confidence limits.
 
-\code{mApply} is like \code{tapply} except that the first argument can
-be a matrix, and the output is cleaned up if \code{simplify=TRUE}.  It
-uses code adapted from Tony Plate (\email{tplate@blackmesacapital.com}) to
-operate on grouped submatrices.
+\code{subsAttr} saves attributes that are commonly preserved across row
+subsetting (i.e., it does not save \code{dim}, \code{dimnames}, or
+\code{names} attributes).
 
-As \code{mApply} can be much faster than using \code{by}, it is often
-worth the trouble of converting a data frame to a numeric matrix for
-processing by \code{mApply}.  \code{asNumericMatrix} will do this, and
-\code{matrix2dataFrame} will convert a numeric matrix back into a data
+\code{asNumericMatrix} converts a data frame into a numeric matrix.
+
+\code{matrix2dataFrame} converts a numeric matrix back into a data
 frame if attributes and storage modes of the original variables are
-saved by calling \code{subsAttr}.  \code{subsAttr} saves attributes that
-are commonly preserved across row subsetting (i.e., it does not save
-\code{dim}, \code{dimnames}, or \code{names} attributes).
+saved by calling \code{subsAttr}.
 }
 \usage{
 summarize(X, by, FUN, \dots, 
           stat.name=deparse(substitute(X)),
           type=c('variables','matrix'), subset=TRUE)
-
-mApply(X, INDEX, FUN=NULL, \dots, simplify=TRUE)
 
 asNumericMatrix(x)
 
@@ -68,8 +61,6 @@ a function of a single vector argument, used to create the statistical
 summaries for \code{summarize}.  \code{FUN} may compute any number of
 statistics. 
 }
-\item{simplify}{set to \code{FALSE} to suppress simplification of the
-  result in to an array, matrix, etc.}
 \item{...}{extra arguments are passed to \code{FUN}}
 \item{stat.name}{
 the name to use when creating the main summary variable.  By default,
@@ -85,9 +76,6 @@ a logical vector or integer vector of subscripts used to specify the
 subset of data to use in the analysis.  The default is to use all
 observations in the data frame.
 }
-\item{INDEX}{
-vector or list of vectors to cross-classify on, similar to \code{by}.
-See \code{tapply}.}
 \item{x}{
   a data frame (for \code{asNumericMatrix}) or a numeric matrix (for
   \code{matrix2dataFrame}).  For \code{subsAttr}, \code{x} may be a data
@@ -106,23 +94,15 @@ For \code{summarize}, a data frame containing the \code{by} variables and the
 statistical summaries (the first of which is named the same as the \code{X}
 variable unless \code{stat.name} is given).  If \code{type="matrix"}, the
 summaries are stored in a single variable in the data frame, and this
-variable is a matrix.  For \code{mApply}, the returned value is a vector,
-matrix, or list.  If \code{FUN} returns more than one number, the result
-is an array if \code{simplify=TRUE} and is a list otherwise.  If a
-matrix is returned, its rows correspond to unique combinations of
-\code{INDEX}.  If \code{INDEX} is a list with more than one vector,
-\code{FUN} returns more than one number, and \code{simplify=FALSE}, the
-returned value is a list that is an array with the first dimension
-corresponding to the last vector in \code{INDEX}, the second dimension
-corresponding to the next to last vector in \code{INDEX}, etc., and the
-elements of the list-array correspond to the values computed by
-\code{FUN}.  In this situation the returned value is a regular array if
-\code{simplify=TRUE}.   The order of dimensions is as previously but the
-additional (last) dimension corresponds to values computed by
-\code{FUN}.  \code{asNumericMatrix} returns a numeric matrix, and
-\code{matrix2dataFrame} returns a data frame.  \code{subsAttr} returns a
-list of attribute lists if its argument is a list or data frame, and a
-list containing attributes of a single variable.
+variable is a matrix.
+
+\code{asNumericMatrix} returns a numeric matrix.
+
+\code{matrix2dataFrame} returns a data frame.
+
+\code{subsAttr} returns a list of attribute lists if its argument is a
+list or data frame, and a list containing attributes of a single
+variable.
 }
 \author{
 Frank Harrell

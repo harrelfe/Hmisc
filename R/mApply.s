@@ -1,4 +1,4 @@
-mApply <- function(X, INDEX, FUN=NULL, ..., simplify=TRUE) {
+mApply <- function(X, INDEX, FUN, ..., simplify=TRUE) {
   ## Matrix tapply
   ## X: matrix with n rows; INDEX: vector or list of vectors of length n
   ## FUN: function to operate on submatrices of x by INDEX

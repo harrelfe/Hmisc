@@ -481,8 +481,7 @@ ecdf.formula <- function(x, data = sys.frame(sys.parent()),
 
   if(.R.)
     do.call("histogram",
-            c(list(formula=x, data=data,
-                   prepanel=prepanel, panel=panel,
+            c(list(x, data=data, prepanel=prepanel, panel=panel,
                    ylab=ylab, xlab=xlab, fun=fun),
               ## was jyst groups=groups 31aug02
               if(!missing(groups))

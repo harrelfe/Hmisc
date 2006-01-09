@@ -588,8 +588,8 @@ xYplot <- if(.R.)
   ## Note: c(list(something), NULL) = list(something)
   ## The following was c(list(formula=formula,...,panel=panel),if()c(),...)
   ## 28aug02
-  do.call("xyplot", c(list(formula=formula, data=data,
-                           prepanel=prepanel, panel=panel),
+  do.call("xyplot", c(list(formula, data=data, prepanel=prepanel,
+                           panel=panel),
                       if(length(ylab))list(ylab=ylab),
                       if(length(ylim))list(ylim=ylim),
                       if(length(xlab))list(xlab=xlab),
@@ -797,8 +797,8 @@ Dotplot <-
   dul <- options(drop.unused.levels=FALSE)   ## 25nov02, for empty cells
   on.exit(options(dul))                      ## across some panels
   
-  do.call("xyplot", c(list(formula=formula, data=data,
-                           prepanel=prepanel, panel=panel),
+  do.call("xyplot", c(list(formula, data=data, prepanel=prepanel,
+                           panel=panel),
                       if(length(ylab))list(ylab=ylab),  ## was c(ylab=)
                       if(length(ylim))list(ylim=ylim),  ## 28aug02
                       if(length(xlab))list(xlab=xlab),

@@ -1,12 +1,12 @@
-\name{.in.}
+\name{\%nin\%}
 \alias{\%nin\%}
 \title{
 Find Matching (or Non-Matching) Elements
 }
 \description{
-  For two vectors or scalars \code{a} and \code{b},
-  \code{\%nin\%} returns
-  \code{TRUE} if the element in \code{a} is not in \code{b}.
+\%nin\% is a binary operator, which returns a logical vector indicating
+if there is a match or not for its left operand. A true vector element
+indicates no match in left operand, false indicates a match.
 }
 \usage{
 a \%nin\% b
@@ -22,11 +22,10 @@ a vector (numeric, character, factor), matching the mode of a
 vector of logical values with length equal to length of \code{a}.
 }
 \seealso{
-\code{\link{match}}
+\code{\link{match}} \code{\link{\%in\%}}
 }
 \examples{
-c('a','b','c') %nin% c('a','b')
+c('a','b','c') \%nin\% c('a','b')
 }
 \keyword{manip}
 \keyword{character}
-

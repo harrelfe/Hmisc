@@ -13,6 +13,8 @@ bpplot                  Box-percentile plots
 bystats                 Statistics by Categories
 ciapower                Power of Interaction Test for Exponential
                         Survival
+cnvrt.coords            Convert between the 4 different coordinate
+                        sytems on a graphical device
 confbar                 Miscellaneous Functions
 contents                Metadata for a Data Frame
 cpower                  Power of Cox/log-rank Two-Sample Test
@@ -57,12 +59,14 @@ latex                   Convert an S object to LaTeX, and Related
 ldBands                 Group Sequential Boundaries using the
                         Lan-DeMets Approach
 list.tree               Pretty-print the Structure of a Data Object
+mApply                  Apply a Function to Rows of a Matrix or Vector
 mgp.axis                Draw Axes With Side-Specific mgp Parameters
 minor.tick              Minor Tick Marks
 mtitle                  Margin Titles
 na.delete               Row-wise Deletion na.action
 na.detail.response      Detailed Response Variable Information
 na.keep                 Do-nothing na.action
+%nin%                   Find Matching (or Non-Matching) Elements
 Overview                Overview of Hmisc Library
 panel.bpplot            Box-Percentile Panel Function for Trellis
 pc1                     First Principal Component
@@ -110,7 +114,9 @@ spower                  Simulate Power of 2-Sample Test for Survival
 spss.get                Enhanced Importing of SPSS Files
 src                     Source a File from the Current Working
                         Directory
+stata.get               Enhanced Importing of STATA Files
 store                   Store an Object Permanently
+subplot                 Embed a new plot within an existing plot
 summarize               Summarize Scalars or Matrices by
                         Cross-Classification
 summary.formula         Summarize Data for Making Tables and Plots

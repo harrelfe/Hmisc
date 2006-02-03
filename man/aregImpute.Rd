@@ -294,6 +294,10 @@ f.harrell@vanderbilt.edu
 \references{
   Little R, An H.  Robust likelihood-based analysis of multivariate data
   with missing values. Statistica Sinica 14:933-952, 2004.
+
+  van Buuren S, Brand JPL, Groothuis-Oudshoorn CGM, Rubin DB.  Fully
+  conditional specifications in multivariate imputation.  Draft
+  available from \url{http://web.inter.nl.net/users/S.van.Buuren/publications/FCS%20(revised%20Jan%202005).pdf}.
   }
 \seealso{
 \code{\link{fit.mult.impute}}, \code{\link{transcan}}, \code{\link[acepack]{ace}}, \code{\link{naclus}}, \code{\link{naplot}}, \code{\link[mice]{mice}},

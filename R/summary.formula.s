@@ -11,8 +11,7 @@ summary.formula <-
            nmin=if(method=='reverse') 15
                 else 0,
            test=FALSE,
-           conTest=function(group,x)
-           {
+           conTest=function(group,x) {
              st <- spearman2(group,x)
              list(P=st['P'], stat=st['F'],
                   df=st[c('df1','df2')],
@@ -21,8 +20,7 @@ summary.formula <-
                   statname='F', latexstat='F_{df}',
                   plotmathstat='F[df]')
            },
-           catTest=function(tab)
-           {
+           catTest=function(tab) {
              st <-
                if(!is.matrix(tab) || nrow(tab) < 2 | ncol(tab) < 2)
                  list(p.value=NA, statistic=NA, parameter=NA)
@@ -33,6 +31,13 @@ summary.formula <-
                   df=st$parameter,
                   testname='Pearson', statname='Chi-square',
                   latexstat='\\chi^{2}_{df}',
+                  plotmathstat='chi[df]^2')
+           },
+           ordTest=function(group, x) {
+             f <- lrm(x ~ group)$stats
+             list(P=stats['P'], stat=stats['Model L.R.'], df=stats['d.f.'],
+                  testname='Proportional odds likelihood ratio',
+                  statname='Chi-square',latexstat='\\chi^{2}_{df}',
                   plotmathstat='chi[df]^2')
            },
            ...)
@@ -369,8 +374,12 @@ summary.formula <-
           g <- group[s, drop=TRUE]
           if(is.factor(w)) {
             tab <- table(w, g)
-            if(test)
-              testresults[[i]] <- catTest(tab)
+            if(test) {
+              if(is.ordered(w))
+                testresults[[i]] <- ordTest(g, w)
+              else
+                testresults[[i]] <- catTest(tab)
+            }
 
             if(nrow(tab)==1) {  # 7sep02
               b <- casefold(dimnames(tab)[[1]],upper=TRUE)

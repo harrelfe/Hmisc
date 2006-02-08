@@ -309,17 +309,27 @@ Lag <- function(x, shift=1)
     isf <- FALSE
   
   n <- length(x)
-  x <- x[1:(n-shift)]
-  if(!isf) atr <- attributes(x)
-  if(length(atr$label)) atr$label <- 
-    paste(atr$label,'lagged',shift,'observations')
-  x <- c(rep(
+  if(n > shift)
+    x <- x[1:(n-shift)]
+  else {
+    length(x) <- 0
+    shift <- n
+  }
+  
+  if(!isf)
+    atr <- attributes(x)
+
+  if(length(atr$label))
+    atr$label <- paste(atr$label,'lagged',
+                       shift,'observations')
+
+  ret <- c(rep(
              if(is.character(x)) ''
              else NA,
              shift), oldUnclass(x))
   
-  attributes(x) <- atr
-  x
+  attributes(ret) <- atr
+  return(ret)
 }
 
 xySortNoDupNoNA <- function(x, y)

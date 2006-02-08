@@ -293,42 +293,28 @@ Lag <- function(x, shift=1)
 {
   ## Lags vector x shift observations, padding with NAs or blank strings
   ## on the left, preserving attributes of x
-  ## factor vectors are converted to character strings
-  if(is.factor(x)) {
-    isf <- TRUE
-    atr <- attributes(x)
-    atr$class <- if(length(atr$class)==1)
-                   NULL
-                 else
-                   atr$class[atr$class!='factor']
-    
-    atr$levels <- NULL
-    x <- as.character(x)
-  }
-  else
-    isf <- FALSE
+
+  # check to see if shift == 0
+  if(shift == 0)
+    return(x)
+
+  # Create base vector use character to generate "" for mode "character"
+  # Coerce base vector to be type of x
+  xLen <- length(x)
+  ret <- as.vector(character(xLen), mode=storage.mode(x))
   
-  n <- length(x)
-  if(n > shift)
-    x <- x[1:(n-shift)]
-  else {
-    length(x) <- 0
-    shift <- n
+  # set resp attributes equal to x attributes
+  attrib <- attributes(x)
+
+  if(!is.null(attrib$label))
+    atr$label <- paste(attrib$label, 'lagged', shift, 'observations')
+
+  if(xLen > shift){
+    retrange = 1:shift
+    ret[-retrange] <- x[1:(xLen - shift)]
   }
   
-  if(!isf)
-    atr <- attributes(x)
-
-  if(length(atr$label))
-    atr$label <- paste(atr$label,'lagged',
-                       shift,'observations')
-
-  ret <- c(rep(
-             if(is.character(x)) ''
-             else NA,
-             shift), oldUnclass(x))
-  
-  attributes(ret) <- atr
+  attributes(ret) <- attrib
   return(ret)
 }
 

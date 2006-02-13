@@ -819,7 +819,7 @@ plot.summary.formula.response <-
   function(x, which=1,
            vnames=c('labels','names'), xlim, xlab,
            pch=c(16,1,2,17,15,3,4,5,0), superposeStrata=TRUE,
-           dotfont=1, add=FALSE, 
+           dotfont=1, add=FALSE, reset.par=TRUE,
            main, subtitles=TRUE, ...)
 {
   stats <- x
@@ -858,7 +858,8 @@ plot.summary.formula.response <-
   opar <- if(.R.) par(no.readonly=TRUE)
           else par()
 
-  on.exit(par(opar))
+  if(reset.par)
+    on.exit(par(opar))
 
   if(superposeStrata) Ns <- apply(stats[,nstat*((1:ns)-1)+1],1,sum)
   
@@ -910,8 +911,8 @@ plot.summary.formula.response <-
 
       rlegend(x, y, legend=lev, pch=pch, ...)
       invisible()
-    } else function(x=NULL, y=NULL, lev, pch, ...)
-    {
+    }
+    else function(x=NULL, y=NULL, lev, pch, ...) {
       if(length(x)) {
         if(is.list(x)) {
           y <- x$y;
@@ -923,7 +924,7 @@ plot.summary.formula.response <-
             transparent=TRUE, ...)
       } else key(text=list(lev), 
                  points=list(pch=pch),transparent=TRUE, ...)
-
+      
       invisible()
     }
 

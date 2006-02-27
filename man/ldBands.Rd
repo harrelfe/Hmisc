@@ -140,11 +140,11 @@ of time.  If \code{par(mfrow=c())} is not already set to something besides
 	type of spending function.}
   \item{truncate}{value at which \eqn{Z} statistics truncated (default
 	is \code{Inf})}
-  }
+    }
   \references{
 	Reboussin DM, DeMets DL, Kim K-M, Lan KKG (1996): Programs
   for computing group sequential boundaries using the Lan-DeMets
-  method.  \url{http://www.medsch.wisc.edu/landemets}
+  method.  \url{http://www.biostat.wisc.edu/landemets/}
 
   Reboussin DM, DeMets DL, Kim K, Lan KKG (2000): Computations for group
   sequential boundaries using the Lan-DeMets spending function method.

@@ -1589,3 +1589,13 @@ Save <- function(object)
   eval(parse(text=paste('save(', .ObjectName, ', file="',
                         .FileName, '", compress=TRUE)', sep='')))
 }
+
+downloadZip <- function(url) {
+  ## Allows downloading and reading a .zip file containing one file
+  ## File may be password protected.  Password will be requested.
+  ## Example: read.csv(downloadZip('http://biostat.mc.vanderbilt.edu/twiki/pub/Sandbox/WebHome/z.zip'))
+  ## Note: to make password-protected zip file foo.zip, do zip -e foo myfile
+  f <- tempfile()
+  download.file(url, f)
+  pipe(paste('unzip -p', f))
+}

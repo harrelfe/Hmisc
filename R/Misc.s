@@ -1595,10 +1595,14 @@ downloadZip <- function(url, password=NULL) {
   ## File may be password protected.  Password will be requested.
   ## Example: read.csv(downloadZip('http://biostat.mc.vanderbilt.edu/twiki/pub/Sandbox/WebHome/z.zip'))
   ## Password is 'foo'
-  ## Note: to make password-protected zip file foo.zip, do zip -e foo myfile
-  f <- tempfile()
-  download.file(url, f)
+  ## url may also be a local file
+  ## Note: to make password-protected zip file z.zip, do zip -e z myfile
+  if(toupper(substring(url, 1, 7)) == 'HTTP://') {
+    f <- tempfile()
+    download.file(url, f)
+  } else f <- url
   cmd <- if(length(password))
     paste('unzip -p -P', password) else 'unzip -p'
+  prn(paste(cmd,f))
   pipe(paste(cmd, f))
 }

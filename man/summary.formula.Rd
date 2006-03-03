@@ -230,7 +230,7 @@ mChoice(\dots, label='',
         sort.levels=c('original','alphabetic'), 
         add.none=TRUE, none.name='none', na.result=FALSE, drop=TRUE)
 
-\method{as.character}{mChoice}(x)
+\method{as.character}{mChoice}(x, sep=",", \dots)
 }
 \arguments{
 \item{formula}{

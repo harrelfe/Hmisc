@@ -8,7 +8,7 @@ summary.formula <-
            continuous=10, na.rm=TRUE, na.include=method!='reverse',
            g=4, 
            quant=c(.025,.05,.125,.25,.375,.5,.625,.75,.875,.95,.975),
-           nmin=if(method=='reverse') 15
+           nmin=if(method=='reverse') 100
                 else 0,
            test=FALSE,
            conTest=function(group,x) {
@@ -1055,8 +1055,8 @@ plot.summary.formula.reverse <-
       zi <- z[,i]
       if(any(prtest == 'none') || i > 1)
         dotchart2(zi, groups=vnd, xlab=xlab, xlim=xlim, 
-                  sort=FALSE, pch=pch[i], 
-                  dotfont=dotfont[i], 
+                  sort=FALSE, pch=pch[i],
+                  dotfont=dotfont[i],
                   add=i>1, ...)
       else
         dotchart2(zi, groups=vnd, auxdata=ftstats,
@@ -2593,13 +2593,13 @@ if(FALSE) {
 }
 
 
-as.character.mChoice <- function(x)
+as.character.mChoice <- function(x, sep=",", ...)
 {
   lev <- dimnames(x)[[2]]
   d <- dim(x)
   w <- rep('',d[1])
   for(j in 1:d[2]) {
-    w <- paste(w,ifelse(w!='' & x[,j],',',''),
+    w <- paste(w,ifelse(w!='' & x[,j],sep,''),
                ifelse(x[,j],lev[j],''),sep='')
   }
 

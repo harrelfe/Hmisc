@@ -8,7 +8,11 @@ mApply <- function(X, INDEX, FUN, ..., simplify=TRUE) {
   ## rows corresponding to unique values of INDEX
 
   ## X should be either a Matrix or a Vector
-  if(is.vector(X)) {  ## X is a vector
+  if((!is.matrix(X) && is.array(X)) || is.list(X)){
+    stop("X must either be a vector or a matrix")
+  }
+
+  if(!is.matrix(X)) {  ## X is a vector
     r <- tapply(X, INDEX, FUN, ..., simplify=simplify)
 
     if(is.matrix(r))
@@ -19,7 +23,7 @@ mApply <- function(X, INDEX, FUN, ..., simplify=TRUE) {
                        dimnames=list(names(r),names(r[[1]])), byrow=TRUE))
   }
   else {
-    idx.list <- tapply(1:nrow(X), INDEX, c)
+    idx.list <- tapply(1:NROW(X), INDEX, c)
     r <- sapply(idx.list, function(idx,x,fun,...) fun(x[idx,,drop=FALSE],...),
                 x=X, fun=FUN, ..., simplify=simplify)
 

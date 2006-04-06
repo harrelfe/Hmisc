@@ -816,9 +816,9 @@ latex.summary.formula.response <- function(object,
 
 
 plot.summary.formula.response <-
-  function(x, which=1,
-           vnames=c('labels','names'), xlim, xlab,
-           pch=c(16,1,2,17,15,3,4,5,0), superposeStrata=TRUE,
+  function(x, which = 1,
+           vnames = c('labels', 'names'), xlim, xlab,
+           pch = c(16, 1, 2, 17, 15, 3, 4, 5, 0), superposeStrata = TRUE,
            dotfont=1, add=FALSE, reset.par=TRUE,
            main, subtitles=TRUE, ...)
 {
@@ -938,15 +938,16 @@ plot.summary.formula.response <-
 
 
 plot.summary.formula.reverse <-
-  function(x, 
-           vnames=c('labels','names'), what=c('proportion','%'),
-           which=c('both','categorical','continuous'),
-           xlim=if(what=='proportion') c(0,1) else c(0,100), 
-           xlab=if(what=='proportion')'Proportion' else 'Percentage', 
-           pch=c(if(FALSE)183 else 16,1,2,17,15,3,4,5,0), exclude1=TRUE,
-           dotfont=1, main, subtitles=TRUE,
-           prtest=c('P','stat','df','name'), pdig=3, eps=.001,
-           conType=c('dot','bp','raw'), cex.means=.5, ...)
+  function(x, vnames = c('labels', 'names'), what = c('proportion','%'),
+           which = c('both', 'categorical', 'continuous'),
+           xlim = if(what == 'proportion') c(0,1)
+                  else c(0,100), 
+           xlab = if(what == 'proportion') 'Proportion'
+                  else 'Percentage', 
+           pch = c(16, 1, 2, 17, 15, 3, 4, 5, 0), exclude1 = TRUE,
+           dotfont = 1, main, subtitles = TRUE,
+           prtest = c('P', 'stat', 'df', 'name'), pdig = 3, eps = 0.001,
+           conType = c('dot', 'bp', 'raw'), cex.means = 0.5, ...)
 {
   obj <- x
   vnames <- match.arg(vnames)
@@ -1441,14 +1442,14 @@ dotchart2 <-
 
 
 print.summary.formula.reverse <- 
-  function(x, digits, prn=!all(n==N), pctdig=0, 
+  function(x, digits, prn=any(n != N), pctdig=0, 
            npct=c('numerator','both','denominator','none'),
            exclude1=TRUE, vnames=c("labels","names"), prUnits=TRUE,
            sep="/", abbreviate.dimnames=FALSE, 
            prefix.width=max(nchar(lab)), 
            min.colwidth, formatArgs=NULL,
            prtest=c('P','stat','df','name'), prmsd=FALSE, long=FALSE,
-           pdig=3, eps=.001, ...)
+           pdig=3, eps=0.001, ...)
 {
   npct   <- match.arg(npct)
   vnames <- match.arg(vnames)
@@ -1838,7 +1839,7 @@ formatTestStats <- function(tr, multchoice=FALSE,
 
 latex.summary.formula.reverse <- 
   function(object, title=first.word(deparse(substitute(object))),
-           digits, prn=!all(n==N), pctdig=0, 
+           digits, prn = any(n!=N), pctdig=0, 
            npct=c('numerator','both','denominator','none'),
            npct.size='scriptsize', Nsize='scriptsize',
            exclude1=TRUE,  vnames=c("labels","names"), prUnits=TRUE,

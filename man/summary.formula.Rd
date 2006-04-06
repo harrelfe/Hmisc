@@ -109,115 +109,123 @@ category.
 categories present per observation.  This makes \code{summarize} work
 when stratifying by \code{mChoice} variables.
 }
-\synopsis{
-\method{summary}{formula}(formula, data, subset, na.action, 
-           fun=NULL,
-           method=c('response','reverse','cross'),
-           overall=method=='response'|method=='cross', 
-           continuous=10, na.rm=TRUE, na.include=method!='reverse', g=4, 
-           quant=c(.025,.05,.125,.25,.375,.5,.625,.75,.875,.95,.975),
-           nmin=if(method=='reverse')15 else 0, test=FALSE,
-           conTest=function(group,x) {
-             st <- spearman2(group,x)
-             list(P=st['P'], stat=st['F'],
-                  df=st[c('df1','df2')],
-                  testname=if(st['df1']==1)'Wilcoxon' else
-                  'Kruskal-Wallis',
-                  statname='F', latexstat='F_{df}',
-                  plotmathstat='F[df]')
-           },
-           catTest=function(tab) {
-             st <- if(!is.matrix(tab) || nrow(tab) < 2)
-               list(p.value=NA, statistic=NA, parameter=NA) else
-             chisq.test(tab, correct=FALSE)
-             list(P=st$p.value, stat=st$statistic,
-                  df=st$parameter,
-                  testname='Pearson', statname='Chi-square',
-                  latexstat='\\chi^{2}_{df}',
-                  plotmathstat='chi[df]^2')
-           }, \dots)
-}
 \usage{
-\method{summary}{formula}(formula, data, subset, na.action, fun, method='response',
-              overall=TRUE, continuous=10, na.rm=FALSE, na.include=TRUE,
-g=4, nmin=0, \dots)
+\method{summary}{formula}(formula, data, subset, na.action, fun = NULL,
+        method = c("response", "reverse", "cross"),
+        overall = method == "response" | method == "cross",
+        continuous = 10, na.rm = TRUE, na.include = method != "reverse",
+        g = 4, quant  = c(0.025, 0.05, 0.125, 0.25, 0.375, 0.5, 0.625,
+                          0.75, 0.875, 0.95, 0.975),
+        nmin = if (method == "reverse") 100
+               else 0,
+         test = FALSE,
+        conTest = function(group, x) {
+          st <- spearman2(group, x)
+          list(P = st["P"], stat = st["F"], df = st[c("df1", "df2")],
+               testname = if (st["df1"] == 1) "Wilcoxon"
+                          else "Kruskal-Wallis",
+               statname = "F", latexstat = "F_{df}",
+               plotmathstat = "F[df]")
+        },
+        catTest = function(tab) {
+          st <- if (!is.matrix(tab) || nrow(tab) < 2 | ncol(tab) < 2)
+                  list(p.value = NA, statistic = NA, parameter = NA)
+                else chisq.test(tab, correct = FALSE)
+          list(P = st$p.value, stat = st$statistic, df = st$parameter,
+               testname = "Pearson", statname = "Chi-square",
+               latexstat = "\\chi^{2}_{df}", plotmathstat = "chi[df]^2")
+        },
+        ordTest = function(group, x) {
+          f <- lrm(x ~ group)$stats
+          list(P = stats["P"], stat = stats["Model L.R."],
+               df = stats["d.f."],
+               testname = "Proportional odds likelihood ratio",
+               statname = "Chi-square", latexstat = "\\chi^{2}_{df}",
+               plotmathstat = "chi[df]^2")
+        }, \dots)
+
+% \method{summary}{formula}(formula, data, subset, na.action, fun, method='response',
+%               overall=TRUE, continuous=10, na.rm=FALSE, na.include=TRUE,
+% g=4, nmin=0, \dots)
 \method{print}{summary.formula.response}(x, vnames=c('labels','names'), prUnits=TRUE,
       abbreviate.dimnames=FALSE,
       prefix.width, min.colwidth, formatArgs, \dots)
-\method{plot}{summary.formula.response}(x, which=1, vnames=c('labels','names'), xlim, xlab, 
-     pch=c(16,1,2,17,15,3,4,5,0), superposeStrata=TRUE,
-     dotfont=1, add=FALSE, main, subtitles=TRUE, xaxis=TRUE,
+
+\method{plot}{summary.formula.response}(x, which = 1, vnames = c('labels','names'), xlim, xlab,
+     pch = c(16, 1, 2, 17, 15, 3, 4, 5, 0), superposeStrata = TRUE,
+     dotfont = 1, add = FALSE, reset.par = TRUE, main, subtitles = TRUE,
      \dots)
-\method{latex}{summary.formula.response}(object, title=first.word(expr=substitute(object)),
-      caption, trios, vnames=c('labels','names'), prn=TRUE, prUnits=TRUE,
-      rowlabel='', cdec=2, ncaption=FALSE,
-      \dots)
+
+\method{latex}{summary.formula.response}(object, title = first.word(deparse(substitute(object))), caption,
+      trios, vnames = c('labels', 'names'), prn = TRUE, prUnits = TRUE,
+      rowlabel = '', cdec = 2, ncaption = TRUE, \dots)
 x[i,j]
 
 
-\method{summary}{formula}(formula, data, subset, na.action, method='reverse',
-              overall=FALSE, continuous=10, na.rm=TRUE, na.include=FALSE,
-              quant=c(0.025, 0.05, 0.125, 0.25, 0.375, 0.5,
-                      0.625, 0.75, 0.875, 0.95, 0.975),
-              nmin=15, test=FALSE,
-              conTest=function(group,x) {
-                 st <- spearman2(group,x)
-                 list(P=st['P'], stat=st['F'], df=st[c('df1','df2')],
-                      testname=if(st['df1']==1)'Wilcoxon' else
-                                            'Kruskal-Wallis',
-                      statname='F', latexstat='F_{df}', plotmathstat='F[df]')
-                 },
-              catTest=function(tab) {
-                 st <- if(!is.matrix(tab) || nrow(tab) < 2)
-                   list(p.value=NA, statistic=NA, parameter=NA) else
-                   chisq.test(tab, correct=FALSE)
-                 list(P=st$p.value, stat=st$statistic,
-                      df=st$parameter,
-                      testname='Pearson', statname='Chi-square',
-                      latexstat='\\chi^{2}_{df}', plotmathstat='chi[df]^2')
-              })
+% \method{summary}{formula}(formula, data, subset, na.action, method='reverse',
+%               overall=FALSE, continuous=10, na.rm=TRUE, na.include=FALSE,
+%               quant=c(0.025, 0.05, 0.125, 0.25, 0.375, 0.5,
+%                       0.625, 0.75, 0.875, 0.95, 0.975),
+%               nmin=15, test=FALSE,
+%               conTest=function(group,x) {
+%                  st <- spearman2(group,x)
+%                  list(P=st['P'], stat=st['F'], df=st[c('df1','df2')],
+%                       testname=if(st['df1']==1)'Wilcoxon' else
+%                                             'Kruskal-Wallis',
+%                       statname='F', latexstat='F_{df}', plotmathstat='F[df]')
+%                  },
+%               catTest=function(tab) {
+%                  st <- if(!is.matrix(tab) || nrow(tab) < 2)
+%                    list(p.value=NA, statistic=NA, parameter=NA) else
+%                    chisq.test(tab, correct=FALSE)
+%                  list(P=st$p.value, stat=st$statistic,
+%                       df=st$parameter,
+%                       testname='Pearson', statname='Chi-square',
+%                       latexstat='\\chi^{2}_{df}', plotmathstat='chi[df]^2')
+%               })
 
-\method{print}{summary.formula.reverse}(x, digits, prn=!all(n==N), pctdig=0,
-      npct=c('numerator','both','denominator','none'),
-      exclude1=TRUE, vnames=c('labels','names'), prUnits=TRUE, sep='/',
-      abbreviate.dimnames=FALSE, prefix.width=max(nchar(lab)),
-      min.colwidth, formatArgs,  prtest=c('P','stat','df','name'),
-      prmsd=FALSE, long=FALSE, pdig=3, eps=.001, \dots)
+\method{print}{summary.formula.reverse}(x, digits, prn = any(n != N), pctdig = 0,
+      npct = c('numerator', 'both', 'denominator', 'none'),
+      exclude1 = TRUE, vnames = c('labels', 'names'), prUnits = TRUE,
+      sep = '/', abbreviate.dimnames = FALSE,
+      prefix.width = max(nchar(lab)), min.colwidth, formatArgs,
+      prtest = c('P','stat','df','name'), prmsd = FALSE, long = FALSE,
+      pdig = 3, eps = 0.001, \dots)
 
-\method{plot}{summary.formula.reverse}(x, vnames=c('labels','names'), what=c('proportion','\%'),
-  which=c('both','categorical','continuous'),
-  xlim=if(what=='proportion') c(0,1) else c(0,100), 
-  xlab=if(what=='proportion')'Proportion' else 'Percentage', 
-  pch=c(16,1,2,17,15,3,4,5,0), exclude1=TRUE,
-  dotfont=1, main, subtitles=TRUE,
-  prtest=c('P','stat','df','name'), pdig=3, eps=.001,
-  conType=c('dot','bp','raw'), cex.means=.5, \dots)
+\method{plot}{summary.formula.reverse}(x, vnames = c('labels', 'names'), what = c('proportion', '\%'),
+     which = c('both', 'categorical', 'continuous'),
+     xlim = if(what == 'proportion') c(0,1)
+            else c(0,100), 
+     xlab = if(what=='proportion') 'Proportion'
+            else 'Percentage', 
+     pch = c(16, 1, 2, 17, 15, 3, 4, 5, 0), exclude1 = TRUE,
+     dotfont = 1, main, subtitles = TRUE,
+     prtest = c('P', 'stat', 'df', 'name'), pdig = 3, eps = 0.001,
+     conType = c('dot', 'bp', 'raw'), cex.means = 0.5, \dots)
 
-\method{latex}{summary.formula.reverse}(object,
-     title=first.word(expr=substitute(object)), digits,
-     prn=!all(n==N), pctdig=0,
-     npct=c('numerator','both','denominator','none'),
-     npct.size='scriptsize', Nsize='scriptsize',
-     exclude1=TRUE, vnames=c('labels','names'),
-     middle.bold=FALSE, outer.size='scriptsize',
-     caption, rowlabel='', insert.bottom=TRUE, dcolumn=FALSE,
-     prtest=c('P','stat','df','name'),
-     prmsd=FALSE, msdsize=NULL, long=FALSE, pdig=3, eps=.001,
-     auxCol=NULL, \dots)
+\method{latex}{summary.formula.reverse}(object, title = first.word(deparse(substitute(object))), digits,
+      prn = any(n != N), pctdig = 0,
+      npct = c('numerator', 'both', 'denominator', 'none'),
+      npct.size = 'scriptsize', Nsize = 'scriptsize', exclude1 = TRUE,
+      vnames=c("labels", "names"), prUnits = TRUE, middle.bold = FALSE,
+      outer.size = "scriptsize", caption, rowlabel = "",
+      insert.bottom = TRUE, dcolumn = FALSE,
+      prtest = c('P', 'stat', 'df', 'name'), prmsd = FALSE,
+      msdsize = NULL, long = FALSE, pdig = 3, eps = 0.001,
+      auxCol = NULL, \dots)
 
 
-\method{summary}{formula}(formula, data, subset, na.action, fun,
-              na.rm=TRUE, na.include=TRUE, method='cross',
-              overall=TRUE, continuous=10, g=4, \dots)
-\method{print}{summary.formula.cross}(x, twoway=nvar==2, prnmiss=any(x$Missing>0), prn=TRUE,
-      abbreviate.dimnames=FALSE, prefix.width=max(nchar(v)), 
-      min.colwidth, formatArgs, \dots) 
-\method{latex}{summary.formula.cross}(object,
-      title=first.word(expr=substitute(object)),
-      twoway=nvar==2, prnmiss=TRUE, prn=TRUE,
-      caption=attr(object,'heading'),
-      vnames=c('labels','names'), rowlabel='', \dots)
+% \method{summary}{formula}(formula, data, subset, na.action, fun,
+%               na.rm=TRUE, na.include=TRUE, method='cross',
+%               overall=TRUE, continuous=10, g=4, \dots)
+\method{print}{summary.formula.cross}(x, twoway = nvar == 2, prnmiss = any(stats$Missing > 0), prn = TRUE,
+      abbreviate.dimnames = FALSE, prefix.width = max(nchar(v)),
+      min.colwidth, formatArgs = NULL, \dots)
 
+\method{latex}{summary.formula.cross}(object, title = first.word(deparse(substitute(object))),
+      twoway = nvar == 2, prnmiss = TRUE, prn = TRUE,
+      caption=attr(object,"heading"), vnames=c('labels','names'),
+      rowlabel="", \dots)
 
 stratify(\dots, na.group=FALSE, shortlabel=TRUE)
 
@@ -387,6 +395,11 @@ the Pearson chi-square test is done, without continuity correction
 (the continuity correction would make the test conservative like the
 Fisher exact test).
 }
+\item{ordTest}{
+a function of a frequency table (an integer matrix) that returns a
+list with the same components as created by \code{conTest}.  By default,
+the Proportional odds likelihood ratio test is done.
+}
 \item{...}{
 for \code{summary.formula} these are optional
 arguments for \code{cut2} when variables are automatically categorized.
@@ -435,8 +448,9 @@ variable names, specify \code{vnames="name"}.
   superposition all strata on one dot chart.
 }
 \item{dotfont}{font for plotting points}
-\item{xaxis}{set to \code{FALSE} to suppress drawing x-axis in
-  \code{plot.summary.formula.response}}
+\item{reset.par}{set to \code{FALSE} to suppress the restoring of the
+  old par values in \code{plot.summary.formula.response}
+}
 
 \item{abbreviate.dimnames}{see \code{print.char.matrix}}
 \item{prefix.width}{see \code{print.char.matrix}}

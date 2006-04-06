@@ -297,7 +297,7 @@ f.harrell@vanderbilt.edu
 
   van Buuren S, Brand JPL, Groothuis-Oudshoorn CGM, Rubin DB.  Fully
   conditional specifications in multivariate imputation.  Draft
-  available from \url{http://web.inter.nl.net/users/S.van.Buuren/publications/FCS%20(revised%20Jan%202005).pdf}.
+  available from \url{http://web.inter.nl.net/users/S.van.Buuren/publications/FCS\%20(revised\%20Jan\%202005).pdf}.
   }
 \seealso{
 \code{\link{fit.mult.impute}}, \code{\link{transcan}}, \code{\link[acepack]{ace}}, \code{\link{naclus}}, \code{\link{naplot}}, \code{\link[mice]{mice}},

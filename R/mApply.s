@@ -9,7 +9,10 @@ mApply <- function(X, INDEX, FUN, ..., simplify=TRUE) {
 
   ## X should be either a Matrix or a Vector
   if((!is.matrix(X) && is.array(X)) || is.list(X)){
-    stop("X must either be a vector or a matrix")
+    if(is.data.frame(X))
+      X <- as.matrix(X)
+    else
+      stop("X must either be a vector or a matrix")
   }
 
   if(!is.matrix(X)) {  ## X is a vector

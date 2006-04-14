@@ -1,5 +1,15 @@
 ## $Id$
 		
+if(!exists("NROW", mode='function')) {
+  NROW <- function(x)
+    if (is.array(x) || is.data.frame(x)) nrow(x) else length(x)
+}
+
+if(!exists("NCOL", mode='function')) {
+  NCOL <- function(x)
+    if (is.array(x) && length(dim(x)) > 1 || is.data.frame(x)) ncol(x) else as.integer(1)
+}
+
 prn <- function(x, txt)
 {
   calltext <- as.character(sys.call())[2]

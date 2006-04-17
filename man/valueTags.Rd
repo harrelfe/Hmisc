@@ -14,7 +14,7 @@
 }
 \usage{
 valueTags(x)
-valueTags(x) <- list
+valueTags(x) <- value
 
 valueLabel(x)
 valueLabel(x) <- value
@@ -22,14 +22,15 @@ valueLabel(x) <- value
 valueName(x)
 valueName(x) <- value
 
-valueUnits(x)
-valueUnits(x) <- value
+valueUnit(x)
+valueUnit(x) <- value
 }
 \arguments{
   \item{x}{
     an object
   }
   \item{value}{
+    for \code{valueTags<-} a named list of value tags.
     a character vector of length 1, or \code{NULL}.
   }
   \item{list}{

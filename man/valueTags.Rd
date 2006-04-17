@@ -33,10 +33,6 @@ valueUnit(x) <- value
     for \code{valueTags<-} a named list of value tags.
     a character vector of length 1, or \code{NULL}.
   }
-  \item{list}{
-    a list containing one or more named values from the list
-    (\code{label}, \code{name}, \code{unit}).
-  }
 }
 \value{
   \code{valueTag} returns \code{NULL} or a named list with each of the

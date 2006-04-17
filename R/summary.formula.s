@@ -2246,16 +2246,27 @@ latex.summary.formula.cross <-
 ##Saves label attributute and defaults shortlabel to T
 stratify <- function(..., na.group = FALSE, shortlabel = TRUE)
 {
-  words <- as.character((match.call())[-1])
+  words <- as.list((match.call())[-1])
   if(!missing(na.group))
-    words <- words[-1]
+    words$na.group <- NULL
+
+  if(!missing(shortlabel))
+    words$shortlabel <- NULL
 
   allf <- list(...)
-  xlab <- attr(allf[[1]],'label')  #FEH 2Jun95
+  
   if(length(allf) == 1 && is.list(ttt <- oldUnclass(allf[[1]]))) {
     allf <- ttt
     words <- names(ttt)
   }
+  
+  xlab <- sapply(allf, function(x){lab <- valueLabel(x); if(is.null(lab)) NA else lab})
+  xname <- sapply(allf, function(x){name <- valueName(x); if(is.null(name)) NA else name})
+
+  xname <- ifelse(is.na(xname), words, xname)
+  xlab <- paste(ifelse(is.na(xlab), xname, xlab), collapse=' and ')
+  
+  xname <- paste(xname, collapse = ' and ')
 
   nterms <- length(allf)
   what <- allf[[1]]
@@ -2298,10 +2309,14 @@ stratify <- function(..., na.group = FALSE, shortlabel = TRUE)
   levs <- match(levs, ulevs)
   labs <- labs[ulevs]
   levels(levs) <- labs
-  attr(levs,'class') <- "factor"
-  if(length(xlab))
-    label(levs) <- xlab   #FEH 2Jun95
+  oldClass(levs) <- "factor"
 
+  if(length(xlab))
+    valueLabel(levs) <- xlab   #FEH 2Jun95
+
+  if(length(xname))
+    valueName(levs) <- xname
+  
   levs
 }
 
@@ -2594,14 +2609,14 @@ if(FALSE) {
 }
 
 
-as.character.mChoice <- function(x, sep=",", ...)
+as.character.mChoice <- function(x, sep=",", append, ...)
 {
   lev <- dimnames(x)[[2]]
   d <- dim(x)
   w <- rep('',d[1])
   for(j in 1:d[2]) {
     w <- paste(w,ifelse(w!='' & x[,j],sep,''),
-               ifelse(x[,j],lev[j],''),sep='')
+               ifelse(x[,j],paste(lev[j],append,sep='.'),''),sep='')
   }
 
   w

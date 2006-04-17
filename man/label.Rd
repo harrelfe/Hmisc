@@ -190,7 +190,7 @@ sapply(w, function(x){
 
 # Or: for(u in w) {hist(u); title(label(u))}
 }
-\keyword{interface}
+\keyword{attribute}
 \keyword{misc}
 \keyword{utilities}
 % Converted by Sd2Rd version 1.21.

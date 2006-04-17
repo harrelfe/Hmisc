@@ -1,29 +1,29 @@
 ## $Id$
 
-valueTags <- function(x)
+valueTags <- function(x) {
   list(unit = valueUnit(x), label = valueLabel(x),
        name = valueName(x))
+}
 
-
-"valueTags<-" <- function(x, list) {
+"valueTags<-" <- function(x, value) {
   tagged <- FALSE
 
-  if(!is.list(list))
-    stop("value must be a named list of valueTags")
+  if(!is.list(value))
+    stop("list must be a named list of valueTags")
 
-  if(!is.null(list$unit)) {
+  if(!is.null(value$unit)) {
     tagged <- TRUE
-    valueUnit(x) <- list$unit
+    valueUnit(x) <- value$unit
   }
 
-  if(!is.null(list$label)) {
+  if(!is.null(value$label)) {
     tagged <- TRUE
-    valueLabel(x) <- list$label
+    valueLabel(x) <- value$label
   }
 
-  if(!is.null(list$name)) {
+  if(!is.null(value$name)) {
     tagged <- TRUE
-    valueName(x) <- list$name
+    valueName(x) <- value$name
   }
 
   if(tagged)

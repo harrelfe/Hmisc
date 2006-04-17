@@ -2609,14 +2609,14 @@ if(FALSE) {
 }
 
 
-as.character.mChoice <- function(x, sep=",", append, ...)
+as.character.mChoice <- function(x, sep=",", ...)
 {
   lev <- dimnames(x)[[2]]
   d <- dim(x)
   w <- rep('',d[1])
   for(j in 1:d[2]) {
     w <- paste(w,ifelse(w!='' & x[,j],sep,''),
-               ifelse(x[,j],paste(lev[j],append,sep='.'),''),sep='')
+               ifelse(x[,j],lev[j],''),sep='')
   }
 
   w

@@ -3,8 +3,10 @@
 ##  x
 ##}
 
-label <- function(x, units=FALSE, plot=FALSE, default=NULL,
-                  grid=FALSE)
+label <- function(x, ...) UseMethod("label")
+
+label.default <- function(x, units=FALSE, plot=FALSE, default=NULL,
+                  grid=FALSE, ...)
 {
   at <- attributes(x)
   lab <- at$label
@@ -83,13 +85,15 @@ plotmathTranslate <- function(x)
   x
 }
 
+"label<-" <- function(x, ...) UseMethod("label<-")
 
 ##From Bill Dunlap, StatSci  15Mar95:
-"label<-" <- if(!.SV4.) function(x, value)
+
+"label<-.default" <- if(!.SV4.) function(x, value)
 {
   structure(x, label=value,
             class=c('labelled',
-                    attr(x,'class')[attr(x,'class')!='labelled']))
+                    attr(x,'class')[attr(x,'class')!='labelled']), ...)
 } else function(x, value)
 {    # 1Nov00 for Splus 5.x, 6.x
   ##  oldClass(x) <- unique(c('labelled', oldClass(x),

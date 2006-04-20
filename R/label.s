@@ -85,21 +85,24 @@ plotmathTranslate <- function(x)
   x
 }
 
-"label<-" <- function(x, ...) UseMethod("label<-")
+"label<-" <- function(x, value) UseMethod("label<-")
 
 ##From Bill Dunlap, StatSci  15Mar95:
 
-"label<-.default" <- if(!.SV4.) function(x, value)
-{
-  structure(x, label=value,
-            class=c('labelled',
-                    attr(x,'class')[attr(x,'class')!='labelled']), ...)
-} else function(x, value)
-{    # 1Nov00 for Splus 5.x, 6.x
-  ##  oldClass(x) <- unique(c('labelled', oldClass(x),
-  ##                          if(is.matrix(x))'matrix'))
-  attr(x,'label') <- value
-  x
+if(!.SV4.) {
+  "label<-.default" <- function(x, value) {
+    structure(x, label=value,
+              class=c('labelled',
+                attr(x,'class')[attr(x,'class')!='labelled']))
+  }
+} else {
+  "label<-.default" <- function(x, value) {
+    ## 1Nov00 for Splus 5.x, 6.x
+    ##  oldClass(x) <- unique(c('labelled', oldClass(x),
+    ##                          if(is.matrix(x))'matrix'))
+    attr(x,'label') <- value
+    x
+  }
 }
 
 if(!.SV4.) "[.labelled"<- function(x, ...)

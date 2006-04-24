@@ -92,31 +92,34 @@ format.df <- function(x,
     stop('only one of digits, dec, rdec, cdec may be given')
   
   ##if(length(digits)) .Options$digits    6Aug00 what was that?
-  
-  if(length(digits)) {
-    oldopt <- options(digits=digits)
-    on.exit(options(oldopt))
+  if(is.null(digits)) {
+    digits <- 16
   }
+
+  oldopt <- options(digits=digits)
+  on.exit(options(oldopt))
+  
 
   ## For now nsmall and scientific are ignored in R  25May01
   formt <-
     if(!.R.)
       format.default
     else function(x, decimal.mark='.', nsmall=0, scientific=c(-4,4))
-    {
-      x <- format(x)
-      if(decimal.mark!='.')
-        x <- gsub('\\.',decimal.mark,x)
+      {
+        x <- format(x)
+        if(decimal.mark!='.')
+          x <- gsub('\\.',decimal.mark,x)
       
-      x
-    }
+        x
+      }
   
   dot <-
-    if(cdot)
-      (if(.R.)
-         '\\\\cdotp\\\\!'
-       else
-         '\\cdotp\\!')
+    if(cdot) {
+      if(.R.)
+        '\\\\cdotp\\\\!'
+      else
+        '\\cdotp\\!'
+    }
     else
       '.'
 
@@ -870,7 +873,10 @@ latex.default <-
         linecnt <- linecnt+1
       }  ## End of for loop that writes the object.
 
-      cat(bottomrule, "\n", sep="",file=file, append=file!='')
+      if(length(n.group) > j)
+        cat(midrule, "\n", sep = "", file=file, append=file!='')
+      else
+        cat(bottomrule, "\n", sep="",file=file, append=file!='')
     }
   }
 

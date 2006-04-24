@@ -88,7 +88,6 @@ plotmathTranslate <- function(x)
 "label<-" <- function(x, value) UseMethod("label<-")
 
 ##From Bill Dunlap, StatSci  15Mar95:
-
 if(!.SV4.) {
   "label<-.default" <- function(x, value) {
     structure(x, label=value,

@@ -92,12 +92,14 @@ format.df <- function(x,
     stop('only one of digits, dec, rdec, cdec may be given')
   
   ##if(length(digits)) .Options$digits    6Aug00 what was that?
-  if(is.null(digits)) {
+  if(is.null(digits) && !(is.null(dec) && is.null(rdec) && is.null(cdec))) {
     digits <- 16
   }
 
-  oldopt <- options(digits=digits)
-  on.exit(options(oldopt))
+  if(length(digits)) {
+    oldopt <- options(digits=digits)
+    on.exit(options(oldopt))
+  }
   
 
   ## For now nsmall and scientific are ignored in R  25May01

@@ -1690,7 +1690,7 @@ if(.R.) {
         if(all(is.na(x))) {
           storage.mode(x) <- 'integer'
           changed <- TRUE
-        } else if(!(is.factor(x) || is.character(x))) {
+        } else if(!(is.factor(x) || is.character(x) || inherits(x,'Date'))) {
           if(all(is.na(x))) {
             storage.mode(x) <- 'integer'
             changed <- TRUE

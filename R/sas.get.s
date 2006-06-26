@@ -466,7 +466,7 @@ sas.get <- if(under.unix || .R.)
     no.format <- all(access(paste(format.library,
                                   c('formats.sc2','formats.sct',
                                     'formats.sct01','formats.sas7bcat'),
-                                  sep='/'),4) < 0)
+                                  sep='//'),4) < 0)
     if(no.format) {
       if((!missing(formats) && formats) || (!missing(recode) && recode))
         warning(paste(paste(format.library, 
@@ -527,7 +527,7 @@ sas.get <- if(under.unix || .R.)
     ## format.library should contain formats.sct containing user defined
     ## formats used by this dataset.
     cat("libname library '", format.library, "';\n", file = sasin,
-	append = TRUE, sep = "")
+        append = TRUE, sep = "")
     cat("%sas_get(temp.", member, ",\n",
         "  ", sasout[1], ",\n",
         "  ", sasout[2], ",\n",
@@ -541,7 +541,8 @@ sas.get <- if(under.unix || .R.)
         file = sasin, append = TRUE, sep = "")
     
     cat('Invoking SAS for Windows.  Click the SAS icon if you want to watch.\n')
-    win3(paste(sasprog, sasin, "-log", log.file, "-icon"))
+    win3(paste(paste('"', sasprog, '"', sep=''), paste('"',sasin,'"', sep=''), "-log",
+               paste('"',log.file,'"',sep=''), "-icon"))
     if(access(log.file) < 0) 
       stop(paste('SAS did not create log file',log.file,
                  '\nCheck that sas.exe is in your path.'))

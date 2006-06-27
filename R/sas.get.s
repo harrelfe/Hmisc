@@ -18,20 +18,20 @@ sas.get <- if(under.unix || .R.)
   dates. <- match.arg(dates.)
 
   fexists <- function(name) {
-    w <- file.exists(name)
+    w <- file.exists(shQuote(name))
     attr(w, 'which') <- name[w]
     w
   }
 
-  file.is.dir <- if(.R.) function(name) !is.na(file.info(name)$isdir)
+  file.is.dir <- if(.R.) function(name) !is.na(file.info(shQuote(name))$isdir)
                  else function(name) is.dir(name)
 
   file.is.readable <- function(name)
     if(.R.)
-      file.access(name,4)==0
+      file.access(shQuote(name),4)==0
     else access(name,4)==0
 
-  fileShow <- if(.R.) function(x) file.show(x)
+  fileShow <- if(.R.) function(x) file.show(shQuote(x))
               else function(x) page(filename=x)
 
   if(recode) formats <- TRUE

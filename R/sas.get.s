@@ -158,10 +158,10 @@ sas.get <- if(under.unix || .R.)
         file = sasin, append = TRUE, sep = "")
   }
   
-  status <- sys(paste(sasprog, sasin, "-log", log.file), output=FALSE)
+  status <- sys(paste(shQuote(sasprog), shQuote(sasin), "-log", shQuote(log.file)), output=FALSE)
   ## 24nov03 added output=F
   if(status != 0) {
-    if(!quiet) fileShow(log.file)  ## 4oct03
+    if(!quiet && fexists(log.file)) fileShow(log.file)  ## 4oct03
     stop(paste("SAS job failed with status", status))
   }
 										#

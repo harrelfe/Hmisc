@@ -18,20 +18,26 @@ sas.get <- if(under.unix || .R.)
   dates. <- match.arg(dates.)
 
   fexists <- function(name) {
-    w <- file.exists(shQuote(name))
+    w <- file.exists(name)
     attr(w, 'which') <- name[w]
     w
   }
 
-  file.is.dir <- if(.R.) function(name) !is.na(file.info(shQuote(name))$isdir)
-                 else function(name) is.dir(name)
+  file.is.dir <- if(.R.) {
+    function(name) {
+      isdir <- file.info(name)$isdir
+      isdir && !is.na(isdir)
+    }
+  } else {
+    function(name) is.dir(name)
+  }
 
   file.is.readable <- function(name)
     if(.R.)
-      file.access(shQuote(name),4)==0
+      file.access(name,4)==0
     else access(name,4)==0
 
-  fileShow <- if(.R.) function(x) file.show(shQuote(x))
+  fileShow <- if(.R.) function(x) file.show(x)
               else function(x) page(filename=x)
 
   if(recode) formats <- TRUE
@@ -113,7 +119,7 @@ sas.get <- if(under.unix || .R.)
   } else {
     if(!file.is.dir(library))
       stop(paste(sep = "", "library, \"", library, 
-                 "\", is not a Unix directory"))
+                 "\", is not a directory"))
     
     unix.file <- paste(library, "/", member, ".", sasds.suffix,
                        sep='')

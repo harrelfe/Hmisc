@@ -221,12 +221,13 @@ f.harrell@vanderbilt.edu
 Lakatos E (1988): Sample sizes based on the log-rank statistic in complex
 clinical trials.  Biometrics 44:229--241 (Correction 44:923).
 
-
 Cuzick J, Edwards R, Segnan N (1997): Adjusting for non-compliance and 
 contamination in randomized clinical trials. Stat in Med 16:1017--1029.
 
 Cook, T (2003): Methods for mid-course corrections in clinical trials
 with survival outcomes.  Stat in Med 22:3431--3447.
+
+Barthel FMS, Babiker A et al (2006): Evaluation of sample size and power for multi-arm survival trials allowing for non-uniform accrual, non-proportional hazards, loss to follow-up and cross-over.  Stat in Med 25:2521--2542.
 }
 \seealso{
 \code{\link{cpower}}, \code{\link{ciapower}}, \code{\link{bpower}}, \code{\link[Design]{cph}}, \code{\link[survival]{coxph}}, \code{\link{labcurve}}

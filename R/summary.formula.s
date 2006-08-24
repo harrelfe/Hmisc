@@ -1386,12 +1386,12 @@ dotchart2 <-
         substring(labng,nchar(labng),nchar(labng))==']'
       yposng <- ypos[nongrp]
       s <- !bracket
-      if(any(s))
+      if(!is.na(any(s)) && any(s))
         mtextsrt(paste(labng[s],''), 2, 0, at=yposng[s],
                  srt=0, adj=1, cex=cex.labels)
 
       s <- bracket
-      if(any(s)) {
+      if(!is.na(any(s)) && any(s)) {
         if(.R.)
           text(rep(par('usr')[1],sum(s)),
                yposng[s], labng[s], adj=1,

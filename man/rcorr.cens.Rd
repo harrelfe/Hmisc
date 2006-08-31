@@ -59,6 +59,9 @@ f.harrell@vanderbilt.edu
 \seealso{
 \code{\link{somers2}}
 }
+\references{
+Newson R: Confidence intervals for rank statistics: Somers' D and extensions.  Stata Journal 6:309-334; 2006.
+}
 \examples{
 set.seed(1)
 x <- round(rnorm(200))

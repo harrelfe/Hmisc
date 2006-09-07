@@ -1168,7 +1168,7 @@ plot.summary.formula.reverse <-
                           else 16,
                           93)[j],
                     dotfont=dotfont[1],
-                    add=j > 1)
+                    add=j > 1, ...)
         }
       } else if(conType=='bp')
         bpplt(st, xlab=nam, cex.points=cex.means)

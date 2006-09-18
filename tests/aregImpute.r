@@ -45,4 +45,50 @@ ecdf(Z, add=T, col='green')
 
 coef(fit.mult.impute(Y~X+Zna, lm, w, data=data.frame(X,Zna,Y),pr=F))
 
+## From Ewout Steyerberg
+# Missing values: illustrate MCAR, MAR, MNAR mechanism
+# linear models
+library(Design)
 
+## 1. x1 and x2 with y1 outcome
+## A) X only
+## B) X+Y
+
+#########################
+### Test Imputation ###
+### use aregImpute in default settings
+#########################
+
+n <- 200               # arbitrary sample size
+x2  <- rnorm(n=n, mean=0, sd=1)               # x2 standard normal
+# x1	<- rnorm(n=n, mean=0, sd=1)  # Uncorrelated x1
+x1   <- sqrt(.5) * x2 + rnorm(n=n, mean=0, sd=sqrt(1-.5))  # x2 correlated with x1
+y1   <- 1 * x1 + 1 * x2 + rnorm(n=n, mean=0, sd=sqrt(1-0)) # generate y
+# var of y1 larger with correlated x1 - x2
+
+x1MCAR   <- ifelse(runif(n) < .5, x1, NA)          # MCAR mechanism for 50% of x1
+x1MARx   <- ifelse(rnorm(n=n,sd=.8) < x2, x1, NA)  # MAR on x2, R2 50%, 50% missing (since mean x2==0)
+x1MARy   <- ifelse(rnorm(n=n,sd=(sqrt(3)*.8)) >y1, x1, NA) # MAR on y, R2 50%, 50% missing (since mean y1==0)
+# x1MNAR   <- ifelse(rnorm(n=n,sd=.8) < x1, x1, NA)  # MNAR on x1, R2 50%, 50% missing (since mean x1==0)
+x1MNAR   <- ifelse(rnorm(n=n,sd=.8) < x1, x1, NA)  # MNAR on x1, R2 50%, 50% missing (since mean x1==0)
+
+d <- data.frame(y1,x1,x2,x1MCAR, x1MARx,x1MARy,x1MNAR)
+f  <- ols(y1~x1+x2)
+
+# MAR on x: 3 approaches; CC, MI with X, MI with X+Y
+par(ask=TRUE)
+g <- aregImpute(~I(x1MARx) + I(x2), n.impute=5, data=d, pr=F, type='regression', method='avas', plotTrans=TRUE)
+
+f <- fit.mult.impute(y1 ~ x1MARx + x2, ols, xtrans=g, data=d, pr=F)
+g <- aregImpute(~y1 + x1MARx + x2, n.impute=5, data=d, pr=F, type='regression', plotTrans=TRUE)
+f <- fit.mult.impute(y1 ~ x1MARx + x2, ols, xtrans=g, data=d, pr=F)
+
+# MAR on y: 3 approaches; CC, MI with X, MI with X+Y
+f  <- ols(y1~x1MARy+x2)
+Mat.imputation[i,29:32] <- c(coef(f)[2:3], sqrt(diag(Varcov(f)))[2:3])
+g <- aregImpute(~x1MARy + x2, n.impute=5, data=d, pr=F, type='regression')
+f <- fit.mult.impute(y1 ~ x1MARy + x2, ols, xtrans=g, data=d, pr=F)
+Mat.imputation[i,33:36] <- c(coef(f)[2:3], sqrt(diag(Varcov(f)))[2:3])
+g <- aregImpute(~y1 + x1MARy + x2, n.impute=5, data=d, pr=F, type='regression')
+f <- fit.mult.impute(y1 ~ x1MARy + x2, ols, xtrans=g, data=d, pr=F)
+Mat.imputation[i,37:40] <- c(coef(f)[2:3], sqrt(diag(Varcov(f)))[2:3])

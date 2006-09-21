@@ -30,10 +30,10 @@
 ##		   27 Dec 91 - added norm argument
 ##		   26 Jun 93 - added evasive action if <3 knots
 
-rcspline.eval <- function(x,knots,nk=5,inclx=FALSE,knots.only=FALSE,
+rcspline.eval <- function(x,knots=NULL,nk=5,inclx=FALSE,knots.only=FALSE,
                           type="ordinary",norm=2, rpm=NULL)
 {
-  if(missing(knots)) {
+  if(!length(knots)) {
     xx <- x[!is.na(x)]
     n <- length(xx)
     if(n<6)

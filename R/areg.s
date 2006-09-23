@@ -204,6 +204,6 @@ plot.areg <- function(object, whichx=1:ncol(x), ...) {
     cn <- colnames(x)
     for(i in whichx)
       plot(x[,i], object$tx[,i],
-           xlab=cn[i], ylab=paste('Transformed', cn[i])) 
+           xlab=cn[i], ylab=paste('Transformed', cn[i]), ...) 
     invisible()
 }

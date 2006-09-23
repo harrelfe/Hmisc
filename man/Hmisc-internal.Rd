@@ -1,6 +1,7 @@
 \name{Hmisc-internal}
 \title{Internal Hmisc functions}
 \alias{dataDensityString}
+\alias{aregTran}
 \alias{as.double.Cbind}
 \alias{as.numeric.Cbind}
 \alias{format.sep}

@@ -1,143 +1,27 @@
+# $Id$
 aregImpute <- function(formula, data, subset, n.impute=5,
-                       group=NULL, method=c('ace','avas'),
+                       group=NULL, nk=3,
                        type=c('pmm','regression'),
                        match=c('weighted','closest'), fweighted=0.2,
-                       defaultLinear=FALSE, x=FALSE,
-                       pr=TRUE, plotTrans=FALSE)
+                       burnin=3, x=FALSE,
+                       pr=TRUE, plotTrans=FALSE,
+                       tolerance=NULL)
 {
   
   acall   <- match.call()
-  method  <- match.arg(method)
   type    <- match.arg(type)
   match   <- match.arg(match)
-  if(.R.)
-    require('acepack')  # provides ace, avas
 
-  ## Temporarily fix bug in ace
-  if(.R.) {
-    ace <- function (x, y, wt = rep(1, nrow(x)), cat = NULL, mon = NULL, 
-                     lin = NULL, circ = NULL, delrsq = 0.01) 
-    {
-      x <- as.matrix(x)
-      if (delrsq <= 0) {
-        cat("delrsq must be positive")
-        return()
-      }
-      iy <- ncol(x) + 1
-      l <- matrix(1, ncol = iy)
-      if (!is.null(circ)) {
-        for (i in 1:length(circ)) {
-          if (circ[i] < 0 || circ[i] > ncol(x)) {  # FEH nrow -> ncol
-            cat("bad circ= specification")
-            return()
-          }
-          if (circ[i] == 0) {
-            cat("response spec can only be lin or ordered (default)")
-            return()
-          }
-          else {
-            nncol <- circ[i]
-            if (l[nncol] != 2 & l[nncol] != 1) {
-              cat("conflicting transformation specifications")
-              return()
-            }
-            l[nncol] <- 2
-          }
-        }
-      }
-      if (length(mon)) {
-        for (i in 1:length(mon)) {
-          if (mon[i] < 0 || mon[i] > ncol(x)) {  # FEH nrow -> ncol
-            cat("bad mon= specification")
-            return()
-          }
-          if (mon[i] == 0) {
-            ## Next 2 lines commented out FEH
-            ##  cat("response spec can only be lin or ordered (default)")
-            ##  return()
-          }
-          else {
-            nncol <- mon[i]
-            if (l[nncol] != 3 && l[nncol] != 1) {
-              cat("conflicting transformation specifications")
-              return()
-            }
-            l[nncol] <- 3
-          }
-        }
-      }
-      if (length(lin)) {
-        for (i in 1:length(lin)) {
-          if (lin[i] < 0 || lin[i] > ncol(x)) {  # FEH nrow -> ncol
-            cat("bad lin= specification")
-            return()
-          }
-          if (lin[i] == 0) {
-            nncol <- iy
-          }
-          else {
-            nncol <- lin[i]
-          }
-          if (l[nncol] != 4 && l[nncol] != 1) {
-            cat("conflicting transformation specifications")
-            return()
-          }
-          l[nncol] <- 4
-        }
-      }
-      if (length(cat)) {
-        for (i in 1:length(cat)) {
-          if (cat[i] < 0 || cat[i] > ncol(x)) {  # FEH nrow -> ncol
-            cat("bad cat= specification")
-            return()
-          }
-          if (cat[i] == 0) {
-            ## Next 2 lines commented out FEH
-            ##  cat("response spec can only be lin or ordered (default)")
-            ##  return()
-          }
-          else {
-            nncol <- cat[i]
-            if (l[nncol] != 4 && l[nncol] != 1) {
-              cat("conflicting transformation specifications")
-              return()
-            }
-            l[nncol] <- 4
-          }
-        }
-      }
-      tx <- x
-      ty <- y
-      m <- matrix(0, nrow = nrow(x), ncol = iy)
-      z <- matrix(0, nrow = nrow(x), ncol = 12)
-      z <- as.matrix(z)
-      ns <- 1
-      mode(x) <- "double"
-      mode(y) <- "double"
-      mode(tx) <- "double"
-      mode(ty) <- "double"
-      mode(wt) <- "double"
-      mode(delrsq) <- "double"
-      mode(z) <- "double"
-      junk <- .Fortran("mace", p = as.integer(ncol(x)), n = as.integer(nrow(x)), 
-                       x = t(x), y = y, w = as.double(wt), l = as.integer(l), 
-                       delrsq = delrsq, ns = as.integer(ns), tx = tx, ty = ty, 
-                       rsq = double(1), ierr = integer(1), m = as.integer(m), 
-                       z = z, PACKAGE = "acepack")
-      return(junk)
-    }
-  }
-  
   if(!inherits(formula,'formula'))
     stop('formula must be a formula')
   
   nam <- var.inner(formula)
 
   m <- match.call(expand = FALSE)
-  Terms <- terms(formula, specials=c('I','monotone'))
+  Terms <- terms(formula, specials='I')
   m$formula <- formula
-  m$match <- m$fweighted <- m$x <- m$n.impute <- m$defaultLinear <-
-    m$type <- m$group <- m$method <- m$pr <- m$plotTrans <- m$... <- NULL
+  m$match <- m$fweighted <- m$x <- m$n.impute <- m$nk <- m$burnin <-
+    m$type <- m$group <- m$pr <- m$plotTrans <- m$tolerance <- NULL
   m$na.action <- na.retain
 
   m[[1]] <- as.name("model.frame")
@@ -156,11 +40,11 @@ aregImpute <- function(formula, data, subset, n.impute=5,
   }
 
   linear <- nam[attr(Terms,'specials')$I]
-  mono <- nam[attr(Terms,'specials')$monotone]
 
   cat.levels <- vector('list',p)
   names(cat.levels) <- nam
-  categorical <- character(0)
+  vtype <- rep('s', p); names(vtype) <- nam
+  dof <- rep(NA, p); names(dof) <- nam
   na <- vector('list',p)
   names(na) <- nam
   nna <- integer(p); names(nna) <- nam
@@ -203,15 +87,15 @@ aregImpute <- function(formula, data, subset, n.impute=5,
     if(iscat) {
       cat.levels[[ni]] <- lev
       xi <- as.integer(xi)
-      categorical <- c(categorical,ni)
+      vtype[ni] <- 'c'
     }
     else {
       u <- unique(xi[!nai])
       if(length(u) == 1)
         stop(paste(ni,'is constant'))
       else
-        if((defaultLinear || length(u) == 2) &&
-           ni %nin% linear) linear <- c(linear, ni)
+        if(nk==0 || length(u) == 2 || ni %in% linear)
+          vtype[ni] <- 'l'
     }
     xf[,i] <- xi
     
@@ -228,7 +112,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
   names(rsq) <- nam[wna]
   
   if(pr) cat('Iteration:')
-  for(iter in 1:(3+n.impute)) {
+  for(iter in 1:(burnin + n.impute)) {
     if(pr) cat(iter,'')
     for(i in wna) {
       nai <- na[[i]]      ## subscripts of NAs on xf[i,]
@@ -248,58 +132,17 @@ aregImpute <- function(formula, data, subset, n.impute=5,
       nm <- c(nami, nam[-i])
 
       X <- xf[,-i,drop=FALSE]
-      w <- list(x=X[s,], y=xf[s,i])
-      if(length(mono))
-        w$mon  <- match(mono, nm) - 1
+
+      f <- areg(X[s,], xf[s,i], xtype=vtype[-i], ytype=vtype[i],
+                na.rm=FALSE, tolerance=tolerance)
+      dof[names(f$xdf)] <- f$xdf
+      dof[nami] <- f$ydf
       
-      if(length(categorical))
-        w$cat  <- match(categorical, nm) - 1
+      if(plotTrans) plot(f)
       
-      if(length(linear))
-        w$lin  <- match(linear, nm) - 1
-      
-      f <- do.call(if(method=='ace' || nami %in% categorical)
-                     'ace'
-                   else
-                     'avas',
-                   w)
-      
-      if(plotTrans) {
-        plot(f$y, f$ty, xlab=nami, ylab=paste('Transformed',nami))
-        xx <- if (is.matrix(f$x))
-                (if(method=='ace') t(f$x) else f$x)
-              else
-                as.matrix(f$x)
-        
-        ## bug in ace returns transpose of x
-        tx <- as.matrix(f$tx)
-        for(jj in 1:ncol(xx))
-          plot(xx[,jj], tx[,jj],
-               xlab=nm[jj+1], ylab=paste('Transformed',nm[jj+1]))
-      }
-      
-      ## avas does not handle categorical response variables
-      cof <- lm.fit.qr.bare(f$tx, f$ty)$coef
-      rsq[nami] <- f$rsq
-      ## fitter does not automatically make coefficients=1
-      pti <- cof[1]    ## predicted transformed xf[,i]
-      for(k in 1:(p-1)) {
-        ## Transform each RHS variable, all original obs.
-        if(length(unique(X[s,k]))==1) {
-          cat('\n\n')
-          print(table(X[,k]))
-          stop(paste('Variable', dimnames(X)[[2]][k],
-                     '\nhas only one unique value in a bootstrap sample.\n',
-                     'See above for overall frequency distribution.'))
-        }
-        tk <- if(TRUE || .R.)
-                approxExtrap(X[s,k], f$tx[,k], xout=X[,k])$y
-              else
-                approx(X[s,k], f$tx[,k], xout=X[,k], rule=3)$y
-        
-        ## Bug in approx with rule=3 resulting in NA for 6.0 Linux
-        pti <- pti + cof[k+1]*tk
-      }
+      rsq[nami] <- f$rsquared
+      pti <- predict(f, X)  # predicted transformed xf[,i]
+      if(vtype[i]=='l') pti <- (pti - mean(pti))/sqrt(var(pti))
       
       if(type=='pmm') {
         whichclose <- if(match=='closest') {
@@ -331,7 +174,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
         impi <- approxExtrap(f$ty, f$y, xout=ptir)$y
       }
       xf[nai,i] <- impi
-      if(iter > 3) imp[[nam[i]]][,iter-3] <- impi
+      if(iter > burnin) imp[[nam[i]]][,iter-burnin] <- impi
     }
   }
   if(pr)
@@ -341,10 +184,10 @@ aregImpute <- function(formula, data, subset, n.impute=5,
     xf <- NULL
   
   structure(list(call=acall, formula=formula,
-                 method=method, match=match, fweighted=fweighted,
+                 match=match, fweighted=fweighted,
                  n=n, p=p, na=na, nna=nna,
-                 linear=linear, categorical=categorical, monotone=mono,
-                 cat.levels=cat.levels,
+                 type=vtype, nk=nk,
+                 cat.levels=cat.levels, df=dof,
                  n.impute=n.impute, imputed=imp, x=xf, rsq=rsq),
             class='aregImpute')
 }
@@ -354,17 +197,12 @@ print.aregImpute <- function(x, ...)
   cat("\nMultiple Imputation using Bootstrap and PMM\n\n")
   dput(x$call)
   cat("\n")
-  cat('\nMethod:',x$method,'\tn=',x$n,'\tp=',x$p,
-      '\tImputations:',x$n.impute,'\n')
-  cat('\nNumber of NAs:\n'); print(x$nna)
-  if(length(x$linear))
-    cat('\nLinear:\t',x$linear,'\n')
-  
-  if(length(x$categorical))
-    cat('\nCategorical:\t',x$categorical,'\n')
-  
-  if(length(x$monotone))
-    cat('\nMonotonic:\t',  x$monotone,'\n')
+  cat('tn:',x$n,'\tp:',x$p,
+      '\tImputations:',x$n.impute,' \tnk:',x$nk,'\n')
+  cat('\nNumber of NAs:\n'); print(x$nna); cat('\n')
+  info <- data.frame(type=x$type, d.f.=x$df,
+                     row.names=names(x$type))
+  print(info)
   
   cat('\nR-squares for Predicting Non-Missing Values for Each Variable\nUsing Last Imputations of Predictors\n')
   print(round(x$rsq,3))
@@ -386,7 +224,7 @@ plot.aregImpute <- function(x, nclass=NULL, type=c('ecdf','hist'),
     
     if(diagnostics) {
       r <- range(xi)
-      cat(min(maxn,nrow(xi)))
+      ## cat(min(maxn,nrow(xi)))
       for(j in 1:min(maxn,nrow(xi))) {
         plot(1:n.impute, xi[j,], ylim=r, xlab='Imputation',
              ylab=paste("Imputations for Obs.",j,"of",n))

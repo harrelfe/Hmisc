@@ -27,8 +27,10 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
   if(!length(ytype)) ytype <- 
     if(is.factor(y) || is.category(y) || is.character(y)) 'c' else
       if(nk==0 || (length(unique(y)) < 3)) 'l' else 's'
+  if(nk==0 && ytype=='s') ytype <- 'l'
 
   if(!length(xtype)) xtype <- rep(if(nk==0)'l' else 's', p)
+  xtype[nk==0 & xtype=='s'] <- 'l'
   names(xtype) <- xnam
   
   Y <- aregTran(y, ytype, nk)
@@ -126,14 +128,12 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
   if(linear.predictors) lp <- xcof[1]
   for(i in 1:p) {
     m <- xdf[i]
-    if(xtype[i] != 'l') {
-      z <- matxv(X[,(j+1):(j+m),drop=FALSE], beta[(j+1):(j+m)])
-      if(linear.predictors) lp <- lp + z
-      mz <- mean(z)
-      xmeans[[xnam[i]]] <- mz
-      tx[,i] <- z - mz
-      j <- j + m
-    }
+    z <- matxv(X[,(j+1):(j+m),drop=FALSE], beta[(j+1):(j+m)])
+    if(linear.predictors) lp <- lp + z
+    mz <- mean(z)
+    xmeans[[xnam[i]]] <- mz
+    tx[,i] <- z - mz
+    j <- j + m
   }
   structure(list(y=y, x=x, ty=ty, tx=tx,
                  rsquared=r2, nk=nk, xdf=xdf, ydf=ydf,
@@ -147,7 +147,7 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
 }
 
 aregTran <- function(z, type, nk, parms=NULL) {
-  if(type=='l') return(as.matrix(z))
+  if(type=='l' || (type=='s' && nk==0)) return(as.matrix(z))
   if(type=='c') {
     n <- length(z)
     lp <- length(parms)

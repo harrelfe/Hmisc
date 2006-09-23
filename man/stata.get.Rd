@@ -9,7 +9,7 @@
 stata.get(file, lowernames = FALSE, convert.dates = TRUE,
           convert.factors = TRUE, missing.type = FALSE,
           convert.underscore = TRUE, warn.missing.labels = TRUE,
-          force.single = TRUE)
+          force.single = TRUE, allow=FALSE)
 }
 \arguments{
   \item{file}{input SPSS save file.  May be a file on the WWW, indicated
@@ -24,6 +24,9 @@ stata.get(file, lowernames = FALSE, convert.dates = TRUE,
   \item{force.single}{set to \code{FALSE} to prevent integer-valued
     variables from being converted from storage mode \code{double} to
     \code{integer}}
+  \item{allow}{a vector of characters allowed by \R that should not be
+	converted to periods in variable names.  By default, underscores in
+	variable names are converted to periods as with \R before version 1.9.}
 }
 \details{
   \code{stata.get} invokes the \code{\link[foreign]{read.dta}} function in the

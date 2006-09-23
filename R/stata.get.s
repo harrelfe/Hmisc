@@ -57,7 +57,7 @@ if (.R.) {
             changed <- TRUE
           }
           else if(max(abs(x), na.rm=TRUE) <= (2^31-1) &&
-                  all(floor(x) == x, na,rm=TRUE)) {
+                  all(floor(x) == x, na.rm=TRUE)) {
             storage.mode(x) <- 'integer'
             changed <- TRUE
           }

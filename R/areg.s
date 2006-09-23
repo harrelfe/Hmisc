@@ -1,7 +1,8 @@
+# $Id$
 areg <- function(x, y, xtype, ytype, nk=4,
                  linear.predictors=FALSE,
                  B=0, na.rm=TRUE,
-                 tolerance=if(.R.) 1e-07 else .Machine$single.eps) {
+                 tolerance=NULL) {
 
   yname <- deparse(substitute(y))
   xname <- deparse(substitute(x))

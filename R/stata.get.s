@@ -2,7 +2,8 @@ if (.R.) {
   stata.get <- function(file, lowernames=FALSE,
                         convert.dates=TRUE, convert.factors=TRUE,
                         missing.type=FALSE, convert.underscore=TRUE,
-                        warn.missing.labels=TRUE, force.single=TRUE)
+                        warn.missing.labels=TRUE, force.single=TRUE,
+                        allow=NULL)
   {
     require('foreign')
 

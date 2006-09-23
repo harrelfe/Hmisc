@@ -1,5 +1,5 @@
 # $Id$
-areg <- function(x, y, xtype, ytype, nk=4,
+areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
                  linear.predictors=FALSE,
                  B=0, na.rm=TRUE,
                  tolerance=NULL) {
@@ -24,8 +24,11 @@ areg <- function(x, y, xtype, ytype, nk=4,
   n <- d[1]; p <- d[2]
   xnam <- colnames(x)
   if(!length(xnam)) xnam <- paste('x',1:p,sep='')
-  if(ytype=='s' & nk==0) ytype <- 'l'
-  xtype[xtype=='s' & nk==0] <- 'l'
+  if(!length(ytype)) ytype <- 
+    if(is.factor(y) || is.category(y) || is.character(y)) 'c' else
+      if(nk==0 || (length(unique(y)) < 3)) 'l' else 's'
+
+  if(!length(xtype)) xtype <- rep(if(nk==0)'l' else 's', p)
   names(xtype) <- xnam
   
   Y <- aregTran(y, ytype, nk)

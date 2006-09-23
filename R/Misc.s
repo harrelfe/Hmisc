@@ -227,9 +227,11 @@ trellis.strip.blank <- function()
 }
 
 lm.fit.qr.bare <- function(x, y, 
-                           tolerance = if(.R.)1e-7 else .Machine$single.eps, 
+                           tolerance = NULL,
                            intercept=TRUE, xpxi=FALSE)
 {
+  if(!length(tolerance)) tolerance <- if(.R.)1e-7 else .Machine$single.eps
+
   if(intercept)
     x <- cbind(1,x)
   if(storage.mode(x) != "double")

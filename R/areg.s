@@ -172,8 +172,9 @@ predict.areg <- function(object, x) {
   p <- length(xdf)
   X <- matrix(NA, nrow=nrow(x), ncol=sum(xdf))
   j <- 0
+  xnam <- names(xtype)
   for(i in 1:p) {
-    w <- aregTran(x[,i], xtype[i], nk, parms=xparms[[i]])
+    w <- aregTran(x[,i], xtype[i], nk, parms=xparms[[xnam[i]]])
     m <- ncol(w)
     X[,(j+1):(j+m)] <- w
     j <- j + m

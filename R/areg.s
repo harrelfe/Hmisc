@@ -146,7 +146,7 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
             class='areg')
 }
 
-aregTran <- function(z, type, nk, parms=NULL) {
+aregTran <- function(z, type, nk=length(parms), parms=NULL) {
   if(type=='l' || (type=='s' && nk==0)) return(as.matrix(z))
   if(type=='c') {
     n <- length(z)
@@ -177,7 +177,7 @@ predict.areg <- function(object, x) {
   j <- 0
   xnam <- names(xtype)
   for(i in 1:p) {
-    w <- aregTran(x[,i], xtype[i], nk, parms=xparms[[xnam[i]]])
+    w <- aregTran(x[,i], xtype[i], parms=xparms[[xnam[i]]])
     m <- ncol(w)
     X[,(j+1):(j+m)] <- w
     j <- j + m
@@ -186,13 +186,13 @@ predict.areg <- function(object, x) {
 }
 
 print.areg <- function(object) {
-  x <- object[c('n','m','nk','rsquared','ytype','ydf')]
-  x$xinfo <- data.frame(type=object$xtype, d.f.=object$xdf,
-                        row.names=names(object$xtype))
+  x <- object[c('n','m','nk','rsquared','xtype','xdf','ytype','ydf')]
+  xinfo <- data.frame(type=x$xtype, d.f.=x$xdf,
+                      row.names=names(x$xtype))
   cat('\nN:',x$n,'\t',x$m,
       ' observations with NAs deleted.\n')
   cat('R^2:', round(x$rsquared,3),'\tnk:',x$nk,'\n\n')
-  print(x$xinfo)
+  print(xinfo)
   cat('\ny type:', x$ytype,'\td.f.:', x$ydf,'\n\n')
   invisible()
 }

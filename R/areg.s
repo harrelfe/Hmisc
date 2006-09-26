@@ -9,7 +9,7 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
   ism <- is.matrix(x)
   if(!ism) {
     x <- as.matrix(x)
-    colnames(x) <- xname
+    if(!length(colnames(x))) colnames(x) <- xname
   }
   if(na.rm) {
     omit <- is.na(x %*% rep(1,ncol(x))) | is.na(y)
@@ -91,23 +91,43 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
       covx <- (covx - B * barx %*% t(barx))/(B-1)
     }
   } else {
-    f <- cancor(X, Y)
-    r2 <- f$cor[1]^2
-    varconst <- sqrt(n-1)
-    xcof <- c(intercept = -sum(f$xcoef[, 1] * f$xcenter),
-              f$xcoef[, 1]) * varconst
-    cof <- c(intercept = -sum(f$ycoef[, 1] * f$ycenter),
-             f$ycoef[, 1]) * varconst
-    ty <- matxv(Y, cof)
+    fcancor <- function(X, Y) {
+      ## If canonical variate transformation of Y is descending in Y,
+      ## negate all parameters
+      f <- cancor(X, Y)
+      f$r2 <- f$cor[1]^2
+      n <- nrow(Y); if(!length(n)) n <- length(y)
+      varconst <- sqrt(n-1)
+      xcoef <- c(intercept = -sum(f$xcoef[, 1] * f$xcenter),
+                 f$xcoef[, 1]) * varconst
+      ycoef <- c(intercept = -sum(f$ycoef[, 1] * f$ycenter),
+                 f$ycoef[, 1]) * varconst
+      ty <- matxv(Y, ycoef)
+      g <- lm.fit.qr.bare(Y,ty)
+      if(g$coefficients[2] < 0) {
+        xcoef <- -xcoef
+        ycoef <- -ycoef
+        ty    <- -ty
+      }
+      f$xcoef <- xcoef
+      f$ycoef <- ycoef
+      f$ty    <- ty
+      f
+    }
+    
+    f <- fcancor(X, Y)
+    r2 <- f$r2
+    xcof <- f$xcoef
+    cof  <- f$ycoef
+    ty   <- f$ty
     ydf <- length(cof) - 1
+  
     if(B > 0) {
       for(j in 1:B) {
         s <- sample(1:n, replace=TRUE)
-        f <- cancor(X[s,,drop=FALSE],Y[s,,drop=FALSE])
-        bx <- c(intercept = -sum(f$xcoef[, 1] * f$xcenter),
-                f$xcoef[, 1]) * varconst
-        by <- c(intercept = -sum(f$ycoef[, 1] * f$ycenter),
-                f$ycoef[, 1]) * varconst
+        f <- fcancor(X[s,,drop=FALSE],Y[s,,drop=FALSE])
+        bx <- f$xcoef
+        by <- f$ycoef
         barx <- barx + bx
         bx <- as.matrix(bx)
         covx <- covx + bx %*% t(bx)

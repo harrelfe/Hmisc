@@ -21,59 +21,59 @@ Additive Regression and Transformations using ace or avas
 transforming all variables in a matrix.  \code{transace} is a fast
 one-iteration version of \code{transcan} without imputation of NAs.  
 
-\code{areg.boot} uses \code{avas} or \code{ace} to fit additive regression models
-allowing all variables in the model (including the right-hand-side) to
-be transformed, with transformations chosen so as to optimize
-certain criteria.  The default method uses \code{avas}, which
-explicity tries to transform the response variable so as to stabilize
-the variance of the residuals.  All-variables-transformed models tend
-to inflate \code{R^2} and it can be difficult to get confidence limits for
-each transformation.  \code{areg.boot} solves both of these problems using
-the bootstrap.  As with the \code{validate} function in the Design library,
-the Efron bootstrap is used to estimate the optimism in the apparent \code{R^2},
-and this optimism is subtracted from the apparent \code{R^2} to optain a
-bias-corrected \code{R^2}.  This is done however on the transformed response
-variable scale.
+\code{areg.boot} uses \code{\link{areg}} or \code{\link[acepack]{avas}}
+to fit additive regression models allowing all variables in the model
+(including the left-hand-side) to be transformed, with transformations
+chosen so as to optimize certain criteria.  The default method uses
+\code{\link{areg}} whose goal it is to maximize \eqn{R^2}.
+\code{method='avas'} explicity tries to transform the response variable
+so as to stabilize the variance of the residuals.
+All-variables-transformed models tend to inflate \code{R^2} and it can
+be difficult to get confidence limits for each transformation.
+\code{areg.boot} solves both of these problems using the bootstrap.  As
+with the \code{validate} function in the Design library, the Efron
+bootstrap is used to estimate the optimism in the apparent \eqn{R^2},
+and this optimism is subtracted from the apparent \eqn{R^2} to optain a
+bias-corrected \eqn{R^2}.  This is done however on the transformed
+response variable scale.
 
-
-Tests with 3 predictors show that the AVAS and ACE estimates used by
-\code{areg.boot} are unstable unless the sample size exceeds 350.  Apparent
-\code{R^2} with low sample sizes can be very inflated, and bootstrap
-estimates of \code{R^2} can be even more unstable in such cases,
-resulting in optimism-corrected \code{R^2} that are much lower even than the
-actual \code{R^2}.  The situation can be improved a little by restricting
-predictor transformations to be monotonic.
-
+Tests with 3 predictors show that the \code{avas} and \code{ace} estimates are unstable unless the sample size exceeds 350.  Apparent
+\eqn{R^2} with low sample sizes can be very inflated, and bootstrap
+estimates of \eqn{R^2} can be even more unstable in such cases,
+resulting in optimism-corrected \eqn{R^2} that are much lower even than the
+actual \eqn{R^2}.  The situation can be improved a little by restricting
+predictor transformations to be monotonic.  On the other hand, the
+\code{areg} approach allows one to control overfitting by specifying the
+number of knots to use for each continuous variable in a restricted
+cubic spline function.
 
 For \code{method="avas"} the response transformation is restricted to be
 monotonic.  You can specify restrictions for transformations of
-predictors (and linearity for the response, or its monotonicity if
-using \code{ace}).  When the first argument is a formula, the function
+predictors (and linearity for the response).  When the first argument is a formula, the function
 automatically determines which variables are categorical (i.e., \code{factor},
 \code{category}, or character vectors).  Specify linear transformations by
 enclosing variables by the identify function (\code{I()}), and specify
-monotonicity by using \code{monotone(variable)}.
+monotonicity by using \code{monotone(variable)}.  Monotonicity
+restrictions are not allowed with \code{method='areg'}.
 
 
-The \code{summary} method for \code{areg.boot} computes bootstrap estimates of
-standard errors of differences in predicted responses (usually 
-on the original scale)
-for selected levels of each predictor against the lowest level of the
-predictor.  The smearing estimator (see below) can be used here to
-estimate differences in predicted means, medians, or many other
-statistics.  By default, quartiles are used for continuous predictors
-and all levels are used for categorical ones.  See DETAILS below.
-There is also a \code{plot} method for plotting transformation estimates,
-transformations for individual bootstrap re--samples, and pointwise
-confidence limits for transformations.  Unless you already have a
-\code{par(mfrow=)} in effect with more than one row or column, \code{plot} will
-try to fit the plots on one page.  A \code{predict} method computes
-predicted values on the original or transformed response scale, or a
-matrix of transformed predictors.  There is a \code{Function} method
-for producing a list of S-PLUS functions that perform the final fitted
-transformations.  There is also a \code{print} method for \code{areg.boot}
-objects.
-
+The \code{summary} method for \code{areg.boot} computes bootstrap
+estimates of standard errors of differences in predicted responses
+(usually on the original scale) for selected levels of each predictor
+against the lowest level of the predictor.  The smearing estimator (see
+below) can be used here to estimate differences in predicted means,
+medians, or many other statistics.  By default, quartiles are used for
+continuous predictors and all levels are used for categorical ones.  See
+DETAILS below.  There is also a \code{plot} method for plotting
+transformation estimates, transformations for individual bootstrap
+re--samples, and pointwise confidence limits for transformations.
+Unless you already have a \code{par(mfrow=)} in effect with more than
+one row or column, \code{plot} will try to fit the plots on one page.  A
+\code{predict} method computes predicted values on the original or
+transformed response scale, or a matrix of transformed predictors.
+There is a \code{Function} method for producing a list of S
+functions that perform the final fitted transformations.  There is also
+a \code{print} method for \code{areg.boot} objects.
 
 When estimated means (or medians or other statistical parameters) are
 requested for models fitted with \code{areg.boot} (by \code{summary.areg.boot}
@@ -115,8 +115,8 @@ example on hypothetical data).  }
 transace(x, monotonic=NULL, categorical=NULL, binary=NULL, pl=TRUE)
 
 areg.boot(x, y, data, weights, subset, na.action=na.delete, 
-          B=100, method=c("avas", "ace"), evaluation=100, valrsq=TRUE, 
-          probs=c(.25,.5,.75), \dots)
+          B=100, method=c("areg","avas"), nk=4, evaluation=100, valrsq=TRUE, 
+          probs=c(.25,.5,.75), tolerance=NULL, \dots)
 
 \method{print}{areg.boot}(x, \dots)
 
@@ -151,10 +151,10 @@ Quantile(object, \dots)
 }
 \arguments{
 \item{x}{
-for \code{transace} a numeric matrix.  For \code{areg.boot} \code{x} may
-be a numeric matrix or a formula.  For \code{print} or \code{plot}, an
-object created by \code{areg.boot}.  For \code{print.summary.areg.boot},
-and object created by \code{summary.areg.boot}.
+for \code{transace} a numeric matrix.  For \code{areg.boot} \code{x} is
+a formula.  For \code{print} or \code{plot}, an object created by
+\code{areg.boot}.  For \code{print.summary.areg.boot}, and object
+created by \code{summary.areg.boot}.
 }
 \item{object}{
 an object created by \code{areg.boot}, or a model fit object suitable
@@ -205,8 +205,11 @@ a function specifying how to handle NAs.  Default is \code{na.delete} (in Hmisc)
 number of bootstrap samples (default=100)
 }
 \item{method}{
-\code{"avas"} (the default) or \code{ace}
+\code{"areg"} (the default) or \code{avas}
 }
+\item{nk}{number of knots for continuous variables not restricted to be
+  linear.  Default is 4.  One or two is not allowed.  \code{nk=0} forces
+  linearity for all continuous variables.}
 \item{evaluation}{
 number of equally-spaced points at which to evaluate (and save) the
 nonparametric transformations derived by \code{avas} or \code{ace}.  Default is
@@ -215,16 +218,14 @@ which to evaluate exact smearing estimates, to approximate them using
 linear interpolation (default is 200).
 }
 \item{valrsq}{
-set to \code{TRUE} to more quickly do bootstrapping without validating \code{R^2}
+set to \code{TRUE} to more quickly do bootstrapping without validating \eqn{R^2}
 }
 \item{probs}{
 vector probabilities denoting the quantiles of continuous predictors
 to use in estimating effects of those predictors
 }
-\item{\dots}{
-other arguments to pass to \code{avas} or \code{ace} (useful if \code{x} is not a
-formula)
-}
+\item{tolerance}{singularity criterion; list source code for the
+  \code{lm.fit.qr.bare} function.}
 \item{res}{
 a vector of residuals from the transformed model.  Not required when
 \code{statistic="lp"} or \code{statistic="fitted"}.
@@ -245,7 +246,7 @@ transformation or by using an explicit analytic function.
 \code{q} which must be specified.  "mean"' causes the population mean
 response to be estimated.  For \code{predict.areg.boot},
 \code{statistic="terms"} returns a matrix of transformed predictors.
-\code{statistic} can also be any S-PLUS function that computes a single
+\code{statistic} can also be any S function that computes a single
 value on a vector of values, such as \code{statistic=var}.  Note that in
 this case the function name is not quoted.
 }
@@ -338,7 +339,7 @@ as the \code{pos} argument.
 }}
 \value{
 \code{transace} returns a matrix like \code{x} but containing transformed
-values.  This matrix has attributes \code{rsq} (vector of \code{R^2} with which
+values.  This matrix has attributes \code{rsq} (vector of \eqn{R^2} with which
 each variable can be predicted from the others) and \code{omitted} (row
 numbers of \code{x} that were deleted due to NAs).
 
@@ -456,8 +457,8 @@ plot(f)
 # Note that the fitted transformation of y is very nearly log(y)
 # (the appropriate one), the transformation of x1 is nearly linear,
 # and the transformations of x2 and x3 are essentially flat 
-# (specifying monotone(x2) would have resulted in a smaller 
-# confidence band for x2)
+# (specifying monotone(x2) if method='avas' would have resulted
+# in a smaller confidence band for x2)
 
 
 summary(f)
@@ -502,7 +503,7 @@ medr  <- Quantile(f)  # default quantile is .5
 nomogram(f.ols, fun=list(Mean=meanr,Median=medr))
 
 
-# Create S-PLUS functions that will do the transformations
+# Create S functions that will do the transformations
 # This is a table look-up with linear interpolation
 g <- Function(f)
 plot(blood.pressure, g$blood.pressure(blood.pressure))
@@ -526,7 +527,7 @@ plot(f)       # note log shape for y, linear for x.  Good!
 xs <- c(-2, 0, 2)
 d <- data.frame(x=xs)
 predict(f, d, 'fitted')
-predict(f, d, 'median')   # almost same; median residual=-.003
+predict(f, d, 'median')   # almost same; median residual=-.001
 exp(xs)                   # population medians
 predict(f, d, 'mean')
 exp(xs + .5)              # population means

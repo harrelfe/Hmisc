@@ -38,7 +38,7 @@ escapeRegex(string)
 escapeBS(string)
 
 \dontshow{
-if(any(grep(escapeRegex(string), string))) {
+if(!any(grep(escapeRegex(string), string))) {
   stop("function escapeRegex failed test")
 }
 

@@ -10,16 +10,6 @@ if(!exists("NCOL", mode='function')) {
     if (is.array(x) && length(dim(x)) > 1 || is.data.frame(x)) ncol(x) else as.integer(1)
 }
 
-if(!exists("ROW", mode='function')) {
-  ROW <- function(x)
-    if (is.array(x) || is.data.frame(x)) row(x) else matrix(seq(along.with=x), ncol=1)
-}
-
-if(!exists("COL", mode='function')) {
-  COL <- function(x)
-    if (is.array(x) && length(dim(x)) > 1 || is.data.frame(x)) col(x) else matrix(as.integer(1))
-}
-
 prn <- function(x, txt)
 {
   calltext <- as.character(sys.call())[2]

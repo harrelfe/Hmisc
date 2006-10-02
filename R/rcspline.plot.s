@@ -1,14 +1,13 @@
 ##Mod rep(1,n)-> rep(1,length(xe)) 1 Jul 91
-rcspline.plot <- function(x,y,model="logistic",xrange,
-                          event,nk=5,knots=NULL,show="xbeta",adj=NULL,xlab,ylab,ylim,
-                          plim=c(0,1),plotcl=TRUE,showknots=TRUE,add=FALSE,subset,lty=1,noprint=FALSE,
-                          m,smooth=FALSE,bass=1,main="auto",statloc)
+rcspline.plot <- function(x, y, model=c("logistic","cox","ols"), xrange,
+                          event, nk=5, knots=NULL, show=c("xbeta", "prob"),
+                          adj=NULL, xlab, ylab, ylim, plim=c(0,1),
+                          plotcl=TRUE, showknots=TRUE, add=FALSE, subset,
+                          lty=1, noprint=FALSE, m, smooth=FALSE, bass=1,
+                          main="auto", statloc)
 {
-  if(!(model=="logistic"|model=="cox"|model=="ols"))
-    stop('model must be "logistic", "cox", or "ols"')
-  
-  if(!(show=="xbeta"|show=="prob"))
-    stop('show must be "xbeta" or "prob"')
+  model <- match.arg(model)
+  show <- match.arg(show)
   
   if(!missing(event))
     model<-"cox"
@@ -79,6 +78,8 @@ rcspline.plot <- function(x,y,model="logistic",xrange,
 
   df1 <- nk-2
   if(model=="logistic") {
+    requirePackage('Design')
+    
     b <- lrm.fit(cbind(x,xx,adj),y)
     ##b <- glim(cbind(x,xx,adj),y,rep(1,n),error="binomial",
     ##link="logit")

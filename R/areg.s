@@ -1,45 +1,45 @@
 # $Id$
-areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
+areg <- function(xdata, ydata, xtype=NULL, ytype=NULL, nk=4,
                  linear.predictors=FALSE,
                  B=0, na.rm=TRUE,
                  tolerance=NULL) {
 
-  yname <- deparse(substitute(y))
-  xname <- deparse(substitute(x))
-  ism <- is.matrix(x)
+  yname <- deparse(substitute(ydata))
+  xname <- deparse(substitute(xdata))
+  ism <- is.matrix(xdata)
   if(!ism) {
-    x <- as.matrix(x)
-    if(!length(colnames(x))) colnames(x) <- xname
+    x <- as.matrix(xdata)
+    if(!length(colnames(xdata))) colnames(xdata) <- xname
   }
   if(na.rm) {
-    omit <- is.na(x %*% rep(1,ncol(x))) | is.na(y)
+    omit <- is.na(xdata %*% rep(1,ncol(x))) | is.na(ydata)
     nmiss <- sum(omit)
     if(nmiss) {
-      x <- x[!omit,,drop=FALSE]
-      y <- y[!omit]
+      xdata <- xdata[!omit,,drop=FALSE]
+      ydata <- ydata[!omit]
     }
   } else nmiss <- 0
     
-  d <- dim(x)
+  d <- dim(xdata)
   n <- d[1]; p <- d[2]
-  xnam <- colnames(x)
+  xnam <- colnames(xdata)
   if(!length(xnam)) xnam <- paste('x',1:p,sep='')
   if(!length(ytype)) ytype <- 
-    if(is.factor(y) || is.category(y) || is.character(y)) 'c' else
-      if(nk==0 || (length(unique(y)) < 3)) 'l' else 's'
+    if(is.factor(ydata) || is.category(ydata) || is.character(ydata)) 'c' else
+      if(nk==0 || (length(unique(ydata)) < 3)) 'l' else 's'
   if(nk==0 && ytype=='s') ytype <- 'l'
 
   if(!length(xtype)) xtype <- rep(if(nk==0)'l' else 's', p)
   xtype[nk==0 & xtype=='s'] <- 'l'
   names(xtype) <- xnam
   
-  Y <- aregTran(y, ytype, nk)
+  Y <- aregTran(ydata, ytype, nk)
   yparms <- attr(Y, 'parms')
 
   xdf <- ifelse(xtype=='l', 1, nk-1)
   j <- xtype=='c'
   if(any(j))
-    xdf[j] <- apply(x[,j,drop=FALSE], 2,
+    xdf[j] <- apply(xdata[,j,drop=FALSE], 2,
                     function(z) length(unique(z)) - 1)
   names(xdf) <- xnam
 
@@ -48,7 +48,7 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
   j <- 0
   xn <- character(0)
   for(i in 1:p) {
-    w <- aregTran(x[,i], xtype[i], nk)
+    w <- aregTran(xdata[,i], xtype[i], nk)
     xparms[[xnam[i]]] <- attr(w, 'parms')
     m <- ncol(w)
     xdf[i] <- m
@@ -77,7 +77,7 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
 	xcof <- f$coefficients
 	r2 <- f$rsquared
     cof <- 1
-    ty <- y
+    ty <- ydata
     ydf <- 1
     if(B > 0) {
       for(j in 1:B) {
@@ -96,7 +96,7 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
       ## negate all parameters
       f <- cancor(X, Y)
       f$r2 <- f$cor[1]^2
-      n <- nrow(Y); if(!length(n)) n <- length(y)
+      n <- nrow(Y); if(!length(n)) n <- length(ydata)
       varconst <- sqrt(n-1)
       xcoef <- c(intercept = -sum(f$xcoef[, 1] * f$xcenter),
                  f$xcoef[, 1]) * varconst
@@ -143,7 +143,7 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
   }
   j <- 0
   beta <- xcof[-1]
-  tx <- x
+  tx <- xdata
   xmeans <- list()
   if(linear.predictors) lp <- xcof[1]
   for(i in 1:p) {
@@ -155,7 +155,7 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
     tx[,i] <- z - mz
     j <- j + m
   }
-  structure(list(y=y, x=x, ty=ty, tx=tx,
+  structure(list(y=ydata, x=xdata, ty=ty, tx=tx,
                  rsquared=r2, nk=nk, xdf=xdf, ydf=ydf,
                  xcoefficients=xcof, ycoefficients=cof,
                  xparms=xparms, yparms=yparms, xmeans=xmeans,
@@ -186,18 +186,18 @@ aregTran <- function(z, type, nk=length(parms), parms=NULL) {
   }
 }
 
-predict.areg <- function(object, x) {
-  beta   <- object$xcoefficients
-  xparms <- object$xparms
-  xtype  <- object$xtype
-  xdf    <- object$xdf
-  x <- as.matrix(x)
+predict.areg <- function(x, xdata, ...) {
+  beta   <- x$xcoefficients
+  xparms <- x$xparms
+  xtype  <- x$xtype
+  xdf    <- x$xdf
+  xdata <- as.matrix(xdata)
   p <- length(xdf)
-  X <- matrix(NA, nrow=nrow(x), ncol=sum(xdf))
+  X <- matrix(NA, nrow=nrow(xdata), ncol=sum(xdf))
   j <- 0
   xnam <- names(xtype)
   for(i in 1:p) {
-    w <- aregTran(x[,i], xtype[i], parms=xparms[[xnam[i]]])
+    w <- aregTran(xdata[,i], xtype[i], parms=xparms[[xnam[i]]])
     m <- ncol(w)
     X[,(j+1):(j+m)] <- w
     j <- j + m
@@ -205,28 +205,28 @@ predict.areg <- function(object, x) {
   matxv(X, beta)
 }
 
-print.areg <- function(object) {
-  x <- object[c('n','m','nk','rsquared','xtype','xdf','ytype','ydf')]
-  xinfo <- data.frame(type=x$xtype, d.f.=x$xdf,
-                      row.names=names(x$xtype))
-  cat('\nN:',x$n,'\t',x$m,
+print.areg <- function(x, ...) {
+  xdata <- x[c('n','m','nk','rsquared','xtype','xdf','ytype','ydf')]
+  xinfo <- data.frame(type=xdata$xtype, d.f.=xdata$xdf,
+                      row.names=names(xdata$xtype))
+  cat('\nN:',xdata$n,'\t',xdata$m,
       ' observations with NAs deleted.\n')
-  cat('R^2:', round(x$rsquared,3),'\tnk:',x$nk,'\n\n')
+  cat('R^2:', round(xdata$rsquared,3),'\tnk:',xdata$nk,'\n\n')
   print(xinfo)
-  cat('\ny type:', x$ytype,'\td.f.:', x$ydf,'\n\n')
+  cat('\ny type:', xdata$ytype,'\td.f.:', xdata$ydf,'\n\n')
   invisible()
 }
 
-plot.areg <- function(object, whichx=1:ncol(x), ...) {
-	plot(object$y, object$ty, xlab=object$yname,
-         ylab=paste('Transformed',object$yname))
-    r2 <- round(object$rsquared,3)
+plot.areg <- function(x, whichx=1:ncol(x$x), ...) {
+	plot(x$y, x$ty, xlab=x$yname,
+         ylab=paste('Transformed',x$yname))
+    r2 <- round(x$rsquared,3)
     if(.R.) title(sub=bquote(R^2==.(r2)), adj=0) else
      title(sub=paste('R^2=',r2),adj=0)
-    x <- object$x
-    cn <- colnames(x)
+    xdata <- x$x
+    cn <- colnames(xdata)
     for(i in whichx)
-      plot(x[,i], object$tx[,i],
+      plot(xdata[,i], x$tx[,i],
            xlab=cn[i], ylab=paste('Transformed', cn[i]), ...) 
     invisible()
 }

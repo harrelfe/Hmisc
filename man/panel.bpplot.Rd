@@ -127,7 +127,7 @@ Department of Mathematical Sciences,
 Montana State University.
 }
 \seealso{
-\code{\link{bpplot}}, \code{\link[lattice]{panel.bwplot}}, \code{\link{scat1d}}, \code{\link{quantile}}, \code{\link{ecdf}}
+\code{\link{bpplot}}, \code{\link[lattice]{panel.bwplot}}, \code{\link{scat1d}}, \code{\link{quantile}}, \code{\link{Ecdf}}
 }
 \examples{
 set.seed(13)

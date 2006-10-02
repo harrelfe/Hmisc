@@ -1386,6 +1386,12 @@ if(!.R.) {
   NULL
 }
 
+requirePackage <- function(package, ...) {
+  if(!require(package, ...)) {
+    stop('This function requires the', as.character(package), 'package')
+  }
+}
+
 if(.R.) {
   getHdata <-
     function(file, what=c('data','contents','description','all'),

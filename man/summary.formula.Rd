@@ -56,7 +56,7 @@
 
   The \code{plot} method for \code{method="reverse"} creates a temporary
   function \code{Key} in frame 0 as is done by the \code{xYplot} and
-  \code{ecdf.formula} functions.  After \code{plot} runs, you can type
+  \code{Ecdf.formula} functions.  After \code{plot} runs, you can type
   \code{Key()} to put a legend in a default location, or
   e.g. \code{Key(locator(1))} to draw a legend where you click the left
   mouse button.  This key is for categorical variables, so to have the
@@ -714,7 +714,7 @@ mChoice(\dots, label='',
   \cr
   Vanderbilt University
   \cr
-  f.harrell@vanderbilt.edu
+  \email{f.harrell@vanderbilt.edu}
 }
 \references{
   Harrell FE (2004): Statistical tables and plots using S and LaTeX.

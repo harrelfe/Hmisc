@@ -13,28 +13,29 @@ that maximize \eqn{R^2}.  Optionally, the bootstrap is used to estimate
 the covariance matrix of both left- and right-hand-side transformation parameters.
 }
 \usage{
-areg(x, y, xtype, ytype, nk = 4, linear.predictors = FALSE, B = 0,
-     na.rm = TRUE, tolerance = NULL)
+areg(xdata, ydata, xtype = NULL, ytype = NULL, nk = 4,
+     linear.predictors = FALSE, B = 0, na.rm = TRUE,
+     tolerance = NULL)
 
-\method{print}{areg}(object)
+\method{print}{areg}(x, \dots)
 
-\method{plot}{areg}(object, whichx=1:ncol(x), ...)
+\method{plot}{areg}(x, whichx = 1:ncol(x$x), \dots)
 
-\method{predict}{areg}(object, x)
+\method{predict}{areg}(x, xdata, \dots)
 }
 \arguments{
-  \item{x}{
+  \item{xdata}{
 	A single predictor or a matrix of predictors.  Categorical
 	predictors are required to be coded as integers (as \code{factor}
 	does internally).
-	For \code{predict}, \code{x} is a data matrix with the same integer
+	For \code{predict}, \code{xdata} is a data matrix with the same integer
 	codes that were originally used for categorical variables.
 	}
-  \item{y}{a \code{factor}, categorical, character, or numeric response
+  \item{ydata}{a \code{factor}, categorical, character, or numeric response
 	variable}
   \item{xtype}{
 	a vector of one-letter character codes specifying how each predictor
-	is to be modeled, in order of columns of \code{x}.  The codes are
+	is to be modeled, in order of columns of \code{xdata}.  The codes are
 	\code{"s"} for smooth function (using restricted cubic splines),
 	\code{"l"} for no transformation (linear), or \code{"c"} for
 	categorical (to cause expansion into dummy variables).  Default is
@@ -48,17 +49,18 @@ areg(x, y, xtype, ytype, nk = 4, linear.predictors = FALSE, B = 0,
 	which will fit 3 parameters to continuous variables (one linear term
   and two nonlinear terms)}
   \item{linear.predictors}{set to \code{TRUE} to store predicted
-	transformed \code{y} in the result}
+	transformed \code{ydata} in the result}
   \item{B}{number of bootstrap resamples used to estimate covariance
 	matrices of transformation parameters.  Default is no bootstrapping.}
   \item{na.rm}{set to \code{FALSE} if you are sure that observations
 	with \code{NA}s have already been removed}
   \item{tolerance}{singularity tolerance.  List source code for
 	\code{lm.fit.qr.bare} for details.}
-  \item{object}{an object created by \code{areg}}
+  \item{x}{an object created by \code{areg}}
   \item{whichx}{integer or character vector specifying which predictors
 	are to have their transformations plotted (default is all).  The
-	\code{y} transformation is always plotted.}
+	\code{ydata} transformation is always plotted.}
+  \item{\dots}{arguments passed to the plot function.}
 }
 \details{
 \code{areg} is a competitor of \code{ace} in the \code{acepack}

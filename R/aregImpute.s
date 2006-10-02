@@ -242,7 +242,7 @@ plot.aregImpute <- function(x, nclass=NULL, type=c('ecdf','hist'),
     }
     else {
       if(type=='ecdf')
-        ecdf(ix, xlab=lab, datadensity='hist', subtitles=FALSE)
+        Ecdf(ix, xlab=lab, datadensity='hist', subtitles=FALSE)
       else {
         if(length(nclass))
           hist(ix, xlab=n, nclass=nclass, main='')

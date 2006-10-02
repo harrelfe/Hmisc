@@ -1,7 +1,7 @@
-ecdf <- function(x, ...) UseMethod('ecdf')
+Ecdf <- function(x, ...) UseMethod('Ecdf')
 
 
-ecdf.default <- function(x, what=c('F','1-F','f'), 
+Ecdf.default <- function(x, what=c('F','1-F','f'), 
                          weights=rep(1,length(x)), normwt=FALSE,
                          xlab, ylab, q, pl=TRUE, add=FALSE, lty=1,
                          col=1, group=rep(1,length(x)), 
@@ -79,7 +79,7 @@ ecdf.default <- function(x, what=c('F','1-F','f'),
     wt <- weights[s]
     xorig <- x
 
-    z <- wtd.ecdf(x, wt, type='i/n', normwt=normwt, na.rm=FALSE)
+    z <- wtd.Ecdf(x, wt, type='i/n', normwt=normwt, na.rm=FALSE)
     x <- z$x; y <- z$ecdf
     switch(what,
            '1-F' = {y <- 1-y},
@@ -139,7 +139,7 @@ ecdf.default <- function(x, what=c('F','1-F','f'),
 }
 
 
-ecdf.data.frame <- function(x, group=rep(1,nrows), 
+Ecdf.data.frame <- function(x, group=rep(1,nrows), 
                             weights=rep(1,nrows), normwt=FALSE,
                             label.curves=TRUE, n.unique=10, na.big=FALSE, 
                             subtitles=TRUE,  vnames=c("labels","names"),
@@ -198,7 +198,7 @@ ecdf.data.frame <- function(x, group=rep(1,nrows),
       else
         label(v, units=TRUE, plot=TRUE, default=nam[j])
     
-    z <- ecdf(v, group=group, weights=weights, normwt=normwt, 
+    z <- Ecdf(v, group=group, weights=weights, normwt=normwt, 
               xlab=lab, label.curves=label.curves, 
               subtitles=subtitles, ...)
     if(na.big) {
@@ -219,7 +219,7 @@ ecdf.data.frame <- function(x, group=rep(1,nrows),
 }
 
 
-prepanel.ecdf <- function(x, y, fun, ...)
+prepanel.Ecdf <- function(x, y, fun, ...)
 {
   xlim <- range(x,na.rm=TRUE)
   ylim <- fun(c(0,1))
@@ -230,7 +230,7 @@ prepanel.ecdf <- function(x, y, fun, ...)
 }
 
 
-panel.ecdf <- function(x, y, subscripts, groups=NULL, 
+panel.Ecdf <- function(x, y, subscripts, groups=NULL, 
                        q=NULL, type='s',
                        method=c('i/n','(i-1)/(n-1)','i/(n+1)'), fun,
                        label.curves=TRUE, 
@@ -292,7 +292,7 @@ panel.ecdf <- function(x, y, subscripts, groups=NULL,
                      dens.opts=NULL, llines, ...)
   {
     ## y ignored
-    z <- wtd.ecdf(x, type=ecdf.type, na.rm=FALSE)
+    z <- wtd.Ecdf(x, type=ecdf.type, na.rm=FALSE)
     
     ## For some reason S-Plus will not plot anything the following way
     ## when lwd is a variable
@@ -350,7 +350,7 @@ panel.ecdf <- function(x, y, subscripts, groups=NULL,
       ## sort in x
       j <- which # no sorting
       if(any(j)) {  ## 31aug02 any
-        z <- wtd.ecdf(x[j], type=ecdf.type, na.rm=FALSE)
+        z <- wtd.Ecdf(x[j], type=ecdf.type, na.rm=FALSE)
         do.call('llines',list(z$x, fun(z$ecdf),
                               col = col[i], lwd = lwd[i], lty = lty[i], 
                               type = type, ...))
@@ -447,9 +447,9 @@ panel.ecdf <- function(x, y, subscripts, groups=NULL,
 }
 
 
-ecdf.formula <- function(x, data = sys.frame(sys.parent()), 
+Ecdf.formula <- function(x, data = sys.frame(sys.parent()), 
                          groups = NULL, 
-                         prepanel=prepanel.ecdf, panel=panel.ecdf, ..., 
+                         prepanel=prepanel.Ecdf, panel=panel.Ecdf, ..., 
                          xlab, ylab, fun=function(x)x, subset=TRUE)
 {
   if(.R.) {

@@ -34,6 +34,8 @@ summary.formula <-
                   plotmathstat='chi[df]^2')
            },
            ordTest=function(group, x) {
+             requirePackage('Design')
+
              f <- lrm(x ~ group)$stats
              list(P=stats['P'], stat=stats['Model L.R.'], df=stats['d.f.'],
                   testname='Proportional odds likelihood ratio',

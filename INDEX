@@ -13,8 +13,6 @@ bpplot                  Box-percentile plots
 bystats                 Statistics by Categories
 ciapower                Power of Interaction Test for Exponential
                         Survival
-cnvrt.coords            Convert between the 4 different coordinate
-                        sytems on a graphical device
 confbar                 Miscellaneous Functions
 contents                Metadata for a Data Frame
 cpower                  Power of Cox/log-rank Two-Sample Test
@@ -43,6 +41,7 @@ gbayes                  Gaussian Bayesian Posterior and Predictive
                         Distributions
 getHdata                Download and Install Datasets for Hmisc,
                         Design, and Statistical Modeling
+getZip                  Open a Zip File From a URL.
 hdquantile              Harrell-Davis Distribution-Free Quantile
                         Estimator
 histbackback            Back to Back Histograms
@@ -59,6 +58,7 @@ latex                   Convert an S object to LaTeX, and Related
 ldBands                 Group Sequential Boundaries using the
                         Lan-DeMets Approach
 list.tree               Pretty-print the Structure of a Data Object
+makeNstr                makeNstr
 mApply                  Apply a Function to Rows of a Matrix or Vector
 mgp.axis                Draw Axes With Side-Specific mgp Parameters
 minor.tick              Minor Tick Marks
@@ -116,7 +116,6 @@ src                     Source a File from the Current Working
                         Directory
 stata.get               Enhanced Importing of STATA Files
 store                   Store an Object Permanently
-subplot                 Embed a new plot within an existing plot
 summarize               Summarize Scalars or Matrices by
                         Cross-Classification
 summary.formula         Summarize Data for Making Tables and Plots
@@ -131,6 +130,7 @@ t.test.cluster          t-test for Clustered Data
 units                   Units Attribute of a Vector
 upData                  Update a Data Frame or Cleanup a Data Frame
                         after Importing
+valueTags               Store Discriptive Information About an Object
 varclus                 Variable Clustering
 wtd.mean                Weighted Statistical Estimates
 xy.group                Mean x vs. function of y in groups of x

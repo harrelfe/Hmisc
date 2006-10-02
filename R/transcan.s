@@ -671,7 +671,7 @@ transcan <-
         v1 <- datad[[i]]; v2 <- datad[[i+1]]
         n1 <- namdd[i]; n2 <- namdd[i+1]
         if(imputed.actual=='ecdf' && is.numeric(datad[[i]]))
-          ecdf(c(v1,v2), xlab=n1,
+          Ecdf(c(v1,v2), xlab=n1,
                group=c(rep('actual',length(v1)),
                        rep('imputed',length(v2))))
         else {

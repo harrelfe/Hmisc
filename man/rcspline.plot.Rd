@@ -21,8 +21,8 @@ responses and taking the logit transformation of the smoothed
 estimates, if desired. The smoothing uses \code{supsmu}.
 }
 \usage{
-rcspline.plot(x,y,model="logistic",xrange,event,nk=5,knots=NULL,
-             show="xbeta",adj=NULL,xlab,ylab,ylim,plim=c(0,1),plotcl=TRUE,
+rcspline.plot(x,y,model=c("logistic", "cox", "ols"),xrange,event,nk=5,knots=NULL,
+             show=c("xbeta","prob"),adj=NULL,xlab,ylab,ylim,plim=c(0,1),plotcl=TRUE,
              showknots=TRUE,add=FALSE,subset,lty=1,noprint=FALSE,m,smooth=FALSE,bass=1,
              main="auto",statloc)
 }
@@ -125,8 +125,8 @@ f.harrell@vanderbilt.edu
 \code{\link[Design]{lrm}}, \code{\link[Design]{cph}}, \code{\link{rcspline.eval}}, \code{\link{plot}}, \code{\link{supsmu}}, \code{\link[survival]{coxph.fit}}, \code{\link[Design]{lrm.fit}}
 }
 \examples{
-# rcspline.plot(cad.dur, tvdlm, m=150)
-# rcspline.plot(log10(cad.dur+1), tvdlm, m=150)
+#rcspline.plot(cad.dur, tvdlm, m=150)
+#rcspline.plot(log10(cad.dur+1), tvdlm, m=150)
 }
 \keyword{regression}
 \keyword{models}

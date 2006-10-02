@@ -106,15 +106,11 @@ if(!.SV4.) {
 
 if(!.SV4.) "[.labelled"<- function(x, ...)
 {
-  atr <- attributes(x)
+  tags <- valueTags(x)
   ##lab <- attr(x, "label")  19sep02
   x <- NextMethod("[")
-  attr(x, "label") <- atr$label
-  if(length(atr$units))
-    attr(x,'units') <- atr$units
-  
-  if(!inherits(x,'labelled'))
-    attr(x,'class') <- c("labelled", attr(x,'class'))
+
+  valueTags(x) <- tags
   
   x
 }

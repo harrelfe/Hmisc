@@ -1,8 +1,8 @@
-\name{wtd.mean}
+\name{wtd.stats}
 \alias{wtd.mean}
 \alias{wtd.var}
 \alias{wtd.quantile}
-\alias{wtd.ecdf}
+\alias{wtd.Ecdf}
 \alias{wtd.table}
 \alias{wtd.rank}
 \alias{wtd.loess.noiter}
@@ -29,7 +29,7 @@ specifying \code{na.rm=FALSE} will save computation time.  Omitting the
 result in the usual unweighted estimates.
 
 \code{wtd.mean}, \code{wtd.var}, and \code{wtd.quantile} compute
-weighted means, variances, and quantiles, respectively.  \code{wtd.ecdf}
+weighted means, variances, and quantiles, respectively.  \code{wtd.Ecdf}
 computes a weighted empirical distribution function.  \code{wtd.table}
 computes a weighted frequency table (although only one stratification
 variable is supported at present).  \code{wtd.rank} computes weighted
@@ -53,7 +53,7 @@ wtd.var(x, weights=NULL, normwt=FALSE, na.rm=TRUE)
 wtd.quantile(x, weights=NULL, probs=c(0, .25, .5, .75, 1), 
              type=c('quantile','(i-1)/(n-1)','i/(n+1)','i/n'), 
              normwt=FALSE, na.rm=TRUE)
-wtd.ecdf(x, weights=NULL, 
+wtd.Ecdf(x, weights=NULL, 
          type=c('i/n','(i-1)/(n-1)','i/(n+1)'), 
          normwt=FALSE, na.rm=TRUE)
 wtd.table(x, weights=NULL, type=c('list','table'), 
@@ -97,7 +97,7 @@ interpolated order statistic method as \code{quantile}.  Set \code{type} to
 empirical distribution function, using, respectively, (wt - 1)/T,
 wt/(T+1), or wt/T, where wt is the cumulative weight and T is the
 total weight (usually total sample size).  These three values of
-\code{type} are the possibilities for \code{wtd.ecdf}.  For \code{wtd.table} the
+\code{type} are the possibilities for \code{wtd.Ecdf}.  For \code{wtd.table} the
 default \code{type} is \code{"list"}, meaning that the function is to return a
 list containing two vectors: \code{x} is the sorted unique values of \code{x}
 and \code{sum.of.weights} is the sum of weights for that \code{x}.  This is the
@@ -120,8 +120,8 @@ to evaluation (if \code{type="evaluate"}).
 }}
 \value{
 \code{wtd.mean} and \code{wtd.var} return scalars.  \code{wtd.quantile} returns a
-vector the same length as \code{probs}.  \code{wtd.ecdf} returns a list whose
-elements \code{x} and \code{ecdf} correspond to unique sorted values of \code{x}.
+vector the same length as \code{probs}.  \code{wtd.Ecdf} returns a list whose
+elements \code{x} and \code{Ecdf} correspond to unique sorted values of \code{x}.
 If the first CDF estimate is greater than zero, a point (min(x),0) is
 placed at the beginning of the estimates.
 See above for \code{wtd.table}.  \code{wtd.rank} returns a vector the same
@@ -151,7 +151,7 @@ Research Triangle Institute (1995): SUDAAN User's Manual, Release
 }
 \seealso{
 \code{\link{mean}}, \code{\link{var}}, \code{\link{quantile}}, \code{\link{table}}, \code{\link{rank}}, \code{\link{loess.smooth}}, \code{\link{lowess}},
-\code{\link{plsmo}}, \code{\link{ecdf}}, \code{\link{somers2}}, \code{\link{describe}}
+\code{\link{plsmo}}, \code{\link{Ecdf}}, \code{\link{somers2}}, \code{\link{describe}}
 }
 \examples{
 set.seed(1)

@@ -67,7 +67,7 @@ Department of Mathematical Sciences,
 Montana State University.
 }
 \seealso{
-\code{\link{panel.bpplot}}, \code{\link{boxplot}}, \code{\link{ecdf}},
+\code{\link{panel.bpplot}}, \code{\link{boxplot}}, \code{\link{Ecdf}},
 \code{\link[lattice]{bwplot}} 
 }
 \examples{

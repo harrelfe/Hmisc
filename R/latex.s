@@ -1125,10 +1125,11 @@ dvi.latex <- function(object, prlog=FALSE,
       '\\end{document}\n', file=tmptex, sep='\n')
   
   sc <-
-    if(under.unix)
-      ';'
-    else
+    if(under.unix) {
+      '&&'
+    } else {
       '&'   # DOS command separator
+    }
   
   sys(paste('cd',shQuote(tempdir()),sc,optionsCmds('latex'),
             '-interaction=scrollmode', shQuote(tmp)), output=FALSE)

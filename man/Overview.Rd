@@ -92,7 +92,7 @@ Dotplot         \tab Enhancement of Trellis dotplot allowing for matrix\cr
                 \tab     x-var., auto generation of Key function, superposition\cr
 drawPlot        \tab Simple mouse-driven drawing program, including a function\cr
                 \tab     for fitting Bezier curves\cr
-ecdf            \tab Empirical cumulative distribution function plot\cr
+Ecdf            \tab Empirical cumulative distribution function plot\cr
 eip             \tab Edit an object "in-place" (may be dangerous!), e.g.\cr
                 \tab     eip(sqrt) will replace the builtin sqrt function\cr
 errbar          \tab Plot with error bars (Charles Geyer, U. Chi., mod FEH)\cr
@@ -279,7 +279,7 @@ xYplot          \tab Like trellis xyplot but supports error bars and multiple\cr
                 \tab     response variables that are connected as separate lines\cr
 win.slide       \tab Setup win.graph or win.printer using nice defaults for\cr
                 \tab presentations/slides/publications\cr
-wtd.mean \tab \cr wtd.var \tab \cr  wtd.quantile \tab \cr  wtd.ecdf \tab
+wtd.mean \tab \cr wtd.var \tab \cr  wtd.quantile \tab \cr  wtd.Ecdf \tab
 \cr wtd.table \tab \cr  wtd.rank \tab \cr wtd.loess.noiter \tab \cr
 num.denom.setup \tab Set of function for obtaining weighted estimates\cr
 zoom            \tab Zoom in on any graphical display\cr \tab     (Bill Dunlap, \email{bill@statsci.com})

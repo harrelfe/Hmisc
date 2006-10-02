@@ -65,13 +65,13 @@ wtd.quantile <- function(x, weights=NULL, probs=c(0, .25, .5, .75, 1),
     names(quantiles) <- nams
     return(quantiles)
   } 
-  w <- wtd.ecdf(x, weights, na.rm=na.rm, type=type, normwt=normwt)
+  w <- wtd.Ecdf(x, weights, na.rm=na.rm, type=type, normwt=normwt)
   structure(approx(w$ecdf, w$x, xout=probs, rule=2)$y, 
             names=nams)
 }
 
 
-wtd.ecdf <- function(x, weights=NULL, 
+wtd.Ecdf <- function(x, weights=NULL, 
                      type=c('i/n','(i-1)/(n-1)','i/(n+1)'), 
                      normwt=FALSE, na.rm=TRUE)
 {

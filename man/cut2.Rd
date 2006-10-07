@@ -14,7 +14,7 @@ with a given minimum number of observations (\code{m}).  Whereas cut creates a
 category object, \code{cut2} creates a factor object.
 }
 \usage{
-cut2(x, cuts, m, g, levels.mean, digits, minmax=TRUE, oneval=TRUE)
+cut2(x, cuts, m, g, levels.mean, digits, minmax=TRUE, oneval=TRUE, onlycuts=FALSE)
 }
 \arguments{
 \item{x}{
@@ -45,10 +45,16 @@ cuts to include min and max \code{x}
 if an interval contains only one unique value, the interval will be
 labeled with the formatted version of that value instead of the
 interval endpoints, unless \code{oneval=FALSE}
-}}
+}
+\item{onlycuts}{
+  set to \code{TRUE} to only return the vector of computed cuts.  This
+  consists of the interior values.
+}
+}
 \value{
 a factor variable with levels of the form \code{[a,b)} or formatted means
-(character strings)
+(character strings) unless \code{onlycuts} is \code{TRUE} in which case
+a numeric vector is returned
 }
 \seealso{
 \code{\link{cut}}, \code{\link{quantile}}

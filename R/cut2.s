@@ -1,3 +1,4 @@
+# $Id$
 ## Function like cut but left endpoints are inclusive and labels are of
 ## the form [lower, upper), except that last interval is [lower,upper].
 ## F. Harrell  3 Dec 90, modified 7 Mar 92, mod 30May95 (more efficient digits)
@@ -7,111 +8,76 @@
 ##   categorization if a cut was close to but not equal an actual value
 
 cut2 <- function(x, cuts, m=150, g, levels.mean=FALSE, digits, minmax=TRUE,
-		 oneval=TRUE)
+		 oneval=TRUE, onlycuts=FALSE)
 {
   method <- 1 ## 20may02
-  x.unique <- sort(unique(c(x[!is.na(x)],if(!missing(cuts))cuts))) #1Jul95
+  x.unique <- sort(unique(c(x[!is.na(x)],if(!missing(cuts))cuts)))
   min.dif <- min(diff(x.unique))/2
-  min.dif.factor <- 1   # was 1.9999 27Oct00
+  min.dif.factor <- 1
 
   ## Make formatted values look good
   if(missing(digits))
-    digits <- if(levels.mean)
-                5
-              else
-                3
+    digits <- if(levels.mean) 5 else 3
   
-  ##.Options$digits <- digits  6Aug00
   oldopt <- options(digits=digits)
   on.exit(options(oldopt))
 
-  xlab <- attr(x, 'label')    #2Jun95
+  xlab <- attr(x, 'label')
 
   if(missing(cuts)) {
     nnm <- sum(!is.na(x))
-    if(missing(g))
-      g <- max(1,floor(nnm/m))
+    if(missing(g)) g <- max(1,floor(nnm/m))
     if(g < 1)
       stop('g must be >=1, m must be positive')
 
-    ##.Options$digits <- 15  ## to get good resolution for names(table(x))
     options(digits=15)
     n <- table(x)
-    xx <- as.double(names(n))  # was single 27Oct00
-    options(digits=digits)  # .Options$digits <- digits
+    xx <- as.double(names(n))
+    options(digits=digits)
     cum <- cumsum(n)
     m <- length(xx)
 
-    ##y <- as.integer(0*x)   ## to preserve NAs   10Dec00
-    y <- as.integer(ifelse(is.na(x),NA,1))       #10Dec00
+    y <- as.integer(ifelse(is.na(x),NA,1))
     labs <- character(g)
     cuts <- approx(cum, xx, xout=(1:g)*nnm/g,
                    method='constant', rule=2, f=1)$y
-    cuts[length(cuts)] <- max(xx)  # 27Oct00
+    cuts[length(cuts)] <- max(xx)
     lower <- xx[1]
     upper <- 1e45
-    up <- low <- double(g)   # was single 27Oct00
-    ##variation <- logical(g) # 10Dec00
+    up <- low <- double(g)
     i <- 0
     for(j in 1:g) {
-      cj <- if(method==1 || j==1)
-              cuts[j]
-            else {
-              if(i==0)
-                stop('program logic error')
-              s <- if(is.na(lower))
-                     FALSE
-                   else
-                     xx >= lower
-              
-              cum.used <- if(all(s))
-                            0
-                          else
-                            max(cum[!s])
-              
-              if(j==m)
-                max(xx)
-              else if(sum(s)<2)
-                max(xx)
-              else
-                approx(cum[s]-cum.used, xx[s], xout=(nnm-cum.used)/(g-j+1),
-                       method='constant', rule=2, f=1)$y
-            }
+      cj <- if(method==1 || j==1) cuts[j] else {
+        if(i==0)
+          stop('program logic error')
+        s <- if(is.na(lower)) FALSE else xx >= lower
+        cum.used <- if(all(s)) 0 else max(cum[!s])
+        if(j==m) max(xx) else if(sum(s)<2) max(xx) else
+        approx(cum[s]-cum.used, xx[s], xout=(nnm-cum.used)/(g-j+1),
+               method='constant', rule=2, f=1)$y
+      }
       
-      if(cj==upper)
-        next
+      if(cj==upper) next
       
       i <- i + 1
       upper <- cj
-      ## Next line 10Dec00
       y[x >= (lower-min.dif.factor*min.dif)]  <- i
-      ##if(j==1) y[x < (upper+min.dif.factor*min.dif)] <- i else
-      ##if(j==g) y[x >= (lower-min.dif.factor*min.dif)] <- i else
-      ##y[x >= (lower-min.dif.factor*min.dif) & x <
-      ##  (upper+min.dif.factor*min.dif)] <- i
       low[i] <- lower
-      lower <- if(j==g)
-                 upper
-               else
-                 min(xx[xx > upper])
+      lower <- if(j==g) upper else min(xx[xx > upper])
       
-      if(is.na(lower))
-        lower <- upper
+      if(is.na(lower)) lower <- upper
       
       up[i]  <- lower
-      ##r <- range(x[y==i], na.rm=T)   10Dec00
-      ##variation[i] <- diff(r) > 0    10Dec00
     }
     
     low  <- low[1:i]
     up   <- up[1:i]
-    ##variation <- variation[1:i]     10Dec00
     variation <- logical(i)
     for(ii in 1:i) {
       r <- range(x[y==ii], na.rm=TRUE)
       variation[ii] <- diff(r) > 0
     }
-    
+    if(onlycuts) return(low[-1])
     flow <- format(low)
     fup  <- format(up)
     bb   <- c(rep(')',i-1),']')
@@ -137,10 +103,7 @@ cut2 <- function(x, cuts, m=150, g, levels.mean=FALSE, digits, minmax=TRUE,
     l <- length(cuts)
     k2 <- cuts-min.dif
     k2[l] <- cuts[l]
-    y <- if(version$major < 5)
-           cut(x, k2)
-         else
-           oldCut(x, k2)
+    y <- if(version$major < 5) cut(x, k2) else oldCut(x, k2)
     
     if(!levels.mean) {
       brack <- rep(")",l-1)

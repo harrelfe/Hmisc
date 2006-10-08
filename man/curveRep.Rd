@@ -170,6 +170,8 @@ plot(w, 3, 'lattice')  # show n=4-5 results
 plot(w, 3, 'lattice', m=1)  # show a single "representative" curve
 # Show median, 10th, and 90th percentiles of supposedly representative curves
 plot(w, 3, 'lattice', m='quantiles', probs=c(.5,.1,.9))
+# Same plot but with much less grouping of x variable
+plot(w, 3, 'lattice', m='quantiles', probs=c(.5,.1,.9), nx=2)
 }
 }
 \keyword{multivariate}

@@ -96,16 +96,25 @@ print.curveRep <- function(x, ...) {
 
 plot.curveRep <- function(x, which=1:length(res),
                           method=c('all','lattice'),
-                          m=5,
+                          m=NULL, probs=c(.5,.25,.75),
+                          nx=NULL, fill=TRUE,
                           xlim=range(x), ylim=range(y),
                           xlab='x', ylab='y') {
   method <- match.arg(method)
-  res <- x$res; id <- x$id; y <- x$y; x <- x$x
+  res <- x$res; id <- x$id; y <- x$y; k <- x$k; x <- x$x
   nm <- names(res)
 
+  samp <- function(ids)
+    if(!length(m) || is.character(m) ||
+       length(ids) <= m) ids else sample(ids, m)
+  if(is.character(m) &&
+     (m != 'quantiles' || method != 'lattice'))
+    stop('improper value of m')
+  
   if(method=='lattice') {
     if(length(which) != 1)
       stop('must specify one n range to plot for method="lattice"')
+    require(lattice)
     nres <- names(res)
     if(length(nres)==1) nname <- NULL else
     nname <- if(which==length(nres))
@@ -121,25 +130,31 @@ plot.curveRep <- function(x, which=1:length(res),
       xgroup  <- res[[jx]]
       ids <- names(xgroup)
       for(jclus in 1:max(xgroup)) {
-        ids.in.cluster <- ids[xgroup==jclus]
+        ids.in.cluster <- samp(ids[xgroup==jclus])
         for(cur in 1:length(ids.in.cluster)) {
           s <- id %in% ids.in.cluster[cur]
-          m <- sum(s)
+          np <- sum(s)
           i <- order(x[s])
-          en <- st+m-1
+          en <- st+np-1
           if(en > n) stop('program logic error 1')
           X[st:en]       <- x[s][i]
           Y[st:en]       <- y[s][i]
           xdist[st:en]   <- jx
           cluster[st:en] <- jclus
           curve[st:en]   <- cur
-          st <- st+m
+          st <- st+np
         }
       }
     }
     Y <- Y[1:en]; X <- X[1:en]
     distribution <- xdist[1:en]; cluster <- cluster[1:en]
     curve <- curve[1:en]
+    if(is.character(m))
+      print(xYplot(Y ~ X | distribution*cluster,
+                   method='quantiles', probs=probs, nx=nx,
+                   xlab=xlab, ylab=ylab,
+                   xlim=xlim, ylim=ylim,
+                   main=nname)) else
     print(xyplot(Y ~ X | distribution*cluster, groups=curve,
                  xlab=xlab, ylab=ylab,
                  xlim=xlim, ylim=ylim,
@@ -154,7 +169,7 @@ plot.curveRep <- function(x, which=1:length(res),
       xgroup <- ngroup[[jx]]
       ids <- names(xgroup)
       for(jclus in 1:max(xgroup)) {
-        ids.in.cluster <- ids[xgroup==jclus]
+        ids.in.cluster <- samp(ids[xgroup==jclus])
         for(curve in 1:length(ids.in.cluster)) {
           s <- id %in% ids.in.cluster[curve]
           i <- order(x[s])
@@ -168,6 +183,9 @@ plot.curveRep <- function(x, which=1:length(res),
           lines(x[s][i], y[s][i], type=type, col=curve)
         }
       }
+      if(fill && max(xgroup) < k)
+        for(i in 1:(k - max(xgroup)))
+          plot(0, 0, type='n', axes=FALSE, xlab='', ylab='')
     }
   }
 }

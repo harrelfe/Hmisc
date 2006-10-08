@@ -22,7 +22,7 @@ are commonly preserved across row subsetting (i.e., it does not save
 }
 
 \usage{
-mApply(X, INDEX, FUN, \dots, simplify=TRUE)
+mApply(X, INDEX, FUN, \dots, simplify=TRUE, keepmatrix=FALSE)
 }
 
 \arguments{
@@ -44,8 +44,10 @@ optional arguments to 'FUN'.
 set to 'FALSE' to suppress simplification of the result in to
 an array, matrix, etc.
 }
+\item{keepmatrix}{set to \code{TRUE} to keep result as a matrix even if
+  \code{simplify} is \code{TRUE}, in the case of only one stratum
+  }
 }
-
 \value{
 For \code{mApply}, the returned value is a vector, matrix, or list.
 If \code{FUN} returns more than one number, the result is an array if

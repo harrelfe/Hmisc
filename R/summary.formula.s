@@ -2497,11 +2497,10 @@ summarize <- function(X, by, FUN, ...,
   ## lists in S+2000
   ##  }
 
-  r <- mApply(X, byc, FUN, ...)
-  
+  r <- mApply(X, byc, FUN, ..., keepmatrix=TRUE)
+  rdimn <- dimnames(r)[[1]]
   if(.R.) {   # someday can use unpaste defined in Misc.s
-    ans <- strsplit(if(nc==1)names(r)
-                    else dimnames(r)[[1]],'\\|')
+    ans <- strsplit(if(nc==1) names(r) else rdimn,'\\|')
 
     ## strsplit returns list "transpose" of unpaste
     bb <- matrix(unlist(ans), nrow=nby)
@@ -2509,8 +2508,7 @@ summarize <- function(X, by, FUN, ...,
     for(jj in 1:nby)
       ans[[jj]] <- bb[jj,]
   } else {
-    ans <- if(nc==1)names(r)
-           else dimnames(r)[[1]]  # was [[2]] 8jan03
+    ans <- if(nc==1)names(r) else rdimn
     
     if(nby==1)
       ans <- list(ans)

@@ -69,7 +69,7 @@ panel.xYplot <-
            method = c("bars", "bands", "upper bars", "lower bars", 
                       "alt bars", "quantiles", "filled bands"), 
            methodArgs = NULL, label.curves = TRUE, abline, 
-           probs = c(0.5, 0.25, 0.75), nx, cap = 0.015, lty.bar = 1, 
+           probs = c(0.5, 0.25, 0.75), nx=NULL, cap = 0.015, lty.bar = 1, 
            lwd = plot.line$lwd, lty = plot.line$lty, 
            pch = plot.symbol$pch, cex = plot.symbol$cex, 
            font = plot.symbol$font, col = NULL, 
@@ -176,8 +176,7 @@ panel.xYplot <-
     else methodArgs <- list(na.rm = TRUE)
 
     if(ng == 1) {
-      if(missing(nx))
-        nx <- min(length(x)/4, 40)    
+      if(!length(nx)) nx <- min(length(x)/4, 40)    
       ## Next 2 lines 2Mar00
       xg <-
         if(nx)

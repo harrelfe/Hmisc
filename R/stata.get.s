@@ -32,7 +32,7 @@ if (.R.) {
 
     ## Translate var labels into Hmisc var lables
     vl  <- a$var.labels
-    v1.len <- length(v1)
+    vl.len <- length(vl)
     label.table.len <- length(a$label.table)
     
     for(i in seq(along.with=w)) {
@@ -40,11 +40,11 @@ if (.R.) {
         attr(w[[i]],'format') <- a$formats[i]
       }
 
-      if(v1.len) {
-        lab <- v1[i]
+      if(vl.len) {
+        lab <- vl[i]
         
         if(lab != '') {
-          lable(w[[i]]) <- lab
+          label(w[[i]]) <- lab
         }
       }
 

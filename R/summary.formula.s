@@ -2497,7 +2497,7 @@ summarize <- function(X, by, FUN, ...,
   ## lists in S+2000
   ##  }
 
-  r <- mApply(X, byc, FUN, ..., keepmatrix=TRUE)
+  r <- mApply(X, byc, FUN, ..., keepmatrix=nc>1)
   rdimn <- dimnames(r)[[1]]
   if(.R.) {   # someday can use unpaste defined in Misc.s
     ans <- strsplit(if(nc==1) names(r) else rdimn,'\\|')

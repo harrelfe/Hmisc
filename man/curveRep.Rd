@@ -1,0 +1,182 @@
+\name{curveRep}
+\alias{curveRep}
+\alias{print.curveRep}
+\alias{plot.curveRep}
+\title{Representative Curves}
+\description{\code{curveRep} finds representative curves from a
+  relatively large collection of curves.  The curves usually represent
+  time-response profiles as in serial (longitudinal or repeated) data
+  with possibly unequal time points and greatly varying sample sizes per
+  subject.  After excluding records containing missing \code{x} or
+  \code{y}, records are first stratified into \code{kn} groups having similar
+  sample sizes per curve (subject).  Within these strata, curves are
+  next stratified according to the distribution of \code{x} points per
+  curve (typically measurement times per subject).  The
+  \code{\link[cluster]{clara}} clustering/partitioning function is used
+  to do this, clustering on one, two, or three \code{x} characteristics
+  depending on the minimum sample size in the current interval of sample
+  size.  If the interval has a minimum number of unique \code{values} of
+  one, clustering is done on the single \code{x} values.  If the minimum
+  number of unique \code{x} values is two, clustering is done to create
+  groups that are similar on both \code{min(x)} and \code{max(x)}.  For
+  groups containing no fewer than three unique \code{x} values,
+  clustering is done on the trio of values \code{min(x)}, \code{max(x)},
+  and the longest gap between any successive \code{x}.  Then within
+  sample size and \code{x} distribution strata, clustering of
+  time-response profiles is based on \code{p} values of \code{y} all
+  evaluated at the same \code{p} equally-spaced \code{x}'s within the
+  stratum.  Outer \code{x} values are taken as extremes of \code{x}
+  across all curves within the stratum.  Linear interpolation within
+  curves is used to estimate \code{y} at the grid of \code{x}'s.  For
+  curves within the stratum that do not extend to the most extreme
+  \code{x} values in that stratum, extrapolation uses flat lines from
+  the observed extremes in the curve.  The \code{p} \code{y} values are
+  clustered using \code{\link[cluster]{clara}}.
+
+  \code{print} and \code{plot} methods show results.
+}
+\usage{
+curveRep(x, y, id, kn = 5, kxdist = 5, k = 5, p = 5,
+         force1 = TRUE, metric = c("euclidean", "manhattan"))
+
+\method{print}{curveRep}(x, \dots)
+
+\method{plot}{curveRep}(x, which=1:length(res), method=c('all','lattice'),
+                        m=NULL, probs=c(.5, .25, .75), nx=NULL, fill=TRUE,
+                        xlim=range(x), ylim=range(y),
+                        xlab='x', ylab='y')
+}
+\arguments{
+  \item{x}{a numeric vector, typically measurement times.
+	For \code{plot.curveRep} is an object created by \code{curveRep}.}
+  \item{y}{a numeric vector of response values}
+  \item{id}{a vector of curve (subject) identifiers, the same length as
+	\code{x} and \code{y}}
+  \item{kn}{number of curve sample size groups to construct.
+	\code{curveRep} tries to divide the data into equal numbers of
+	curves across sample size intervals.}
+  \item{kxdist}{maximum number of x-distribution clusters to derive
+	using \code{clara}}
+  \item{k}{maximum number of x-y profile clusters to derive using \code{clara}}
+  \item{p}{number of \code{x} points at which to interpolate \code{y}
+	for profile clustering}
+  \item{force1}{By default if any curves have only one point, all curves
+	consisting of one point will be placed in a separate stratum.  To
+	prevent this separation, set \code{force1=FALSE}.}
+  \item{metric}{see \code{\link[cluster]{clara}}}
+  \item{which}{an integer vector specifying which sample size intervals
+	to plot.  Must be specified if \code{method='lattice'} and must be a
+	single number in that case.}
+  \item{method}{The default makes individual plots of possibly all
+	x-distribution by sample size by cluster combinations.  Fewer may be
+	plotted by specifying \code{which}.  Specify \code{method='lattice'}
+	to show a lattice \code{xyplot} of a single sample size interval,
+	with x distributions going across and clusters going down.}
+  \item{m}{the number of curves in a cluster to randomly sample if there
+	are more than \code{m} in a cluster.  Default is to draw all curves
+	in a cluster.  For \code{method='lattice'} you can specify
+	\code{m='quantiles'} to use the \code{xYplot} function to show
+	quantiles of \code{y} as a function of {x}, with the quantiles
+	specified by the \code{probs} argument.  This cannot be used to draw
+	a group containing \code{n=1}.}
+  \item{nx}{applies if \code{m='quantiles'}.  See \code{\link{xYplot}}.}
+  \item{probs}{3-vector of probabilities with the central quantile
+	first.  Default uses quartiles.}
+  \item{fill}{for \code{method='all'}, by default if a sample size
+	x-distribution stratum did not have enough curves to stratify into
+	\code{k} x-y profiles, empty graphs are drawn so that a matrix of
+	graphs will have the next row starting with a different sample size
+	range or x-distribution.  See the example below.}
+  \item{xlim, ylim, xlab, ylab}{plotting parameters.  Default ranges are
+	the ranges in the entire set of raw data given to \code{curveRep}.}
+}
+\value{a list of class \code{'curveRep'} with the following elements
+  \item{res}{a hierarchical list first split by sample size intervals,
+	then by x distribution clusters, then containing a vector of cluster
+  numbers with \code{id} values as a names attribute}
+  \item{ns}{a table of frequencies of sample sizes per curve after
+	removing \code{NA}s}
+  \item{nomit}{total number of records excluded due to \code{NA}s}
+  \item{missfreq}{a table of frequencies of number of \code{NA}s
+	excluded per curve}
+  \item{ncuts}{cut points for sample size intervals}
+  \item{kn}{number of sample size intervals}
+  \item{kxdist}{number of clusters on x distribution}
+  \item{k}{number of clusters of curves within sample size and
+	distribution groups}
+  \item{p}{number of points at which to evaluate each curve for clustering}
+  \item{x}{}
+  \item{y}{}
+  \item{id}{input data after removing \code{NA}s}
+}
+\details{
+  In the graph titles for the default graphic output, \code{n} refers to the
+  minimum sample size, \code{x} refers to the sequential x-distribution
+  cluster, and \code{c} refers to the sequential x-y profile cluster.  Graphs
+  from \code{method='lattice'} are produced by
+  \code{\link[lattice]{xyplot}} and in the panel titles
+  \code{distribution} refers to the x-distribution stratum and
+  \code{cluster} refers to the x-y profile cluster.
+}
+\references{
+  Segal M. (1994): Representative curves for longitudinal data via
+  regression trees.  J Comp Graph Stat 3:214-233.
+
+  
+  Jones MC, Rice JA (1992): Displaying the important features of large
+  collections of similar curves.  Am Statistician 46:140-145.
+
+  
+  Zhen X, Simpson JA, et al (2005): Data from a study of effectiveness
+  suggested potential prognostic factors related to the patterns of
+  shoulder pain.  J Clin Epi 58:823-830.
+  }
+\author{
+  Frank Harrell\cr
+  Department of Biostatistics\cr
+  Vanderbilt University\cr
+  \email{f.harrell@vanderbilt.edu}
+}
+\note{The references describe other methods for deriving
+  representative curves, but those methods were not used here.  The last
+  reference motivated \code{curveRep} however.}
+\seealso{\code{\link[cluster]{clara}},\code{\link[Hmisc]{dataRep}}}
+\examples{
+\dontrun{
+# Simulate 200 curves with pre-curve sample sizes ranging from 1 to 10
+# Make curves with odd-numbered IDs have an x-distribution that is random
+# uniform [0,1] and those with even-numbered IDs have an x-dist. that is
+# half as wide but still centered at 0.5.  Shift y values higher with
+# increasing IDs
+set.seed(1)
+N <- 200
+nc <- sample(1:10, N, TRUE)
+id <- rep(1:N, nc)
+x <- y <- id
+for(i in 1:N) {
+  x[id==i] <- if(i %% 2) runif(nc[i]) else runif(nc[i], c(.25, .75))
+  y[id==i] <- i + 10*(x[id==i] - .5) + runif(nc[i], -10, 10)
+}
+
+w <- curveRep(x, y, id, kxdist=2, p=10)
+w
+par(ask=TRUE, mfrow=c(4,5))
+plot(w)                # show everything, profiles going across
+par(mfrow=c(2,5))
+plot(w,1)              # show n=1 results
+par(ask=FALSE, mfrow=c(1,1))
+plot(w, 1, 'lattice')  # show n=1 results
+plot(w, 3, 'lattice')  # show n=4-5 results
+plot(w, 3, 'lattice', m=1)  # show a single "representative" curve
+# Show median, 10th, and 90th percentiles of supposedly representative curves
+plot(w, 3, 'lattice', m='quantiles', probs=c(.5,.1,.9))
+}
+}
+\keyword{multivariate}
+\keyword{hplot}
+\concept{repeated measures}
+\concept{longitudinal data}
+\concept{serial data}
+\concept{representative curves}
+\concept{descriptive statistics}
+\concept{exploratory data analysis}

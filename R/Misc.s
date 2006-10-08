@@ -1624,3 +1624,35 @@ getZip <- function(url, password=NULL) {
     paste('unzip -p -P', password) else 'unzip -p'
   pipe(paste(cmd, f))
 }
+
+getLatestSource <- function(x=NULL, package='Hmisc',
+                            recent=NULL, avail=FALSE) {
+  url <- paste('http://biostat.mc.vanderbilt.edu/cgi-bin/cvsweb.cgi',
+               package, 'R/', sep='/')
+  if(length(recent)) url <- paste(url, '?sortby=date#dirlist', sep='')
+  
+  w <- scan(url, what='',quiet=TRUE)
+  i <- grep('\\.s\\?rev=',w)
+  w <- w[i]
+  
+  files <- sub('href=\"\(.*\)\\?.*','\\1', w)
+  files <- sub('\\.s$','',files)
+  ver <- if(length(recent)) sub('^.*rev=\(.*\);.*','\\1',w) else
+   sub('\"$','',sub('^.*rev=','',w))
+
+  if(avail) return(data.frame(file=files, version=ver))
+
+  if(length(recent)) x <- files[1:recent]
+  if(length(x)==1 && x=='all') x <- files
+
+  for(fun in x) {
+    i <- which(files==fun)
+    if(!length(i)) stop(paste('no file ', fun,' in ',package, sep=''))
+    cat('Fetching', fun, 'version', ver[i],'\n')
+    url <- paste('http://biostat.mc.vanderbilt.edu/cgi-bin/cvsweb.cgi/~checkout~/',package,'/R/',fun,'.s?rev=',ver[i],';content-type=text%2Fplain', sep='')
+    source(url)
+  }
+}
+
+
+  

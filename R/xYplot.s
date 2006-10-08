@@ -213,7 +213,7 @@ panel.xYplot <-
 
     x <- dsum$xg
     y <- dsum$Z[, 1, drop = TRUE]
-    other <- dsum$Z[, -1]
+    other <- dsum$Z[, -1, drop=FALSE]
     nother <- 2
     method <- "bands"
   }
@@ -344,7 +344,6 @@ panel.xYplot <-
         sapply(a, function(b, j)
                b[j], j = j)
       }
-
       for(j in 1:ncol(other)) {
         if(ng == 1)
           ppanel(x, other[, j], 

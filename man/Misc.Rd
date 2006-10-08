@@ -1,5 +1,6 @@
 \name{Misc}
 \alias{confbar}
+\alias{getLatestSource}
 \alias{james.stein}
 \alias{km.quick}
 \alias{lm.fit.qr.bare}
@@ -23,6 +24,10 @@
 
   \code{confbar} draws multi-level confidence bars using small rectangles
   that may be of different colors.
+
+  \code{getLatestSource} fetches and \code{source}s the most recent
+  source code for functions in packages in the Vanderbilty University
+  CVS repository.
 
   \code{james.stein} computes James-Stein shrunken estimates of cell
   means given a response variable (which may be binary) and a grouping
@@ -84,7 +89,8 @@
 
   \code{xless} is a function for Linux/Unix users to invoke the system
   \code{xless} command to pop up a window to display the result of
-  \code{print}ing an object.
+  \code{print}ing an object.  For Windows, \code{xless} uses the builtin
+  \code{page} function but with better defaults.
 }
 \usage{
 confbar(at, est, se, width, q = c(0.7, 0.8, 0.9, 0.95, 0.99), 
@@ -97,6 +103,7 @@ confbar(at, est, se, width, q = c(0.7, 0.8, 0.9, 0.95, 0.99),
         qfun = function(x) ifelse(x == 0.5, qnorm(x),
                             ifelse(x < 0.5, qnorm(x/2),
                             qnorm((1 +  x)/2))))
+getLatestSource(x=NULL, package='Hmisc', recent=NULL, avail=FALSE) 
 james.stein(y, group)
 km.quick(S, times, q)
 lm.fit.qr.bare(x, y, tolerance, intercept=TRUE, xpxi=FALSE)
@@ -114,57 +121,66 @@ whichClosePW(x, w, f=0.2)
 xless(x, \dots, title)
 }
 \arguments{
+  \item{a}{a numeric matrix or vector}
+  \item{adj}{0 for left justification, 0.5 for centered, 1 for right}
   \item{at}{x-coordinate for vertical confidence intervals, y-coordinate
 	for horizontal}
-  \item{est}{vector of point estimates for confidence limits}
-  \item{se}{vector of standard errors}
-  \item{width}{width of confidence rectanges in user units}
-  \item{q}{vector of confidence coefficients or quantiles}
+  \item{avail}{set to \code{TRUE} to have \code{getLatestSource} return
+	a data frame of available files and latest versions instead of
+	fetching any}
+  \item{b}{a numeric vector}
+  \item{cex}{character expansion factor}
+  \item{clip}{interval to truncate limits}
   \item{col}{vector of colors}
-  \item{type}{\code{"v"} for vertical, \code{"h"} for horizontal}
+  \item{conversion}{a named numeric vector}
+  \item{digits}{number of digits used for \code{round}}
+  \item{est}{vector of point estimates for confidence limits}
+  \item{extended}{see \code{\link{strsplit}} in \R}
+  \item{f}{a scaling constant}
+  \item{fun}{function to transform scale}
+  \item{group}{a categorical grouping variable}
+  \item{intercept}{set to \code{FALSE} to not automatically add a column
+	of ones to the \code{x} matrix}
+  \item{kint}{which element of \code{b} to add to the result if \code{a}
+	does not contain a column for intercepts}
   \item{labels}{set to \code{FALSE} to omit drawing confidence
 	coefficients}
-  \item{ticks}{set to \code{TRUE} to draw lines between rectangles}
-  \item{cex}{character expansion factor}
+  \item{lwd}{line widths}
+  \item{package}{name of package for \code{getLatestSource}, default is
+	\code{'Hmisc'}}
+  \item{q}{vector of confidence coefficients or quantiles}
+  \item{qfun}{quantiles on transformed scale}
+  \item{recent}{an integer telling \code{getLatestSource} to get the
+	\code{recent} most recently modified files from the package}
+  \item{round}{set to \code{TRUE} to round converted values}
+  \item{S}{a \code{\link[survival]{Surv}} object}
+  \item{se}{vector of standard errors}
+  \item{sep}{a single character string specifying the delimiter}
+  \item{setAside}{for \code{adj=1 side=4}, is a character string used to
+	determine the space to set aside for all strings.}
   \item{side}{for \code{confbar} is \code{"b","l","t","r"} for bottom,
 	left, top, right.  For \code{outText} is the using integers 1-4
 	corresponding to these.}
-  \item{lwd}{line widths}
-  \item{clip}{interval to truncate limits}
-  \item{fun}{function to transform scale}
-  \item{qfun}{quantiles on transformed scale}
-  \item{group}{a categorical grouping variable}
-  \item{S}{a \code{\link[survival]{Surv}} object}
-  \item{times}{a numeric vector of times}
-  \item{tolerance}{tolerance for judging singularity in matrix}
-  \item{intercept}{set to \code{FALSE} to not automatically add a column
-	of ones to the \code{x} matrix}
-  \item{xpxi}{set to \code{TRUE} to add an element to the result
-	containing the inverse of \eqn{X'X}}
-  \item{a}{a numeric matrix or vector}
-  \item{b}{a numeric vector}
-  \item{kint}{which element of \code{b} to add to the result if \code{a}
-	does not contain a column for intercepts}
-  \item{string}{a character string vector}
-  \item{setAside}{for \code{adj=1 side=4}, is a character string used to
-	determine the space to set aside for all strings.}
   \item{space}{the number of extra characters to leave to the left of
 	the string(s) (\code{adj=0}) or to the right (\code{adj=1})}
-  \item{adj}{0 for left justification, 0.5 for centered, 1 for right}
-  \item{conversion}{a named numeric vector}
-  \item{round}{set to \code{TRUE} to round converted values}
-  \item{digits}{number of digits used for \code{round}}
   \item{str}{a character string vector}
+  \item{string}{a character string vector}
+  \item{ticks}{set to \code{TRUE} to draw lines between rectangles}
+  \item{times}{a numeric vector of times}
+  \item{title}{a character string to title a window or plot}
+  \item{tolerance}{tolerance for judging singularity in matrix}
+  \item{type}{\code{"v"} for vertical, \code{"h"} for horizontal}
   \item{w}{a numeric vector}
+  \item{width}{width of confidence rectanges in user units}
   \item{x}{a numeric vector (matrix for \code{lm.fit.qr.bare}) or data
 	frame.  For \code{xless} may be any object that is sensible to
 	\code{print}.  For \code{sepUnitsTrans} is a character or factor
-	variable.}
+	variable.  For \code{getLatestSource} is a character string or
+	vector of character strings containing base file names to retrieve
+	from CVS.  Set \code{x='all'} to retrieve all source files.}
+  \item{xpxi}{set to \code{TRUE} to add an element to the result
+	containing the inverse of \eqn{X'X}}
   \item{y}{a numeric vector}
-  \item{sep}{a single character string specifying the delimiter}
-  \item{extended}{see \code{\link{strsplit}} in \R}
-  \item{f}{a scaling constant}
-  \item{title}{a character string to title a window or plot}
   \item{\dots}{arguments passed through to another function}
 }
 \author{Frank Harrell}
@@ -182,6 +198,13 @@ whichClosest(1:100, rep(3,20))
 whichClosePW(1:100, rep(3,20))
 whichClosePW(1:100, rep(3,20), f=.05)
 whichClosePW(1:100, rep(3,20), f=1e-10)
+
+\dontrun{
+getLatestSource(recent=5)  # source() most recent 5 revised files in Hmisc
+getLatestSource('cut2')    # fetch and source latest cut2.s
+getLatestSource('all')     # get everything
+getLatestSource(avail=TRUE) # list available files and latest versions
+}
 }
 \keyword{programming}
 \keyword{utilities}

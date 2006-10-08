@@ -1,4 +1,4 @@
-mApply <- function(X, INDEX, FUN, ..., simplify=TRUE) {
+mApply <- function(X, INDEX, FUN, ..., simplify=TRUE, keepmatrix=FALSE) {
   ## Matrix tapply
   ## X: matrix with n rows; INDEX: vector or list of vectors of length n
   ## FUN: function to operate on submatrices of x by INDEX
@@ -15,14 +15,16 @@ mApply <- function(X, INDEX, FUN, ..., simplify=TRUE) {
       stop("X must either be a vector or a matrix")
   }
 
+  km <- if(keepmatrix) function(x)x else function(x)drop(x)
+
   if(!is.matrix(X)) {  ## X is a vector
     r <- tapply(X, INDEX, FUN, ..., simplify=simplify)
 
     if(is.matrix(r))
-      r <- drop(t(r))
+      r <- km(t(r))
 
     else if(simplify && is.list(r))
-      r <- drop(matrix(unlist(r), nrow=length(r),
+      r <- km(matrix(unlist(r), nrow=length(r),
                        dimnames=list(names(r),names(r[[1]])), byrow=TRUE))
   }
   else {
@@ -31,7 +33,7 @@ mApply <- function(X, INDEX, FUN, ..., simplify=TRUE) {
                 x=X, fun=FUN, ..., simplify=simplify)
 
     if(simplify)
-      r <- drop(t(r))
+      r <- km(t(r))
   }
 
   dn <- dimnames(r)

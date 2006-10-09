@@ -25,13 +25,15 @@
   sample size and \code{x} distribution strata, clustering of
   time-response profiles is based on \code{p} values of \code{y} all
   evaluated at the same \code{p} equally-spaced \code{x}'s within the
-  stratum.  Outer \code{x} values are taken as extremes of \code{x}
-  across all curves within the stratum.  Linear interpolation within
-  curves is used to estimate \code{y} at the grid of \code{x}'s.  For
-  curves within the stratum that do not extend to the most extreme
-  \code{x} values in that stratum, extrapolation uses flat lines from
-  the observed extremes in the curve.  The \code{p} \code{y} values are
-  clustered using \code{\link[cluster]{clara}}.
+  stratum.  An option allows per-curve data to be smoothed with
+  \code{\link{lowess}} before proceeding.  Outer \code{x} values are
+  taken as extremes of \code{x} across all curves within the stratum.
+  Linear interpolation within curves is used to estimate \code{y} at the
+  grid of \code{x}'s.  For curves within the stratum that do not extend
+  to the most extreme \code{x} values in that stratum, extrapolation
+  uses flat lines from the observed extremes in the curve.  If
+  \code{smooth=TRUE}, linear extrapolation is used instead.  The
+  \code{p} \code{y} values are clustered using \code{\link[cluster]{clara}}.
 
   \code{print} and \code{plot} methods show results.  By specifying an
   auxiliary \code{idcol} variable to \code{plot}, other variables such
@@ -41,7 +43,8 @@
 }
 \usage{
 curveRep(x, y, id, kn = 5, kxdist = 5, k = 5, p = 5,
-         force1 = TRUE, metric = c("euclidean", "manhattan"))
+         force1 = TRUE, metric = c("euclidean", "manhattan"),
+         smooth=FALSE, pr=FALSE)
 
 \method{print}{curveRep}(x, \dots)
 
@@ -68,6 +71,14 @@ curveRep(x, y, id, kn = 5, kxdist = 5, k = 5, p = 5,
 	consisting of one point will be placed in a separate stratum.  To
 	prevent this separation, set \code{force1=FALSE}.}
   \item{metric}{see \code{\link[cluster]{clara}}}
+  \item{smooth}{By default, linear interpolation is used on raw data to
+	obtain \code{y} values to cluster to determine x-y profiles.
+	Specify \code{smooth=TRUE} to replace observed points with
+	\code{\link{lowess}} before computing \code{y} points on the grid.
+	Also, with \code{smooth} is used, linear extrapolation to the
+	x-extremes in the x-distribution group is used instead of curtailing
+	estimates at observed ranges per curve.}
+  \item{pr}{set to \code{TRUE} to print progress notes}
   \item{which}{an integer vector specifying which sample size intervals
 	to plot.  Must be specified if \code{method='lattice'} and must be a
 	single number in that case.}

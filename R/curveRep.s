@@ -1,6 +1,7 @@
 ## $Id$
 curveRep <- function(x, y, id, kn=5, kxdist=5, k=5, p=5, force1=TRUE,
-                     metric=c('euclidean','manhattan'), pr=FALSE) {
+                     metric=c('euclidean','manhattan'),
+                     smooth=FALSE, pr=FALSE) {
   require(cluster)
   metric <- match.arg(metric)
   
@@ -69,13 +70,16 @@ curveRep <- function(x, y, id, kn=5, kxdist=5, k=5, p=5, force1=TRUE,
                    'containing', length(idc),'curves\n')
         s <- id %in% idc
         ssize <- min(tapply(x[s], id[s], function(w) length(unique(w))))
-        xrange <- range(x[s])
-        z <- tapply((1:n)[s], id[s],
-                    function(j) if(ssize==1) c(mean(x[j]), mean(y[j]))
-                    else
-                    approx(x[j], y[j],
-                           xout=seq(xrange[1],xrange[2],
-                             length.out=p), rule=2)$y)
+        if(ssize > 1) {
+          xrange <- range(x[s])
+          xseq <- seq(xrange[1], xrange[2], length.out=p)
+        }
+        g <- if(ssize==1) function(j) c(mean(x[j]), mean(y[j])) else
+         if(smooth && ssize > 2)
+           function(j) approxExtrap(lowess(x[j],y[j]), xout=xseq)$y else
+           function(j) approx(x[j], y[j], xout=xseq, rule=2)$y
+        
+        z <- tapply((1:n)[s], id[s], g)
         z <- matrix(unlist(z), nrow=length(idc), byrow=TRUE)
         yclusters <- clust(z, min(k, max(length(idc)-2,1)))
         names(yclusters) <- idc
@@ -86,12 +90,13 @@ curveRep <- function(x, y, id, kn=5, kxdist=5, k=5, p=5, force1=TRUE,
   }
   structure(list(res=res, ns=table(ns), nomit=nomit, missfreq=missfreq,
                  ncuts=ncuts[-length(ncuts)], kn=kn, kxdist=kxdist, k=k, p=p,
-                 x=x, y=y, id=id),
+                 smooth=smooth, x=x, y=y, id=id),
             class='curveRep')
 }
 
 print.curveRep <- function(x, ...) {
-  cat('kn:',x$kn, ' kxdist:',x$kxdist, ' k:',x$k, ' p:',x$p, '\n\n', sep='')
+  cat('kn:',x$kn, ' kxdist:',x$kxdist, ' k:',x$k, ' p:',x$p,
+      ' smooth=',smooth,'\n\n', sep='')
   cat('Frequencies of number of non-missing values per curve:\n')
   print(x$ns)
   if(length(x$missfreq)) {

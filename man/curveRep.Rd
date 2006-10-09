@@ -33,7 +33,11 @@
   the observed extremes in the curve.  The \code{p} \code{y} values are
   clustered using \code{\link[cluster]{clara}}.
 
-  \code{print} and \code{plot} methods show results.
+  \code{print} and \code{plot} methods show results.  By specifying an
+  auxiliary \code{idcol} variable to \code{plot}, other variables such
+  as treatment may be depicted to allow the analyst to determine for
+  example whether subjects on different treatments are assigned to
+  different time-response profiles.
 }
 \usage{
 curveRep(x, y, id, kn = 5, kxdist = 5, k = 5, p = 5,
@@ -43,7 +47,7 @@ curveRep(x, y, id, kn = 5, kxdist = 5, k = 5, p = 5,
 
 \method{plot}{curveRep}(x, which=1:length(res), method=c('all','lattice'),
                         m=NULL, probs=c(.5, .25, .75), nx=NULL, fill=TRUE,
-                        xlim=range(x), ylim=range(y),
+                        idcol=NULL, xlim=range(x), ylim=range(y),
                         xlab='x', ylab='y')
 }
 \arguments{
@@ -87,6 +91,10 @@ curveRep(x, y, id, kn = 5, kxdist = 5, k = 5, p = 5,
 	\code{k} x-y profiles, empty graphs are drawn so that a matrix of
 	graphs will have the next row starting with a different sample size
 	range or x-distribution.  See the example below.}
+  \item{idcol}{a named vector to be used as a table lookup for color
+	assignments (does not apply when \code{m='quantile'}).  The names of
+	this vector are curve \code{id}s and the values are color names or
+	numbers.}
   \item{xlim, ylim, xlab, ylab}{plotting parameters.  Default ranges are
 	the ranges in the entire set of raw data given to \code{curveRep}.}
 }
@@ -164,9 +172,16 @@ par(ask=TRUE, mfrow=c(4,5))
 plot(w)                # show everything, profiles going across
 par(mfrow=c(2,5))
 plot(w,1)              # show n=1 results
+# Use a color assignment table, assigning low curves to green and
+# high to red.  Unique curve (subject) IDs are the names of the vector.
+cols <- c(rep('green', N/2), rep('red', N/2))
+names(cols) <- as.character(1:N)
+plot(w, 3, idcol=cols)
 par(ask=FALSE, mfrow=c(1,1))
+
 plot(w, 1, 'lattice')  # show n=1 results
 plot(w, 3, 'lattice')  # show n=4-5 results
+plot(w, 3, 'lattice', idcol=cols)  # same but different color mapping
 plot(w, 3, 'lattice', m=1)  # show a single "representative" curve
 # Show median, 10th, and 90th percentiles of supposedly representative curves
 plot(w, 3, 'lattice', m='quantiles', probs=c(.5,.1,.9))

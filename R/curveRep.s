@@ -1,6 +1,6 @@
 ## $Id$
 curveRep <- function(x, y, id, kn=5, kxdist=5, k=5, p=5, force1=TRUE,
-                     metric=c('euclidean','manhattan')) {
+                     metric=c('euclidean','manhattan'), pr=FALSE) {
   require(cluster)
   metric <- match.arg(metric)
   
@@ -29,12 +29,17 @@ curveRep <- function(x, y, id, kn=5, kxdist=5, k=5, p=5, force1=TRUE,
   nlev <- length(ncuts)-1
   res <- vector('list', nlev); names(res) <- as.character(cuts)
 
-  clust <- function(x, k) clara(x, k, metric=metric)$clustering
+  clust <- function(x, k)
+    if(diff(range(x))==0) rep(1, NROW(x)) else
+    clara(x, k, metric=metric)$clustering
 
   ## Cluster by sample size first
+  if(pr) cat('Creating',nlev,'sample size groups\n\n')
   for(i in 1:nlev) {
     ## Get list of curve ids in this sample size group
     ids <- names(ns)[ns >= ncuts[i] & ns < ncuts[i+1]]
+    if(pr) cat('Processing sample size [',ncuts[i],',',ncuts[i+1],
+               ') containing ', length(ids),' curves\n',sep='')
     if(length(ids) < kxdist) res[[i]] <- list(ids) else {
       ## Cluster by distribution of x within sample size group
       ## Summarize these ids by clustering on range of x,
@@ -50,12 +55,18 @@ curveRep <- function(x, y, id, kn=5, kxdist=5, k=5, p=5, force1=TRUE,
       if(kxdist > nrow(z) - 1)
         stop('number of curves to cluster must be >= kxdist+1')
       distclusters <- clust(z, kxdist)
+      if(pr) {
+        cat(' Number of curves in each x-dist cluster:\n')
+        print(table(distclusters))
+      }
       resi <- list()
       ## Within x distribution and within sample size interval,
       ## cluster on linearly interpolated y at p equally spaced x points
       ## unless <2 unique x-points for some curve
       for(clus in 1:max(distclusters)) {
         idc <- ids[distclusters==clus]
+        if(pr) cat(' Processing x-distribution group', clus,
+                   'containing', length(idc),'curves\n')
         s <- id %in% idc
         ssize <- min(tapply(x[s], id[s], function(w) length(unique(w))))
         xrange <- range(x[s])
@@ -97,7 +108,7 @@ print.curveRep <- function(x, ...) {
 plot.curveRep <- function(x, which=1:length(res),
                           method=c('all','lattice'),
                           m=NULL, probs=c(.5,.25,.75),
-                          nx=NULL, fill=TRUE,
+                          nx=NULL, fill=TRUE, idcol=NULL,
                           xlim=range(x), ylim=range(y),
                           xlab='x', ylab='y') {
   method <- match.arg(method)
@@ -124,15 +135,15 @@ plot.curveRep <- function(x, which=1:length(res),
     
     res <- res[[which]]
     n <- length(x)
-    X <- Y <- xdist <- cluster <- curve <- numeric(n)
+    X <- Y <- xdist <- cluster <- numeric(n); curve <- character(n)
     st <- 1
     for(jx in 1:length(res)) {
       xgroup  <- res[[jx]]
       ids <- names(xgroup)
       for(jclus in 1:max(xgroup)) {
         ids.in.cluster <- samp(ids[xgroup==jclus])
-        for(cur in 1:length(ids.in.cluster)) {
-          s <- id %in% ids.in.cluster[cur]
+        for(cur in ids.in.cluster) {
+          s <- id %in% cur
           np <- sum(s)
           i <- order(x[s])
           en <- st+np-1
@@ -149,6 +160,22 @@ plot.curveRep <- function(x, which=1:length(res),
     Y <- Y[1:en]; X <- X[1:en]
     distribution <- xdist[1:en]; cluster <- cluster[1:en]
     curve <- curve[1:en]
+    pan <- if(length(idcol))
+      function(x, y, subscripts, groups, type, ...) {
+        groups <- as.factor(groups)[subscripts]
+        for(g in levels(groups)) {
+          idx <- groups == g
+          xx <- x[idx]; yy <- y[idx]; ccols <- idcol[g]
+          if (any(idx)) { 
+            switch(type, 
+                   p = lpoints(xx, yy, col = ccols), 
+                   l = llines(xx, yy, col = ccols), 
+                   b = { lpoints(xx, yy, col = ccols) 
+                         llines(xx, yy, col = ccols) }) 
+          } 
+        } 
+      } else panel.superpose 
+ 
     if(is.character(m))
       print(xYplot(Y ~ X | distribution*cluster,
                    method='quantiles', probs=probs, nx=nx,
@@ -159,7 +186,7 @@ plot.curveRep <- function(x, which=1:length(res),
                  xlab=xlab, ylab=ylab,
                  xlim=xlim, ylim=ylim,
                  type=if(nres[which]=='1')'b' else 'l',
-                 main=nname, panel=panel.superpose))
+                 main=nname, panel=pan))
     return(invisible())
   }
 
@@ -180,7 +207,9 @@ plot.curveRep <- function(x, which=1:length(res),
             title(paste('n=',nm[jn],' x=',jx,
                         ' c=',jclus,sep=''), cex=.5)
           }
-          lines(x[s][i], y[s][i], type=type, col=curve)
+          lines(x[s][i], y[s][i], type=type,
+                col=if(length(idcol))
+                 idcol[ids.in.cluster[curve]] else curve)
         }
       }
       if(fill && max(xgroup) < k)

@@ -2,6 +2,7 @@
 \alias{curveRep}
 \alias{print.curveRep}
 \alias{plot.curveRep}
+\alias{curveSmooth}
 \title{Representative Curves}
 \description{\code{curveRep} finds representative curves from a
   relatively large collection of curves.  The curves usually represent
@@ -31,20 +32,27 @@
   Linear interpolation within curves is used to estimate \code{y} at the
   grid of \code{x}'s.  For curves within the stratum that do not extend
   to the most extreme \code{x} values in that stratum, extrapolation
-  uses flat lines from the observed extremes in the curve.  If
-  \code{smooth=TRUE}, linear extrapolation is used instead.  The
-  \code{p} \code{y} values are clustered using \code{\link[cluster]{clara}}.
+  uses flat lines from the observed extremes in the curve unless
+  \code{extrap=TRUE}. The \code{p} \code{y} values are clustered using
+  \code{\link[cluster]{clara}}.
 
   \code{print} and \code{plot} methods show results.  By specifying an
   auxiliary \code{idcol} variable to \code{plot}, other variables such
   as treatment may be depicted to allow the analyst to determine for
   example whether subjects on different treatments are assigned to
   different time-response profiles.
+
+  \code{curveSmooth} takes a set of curves and smooths them using
+  \code{\link{lowess}}.  If the number of unique \code{x} points in a curve is
+  less than \code{p}, the smooth is evaluated at the unique \code{x}
+  values.  Otherwise it is evaluated at an equally spaced set of
+  \code{x} points over the observed range.  If fewer than 3 unique
+  \code{x}s are in a curve, those points are used and smoothing is not done.
 }
 \usage{
 curveRep(x, y, id, kn = 5, kxdist = 5, k = 5, p = 5,
          force1 = TRUE, metric = c("euclidean", "manhattan"),
-         smooth=FALSE, pr=FALSE)
+         smooth=FALSE, extrap=FALSE, pr=FALSE)
 
 \method{print}{curveRep}(x, \dots)
 
@@ -52,6 +60,8 @@ curveRep(x, y, id, kn = 5, kxdist = 5, k = 5, p = 5,
                         m=NULL, probs=c(.5, .25, .75), nx=NULL, fill=TRUE,
                         idcol=NULL, xlim=range(x), ylim=range(y),
                         xlab='x', ylab='y')
+curveSmooth(x, y, id, p=10, pr=FALSE)
+
 }
 \arguments{
   \item{x}{a numeric vector, typically measurement times.
@@ -66,7 +76,11 @@ curveRep(x, y, id, kn = 5, kxdist = 5, k = 5, p = 5,
 	using \code{clara}}
   \item{k}{maximum number of x-y profile clusters to derive using \code{clara}}
   \item{p}{number of \code{x} points at which to interpolate \code{y}
-	for profile clustering}
+	for profile clustering.  For \code{curveSmooth} is the number of
+	equally spaced points at which to evaluate the lowess smooth, and if
+  \code{p} is omitted the smooth is evaluated at the original \code{x}
+  values (which will allow \code{curveRep} to still know the \code{x}
+  distribution}
   \item{force1}{By default if any curves have only one point, all curves
 	consisting of one point will be placed in a separate stratum.  To
 	prevent this separation, set \code{force1=FALSE}.}
@@ -75,9 +89,11 @@ curveRep(x, y, id, kn = 5, kxdist = 5, k = 5, p = 5,
 	obtain \code{y} values to cluster to determine x-y profiles.
 	Specify \code{smooth=TRUE} to replace observed points with
 	\code{\link{lowess}} before computing \code{y} points on the grid.
-	Also, with \code{smooth} is used, linear extrapolation to the
-	x-extremes in the x-distribution group is used instead of curtailing
-	estimates at observed ranges per curve.}
+	Also, when \code{smooth} is used, it may be desirable to use
+	\code{extrap=TRUE}.}
+  \item{extrap}{set to \code{TRUE} to use linear extrapolation to
+	evaluate \code{y} points for x-y clustering.  Not recommended unless
+	smoothing has been or is being done.}
   \item{pr}{set to \code{TRUE} to print progress notes}
   \item{which}{an integer vector specifying which sample size intervals
 	to plot.  Must be specified if \code{method='lattice'} and must be a
@@ -127,6 +143,7 @@ curveRep(x, y, id, kn = 5, kxdist = 5, k = 5, p = 5,
   \item{x}{}
   \item{y}{}
   \item{id}{input data after removing \code{NA}s}
+  \code{curveSmooth} returns a list with elements \code{x,y,id}.
 }
 \details{
   In the graph titles for the default graphic output, \code{n} refers to the
@@ -198,6 +215,12 @@ plot(w, 3, 'lattice', m=1)  # show a single "representative" curve
 plot(w, 3, 'lattice', m='quantiles', probs=c(.5,.1,.9))
 # Same plot but with much less grouping of x variable
 plot(w, 3, 'lattice', m='quantiles', probs=c(.5,.1,.9), nx=2)
+
+# Smooth data before profiling.  This allows later plotting to plot
+# smoothed representative curves rather than raw curves (which
+# specifying smooth=TRUE to curveRep would do, if curveSmooth was not used
+d <- curveSmooth(x, y, id)
+w <- with(d, curveRep(x, y, id))
 }
 }
 \keyword{multivariate}

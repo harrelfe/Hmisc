@@ -1,7 +1,7 @@
 ## $Id$
 curveRep <- function(x, y, id, kn=5, kxdist=5, k=5, p=5, force1=TRUE,
                      metric=c('euclidean','manhattan'),
-                     smooth=FALSE, pr=FALSE) {
+                     smooth=FALSE, extrap=FALSE, pr=FALSE) {
   require(cluster)
   metric <- match.arg(metric)
   
@@ -33,6 +33,10 @@ curveRep <- function(x, y, id, kn=5, kxdist=5, k=5, p=5, force1=TRUE,
   clust <- function(x, k)
     if(diff(range(x))==0) rep(1, NROW(x)) else
     clara(x, k, metric=metric)$clustering
+
+  interp <- if(extrap)
+    function(x, y=NULL, xout) approxExtrap(x, y, xout=xout)$y else
+    function(x, y=NULL, xout) approx(x, y, xout=xout, rule=2)$y
 
   ## Cluster by sample size first
   if(pr) cat('Creating',nlev,'sample size groups\n\n')
@@ -76,8 +80,8 @@ curveRep <- function(x, y, id, kn=5, kxdist=5, k=5, p=5, force1=TRUE,
         }
         g <- if(ssize==1) function(j) c(mean(x[j]), mean(y[j])) else
          if(smooth && ssize > 2)
-           function(j) approxExtrap(lowess(x[j],y[j]), xout=xseq)$y else
-           function(j) approx(x[j], y[j], xout=xseq, rule=2)$y
+           function(j) interp(lowess(x[j],y[j]), xout=xseq) else
+           function(j) interp(x[j], y[j], xout=xseq)
         
         z <- tapply((1:n)[s], id[s], g)
         z <- matrix(unlist(z), nrow=length(idc), byrow=TRUE)
@@ -95,8 +99,9 @@ curveRep <- function(x, y, id, kn=5, kxdist=5, k=5, p=5, force1=TRUE,
 }
 
 print.curveRep <- function(x, ...) {
-  cat('kn:',x$kn, ' kxdist:',x$kxdist, ' k:',x$k, ' p:',x$p,
-      ' smooth=',smooth,'\n\n', sep='')
+  sm <- if(x$smooth) 'smooth' else 'not smoothed'
+  cat('kn:',x$kn, ' kxdist:',x$kxdist, ' k:',x$k,
+      ' p:',x$p, ' ', sm, '\n\n', sep='')
   cat('Frequencies of number of non-missing values per curve:\n')
   print(x$ns)
   if(length(x$missfreq)) {
@@ -107,6 +112,22 @@ print.curveRep <- function(x, ...) {
   cat('\nSample size cuts:', paste(x$ncuts, collapse=' '),'\n')
   cat('Number of x distribution groups per sample size group:',
       paste(sapply(x$res, length), collapse=' '),'\n\n')
+  res <- x$res
+  nn <- c(names(res),'')
+  for(i in 1:length(res)) {
+    ngroup <- res[[i]]
+    maxclus <- max(unlist(ngroup))
+    w <- matrix(NA, nrow=maxclus, ncol=length(ngroup),
+                dimnames=list(paste('Cluster',1:maxclus),
+                  paste('x-Dist', 1:length(ngroup))))
+    j <- 0
+    for(xdistgroup in ngroup) {
+      j <- j+1
+      w[,j] <- tabulate(xdistgroup, nbins=maxclus)
+    }
+    cat('\nNumber of Curves for Sample Size ', nn[i],'-',nn[i+1],'\n',sep='')
+    print(w)
+  }
   invisible()
 }
 
@@ -186,12 +207,12 @@ plot.curveRep <- function(x, which=1:length(res),
                    method='quantiles', probs=probs, nx=nx,
                    xlab=xlab, ylab=ylab,
                    xlim=xlim, ylim=ylim,
-                   main=nname)) else
+                   main=nname, as.table=TRUE)) else
     print(xyplot(Y ~ X | distribution*cluster, groups=curve,
                  xlab=xlab, ylab=ylab,
                  xlim=xlim, ylim=ylim,
                  type=if(nres[which]=='1')'b' else 'l',
-                 main=nname, panel=pan))
+                 main=nname, panel=pan, as.table=TRUE))
     return(invisible())
   }
 
@@ -201,7 +222,9 @@ plot.curveRep <- function(x, which=1:length(res),
       xgroup <- ngroup[[jx]]
       ids <- names(xgroup)
       for(jclus in 1:max(xgroup)) {
-        ids.in.cluster <- samp(ids[xgroup==jclus])
+        rids <- ids[xgroup==jclus]
+        nc <- length(rids)
+        ids.in.cluster <- samp(rids)
         for(curve in 1:length(ids.in.cluster)) {
           s <- id %in% ids.in.cluster[curve]
           i <- order(x[s])
@@ -210,7 +233,7 @@ plot.curveRep <- function(x, which=1:length(res),
             plot(x[s][i], y[s][i], xlab=xlab, ylab=ylab,
                  type='n', xlim=xlim, ylim=ylim)
             title(paste('n=',nm[jn],' x=',jx,
-                        ' c=',jclus,sep=''), cex=.5)
+                        ' c=',jclus,' ',nc,' curves', sep=''), cex=.5)
           }
           lines(x[s][i], y[s][i], type=type,
                 col=if(length(idcol))
@@ -222,4 +245,64 @@ plot.curveRep <- function(x, which=1:length(res),
           plot(0, 0, type='n', axes=FALSE, xlab='', ylab='')
     }
   }
+}
+
+curveSmooth <- function(x, y, id, p=NULL, pr=TRUE) {
+  omit <- is.na(x + y)
+  if(any(omit)) {
+    x <- x[!omit]; y <- y[!omit]; id <- id[!omit]
+  }
+  uid <- unique(id)
+  m <- length(uid)
+  pp <- length(p)
+  if(pp) {
+    X <- Y <- numeric(p*m)
+    Id <- rep(id, length.out=p*m)
+  }
+  st <- 1
+  ncurve <- 0
+  clowess <- function(x, y) {
+    ## to get around bug in lowess with occasional wild values
+    r <- range(y)
+    f <- lowess(x, y)
+    f$y <- pmax(pmin(f$y, r[2]), r[1])
+    f
+  }
+  for(j in uid) {
+    if(pr) {
+      ncurve <- ncurve + 1
+      if((ncurve %% 50) == 0) cat(ncurve,'')
+    }
+    s <- id==j
+    xs <- x[s]
+    ys <- y[s]
+    if(length(unique(xs)) < 3) {
+      if(pp) {
+        en <- st + length(xs) - 1
+        X[st:en] <- xs
+        Y[st:en] <- ys
+        Id[st:en] <- j
+      }
+    } else {
+      if(pp) {
+        uxs <- sort(unique(xs))
+        xseq <- if(length(uxs) < p) uxs else
+        seq(min(uxs), max(uxs), length.out=p)
+        ye <- approx(clowess(xs, ys), xout=xseq)$y
+        n <- length(xseq)
+        en <- st + n - 1
+        X[st:en] <- xseq
+        Y[st:en] <- ye
+        Id[st:en] <- j
+      } else y[s] <- approx(clowess(xs, ys), xout=xs)$y
+    }
+    st <- en + 1
+  }
+  if(pr) cat('\n')
+  if(pp) {
+    X <- X[1:en]
+    Y <- Y[1:en]
+    Id <- Id[1:en]
+    list(x=X, y=Y, id=Id)
+  } else list(x=x, y=y, id=id)
 }

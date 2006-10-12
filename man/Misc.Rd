@@ -1,4 +1,5 @@
 \name{Misc}
+\alias{clowess}
 \alias{confbar}
 \alias{getLatestSource}
 \alias{james.stein}
@@ -22,6 +23,10 @@
   This documents miscellaneous small functions in Hmisc that may be of
   interest to users.
 
+  \code{clowess} runs \code{lowess} but if the \code{iter} argument
+  exceeds zero, sometimes wild values can result, in which case
+  \code{lowess} is re-run with \code{iter=0}.
+  
   \code{confbar} draws multi-level confidence bars using small rectangles
   that may be of different colors.
 
@@ -177,7 +182,8 @@ xless(x, \dots, title)
 	\code{print}.  For \code{sepUnitsTrans} is a character or factor
 	variable.  For \code{getLatestSource} is a character string or
 	vector of character strings containing base file names to retrieve
-	from CVS.  Set \code{x='all'} to retrieve all source files.}
+	from CVS.  Set \code{x='all'} to retrieve all source files.  For
+	\code{clowess}, \code{x} may also be a list with x and y components.}
   \item{xpxi}{set to \code{TRUE} to add an element to the result
 	containing the inverse of \eqn{X'X}}
   \item{y}{a numeric vector}

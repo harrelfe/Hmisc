@@ -1653,6 +1653,12 @@ getLatestSource <- function(x=NULL, package='Hmisc',
     source(url)
   }
 }
-
-
   
+clowess <- function(x, y=NULL, iter=3, ...) {
+  ## to get around bug in lowess with occasional wild values with iter>0
+  r <- range(if(length(y)) y else x$y)
+  f <- lowess(x, y, iter=iter, ...)
+  if(iter != 0 && any(f$y < r[1] | f$y > r[2]))
+    f <- lowess(x, y, iter=0)
+  f
+}

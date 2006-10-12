@@ -80,7 +80,7 @@ curveRep <- function(x, y, id, kn=5, kxdist=5, k=5, p=5, force1=TRUE,
         }
         g <- if(ssize==1) function(j) c(mean(x[j]), mean(y[j])) else
          if(smooth && ssize > 2)
-           function(j) interp(lowess(x[j],y[j]), xout=xseq) else
+           function(j) interp(clowess(x[j],y[j]), xout=xseq) else
            function(j) interp(x[j], y[j], xout=xseq)
         
         z <- tapply((1:n)[s], id[s], g)
@@ -260,14 +260,8 @@ curveSmooth <- function(x, y, id, p=NULL, pr=TRUE) {
     Id <- rep(id, length.out=p*m)
   }
   st <- 1
+  en <- 0
   ncurve <- 0
-  clowess <- function(x, y) {
-    ## to get around bug in lowess with occasional wild values
-    r <- range(y)
-    f <- lowess(x, y)
-    f$y <- pmax(pmin(f$y, r[2]), r[1])
-    f
-  }
   for(j in uid) {
     if(pr) {
       ncurve <- ncurve + 1

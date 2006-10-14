@@ -218,9 +218,53 @@ plot(w, 3, 'lattice', m='quantiles', probs=c(.5,.1,.9), nx=2)
 
 # Smooth data before profiling.  This allows later plotting to plot
 # smoothed representative curves rather than raw curves (which
-# specifying smooth=TRUE to curveRep would do, if curveSmooth was not used
+# specifying smooth=TRUE to curveRep would do, if curveSmooth was not used)
 d <- curveSmooth(x, y, id)
 w <- with(d, curveRep(x, y, id))
+
+# Example to show that curveRep can cluster profiles correctly when
+# there is no noise.  In the data there are four profiles - flat, flat
+# at a higher mean y, linearly increasing then flat, and flat at the
+# first height except for a sharp triangular peak
+
+set.seed(1)
+x <- 0:100
+m <- length(x)
+profile <- matrix(NA, nrow=m, ncol=4)
+profile[,1] <- rep(0, m)
+profile[,2] <- rep(3, m)
+profile[,3] <- c(0:3, rep(3, m-4))
+profile[,4] <- c(0,1,3,1,rep(0,m-4))
+col <- c('black','blue','green','red')
+matplot(x, profile, type='l', col=col)
+xeval <- seq(0, 100, length.out=5)
+s <- x %in% xeval
+matplot(x[s], profile[s,], type='l', col=col)
+
+id <- rep(1:100, each=m)
+X <- Y <- id
+cols <- character(100)
+names(cols) <- as.character(1:100)
+for(i in 1:100) {
+  s <- id==i
+  X[s] <- x
+  j <- sample(1:4,1)
+  Y[s] <- profile[,j]
+  cols[i] <- col[j]
+}
+table(cols)
+yl <- c(-1,4)
+w <- curveRep(X, Y, id, kn=1, kxdist=1, k=4)
+plot(w, 1, 'lattice', idcol=cols, ylim=yl)
+# Found 4 clusters but two have same profile
+w <- curveRep(X, Y, id, kn=1, kxdist=1, k=3)
+plot(w, 1, 'lattice', idcol=cols, ylim=yl)
+# Incorrectly combined black and red because default value p=5 did
+# not result in different profiles at x=xeval
+w <- curveRep(X, Y, id, kn=1, kxdist=1, k=4, p=40)
+plot(w, 1, 'lattice', idcol=cols, ylim=yl)
+# Found correct clusters because evaluated curves at 40 equally
+# spaced points and could find the sharp triangular peak in profile 4
 }
 }
 \keyword{multivariate}

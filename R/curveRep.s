@@ -151,6 +151,7 @@ plot.curveRep <- function(x, which=1:length(res),
   if(method=='lattice') {
     if(length(which) != 1)
       stop('must specify one n range to plot for method="lattice"')
+    require(grid)
     require(lattice)
     nres <- names(res)
     if(length(nres)==1) nname <- NULL else
@@ -161,7 +162,8 @@ plot.curveRep <- function(x, which=1:length(res),
     
     res <- res[[which]]
     n <- length(x)
-    X <- Y <- xdist <- cluster <- numeric(n); curve <- character(n)
+    X <- Y <- xdist <- cluster <- sizecluster <- numeric(n)
+    curve <- character(n)
     st <- 1
     for(jx in 1:length(res)) {
       xgroup  <- res[[jx]]
@@ -179,16 +181,22 @@ plot.curveRep <- function(x, which=1:length(res),
           xdist[st:en]   <- jx
           cluster[st:en] <- jclus
           curve[st:en]   <- cur
+          sizecluster[st:en] <- sum(xgroup==jclus)
           st <- st+np
         }
       }
     }
     Y <- Y[1:en]; X <- X[1:en]
     distribution <- xdist[1:en]; cluster <- cluster[1:en]
-    curve <- curve[1:en]
+    curve <- curve[1:en]; sizecluster <- sizecluster[1:en]
     pan <- if(length(idcol))
       function(x, y, subscripts, groups, type, ...) {
         groups <- as.factor(groups)[subscripts]
+        if(length(subscripts)) {
+          size <- sizecluster[subscripts[1]]
+          grid.text(paste('N=',size,sep=''), x=0, y=1, just=c(0,1),
+                    gp=gpar(fontsize=9, col=gray(.25)))
+        }
         for(g in levels(groups)) {
           idx <- groups == g
           xx <- x[idx]; yy <- y[idx]; ccols <- idcol[g]
@@ -200,14 +208,29 @@ plot.curveRep <- function(x, which=1:length(res),
                          llines(xx, yy, col = ccols) }) 
           } 
         } 
-      } else panel.superpose 
- 
+      } else function(x, y, subscripts, ...) {
+        panel.superpose(x, y, subscripts, ...)
+        if(length(subscripts)) {
+          size <- sizecluster[subscripts[1]]
+          grid.text(paste('N=',size,sep=''), x=0, y=1,
+                    just=c(0,1), gp=gpar(fontsize=9, col=gray(.25)))
+        }
+      }
     if(is.character(m))
       print(xYplot(Y ~ X | distribution*cluster,
                    method='quantiles', probs=probs, nx=nx,
                    xlab=xlab, ylab=ylab,
                    xlim=xlim, ylim=ylim,
-                   main=nname, as.table=TRUE)) else
+                   main=nname, as.table=TRUE,
+                   panel=function(x, y, subscripts, ...) {
+                     if(length(subscripts)) {
+                       panel.xYplot(x, y, subscripts, ...)
+                       size <- sizecluster[subscripts[1]]
+                       grid.text(paste('N=',size,sep=''), x=0, y=1,
+                        just=c(0,1), gp=gpar(fontsize=9,
+                                       col=gray(.25)))
+                     }
+                     })) else
     print(xyplot(Y ~ X | distribution*cluster, groups=curve,
                  xlab=xlab, ylab=ylab,
                  xlim=xlim, ylim=ylim,

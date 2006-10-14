@@ -48,7 +48,7 @@ interval endpoints, unless \code{oneval=FALSE}
 }
 \item{onlycuts}{
   set to \code{TRUE} to only return the vector of computed cuts.  This
-  consists of the interior values.
+  consists of the interior values plus outer ranges.
 }
 }
 \value{

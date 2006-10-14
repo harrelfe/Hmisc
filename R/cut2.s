@@ -77,7 +77,7 @@ cut2 <- function(x, cuts, m=150, g, levels.mean=FALSE, digits, minmax=TRUE,
       r <- range(x[y==ii], na.rm=TRUE)
       variation[ii] <- diff(r) > 0
     }
-    if(onlycuts) return(low[-1])
+    if(onlycuts) return(unique(c(low, max(xx))))
     flow <- format(low)
     fup  <- format(up)
     bb   <- c(rep(')',i-1),']')

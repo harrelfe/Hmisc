@@ -17,21 +17,18 @@ curveRep <- function(x, y, id, kn=5, kxdist=5, k=5, p=5, force1=TRUE,
   ns <- table(id)
   nunique <- length(unique(ns))
 
-  if(nunique==1 || nunique <= kn) {
-    cuts <- sort(unique(ns))
-    ncuts <- c(cuts, Inf)
-  } else {
+  if(nunique==1 || nunique <= kn) ncuts <- c(sort(unique(ns)),Inf) else {
     grouped.n <- cut2(ns, g=kn)
-    cuts <- cut2(ns, g=kn, onlycuts=TRUE)
-    if(force1 && cuts[1] > 1 && min(ns)==1)
-      cuts <- sort(unique(c(1:2, cuts)))
-    ncuts <- c(unique(c(min(ns), cuts)), Inf)
+    ncuts <- cut2(ns, g=kn, onlycuts=TRUE)
+    if(force1 && ncuts[2] > 1 && min(ns)==1)
+      ncuts <- sort(unique(c(1:2, ncuts)))
   }
   nlev <- length(ncuts)-1
-  res <- vector('list', nlev); names(res) <- as.character(cuts)
+  res <- vector('list', nlev)
+  names(res) <- as.character(ncuts[-length(ncuts)])
 
   clust <- function(x, k)
-    if(diff(range(x))==0) rep(1, NROW(x)) else
+    if(diff(range(x))==0 || NROW(x) < k+1) rep(1, NROW(x)) else
     clara(x, k, metric=metric)$clustering
 
   interp <- if(extrap)
@@ -42,9 +39,16 @@ curveRep <- function(x, y, id, kn=5, kxdist=5, k=5, p=5, force1=TRUE,
   if(pr) cat('Creating',nlev,'sample size groups\n\n')
   for(i in 1:nlev) {
     ## Get list of curve ids in this sample size group
-    ids <- names(ns)[ns >= ncuts[i] & ns < ncuts[i+1]]
+    if(i==nlev) {
+      below <- ns <= ncuts[i+1]
+      brack <- ']'
+    } else {
+      below <- ns < ncuts[i+1]
+      brack <- ')'
+    }
+    ids <- names(ns)[ns >= ncuts[i] & below]
     if(pr) cat('Processing sample size [',ncuts[i],',',ncuts[i+1],
-               ') containing ', length(ids),' curves\n',sep='')
+               brack,' containing ', length(ids),' curves\n',sep='')
     if(length(ids) < kxdist) res[[i]] <- list(ids) else {
       ## Cluster by distribution of x within sample size group
       ## Summarize these ids by clustering on range of x,
@@ -93,13 +97,14 @@ curveRep <- function(x, y, id, kn=5, kxdist=5, k=5, p=5, force1=TRUE,
     }
   }
   structure(list(res=res, ns=table(ns), nomit=nomit, missfreq=missfreq,
-                 ncuts=ncuts[-length(ncuts)], kn=kn, kxdist=kxdist, k=k, p=p,
+                 ncuts=ncuts, kn=kn, kxdist=kxdist, k=k, p=p,
                  smooth=smooth, x=x, y=y, id=id),
             class='curveRep')
 }
 
 print.curveRep <- function(x, ...) {
   sm <- if(x$smooth) 'smooth' else 'not smoothed'
+  ncuts <- x$ncuts
   cat('kn:',x$kn, ' kxdist:',x$kxdist, ' k:',x$k,
       ' p:',x$p, ' ', sm, '\n\n', sep='')
   cat('Frequencies of number of non-missing values per curve:\n')
@@ -109,12 +114,12 @@ print.curveRep <- function(x, ...) {
     cat('\nFrequency of number of missing values per curve:\n')
     print(x$missfreq)
   }
-  cat('\nSample size cuts:', paste(x$ncuts, collapse=' '),'\n')
+  cat('\nSample size cuts:', paste(ncuts, collapse=' '),'\n')
   cat('Number of x distribution groups per sample size group:',
       paste(sapply(x$res, length), collapse=' '),'\n\n')
   res <- x$res
-  nn <- c(names(res),'')
-  for(i in 1:length(res)) {
+  ng <- length(res)
+  for(i in 1:ng) {
     ngroup <- res[[i]]
     maxclus <- max(unlist(ngroup))
     w <- matrix(NA, nrow=maxclus, ncol=length(ngroup),
@@ -125,7 +130,10 @@ print.curveRep <- function(x, ...) {
       j <- j+1
       w[,j] <- tabulate(xdistgroup, nbins=maxclus)
     }
-    cat('\nNumber of Curves for Sample Size ', nn[i],'-',nn[i+1],'\n',sep='')
+    brack <- if(i==ng) ']' else ')'
+    z <- if(is.infinite(ncuts[i+1])) ncuts[i] else
+    paste('[', ncuts[i], ',', ncuts[i+1], brack, sep='')
+    cat('\nNumber of Curves for Sample Size ', z, '\n',sep='')
     print(w)
   }
   invisible()
@@ -138,8 +146,9 @@ plot.curveRep <- function(x, which=1:length(res),
                           xlim=range(x), ylim=range(y),
                           xlab='x', ylab='y') {
   method <- match.arg(method)
+  ncuts <- x$ncuts
   res <- x$res; id <- x$id; y <- x$y; k <- x$k; x <- x$x
-  nm <- names(res)
+  nng <- length(res)
 
   samp <- function(ids)
     if(!length(m) || is.character(m) ||
@@ -154,11 +163,13 @@ plot.curveRep <- function(x, which=1:length(res),
     require(grid)
     require(lattice)
     nres <- names(res)
-    if(length(nres)==1) nname <- NULL else
-    nname <- if(which==length(nres))
-      paste('n>=',nres[which],sep='') else
-      if(nres[which]=='1' & nres[which+1]=='2') 'n=1' else
-      paste(nres[which],'<=n<',nres[which+1],sep='')
+    nname <- if(length(nres)==1) NULL else
+      if(nres[which]=='1' & nres[which+1]=='2') 'n=1' else {
+        brack <- if(which==length(nres)) ']' else ')'
+        z <- if(is.infinite(ncuts[which+1])) ncuts[which] else
+        paste('[',ncuts[which],',',ncuts[which+1],brack,sep='')
+        paste('n ',z, sep='')
+      }
     
     res <- res[[which]]
     n <- length(x)
@@ -255,7 +266,10 @@ plot.curveRep <- function(x, which=1:length(res),
           if(curve==1) {
             plot(x[s][i], y[s][i], xlab=xlab, ylab=ylab,
                  type='n', xlim=xlim, ylim=ylim)
-            title(paste('n=',nm[jn],' x=',jx,
+            brack <- if(jn==nng) ']' else ')'
+            z <- if(is.infinite(ncuts[jn+1])) ncuts[jn] else
+            paste('[', ncuts[jn],',',ncuts[jn+1],brack,sep='')
+            title(paste('n ', z, ' x=',jx,
                         ' c=',jclus,' ',nc,' curves', sep=''), cex=.5)
           }
           lines(x[s][i], y[s][i], type=type,

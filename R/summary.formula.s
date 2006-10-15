@@ -2526,7 +2526,7 @@ summarize <- function(X, by, FUN, ...,
   
   if(length(stat.name)==1)
     snames[1] <- stat.name
-  else
+  else if(length(stat.name))
     snames <- stat.name
   
   oldopt <- options(warn=-1)

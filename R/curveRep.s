@@ -142,7 +142,8 @@ print.curveRep <- function(x, ...) {
 plot.curveRep <- function(x, which=1:length(res),
                           method=c('all','lattice'),
                           m=NULL, probs=c(.5,.25,.75),
-                          nx=NULL, fill=TRUE, idcol=NULL,
+                          nx=NULL, fill=TRUE,
+                          idcol=NULL, freq=NULL,
                           xlim=range(x), ylim=range(y),
                           xlab='x', ylab='y') {
   method <- match.arg(method)
@@ -175,13 +176,23 @@ plot.curveRep <- function(x, which=1:length(res),
     n <- length(x)
     X <- Y <- xdist <- cluster <- sizecluster <- numeric(n)
     curve <- character(n)
+    if(length(freq)) {
+      unique.cats <- unique(freq)
+      Freqtab <- matrix(0, nrow=n, length(unique.cats),
+                        dimnames=list(NULL, unique.cats))
+    }
     st <- 1
     for(jx in 1:length(res)) {
       xgroup  <- res[[jx]]
       ids <- names(xgroup)
       for(jclus in 1:max(xgroup)) {
-        ids.in.cluster <- samp(ids[xgroup==jclus])
-        for(cur in ids.in.cluster) {
+        all.ids.in.cluster <- ids[xgroup==jclus]
+        if(length(freq)) {
+          freqtab <- table(freq[all.ids.in.cluster])
+          nfreqtab <- names(freqtab)
+        }
+        plotted.ids.in.cluster <- samp(all.ids.in.cluster)
+        for(cur in plotted.ids.in.cluster) {
           s <- id %in% cur
           np <- sum(s)
           i <- order(x[s])
@@ -193,6 +204,7 @@ plot.curveRep <- function(x, which=1:length(res),
           cluster[st:en] <- jclus
           curve[st:en]   <- cur
           sizecluster[st:en] <- sum(xgroup==jclus)
+          if(length(freq)) Freqtab[st:en, nfreqtab] <- rep(freqtab, each=np)
           st <- st+np
         }
       }
@@ -200,14 +212,24 @@ plot.curveRep <- function(x, which=1:length(res),
     Y <- Y[1:en]; X <- X[1:en]
     distribution <- xdist[1:en]; cluster <- cluster[1:en]
     curve <- curve[1:en]; sizecluster <- sizecluster[1:en]
+    if(length(freq)) Freqtab <- Freqtab[1:en,,drop=FALSE]
+    textfun <- function(subscripts, groups=NULL) {
+      if(!length(subscripts)) return()
+      txt <- if(length(freq) && length(groups)) {
+        tab <- Freqtab[subscripts[1],]
+        txt <- paste(names(tab), tab, sep=':')
+        paste(txt, collapse=';')
+      } else {
+        size <- sizecluster[subscripts[1]]
+        paste('N=',size,sep='')
+      }
+      grid.text(txt, x=.005, y=.99, just=c(0,1),
+                gp=gpar(fontsize=9, col=gray(.25)))
+    }
     pan <- if(length(idcol))
       function(x, y, subscripts, groups, type, ...) {
         groups <- as.factor(groups)[subscripts]
-        if(length(subscripts)) {
-          size <- sizecluster[subscripts[1]]
-          grid.text(paste('N=',size,sep=''), x=0, y=1, just=c(0,1),
-                    gp=gpar(fontsize=9, col=gray(.25)))
-        }
+        textfun(subscripts, groups)
         for(g in levels(groups)) {
           idx <- groups == g
           xx <- x[idx]; yy <- y[idx]; ccols <- idcol[g]
@@ -219,13 +241,9 @@ plot.curveRep <- function(x, which=1:length(res),
                          llines(xx, yy, col = ccols) }) 
           } 
         } 
-      } else function(x, y, subscripts, ...) {
-        panel.superpose(x, y, subscripts, ...)
-        if(length(subscripts)) {
-          size <- sizecluster[subscripts[1]]
-          grid.text(paste('N=',size,sep=''), x=0, y=1,
-                    just=c(0,1), gp=gpar(fontsize=9, col=gray(.25)))
-        }
+      } else function(x, y, subscripts, groups, ...) {
+        panel.superpose(x, y, subscripts, groups, ...)
+        textfun(subscripts, groups)
       }
     if(is.character(m))
       print(xYplot(Y ~ X | distribution*cluster,
@@ -236,10 +254,7 @@ plot.curveRep <- function(x, which=1:length(res),
                    panel=function(x, y, subscripts, ...) {
                      if(length(subscripts)) {
                        panel.xYplot(x, y, subscripts, ...)
-                       size <- sizecluster[subscripts[1]]
-                       grid.text(paste('N=',size,sep=''), x=0, y=1,
-                        just=c(0,1), gp=gpar(fontsize=9,
-                                       col=gray(.25)))
+                       textfun(subscripts)
                      }
                      })) else
     print(xyplot(Y ~ X | distribution*cluster, groups=curve,

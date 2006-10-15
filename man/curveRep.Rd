@@ -40,7 +40,10 @@
   auxiliary \code{idcol} variable to \code{plot}, other variables such
   as treatment may be depicted to allow the analyst to determine for
   example whether subjects on different treatments are assigned to
-  different time-response profiles.
+  different time-response profiles.  To write the frequencies of a
+  variable such as treatment in the upper left corner of each panel
+  (instead of the grand total number of clusters in that panel), specify
+  \code{freq}.
 
   \code{curveSmooth} takes a set of curves and smooths them using
   \code{\link{lowess}}.  If the number of unique \code{x} points in a curve is
@@ -58,7 +61,7 @@ curveRep(x, y, id, kn = 5, kxdist = 5, k = 5, p = 5,
 
 \method{plot}{curveRep}(x, which=1:length(res), method=c('all','lattice'),
                         m=NULL, probs=c(.5, .25, .75), nx=NULL, fill=TRUE,
-                        idcol=NULL, xlim=range(x), ylim=range(y),
+                        idcol=NULL, freq=NULL, xlim=range(x), ylim=range(y),
                         xlab='x', ylab='y')
 curveSmooth(x, y, id, p=10, pr=FALSE)
 
@@ -122,6 +125,9 @@ curveSmooth(x, y, id, p=10, pr=FALSE)
 	assignments (does not apply when \code{m='quantile'}).  The names of
 	this vector are curve \code{id}s and the values are color names or
 	numbers.}
+  \item{freq}{a named vector to be used as a table lookup for a grouping
+	variable such as treatment.  The names are curve \code{id}s and
+	values are any values useful for grouping in a frequency tabulation.}
   \item{xlim, ylim, xlab, ylab}{plotting parameters.  Default ranges are
 	the ranges in the entire set of raw data given to \code{curveRep}.}
 }
@@ -258,7 +264,7 @@ w <- curveRep(X, Y, id, kn=1, kxdist=1, k=4)
 plot(w, 1, 'lattice', idcol=cols, ylim=yl)
 # Found 4 clusters but two have same profile
 w <- curveRep(X, Y, id, kn=1, kxdist=1, k=3)
-plot(w, 1, 'lattice', idcol=cols, ylim=yl)
+plot(w, 1, 'lattice', idcol=cols, freq=cols, ylim=yl)
 # Incorrectly combined black and red because default value p=5 did
 # not result in different profiles at x=xeval
 w <- curveRep(X, Y, id, kn=1, kxdist=1, k=4, p=40)

@@ -3,7 +3,7 @@ if (.R.) {
                         convert.dates=TRUE, convert.factors=TRUE,
                         missing.type=FALSE, convert.underscore=TRUE,
                         warn.missing.labels=TRUE, force.single=TRUE,
-                        allow=NULL, ...)
+                        allow=NULL, charfactor=TRUE, ...)
   {
     require('foreign')
 
@@ -74,7 +74,13 @@ if (.R.) {
           storage.mode(x) <- 'integer'
           changed <- TRUE
         }
+      } else if(charfactor && is.character(x)) {
+        if(max(nchar(x)) >= 2 && (length(unique(x)) < .5*length(x))) {
+          x <- factor(x)
+          changed <- TRUE
+        }
       }
+
 
       if(changed) w[[v]] <- x
     }

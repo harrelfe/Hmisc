@@ -1120,7 +1120,8 @@ cleanup.import <- function(obj, labels=NULL, lowernames=FALSE,
                            big=1e20, sasdict, 
                            pr=prod(dimobj) > 5e5,
                            datevars=NULL,
-                           dateformat='%F', fixdates=c('none','year'))
+                           dateformat='%F', fixdates=c('none','year'),
+                           charfactor=FALSE)
 {
   fixdates <- match.arg(fixdates)
   nam <- names(obj)
@@ -1279,6 +1280,13 @@ cleanup.import <- function(obj, labels=NULL, lowernames=FALSE,
         }
       }
     }
+
+    if(charfactor && is.character(x)) {
+      if(max(nchar(x)) >= 2 && (length(unique(x)) < .5*length(x))) {
+        x <- factor(x)
+        modif <- TRUE
+      }
+    }
     
     if(modif)
       obj[[i]] <- x
@@ -1323,7 +1331,7 @@ upData <- function(object, ...,
                    rename=NULL, drop=NULL,
                    labels=NULL, units=NULL, levels=NULL,
                    force.single=TRUE, lowernames=FALSE,
-                   moveUnits=FALSE)
+                   moveUnits=FALSE, charfactor=FALSE)
 {
   n  <- nrow(object)
   if(!length(n)) {
@@ -1498,6 +1506,16 @@ upData <- function(object, ...,
       }
   }
 
+  if(charfactor) {
+    g <- function(z) {
+      if(!is.character(z) || max(nchar(z)) < 2) return(FALSE)
+      length(unique(z)) < .5*length(z)
+    }
+    mfact <- sapply(object, g)
+    if(any(mfact))
+      for(i in (1:length(mfact))[mfact]) object[[i]] <- factor(object[[i]])
+  }
+  
   if(length(drop)) {
     if(length(drop)==1)
       cat('Dropped variable\t',drop,'\n')
@@ -1594,7 +1612,7 @@ if(.R.) {
                        use.value.labels=TRUE,
                        to.data.frame=TRUE,
                        max.value.labels=Inf,
-                       force.single=TRUE, allow=NULL)
+                       force.single=TRUE, allow=NULL, charfactor=FALSE)
   {
     require('foreign')
     if(length(grep('http://', file))) {
@@ -1623,7 +1641,7 @@ if(.R.) {
       }
 
     attr(w, 'variable.labels') <- NULL
-    if(force.single || length(datevars))
+    if(force.single || length(datevars) || charfactor)
       for(v in nam) {
         x <- w[[v]]
         changed <- FALSE
@@ -1640,6 +1658,11 @@ if(.R.) {
           } else if(max(abs(x),na.rm=TRUE) <= (2^31-1) &&
                     all(floor(x) == x, na.rm=TRUE)) {
             storage.mode(x) <- 'integer'
+            changed <- TRUE
+          }
+        } else if(charfactor && is.character(x)) {
+          if(max(nchar(x)) >= 2 && (length(unique(x)) < .5*length(x))) {
+            x <- factor(x)
             changed <- TRUE
           }
         }
@@ -1968,8 +1991,6 @@ csv.get <- function(file, lowernames=FALSE, datevars=NULL,
     for(i in 1:length(tmp)) {
       if(! is.character(tmp[[1]]))
         next
-
-      
     }
   }
   cleanup.import(w,

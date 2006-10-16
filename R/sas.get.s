@@ -1971,7 +1971,8 @@ if(.R.) {
 
 csv.get <- function(file, lowernames=FALSE, datevars=NULL,
                     dateformat='%F', fixdates=c('none','year'),
-                    comment.char = "", autodates=TRUE, allow=NULL, ...)
+                    comment.char = "", autodates=TRUE, allow=NULL,
+                    charfactor=FALE, ...)
 {
   fixdates <- match.arg(fixdates)
   w <- read.csv(file, check.names=FALSE, comment.char=comment.char, ...)
@@ -1997,7 +1998,7 @@ csv.get <- function(file, lowernames=FALSE, datevars=NULL,
                  labels=if(changed)n
                         else NULL,
                  datevars=datevars, dateformat=dateformat,
-                 fixdates=fixdates)
+                 fixdates=fixdates, charfactor=charfactor)
 }
 
 

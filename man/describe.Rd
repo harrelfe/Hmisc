@@ -248,6 +248,16 @@ describe(relig)  #Has special missing values .D .F .M .R .T
                  g=ISOdate(year=2001:2020,month=rep(3,20),day=1:20))
  describe(d)
 
+# Make a function to run describe, latex.describe, and use the kdvi
+# previewer in Linux to view the result and easily make a pdf file
+
+ ldesc <- function(data) {
+  options(xdvicmd='kdvi')
+  d <- describe(data, desc=deparse(substitute(data)))
+  dvi(latex(d, file='/tmp/z.tex'), nomargins=FALSE, width=8.5, height=11)
+ }
+
+ ldesc(d)
 }
 }
 \keyword{interface}

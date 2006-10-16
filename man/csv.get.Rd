@@ -8,7 +8,7 @@
 \usage{
 csv.get(file, lowernames=FALSE, datevars=NULL, dateformat='\%F',
         fixdates=c('none','year'), comment.char="", autodates=TRUE,
-        allow=NULL, \dots)
+        allow=NULL, charfactor=FALSE, \dots)
 }
 \arguments{
   \item{file}{the file name for import.}
@@ -41,6 +41,9 @@ csv.get(file, lowernames=FALSE, datevars=NULL, dateformat='\%F',
     converted to periods in variable names.  By default, underscores in
     variable names are converted to periods as with \R before version
     1.9.}
+  \item{charfactor}{set to \code{TRUE} to change character variables to
+	factors if they have at least two characters in an observation but
+	have fewer than n/2 unique values}
   \item{\dots}{arguments to pass to \code{read.csv}.}
 }
 \details{

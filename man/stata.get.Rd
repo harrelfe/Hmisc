@@ -9,7 +9,7 @@
 stata.get(file, lowernames = FALSE, convert.dates = TRUE,
           convert.factors = TRUE, missing.type = FALSE,
           convert.underscore = TRUE, warn.missing.labels = TRUE,
-          force.single = TRUE, allow=NULL, \dots)
+          force.single = TRUE, allow=NULL, charfactor=FALSE, \dots)
 }
 \arguments{
   \item{file}{input SPSS save file.  May be a file on the WWW, indicated
@@ -27,6 +27,9 @@ stata.get(file, lowernames = FALSE, convert.dates = TRUE,
   \item{allow}{a vector of characters allowed by \R that should not be
 	converted to periods in variable names.  By default, underscores in
 	variable names are converted to periods as with \R before version 1.9.}
+  \item{charfactor}{set to \code{TRUE} to change character variables to
+	factors if they have at least two characters in an observation but
+	have fewer than n/2 unique values}
   \item{\dots}{arguments passed to \code{\link[foreign]{read.dta}}.}
 }
 \details{

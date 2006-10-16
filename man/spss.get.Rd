@@ -14,7 +14,8 @@ variables.  By default, underscores in names are converted to periods.
 \usage{
 spss.get(file, lowernames=FALSE, datevars = NULL,
          use.value.labels = TRUE, to.data.frame = TRUE,
-         max.value.labels = Inf, force.single=TRUE, allow=NULL)
+         max.value.labels = Inf, force.single=TRUE,
+         allow=NULL, charfactor=FALSE)
 }
 \arguments{
   \item{file}{input SPSS save file.  May be a file on the WWW, indicated
@@ -33,6 +34,9 @@ spss.get(file, lowernames=FALSE, datevars = NULL,
   \item{allow}{a vector of characters allowed by \R that should not be
 	converted to periods in variable names.  By default, underscores in
 	variable names are converted to periods as with \R before version 1.9.}
+  \item{charfactor}{set to \code{TRUE} to change character variables to
+	factors if they have at least two characters in an observation but
+	have fewer than n/2 unique values}
 }
 \value{
   a data frame or list

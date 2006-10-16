@@ -54,11 +54,11 @@ attributes.  Otherwise \code{exportData} will fail.
 cleanup.import(obj, labels, lowernames=FALSE, 
                force.single=TRUE, force.numeric=TRUE, rmnames=TRUE,
                big=1e20, sasdict, pr, datevars=NULL, dateformat='\%F',
-               fixdates=c('none','year'))
+               fixdates=c('none','year'), charfactor=FALSE)
 
 upData(object, \dots, 
        rename, drop, labels, units, levels,
-       force.single=TRUE, lowernames=FALSE, moveUnits=FALSE)
+       force.single=TRUE, lowernames=FALSE, moveUnits=FALSE, charfactor=FALSE)
 
 exportDataStripped(data, \dots)
 }
@@ -132,6 +132,9 @@ for all observation for \code{datevars}).  Currently
 on the left.  Set \code{dateformat} to the desired format, not the
 exceptional format.
 }
+\item{charfactor}{set to \code{TRUE} to change character variables to
+  factors if they have at least two characters in an observation but
+  have fewer than n/2 unique values}
 \item{\dots}{
 for \code{upData}, one or more expressions of the form
 \code{variable=expression}, to derive new variables or change old ones.

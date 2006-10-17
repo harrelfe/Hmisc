@@ -1022,60 +1022,57 @@ latexTranslate <- function(object, inn=NULL, out=NULL, pb=FALSE,
            if(pb)
              c("$\\left[","$\\left(","\\right]$","\\right)$"))
 
-    text <- sedit(text, '$', 'DOLLARS', wild.literal=TRUE)   ##17Nov00
-    text <- sedit(text, inn, out)
+  text <- sedit(text, '$', 'DOLLARS', wild.literal=TRUE)   ##17Nov00
+  text <- sedit(text, inn, out)
 
-    ##See if string contains an ^ - superscript followed by a number
-    ## (number condition added 31aug02)
+  ##See if string contains an ^ - superscript followed by a number
+  ## (number condition added 31aug02)
 
-    dig <- c('0','1','2','3','4','5','6','7','8','9')
+  dig <- c('0','1','2','3','4','5','6','7','8','9')
 
-    for(i in 1:length(text)) {
-      lt <- nchar(text[i])
-      x <- substring(text[i],1:lt,1:lt)
-      j <- x=='^'
-      if(any(j)) {
-        is <- ((1:lt)[j])[1]  #get first ^
-        remain <- x[-(1:is)]
-        k <- remain %in% c(' ',',',')',']','\\','$')
-        ## Following 3 lines 31aug02
-        if(remain[1] %in% dig ||
-           (length(remain) > 1 && remain[1]=='-' && remain[2] %in% dig))
-          k[-1] <- k[-1] | remain[-1] %nin% dig
-        
-        ie <-
-          if(any(k))
-            is + ((1:length(remain))[k])[1]
-          else
-            length(x)+1
-        
-        ##See if math mode already turned on (odd number of $ to left of ^)
-        dol <-
-          if(sum(x[1:is]=='$') %% 2)
-            ''
-          else '$'
-        
-        substring2(text[i],is,ie-1) <- paste(dol,'^{',
-                                             substring(text[i],is+1,ie-1),'}',
-                                             dol,sep='')  # 25May01
-      }
+  for(i in 1:length(text)) {
+    lt <- nchar(text[i])
+    x <- substring(text[i],1:lt,1:lt)
+    j <- x=='^'
+    if(any(j)) {
+      is <- ((1:lt)[j])[1]  #get first ^
+      remain <- x[-(1:is)]
+      k <- remain %in% c(' ',',',')',']','\\','$')
+      ## Following 3 lines 31aug02
+      if(remain[1] %in% dig ||
+         (length(remain) > 1 && remain[1]=='-' && remain[2] %in% dig))
+        k[-1] <- k[-1] | remain[-1] %nin% dig
       
-      if(greek) {
-        gl <- Cs(alpha,beta,gamma,delta,epsilon,varepsilon,zeta,eta,theta,
-                 vartheta,iota,kappa,lambda,mu,nu,xi,pi,varpi,rho,varrho,
-                 sigma,varsigma,tau,upsilon,phi,carphi,chi,psi,omega,Gamma,
-                 Delta,Theta,Lambda,Xi,Pi,Sigma,Upsilon,Phi,Psi,Omega)
-        for(w in gl)
-          text[i] <- gsub(paste('\\b', w, '\\b', sep=''),
-                          paste('$\\\\',w,'$',   sep=''),
-                          text[i])
-      }
+      ie <-
+        if(any(k))
+          is + ((1:length(remain))[k])[1]
+        else
+          length(x)+1
+      
+      ##See if math mode already turned on (odd number of $ to left of ^)
+      dol <-
+        if(sum(x[1:is]=='$') %% 2)
+          ''
+        else '$'
+      
+      substring2(text[i],is,ie-1) <- paste(dol,'^{',
+                                           substring(text[i],is+1,ie-1),'}',
+                                           dol,sep='')  # 25May01
     }
     
-    sedit(text, 'DOLLARS', '\\$', wild.literal=TRUE)  ## 17Nov00
-  } else {
-    
+    if(greek) {
+      gl <- Cs(alpha,beta,gamma,delta,epsilon,varepsilon,zeta,eta,theta,
+               vartheta,iota,kappa,lambda,mu,nu,xi,pi,varpi,rho,varrho,
+               sigma,varsigma,tau,upsilon,phi,carphi,chi,psi,omega,Gamma,
+               Delta,Theta,Lambda,Xi,Pi,Sigma,Upsilon,Phi,Psi,Omega)
+      for(w in gl)
+        text[i] <- gsub(paste('\\b', w, '\\b', sep=''),
+                        paste('$\\\\',w,'$',   sep=''),
+                        text[i])
+    }
   }
+  
+  sedit(text, 'DOLLARS', '\\$', wild.literal=TRUE)  ## 17Nov00
 }
 
 

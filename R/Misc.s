@@ -1596,16 +1596,15 @@ Load <- function(object)
   load(file, .GlobalEnv)
 }
 
-Save <- function(object)
+Save <- function(object, name=deparse(substitute(object)))
 {
-  .ObjectName <- deparse(substitute(object))
   path <- .Options$LoadPath
   if(length(path))
     path <- paste(path, '/', sep='')
   
-  .FileName <- paste(path, .ObjectName, '.rda', sep='')
-  assign(.ObjectName, object)
-  eval(parse(text=paste('save(', .ObjectName, ', file="',
+  .FileName <- paste(path, name, '.rda', sep='')
+  assign(name, object)
+  eval(parse(text=paste('save(', name, ', file="',
                         .FileName, '", compress=TRUE)', sep='')))
 }
 

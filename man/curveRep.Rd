@@ -62,8 +62,8 @@ curveRep(x, y, id, kn = 5, kxdist = 5, k = 5, p = 5,
 \method{plot}{curveRep}(x, which=1:length(res), method=c('all','lattice'),
                         m=NULL, probs=c(.5, .25, .75), nx=NULL, fill=TRUE,
                         idcol=NULL, freq=NULL, xlim=range(x), ylim=range(y),
-                        xlab='x', ylab='y')
-curveSmooth(x, y, id, p=10, pr=FALSE)
+                        xlab='x', ylab='y', \dots)
+curveSmooth(x, y, id, p=NULL, pr=TRUE)
 
 }
 \arguments{
@@ -130,6 +130,7 @@ curveSmooth(x, y, id, p=10, pr=FALSE)
 	values are any values useful for grouping in a frequency tabulation.}
   \item{xlim, ylim, xlab, ylab}{plotting parameters.  Default ranges are
 	the ranges in the entire set of raw data given to \code{curveRep}.}
+  \item{\dots}{arguments passed to other functions.}
 }
 \value{a list of class \code{'curveRep'} with the following elements
   \item{res}{a hierarchical list first split by sample size intervals,

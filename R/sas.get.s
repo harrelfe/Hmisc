@@ -1972,7 +1972,7 @@ if(.R.) {
 csv.get <- function(file, lowernames=FALSE, datevars=NULL,
                     dateformat='%F', fixdates=c('none','year'),
                     comment.char = "", autodates=TRUE, allow=NULL,
-                    charfactor=FALE, ...)
+                    charfactor=FALSE, ...)
 {
   fixdates <- match.arg(fixdates)
   w <- read.csv(file, check.names=FALSE, comment.char=comment.char, ...)

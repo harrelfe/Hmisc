@@ -145,7 +145,7 @@ plot.curveRep <- function(x, which=1:length(res),
                           nx=NULL, fill=TRUE,
                           idcol=NULL, freq=NULL,
                           xlim=range(x), ylim=range(y),
-                          xlab='x', ylab='y') {
+                          xlab='x', ylab='y', ...) {
   method <- match.arg(method)
   ncuts <- x$ncuts
   res <- x$res; id <- x$id; y <- x$y; k <- x$k; x <- x$x

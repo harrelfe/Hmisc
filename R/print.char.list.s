@@ -2,7 +2,7 @@ if(!exists("string.bounding.box")) {
   string.bounding.box <- function(string) {
     mode(string) <- "character"
 
-    .Call("string_box", string, package="Hmisc")
+    .Call("string_box", string, PACKAGE="Hmisc")
   }
 }
 

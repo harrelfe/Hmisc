@@ -227,13 +227,14 @@ plot.curveRep <- function(x, which=1:length(res),
           for(i in 1:length(tab)) {
             y <- y - .075
             grid.text(fnam[i], x=lx-.005, y=y+.025, just=c(1,.5),
-                      gp=gpar(fontsize=7, col=gray(.5)))
+                      gp=gpar(fontsize=7, col=gray(.4)))
             if(tab[i] > 0)
               grid.polygon(x=c(lx, lx+tab[i]/f, lx+tab[i]/f, lx, lx),
                            y=c(y, y, y+.05, y+.05, y), 
-                           gp=gpar(fill=gray(.7)))
-            if(tab[i]==mx) grid.text(mx, x=lx+mx/f + .01, y=y+.025,
-                    just=c(0,.5), gp=gpar(fontsize=7, col=gray(.5)))
+                           gp=gpar(fill=gray(.7), col=gray(.7)))
+            if(tab[i]==mx)
+              grid.text(mx, x=lx+mx/f + .01, y=y+.025,
+                        just=c(0,.5), gp=gpar(fontsize=7, col=gray(.4)))
           }
           return()
         }

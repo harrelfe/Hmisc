@@ -143,7 +143,7 @@ plot.curveRep <- function(x, which=1:length(res),
                           method=c('all','lattice'),
                           m=NULL, probs=c(.5,.25,.75),
                           nx=NULL, fill=TRUE,
-                          idcol=NULL, freq=NULL,
+                          idcol=NULL, freq=NULL, plotfreq=FALSE,
                           xlim=range(x), ylim=range(y),
                           xlab='x', ylab='y', ...) {
   method <- match.arg(method)
@@ -217,6 +217,26 @@ plot.curveRep <- function(x, which=1:length(res),
       if(!length(subscripts)) return()
       txt <- if(length(freq) && length(groups)) {
         tab <- Freqtab[subscripts[1],]
+        if(plotfreq) {
+          mx <- max(Freqtab, na.rm=TRUE)
+          f <- mx/(.1*plotfreq)
+          y <- 1
+          fnam <- names(tab)
+          long <- fnam[nchar(fnam)==max(nchar(fnam))][1]
+          lx <- convertX(unit(1, 'strwidth', long), 'npc', valueOnly=TRUE)
+          for(i in 1:length(tab)) {
+            y <- y - .075
+            grid.text(fnam[i], x=lx-.005, y=y+.025, just=c(1,.5),
+                      gp=gpar(fontsize=7, col=gray(.5)))
+            if(tab[i] > 0)
+              grid.polygon(x=c(lx, lx+tab[i]/f, lx+tab[i]/f, lx, lx),
+                           y=c(y, y, y+.05, y+.05, y), 
+                           gp=gpar(fill=gray(.7)))
+            if(tab[i]==mx) grid.text(mx, x=lx+mx/f + .01, y=y+.025,
+                    just=c(0,.5), gp=gpar(fontsize=7, col=gray(.5)))
+          }
+          return()
+        }
         txt <- paste(names(tab), tab, sep=':')
         paste(txt, collapse=';')
       } else {

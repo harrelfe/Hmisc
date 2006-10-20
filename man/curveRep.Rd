@@ -61,7 +61,8 @@ curveRep(x, y, id, kn = 5, kxdist = 5, k = 5, p = 5,
 
 \method{plot}{curveRep}(x, which=1:length(res), method=c('all','lattice'),
                         m=NULL, probs=c(.5, .25, .75), nx=NULL, fill=TRUE,
-                        idcol=NULL, freq=NULL, xlim=range(x), ylim=range(y),
+                        idcol=NULL, freq=NULL, plotfreq=FALSE,
+                        xlim=range(x), ylim=range(y),
                         xlab='x', ylab='y', \dots)
 curveSmooth(x, y, id, p=NULL, pr=TRUE)
 
@@ -128,6 +129,11 @@ curveSmooth(x, y, id, p=NULL, pr=TRUE)
   \item{freq}{a named vector to be used as a table lookup for a grouping
 	variable such as treatment.  The names are curve \code{id}s and
 	values are any values useful for grouping in a frequency tabulation.}
+  \item{plotfreq}{set to \code{TRUE} to plot the frequencies from the
+	\code{freq} variable as horizontal bars instead of printing them.
+	Applies only to \code{method='lattice'}.  By default the largest bar
+	is 0.1 times the length of a panel's x-axis.  Specify
+	\code{plotfreq=.5} for example to make the longest bar half this long.}
   \item{xlim, ylim, xlab, ylab}{plotting parameters.  Default ranges are
 	the ranges in the entire set of raw data given to \code{curveRep}.}
   \item{\dots}{arguments passed to other functions.}
@@ -265,7 +271,7 @@ w <- curveRep(X, Y, id, kn=1, kxdist=1, k=4)
 plot(w, 1, 'lattice', idcol=cols, ylim=yl)
 # Found 4 clusters but two have same profile
 w <- curveRep(X, Y, id, kn=1, kxdist=1, k=3)
-plot(w, 1, 'lattice', idcol=cols, freq=cols, ylim=yl)
+plot(w, 1, 'lattice', idcol=cols, freq=cols, plotfreq=TRUE, ylim=yl)
 # Incorrectly combined black and red because default value p=5 did
 # not result in different profiles at x=xeval
 w <- curveRep(X, Y, id, kn=1, kxdist=1, k=4, p=40)

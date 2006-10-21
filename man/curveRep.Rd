@@ -176,7 +176,7 @@ curveSmooth(x, y, id, p=NULL, pr=TRUE)
   collections of similar curves.  Am Statistician 46:140-145.
 
   
-  Zhen X, Simpson JA, et al (2005): Data from a study of effectiveness
+  Zheng X, Simpson JA, et al (2005): Data from a study of effectiveness
   suggested potential prognostic factors related to the patterns of
   shoulder pain.  J Clin Epi 58:823-830.
   }
@@ -188,7 +188,8 @@ curveSmooth(x, y, id, p=NULL, pr=TRUE)
 }
 \note{The references describe other methods for deriving
   representative curves, but those methods were not used here.  The last
-  reference motivated \code{curveRep} however.}
+  reference which used a cluster analysis on principal components
+  motivated \code{curveRep} however.}
 \seealso{\code{\link[cluster]{clara}},\code{\link[Hmisc]{dataRep}}}
 \examples{
 \dontrun{

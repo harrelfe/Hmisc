@@ -951,7 +951,7 @@ code.levels <- function(object) {
 }
 
 
-as.data.frame.special.miss <- function(x, row.names = NULL, optional = FALSE)
+as.data.frame.special.miss <- function(x, row.names = NULL, optional = FALSE, ...)
 {
   nrows <- length(x)
   if(is.null(row.names)) {

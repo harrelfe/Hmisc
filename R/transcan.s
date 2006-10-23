@@ -96,7 +96,7 @@ transcan <-
     if(.R.)
       require('nnet')
     else if(!existsFunction('multinom'))
-      library(nnet)
+      require(nnet)
   }
 
   if(.R. & missing(data))

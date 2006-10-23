@@ -20,6 +20,7 @@ floor.chron(x, units = c("minutes", "hours", "days", "months", "years"))
 \author{ Charles Dupont }
 \seealso{ \code{\link[chron]{dates}} \code{\link[chron]{times}} }
 \examples{
+library(chron)
 ceiling.chron(dates('7/13/1832'), units='months')  # '7/31/1832'
 floor.chron(dates('7/13/1832'), units='years')     # '1/1/1832'
 }

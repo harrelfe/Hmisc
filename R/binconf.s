@@ -91,9 +91,9 @@ binconf <- function(x, n, alpha = 0.05,
   
   if(include.x)
     mat <- cbind(X = x, mat)
-  
+
   if(return.df)
-    mat <- as.data.frame(mat)
+    mat <- as.data.frame(mat, row.names=NULL)
   
   mat
 }

@@ -1123,8 +1123,7 @@ Names2names <- function(x)
 }
 
 ## Use R function for S-Plus, just changed to .Options
-if(!.R.) {
-  format.pval <- function (pv, digits = max(1, .Options$digits - 2),
+format.pval <- function (pv, digits = max(1, .Options$digits - 2),
                            eps = .Machine$double.eps, 
                            na.form = "NA") 
   {
@@ -1137,9 +1136,11 @@ if(!.R.) {
       expo <- floor(log10(pv))
       fixp <- expo >= -3 | (expo == -4 & digits > 1)
       if (any(fixp)) 
-        rr[fixp] <- format(pv[fixp], dig = digits)
+        rr[fixp] <- format(round(pv[fixp], digits = digits),
+                                     nsmall = digits)
       if (any(!fixp)) 
-        rr[!fixp] <- format(pv[!fixp], dig = digits)
+        rr[!fixp] <- format(round(pv[!fixp], digits = digits),
+                                      nsmall = digits)
       r[!is0] <- rr
     }
     
@@ -1166,9 +1167,8 @@ if(!.R.) {
       r[ina] <- na.form
     }
     r
-  }
-  NULL
 }
+
 
 if(!existsFunction('tempdir')) {
   tempdir <- function()

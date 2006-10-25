@@ -37,7 +37,7 @@ summary.formula <-
              requirePackage('Design')
 
              f <- lrm(x ~ group)$stats
-             list(P=stats['P'], stat=stats['Model L.R.'], df=stats['d.f.'],
+             list(P=f['P'], stat=f['Model L.R.'], df=f['d.f.'],
                   testname='Proportional odds likelihood ratio',
                   statname='Chi-square',latexstat='\\chi^{2}_{df}',
                   plotmathstat='chi[df]^2')

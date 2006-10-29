@@ -188,7 +188,7 @@ areg.boot <- function(x, data, weights, subset, na.action=na.delete,
 
   nfail <- 0
   for(b in 1:B) {
-    cat(b,'')
+    cat(b,'\r')
     s <- sample(n, n, rep = TRUE)
     g <- if(method=='areg')
       areg(x[s,,drop=FALSE], y[s], xtype=xtype, ytype=ytype, nk=nk,

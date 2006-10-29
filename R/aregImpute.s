@@ -111,9 +111,8 @@ aregImpute <- function(formula, data, subset, n.impute=5,
   rsq <- double(length(wna));
   names(rsq) <- nam[wna]
   
-  if(pr) cat('Iteration:')
   for(iter in 1:(burnin + n.impute)) {
-    if(pr) cat(iter,'')
+    if(pr) cat('Iteration',iter,'\r')
     for(i in wna) {
       nai <- na[[i]]      ## subscripts of NAs on xf[i,]
       j <- (1:n)[-nai]    ## subscripts of non-NAs on xf[i,]

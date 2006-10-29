@@ -525,8 +525,8 @@ University of Newcastle upon Tyne, UK.
 \code{\link{html}}, \code{\link{format.df}}
 }
 \examples{
-\dontrun{
 x <- matrix(1:6, nrow=2, dimnames=list(c('a','b'),c('c','d','enLine 2')))
+\dontrun{
 latex(x)   # creates x.tex in working directory
 w <- latex(x, file='/tmp/my.tex')
 d <- dvi(w)  # compile LaTeX document, make .dvi
@@ -535,8 +535,10 @@ d            # or show(d) : run xdvi (assumed in path) to display
 w            # or show(w) : run dvi then xdvi
 dvips(d)     # run dvips to print document
 dvips(w)     # run dvi then dvips
+}
 latex(x, file="")   # just write out LaTeX code to screen
 
+\dontrun{
 # After running latex( ) multiple times with different special styles in
 # effect, make a file that will call for the needed LaTeX packages when
 # latex is run (especially when using Sweave with R)

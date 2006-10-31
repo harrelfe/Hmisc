@@ -2,7 +2,6 @@
 \alias{summarize}
 \alias{asNumericMatrix}
 \alias{matrix2dataFrame}
-\alias{subsAttr}
 \title{Summarize Scalars or Matrices by Cross-Classification}
 \description{
 \code{summarize} is a fast version of \code{summary(formula,
@@ -21,15 +20,15 @@ will remain a numeric variable in the collapsed data frame.
 function for displaying multiple summaries of a single variable on each
 panel, such as means and upper and lower confidence limits.
 
-\code{subsAttr} saves attributes that are commonly preserved across row
+
+\code{asNumericMatrix} converts a data frame into a numeric matrix,
+saving attributes to reverse the process by \code{matrix2dataframe}.
+It saves attributes that are commonly preserved across row
 subsetting (i.e., it does not save \code{dim}, \code{dimnames}, or
 \code{names} attributes).
 
-\code{asNumericMatrix} converts a data frame into a numeric matrix.
-
 \code{matrix2dataFrame} converts a numeric matrix back into a data
-frame if attributes and storage modes of the original variables are
-saved by calling \code{subsAttr}.
+frame if it was created by \code{asNumericMatrix}.
 }
 \usage{
 summarize(X, by, FUN, \dots, 
@@ -38,9 +37,7 @@ summarize(X, by, FUN, \dots,
 
 asNumericMatrix(x)
 
-subsAttr(x)
-
-matrix2dataFrame(x, at, restoreAll=TRUE)
+matrix2dataFrame(x, origAttributes, restoreAll=TRUE)
 }
 \arguments{
 \item{X}{
@@ -78,12 +75,10 @@ observations in the data frame.
 }
 \item{x}{
   a data frame (for \code{asNumericMatrix}) or a numeric matrix (for
-  \code{matrix2dataFrame}).  For \code{subsAttr}, \code{x} may be a data
-  frame, list, or a vector.
+  \code{matrix2dataFrame}).
 }
-\item{at}{
-  result of \code{subsAttr}
-}
+\item{origAttributes}{\code{"origAttributes"} attribute from an object
+  created by \code{asNumericMatrix}}
 \item{restoreAll}{
   set to \code{FALSE} to only restore attributes \code{label},
   \code{units}, and \code{levels} instead of all attributes
@@ -96,13 +91,13 @@ variable unless \code{stat.name} is given).  If \code{type="matrix"}, the
 summaries are stored in a single variable in the data frame, and this
 variable is a matrix.
 
-\code{asNumericMatrix} returns a numeric matrix.
+\code{asNumericMatrix} returns a numeric matrix with an attribute
+\code{origAttrributes} with original attributes of component variables, plus an
+indicator for whether a variable was converted from character to factor
+to allow it to be made numeric.
 
 \code{matrix2dataFrame} returns a data frame.
 
-\code{subsAttr} returns a list of attribute lists if its argument is a
-list or data frame, and a list containing attributes of a single
-variable.
 }
 \author{
 Frank Harrell
@@ -191,10 +186,10 @@ g <- function(y) { # computations for one race group
 mApply(cbind(followup.time, death), race, g)
 
 # To run mApply on a data frame:
-m <- mApply(asNumericMatrix(x), race, h)
+xn <- asNumericMatrix(x)
+m <- mApply(xn, race, h)
 # Here assume h is a function that returns a matrix similar to x
-at <- subsAttr(x)  # get original attributes and storage modes
-matrix2dataFrame(m, at)
+matrix2dataFrame(m, attr(xn, 'origAttributes'))
 
 
 # Get stratified weighted means
@@ -233,6 +228,13 @@ count <- rep(1,length(dx))
 d <- summarize(count, llist(dx,sex), sum)
 Dotplot(dx ~ count | sex, data=d)
 }
+d <- list(x=1:10, a=factor(rep(c('a','b'),5)),
+          b=structure(letters[1:10], label='label for a'))
+x <- asNumericMatrix(d)
+at <- attr(x, 'origAttributes')
+at
+matrix2dataFrame(x, at)
+
 detach('dfr')
 
 # Run summarize on a matrix to get column means

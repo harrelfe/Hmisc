@@ -15,10 +15,7 @@ As \code{mApply} can be much faster than using \code{by}, it is often
 worth the trouble of converting a data frame to a numeric matrix for
 processing by \code{mApply}.  \code{asNumericMatrix} will do this, and
 \code{matrix2dataFrame} will convert a numeric matrix back into a data
-frame if attributes and storage modes of the original variables are
-saved by calling \code{subsAttr}.  \code{subsAttr} saves attributes that
-are commonly preserved across row subsetting (i.e., it does not save
-\code{dim}, \code{dimnames}, or \code{names} attributes).
+frame.
 }
 
 \usage{

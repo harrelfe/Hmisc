@@ -2709,30 +2709,28 @@ smedian.hilow <- function(x, conf.int=.95, na.rm=TRUE)
 }
 
 
-subsAttr <- function(x)
-{
-  g <- function(y)
-  {
-    a <- attributes(y)
-    a$dim <- a$names <- a$dimnames <- NULL
-    a$storage.mode <- storage.mode(y)
-    a
-  }
-  
-  if(is.list(x))
-    sapply(x, g) else g(x)
-}
-
-
 asNumericMatrix <- function(x)
 {
   a <- attributes(x)
   k <- length(a$names)
-  y <- matrix(unlist(x), ncol=k, dimnames=list(a$row.names,a$names))
-  if(storage.mode(y)=='character')
-    warning('x had at least one character vector')
-  
-  y
+  at <- vector('list', k); names(at) <- a$names
+  for(i in 1:k) {
+    xi <- x[[i]]
+    ischar <- FALSE
+    A <- attributes(xi)
+    if(is.character(xi)) {
+      ischar <- TRUE
+      xi <- factor(xi)
+      A <- c(A, attributes(xi))
+      x[[i]] <- xi
+    }
+    A$dim <- A$names <- A$dimnames <- NULL
+    A$ischar <- ischar
+    at[[i]] <- A
+  }
+  structure(matrix(unlist(x), ncol=k,
+                   dimnames=list(a$row.names, a$names)),
+            origAttributes=at)
 }
 
 
@@ -2746,16 +2744,19 @@ matrix2dataFrame <- function(x, at, restoreAll=TRUE)
   
   for(i in 1:k) {
     a <- at[[nam[i]]]
+    isc <- a$ischar
     if(!length(a))
       next
 
     xi <- x[,i]
     names(xi) <- NULL
     if(restoreAll) {
-      if(a$storage.mode != sm)
-        storage.mode(xi) <- a$storage.mode
-
-      a$storage.mode <- NULL
+      a$ischar <- NULL
+      if(isc) {
+        xi <- as.character(xi)
+        a$levels <- NULL
+        if(length(a$class)) a$class <- setdiff(a$class, 'factor')
+      }
       attributes(xi) <- a
     } else {
       if(length(l   <- a$label))
@@ -2764,14 +2765,17 @@ matrix2dataFrame <- function(x, at, restoreAll=TRUE)
       if(length(u   <- a$units))
         units(xi) <- u
       
-      if(length(lev <- a$levels))
+      if(length(lev <- a$levels)) {
         xi <- factor(xi, 1:length(lev), lev)
+        if(isc) xi <- as.character(xi)
+      }
     }
     
     w[[i]] <- xi
   }
-  
-  structure(w, class='data.frame', row.names=d[[1]])
+  rn <- d[[1]]
+  if(!length(rn)) rn <- as.character(seq(along=xi))
+  structure(w, class='data.frame', row.names=rn)
 }
 
 

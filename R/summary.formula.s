@@ -2728,13 +2728,13 @@ asNumericMatrix <- function(x)
     A$ischar <- ischar
     at[[i]] <- A
   }
-  structure(matrix(unlist(x), ncol=k,
-                   dimnames=list(a$row.names, a$names)),
-            origAttributes=at)
+  assign('origAttributes', at, pos=if(.R.)'.GlobalEnv' else 1)
+  matrix(unlist(x), ncol=k,
+         dimnames=list(a$row.names, a$names))
 }
 
 
-matrix2dataFrame <- function(x, at, restoreAll=TRUE)
+matrix2dataFrame <- function(x, at=origAttributes, restoreAll=TRUE)
 {
   d <- dimnames(x)
   k <- length(d[[2]])

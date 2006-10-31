@@ -37,7 +37,7 @@ summarize(X, by, FUN, \dots,
 
 asNumericMatrix(x)
 
-matrix2dataFrame(x, origAttributes, restoreAll=TRUE)
+matrix2dataFrame(x, at=origAttributes, restoreAll=TRUE)
 }
 \arguments{
 \item{X}{
@@ -77,8 +77,9 @@ observations in the data frame.
   a data frame (for \code{asNumericMatrix}) or a numeric matrix (for
   \code{matrix2dataFrame}).
 }
-\item{origAttributes}{\code{"origAttributes"} attribute from an object
-  created by \code{asNumericMatrix}}
+\item{at}{List containing attributes of original data frame that survive
+  subsetting. Defaults to object \code{"origAttributes"} in the global
+  environment, created by the last call to \code{asNumericMatrix}}
 \item{restoreAll}{
   set to \code{FALSE} to only restore attributes \code{label},
   \code{units}, and \code{levels} instead of all attributes
@@ -91,10 +92,11 @@ variable unless \code{stat.name} is given).  If \code{type="matrix"}, the
 summaries are stored in a single variable in the data frame, and this
 variable is a matrix.
 
-\code{asNumericMatrix} returns a numeric matrix with an attribute
-\code{origAttrributes} with original attributes of component variables, plus an
-indicator for whether a variable was converted from character to factor
-to allow it to be made numeric.
+\code{asNumericMatrix} returns a numeric matrix and stores an object
+\code{origAttributes} in the global environment, with original
+attributes of component variables, plus an indicator for whether a
+variable was converted from character to factor to allow it to be made
+numeric. 
 
 \code{matrix2dataFrame} returns a data frame.
 
@@ -189,7 +191,7 @@ mApply(cbind(followup.time, death), race, g)
 xn <- asNumericMatrix(x)
 m <- mApply(xn, race, h)
 # Here assume h is a function that returns a matrix similar to x
-matrix2dataFrame(m, attr(xn, 'origAttributes'))
+matrix2dataFrame(m)
 
 
 # Get stratified weighted means
@@ -231,9 +233,8 @@ Dotplot(dx ~ count | sex, data=d)
 d <- list(x=1:10, a=factor(rep(c('a','b'),5)),
           b=structure(letters[1:10], label='label for a'))
 x <- asNumericMatrix(d)
-at <- attr(x, 'origAttributes')
-at
-matrix2dataFrame(x, at)
+origAttributes
+matrix2dataFrame(x)
 
 detach('dfr')
 

@@ -108,7 +108,8 @@ confbar(at, est, se, width, q = c(0.7, 0.8, 0.9, 0.95, 0.99),
         qfun = function(x) ifelse(x == 0.5, qnorm(x),
                             ifelse(x < 0.5, qnorm(x/2),
                             qnorm((1 +  x)/2))))
-getLatestSource(x=NULL, package='Hmisc', recent=NULL, avail=FALSE) 
+getLatestSource(x=NULL, package='Hmisc', recent=NULL, avail=FALSE,
+                type=c('svn','cvs')) 
 james.stein(y, group)
 km.quick(S, times, q)
 lm.fit.qr.bare(x, y, tolerance, intercept=TRUE, xpxi=FALSE)
@@ -174,7 +175,11 @@ xless(x, \dots, title)
   \item{times}{a numeric vector of times}
   \item{title}{a character string to title a window or plot}
   \item{tolerance}{tolerance for judging singularity in matrix}
-  \item{type}{\code{"v"} for vertical, \code{"h"} for horizontal}
+  \item{type}{\code{"v"} for vertical, \code{"h"} for horizontal.  For
+	\code{getLatestSource} this specifies the type of source code
+	repository, \code{'svn'} (the default) or 
+	\code{'cvs'}, which is now outdated as Subversion has replaced CVS
+	in the Vanderbilt Biostatistics server.}
   \item{w}{a numeric vector}
   \item{width}{width of confidence rectanges in user units}
   \item{x}{a numeric vector (matrix for \code{lm.fit.qr.bare}) or data

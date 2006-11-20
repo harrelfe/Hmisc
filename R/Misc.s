@@ -1625,19 +1625,33 @@ getZip <- function(url, password=NULL) {
 }
 
 getLatestSource <- function(x=NULL, package='Hmisc',
-                            recent=NULL, avail=FALSE) {
-  url <- paste('http://biostat.mc.vanderbilt.edu/cgi-bin/cvsweb.cgi',
-               package, 'R/', sep='/')
+                            recent=NULL, avail=FALSE,
+                            type=c('svn','cvs')) {
+  type <- match.arg(type)
+  url <- switch(type,
+                cvs=paste('http://biostat.mc.vanderbilt.edu/cgi-bin/cvsweb.cgi',
+                  package, 'R/', sep='/'),
+                svn=paste('http://biostat.mc.vanderbilt.edu/cgi-bin/viewvc.cgi',
+                  package, 'trunk/R/', sep='/'))
   if(length(recent)) url <- paste(url, '?sortby=date#dirlist', sep='')
   
   w <- scan(url, what='',quiet=TRUE)
-  i <- grep('\\.s\\?rev=',w)
+  i <- switch(type,
+              cvs=grep('\\.s\\?rev=',w),
+              svn=grep('\\.s\\?view=markup&amp;rev=', w))
   w <- w[i]
   
-  files <- sub('href=\"\(.*\)\\?.*','\\1', w)
+  files <- switch(type,
+                  cvs=sub('href=\"\(.*\)\\?.*','\\1', w),
+                  svn=sub('href=\".*/trunk/R/\(.*\)\\?.*','\\1', w))
   files <- sub('\\.s$','',files)
-  ver <- if(length(recent)) sub('^.*rev=\(.*\);.*','\\1',w) else
-   sub('\"$','',sub('^.*rev=','',w))
+  ver <- switch(type,
+                cvs=if(length(recent))
+                sub('^.*rev=\(.*\);.*','\\1',w) else
+                sub('\"$','',sub('^.*rev=','',w)),
+                svn=if(length(recent))
+                sub('^.*rev=\(.*\)&amp.*', '\\1', w) else
+                sub('^.*rev=\(.*\)\"', '\\1', w))
 
   if(avail) return(data.frame(file=files, version=ver))
 
@@ -1648,7 +1662,10 @@ getLatestSource <- function(x=NULL, package='Hmisc',
     i <- which(files==fun)
     if(!length(i)) stop(paste('no file ', fun,' in ',package, sep=''))
     cat('Fetching', fun, 'version', ver[i],'\n')
-    url <- paste('http://biostat.mc.vanderbilt.edu/cgi-bin/cvsweb.cgi/~checkout~/',package,'/R/',fun,'.s?rev=',ver[i],';content-type=text%2Fplain', sep='')
+    url <- switch(type,
+                  cvs=paste('http://biostat.mc.vanderbilt.edu/cgi-bin/cvsweb.cgi/~checkout~/',package,'/R/',fun,'.s?rev=',ver[i],';content-type=text%2Fplain', sep=''),
+                  svn=paste('http://biostat.mc.vanderbilt.edu/svn/R/',
+                    package,'/trunk/R/', fun,'.s',sep=''))
     source(url)
   }
 }

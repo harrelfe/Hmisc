@@ -8,8 +8,12 @@
 \alias{plot.spearman2.formula}
 \alias{spearman}
 \alias{spearman.test}
+\alias{chiSquare}
+\alias{print.chiSquare}
+\alias{plot.chiSquare}
 \title{
-Matrix of Correlations and Generalized Spearman Rank Correlation
+Matrix of Correlations, Generalized Spearman Rank Correlation, and
+Pearson Chi-square Tests for a Series of Predictors
 }
 \description{
 

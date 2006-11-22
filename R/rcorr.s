@@ -206,3 +206,87 @@ plot.spearman2.formula <- function(x,
             main=main, ...)
   invisible()
 }
+
+chiSquare <- function(x, g=3, data, subset, na.action,
+                              minlev=0, exclude.imputed=TRUE, ...)
+{
+  call <- match.call()
+  nact <- NULL
+  y <- match.call(expand=FALSE)
+  y$formula <- x
+  y$x <- y$g <- y$minlev <- y$exclude.imputed <- y$... <- NULL
+  if(missing(na.action)) y$na.action <- na.retain
+  y[[1]] <- as.name("model.frame")
+  x <- eval(y, sys.parent())
+  nam <- names(x); yname <- names(x)[1]
+  y <- x[[1]]
+  if(minlev) y <- combine.levels(y, minlev=minlev)
+  x <- x[-1]
+  m <- ncol(x)
+  N <- pval <- chisq <- numeric(m)
+  df <- integer(m)
+  for(i in 1:m) {
+    w <- x[[i]]
+    j <- !(is.na(w) | is.na(y))
+    if(exclude.imputed) j <- j & !(is.imputed(w) | is.imputed(y))
+    yy <- y[j]; w <- w[j]
+    if(is.category(w) && minlev) w <- combine.levels(w, minlev=minlev)
+  
+    N[i] <- length(w)
+    if(is.numeric(w) && length(unique(w)) > g) w <- cut2(w, g=g)
+    ct <- chisq.test(w, yy)
+    chisq[i] <- ct$statistic
+    df[i]    <- ct$parameter
+    pval[i]  <- ct$p.value
+  }
+  w <- cbind(chisquare=chisq, df=df, "chisquare-df"=chisq-df, p=pval, n=N)
+  dimnames(w)[[1]] <- names(x)
+  structure(w, class='chiSquare', yname=yname)
+}
+
+
+print.chiSquare <- function(x, ...)
+{
+  cat('\nPearson Chi-square Tests    Response variable:',attr(x,'yname'),'\n\n')
+  dig <- c(2,0,2,4,0)
+  for(i in 1:5)
+    x[,i] <- round(x[,i],dig[i])
+  
+  attr(x,'yname') <- oldClass(x) <- NULL
+  print(x)
+  invisible()
+}
+
+
+plot.chiSquare <- function(x,
+                           what=c('chisquare-df','chisquare','P'),
+                           sort.=TRUE, main, xlab, ...)
+{
+  what <- match.arg(what)
+  if(missing(xlab)) xlab <- switch(what,
+                                   'chisquare-df'=
+                                     if(.R.)expression(chi^2 - d.f.)
+                                     else 'Chi-square - d.f.',
+                                   'chisquare'=if(.R.)expression(chi^2)
+                                          else 'Chi-square',
+                                   'P'='P-value')
+  if(missing(main))
+    main <- if(.R.) parse(text=paste('paste(Pearson,~chi^2,~~~~Response:',
+                                     attr(x,'yname'),')',sep=''))
+            else
+              paste('Pearson Chi-squared    Response variable:',attr(x,'yname'))
+  
+  if(.SV4.) x <- matrix(oldUnclass(x), nrow=nrow(x),
+                        dimnames=dimnames(x))
+  aux <- paste(x[,'n'],x[,'df'])
+  stat <- x[,what]
+  if(sort.) {
+    i <- order(stat)
+    stat <- stat[i]
+    aux <- aux[i]
+  }
+  dotchart2(stat, auxdata=aux, reset.par=TRUE,
+            xlab=xlab, auxtitle=c('N  df'),
+            main=main, ...)
+  invisible()
+}

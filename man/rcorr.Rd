@@ -43,7 +43,14 @@ a dot chart is drawn which by default shows, in sorted order, the
 adjusted \code{rho^2}.
 
 \code{spearman} computes Spearman's rho on non-missing values of two
-variables.  \code{spearman.test} is a simple version of \code{spearman2.default}.
+variables.  \code{spearman.test} is a simple version of
+\code{spearman2.default}.
+
+\code{chiSquare} is set up like \code{spearman2} except it is intended
+for a categorical response variable.  Separate Pearson chi-square tests
+are done for each predictor, with optional collapsing of infrequent
+categories.  Numeric predictors having more than \code{g} levels are
+categorized into \code{g} quantile groups.
 }
 \usage{
 rcorr(x, y, type=c("pearson","spearman"))
@@ -65,6 +72,14 @@ spearman2(x, ...)
 spearman(x, y)
 
 spearman.test(x, y, p=1)
+
+chiSquare(x, g=3, data, subset, na.action,
+          minlev=0, exclude.imputed=TRUE, ...)
+
+\method{print}{chiSquare}(x, ...)
+
+\method{plot}{chiSquare}(x, what=c('chisquare-df','chisquare','P'),
+                         sort.=TRUE, main, xlab, ...)
 }
 \arguments{
 \item{x}{
@@ -76,9 +91,11 @@ the response variable.  \code{x} may be a formula for \code{spearman2}
 in which case \code{spearman2.formula} is invoked.  Each
 predictor in the right hand side of the formula is separately correlated
 with the response variable.  For \code{print}, \code{x} is an object
-produced by \code{rcorr} or \code{spearman2}. For \code{plot}, \code{x}
+produced by \code{rcorr}, \code{spearman2}, or \code{chiSquare}. For
+\code{plot}, \code{x} 
 is a result returned by \code{spearman2}.  For \code{spearman} and
-\code{spearman.test} \code{x} is a numeric vector, as is \code{y}.
+\code{spearman.test} \code{x} is a numeric vector, as is \code{y}.  For
+\code{chiSquare}, \code{x} is a formula.
 }
 \item{type}{
 specifies the type of correlations to compute.  Spearman correlations
@@ -103,7 +120,9 @@ fashion.
 \item{minlev}{
 minimum relative frequency that a level of a categorical predictor
 should have before it is pooled with other categories (see
-\code{combine.levels}) in \code{spearman2}.  The default, \code{minlev=0} causes no pooling.
+\code{combine.levels}) in \code{spearman2} and \code{chiSquare} (in
+which case it also applies to the response).  The default,
+\code{minlev=0} causes no pooling.
 }
 \item{exclude.imputed}{
 set to \code{FALSE} to include imputed values (created by \code{impute}) in the calculations.
@@ -121,8 +140,10 @@ variable.
 \item{xlab}{
 x-axis label.  Default constructed from \code{what}.
 }
+\item{g}{number of quantile groups into which to categorize continuous
+  predictors having more than \code{g} unique values, for \code{chiSquare}}
 \item{...}{
-other arguments that are passed to \code{dotchart2}
+other arguments that are passed to \code{dotchart2} or to \code{chisq.test}.
 }}
 \value{
 \code{rcorr} returns a list with elements \code{r}, the
@@ -134,12 +155,13 @@ The diagonals of \code{n} are the number of non-NAs for the single variable
 corresponding to that row and column.  \code{spearman2.default} (the
 function that is called for a single \code{x}, i.e., when there is no
 formula) returns a vector of statistics for the variable.
-\code{spearman2.formula} returns a matrix with rows corresponding to
-predictors.
+\code{spearman2.formula} and \code{chiSquare} return a matrix with rows
+corresponding to predictors.
 }
 \details{
 Uses midranks in case of ties, as described by Hollander and Wolfe.
-P-values are approximated by using the \code{t} distribution.
+P-values for Spearman, Wilcoxon, or Kruskal-Wallis tests are
+approximated by using the \code{t} or \code{F} distributions.
 }
 \author{
 Frank Harrell
@@ -158,7 +180,9 @@ Press WH, Flannery BP, Teukolsky SA, Vetterling, WT (1988): Numerical
 Recipes in C.  Cambridge: Cambridge University Press.
 }
 \seealso{
-\code{\link{hoeffd}}, \code{\link{cor}}, \code{\link{combine.levels}}, \code{\link{varclus}}, \code{\link{dotchart2}}, \code{\link{impute}}
+\code{\link{hoeffd}}, \code{\link{cor}}, \code{\link{combine.levels}},
+\code{\link{varclus}}, \code{\link{dotchart2}}, \code{\link{impute}},
+\code{\link{chisq.test}}, \code{\link{cut2}}.
 }
 \examples{
 x <- c(-2, -1, 0, 1, 2)
@@ -169,10 +193,10 @@ rcorr(cbind(x,y,z,v))
 
 spearman2(x, y)
 plot(spearman2(z ~ x + y + v, p=2))
+
+f <- chiSquare(z ~ x + y + v)
+f
 }
 \keyword{nonparametric}
 \keyword{htest}
-
-
-
-
+\keyword{category}

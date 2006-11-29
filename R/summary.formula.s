@@ -1219,8 +1219,7 @@ plot.summary.formula.reverse <-
 #Also added: sort. parameter, to allow suppression of rearrangements of data,
 #and added the parameter `add'.  Reference lines are always drawn with lwd=1.
 #There's also a new parameter, groupfont, which specifies a font number for
-#group headings.  Default is 5 for UNIX (usually Helvetica Bold)
-#and 4 for Windows (bold)
+#group headings.
 #cex.labels is a cex to be used only for category labels.  Default is cex.
 #Added reset.par - set to T to reset par() after making plot.  You will
 #need to set reset.par to T for the last call in a sequence.
@@ -1233,8 +1232,7 @@ dotchart2 <-
            lines = TRUE, dotsize = .8, cex = par("cex"), 
            cex.labels = cex, cex.group.labels = cex.labels*1.25, sort.=TRUE, 
            add=FALSE, dotfont=par('font'),
-           groupfont=if(under.unix)5
-                     else 1, 
+           groupfont=2,
            reset.par=add, xaxis=TRUE,
            width.factor=if(.R.)1.5
                         else 1,

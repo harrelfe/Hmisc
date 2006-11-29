@@ -13,7 +13,7 @@ dotchart2(data, labels, groups, gdata, horizontal=TRUE, pch=16,
           lty=if(.R.) 1 else 2, lines=TRUE, dotsize = .8,
           cex = par("cex"), cex.labels = cex,
           cex.group.labels = cex.labels*1.25, sort.=TRUE, 
-	      add=FALSE, dotfont=par('font'), groupfont=if(under.unix)5 else 1, 
+	      add=FALSE, dotfont=par('font'), groupfont=1, 
 	      reset.par=add, xaxis=TRUE, width.factor=if(.R.)1.5 else 1,
           lcolor=if(.R.)'gray' else par('col'), ...)
 }
@@ -72,10 +72,7 @@ dotchart2(data, labels, groups, gdata, horizontal=TRUE, pch=16,
 	an open octagon under Windows.}
   \item{groupfont}{
 	font number to use in drawing \code{group} labels for \code{dotchart2}.
-	Default is \code{5} for UNIX, which is usually Helvetica bold.  For
-	Microsoft Windows, the default is \code{1}.  The font number 
-	corresponding to some bold font is recommended, if you can figure this
-	out for Windows S-Plus.
+	Default is \code{2} for boldface.
   }
   \item{reset.par}{
 	set to \code{FALSE} to cause \code{dotchart2} to not reset the \code{par}

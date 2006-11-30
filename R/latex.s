@@ -106,9 +106,9 @@ format.df <- function(x,
   formt <-
     if(!.R.)
       format.default
-    else function(x, decimal.mark='.', nsmall=0, scientific=c(-4,4))
+    else function(x, decimal.mark='.', nsmall=0, scientific=c(-4,4), digits=NULL)
       {
-        x <- format(x)
+        x <- format(x, nsmall=nsmall, decimal.mark=decimal.mark, digits=digits)
         if(decimal.mark!='.')
           x <- gsub('\\.',decimal.mark,x)
       
@@ -274,7 +274,7 @@ format.df <- function(x,
                 formt(xk[i], decimal.mark=dot, scientific=scientific)
               else
                 formt(round(xk[i], dec[i,j]), decimal.mark=dot,
-                      nsmall=dec[i,j], scientific=scientific)
+                      digits=dec[i,j], nsmall=dec[i,j], scientific=scientific)
           ## 12Aug99
         } else if(rtype==4)  # 12Aug99
           cxk <-
@@ -282,7 +282,7 @@ format.df <- function(x,
               formt(xk, decimal.mark=dot, scientific=scientific)
             else
               formt(round(xk, cdec[j]), decimal.mark=dot, nsmall=cdec[j],
-                    scientific=scientific)
+                    digits=cdec[j], scientific=scientific)
         
         if(na.blank)
           cxk[is.na(xk)] <- ''

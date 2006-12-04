@@ -74,6 +74,28 @@ cens   <- runif(400,.5,2)
 death  <- d.time <= cens
 d.time <- pmin(d.time, cens)
 rcorr.cens(age, Surv(d.time, death))
+
+# Show typical 0.95 confidence limits for ROC areas for a sample size of 100
+# with 50 events and 50 non-events, for varying population ROC areas
+set.seed(8)
+y <- c(rep(0,50), rep(1,50))
+deltas <- seq(-3, 3, by=.25)
+C <- se <- deltas
+i <- 0
+for(d in deltas) {
+ i <- i + 1
+ x <- c(rnorm(50, 0), rnorm(50, d))
+ w <- rcorr.cens(x, y)
+ C[i]  <- w['C Index']
+ se[i] <- w['S.D.']/2
+}
+errbar(deltas, C, C+1.96*se, C-1.96*se,
+       xlab='True Difference in Mean X',
+       ylab='ROC Area and Approx. 0.95 CI')
+abline(h=.5, v=0, col='gray')
 }
 \keyword{survival}
+\keyword{nonparametric}
+\concept{predictive accuracy}
+\concept{logistic regression model}
 % Converted by Sd2Rd version 1.21.

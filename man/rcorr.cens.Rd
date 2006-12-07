@@ -75,24 +75,36 @@ death  <- d.time <= cens
 d.time <- pmin(d.time, cens)
 rcorr.cens(age, Surv(d.time, death))
 
-# Show typical 0.95 confidence limits for ROC areas for a sample size of 100
-# with 50 events and 50 non-events, for varying population ROC areas
+# Show typical 0.95 confidence limits for ROC areas for a sample size
+# with 24 events and 62 non-events, for varying population ROC areas
+# Repeat for 138 events and 102 non-events
 set.seed(8)
-y <- c(rep(0,50), rep(1,50))
-deltas <- seq(-3, 3, by=.25)
-C <- se <- deltas
-i <- 0
-for(d in deltas) {
- i <- i + 1
- x <- c(rnorm(50, 0), rnorm(50, d))
- w <- rcorr.cens(x, y)
- C[i]  <- w['C Index']
- se[i] <- w['S.D.']/2
+par(mfrow=c(2,1))
+for(i in 1:2) {
+ n1 <- c(24,138)[i]
+ n0 <- c(62,102)[i]
+ y <- c(rep(0,n0), rep(1,n1))
+ deltas <- seq(-3, 3, by=.25)
+ C <- se <- deltas
+ j <- 0
+ for(d in deltas) {
+  j <- j + 1
+  x <- c(rnorm(n0, 0), rnorm(n1, d))
+  w <- rcorr.cens(x, y)
+  C[j]  <- w['C Index']
+  se[j] <- w['S.D.']/2
+ }
+ low <- C-1.96*se; hi <- C+1.96*se
+ print(cbind(C, low, hi))
+ errbar(deltas, C, C+1.96*se, C-1.96*se,
+        xlab='True Difference in Mean X',
+        ylab='ROC Area and Approx. 0.95 CI')
+ title(paste('n1=',n1,'  n0=',n0,sep=''))
+ abline(h=.5, v=0, col='gray')
+ true <- 1 - pnorm(0, deltas, sqrt(2))
+ lines(deltas, true, col='blue')
 }
-errbar(deltas, C, C+1.96*se, C-1.96*se,
-       xlab='True Difference in Mean X',
-       ylab='ROC Area and Approx. 0.95 CI')
-abline(h=.5, v=0, col='gray')
+par(mfrow=c(1,1))
 }
 \keyword{survival}
 \keyword{nonparametric}

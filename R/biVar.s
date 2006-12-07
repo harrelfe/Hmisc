@@ -191,7 +191,7 @@ spearman2.formula <- function(formula, data=NULL, subset=NULL,
                               exclude.imputed=TRUE, ...)
 {
   g <- function(x, y, p=1, minlev=0)
-    spearman2(x, y, p=p, minlev=minlev, na.rm=FALSE)[,-6,drop=FALSE]
+    spearman2(x, y, p=p, minlev=minlev, na.rm=FALSE)[-6]
     
 statinfo <- list(fun=g,
                  title='Spearman rho^2',

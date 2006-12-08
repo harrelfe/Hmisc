@@ -166,7 +166,9 @@ any object to be \code{print}ed verbatim for \code{latexVerbatim}.  For
 \code{latexSN} \code{x} is a numeric vector.
 }
 \item{title}{
-name of file to create without the \code{.tex} extension.
+name of file to create without the \code{.tex} extension.  If this
+option is not set, value/string of \code{x} (see above) is printed in the
+top left corner of the table.  Set \code{title=''} to suppress this output.
 }
 \item{file}{
 name of the file to create.  The default file name is \code{x.tex} where

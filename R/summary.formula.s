@@ -2384,54 +2384,6 @@ cumcategory <- function(y)
 }
 
 
-mChoice <- function(..., label='', 
-                    sort.levels=c('original','alphabetic'),
-                    add.none=TRUE, none.name='none',
-                    na.result=FALSE, drop=TRUE)
-{
-  sort.levels <- match.arg(sort.levels)
-  dotlist <- list(...)
-  lev <- unique(unlist(lapply(dotlist, function(x)levels(as.factor(x)))))
-  if(sort.levels=='alphabetic')
-    lev <- sort(lev)
-
-  X <- as.matrix(as.data.frame(lapply(dotlist,as.character)))
-  vcall <- as.character(sys.call())[-1]  ## 15feb03
-  Y <- matrix(NA, ncol=length(lev), nrow=nrow(X),
-              dimnames=list(names(dotlist[[1]]),lev))
-  if(na.result)
-    anyna <- apply(X=='', 1, any)
-
-  unused <- integer(0)
-  for(j in 1:length(lev)) {
-    Y[,j] <- apply(X==lev[j],1,any)
-    if(na.result)
-      Y[,j] <- ifelse(!Y[,j] & anyna, NA, Y[,j])
-    
-    if(drop && sum(Y[,j],na.rm=TRUE)==0)
-      unused <- c(unused,j)
-  }
-
-  if(length(unused)) Y <- Y[,-unused,drop=FALSE]
-  if(add.none) {
-    isnone <- apply(Y,1,sum,na.rm=TRUE) == 0
-    if(any(isnone))
-      Y <- cbind(Y,none=isnone)
-  }
-  
-  if(label == '')
-    label <- attr(dotlist[[1]],'label')
-  
-  if(!length(label)) {
-    label <- vcall[1]
-    if(length(nn <- names(dotlist)[1]))
-      label <- nn
-  }
-  
-  structure(Y, label=label, class=c('mChoice','labelled',attr(Y,'class')))
-}
-
-
 summarize <- function(X, by, FUN, ..., 
                       stat.name=deparse(substitute(X)), 
                       type=c('variables','matrix'), subset=TRUE)
@@ -2605,14 +2557,6 @@ if(FALSE) {
   } else ans <- cbind(ans, S)
   ans
 }
-
-
-as.character.mChoice <- function(x, sep=",", ...)
-{
-  lev <- dimnames(x)[[2]]
-  apply(x, 1, FUN=function(x) paste(lev[x], collapse=sep))
-}
-
 
 smean.cl.normal <- function(x, mult=qt((1+conf.int)/2,n-1),
                             conf.int=.95, na.rm=TRUE)

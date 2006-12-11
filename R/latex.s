@@ -92,7 +92,7 @@ format.df <- function(x,
     stop('only one of digits, dec, rdec, cdec may be given')
   
   ##if(length(digits)) .Options$digits    6Aug00 what was that?
-  if(is.null(digits) && !(is.null(dec) && is.null(rdec) && is.null(cdec))) {
+  if(is.null(digits) && is.null(dec) && is.null(rdec) && is.null(cdec)) {
     digits <- 16
   }
 
@@ -265,24 +265,24 @@ format.df <- function(x,
           else 'r'
         
         if(rtype==1)
-          cxk <- formt(xk, decimal.mark=dot, scientific=scientific)
+          cxk <- formt(xk, decimal.mark=dot, scientific=scientific, digits=digits)
         else if(rtype==3) {
           cxk <- character(nrx)  ## corrected 4Nov97 Eric Bissonette
           for(i in 1:nrx)
             cxk[i] <-
               if(is.na(dec[i,j]))
-                formt(xk[i], decimal.mark=dot, scientific=scientific)
+                formt(xk[i], decimal.mark=dot, scientific=scientific, digits=digits)
               else
                 formt(round(xk[i], dec[i,j]), decimal.mark=dot,
-                      digits=dec[i,j], nsmall=dec[i,j], scientific=scientific)
+                      digits=digits, nsmall=dec[i,j], scientific=scientific)
           ## 12Aug99
         } else if(rtype==4)  # 12Aug99
           cxk <-
             if(is.na(cdec[j]))
-              formt(xk, decimal.mark=dot, scientific=scientific)
+              formt(xk, decimal.mark=dot, scientific=scientific, digits=digits)
             else
               formt(round(xk, cdec[j]), decimal.mark=dot, nsmall=cdec[j],
-                    digits=cdec[j], scientific=scientific)
+                    digits=digits, scientific=scientific)
         
         if(na.blank)
           cxk[is.na(xk)] <- ''

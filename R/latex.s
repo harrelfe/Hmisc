@@ -1199,9 +1199,9 @@ dvips.dvi   <- function(object, file, ...)
 {
   cmd <-
     if(missing(file))
-      paste(optionsCmds('dvips'), dQuote(object$file))
+      paste(optionsCmds('dvips'), shQuote(object$file))
     else
-      paste(optionsCmds('dvips'),'-o', file, dQuote(object$file))
+      paste(optionsCmds('dvips'),'-o', file, shQuote(object$file))
   
   ## paste(optionsCmds('dvips'),'-f', object$file,' | lpr') else 5dec03
   ## 2 dQuote 26jan04
@@ -1248,9 +1248,9 @@ html.latex <- function(object, file, ...)
   ## Create system call to hevea to convert temporary latex file to html.
   cmd <-
     if(missing(file)) {
-      paste(optionsCmds('hevea'), dQuote(tmptex))
+      paste(optionsCmds('hevea'), shQuote(tmptex))
     } else {
-      paste(optionsCmds('hevea'), '-o', file, dQuote(tmptex))
+      paste(optionsCmds('hevea'), '-o', file, shQuote(tmptex))
     }
     
   ## perform system call

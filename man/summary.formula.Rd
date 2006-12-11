@@ -13,8 +13,6 @@
 \alias{formula.summary.formula.cross}
 \alias{na.retain}
 \alias{cumcategory}
-\alias{mChoice}
-\alias{as.character.mChoice}
 \title{
   Summarize Data for Making Tables and Plots
 }
@@ -42,17 +40,9 @@
   later).
 
 
-  For \code{method="response"} and \code{method="reverse"} the right hand side of
-  \code{formula} may contain "multiple choice" variables.  These are denoted
-  by matrices whose elements are logical (\code{FALSE},\code{TRUE}) values, 0/1 values,
-  or character strings in which values of \code{"present"} or \code{"yes"} (case
-  is ignored) denote positive and anything else denotes a negative
-  answer.  The columns of such matrices correspond to basic categories
-  (e.g., symptoms), and the matrices are often created by applying the
-  \code{mChoice} function to a series of factor or character vectors.  See
-  the first example.  When \code{test=TRUE} each choice is tested separately as
-  a binary categorical response.
-
+  The right hand side of \code{formula} may contain \code{mChoice}
+  ("multiple choice") variables.  When \code{test=TRUE} each choice is
+  tested separately as a binary categorical response.
 
   The \code{plot} method for \code{method="reverse"} creates a temporary
   function \code{Key} in frame 0 as is done by the \code{xYplot} and
@@ -85,29 +75,6 @@
   greater.  When the left hand side of \code{formula} is \code{cumcategory(y)},
   the default \code{fun} will summarize it by computing all of the relevant
   cumulative proportions.
-
-  \code{mChoice} is a function that is useful for defining a group of
-  variables on the right side of the formula.  The variables can represent
-  individual choices on a multiple choice question.  These choices are
-  typically factor or character values but may be of any type.  Levels
-  of component factor variables need not be the same; all unique levels
-  (or unique character values) are collected over all of the multiple
-  variables.  Then a new matrix is formed that has one column per unique
-  value of all of these variables.  For each column, the row values are
-  logical \code{TRUE} or \code{FALSE} if any of the component choice variables equal
-  level for the new matrice's current column.  By default, NAs in the
-  choice variables are ignored.  Set \code{na.result=TRUE} to set results to NA
-  for a row and column where at least one of the choice
-  variables is NA but none of them equals the current column category.
-  When a matrix like one created by \code{mChoice} appears in a formula
-  processed by \code{summary.formula} you can easily obtain descriptive
-  statistics for categories where subjects can be in more than one
-  category.
-
-  \code{as.character.mChoice} will convert a matrix representing an
-  \code{mChoice} object into a character vector by concatenating the
-  categories present per observation.  This makes \code{summarize} work
-  when stratifying by \code{mChoice} variables.
 }
 \usage{
 \method{summary}{formula}(formula, data, subset, na.action, fun = NULL,
@@ -232,13 +199,6 @@ stratify(\dots, na.group=FALSE, shortlabel=TRUE)
 \method{formula}{summary.formula.cross}(x, ...)
 
 cumcategory(y)
-
-
-mChoice(\dots, label='', 
-        sort.levels=c('original','alphabetic'), 
-        add.none=TRUE, none.name='none', na.result=FALSE, drop=TRUE)
-
-\method{as.character}{mChoice}(x, sep=",", \dots)
 }
 \arguments{
   \item{formula}{
@@ -256,7 +216,7 @@ mChoice(\dots, label='',
     \code{method="reverse"} is the only legal value and so \code{method} defaults to
     \code{"reverse"} in this case.
   }
-  \item{x}{an object created by \code{summary.formula} or \code{mChoice}}
+  \item{x}{an object created by \code{summary.formula}}
   \item{y}{
     a numeric, character, category, or factor vector for \code{cumcategory}.
     Is converted to a categorical variable is needed.
@@ -411,9 +371,6 @@ mChoice(\dots, label='',
     these is \code{file}.  Specifying \code{file=""} will cause LaTeX code
     to just be printed to standard output rather than be stored in a
     permanent file.
-    Is a series of vectors for \code{mChoice}, or one or more stratification
-    variables (separated by commas) (which will be cross-classified) for
-    \code{stratify}.
   }
   \item{object}{an object created by \code{summary.formula}}
   \item{quant}{
@@ -601,38 +558,6 @@ mChoice(\dots, label='',
   \item{subtitles}{
     set to \code{FALSE} to suppress automatic subtitles
   }
-  \item{label}{
-    a character string \code{label} attribute to attach to the matrix created
-    by \code{mChoice}
-  }
-  \item{sort.levels}{
-    set \code{sort.levels="alphabetic"} to sort the columns of the matrix
-    created by \code{mChoice} alphabetically by category rather than by the
-    original order of levels in component factor variables (if there were
-    any input variables that were factors)
-  }
-  \item{add.none}{
-    set to \code{FALSE} to keep \code{mChoice} from adding a final column to the
-    matrix named \code{none.name}.  The logical values in this column are
-    set to \code{TRUE} when none of the defined choices apply for the
-    observation and \code{FALSE} otherwise. If every observation used at least
-    one of the choices, the "none" column is not added regardless of the
-    value of \code{add.none}. 
-  }
-  \item{none.name}{
-    a character string defining the name of the column added if
-    \code{add.none=TRUE} and some observations did not select any choices.  The
-    default column name is \code{none.name="none"}.
-  }
-  \item{na.result}{
-    set to \code{TRUE} to set elements of columns of the matrix computed by
-    \code{mChoice} to \code{NA} when no input variable values equalled the current
-    category and at least one of them was NA
-  }
-  \item{drop}{
-    set \code{drop=FALSE} to keep unused factor levels as columns of the matrix
-    produced by \code{mChoice}
-  }
   \item{caption}{
     character string containing LaTeX table captions.
   }
@@ -721,7 +646,7 @@ mChoice(\dots, label='',
   Document available from \url{http://biostat.mc.vanderbilt.edu/twiki/pub/Main/StatReport/summary.pdf}.
 }
 \seealso{
-  \code{\link{smean.sd}}, \code{\link{summarize}},
+  \code{\link{mChoice}}, \code{\link{smean.sd}}, \code{\link{summarize}},
   \code{\link{label}}, \code{\link[survival]{strata}}, \code{\link{dotchart2}},
   \code{\link{print.char.matrix}}, \code{\link{update}},
   \code{\link{formula}}, \code{\link{cut2}}, \code{\link{llist}},
@@ -735,7 +660,6 @@ sex <- factor(sample(c("m","f"), 500, rep=TRUE))
 age <- rnorm(500, 50, 5)
 treatment <- factor(sample(c("Drug","Placebo"), 500, rep=TRUE))
 
-
 # Generate a 3-choice variable; each of 3 variables has 5 possible levels
 symp <- c('Headache','Stomach Ache','Hangnail',
           'Muscle Ache','Depressed')
@@ -743,48 +667,20 @@ symptom1 <- sample(symp, 500,TRUE)
 symptom2 <- sample(symp, 500,TRUE)
 symptom3 <- sample(symp, 500,TRUE)
 Symptoms <- mChoice(symptom1, symptom2, symptom3, label='Primary Symptoms')
-table(as.character(Symptoms))
+table(Symptoms)
 
 # Note: In this example, some subjects have the same symptom checked
 # multiple times; in practice these redundant selections would be NAs
 # mChoice will ignore these redundant selections
-# If the multiple choices to a single survey question were already
-# stored as a series of T/F yes/no present/absent questions we could do:
-# Symptoms <- cbind(headache,stomach.ache,hangnail,muscle.ache,depressed)
-# where the 5 input variables are all of the same type: 0/1,logical,char.
-# These variables cannot be factors in this case as cbind would
-# store integer codes instead of character strings.
-# To give better column names can use 
-# cbind(Headache=headache, 'Stomach Ache'=stomach.ache, \dots)
-
-
-# Following 8 commands only for checking mChoice
-data.frame(symptom1,symptom2,symptom3)[1:10,]
-Symptoms[1:10,]  # Print first 10 subjects' new binary indicators
-
-
-meanage <- if(.R.)double(5) else single(5)
-for(j in 1:5) meanage[j] <- mean(age[Symptoms[,j]])
-names(meanage) <- dimnames(Symptoms)[[2]]
-meanage
-
-
-# Manually compute mean age for 2 symptoms
-mean(age[symptom1=='Headache' | symptom2=='Headache' | symptom3=='Headache'])
-mean(age[symptom1=='Hangnail' | symptom2=='Hangnail' | symptom3=='Hangnail'])
-
 
 #Frequency table sex*treatment, sex*Symptoms
 summary(sex ~ treatment + Symptoms, fun=table)
-# could also do summary(sex ~ treatment + mChoice(symptom1,\dots),\dots)
+# could also do summary(sex ~ treatment +
+#  mChoice(symptom1,symptom2,symptom3), fun=table)
 
 
 #Compute mean age, separately by 3 variables
 summary(age ~ sex + treatment + Symptoms)
-
-
-summary(age ~ sex + treatment, method="cross")
-# Note: method="cross" will not allow mChoice variables
 
 
 f <- summary(treatment ~ age + sex + Symptoms, method="reverse", test=TRUE)

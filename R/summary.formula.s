@@ -163,15 +163,6 @@ summary.formula <-
 
         ## 2nd case is for simple function(x)mean(x) function
       } else funlab <- as.character(substitute(fun))
-
-      ## funlab <- if(.R.)deparse(fun) else as.character(substitute(fun))
-      ## funlab <- funlab[length(funlab)] #handles fun=function(x)mean(x)
-      ## chf <- if(.R.) as.character(as.list(fun)[[2]]) else
-      ## as.character(fun[[2]])
-      ## if(length(chf) > 3 && chf[1]=="apply") funlab <- chf[4]
-      ## The preceeding gets "median" from function(y) apply(y, 2, median)
-      ##  if(length(fun)==2 && length(fun[[2]])>1) funlab <- 
-      ##  if(length(name.stats)==1) name.stats else funname
     }
 
     if(funlab[1]=='')
@@ -219,6 +210,7 @@ summary.formula <-
       i <- i+1
       x <- if(v=='Overall') factor(rep('',n))
            else X[[v]]
+      if(inherits(x,'mChoice')) x <- as.numeric(x)
 
       labels[i] <- if(length(l <- attr(x,'label'))) l
                    else nams[i]
@@ -359,7 +351,7 @@ summary.formula <-
       if(length(attr(w,'units')))
         Units[i]  <- attr(w,'units')
 
-      if(!is.matrix(w)) {
+      if(!inherits(w,'mChoice')) {
           if(!is.factor(w) && length(unique(w[!is.na(w)])) < continuous) 
             w <- as.factor(w)
           s <- !is.na(w)
@@ -435,13 +427,8 @@ summary.formula <-
 
             type[i] <- 2
           }
-        } else {  ## matrix: multiple choice variables
-          if(!is.logical(w)) {
-            if(is.numeric(w)) w <- w==1 else {
-              w <- structure(casefold(w),dim=dim(w))
-              w <- w=='present' | w=='yes'
-            }
-          }
+        } else {
+          w <- as.numeric(w)==1 ## multiple choice variables
           n[i] <- nrow(w)
           g    <- as.factor(group)
           ncat <- ncol(w)
@@ -502,9 +489,8 @@ summary.formula <-
     labels <- character(nvar)
     for(i in 1:nvar) {
       xi <- X[[i]]
-      ## 15feb03:
       if(inherits(xi,'mChoice'))
-        xi <- as.character(xi)
+        xi <- factor(format(xi))
       else if(is.matrix(xi) && ncol(xi) > 1) 
         stop('matrix variables not allowed for method="cross"')
 
@@ -518,7 +504,7 @@ summary.formula <-
         xi <- cut2(xi, g=g, ...)
       X[[i]] <- na.include(as.factor(xi))
       if(.R.)
-        levels(X[[i]])[is.na(levels(X[[i]]))] <- 'NA'  ## 08may02
+        levels(X[[i]])[is.na(levels(X[[i]]))] <- 'NA'
         
       Levels[[i]] <- c(levels(X[[i]]),if(overall)"ALL")
     }

@@ -48,9 +48,10 @@ print.mChoice <- function(x, long=FALSE) {
   invisible()
 }
 
-format.mChoice <- function(x, sep=";", ...)
+format.mChoice <- function(x, minlength=NULL, sep=";", ...)
 {
   lev <- attr(x, 'levels')
+  if(length(minlength)) lev <- abbreviate(lev, minlength)
   w <- strsplit(x, ';')
   sapply(w, function(x, lev, sep)
          paste(lev[as.numeric(x)], collapse=sep), lev=lev, sep=sep)
@@ -79,7 +80,7 @@ as.double.mChoice <- function(x, drop=FALSE) {
   X
 }
 
-summary.mChoice <- function(x, ncombos=5, drop=TRUE) {
+summary.mChoice <- function(x, ncombos=5, minlength=NULL, drop=TRUE) {
   nunique <- length(unique(x))
   y <- gsub('[^;]', '', x)
   nchoices <- nchar(y)+1
@@ -87,9 +88,10 @@ summary.mChoice <- function(x, ncombos=5, drop=TRUE) {
   nchoices <- table(nchoices)
   
   X <- as.numeric(x, drop=drop)
+  if(length(minlength)) dimnames(X)[[2]] <- abbreviate(dimnames(X)[[2]],minlength)
   crosstab <- crossprod(X)
 
-  combos <- table(format(x))
+  combos <- table(format(x,minlength))
   i <- order(-combos)
   combos <- combos[i[1:min(ncombos,length(combos))]]
   
@@ -99,8 +101,8 @@ summary.mChoice <- function(x, ncombos=5, drop=TRUE) {
             class='summary.mChoice')
 }
 
-print.summary.mChoice <- function(x) {
-  cat(x$label, '   ', x$nunique, ' unique combinations\n', sep='')
+print.summary.mChoice <- function(x, prlabel=TRUE) {
+  if(prlabel) cat(x$label, '   ', x$nunique, ' unique combinations\n', sep='')
   cat('Frequencies of Numbers of Choices Per Observation\n\n')
   print(x$nchoices)
   crosstab <-format(x$crosstab)

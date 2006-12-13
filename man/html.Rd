@@ -44,7 +44,9 @@ the name of the argument for \code{object}.
 \item{link}{character vector specifying hyperlink names to attach to
   selected elements of the matrix or data frame.  No hyperlinks are used
   if \code{link} is omitted or for elements of \code{link} that are
-  \code{""}.}
+  \code{""}.  To allow multiple links per link, \code{link} may also be
+  a character matrix shaped as \code{object} in which case
+  \code{linkCol} is ignored.}
 \item{linkCol}{column number of \code{object} to which hyperlinks are
   attached.  Defaults to first column.}
 \item{linkType}{defaults to \code{"href"}}

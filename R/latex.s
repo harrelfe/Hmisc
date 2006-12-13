@@ -1294,11 +1294,15 @@ html.data.frame <-
   cat('<tr>', paste('<td>', dimnames(x)[[2]], '</td>',sep=''), '</tr>\n',
       sep='', file=file, append=file!='')
   
-  if(length(link))
+  if(length(link)) {
+    if(is.matrix(link)) 
+      x[link!=''] <- paste('<a ',linkType,'="', link[link!=''],'">',
+                           x[link!=''],'</a>',sep='') else
     x[,linkCol] <- ifelse(link=='',x[,linkCol],
                           paste('<a ',linkType,'="',link,'">',
                                 x[,linkCol],'</a>',sep=''))
-
+  }
+  
   for(i in 1:nrow(x))
     cat('<tr>',paste('<td>',x[i,],'</td>',sep=''),'</tr>\n',
         sep='', file=file, append=file!='')

@@ -17,7 +17,7 @@ describe.default <- function(x, descript, ...)  #13Mar99
 
 
 describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
-                            weights=NULL, normwt=FALSE, ...)
+                            weights=NULL, normwt=FALSE, minlength=NULL, ...)
 {
   oldopt <- options(digits=digits)
   on.exit(options(oldopt))
@@ -162,6 +162,9 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
     }
     
     lab <- c(lab,"Mean")
+  } else if(n.unique==1) {
+    counts <- c(counts, x.unique)
+    lab <- c(lab, "value")
   }
 
   if(n.unique>=10 & isnum) {
@@ -188,10 +191,11 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
 
   counts <- NULL
 
-  if(n.unique>=20) {
-    if(isnum) { ##15Nov00 Store frequency table, 100 intervals
-      r <- range(xnum)   # 3Dec00
-      xg <- pmin(1 + floor((100 * (xnum - r[1]))/  # 3Dec00
+  if(inherits(x,'mChoice')) z$mChoice <- summary(x, minlength=minlength) else {
+    if(n.unique>=20) {
+      if(isnum) {
+      r <- range(xnum)
+      xg <- pmin(1 + floor((100 * (xnum - r[1]))/
                            (r[2] - r[1])), 100)
       z$intervalFreq <- list(range=as.single(r),
                              count = as.integer(tabulate(xg)))
@@ -202,14 +206,13 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
       if(isdot && (class(loandhi) %nin% 'timeDate')) {
         formatDateTime(oldUnclass(loandhi), at=atx, roundDay=!timeUsed)
       } else {
-        format(format(loandhi), ...)  # inner format 21apr04
+        format(format(loandhi), ...)
       }
     counts <- fval
     names(counts) <- c("L1","L2","L3","L4","L5","H5","H4","H3","H2","H1")
   }
 
   if(n.unique>1 && n.unique<20 && !x.binary) {
-    ## following was & !isdatetime 26May97
     tab <- wtd.table(if(isnum)
                        format(x)
                      else
@@ -221,7 +224,7 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
     counts <- rbind(counts, pct)
     dimnames(counts)[[1]]<- c("Frequency","%")
   }
-  
+}  
   z$values <- counts
   structure(z, class="describe")
 }
@@ -406,6 +409,7 @@ print.describe.single <- function(x, condense=TRUE, ...)
       }
     }
   }
+  if(length(x$mChoice)) {cat('\n'); print(x$mChoice, prlabel=FALSE)}
   
   invisible()
 }
@@ -622,6 +626,7 @@ latex.describe.single <- function(object, title=NULL, condense=TRUE, vname,
       }
     }
   }
+  if(length(object$mChoice)) print(object$mChoice, prlabel=FALSE)
   
   cat('\\end{verbatim}\n}\n')
   if(file!='')
@@ -692,13 +697,15 @@ contents.data.frame <- function(object, ...)
   d <- dim(object)
   n <- length(nam)
   fl <- nas <- integer(n)
-  cl <- sm <- lab <- un <- character(n)
+  cl <- sm <- lab <- un <- longlab <- character(n)
   Lev <- list()
   for(i in 1:n) {
     x <- object[[i]]
     at <- attributes(x)
     if(length(at$label))
       lab[i] <- at$label
+    if(length(at$longlabel))
+      longlab[i] <- at$longlabel
     
     if(length(at$units))
       un[i] <- at$units
@@ -706,8 +713,6 @@ contents.data.frame <- function(object, ...)
     atl <- at$levels
     fl[i] <- length(atl)
     cli <- at$class[at$class %nin% c('labelled','factor')]
-    ##if(length(at$class) && at$class[1] %nin%c('labelled','factor'))
-    ##  cl[i] <- at$class[1]  11aug03
     if(length(cli))
       cl[i] <- cli[1]
     
@@ -717,17 +722,12 @@ contents.data.frame <- function(object, ...)
       Lev[[nam[i]]] <- atl
   }
   
-  w <- list(Labels=if(any(lab!=''))
-                     lab,
-            Units=if(any(un!=''))
-                    un,
-            Levels=if(any(fl>0))
-                     fl,
-            Class=if(any(cl!=''))
-                    cl,
-            Storage=sm,
-            NAs=if(any(nas>0))
-                  nas)
+  w <- list(Labels=if(any(lab!=''))         lab,
+            Units=if(any(un!=''))           un,
+            Levels=if(any(fl>0))            fl,
+            Class=if(any(cl!=''))           cl,
+            Storage=                        sm,
+            NAs=if(any(nas>0))              nas )
   
   if(.R.)
     w <- w[sapply(w, function(x)length(x)>0)]
@@ -735,7 +735,8 @@ contents.data.frame <- function(object, ...)
   ## R does not remove NULL elements from a list
   structure(list(contents=data.frame(w, row.names=nam),
                  dim=d, maxnas=max(nas), dfname=dfname,
-                 Levels=Lev),
+                 Levels=Lev,
+                 longLabels=if(any(longlab!='')) structure(longlab, names=nam)),
             class='contents.data.frame')
 }
 
@@ -783,6 +784,21 @@ print.contents.data.frame <-
     } else print.char.matrix(matrix(lin,ncol=1,
                                     dimnames=list(nam,'Levels')))
   }
+
+  longlab <- x$longLabels
+  if(length(longlab)) {
+    if(existsFunction('strwrap'))
+      for(i in 1:length(longlab)) {
+        if(longlab[i] != '')
+          longlab[i] <- paste(strwrap(longlab[i],width=.85*.Options$width ),
+                              collapse='\n')
+      }
+    i <- longlab != ''
+    nam <- names(longlab)
+    z <- cbind(Variable=nam[i], 'Long Label'=longlab[i])
+    print.char.matrix(z, col.names=TRUE, row.names=FALSE,
+                      cell.align='left')
+  }
   
   invisible()
 }
@@ -813,15 +829,26 @@ html.contents.data.frame <-
          NAs={
            if(maxnas>0) cont <- cont[order(cont$NAs,nam),]
          })
-
+  
+  link <- matrix('', nrow=nrow(cont), ncol=1+ncol(cont),
+                 dimnames=list(dimnames(cont)[[1]], c('Name', dimnames(cont)[[2]])))
+  
+  longlab <- object$longLabels
+  if(length(longlab)) {
+    longlab <- longlab[longlab!='']
+    link[names(longlab),'Name'] <- paste('#longlab',names(longlab),sep='.')
+  }
+  
   if(length(cont$Levels)) {
-    cont$Levels <- ifelse(cont$Levels==0,'',format(cont$Levels))
-    adj <- rep('l', length(cont))
-    adj[names(cont) %in% c('NAs','Levels')] <- 'r'
-    out <- html(cont, file=file, append=TRUE,
-                link=ifelse(cont$Levels=='','',paste('#',nam,sep='')),
-                linkCol='Levels', col.just=adj, ...)
-  } else out <- html(cont, file=file, append=TRUE, ...)
+    cont$Levels <- ifelse(cont$Levels==0, '', format(cont$Levels))
+    link[,'Levels'] <- ifelse(cont$Levels=='', '', paste('#levels',nam,sep='.'))
+  }
+  
+  adj <- rep('l', length(cont))
+  adj[names(cont) %in% c('NAs','Levels')] <- 'r'
+  out <- html(cont, file=file, append=TRUE,
+              link=link,
+              col.just=adj, ...)
   
   cat('<hr>\n', file=file, append=TRUE)
 
@@ -833,11 +860,22 @@ html.contents.data.frame <-
       lab <- c(lab, nam[i], rep('',length(l)-1))
       lev <- c(lev, l)
     }
-    
     z <- cbind(Variable=lab, Levels=lev)
     out <- html(z, file=file, append=TRUE,
-                link=lab, linkCol='Variable', linkType='name', ...)
+                link=ifelse(lab=='','',paste('levels',lab,sep='.')),
+                linkCol='Variable', linkType='name', ...)
     cat('<hr>\n',file=file,append=TRUE)
+  }
+
+  i <- longlab != ''
+  if(any(i)) {
+    nam <- names(longlab)[i]
+    names(longlab) <- NULL
+    lab <- paste('longlab', nam, sep='.')
+    z <- cbind(Variable=nam, 'Long Label'=longlab[i])
+    out <- html(z, file=file, append=TRUE,
+                link=lab, linkCol='Variable', linkType='name', ...)
+    cat('<hr>\n', file=file, append=TRUE)
   }
   out
 }

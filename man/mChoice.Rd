@@ -26,7 +26,8 @@
   \code{format.mChoice} will convert the multiple choice representation
   to text form by substituting \code{levels} for integer codes.
   \code{as.double.mChoice} converts the \code{mChoice} object to a
-  binary numeric matrix, one column per used level.  This is called by
+  binary numeric matrix, one column per used level (or all levels of
+  \code{drop=FALSE}.  This is called by
   the user by invoking \code{as.numeric}.  There is a
   \code{print} method and a \code{summary} method, and a \code{print}
   method for the \code{summary.mChoice} object.  The \code{summary}
@@ -45,35 +46,26 @@ mChoice(\dots, sort.=TRUE, label='',
         sort.levels=c('original','alphabetic'), 
         add.none=FALSE, drop=TRUE)
 
-\method{format}{mChoice}(x, sep=";", \dots)
+\method{format}{mChoice}(x, minlength=NULL, sep=";", \dots)
 
 \method{as.double}{mChoice}(x, drop=TRUE)
 
 \method{print}{mChoice}(x, long=FALSE)
 
-\method{summary}{mChoice}(x)
+\method{summary}{mChoice}(x, minlength=NULL)
 
-\method{print}{summary.mChoice}(x)
+\method{print}{summary.mChoice}(x, prlabel=TRUE)
 
 inmChoice(x, values)
 }
 \arguments{
   \item{...}{a series of vectors}
-  \item{sep}{
-    character to use to separate quantiles when printing
-    \code{method="reverse"} tables
-  }
   \item{sort.}{By default, choice codes are sorted in ascending numeric
 	order.  Set \code{sort=FALSE} to preserve the original left to right
 	ordering from the input variables.}
   \item{label}{
     a character string \code{label} attribute to attach to the matrix created
     by \code{mChoice}
-  }
-  \item{long}{
-    set to \code{TRUE} to print the results for the first category on its own
-    line, not on the same line with the variable label (for
-    \code{method="reverse"} with \code{print} and \code{latex} methods)
   }
   \item{sort.levels}{
     set \code{sort.levels="alphabetic"} to sort the columns of the matrix
@@ -90,6 +82,19 @@ inmChoice(x, values)
     set \code{drop=FALSE} to keep unused factor levels as columns of the matrix
     produced by \code{mChoice}
   }
+  \item{x}{an object of class \code{"mchoice"} such as that created by
+	\code{mChoice}}
+  \item{minlength}{By default no abbreviation of levels is done in
+	\code{format} and \code{summary}.  Specify a positive integer to use
+	abbreviation in those functions.  See \code{\link{abbreviate}}.}
+  \item{sep}{character to use to separate levels when formatting}
+  \item{long}{
+    Set to \code{TRUE} to print the formatted levels.  Otherwise integer
+	codes are printed.
+  }
+  \item{prlabel}{set to \code{FALSE} to keep
+	\code{print.summary.mChoice} from printing the variable label and
+	number of unique values}
   \item{values}{a scalar or vector.  If \code{values} is integer, it is
 	the choice codes, and if it is a character vector, it is assumed to
 	be value labels.}
@@ -176,9 +181,6 @@ f <- summary(treatment ~ age + sex + Symptoms, method="reverse", test=TRUE)
 f
 # trio of numbers represent 25th, 50th, 75th percentile
 print(f, long=TRUE)
-plot(f)
-plot(f, conType='bp', prtest='P')
-bpplt()    # annotated example showing layout of bp plot
 }
 \keyword{category}
 \keyword{manip}

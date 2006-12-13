@@ -19,7 +19,10 @@ will print the results, with options for sorting the variables.
 \code{html.contents.data.frame} creates HTML code for displaying the
 results.  This code has hyperlinks so that if the user clicks on the
 number of levels the browser jumps to the correct part of a table of
-factor levels for all the \code{factor} variables.
+factor levels for all the \code{factor} variables.  If long labels are
+present (\code{"longlabel"} attributes on variables), these are printed
+at the bottom and the \code{html} method links to them through the
+regular labels.
 
 \code{contents.list} prints a directory of datasets when
 \code{\link{sasxport.get}} imported more than one SAS dataset.
@@ -72,12 +75,16 @@ Vanderbilt University
 \email{f.harrell@vanderbilt.edu}
 }
 \seealso{
-  \code{\link{describe}}, \code{\link{html}}
+  \code{\link{describe}}, \code{\link{html}}, \code{\link{upData}}
 }
 \examples{
 set.seed(1)
 dfr <- data.frame(x=rnorm(400),y=sample(c('male','female'),400,TRUE))
 contents(dfr)
+dfr <- upData(dfr, labels=c(x='Label for x', y='Label for y'))
+attr(dfr$x, 'longlabel') <-
+ 'A very long label for x that can continue onto multiple long lines of text'
+
 k <- contents(dfr)
 print(k, sort='names', prlevels=FALSE)
 \dontrun{

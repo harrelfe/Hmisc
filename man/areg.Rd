@@ -14,8 +14,7 @@ the covariance matrix of both left- and right-hand-side transformation parameter
 }
 \usage{
 areg(x, y, xtype = NULL, ytype = NULL, nk = 4,
-     linear.predictors = FALSE, B = 0, na.rm = TRUE,
-     tolerance = NULL)
+     B = 0, na.rm = TRUE, tolerance = NULL)
 
 \method{print}{areg}(x, \dots)
 
@@ -48,8 +47,6 @@ areg(x, y, xtype = NULL, ytype = NULL, nk = 4,
   \item{nk}{number of knots, 0 for linear, or 3 or more.  Default is 4
 	which will fit 3 parameters to continuous variables (one linear term
   and two nonlinear terms)}
-  \item{linear.predictors}{set to \code{TRUE} to store predicted
-	transformed \code{y} in the result}
   \item{B}{number of bootstrap resamples used to estimate covariance
 	matrices of transformation parameters.  Default is no bootstrapping.}
   \item{na.rm}{set to \code{FALSE} if you are sure that observations
@@ -164,7 +161,7 @@ n <- 50
 x <- rnorm(n)
 y <- rnorm(n) + x
 g <- sample(1:3, n, TRUE)
-z <- areg(cbind(x,g),y,xtype=c('s','c'),linear.predictors=TRUE)
+z <- areg(cbind(x,g),y,xtype=c('s','c'))
 range(predict(z, cbind(x,g)) - z$linear.predictors)
 }
 \keyword{smooth}

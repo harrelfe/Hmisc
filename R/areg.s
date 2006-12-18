@@ -1,6 +1,5 @@
 # $Id$
 areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
-                 linear.predictors=FALSE,
                  B=0, na.rm=TRUE,
                  tolerance=NULL) {
 
@@ -59,7 +58,7 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
   ## See if rcpsline.eval could not get desired no. of knots due to ties
   if(ncol(X) > sum(xdf)) X <- X[,1:sum(xdf),drop=FALSE]
 
-  covx <- covy <- lp <- NULL
+  covx <- covy <- NULL
   if(B > 0) {
     r <- 1 + sum(xdf)
     barx <- rep(0, r)
@@ -75,10 +74,12 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
   if(ytype=='l') {
     f <- lm.fit.qr.bare(X, Y, tolerance=tolerance)
 	xcof <- f$coefficients
-	r2 <- f$rsquared
+	r2  <- f$rsquared
     cof <- 1
-    ty <- y
+    ty  <- y
     ydf <- 1
+    lp  <- f$fitted.values
+    res <- f$residuals
     if(B > 0) {
       for(j in 1:B) {
         s <- sample(1:n, replace=TRUE)
@@ -120,7 +121,9 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
     xcof <- f$xcoef
     cof  <- f$ycoef
     ty   <- f$ty
-    ydf <- length(cof) - 1
+    ydf  <- length(cof) - 1
+    lp   <- matxv(X, xcof)
+    res  <- ty - lp
   
     if(B > 0) {
       for(j in 1:B) {
@@ -145,11 +148,9 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
   beta <- xcof[-1]
   tx <- x
   xmeans <- list()
-  if(linear.predictors) lp <- xcof[1]
   for(i in 1:p) {
     m <- xdf[i]
     z <- matxv(X[,(j+1):(j+m),drop=FALSE], beta[(j+1):(j+m)])
-    if(linear.predictors) lp <- lp + z
     mz <- mean(z)
     xmeans[[xnam[i]]] <- mz
     tx[,i] <- z - mz
@@ -159,7 +160,7 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
                  rsquared=r2, nk=nk, xdf=xdf, ydf=ydf,
                  xcoefficients=xcof, ycoefficients=cof,
                  xparms=xparms, yparms=yparms, xmeans=xmeans,
-                 linear.predictors=lp,
+                 linear.predictors=lp, residuals=res,
                  xtype=xtype, ytype=ytype, yname=yname,
                  xcov=covx, ycov=covy,
                  n=n, m=nmiss, B=B),

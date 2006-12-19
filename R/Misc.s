@@ -263,12 +263,12 @@ lm.fit.qr.bare <- function(x, y,
   if(length(dn[[2]]))
     names(coef) <- dn[[2]]
   
-  res <- z$residuals
+  res <- as.vector(z$residuals)
   sse <- sum(res^2)
   sst <- sum((y-mean(y))^2)
 
   res <- list(coefficients=coef, residuals=res, 
-              rsquared=1-sse/sst, fitted.values=y-res)
+              rsquared=1-sse/sst, fitted.values=as.vector(y-res))
   if(xpxi) {
     if(.R.)
       xpxi <- chol2inv(z$qr)

@@ -122,8 +122,8 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
     cof  <- f$ycoef
     ty   <- f$ty
     ydf  <- length(cof) - 1
-    lp   <- matxv(X, xcof)
-    res  <- ty - lp
+    lp   <- as.vector(matxv(X, xcof))
+    res  <- as.vector(ty - lp)
   
     if(B > 0) {
       for(j in 1:B) {

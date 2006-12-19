@@ -141,19 +141,19 @@ aregImpute <- function(formula, data, subset, n.impute=5,
       
       rsq[nami] <- f$rsquared
       pti <- predict(f, X)  # predicted transformed xf[,i]
-      if(vtype[i]=='l') pti <- (pti - mean(pti))/sqrt(var(pti))
       
       if(type=='pmm') {
+      if(vtype[i]=='l') pti <- (pti - mean(pti))/sqrt(var(pti))
         whichclose <- if(match=='closest') {
           
           ## Jitter predicted transformed values for non-NAs to randomly
           ## break ties in matching with predictions for NAs in xf[,i]
-          ## Becuase of normalization used by fitter, pti usually ranges from
-          ## about -4 to 4
+          ## Becuase of normalization used by fitter, pti usually ranges
+          ## from about -4 to 4
           pti[j] <- pti[j] + runif(npr,-.0001,.0001)
           
-          ## For each orig. missing xf[,i] impute with non-missing xf[,i] that
-          ## has closest predicted transformed value
+          ## For each orig. missing xf[,i] impute with non-missing xf[,i]
+          ## that has closest predicted transformed value
           j[whichClosest(pti[j], pti[nai])]  ## see Misc.s
         }
         else
@@ -161,7 +161,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
         impi <- xf[whichclose,i]
       } else {
         ## residuals off of transformed predicted values
-        res <- f$ty - pti[s]
+        res <- f$residuals
         
         ## predicted transformed target var + random sample of res,
         ## for NAs

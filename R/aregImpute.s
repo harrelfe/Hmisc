@@ -1,6 +1,6 @@
 # $Id$
 aregImpute <- function(formula, data, subset, n.impute=5,
-                       group=NULL, nk=3,
+                       group=NULL, nk=0,
                        type=c('pmm','regression'),
                        match=c('weighted','closest'), fweighted=0.2,
                        burnin=3, x=FALSE,

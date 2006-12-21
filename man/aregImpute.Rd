@@ -17,34 +17,35 @@ process of drawing predicted values from a full Bayesian predictive
 distribution.  Different bootstrap resamples are used for each of the
 multiple imputations, i.e., for the \code{i}th imputation of a sometimes
 missing variable, \code{i=1,2,\dots n.impute}, a flexible additive
-model is fitted on a sample with replacement
-from the original data and this model is used to predict all of the
-original missing and non-missing values for the target variable.
+model is fitted on a sample with replacement from the original data and
+this model is used to predict all of the original missing and
+non-missing values for the target variable.
 
-\code{areg} is used to fit the imputation models.  Unless the identity
-transformation is specified or \code{nk} is set to zero, \code{areg}
+\code{areg} is used to fit the imputation models.  By default, linearity
+is assumed.  If \code{nk} is three or greater, \code{areg}
 simultaneously find transformations of the target variable and of all of
 the predictors, to get a good fit assuming additivity, maximizing
 \eqn{R^2}, using the same canonical correlation method as
-\code{transcan}.  When a categorical variable is being predicted, this
-is Fisher's optimum scoring method.  For continuous variables.  The
-default transformation for continuous variables is a restricted cubic
-spline function unless \code{nk=0}.  allows nonmonotonic transformations
-of target variables.
+\code{transcan}.  Flexible transformations may be overridden for
+specific variables by specifying the identity transformation for them.
+When a categorical variable is being predicted, the flexible
+transformation is Fisher's optimum scoring method.  For continuous
+variables.  Nonlinear transformations for continuous variables are
+restricted cubic spline function which may be nonmonotonic.
 
-Instead of taking random draws from fitted imputation models using
-random residuals as is done by \code{transcan}, \code{aregImpute} uses
-predictive mean matching with optional weighted probability sampling of
-donors rather than using only the closest match.  Predictive mean
-matching works for binary, categorical, and continuous variables without
-the need for iterative maximum likelihood fitting for binary and
-categorical variables, and without the need for computing residuals or
-for curtailing imputed values to be in the range of actual data.
-Predictive mean matching is especially attractive when the variable
-being imputed is also being transformed automatically.  See Details
-below for more information about the algorithm.  A \code{"regression"}
-method is also available that is similar to that used in
-\code{transcan}.  This option should be used when mechanistic
+Instead of defaulting to taking random draws from fitted imputation
+models using random residuals as is done by \code{transcan},
+\code{aregImpute} uses predictive mean matching with optional weighted
+probability sampling of donors rather than using only the closest match.
+Predictive mean matching works for binary, categorical, and continuous
+variables without the need for iterative maximum likelihood fitting for
+binary and categorical variables, and without the need for computing
+residuals or for curtailing imputed values to be in the range of actual
+data.  Predictive mean matching is especially attractive when the
+variable being imputed is also being transformed automatically.  See
+Details below for more information about the algorithm.  A
+\code{"regression"} method is also available that is similar to that
+used in \code{transcan}.  This option should be used when mechanistic
 missingness requires the use of extrapolation during imputation.
 
 A \code{print} method summarizes the results, and a \code{plot} method plots
@@ -53,7 +54,7 @@ Typically, \code{fit.mult.impute} will be called after \code{aregImpute}.
 }
 \usage{
 aregImpute(formula, data, subset, n.impute=5, group=NULL,
-           nk=3, type=c('pmm','regression'),
+           nk=0, type=c('pmm','regression'),
            match=c('weighted','closest'), fweighted=0.2, burnin=3,
            x=FALSE, pr=TRUE, plotTrans=FALSE, tolerance=NULL)
 \method{print}{aregImpute}(x, \dots)
@@ -477,3 +478,4 @@ abline(h=rmse, lty=2)  # root MSE of residuals from linear regression
 \concept{predictive mean matching}
 \concept{imputation}
 \concept{NA}
+\concept{missing data}

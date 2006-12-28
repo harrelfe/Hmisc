@@ -10,13 +10,24 @@ Expands continuous variables into restricted cubic spline bases and
 categorical variables into dummy variables and fits a multivariate
 equation using canonical variates.  This finds optimum transformations
 that maximize \eqn{R^2}.  Optionally, the bootstrap is used to estimate
-the covariance matrix of both left- and right-hand-side transformation parameters.
+the covariance matrix of both left- and right-hand-side transformation
+parameters, and to estimate the bias in the \eqn{R^2} due to overfitting
+and compute the bootstrap optimism-corrected \eqn{R^2}.
+Cross-validation can also be used to get an unbiased estimate of
+\eqn{R^2} but this is not as precise as the bootstrap estimate.  The
+bootstrap and cross-validation may also used to get estimates of mean
+and median absolute error in predicted values on the original \code{y}
+scale.  These two estimates are perhaps the best ones for gauging the
+accuracy of a flexible model, because it is difficult to compare
+\eqn{R^2} under different y-transformations, and because \eqn{R^2}
+allows for an out-of-sample recalibration (i.e., it only measures
+relative errors).
 }
 \usage{
 areg(x, y, xtype = NULL, ytype = NULL, nk = 4,
-     B = 0, na.rm = TRUE, tolerance = NULL)
+     B = 0, na.rm = TRUE, tolerance = NULL, crossval = NULL)
 
-\method{print}{areg}(x, \dots)
+\method{print}{areg}(x, digits=4, \dots)
 
 \method{plot}{areg}(x, whichx = 1:ncol(x$x), \dots)
 
@@ -53,6 +64,10 @@ areg(x, y, xtype = NULL, ytype = NULL, nk = 4,
 	with \code{NA}s have already been removed}
   \item{tolerance}{singularity tolerance.  List source code for
 	\code{lm.fit.qr.bare} for details.}
+  \item{crossval}{set to a positive integer k to compute k-fold
+	cross-validated R-squared (square of first canonical correlation)
+	and mean and median absolute error of predictions on the original scale}
+  \item{digits}{number of digits to use in formatting for printing}
   \item{object}{an object created by \code{areg}}
   \item{whichx}{integer or character vector specifying which predictors
 	are to have their transformations plotted (default is all).  The
@@ -125,14 +140,28 @@ plot(z)
 z <- areg(x,y,ytype='c')
 z
 plot(z)
-		
+
+\dontrun{		
 # Examine overfitting when true transformations are linear
-par(mfrow=c(2,2))
+par(mfrow=c(3,3))
 for(n in c(200,2000)) {
   x <- rnorm(n); y <- rnorm(n) + x
-  z <- areg(x,y,nk=5)
-  plot(z)
-  title(paste('n=',n))
+    for(nk in c(0,5)) {
+    z <- areg(x,y,nk=nk,crossval=10,B=100)
+    print(z)
+    plot(z)
+    title(paste('n=',n))
+  }
+}
+par(mfrow=c(1,1))
+
+# Examine underfitting when true transformation is quadratic
+n <- 200
+x <- rnorm(n); y <- rnorm(n) + .5*x^2
+z <- areg(x, y, nk=0, crossval=10, B=100)
+z
+z <- areg(x, y, nk=4, crossval=10, B=100)
+z
 }
 
 # True transformation of x1 is quadratic, y is linear

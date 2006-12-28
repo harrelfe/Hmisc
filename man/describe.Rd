@@ -40,14 +40,16 @@ If a variable was created by the special-purpose function \code{substi} (which
 substitutes values of a second variable if the first variable is NA),
 the frequency table of substitutions is also printed.  
 
-A latex method
-exists for converting the \code{describe} object to a LaTeX file.  For
-numeric variables having at least 20 unique values, \code{describe} saves
-in its returned object the frequencies of 100 evenly spaced bins
-running from minimum observed value to the maximum.  \code{latex} inserts a
-spike histogram displaying these frequency counts in the tabular
-material using the LaTeX picture environment.  For example output see
+A latex method exists for converting the \code{describe} object to a
+LaTeX file.  For numeric variables having at least 20 unique values,
+\code{describe} saves in its returned object the frequencies of 100
+evenly spaced bins running from minimum observed value to the maximum.
+\code{latex} inserts a spike histogram displaying these frequency counts
+in the tabular material using the LaTeX picture environment.  For
+example output see
 \url{http://biostat.mc.vanderbilt.edu/twiki/pub/Main/Hmisc/counties.pdf}.
+Note that the latex method assumes you have the following styles
+installed in your latex installation: setspace and relsize.
 
 Sample weights may be specified to any of the functions, resulting
 in weighted means, quantiles, and frequency tables.

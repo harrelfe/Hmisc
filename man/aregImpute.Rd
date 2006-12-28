@@ -31,7 +31,11 @@ specific variables by specifying the identity transformation for them.
 When a categorical variable is being predicted, the flexible
 transformation is Fisher's optimum scoring method.  For continuous
 variables.  Nonlinear transformations for continuous variables are
-restricted cubic spline function which may be nonmonotonic.
+restricted cubic spline function which may be nonmonotonic.  If
+\code{nk} is a vector, \code{areg}'s bootstrap and \code{crossval=10}
+options will be used to help find the optimum validating value of
+\code{nk} over values of that vector, at the last imputation iteration.
+For the imputations, the minimum value of \code{nk} is used.
 
 Instead of defaulting to taking random draws from fitted imputation
 models using random residuals as is done by \code{transcan},
@@ -56,8 +60,8 @@ Typically, \code{fit.mult.impute} will be called after \code{aregImpute}.
 aregImpute(formula, data, subset, n.impute=5, group=NULL,
            nk=0, type=c('pmm','regression'),
            match=c('weighted','closest'), fweighted=0.2, burnin=3,
-           x=FALSE, pr=TRUE, plotTrans=FALSE, tolerance=NULL)
-\method{print}{aregImpute}(x, \dots)
+           x=FALSE, pr=TRUE, plotTrans=FALSE, tolerance=NULL, B=75)
+\method{print}{aregImpute}(x, digits=3, \dots)
 \method{plot}{aregImpute}(x, nclass=NULL, type=c('ecdf','hist'), 
      diagnostics=FALSE, maxn=10, \dots)
 }
@@ -104,7 +108,12 @@ recommended but 10 or more doesn't hurt.
   linearity for non-categorical variables) or 3 (minimum number of knots
   possible with a linear tail-restricted cubic spline) for small sample
   sizes.  Simulated problems as in the examples section can assist in
-  choosing \code{nk}.
+  choosing \code{nk}.  See \code{nk} to a vector to get bootstrap-validated
+  and 10-fold cross-validated \eqn{R^2} and mean and median absolute
+  prediction errors for imputing each sometimes-missing variable, with
+  \code{nk} ranging over the given vector.  The errors are on the
+  original untransformed scale.  The mean absolute error is the
+  recommended basis for choosing the number of knots (or linearity).
   }
 \item{type}{
   The default is \code{"pmn"} for predictive mean matching,
@@ -156,9 +165,9 @@ set to \code{FALSE} to suppress printing of iteration messages
 }
 \item{tolerance}{singularity criterion; list the source code in the
   \code{lm.fit.qr.bare} function for details}
-\item{nclass}{
-number of bins to use in drawing histogram
-}
+\item{B}{number of bootstrap resamples to use if \code{nk} is a vector}
+\item{digits}{number of digits for printing}
+\item{nclass}{number of bins to use in drawing histogram}
 \item{diagnostics}{
 Specify \code{diagnostics=TRUE} to draw plots of imputed values against
 sequential imputation numbers, separately for each missing
@@ -341,6 +350,9 @@ orig.x2 <- x2[251:350]
 x1[1:250] <- NA
 x2[251:350] <- NA
 d <- data.frame(x1,x2,x3,y)
+# Find value of nk that yields best validating imputation models
+f <- aregImpute(~y + x1 + x2 + x3, nk=c(0,3:5), data=d, B=10) # normally B=75
+f
 
 # Use 100 imputations to better check against individual true values
 f <- aregImpute(~y + x1 + x2 + x3, n.impute=100, data=d)

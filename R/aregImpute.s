@@ -5,7 +5,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
                        match=c('weighted','closest'), fweighted=0.2,
                        burnin=3, x=FALSE,
                        pr=TRUE, plotTrans=FALSE,
-                       tolerance=NULL)
+                       tolerance=NULL, B=75)
 {
   
   acall   <- match.call()
@@ -21,7 +21,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
   Terms <- terms(formula, specials='I')
   m$formula <- formula
   m$match <- m$fweighted <- m$x <- m$n.impute <- m$nk <- m$burnin <-
-    m$type <- m$group <- m$pr <- m$plotTrans <- m$tolerance <- NULL
+    m$type <- m$group <- m$pr <- m$plotTrans <- m$tolerance <- m$B <- NULL
   m$na.action <- na.retain
 
   m[[1]] <- as.name("model.frame")
@@ -94,7 +94,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
       if(length(u) == 1)
         stop(paste(ni,'is constant'))
       else
-        if(nk==0 || length(u) == 2 || ni %in% linear)
+        if((length(nk)==1 && nk==0) || length(u) == 2 || ni %in% linear)
           vtype[ni] <- 'l'
     }
     xf[,i] <- xi
@@ -105,11 +105,14 @@ aregImpute <- function(formula, data, subset, n.impute=5,
   }
   z <- NULL
   wna <- (1:p)[nna > 0]
+
   
   ## xf = original data matrix (categorical var -> integer codes)
   ## with current imputations
   rsq <- double(length(wna));
   names(rsq) <- nam[wna]
+
+  resampacc <- list()
   
   for(iter in 1:(burnin + n.impute)) {
     if(pr) cat('Iteration',iter,'\r')
@@ -117,6 +120,30 @@ aregImpute <- function(formula, data, subset, n.impute=5,
       nai <- na[[i]]      ## subscripts of NAs on xf[i,]
       j <- (1:n)[-nai]    ## subscripts of non-NAs on xf[i,]
       npr <- length(j)
+      
+      if(iter==(burnin + n.impute) && length(nk) > 1) {
+        rn <- c('Bootstrap bias-corrected R^2',
+                '10-fold cross-validated  R^2',
+                'Bootstrap bias-corrected mean   |error|',
+                '10-fold cross-validated  mean   |error|',
+                'Bootstrap bias-corrected median |error|',
+                '10-fold cross-validated  median |error|')
+        racc <- matrix(NA, nrow=6, ncol=length(nk),
+                       dimnames=list(rn, paste('nk=',nk,sep='')))
+        jj <- 0
+        for(k in nk) {
+          jj <- jj + 1
+          f <- areg(xf[,-i,drop=FALSE], xf[,i],
+                    xtype=vtype[-i], ytype=vtype[i],
+                    nk=k, na.rm=FALSE,
+                    tolerance=tolerance, B=B, crossval=10)
+          w <- c(f$r2boot, f$rsquaredcv, f$madboot, f$madcv,
+                 f$medboot, f$medcv)
+          racc[,jj] <- w
+        }
+        resampacc[[nam[i]]] <- racc
+      }
+
       if(lgroup) {        ## insure orig. no. obs from each level of group
         s <- rep(NA, npr)
         for(ji in 1:ngroup) {
@@ -133,7 +160,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
       X <- xf[,-i,drop=FALSE]
 
       f <- areg(X[s,], xf[s,i], xtype=vtype[-i], ytype=vtype[i],
-                na.rm=FALSE, tolerance=tolerance)
+                nk=min(nk), na.rm=FALSE, tolerance=tolerance)
       dof[names(f$xdf)] <- f$xdf
       dof[nami] <- f$ydf
       
@@ -185,13 +212,14 @@ aregImpute <- function(formula, data, subset, n.impute=5,
   structure(list(call=acall, formula=formula,
                  match=match, fweighted=fweighted,
                  n=n, p=p, na=na, nna=nna,
-                 type=vtype, nk=nk,
+                 type=vtype, nk=min(nk),
                  cat.levels=cat.levels, df=dof,
-                 n.impute=n.impute, imputed=imp, x=xf, rsq=rsq),
+                 n.impute=n.impute, imputed=imp, x=xf, rsq=rsq,
+                 resampacc=resampacc),
             class='aregImpute')
 }
 
-print.aregImpute <- function(x, ...)
+print.aregImpute <- function(x, digits=3, ...)
 {
   cat("\nMultiple Imputation using Bootstrap and PMM\n\n")
   dput(x$call)
@@ -204,7 +232,18 @@ print.aregImpute <- function(x, ...)
   print(info)
   
   cat('\nR-squares for Predicting Non-Missing Values for Each Variable\nUsing Last Imputations of Predictors\n')
-  print(round(x$rsq,3))
+  print(round(x$rsq, digits))
+
+  racc <- x$resampacc
+  if(length(racc)) {
+    cat('\nResampling results for determining the complexity of imputation models\n\n')
+    for(i in 1:length(racc)) {
+      cat('Variable being imputed:', names(racc)[i], '\n')
+      print(racc[[i]], digits=digits)
+      cat('\n')
+    }
+    cat('\n')
+  }
   invisible()
 }
 

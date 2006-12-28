@@ -1,7 +1,7 @@
 # $Id$
 areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
                  B=0, na.rm=TRUE,
-                 tolerance=NULL) {
+                 tolerance=NULL, crossval=NULL) {
 
   yname <- deparse(substitute(y))
   xname <- deparse(substitute(x))
@@ -31,6 +31,32 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
   if(!length(xtype)) xtype <- rep(if(nk==0)'l' else 's', p)
   xtype[nk==0 & xtype=='s'] <- 'l'
   names(xtype) <- xnam
+
+  aprx <- function(x, y, xout) approx(x, y, xout=xout, rule=2)$y
+  
+  fcancor <- function(X, Y) {
+    ## If canonical variate transformation of Y is descending in Y,
+    ## negate all parameters
+    f <- cancor(X, Y)
+    f$r2 <- f$cor[1]^2
+    n <- nrow(Y); if(!length(n)) n <- length(y)
+    varconst <- sqrt(n-1)
+    xcoef <- c(intercept = -sum(f$xcoef[, 1] * f$xcenter),
+               f$xcoef[, 1]) * varconst
+    ycoef <- c(intercept = -sum(f$ycoef[, 1] * f$ycenter),
+               f$ycoef[, 1]) * varconst
+    ty <- matxv(Y, ycoef)
+    g <- lm.fit.qr.bare(Y,ty)
+    if(g$coefficients[2] < 0) {
+      xcoef <- -xcoef
+      ycoef <- -ycoef
+      ty    <- -ty
+    }
+    f$xcoef <- xcoef
+    f$ycoef <- ycoef
+    f$ty    <- ty
+    f
+  }
   
   Y <- aregTran(y, ytype, nk)
   yparms <- attr(Y, 'parms')
@@ -58,7 +84,8 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
   ## See if rcpsline.eval could not get desired no. of knots due to ties
   if(ncol(X) > sum(xdf)) X <- X[,1:sum(xdf),drop=FALSE]
 
-  covx <- covy <- NULL
+  covx <- covy <- r2opt <- r2boot <-
+    madopt <- madboot <- medopt <- medboot <- NULL
   if(B > 0) {
     r <- 1 + sum(xdf)
     barx <- rep(0, r)
@@ -80,42 +107,39 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
     ydf <- 1
     lp  <- f$fitted.values
     res <- f$residuals
+    mad <- mean(abs(y-lp))
+    med <- median(abs(y-lp))
     if(B > 0) {
+      r2opt <- madopt <- medopt <- 0
       for(j in 1:B) {
         s <- sample(1:n, replace=TRUE)
-        b <- lm.fit.qr.bare(X[s,,drop=FALSE], Y[s])$coefficients
+        g <- lm.fit.qr.bare(X[s,,drop=FALSE], Y[s])
+        b <- g$coefficients
+        r2boot <- g$rsquared
+        yhat <- matxv(X,b)
+        r2orig <- cor(yhat, y)^2
+        r2opt  <- r2opt + r2boot - r2orig
+        er <- abs(Y[s] - g$fitted.values)
+        madboot <- mean(er)
+        medboot <- median(er)
+        er <- abs(y - yhat)
+        madorig <- mean(er)
+        medorig <- median(er)
+        madopt <- madopt + madboot - madorig
         barx <- barx + b
         b <- as.matrix(b)
         covx <- covx + b %*% t(b)
       }
+      r2opt   <- r2opt/B
+      r2boot  <- r2 - r2opt
+      madopt  <- madopt/B
+      madboot <- mad - madopt
+      medopt  <- medopt/B
+      medboot <- med - medopt
       barx <- as.matrix(barx/B)
       covx <- (covx - B * barx %*% t(barx))/(B-1)
     }
   } else {
-    fcancor <- function(X, Y) {
-      ## If canonical variate transformation of Y is descending in Y,
-      ## negate all parameters
-      f <- cancor(X, Y)
-      f$r2 <- f$cor[1]^2
-      n <- nrow(Y); if(!length(n)) n <- length(y)
-      varconst <- sqrt(n-1)
-      xcoef <- c(intercept = -sum(f$xcoef[, 1] * f$xcenter),
-                 f$xcoef[, 1]) * varconst
-      ycoef <- c(intercept = -sum(f$ycoef[, 1] * f$ycenter),
-                 f$ycoef[, 1]) * varconst
-      ty <- matxv(Y, ycoef)
-      g <- lm.fit.qr.bare(Y,ty)
-      if(g$coefficients[2] < 0) {
-        xcoef <- -xcoef
-        ycoef <- -ycoef
-        ty    <- -ty
-      }
-      f$xcoef <- xcoef
-      f$ycoef <- ycoef
-      f$ty    <- ty
-      f
-    }
-    
     f <- fcancor(X, Y)
     r2 <- f$r2
     xcof <- f$xcoef
@@ -124,13 +148,32 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
     ydf  <- length(cof) - 1
     lp   <- as.vector(matxv(X, xcof))
     res  <- as.vector(ty - lp)
-  
+    puy  <- aprx(ty, y, lp)  ## predicted untransformed y
+    mad  <- mean(abs(y-puy))
+    med  <- median(abs(y-puy))
+    
     if(B > 0) {
+      r2opt <- madopt <- medopt <- 0
       for(j in 1:B) {
         s <- sample(1:n, replace=TRUE)
         f <- fcancor(X[s,,drop=FALSE],Y[s,,drop=FALSE])
         bx <- f$xcoef
         by <- f$ycoef
+        r2boot <- f$r2
+        xbeta <- matxv(X,bx)
+        ybeta <- matxv(Y,by)
+        r2orig <- cor(xbeta, ybeta)^2
+        r2opt  <- r2opt + r2boot - r2orig
+        puyb <- aprx(f$ty, y[s], xbeta[s])
+        er <- abs(y[s] - puyb)
+        madboot <- mean(er)
+        medboot <- median(er)
+        puyo <- aprx(f$ty, y[s], xbeta)
+        er <- abs(y - puyo)
+        madorig <- mean(er)
+        medorig <- median(er)
+        madopt <- madopt + madboot - madorig
+        medopt <- medopt + medboot - medorig
         barx <- barx + bx
         bx <- as.matrix(bx)
         covx <- covx + bx %*% t(bx)
@@ -138,6 +181,13 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
         by <- as.matrix(by)
         covy <- covy + by %*% t(by)
       }
+      r2opt   <- r2opt/B
+      r2boot  <- r2 - r2opt
+      madopt  <- madopt/B
+      madboot <- mad - madopt
+      medopt  <- medopt/B
+      medboot <- med - medopt
+      
       barx <- as.matrix(barx/B)
       bary <- as.matrix(bary/B)
       covx <- (covx - B * barx %*% t(barx))/(B-1)
@@ -156,14 +206,38 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
     tx[,i] <- z - mz
     j <- j + m
   }
+  r2cv <- madcv <- medcv <- NULL
+  if(length(crossval)) {
+    s <- sample(1:crossval, n, replace=TRUE)
+    r2cv <- madcv <- medcv <- 0
+    for(j in 1:crossval) {
+      g    <- fcancor(X[s!=j,,drop=FALSE], Y[s!=j,,drop=FALSE])
+      bx   <- g$xcoef
+      by   <- g$ycoef
+      xbo  <- matxv(X[s==j,,drop=FALSE], bx)
+      ybo  <- matxv(Y[s==j,,drop=FALSE], by)
+      r2cv <- r2cv + cor(xbo, ybo)^2
+      puy  <- aprx(g$ty, y[s!=j], xbo)
+      er   <- abs(y[s==j] - puy)
+      madcv<- madcv + mean(er)
+      medcv<- medcv + median(er)
+    }
+    r2cv  <- r2cv/crossval
+    madcv <- madcv/crossval
+    medcv <- medcv/crossval
+  }
   structure(list(y=y, x=x, ty=ty, tx=tx,
-                 rsquared=r2, nk=nk, xdf=xdf, ydf=ydf,
+                 rsquared=r2, rsquaredcv=r2cv, nk=nk, xdf=xdf, ydf=ydf,
                  xcoefficients=xcof, ycoefficients=cof,
                  xparms=xparms, yparms=yparms, xmeans=xmeans,
                  linear.predictors=lp, residuals=res,
                  xtype=xtype, ytype=ytype, yname=yname,
+                 r2boot=r2boot, r2opt=r2opt,
+                 mad=mad, madboot=madboot, madopt=madopt,
+                 med=med, medboot=medboot, medopt=medopt,
+                 madcv=madcv, medcv=medcv,
                  xcov=covx, ycov=covy,
-                 n=n, m=nmiss, B=B),
+                 n=n, m=nmiss, B=B, crossval=crossval),
             class='areg')
 }
 
@@ -206,13 +280,36 @@ predict.areg <- function(object, x, ...) {
   matxv(X, beta)
 }
 
-print.areg <- function(x, ...) {
+print.areg <- function(x, digits=4, ...) {
   xdata <- x[c('n','m','nk','rsquared','xtype','xdf','ytype','ydf')]
   xinfo <- data.frame(type=xdata$xtype, d.f.=xdata$xdf,
                       row.names=names(xdata$xtype))
   cat('\nN:',xdata$n,'\t',xdata$m,
       ' observations with NAs deleted.\n')
-  cat('R^2:', round(xdata$rsquared,3),'\tnk:',xdata$nk,'\n\n')
+  cat('R^2: ', round(xdata$rsquared,3),'\tnk: ',xdata$nk,
+      '\tMean and Median |error|: ',format(x$mad, digits=digits),', ',
+      format(x$med, digits=digits),'\n\n', sep='')
+  if(length(x$r2boot)) {
+    x1 <- format(c(x$r2opt,  x$madopt,  x$medopt),  digits=digits)
+    x2 <- format(c(x$r2boot, x$madboot, x$medboot), digits=digits)
+    n  <- c('R^2', 'Mean |error|', 'Median |error|')
+    d  <- cbind('Bootstrap Estimates'=n, Optimism=x1, 'Optimism-corrected'=x2)
+    row.names(d) <- rep('', 3)
+    if(.R.) print(d, quote=FALSE, right=TRUE) else
+     print(d, quote=FALSE)
+  }
+  if(length(x$crossval)) {
+    x1 <- format(c(x$rsquaredcv, x$madcv, x$medcv), digits=digits)
+    n  <- c('R^2', 'Mean |error|', 'Median |error|')
+    d  <- cbind(n, x1)
+    dimnames(d) <- list(rep('',3), 
+      c(paste(x$crossval,'-fold Cross-validation',sep=''),
+        'Estimate'))
+    cat('\n')
+    if(.R.) print(d, quote=FALSE, right=TRUE) else
+     print(d, quote=FALSE)
+  }
+  cat('\n')
   print(xinfo)
   cat('\ny type:', xdata$ytype,'\td.f.:', xdata$ydf,'\n\n')
   invisible()

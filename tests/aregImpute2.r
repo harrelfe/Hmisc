@@ -1,12 +1,12 @@
 library(Design)
 source('/tmp/hmisc.s')
 set.seed(1)
-n <- c(20000,2000,200)[1]
+n <- c(20000,2000,200)[2]
 x2 <- rnorm(n)
 x1 <- sqrt(.5) * x2 + rnorm(n, sd=sqrt(1-.5))
 y  <- 1 * x1 + 1 * x2 + rnorm(n)
 
-type <- c('mcar','mar.x2')[1]
+type <- c('mcar','mar.x2')[2]
 
 x1m <- if(type=='mcar') ifelse(runif(n) < .5, x1, NA) else
  ifelse(rnorm(n,sd=.8) < x2, x1, NA)  # MAR on x2, R2 50%, 50% missing
@@ -26,14 +26,37 @@ ols(y ~ x1+x2)
 ols(y ~ x1m + x2)
 
 d <- data.frame(x1,x1m,x2,y)
-g <- aregImpute(~y + x1m + x2, nk=6, n.impute=5, data=d, pr=F, 
-    type=c('pmm','regression')[2], plotTrans=TRUE)
+
+# Find best-validating (in terms of bootstrap R^2) value of nk
+g <- aregImpute(~ y + x1m + x2, nk=c(0,3:6), data=d)
+g
+# nk=0 is best with respect to mean and median absolute deviations
+
+g <- aregImpute(~y + x1m + x2, nk=0, n.impute=5, data=d, pr=F, 
+    type=c('pmm','regression')[1], plotTrans=FALSE)
+s <- is.na(x1m)
+c(mean(g$imputed$x1), mean(x1[s]))
+ix1 <- g$imputed$x1[,5]
+x1i <- x1m
+x1i[s] <- ix1
+rcorr(cbind(x1,x2,y)[s,])
+rcorr(cbind(x1i,x2,y)[s,])
+# allowing x1 to be nonlinearly transformed seems to increase the
+# correlation between imputed x1 and x2 and imputed x1 and y,
+# in addition to variance of imputed values increasing
+g2 <- g
+g1 <- g
+Ecdf(g1)
+Ecdf(g2, add=TRUE, col='blue')
+
 # For MARx2, pmm works reasonably well when nk=3, regression doesn't
 # both work well when nk=0
 # For MCAR, pmm works well when nk=3, regression works moderately
 # well but imputed values have higher variance than real x1 values
 # when x1m is missing, and coefficient of x2 on y is 0.92 when n=20000
 # Did not get worse by setting nk=6
+# Regression imputation works fine with nk=6 with ~y+I(x1m)+x2
+# Problem with I(y)+x1m+I(x2)
 
 plot(g)
 Ecdf(x1, add=TRUE, col='blue')
@@ -44,12 +67,13 @@ f <- fit.mult.impute(y ~ x1m + x2, ols, xtrans=g, data=d, pr=F)
 coef(f)
 
 # Look at distribution of residuals from areg for various nk
-f <- lm.fit.qr.bare(cbind(x1,x2),y)
+s <- !is.na(x1m)
+f <- lm.fit.qr.bare(cbind(y,x2)[s,],x1m[s])
 Ecdf(resid(f), lwd=2, col='gray')
 py <- f$fitted.values
 ry <- resid(f)
 
-g <- areg(cbind(x1,x2), y, nk=3)
+g <- areg(cbind(y,x2), x1m, nk=6, xtype=rep('l',2))
 p <- g$linear.predictors
 r <- resid(g)
 Ecdf(r, add=TRUE, col='blue')
@@ -58,6 +82,7 @@ plot(py, p)
 coef(lm.fit.qr.bare(py,p))
 plot(ry,r)
 coef(lm.fit.qr.bare(ry,r))
+cor(ry,r)
 sd(ry)
 sd(r)
 pr <- predict(g,cbind(x1,x2))

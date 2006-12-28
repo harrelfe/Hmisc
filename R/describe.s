@@ -445,9 +445,9 @@ latex.describe <- function(object, title=NULL, condense=TRUE,
   
   ct('\\begin{spacing}{0.7}\n', file=file, append=append)
   if(length(at$dimensions)) {
-    ct('\\begin{center}\\bf ', at$descript, '\\\\',
+    ct('\\begin{center}\\textbf{', at$descript, '\\\\',
        at$dimensions[2],'Variables~~~~~',at$dimensions[1],
-       '~Observations\\end{center}\n', file=file, append=TRUE)
+       '~Observations}\\end{center}\n', file=file, append=TRUE)
     if(length(at$naprint))
       ct(at$naprint,'\\\\\n', file=file, append=TRUE)
     

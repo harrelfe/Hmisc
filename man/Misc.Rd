@@ -2,6 +2,7 @@
 \alias{clowess}
 \alias{confbar}
 \alias{getLatestSource}
+\alias{inverseFunction}
 \alias{james.stein}
 \alias{km.quick}
 \alias{lm.fit.qr.bare}
@@ -33,6 +34,18 @@
   \code{getLatestSource} fetches and \code{source}s the most recent
   source code for functions in packages in the Vanderbilty University
   CVS repository.
+
+  \code{inverseFunction} generates a function to find all inverses of a
+  monotonic or nonmonotonic function that is tabulated at vectors (x,y),
+  typically 1000 points.  If the original function is monotonic, simple linear
+  interpolation is used and the result is a vector, otherwise linear
+  interpolation is used within each interval in which the function is
+  monotonic and the result is a matrix with number of columns equal to the
+  number of monotonic intervals.  If a requested y is not within any
+  interval, the extreme x that pertains to the nearest extreme y is
+  returned. Specifying what='sample' to the returned function will cause a
+  vector to be returned instead of a matrix, with elements taken as a
+  random choice of the possible inverses.
 
   \code{james.stein} computes James-Stein shrunken estimates of cell
   means given a response variable (which may be binary) and a grouping
@@ -109,7 +122,9 @@ confbar(at, est, se, width, q = c(0.7, 0.8, 0.9, 0.95, 0.99),
                             ifelse(x < 0.5, qnorm(x/2),
                             qnorm((1 +  x)/2))))
 getLatestSource(x=NULL, package='Hmisc', recent=NULL, avail=FALSE,
-                type=c('svn','cvs')) 
+                type=c('svn','cvs'))
+
+inverseFunction(x, y)
 james.stein(y, group)
 km.quick(S, times, q)
 lm.fit.qr.bare(x, y, tolerance, intercept=TRUE, xpxi=FALSE)
@@ -188,14 +203,20 @@ xless(x, \dots, title)
 	variable.  For \code{getLatestSource} is a character string or
 	vector of character strings containing base file names to retrieve
 	from CVS.  Set \code{x='all'} to retrieve all source files.  For
-	\code{clowess}, \code{x} may also be a list with x and y components.}
+	\code{clowess}, \code{x} may also be a list with x and y
+	components.  For \code{inverseFunction}, \code{x} and \code{y}
+	contain evaluations of the function whose inverse is needed.
+	\code{x} is typically an equally-spaced grid of 1000 points.}
   \item{xpxi}{set to \code{TRUE} to add an element to the result
 	containing the inverse of \eqn{X'X}}
-  \item{y}{a numeric vector}
+  \item{y}{a numeric vector.  For \code{inverseFunction} \code{y} is the
+  evaluated function values at \code{x}.}
   \item{\dots}{arguments passed through to another function}
 }
 \author{Frank Harrell}
 \examples{
+
+
 trap.rule(1:100,1:100)
 
 unPaste(c('a;b or c','ab;d','qr;s'), ';')
@@ -209,6 +230,17 @@ whichClosest(1:100, rep(3,20))
 whichClosePW(1:100, rep(3,20))
 whichClosePW(1:100, rep(3,20), f=.05)
 whichClosePW(1:100, rep(3,20), f=1e-10)
+
+x <- seq(-1, 1, by=.01)
+y <- x^2
+h <- inverseFunction(x,y)
+formals(h)$turns   # vertex
+a <- seq(0, 1, by=.01)
+plot(0, 0, type='n', xlim=c(-.5,1.5))
+lines(a, h(a)[,1])            ## first inverse
+lines(a, h(a)[,2], col='red') ## second inverse
+a <- c(-.1, 1.01, 1.1, 1.2)
+points(a, h(a)[,1])
 
 \dontrun{
 getLatestSource(recent=5)  # source() most recent 5 revised files in Hmisc

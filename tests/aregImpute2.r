@@ -1,7 +1,7 @@
 library(Design)
 source('/tmp/hmisc.s')
-set.seed(1)
-n <- c(20000,2000,200)[2]
+set.seed(4)
+n <- c(20000,2000,200)[1]
 x2 <- rnorm(n)
 x1 <- sqrt(.5) * x2 + rnorm(n, sd=sqrt(1-.5))
 y  <- 1 * x1 + 1 * x2 + rnorm(n)
@@ -10,6 +10,8 @@ type <- c('mcar','mar.x2')[2]
 
 x1m <- if(type=='mcar') ifelse(runif(n) < .5, x1, NA) else
  ifelse(rnorm(n,sd=.8) < x2, x1, NA)  # MAR on x2, R2 50%, 50% missing
+coef(ols(y ~ x1+x2))
+coef(ols(y ~ x1m + x2))
 
 Ecdf(x1)
 Ecdf(x1m, lty=2, add=TRUE)
@@ -22,15 +24,15 @@ options(datadist='dd')
 f <- lrm(is.na(x1m) ~ rcs(x2,4))
 plot(f, x2=NA, fun=plogis)
 
-ols(y ~ x1+x2)
-ols(y ~ x1m + x2)
 
 d <- data.frame(x1,x1m,x2,y)
 
 # Find best-validating (in terms of bootstrap R^2) value of nk
-g <- aregImpute(~ y + x1m + x2, nk=c(0,3:6), data=d)
+g <- aregImpute(~ y + x1m + x2, nk=c(0,3:5), data=d)
 g
 # nk=0 is best with respect to mean and median absolute deviations
+# Another good model is one that forces the target variable (x1m) to
+# be transformed linearly using tlinear=TRUE
 
 g <- aregImpute(~y + x1m + x2, nk=0, n.impute=5, data=d, pr=F, 
     type=c('pmm','regression')[1], plotTrans=FALSE)
@@ -44,6 +46,12 @@ rcorr(cbind(x1i,x2,y)[s,])
 # allowing x1 to be nonlinearly transformed seems to increase the
 # correlation between imputed x1 and x2 and imputed x1 and y,
 # in addition to variance of imputed values increasing
+
+f <- fit.mult.impute(y ~ x1m + x2, ols, xtrans=g, data=d, pr=F)
+coef(f)
+
+
+
 g2 <- g
 g1 <- g
 Ecdf(g1)
@@ -63,8 +71,6 @@ Ecdf(x1, add=TRUE, col='blue')
 Ecdf(x1m, lty=2, add=TRUE)
 Ecdf(x1[is.na(x1m)], lty=2, lwd=3, add=TRUE)
 
-f <- fit.mult.impute(y ~ x1m + x2, ols, xtrans=g, data=d, pr=F)
-coef(f)
 
 # Look at distribution of residuals from areg for various nk
 s <- !is.na(x1m)

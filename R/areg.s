@@ -32,8 +32,6 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
   xtype[nk==0 & xtype=='s'] <- 'l'
   names(xtype) <- xnam
 
-  aprx <- function(x, y, xout) approx(x, y, xout=xout, rule=2)$y
-  
   fcancor <- function(X, Y) {
     ## If canonical variate transformation of Y is descending in Y,
     ## negate all parameters
@@ -57,9 +55,14 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
     f$ty    <- ty
     f
   }
+
+  need2getinv <- FALSE
   
-  Y <- aregTran(y, ytype, nk)
-  yparms <- attr(Y, 'parms')
+  Y <- aregTran(y, ytype, nk, functions=TRUE)
+  at <- attributes(Y)
+  ytrans <- at$fun
+  yinv   <- at$inversefun  ## NULL if type='s'; need coef
+  yparms <- at$parms
 
   xdf <- ifelse(xtype=='l', 1, nk-1)
   j <- xtype=='c'
@@ -148,7 +151,17 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
     ydf  <- length(cof) - 1
     lp   <- as.vector(matxv(X, xcof))
     res  <- as.vector(ty - lp)
-    puy  <- aprx(ty, y, lp)  ## predicted untransformed y
+
+    if(!length(yinv)) {
+      ## spline transformation, need coef to get inverse y transform
+      yy   <- seq(min(y), max(y), length=1000)
+      tyy  <- ytrans(yy, coef=cof)
+      yinv <- inverseFunction(yy, tyy)
+      need2getinv <- TRUE
+    }
+
+    puy  <- yinv(lp, what='sample')
+    if(length(y) != length(puy)) browser()
     mad  <- mean(abs(y-puy))
     med  <- median(abs(y-puy))
     
@@ -164,12 +177,15 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
         ybeta <- matxv(Y,by)
         r2orig <- cor(xbeta, ybeta)^2
         r2opt  <- r2opt + r2boot - r2orig
-        puyb <- aprx(f$ty, y[s], xbeta[s])
-        er <- abs(y[s] - puyb)
+        puyall <- if(need2getinv) {
+          tyyb  <- ytrans(yy, coef=by)  ## keeping constant knots
+          yinvb <- inverseFunction(yy, tyyb)
+          yinvb(xbeta, coef=by, what='sample')
+        } else yinv(xbeta, coef=by)
+        er <- abs(y[s] - puyall[s])
         madboot <- mean(er)
         medboot <- median(er)
-        puyo <- aprx(f$ty, y[s], xbeta)
-        er <- abs(y - puyo)
+        er <- abs(y - puyall)
         madorig <- mean(er)
         medorig <- median(er)
         madopt <- madopt + madboot - madorig
@@ -217,7 +233,11 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
       xbo  <- matxv(X[s==j,,drop=FALSE], bx)
       ybo  <- matxv(Y[s==j,,drop=FALSE], by)
       r2cv <- r2cv + cor(xbo, ybo)^2
-      puy  <- aprx(g$ty, y[s!=j], xbo)
+      puy <- if(need2getinv) {
+        tyyb  <- ytrans(yy, coef=by)  ## keeping constant knots
+        yinvb <- inverseFunction(yy, tyyb)
+        yinvb(xbo, coef=by, what='sample')
+        } else yinv(xbo, coef=by)
       er   <- abs(y[s==j] - puy)
       madcv<- madcv + mean(er)
       medcv<- medcv + median(er)
@@ -230,6 +250,7 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
                  rsquared=r2, rsquaredcv=r2cv, nk=nk, xdf=xdf, ydf=ydf,
                  xcoefficients=xcof, ycoefficients=cof,
                  xparms=xparms, yparms=yparms, xmeans=xmeans,
+                 ytrans=ytrans, yinv=yinv,
                  linear.predictors=lp, residuals=res,
                  xtype=xtype, ytype=ytype, yname=yname,
                  r2boot=r2boot, r2opt=r2opt,
@@ -241,8 +262,13 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
             class='areg')
 }
 
-aregTran <- function(z, type, nk=length(parms), parms=NULL) {
-  if(type=='l' || (type=='s' && nk==0)) return(as.matrix(z))
+aregTran <- function(z, type, nk=length(parms), parms=NULL, functions=FALSE) {
+  if(type=='l' || (type=='s' && nk==0)) 
+    return(if(functions)
+           structure(as.matrix(z),
+                     fun       =function(x,...)x,
+                     inversefun=function(x,...)x) else as.matrix(z))
+
   if(type=='c') {
     n <- length(z)
     lp <- length(parms)
@@ -253,19 +279,49 @@ aregTran <- function(z, type, nk=length(parms), parms=NULL) {
     z <- matrix(0, nrow=n, ncol=length(parms)-1)
     z[cbind(1:n, x-1)] <- 1
     attr(z, 'parms') <- if(lp)parms else levels(w)
+    if(functions) {
+      f <- function(x, parms, coef) {
+        if(length(parms) > length(coef)) coef <- c(0,coef)
+        coef[-1] <- coef[-1] + coef[1]
+        names(coef) <- parms
+        coef[x]
+      }
+      formals(f) <- list(x=integer(0), parms=parms, coef=numeric(0))
+      attr(z, 'fun') <- f
+      ## what is ignored; for compatibility with inverseFunction in Misc.s
+      f <- function(y, parms, coef, what=character(0)) {
+        if(length(parms) > length(coef)) coef <- c(0, coef)
+        isna <- is.na(y)
+        y[isna] <- 0
+        x <- parms[whichClosest(c(coef[1], coef[1] + coef[-1]), y)]
+        x[isna] <- NA
+        x
+      }
+      formals(f) <- list(y=numeric(0), parms=parms,
+                         coef=numeric(0), what=character(0))
+      attr(z, 'inversefun') <- f
+    }
     z
   } else {
     z <- rcspline.eval(z, knots=parms, nk=nk, inclx=TRUE)
-    attr(z,'parms') <- attr(z,'knots')
+    knots <- attr(z, 'knots')
+    attr(z,'parms') <- knots
+    if(functions) attr(z, 'fun') <- rcsplineFunction(knots)
+    ## inverse function created later when coefficients available
     z
   }
 }
 
-predict.areg <- function(object, x, ...) {
+predict.areg <- function(object, x, type=c('lp','fitted'),
+                         what=c('all','sample'), ...) {
+  type <- match.arg(type)
+  what <- match.arg(what)
   beta   <- object$xcoefficients
   xparms <- object$xparms
   xtype  <- object$xtype
   xdf    <- object$xdf
+  ybeta  <- object$ycoefficients
+  yinv   <- object$yinv
   x <- as.matrix(x)
   p <- length(xdf)
   X <- matrix(NA, nrow=nrow(x), ncol=sum(xdf))
@@ -277,7 +333,8 @@ predict.areg <- function(object, x, ...) {
     X[,(j+1):(j+m)] <- w
     j <- j + m
   }
-  matxv(X, beta)
+  xb <- matxv(X, beta)
+  if(type=='fitted') yinv(xb, what=what, coef=ybeta) else xb
 }
 
 print.areg <- function(x, digits=4, ...) {

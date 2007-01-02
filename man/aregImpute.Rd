@@ -22,16 +22,17 @@ this model is used to predict all of the original missing and
 non-missing values for the target variable.
 
 \code{areg} is used to fit the imputation models.  By default, linearity
-is assumed.  If \code{nk} is three or greater, \code{areg}
+is assumed for target variables (variables being imputed) and
+\code{nk=3} knots are assumed for continuous predictors transformed
+using restricted cubic splines.  If \code{nk} is three or greater and
+\code{tlinear} is set to \code{FALSE}, \code{areg}
 simultaneously find transformations of the target variable and of all of
 the predictors, to get a good fit assuming additivity, maximizing
 \eqn{R^2}, using the same canonical correlation method as
 \code{transcan}.  Flexible transformations may be overridden for
 specific variables by specifying the identity transformation for them.
 When a categorical variable is being predicted, the flexible
-transformation is Fisher's optimum scoring method.  For continuous
-variables.  Nonlinear transformations for continuous variables are
-restricted cubic spline function which may be nonmonotonic.  If
+transformation is Fisher's optimum scoring method.  Nonlinear transformations for continuous variables may be nonmonotonic.  If
 \code{nk} is a vector, \code{areg}'s bootstrap and \code{crossval=10}
 options will be used to help find the optimum validating value of
 \code{nk} over values of that vector, at the last imputation iteration.
@@ -39,7 +40,8 @@ For the imputations, the minimum value of \code{nk} is used.
 
 Instead of defaulting to taking random draws from fitted imputation
 models using random residuals as is done by \code{transcan},
-\code{aregImpute} uses predictive mean matching with optional weighted
+\code{aregImpute} by default uses predictive mean matching with optional
+weighted 
 probability sampling of donors rather than using only the closest match.
 Predictive mean matching works for binary, categorical, and continuous
 variables without the need for iterative maximum likelihood fitting for
@@ -53,12 +55,18 @@ used in \code{transcan}.  This option should be used when mechanistic
 missingness requires the use of extrapolation during imputation.
 
 A \code{print} method summarizes the results, and a \code{plot} method plots
-distributions of imputed values.
-Typically, \code{fit.mult.impute} will be called after \code{aregImpute}.
+distributions of imputed values.  Typically, \code{fit.mult.impute} will
+be called after \code{aregImpute}.
+
+If a target variable is transformed nonlinearly (i.e., if \code{nk} is
+greater than zero and \code{tlinear} is set to \code{FALSE}) and the
+estimated target variable transformation is non-monotonic, imputed
+values are not unique.  When \code{type='regression'}, a random choice
+of possible inverse values is made.
 }
 \usage{
 aregImpute(formula, data, subset, n.impute=5, group=NULL,
-           nk=0, type=c('pmm','regression'),
+           nk=3, tlinear=TRUE, type=c('pmm','regression'),
            match=c('weighted','closest'), fweighted=0.2, burnin=3,
            x=FALSE, pr=TRUE, plotTrans=FALSE, tolerance=NULL, B=75)
 \method{print}{aregImpute}(x, digits=3, \dots)
@@ -114,7 +122,10 @@ recommended but 10 or more doesn't hurt.
   \code{nk} ranging over the given vector.  The errors are on the
   original untransformed scale.  The mean absolute error is the
   recommended basis for choosing the number of knots (or linearity).
-  }
+}
+\item{tlinear}{set to \code{FALSE} to allow a target variable (variable
+  being imputed) to have a nonlinear left-hand-side transformation when
+  \code{nk} is 3 or greater}
 \item{type}{
   The default is \code{"pmn"} for predictive mean matching,
   which is a more nonparametric approach that will work for categorical
@@ -213,6 +224,7 @@ vector of types of transformations used for each variable
 (\code{"s","l","c"} for smooth spline, linear, or categorical with dummy
 variables)
 }
+\item{tlinear}{value of \code{tlinear} parameter}
 \item{nk}{number of knots used for smooth transformations}
 \item{cat.levels}{
 list containing character vectors specifying the \code{levels} of
@@ -296,6 +308,10 @@ transformed target values (linear extrapolation when a random residual
 is large enough to put the random draw prediction outside the range of
 observed values).  The bootstrap is used as with \code{type="pmm"} to
 factor in the uncertainty of the imputation model.
+
+As model uncertainty is high when the transformation of a target
+variable is unknown, \code{tlinear} defaults to \code{TRUE} to limit the
+variance in predicted values when \code{nk} is positive.
 }
 \author{
 Frank Harrell
@@ -351,7 +367,13 @@ x1[1:250] <- NA
 x2[251:350] <- NA
 d <- data.frame(x1,x2,x3,y)
 # Find value of nk that yields best validating imputation models
-f <- aregImpute(~y + x1 + x2 + x3, nk=c(0,3:5), data=d, B=10) # normally B=75
+# tlinear=FALSE means to not force the target variable to be linear
+f <- aregImpute(~y + x1 + x2 + x3, nk=c(0,3:5), tlinear=FALSE,
+                data=d, B=10) # normally B=75
+f
+# Try forcing target variable (x1, then x2) to be linear while allowing
+# predictors to be nonlinear (could also say tlinear=TRUE)
+f <- aregImpute(~y + x1 + x2 + x3, nk=c(0,3:5), data=d, B=10)
 f
 
 # Use 100 imputations to better check against individual true values

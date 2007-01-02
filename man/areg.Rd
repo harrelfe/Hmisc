@@ -22,6 +22,15 @@ accuracy of a flexible model, because it is difficult to compare
 \eqn{R^2} under different y-transformations, and because \eqn{R^2}
 allows for an out-of-sample recalibration (i.e., it only measures
 relative errors).
+
+Note that uncertainty about the proper transformation of \code{y} causes
+an enormous amount of model uncertainty.  When the transformation for
+\code{y} is estimated from the data a high variance in predicted values
+on the original \code{y} scale may result, especially if the true
+transformation is linear.  Comparing bootstrap or cross-validated mean
+absolute errors with and without restricted the \code{y} transform to be
+linear (\code{ytype='l'}) may help the analyst choose the proper model
+complexity.
 }
 \usage{
 areg(x, y, xtype = NULL, ytype = NULL, nk = 4,
@@ -31,7 +40,8 @@ areg(x, y, xtype = NULL, ytype = NULL, nk = 4,
 
 \method{plot}{areg}(x, whichx = 1:ncol(x$x), \dots)
 
-\method{predict}{areg}(object, x, \dots)
+\method{predict}{areg}(object, x, type=c('lp','fitted'),
+                       what=c('all','sample'), \dots)
 }
 \arguments{
   \item{x}{
@@ -72,6 +82,13 @@ areg(x, y, xtype = NULL, ytype = NULL, nk = 4,
   \item{whichx}{integer or character vector specifying which predictors
 	are to have their transformations plotted (default is all).  The
 	\code{y} transformation is always plotted.}
+  \item{type}{tells \code{predict} whether to obtain predicted
+	untransformed \code{y} (\code{type='lp'}, the default) or predicted
+	\code{y} on the original scale (\code{type='fitted'})}
+  \item{what}{When the \code{y}-transform is non-monotonic you may
+	specify \code{what='sample'} to \code{predict} to obtain a random
+	sample of \code{y} values on the original scale instead of a matrix
+	of all \code{y}-inverses.  See \code{\link{inverseFunction}}.}
   \item{\dots}{arguments passed to the plot function.}
 }
 \details{
@@ -108,11 +125,11 @@ set.seed(1)
 
 ns <- c(30,300,3000)
 for(n in ns) {
-  y <- sample(1:5,n,TRUE)
+  y <- sample(1:5, n, TRUE)
   x <- abs(y-3) + runif(n)
   par(mfrow=c(3,4))
   for(k in c(0,3:5)) {
-    z <- areg(x,y,ytype='c',nk=k)
+    z <- areg(x, y, ytype='c', nk=k)
     plot(x, z$tx)
 	title(paste('R2=',format(z$rsquared)))
     tapply(z$ty, y, range)
@@ -121,7 +138,7 @@ for(n in ns) {
     plot(a,b)
 	abline(lsfit(a,b))
     # Should get same result to within linear transformation if reverse x and y
-    w <- areg(y,x,xtype='c',nk=k)
+    w <- areg(y, x, xtype='c', nk=k)
     plot(z$ty, w$tx)
     title(paste('R2=',format(w$rsquared)))
     abline(lsfit(z$ty, w$tx))
@@ -143,11 +160,11 @@ plot(z)
 
 \dontrun{		
 # Examine overfitting when true transformations are linear
-par(mfrow=c(3,3))
+par(mfrow=c(4,3))
 for(n in c(200,2000)) {
   x <- rnorm(n); y <- rnorm(n) + x
-    for(nk in c(0,5)) {
-    z <- areg(x,y,nk=nk,crossval=10,B=100)
+    for(nk in c(0,3,5)) {
+    z <- areg(x, y, nk=nk, crossval=10, B=100)
     print(z)
     plot(z)
     title(paste('n=',n))
@@ -155,13 +172,24 @@ for(n in c(200,2000)) {
 }
 par(mfrow=c(1,1))
 
-# Examine underfitting when true transformation is quadratic
+# Underfitting when true transformation is quadratic but overfitting
+# when y is allowed to be transformed
+set.seed(49)
 n <- 200
 x <- rnorm(n); y <- rnorm(n) + .5*x^2
-z <- areg(x, y, nk=0, crossval=10, B=100)
+#areg(x, y, nk=0, crossval=10, B=100)
+#areg(x, y, nk=4, ytype='l', crossval=10, B=100)
+z <- areg(x, y, nk=4) #, crossval=10, B=100)
 z
-z <- areg(x, y, nk=4, crossval=10, B=100)
-z
+# Plot x vs. predicted value on original scale.  Since y-transform is
+# not monotonic, there are multiple y-inverses
+xx <- seq(-3.5,3.5,length=1000)
+yhat <- predict(z, xx, type='fitted')
+plot(x, y, xlim=c(-3.5,3.5))
+for(j in 1:ncol(yhat)) lines(xx, yhat[,j], col=j)
+# Plot a random sample of possible y inverses
+yhats <- predict(z, xx, type='fitted', what='sample')
+points(xx, yhats, pch=2)
 }
 
 # True transformation of x1 is quadratic, y is linear
@@ -183,7 +211,7 @@ plot(z)
 n <- 1000
 x <- matrix(runif(n*20),n,20)
 y <- rnorm(n)
-z <- areg(x,y,nk=5)
+z <- areg(x, y, nk=5)  # add crossval=4 to expose the problem
 
 # Test predict function
 n <- 50

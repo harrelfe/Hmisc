@@ -1,6 +1,6 @@
 # $Id$
 aregImpute <- function(formula, data, subset, n.impute=5,
-                       group=NULL, nk=0,
+                       group=NULL, nk=0, tlinear=FALSE,
                        type=c('pmm','regression'),
                        match=c('weighted','closest'), fweighted=0.2,
                        burnin=3, x=FALSE,
@@ -20,8 +20,9 @@ aregImpute <- function(formula, data, subset, n.impute=5,
   m <- match.call(expand = FALSE)
   Terms <- terms(formula, specials='I')
   m$formula <- formula
-  m$match <- m$fweighted <- m$x <- m$n.impute <- m$nk <- m$burnin <-
-    m$type <- m$group <- m$pr <- m$plotTrans <- m$tolerance <- m$B <- NULL
+  m$match <- m$fweighted <- m$x <- m$n.impute <- m$nk <- m$tlinear <-
+    m$burnin <- m$type <- m$group <- m$pr <- m$plotTrans <- m$tolerance <-
+      m$B <- NULL
   m$na.action <- na.retain
 
   m[[1]] <- as.name("model.frame")
@@ -120,6 +121,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
       nai <- na[[i]]      ## subscripts of NAs on xf[i,]
       j <- (1:n)[-nai]    ## subscripts of non-NAs on xf[i,]
       npr <- length(j)
+      ytype <- if(tlinear && vtype[i]=='s')'l' else vtype[i]
       
       if(iter==(burnin + n.impute) && length(nk) > 1) {
         rn <- c('Bootstrap bias-corrected R^2',
@@ -134,7 +136,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
         for(k in nk) {
           jj <- jj + 1
           f <- areg(xf[,-i,drop=FALSE], xf[,i],
-                    xtype=vtype[-i], ytype=vtype[i],
+                    xtype=vtype[-i], ytype=ytype,
                     nk=k, na.rm=FALSE,
                     tolerance=tolerance, B=B, crossval=10)
           w <- c(f$r2boot, f$rsquaredcv, f$madboot, f$madcv,
@@ -159,7 +161,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
 
       X <- xf[,-i,drop=FALSE]
 
-      f <- areg(X[s,], xf[s,i], xtype=vtype[-i], ytype=vtype[i],
+      f <- areg(X[s,], xf[s,i], xtype=vtype[-i], ytype=ytype,
                 nk=min(nk), na.rm=FALSE, tolerance=tolerance)
       dof[names(f$xdf)] <- f$xdf
       dof[nami] <- f$ydf
@@ -170,7 +172,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
       pti <- predict(f, X)  # predicted transformed xf[,i]
       
       if(type=='pmm') {
-      if(vtype[i]=='l') pti <- (pti - mean(pti))/sqrt(var(pti))
+      if(ytype=='l') pti <- (pti - mean(pti))/sqrt(var(pti))
         whichclose <- if(match=='closest') {
           
           ## Jitter predicted transformed values for non-NAs to randomly
@@ -197,7 +199,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
                  replace=length(nai) > length(res))
         
         ## predicted random draws on untransformed scale
-        impi <- approxExtrap(f$ty, f$y, xout=ptir)$y
+        impi <- f$yinv(ptir, what='sample', coef=f$ycoefficients)
       }
       xf[nai,i] <- impi
       if(iter > burnin) imp[[nam[i]]][,iter-burnin] <- impi
@@ -212,7 +214,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
   structure(list(call=acall, formula=formula,
                  match=match, fweighted=fweighted,
                  n=n, p=p, na=na, nna=nna,
-                 type=vtype, nk=min(nk),
+                 type=vtype, tlinear=tlinear, nk=min(nk),
                  cat.levels=cat.levels, df=dof,
                  n.impute=n.impute, imputed=imp, x=xf, rsq=rsq,
                  resampacc=resampacc),
@@ -230,6 +232,8 @@ print.aregImpute <- function(x, digits=3, ...)
   info <- data.frame(type=x$type, d.f.=x$df,
                      row.names=names(x$type))
   print(info)
+  if(x$tlinear)
+    cat('\nTransformation of Target Variables Forced to be Linear\n')
   
   cat('\nR-squares for Predicting Non-Missing Values for Each Variable\nUsing Last Imputations of Predictors\n')
   print(round(x$rsq, digits))
@@ -262,7 +266,6 @@ plot.aregImpute <- function(x, nclass=NULL, type=c('ecdf','hist'),
     
     if(diagnostics) {
       r <- range(xi)
-      ## cat(min(maxn,nrow(xi)))
       for(j in 1:min(maxn,nrow(xi))) {
         plot(1:n.impute, xi[j,], ylim=r, xlab='Imputation',
              ylab=paste("Imputations for Obs.",j,"of",n))

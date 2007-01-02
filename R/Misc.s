@@ -1106,6 +1106,75 @@ approxExtrap <- function(x, y, xout, method='linear', n=50, rule=2,
   list(x=xout, y=w)
 }
 
+
+inverseFunction <- function(x, y) {
+  d <- diff(y)
+  xd <- x[-1]
+  dl <- c(NA, d[-length(d)])
+  ic <- which(d>=0 & dl<0 | d>0 & dl<=0 | d<=0 & dl>0 | d<0 & dl>=0)
+  nt <- length(ic)
+  k <- nt + 1
+  if(k==1) {
+    h <- function(y, xx, yy, turns, what, coef)
+      approx(yy, xx, xout=y, rule=2)$y
+    formals(h) <- list(y=numeric(0), xx=x, yy=y, turns=numeric(0),
+                       what=character(0), coef=numeric(0))
+  return(h)
+  }
+  turns <- x[ic]
+  turnse <- c(-Inf, turns, Inf)
+  xrange <- yrange <- matrix(NA, nrow=k, ncol=2)
+  for(j in 1:k) {
+    l <- which(x >= turnse[j] & x <= turnse[j+1])
+    xrange[j,] <- x[l[c(1,length(l))]]
+    yrange[j,] <- y[l[c(1,length(l))]]
+  }
+
+  for(j in 1:length(ic)) {
+    l <- (ic[j]-1):(ic[j]+1)
+    turns[j] <- approxExtrap(d[l], xd[l], xout=0, na.rm=TRUE)$y
+  }
+
+  h <- function(y, xx, yy, turns, xrange, yrange, what, coef) {
+    what <- match.arg(what)
+    ## Find number of monotonic intervals containing a given y value
+    ylo <- pmin(yrange[,1],yrange[,2])
+    yhi <- pmax(yrange[,1],yrange[,2])
+    n <- outer(y, ylo, function(a,b)a >= b) &
+         outer(y, yhi, function(a,b)a <= b)
+    ## Columns of n indicate whether or not y interval applies
+    ni <- nrow(yrange)
+    fi <- matrix(NA, nrow=length(y), ncol=ni)
+    turnse <- c(-Inf, turns, Inf)
+    for(i in 1:ni) {
+      w <- n[,i]
+      if(any(w)) {
+        l <- xx >= turnse[i] & xx <= turnse[i+1]
+        fi[w,i] <- approx(yy[l], xx[l], xout=y[w])$y
+      }
+    }
+    noint <- !apply(n, 1, any)
+    if(any(noint)) {
+      ## Determine if y is closer to yy at extreme left or extreme right
+      ## of an interval
+      m <- length(yy)
+      yl <- as.vector(yrange); xl <- as.vector(xrange)
+      fi[noint,1] <- xl[whichClosest(yl, y[noint])]
+    }
+    if(what=='sample')
+      apply(fi, 1, function(x) {
+       z <- x[!is.na(x)]
+       if(length(z)==1) z else if(length(z)==0) NA else sample(z, size=1)
+       }) else fi
+  }
+  formals(h) <- list(y=numeric(0), xx=x, yy=y, turns=turns,
+                     xrange=xrange, yrange=yrange,
+                     what=c('all', 'sample'), coef=numeric(0))
+  ## coef is there for compatibility with areg use
+  h
+}
+
+
 if(!existsFunction('reorder.factor'))
   reorder.factor <- function(x, v, FUN = mean, ...)
     ordered(x, levels(x)[order(tapply(v, x, FUN, ...))])

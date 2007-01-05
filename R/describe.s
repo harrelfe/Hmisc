@@ -719,7 +719,18 @@ contents.data.frame <- function(object, ...)
     sm[i] <- storage.mode(x)
     nas[i] <- sum(is.na(x))
     if(length(atl))
+    {
+      if(length(Lev)) for(j in 1:length(Lev))
+        {
+          w <- Lev[[j]]
+          if(!is.name(w) && is.logical(all.equal(w, atl)))
+            {
+              atl <- as.name(names(Lev)[j])
+              break   
+            }
+        }
       Lev[[nam[i]]] <- atl
+    }
   }
   
   w <- list(Labels=if(any(lab!=''))         lab,
@@ -772,19 +783,34 @@ print.contents.data.frame <-
 
   if(prlevels && length(L <- x$Levels)) {
     cat('\n')
-    nam <- lin <- names(L)
+    nam <- names(L)
     w <- .Options$width-max(nchar(nam))-5
+    reusingLevels <- sapply(L, is.name)
+    fullLevels <- which(!reusingLevels)
+    namf <- lin <- names(L[fullLevels])
     ## separate multiple lines per var with \n for print.char.matrix
-    for(i in 1:length(L))
-      lin[i] <- paste(pasteFit(L[[i]], width=w), collapse='\n')
+    j <- 0
+    for(i in fullLevels)
+      {
+        j <- j + 1
+        varsUsingSame <- NULL
+        if(sum(reusingLevels))
+          {
+            for(k in which(reusingLevels)) if(L[[k]] == nam[j]) 
+              varsUsingSame <- c(varsUsingSame, nam[k])
+            if(length(varsUsingSame))
+              namf[j] <- paste(c(namf[j], varsUsingSame), collapse='\n')
+          }
+        lin[j] <- paste(pasteFit(L[[i]], width=w), collapse='\n')
+      }
     if(.R.) {
-      z <- cbind(Variable=nam,Levels=lin)
+      z <- cbind(Variable=namf, Levels=lin)
       print.char.matrix(z, col.txt.align='left', col.name.align='left',
                         row.names=TRUE, col.names=TRUE)
     } else print.char.matrix(matrix(lin,ncol=1,
                                     dimnames=list(nam,'Levels')))
   }
-
+  
   longlab <- x$longLabels
   if(length(longlab)) {
     if(existsFunction('strwrap'))
@@ -807,9 +833,11 @@ print.contents.data.frame <-
 html.contents.data.frame <-
   function(object, sort=c('none','names','labels','NAs'), prlevels=TRUE,
            file=paste('contents',object$dfname,'html',sep='.'),
+           levelType=c('list','table'),
            append=FALSE, ...)
 {
   sort <- match.arg(sort)
+  levelType <- match.arg(levelType)
   d <- object$dim
   maxnas <- object$maxnas
   cat('<hr><h2>Data frame:',object$dfname,
@@ -839,11 +867,17 @@ html.contents.data.frame <-
     link[names(longlab),'Name'] <- paste('#longlab',names(longlab),sep='.')
   }
   
+  L <- object$Levels
+  Lnames <- names(L)
   if(length(cont$Levels)) {
     cont$Levels <- ifelse(cont$Levels==0, '', format(cont$Levels))
-    link[,'Levels'] <- ifelse(cont$Levels=='', '', paste('#levels',nam,sep='.'))
+    namUsed     <- sapply(L, function(z) if(is.name(z)) as.character(z) else '')
+    reusingLevels <- namUsed != ''
+    fullLevels  <- which(!reusingLevels)
+    namUsed     <- ifelse(reusingLevels, namUsed, Lnames)
+    names(namUsed) <- Lnames
+    link[,'Levels'] <- ifelse(cont$Levels=='', '', paste('#levels',namUsed[nam],sep='.'))
   }
-  
   adj <- rep('l', length(cont))
   adj[names(cont) %in% c('NAs','Levels')] <- 'r'
   out <- html(cont, file=file, append=TRUE,
@@ -851,21 +885,79 @@ html.contents.data.frame <-
               col.just=adj, ...)
   
   cat('<hr>\n', file=file, append=TRUE)
-
-  if(prlevels && length(L <- object$Levels)) {
-    nam <- names(L)
-    lab <- lev <- character(0)
-    for(i in 1:length(L)) {
-      l <- L[[i]]
-      lab <- c(lab, nam[i], rep('',length(l)-1))
-      lev <- c(lev, l)
+  
+  if(prlevels && length(L))
+    {
+      if(levelType=='list')
+        {
+          cat('<h2>Category Levels</h2>\n', file=file, append=TRUE)
+          for(i in fullLevels) 
+            {
+              l <- L[[i]]
+              nami <- Lnames[i]
+              w <- nami
+              if(sum(reusingLevels))
+                for(k in which(reusingLevels))
+                  if(L[[k]] == nami) w <- c(w, Lnames[k])
+              cat('<a name="levels.',nami,'"><h3>',
+                  paste(w, collapse=', '), '</h3>\n', sep='', 
+                  file=file, append=TRUE)
+              cat('<ul>\n', file=file, append=TRUE)
+              for(k in l) cat('<li>', k, '</li>\n', sep='',
+                              file=file, append=TRUE)
+              cat('</ul>\n', file=file, append=TRUE)
+            }
+        }
+      else
+        {  
+          ## Function to split a character vector x as evenly as
+          ## possible into n elements, pasting multiple elements
+          ## together when needed
+          evenSplit <- function(x, n)
+            {
+              indent <- function(z) if(length(z)==1)z else
+              c(z[1], paste('&nbsp&nbsp&nbsp',z[-1],sep=''))
+              m <- length(x)
+              if(m <= n) return(c(indent(x), rep('',n-m)))
+              totalLength <- sum(nchar(x)) + (m-1)*3.5
+              ## add indent, comma, space
+              lineLength  <- ceiling(totalLength/n)
+              y <- pasteFit(x, sep=', ', width=lineLength)
+              m <- length(y)
+              if(m > n) for(j in 1:10)
+                {
+                  lineLength <- round(lineLength*1.1)
+                  y <- pasteFit(x, sep=', ', width=lineLength)
+                  m <- length(y)
+                  if(m <= n) break
+                }
+              ## Take evasive action if needed
+              if(m==n) indent(y) else if(m < n)
+                c(indent(y), rep('', n-m)) else 
+              c(paste(x, collapse=', '), rep('',n-1))
+            }
+          nam <- names(L)
+          v <- lab <- lev <- character(0)
+          j <- 0
+          for(i in fullLevels) 
+            {
+              j <- j + 1
+              l <- L[[i]]
+              nami <- nam[i]
+              v <- c(v, nami)
+              w <- nami
+              if(sum(reusingLevels))
+                for(k in which(reusingLevels)) if(L[[k]] == nam[i]) w <- c(w, nam[k])
+              lab <- c(lab, evenSplit(w, length(l)))
+              lev <- c(lev, l)
+            }
+          z <- cbind(Variable=lab, Levels=lev)
+          out <- html(z, file=file, append=TRUE,
+                      link=ifelse(lab=='','',paste('levels',v,sep='.')),
+                      linkCol='Variable', linkType='name', ...)
+          cat('<hr>\n',file=file,append=TRUE)
+        }
     }
-    z <- cbind(Variable=lab, Levels=lev)
-    out <- html(z, file=file, append=TRUE,
-                link=ifelse(lab=='','',paste('levels',lab,sep='.')),
-                linkCol='Variable', linkType='name', ...)
-    cat('<hr>\n',file=file,append=TRUE)
-  }
 
   i <- longlab != ''
   if(any(i)) {

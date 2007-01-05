@@ -1352,7 +1352,7 @@ pasteFit <- function(x, sep=',', width=.Options$width)
     if(cur=='' | (m[i] + nchar(cur) <= width))
       cur <- paste(cur, x[i],
                    sep=if(cur=='')''
-                       else ',')
+                       else sep)
     else {
       out <- c(out, cur)
       cur <- x[i]

@@ -22,7 +22,8 @@ number of levels the browser jumps to the correct part of a table of
 factor levels for all the \code{factor} variables.  If long labels are
 present (\code{"longlabel"} attributes on variables), these are printed
 at the bottom and the \code{html} method links to them through the
-regular labels.
+regular labels.  Variables having the same \code{levels} in the same
+order have the levels factored out for brevity.
 
 \code{contents.list} prints a directory of datasets when
 \code{\link{sasxport.get}} imported more than one SAS dataset.
@@ -32,8 +33,10 @@ contents(object, \dots)
 \method{contents}{data.frame}(object, \dots)
 \method{print}{contents.data.frame}(x,
     sort=c('none','names','labels','NAs'), prlevels=TRUE, \dots) 
-\method{html}{contents.data.frame}(object,  sort=c('none','names','labels','NAs'), prlevels=TRUE,
+\method{html}{contents.data.frame}(object,
+           sort=c('none','names','labels','NAs'), prlevels=TRUE,
            file=paste('contents',object$dfname,'html',sep='.'),
+           levelType=c('list','table'),
            append=FALSE, \dots)
 \method{contents}{list}(object, dslabels, \dots)
 \method{print}{contents.list}(x,
@@ -58,6 +61,9 @@ contents(object, \dots)
   \item{file}{file to which to write the html code.  Default is
    \code{"conents.dfname.html"} where \code{dfname} is the name of the data
    frame processed by \code{contents}.}
+ \item{levelType}{By default, bullet lists of category levels are
+   constructed in html.  Set \code{levelType='table'} to put levels in
+   html table format.
  \item{append}{set to \code{TRUE} to add html code to an existing file}
  \item{\dots}{arguments passed from \code{html} to \code{format.df},
 unused otherwise}
@@ -95,4 +101,5 @@ w <- html(k, file='my.html')   # create my.html, don't display
 }
 \keyword{data}
 \keyword{interface}
+\concept{html}
 

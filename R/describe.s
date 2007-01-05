@@ -890,7 +890,7 @@ html.contents.data.frame <-
     {
       if(levelType=='list')
         {
-          cat('<h2>Category Levels</h2>\n', file=file, append=TRUE)
+          cat('<h2 align="center">Category Levels</h2>\n', file=file, append=TRUE)
           for(i in fullLevels) 
             {
               l <- L[[i]]

@@ -1291,7 +1291,7 @@ html.data.frame <-
     x <- cbind('Name'=r, x)
   
   cat('<TABLE BORDER>\n', file=file, append=append)
-  cat('<tr>', paste('<td>', dimnames(x)[[2]], '</td>',sep=''), '</tr>\n',
+  cat('<tr>', paste('<td><h3>', dimnames(x)[[2]], '</h3></td>',sep=''), '</tr>\n',
       sep='', file=file, append=file!='')
   
   if(length(link)) {

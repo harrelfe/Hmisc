@@ -255,10 +255,11 @@ print.aregImpute <- function(x, digits=3, ...)
 }
 
 plot.aregImpute <- function(x, nclass=NULL, type=c('ecdf','hist'),
-                            datadensity=c("none", "rug", "hist", "density"),
+                            datadensity=c("hist","none","rug","density"),
                             diagnostics=FALSE, maxn=10, ...)
 {
   type <- match.arg(type)
+  datadensity <- match.arg(datadensity)
   i <- x$imputed
   catg <- x$categorical
   lev  <- x$cat.levels

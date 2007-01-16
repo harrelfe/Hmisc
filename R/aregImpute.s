@@ -21,8 +21,9 @@ aregImpute <- function(formula, data, subset, n.impute=5,
   m <- match.call(expand = FALSE)
   Terms <- terms(formula, specials='I')
   m$formula <- formula
-  m$match <- m$fweighted <- m$x <- m$n.impute <- m$nk <- m$tlinear <-
-    m$burnin <- m$type <- m$group <- m$pr <- m$plotTrans <- m$tolerance <-
+  m$match <- m$fweighted <- m$curtail <- m$x <- m$n.impute <- m$nk <-
+    m$tlinear <- m$burnin <- m$type <- m$group <- m$pr <-
+      m$plotTrans <- m$tolerance <-
       m$B <- NULL
   m$na.action <- na.retain
 
@@ -114,7 +115,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
   rsq <- double(length(wna));
   names(rsq) <- nam[wna]
   resampacc <- list()
-  if(curtail) xfrange <- apply(xf, 2, range)
+  if(curtail) xrange <- apply(xf, 2, range)
   
   for(iter in 1:(burnin + n.impute)) {
     if(pr) cat('Iteration',iter,'\r')
@@ -254,6 +255,7 @@ print.aregImpute <- function(x, digits=3, ...)
 }
 
 plot.aregImpute <- function(x, nclass=NULL, type=c('ecdf','hist'),
+                            datadensity=c("none", "rug", "hist", "density"),
                             diagnostics=FALSE, maxn=10, ...)
 {
   type <- match.arg(type)
@@ -285,7 +287,7 @@ plot.aregImpute <- function(x, nclass=NULL, type=c('ecdf','hist'),
     }
     else {
       if(type=='ecdf')
-        Ecdf(ix, xlab=lab, datadensity='hist', subtitles=FALSE)
+        Ecdf(ix, xlab=lab, datadensity=datadensity, subtitles=FALSE)
       else {
         if(length(nclass))
           hist(ix, xlab=n, nclass=nclass, main='')

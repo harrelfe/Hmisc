@@ -72,7 +72,7 @@ aregImpute(formula, data, subset, n.impute=5, group=NULL,
            x=FALSE, pr=TRUE, plotTrans=FALSE, tolerance=NULL, B=75)
 \method{print}{aregImpute}(x, digits=3, \dots)
 \method{plot}{aregImpute}(x, nclass=NULL, type=c('ecdf','hist'),
-     datadensity=c("none", "rug", "hist", "density"),
+     datadensity=c("hist", "none", "rug", "density"),
      diagnostics=FALSE, maxn=10, \dots)
 }
 \arguments{

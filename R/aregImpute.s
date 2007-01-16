@@ -3,6 +3,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
                        group=NULL, nk=3, tlinear=TRUE,
                        type=c('pmm','regression'),
                        match=c('weighted','closest'), fweighted=0.2,
+                       curtail=FALSE,
                        burnin=3, x=FALSE,
                        pr=TRUE, plotTrans=FALSE,
                        tolerance=NULL, B=75)
@@ -112,8 +113,8 @@ aregImpute <- function(formula, data, subset, n.impute=5,
   ## with current imputations
   rsq <- double(length(wna));
   names(rsq) <- nam[wna]
-
   resampacc <- list()
+  if(curtail) xfrange <- apply(xf, 2, range)
   
   for(iter in 1:(burnin + n.impute)) {
     if(pr) cat('Iteration',iter,'\r')
@@ -172,7 +173,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
       pti <- predict(f, X)  # predicted transformed xf[,i]
       
       if(type=='pmm') {
-      if(ytype=='l') pti <- (pti - mean(pti))/sqrt(var(pti))
+        if(ytype=='l') pti <- (pti - mean(pti))/sqrt(var(pti))
         whichclose <- if(match=='closest') {
           
           ## Jitter predicted transformed values for non-NAs to randomly
@@ -200,6 +201,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
         
         ## predicted random draws on untransformed scale
         impi <- f$yinv(ptir, what='sample', coef=f$ycoefficients)
+        if(curtail) impi <- pmin(pmax(impi, xrange[1,i]), xrange[2,i])
       }
       xf[nai,i] <- impi
       if(iter > burnin) imp[[nam[i]]][,iter-burnin] <- impi

@@ -71,7 +71,8 @@ aregImpute(formula, data, subset, n.impute=5, group=NULL,
            curtail=FALSE, burnin=3,
            x=FALSE, pr=TRUE, plotTrans=FALSE, tolerance=NULL, B=75)
 \method{print}{aregImpute}(x, digits=3, \dots)
-\method{plot}{aregImpute}(x, nclass=NULL, type=c('ecdf','hist'), 
+\method{plot}{aregImpute}(x, nclass=NULL, type=c('ecdf','hist'),
+     datadensity=c("none", "rug", "hist", "density"),
      diagnostics=FALSE, maxn=10, \dots)
 }
 \arguments{
@@ -182,6 +183,7 @@ set to \code{FALSE} to suppress printing of iteration messages
 \item{B}{number of bootstrap resamples to use if \code{nk} is a vector}
 \item{digits}{number of digits for printing}
 \item{nclass}{number of bins to use in drawing histogram}
+\item{datadensity}{see \code{\link{Ecdf}}}
 \item{diagnostics}{
 Specify \code{diagnostics=TRUE} to draw plots of imputed values against
 sequential imputation numbers, separately for each missing

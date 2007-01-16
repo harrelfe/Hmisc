@@ -68,7 +68,7 @@ of possible inverse values is made.
 aregImpute(formula, data, subset, n.impute=5, group=NULL,
            nk=3, tlinear=TRUE, type=c('pmm','regression'),
            match=c('weighted','closest'), fweighted=0.2,
-           curtail=FALSE, burnin=3,
+           curtail=TRUE, burnin=3,
            x=FALSE, pr=TRUE, plotTrans=FALSE, tolerance=NULL, B=75)
 \method{print}{aregImpute}(x, digits=3, \dots)
 \method{plot}{aregImpute}(x, nclass=NULL, type=c('ecdf','hist'),
@@ -161,7 +161,8 @@ recommended but 10 or more doesn't hurt.
   learn how to study the relationship between \code{fweighted} and the
   standard deviation of multiple imputations within individuals.}
 \item{curtail}{applies if \code{type='regression'}, causing imputed
-  values to be curtailed at the observed range of the target variable}
+  values to be curtailed at the observed range of the target variable.
+  Set to \code{FALSE} to allow extrapolation outside the data range.}
 \item{burnin}{
   \code{aregImpute} does \code{burnin + n.impute} iterations of the
   entire modeling process.  The first \code{burnin} imputations are

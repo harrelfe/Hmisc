@@ -3,8 +3,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
                        group=NULL, nk=3, tlinear=TRUE,
                        type=c('pmm','regression'),
                        match=c('weighted','closest'), fweighted=0.2,
-                       curtail=FALSE,
-                       burnin=3, x=FALSE,
+                       curtail=TRUE, burnin=3, x=FALSE,
                        pr=TRUE, plotTrans=FALSE,
                        tolerance=NULL, B=75)
 {

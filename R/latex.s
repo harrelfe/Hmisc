@@ -80,7 +80,8 @@ format.df <- function(x,
                       digits, dec=NULL, rdec=NULL, cdec=NULL,
                       numeric.dollar=cdot, na.blank=FALSE,
                       na.dot=FALSE, blank.dot=FALSE, col.just=NULL,
-                      cdot=FALSE, dcolumn=FALSE, matrix.sep=' ', scientific=c(-4,4), ...)
+                      cdot=FALSE, dcolumn=FALSE, matrix.sep=' ', scientific=c(-4,4),
+                      math.row.names=FALSE, math.col.names=FALSE, ...)
 {
   if(cdot && dcolumn)
     stop('cannot have both cdot=T and dcolumn=T')
@@ -93,7 +94,7 @@ format.df <- function(x,
   
   ##if(length(digits)) .Options$digits    6Aug00 what was that?
   if(is.null(digits) && is.null(dec) && is.null(rdec) && is.null(cdec)) {
-    digits <- 16
+    digits <- 15
   }
 
   if(length(digits)) {
@@ -223,6 +224,10 @@ format.df <- function(x,
         x
     
     namj <- nams[j]
+    if(math.col.names) {
+      namj <- paste('$', namj, '$', sep='')
+    }
+    
     num <- is.numeric(xj) || all(is.na(xj)) ## 16sep03
     if(testDateTime(xj))
       num <- FALSE            ## 16sep03
@@ -249,7 +254,11 @@ format.df <- function(x,
           if(length(dn)==0)
             dn <- as.character(k)
           
-          dn
+          if(math.row.names) {
+            paste('$', dn, '$', sep='')
+          } else {
+            dn
+          }
         } else ''
       
       namk <- paste(namj,
@@ -373,12 +382,15 @@ latex.default <-
            center=c('center','centering','none'),
            landscape=FALSE,
            multicol=TRUE, ## to remove multicolumn if no need  SSJ 17nov03
+           math.row.names=FALSE, math.col.names=FALSE,
            ...)      ## center MJ 08sep03
 {
   center <- match.arg(center)
   caption.loc <- match.arg(caption.loc)
   cx <- format.df(object, dcolumn=dcolumn, na.blank=na.blank,
-                  numeric.dollar=numeric.dollar, cdot=cdot, ...)
+                  numeric.dollar=numeric.dollar, cdot=cdot,
+                  math.row.names=math.row.names, math.col.names=math.col.names,
+                  ...)
   ## removed check.names=FALSE from above 23jan03
   if (missing(rowname))
     rowname <- dimnames(cx)[[1]]
@@ -1341,7 +1353,7 @@ latexSN <- function(x) {
                   'e+0*',
                   'e+*'),
              c('',
-               '\\\!\\times\\\!10^{-*}','\\\!\\times\\\!10^{-*}',
-               '\\\!\\times\\\!10^{*}','\\\!\\times\\\!10^{*}'))
+               '\\\\!\\times\\\\!10^{-*}','\\\\!\\times\\\\!10^{-*}',
+               '\\\\!\\times\\\\!10^{*}','\\\\!\\times\\\\!10^{*}'))
   x
 }

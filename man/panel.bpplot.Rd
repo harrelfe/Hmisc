@@ -137,7 +137,7 @@ x[g==1][1:20] <- rnorm(20)+3   # contaminate 20 x's for group 1
 
 
 # default trellis box plot
-if(.R.) library(lattice)
+require(lattice)
 bwplot(g ~ x)
 
 

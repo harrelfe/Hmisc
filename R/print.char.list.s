@@ -2,7 +2,7 @@ if(!exists("string.bounding.box")) {
   string.bounding.box <- function(string) {
     mode(string) <- "character"
 
-    .Call("string_box", string, PACKAGE="Hmisc")
+    .Call('string_box', string)
   }
 }
 
@@ -25,7 +25,7 @@ equalBins <- function(widths, subwidths) {
   }, widths, subwidths, SIMPLIFY = FALSE))
 }
 
-stringDims <- function(string, rownames = FALSE, colnames = FALSE) {
+stringDims <- function(string) {
   if(is.null(string)) {
     return(height = 0, width = 0)
   }
@@ -60,7 +60,7 @@ partition.vector <- function(x, sep, ...) {
     stop("sep must sum to the number of columns in x")
   }
 
-  lapply(split(seq(length(x)), rep(seq(sep), times=sep)), function(index) x[index, drop=FALSE])
+  split(x, rep(seq(along.with=sep), times=sep))
 }
 
 
@@ -115,7 +115,7 @@ partition.matrix <- function(x, rowsep, colsep, ...) {
   
 
 print.char.list <- function(x, ..., hsep = c("|"), vsep = c("-"), csep = c("+"),
-                            print.it = T, rowname.halign = c("left", "centre", "right"),
+                            print.it = TRUE, rowname.halign = c("left", "centre", "right"),
                             rowname.valign = c("top", "centre", "bottom"),
                             colname.halign = c("centre", "left", "right"),
                             colname.valign = c("centre", "top", "bottom"),

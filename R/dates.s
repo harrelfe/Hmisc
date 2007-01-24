@@ -1,5 +1,3 @@
-require('chron', character.only=TRUE)
-
 ## round.chron <- function(x, units=c("minutes", "hours", "days", "months", "years")) {
 ##   if(missing(units)) {
 ##     return(floor(unclass(x)))
@@ -52,6 +50,8 @@ require('chron', character.only=TRUE)
 ## }
 
 floor.chron <- function(x, units=c("minutes", "hours", "days", "months", "years")) {
+  require('chron', character.only=TRUE)
+  
   if(missing(units)) {
     return(floor(unclass(x)))
   }
@@ -106,6 +106,8 @@ floor.chron <- function(x, units=c("minutes", "hours", "days", "months", "years"
 
   
 ceiling.chron <- function(x, units=c("minutes", "hours", "days", "months", "years")) {
+  require('chron', character.only=TRUE)
+  
   if(missing(units)) {
     return(ceiling(unclass(x)))
   }

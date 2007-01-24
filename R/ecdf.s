@@ -41,9 +41,10 @@ Ecdf.default <- function(x, what=c('F','1-F','f'),
                                    'f'='Frequency <= x')
   
   group <- as.factor(group)
-  nna <- !(is.na(x)|is.na(group)|is.na(weights))
   if(length(x) != length(group))
     stop('length of x != length of group')
+
+  nna <- !(is.na(x)|is.na(group)|is.na(weights))
   
   X <- x[nna]
   group <- group[nna]

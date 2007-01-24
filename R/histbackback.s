@@ -23,12 +23,18 @@
   
   if(!length(brks))
     brks <- hist(c(x, y), plot = FALSE)$breaks
-  
-  ll <- hist(x, breaks = brks, plot = FALSE, probability = probability)
-  rr <- hist(y, breaks = brks, plot = FALSE, probability = probability)
-  if(.R. && probability) {  ## FEH 12may02
-    ll$counts <- ll$density
-    rr$counts <- rr$density
+
+  if(.R.) {
+    ll <- hist(x, breaks = brks, plot = FALSE)
+    rr <- hist(y, breaks = brks, plot = FALSE)
+
+    if(probability) {
+      ll$counts <- ll$density
+      rr$counts <- rr$density
+    }
+  } else {
+    ll <- hist(x, breaks = brks, plot = FALSE, probability = probability)
+    rr <- hist(y, breaks = brks, plot = FALSE, probability = probability)
   }
 
   if(length(xlim) == 2)

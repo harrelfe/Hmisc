@@ -96,7 +96,7 @@ Default is current \code{par("lwd")}.
 iter parameter if method="lowess", default=0 if \code{y} is binary, and 3 otherwise.
 }
 \item{bass}{
-bass parameter if method="bass", default=0.
+bass parameter if method="supsmu", default=0.
 }
 \item{trim}{
 only plots smoothed estimates between trim and 1-trim quantiles

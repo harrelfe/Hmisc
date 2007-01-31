@@ -124,7 +124,7 @@ inmChoice <- function(x, values) {
                                  paste(values[is.na(v)],collapse=';')))
     values <- v
   }
-  x <- paste(';', x, ';', sep='')
+  x <- paste(';', unclass(x), ';', sep='')
   values <- paste(';', values, ';', sep='')
   res <- rep(FALSE, length(x))
   for(j in 1:length(values)) {

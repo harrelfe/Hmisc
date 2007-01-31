@@ -469,6 +469,7 @@ latex.describe <- function(object, title=NULL, condense=TRUE,
     if(length(mv <- at$missing.vars)) {
       ct('\\smallskip\\noindent Variables with all observations missing:\\ \\smallskip\n',
          file=file, append=TRUE)
+      mv <- latexTranslate(mv)
       mv <- paste('\\texttt{',mv,'}',sep='')
       mv <- paste(mv, collapse=', ')
       ##ct('\\texttt{',at$missing.vars, '}', sep='', file=file,

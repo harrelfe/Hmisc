@@ -17,15 +17,16 @@ describe.default <- function(x, descript, ...)  #13Mar99
 
 
 describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
+                            listunique=0, listnchar=12,
                             weights=NULL, normwt=FALSE, minlength=NULL, ...)
 {
   oldopt <- options(digits=digits)
   on.exit(options(oldopt))
-
+  
   if(length(weights)==0) {
     weights <- rep(1,length(x))
   }
-
+  
   special.codes <- attr(x, "special.miss")$codes
   labx <- attr(x,"label")
   
@@ -40,7 +41,6 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
   un <- attr(x,"units")
   if(length(un) && un=='') {
     un <- NULL
-    ## 8jun03 and next
   }
 
   fmt <- attr(x,'format')
@@ -48,26 +48,24 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
     fmt <- NULL
   }
   
-  ## is.function 1dec03
   if(length(fmt) > 1) {
     fmt <- paste(as.character(fmt[[1]]),as.character(fmt[[2]]))
   }
   
   present <- if(all(is.na(x)))
-               rep(FALSE,length(x))
-             else if(is.character(x))
-               (if(.R.)
-                  x!="" & x!=" " & !is.na(x)
-                else
-                x!="" & x!=" ")
-             else
-               !is.na(x)
+    rep(FALSE,length(x))
+  else if(is.character(x))
+    (if(.R.)
+     x!="" & x!=" " & !is.na(x)
+    else
+     x!="" & x!=" ")
+  else
+    !is.na(x)
   
   present <- present & !is.na(weights)
-
-  if(length(weights) != length(x)) {
+  
+  if(length(weights) != length(x))
     stop('length of weights must equal length of x')
-  }
 
   if(normwt) {
     weights <- sum(present)*weights/sum(weights[present])
@@ -75,7 +73,7 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
   } else {
     n <- sum(weights[present])
   }
-
+  
   if(exclude.missing && n==0) {
     return(structure(NULL, class="describe"))
   }
@@ -83,14 +81,13 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
   missing <- sum(weights[!present], na.rm=TRUE)
   atx <- attributes(x)
   atx$names <- atx$dimnames <- atx$dim <- atx$special.miss <- NULL  
-  ## added dim,dimnames 18 Dec 95, last 1 7May96
   
   atx$class <- atx$class[atx$class!='special.miss']
-
+  
   isdot <- testDateTime(x,'either') # is date or time var
   isdat <- testDateTime(x,'both')   # is date and time combo var
 
-  x <- x[present,drop=FALSE]  ## drop=F 14Nov97
+  x <- x[present,drop=FALSE]
   x.unique <- sort(unique(x))
   weights <- weights[present]
 
@@ -148,13 +145,10 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
   }
   
   if(isnum) {
-    xnum <- if(.SV4.)
-              as.numeric(x)
-            else
-              oldUnclass(x)  # 3Dec00
+    xnum <- if(.SV4.) as.numeric(x) else oldUnclass(x)
     
     if(isdot) {
-      dd <- sum(weights*xnum)/sum(weights)  # 3Dec00
+      dd <- sum(weights*xnum)/sum(weights)
       fval <- formatDateTime(dd, atx, !timeUsed)
       counts <- c(counts, fval)
     } else {
@@ -192,39 +186,37 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
   counts <- NULL
 
   if(inherits(x,'mChoice')) z$mChoice <- summary(x, minlength=minlength) else {
-    if(n.unique>=20) {
-      if(isnum) {
-      r <- range(xnum)
-      xg <- pmin(1 + floor((100 * (xnum - r[1]))/
-                           (r[2] - r[1])), 100)
-      z$intervalFreq <- list(range=as.single(r),
-                             count = as.integer(tabulate(xg)))
-    }
-    
-    loandhi <- x.unique[c(1:5,(n.unique-4):n.unique)]
-    fval <-
-      if(isdot && (class(loandhi) %nin% 'timeDate')) {
-        formatDateTime(oldUnclass(loandhi), at=atx, roundDay=!timeUsed)
-      } else {
-        format(format(loandhi), ...)
+    if(n.unique <= listunique && !isnum && !is.category(x) &&
+       max(nchar(x)) > listnchar) counts <- table(x) else {
+      if(n.unique>=20) {
+        if(isnum) {
+          r <- range(xnum)
+          xg <- pmin(1 + floor((100 * (xnum - r[1]))/
+                               (r[2] - r[1])), 100)
+          z$intervalFreq <- list(range=as.single(r),
+                                 count = as.integer(tabulate(xg)))
+        }
+        
+        loandhi <- x.unique[c(1:5,(n.unique-4):n.unique)]
+        fval <-
+          if(isdot && (class(loandhi) %nin% 'timeDate')) {
+            formatDateTime(oldUnclass(loandhi), at=atx, roundDay=!timeUsed)
+          } else format(format(loandhi), ...)
+        counts <- fval
+        names(counts) <- c("L1","L2","L3","L4","L5","H5","H4","H3","H2","H1")
       }
-    counts <- fval
-    names(counts) <- c("L1","L2","L3","L4","L5","H5","H4","H3","H2","H1")
-  }
 
-  if(n.unique>1 && n.unique<20 && !x.binary) {
-    tab <- wtd.table(if(isnum)
-                       format(x)
-                     else
-                       x,
-                     weights, normwt=FALSE, na.rm=FALSE, type='table')
+      if(n.unique>1 && n.unique<20 && !x.binary) {
+        tab <- wtd.table(if(isnum && isdat) format(x) else x,
+                         weights, normwt=FALSE, na.rm=FALSE, type='table')
 
-    pct <- round(100*tab/sum(tab))
-    counts <- t(as.matrix(tab))
-    counts <- rbind(counts, pct)
-    dimnames(counts)[[1]]<- c("Frequency","%")
+        pct <- round(100*tab/sum(tab))
+        counts <- t(as.matrix(tab))
+        counts <- rbind(counts, pct)
+        dimnames(counts)[[1]]<- c("Frequency","%")
+      }
+    }
   }
-}  
   z$values <- counts
   structure(z, class="describe")
 }
@@ -370,20 +362,26 @@ print.describe.single <- function(x, condense=TRUE, ...)
   
   cat(des,'\n')
   print(x$counts, quote=FALSE)
-  if(length(val <- x$values)) {
-    if(length(dim(val))==0) {
-      if(condense) {
-        low <- paste('lowest :', paste(val[1:5],collapse=' '))
-        hi  <- paste('highest:', paste(val[6:10],collapse=' '))
-        cat('\n',low,sep='')
-        if(nchar(low)+nchar(hi)+2>wide)
-          cat('\n')
-        else
-          cat(', ')
-        
-        cat(hi,'\n')
+  val <- x$values
+  if(length(val)) {
+    if(!is.matrix(val)) {
+      if(length(val)!=10 || !all(names(val)==
+                 c("L1","L2","L3","L4","L5","H5","H4","H3","H2","H1"))) {
+        cat('\n')
+        val <- paste(names(val),
+                     ifelse(val > 1, paste(' (', val, ')', sep=''), ''),
+                     sep='')
+        cat(strwrap(val, exdent=4), sep='\n')
       } else {
-        cat('\n'); print(val, quote=FALSE)
+        if(condense) {
+          low <- paste('lowest :', paste(val[1:5],collapse=' '))
+          hi  <- paste('highest:', paste(val[6:10],collapse=' '))
+          cat('\n',low,sep='')
+          if(nchar(low)+nchar(hi)+2>wide) cat('\n') else cat(', ')
+          cat(hi,'\n')
+        } else {
+          cat('\n'); print(val, quote=FALSE)
+        }
       }
     } else {
       lev <- dimnames(val)[[2]]
@@ -459,11 +457,18 @@ latex.describe <- function(object, title=NULL, condense=TRUE,
       i <- i + 1
       if(length(z)==0)
         next
-      
-      ct('\\vbox{', file=file, append=TRUE)
+
+      val <- z$values
+      potentiallyLong <-
+        length(val) && !is.matrix(val) &&
+           length(val) != 10 || !all(names(val)==
+                   c("L1","L2","L3","L4","L5","H5","H4","H3","H2","H1"))
+      if(!potentiallyLong) cat('\\vbox{', file=file, append=TRUE)
+
       latex.describe.single(z, condense=condense, vname=vnames[i],
                             file=file, append=TRUE, tabular=tabular, greek=greek)
-      ct('\\vspace{-.5ex}\\hrule\\smallskip}\n', file=file, append=TRUE)
+      ct('\\vspace{-.5ex}\\hrule\\smallskip\n', file=file, append=TRUE)
+      if(!potentiallyLong) cat('}\n', file=file, append=TRUE)
     }
     
     if(length(mv <- at$missing.vars)) {
@@ -472,20 +477,17 @@ latex.describe <- function(object, title=NULL, condense=TRUE,
       mv <- latexTranslate(mv)
       mv <- paste('\\texttt{',mv,'}',sep='')
       mv <- paste(mv, collapse=', ')
-      ##ct('\\texttt{',at$missing.vars, '}', sep='', file=file,
-      ##append=TRUE)
       ct(mv, file=file, append=TRUE)
     }
     
-    ct('}', file=file, append=TRUE)  # added 23oct02
+#    ct('}', file=file, append=TRUE)
   } else latex.describe.single(object,
                                vname=first.word(expr=at$descript),
                                condense=condense,
                                file=file, append=TRUE, size=size,
                                tabular=tabular)
   
-  ## was append=append 23oct02; also removed } in cat below
-  ct('\\end{spacing}\n', file=file, append=TRUE)
+  ct('}\\end{spacing}\n', file=file, append=TRUE)
 
   ##if(!.SV4.)   18Oct01
   structure(list(file=file,  style=c('setspace','relsize')),
@@ -493,23 +495,24 @@ latex.describe <- function(object, title=NULL, condense=TRUE,
 }
 
 
-latex.describe.single <- function(object, title=NULL, condense=TRUE, vname,
-                                  file, append=FALSE, size='small',
-                                  tabular=TRUE, greek=TRUE, ...)
+latex.describe.single <-
+  function(object, title=NULL, condense=TRUE, vname,
+           file, append=FALSE, size='small',
+           tabular=TRUE, greek=TRUE, ...)
 {
   ct <- function(..., file, append=FALSE)
-  {
-    if(file=='')
-      cat(...)
-    else
-      cat(..., file=file, append=append)
-    
-    invisible()
-  }
-
+    {
+      if(file=='')
+        cat(...)
+      else
+        cat(..., file=file, append=append)
+      
+      invisible()
+    }
+  
   oldw <- options(width=85)
   on.exit(options(oldw))
-
+  
   wide <- switch(size,
                  normalsize=66,
                  small=73,
@@ -524,14 +527,14 @@ latex.describe.single <- function(object, title=NULL, condense=TRUE, vname,
   z   <- latexTranslate(object$descript, '&', '\\&', greek=greek)
   ## If any math mode ($ not preceeded by \) don't put label part in bold
   des <- if(!length(grep('[^\\]\\$', z)))
-           paste('\\textbf{', z, '}', sep='')
-         else {
-           ## Get text before : (variable name)
-           sp <- strsplit(z, ' : ')[[1]]
-           vnm <- sp[1]
-           rem <- paste(sp[-1], collapse=':')
-           paste('\\textbf{', vnm, '}: ', rem, sep='')
-         }
+    paste('\\textbf{', z, '}', sep='')
+  else {
+    ## Get text before : (variable name)
+    sp <- strsplit(z, ' : ')[[1]]
+    vnm <- sp[1]
+    rem <- paste(sp[-1], collapse=':')
+    paste('\\textbf{', vnm, '}: ', rem, sep='')
+  }
   
   if(length(object$units))
     des <- paste(des, '{\\smaller[1] [',
@@ -543,10 +546,10 @@ latex.describe.single <- function(object, title=NULL, condense=TRUE, vname,
   
   desbas <- paste(object$descript,
                   if(length(object$units))
-                    paste(' [', object$units, ']', sep=''),
+                  paste(' [', object$units, ']', sep=''),
                   if(length(object$format))
-                    paste('  Format:', object$format, sep=''))
-
+                  paste('  Format:', object$format, sep=''))
+  
   ct('\\noindent', des, sep='', file=file, append=append)
   if(length(intFreq)) {
     counts <- intFreq$count
@@ -563,8 +566,8 @@ latex.describe.single <- function(object, title=NULL, condense=TRUE, vname,
     }
     
     ct('\\end{picture}\n', file=file, append=TRUE)
-  }
-
+  } else ct('\n', file=file, append=TRUE)
+  
   sz <- ''
   if(tabular) {
     ml <- nchar(paste(object$counts,collapse='  '))
@@ -574,9 +577,9 @@ latex.describe.single <- function(object, title=NULL, condense=TRUE, vname,
       sz <- '[2]'
   }
   
-  ct('{\\smaller\n', sz, sep='', file=file, append=TRUE)
+  ct('\n{\\smaller', sz, '\n', sep='', file=file, append=TRUE)
   if(tabular) {
-    ct('\\\\ \\begin{tabular}{',
+    ct('\\begin{tabular}{',
        paste(rep('r',length(object$counts)),collapse=''),'}\n',
        file=file, append=TRUE)
     ct(paste(names(object$counts), collapse='&'), '\\\\ \n',
@@ -585,27 +588,46 @@ latex.describe.single <- function(object, title=NULL, condense=TRUE, vname,
        file=file, append=TRUE)
   }
   
-  ct('\\begin{verbatim}\n', file=file, append=TRUE)
   if(file!='')
-    sink(file, append=TRUE)  ## 22dec02
-  
-  if(!tabular)
+    sink(file, append=TRUE)
+
+  verb <- 0
+  if(!tabular) {
+    cat('\\begin{verbatim}\n'); verb <- 1
     print(object$counts, quote=FALSE)
-  
-  if(length(val <- object$values)) {
-    if(length(dim(val))==0) {
-      if(condense) {
-        low <- paste('lowest :', paste(val[1:5],collapse=' '))
-        hi  <- paste('highest:', paste(val[6:10],collapse=' '))
-        cat('\n',low,sep='')
-        if(nchar(low)+nchar(hi)+2 > wide) cat('\n') else cat(', ')
-        cat(hi,'\n')
-      } else {
-        cat('\n'); print(val, quote=FALSE)
+  }
+
+  val <- object$values
+  if(length(val)) {
+    if(!is.matrix(val)) {
+      if(length(val) != 10 || !all(names(val)==
+                 c("L1","L2","L3","L4","L5","H5","H4","H3","H2","H1")))
+        {
+          if(verb) {cat('\\end{verbatim}\n'); verb <- 0}
+          cat('\\\\ \\smallskip\n\n')
+          val <- paste('{\\hangafter=1\\hangindent=3ex\\noindent ',
+                       latexTranslate(names(val)),
+                       ifelse(val > 1, paste(' (', val, ')', sep=''),''),
+                       '\n\n}\n', sep='')
+          cat(val, sep='\n')
+          cat('\\smallskip\n')
+        }
+      else {
+        if(condense) {
+          low <- paste('lowest :', paste(val[1:5],collapse=' '))
+          hi  <- paste('highest:', paste(val[6:10],collapse=' '))
+          if(!verb) {cat('\\begin{verbatim}\n'); verb <- 1}
+          cat('\n',low,sep='')
+          if(nchar(low)+nchar(hi)+2 > wide) cat('\n') else cat(', ')
+          cat(hi,'\n')
+        } else {
+          cat('\n'); print(val, quote=FALSE)
+        }
       }
     } else {
       lev <- dimnames(val)[[2]]
       if(condense && (mean(nchar(lev))>10 | length(lev) < 5)) {
+        if(!verb) {cat('\\begin{verbatim}\n'); verb <- 1}
         z <- ''; len <- 0; cat('\n')
         for(i in 1:length(lev)) {
           w <- paste(lev[i], ' (', val[1,i], ', ', val[2,i], '%)', sep='')
@@ -613,7 +635,7 @@ latex.describe.single <- function(object, title=NULL, condense=TRUE, vname,
           if(len + l + 2 > wide) {
             cat(z,'\n'); len <- 0; z <- ''
           }
-    
+          
           if(len==0) {
             z <- w; len <- l
           } else {
@@ -623,13 +645,19 @@ latex.describe.single <- function(object, title=NULL, condense=TRUE, vname,
         
         cat(z, '\n')
       } else {
-        cat('\n'); print(val, quote=FALSE)
+        cat('\n');
+        if(!verb) {cat('\\begin{verbatim}\n'); verb <- 1}
+        print(val, quote=FALSE)
       }
     }
   }
-  if(length(object$mChoice)) print(object$mChoice, prlabel=FALSE)
+  if(length(object$mChoice)) {
+    if(!verb) {cat('\\begin{verbatim}\n'); verb <- 1}
+    print(object$mChoice, prlabel=FALSE)
+  }
   
-  cat('\\end{verbatim}\n}\n')
+  if(verb) cat('\\end{verbatim}\n')
+  cat('}\n')
   if(file!='')
     sink()
   

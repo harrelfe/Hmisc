@@ -107,7 +107,9 @@ in weighted means, quantiles, and frequency tables.
   has the frequency of occurrence after it, in parentheses.  Specify
   \code{listunique} equal to some value at least as large as the number
   of observations to ensure that all character variables will have all
-  their values listed.
+  their values listed.  For purposes of tabulating character strings,
+  multiple white spaces of any kind are translated to a single space,
+  leading and trailing white space are ignored, and case is ignored.
 }
 \item{listnchar}{see \code{listunique}}
 \item{weights}{

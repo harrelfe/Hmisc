@@ -185,9 +185,19 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
 
   counts <- NULL
 
+  tableIgnoreCaseWhiteSpace <- function(x) {
+    x <- gsub('\r',' ',x)
+    x <- gsub('^[[:space:]]+','',gsub('[[:space:]]+$','', x))
+    x <- gsub('[[:space:]]+',' ', x)
+    y <- tolower(x)
+    f <- table(y)
+    names(f) <- x[match(names(f), y)]
+    f
+  }
+
   if(inherits(x,'mChoice')) z$mChoice <- summary(x, minlength=minlength) else {
     if(n.unique <= listunique && !isnum && !is.category(x) &&
-       max(nchar(x)) > listnchar) counts <- table(x) else {
+       max(nchar(x)) > listnchar) counts <- tableIgnoreCaseWhiteSpace(x) else {
       if(n.unique>=20) {
         if(isnum) {
           r <- range(xnum)

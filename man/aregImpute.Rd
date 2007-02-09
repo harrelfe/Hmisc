@@ -68,8 +68,8 @@ of possible inverse values is made.
 aregImpute(formula, data, subset, n.impute=5, group=NULL,
            nk=3, tlinear=TRUE, type=c('pmm','regression'),
            match=c('weighted','closest'), fweighted=0.2,
-           curtail=TRUE, burnin=3,
-           x=FALSE, pr=TRUE, plotTrans=FALSE, tolerance=NULL, B=75)
+           curtail=TRUE, boot.method=c('simple', 'approximate bayesian'),
+           burnin=3, x=FALSE, pr=TRUE, plotTrans=FALSE, tolerance=NULL, B=75)
 \method{print}{aregImpute}(x, digits=3, \dots)
 \method{plot}{aregImpute}(x, nclass=NULL, type=c('ecdf','hist'),
      datadensity=c("hist", "none", "rug", "density"),
@@ -163,6 +163,15 @@ recommended but 10 or more doesn't hurt.
 \item{curtail}{applies if \code{type='regression'}, causing imputed
   values to be curtailed at the observed range of the target variable.
   Set to \code{FALSE} to allow extrapolation outside the data range.}
+\item{boot.method}{By default, simple boostrapping is used in which the
+  target variable is predicted using a sample with replacement from the
+  observations with non-missing target variable.  Specify
+  \code{boot.method='approximate bayesian'} to build the imputation
+  models from a sample with replacement from a sample with replacement
+  of the observations with non-missing targets.  Preliminary simulations
+  have shown this results in good confidence coverage of the final model
+  parameters when \code{type='regression'} is used.  Not implemented
+  when \code{group} is used.}
 \item{burnin}{
   \code{aregImpute} does \code{burnin + n.impute} iterations of the
   entire modeling process.  The first \code{burnin} imputations are

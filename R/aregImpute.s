@@ -3,7 +3,9 @@ aregImpute <- function(formula, data, subset, n.impute=5,
                        group=NULL, nk=3, tlinear=TRUE,
                        type=c('pmm','regression'),
                        match=c('weighted','closest'), fweighted=0.2,
-                       curtail=TRUE, burnin=3, x=FALSE,
+                       curtail=TRUE,
+                       boot.method=c('simple', 'approximate bayesian'),
+                       burnin=3, x=FALSE,
                        pr=TRUE, plotTrans=FALSE,
                        tolerance=NULL, B=75)
 {
@@ -11,6 +13,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
   acall   <- match.call()
   type    <- match.arg(type)
   match   <- match.arg(match)
+  boot.method <- match.arg(boot.method)
 
   if(!inherits(formula,'formula'))
     stop('formula must be a formula')
@@ -22,8 +25,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
   m$formula <- formula
   m$match <- m$fweighted <- m$curtail <- m$x <- m$n.impute <- m$nk <-
     m$tlinear <- m$burnin <- m$type <- m$group <- m$pr <-
-      m$plotTrans <- m$tolerance <-
-      m$B <- NULL
+      m$plotTrans <- m$tolerance <- m$boot.method <- m$B <- NULL
   m$na.action <- na.retain
 
   m[[1]] <- as.name("model.frame")
@@ -35,6 +37,8 @@ aregImpute <- function(formula, data, subset, n.impute=5,
 
   lgroup <- length(group)
   if(lgroup) {
+    if(boot.method == 'approximate bayesian')
+      stop('group not implemented for boot.method="approximate bayesian"')
     if(lgroup != n)
       stop('group should have length equal to number of observations')
     
@@ -154,9 +158,11 @@ aregImpute <- function(formula, data, subset, n.impute=5,
           s[gi] <- sample(gi, length(gi), replace=TRUE)
         }
       }
-      else
-        s <- sample(j, npr, replace=TRUE)  ## sample of non-NAs
-      
+      else { ## sample of non-NAs
+        s <- sample(j, npr, replace=TRUE)
+        if(boot.method == 'approximate bayesian')
+          s <- sample(s, replace=TRUE)
+      }
       nami <- nam[i]
       nm <- c(nami, nam[-i])
 
@@ -195,9 +201,9 @@ aregImpute <- function(formula, data, subset, n.impute=5,
         
         ## predicted transformed target var + random sample of res,
         ## for NAs
-        ptir <- pti[nai] +
-          sample(res, length(nai),
-                 replace=length(nai) > length(res))
+        r <- sample(res, length(nai),
+                    replace=length(nai) > length(res))
+        ptir <- pti[nai] + r
         
         ## predicted random draws on untransformed scale
         impi <- f$yinv(ptir, what='sample', coef=f$ycoefficients)

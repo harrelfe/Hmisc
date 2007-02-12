@@ -80,7 +80,8 @@ format.df <- function(x,
                       digits, dec=NULL, rdec=NULL, cdec=NULL,
                       numeric.dollar=cdot, na.blank=FALSE,
                       na.dot=FALSE, blank.dot=FALSE, col.just=NULL,
-                      cdot=FALSE, dcolumn=FALSE, matrix.sep=' ', scientific=c(-4,4), ...)
+                      cdot=FALSE, dcolumn=FALSE, matrix.sep=' ', scientific=c(-4,4),
+                      math.row.names=FALSE, math.col.names=FALSE, ...)
 {
   if(cdot && dcolumn)
     stop('cannot have both cdot=T and dcolumn=T')
@@ -92,8 +93,8 @@ format.df <- function(x,
     stop('only one of digits, dec, rdec, cdec may be given')
   
   ##if(length(digits)) .Options$digits    6Aug00 what was that?
-  if(is.null(digits) && !(is.null(dec) && is.null(rdec) && is.null(cdec))) {
-    digits <- 16
+  if(is.null(digits) && is.null(dec) && is.null(rdec) && is.null(cdec)) {
+    digits <- 15
   }
 
   if(length(digits)) {
@@ -106,9 +107,9 @@ format.df <- function(x,
   formt <-
     if(!.R.)
       format.default
-    else function(x, decimal.mark='.', nsmall=0, scientific=c(-4,4))
+    else function(x, decimal.mark='.', nsmall=0, scientific=c(-4,4), digits=NULL)
       {
-        x <- format(x)
+        x <- format(x, nsmall=nsmall, decimal.mark=decimal.mark, digits=digits)
         if(decimal.mark!='.')
           x <- gsub('\\.',decimal.mark,x)
       
@@ -223,6 +224,10 @@ format.df <- function(x,
         x
     
     namj <- nams[j]
+    if(math.col.names) {
+      namj <- paste('$', namj, '$', sep='')
+    }
+    
     num <- is.numeric(xj) || all(is.na(xj)) ## 16sep03
     if(testDateTime(xj))
       num <- FALSE            ## 16sep03
@@ -249,7 +254,11 @@ format.df <- function(x,
           if(length(dn)==0)
             dn <- as.character(k)
           
-          dn
+          if(math.row.names) {
+            paste('$', dn, '$', sep='')
+          } else {
+            dn
+          }
         } else ''
       
       namk <- paste(namj,
@@ -265,24 +274,24 @@ format.df <- function(x,
           else 'r'
         
         if(rtype==1)
-          cxk <- formt(xk, decimal.mark=dot, scientific=scientific)
+          cxk <- formt(xk, decimal.mark=dot, scientific=scientific, digits=digits)
         else if(rtype==3) {
           cxk <- character(nrx)  ## corrected 4Nov97 Eric Bissonette
           for(i in 1:nrx)
             cxk[i] <-
               if(is.na(dec[i,j]))
-                formt(xk[i], decimal.mark=dot, scientific=scientific)
+                formt(xk[i], decimal.mark=dot, scientific=scientific, digits=digits)
               else
                 formt(round(xk[i], dec[i,j]), decimal.mark=dot,
-                      nsmall=dec[i,j], scientific=scientific)
+                      digits=digits, nsmall=dec[i,j], scientific=scientific)
           ## 12Aug99
         } else if(rtype==4)  # 12Aug99
           cxk <-
             if(is.na(cdec[j]))
-              formt(xk, decimal.mark=dot, scientific=scientific)
+              formt(xk, decimal.mark=dot, scientific=scientific, digits=digits)
             else
               formt(round(xk, cdec[j]), decimal.mark=dot, nsmall=cdec[j],
-                    scientific=scientific)
+                    digits=digits, scientific=scientific)
         
         if(na.blank)
           cxk[is.na(xk)] <- ''
@@ -373,12 +382,15 @@ latex.default <-
            center=c('center','centering','none'),
            landscape=FALSE,
            multicol=TRUE, ## to remove multicolumn if no need  SSJ 17nov03
+           math.row.names=FALSE, math.col.names=FALSE,
            ...)      ## center MJ 08sep03
 {
   center <- match.arg(center)
   caption.loc <- match.arg(caption.loc)
   cx <- format.df(object, dcolumn=dcolumn, na.blank=na.blank,
-                  numeric.dollar=numeric.dollar, cdot=cdot, ...)
+                  numeric.dollar=numeric.dollar, cdot=cdot,
+                  math.row.names=math.row.names, math.col.names=math.col.names,
+                  ...)
   ## removed check.names=FALSE from above 23jan03
   if (missing(rowname))
     rowname <- dimnames(cx)[[1]]
@@ -1203,9 +1215,9 @@ dvips.dvi   <- function(object, file, ...)
 {
   cmd <-
     if(missing(file))
-      paste(optionsCmds('dvips'), dQuote(object$file))
+      paste(optionsCmds('dvips'), shQuote(object$file))
     else
-      paste(optionsCmds('dvips'),'-o', file, dQuote(object$file))
+      paste(optionsCmds('dvips'),'-o', file, shQuote(object$file))
   
   ## paste(optionsCmds('dvips'),'-f', object$file,' | lpr') else 5dec03
   ## 2 dQuote 26jan04
@@ -1252,9 +1264,9 @@ html.latex <- function(object, file, ...)
   ## Create system call to hevea to convert temporary latex file to html.
   cmd <-
     if(missing(file)) {
-      paste(optionsCmds('hevea'), dQuote(tmptex))
+      paste(optionsCmds('hevea'), shQuote(tmptex))
     } else {
-      paste(optionsCmds('hevea'), '-o', file, dQuote(tmptex))
+      paste(optionsCmds('hevea'), '-o', file, shQuote(tmptex))
     }
     
   ## perform system call
@@ -1349,7 +1361,7 @@ latexSN <- function(x) {
                   'e+0*',
                   'e+*'),
              c('',
-               '\\\!\\times\\\!10^{-*}','\\\!\\times\\\!10^{-*}',
-               '\\\!\\times\\\!10^{*}','\\\!\\times\\\!10^{*}'))
+               '\\\\!\\times\\\\!10^{-*}','\\\\!\\times\\\\!10^{-*}',
+               '\\\\!\\times\\\\!10^{*}','\\\\!\\times\\\\!10^{*}'))
   x
 }

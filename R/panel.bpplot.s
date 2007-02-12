@@ -4,6 +4,10 @@ panel.bpplot <- function(x, y, box.ratio = 1, means=TRUE, qref=c(.5,.25,.75),
                          font = box.dot$font, pch = box.dot$pch, 
                          cex  = box.dot$cex, col = box.dot$col, ...)
 {
+  if(.R.) {
+    require(lattice)
+  }
+
   grid <- .R.
   if(grid) {
     lines <- llines;

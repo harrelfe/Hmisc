@@ -67,7 +67,7 @@ set.seed(1)
 x <- round(rnorm(200))
 y <- rnorm(200)
 rcorr.cens(x, y, outx=TRUE)   # can correlate non-censored variables
-if(.R.) library(survival)
+library(survival)
 age <- rnorm(400, 50, 10)
 d.time <- rexp(400)
 cens   <- runif(400,.5,2)

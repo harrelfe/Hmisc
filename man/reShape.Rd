@@ -125,35 +125,36 @@ Department of Biostatistics
 \cr
 Vanderbilt University School of Medicine
 \cr
-f.harrell@vanderbilt.edu
+\email{f.harrell@vanderbilt.edu}
 }
 \seealso{
-\code{\link{reshape}},\code{\link{as.vector}}, \code{\link{matrix}}, \code{\link{dimnames}}, \code{\link{outer}}, \code{\link{table}}
+  \code{\link[stats]{reshape}}, \code{\link[base]{as.vector}},
+  \code{\link[base]{matrix}}, \code{\link[base]{dimnames}},
+  \code{\link[base]{outer}}, \code{\link[base]{table}}
 }
 \examples{
-if(.R.) {
-  set.seed(1)
-  Solder  <- factor(sample(c('Thin','Thick'),200,TRUE),c('Thin','Thick'))
-  Opening <- factor(sample(c('S','M','L'),  200,TRUE),c('S','M','L'))
-} else attach(solder[solder$skips > 10, ])
+set.seed(1)
+Solder  <- factor(sample(c('Thin','Thick'),200,TRUE),c('Thin','Thick'))
+Opening <- factor(sample(c('S','M','L'),  200,TRUE),c('S','M','L'))
+
 tab <- table(Opening, Solder)
 tab
 reShape(tab)
 # attach(tab)  # do further processing
 
 
-if(!.R.) {
- g <- crosstabs( ~ Solder + Opening, data = solder, subset = skips > 10)
- rowpct <- 100*attr(g,'marginals')$"N/RowTotal"   # compute row pcts
- rowpct
-
-
- r <- reShape(rowpct)
- # note names "Solder" and "Opening" came originally from formula
- # given to crosstabs
- r    
- dotplot(Solder ~ rowpct, groups=Opening, panel=panel.superpose, data=r)
-}
+#if(!.R.) {
+# g <- crosstabs( ~ Solder + Opening, data = solder, subset = skips > 10)
+# rowpct <- 100*attr(g,'marginals')$"N/RowTotal"   # compute row pcts
+# rowpct
+#
+#
+# r <- reShape(rowpct)
+# # note names "Solder" and "Opening" came originally from formula
+# # given to crosstabs
+# r    
+# dotplot(Solder ~ rowpct, groups=Opening, panel=panel.superpose, data=r)
+#}
 
 
 # An example where a matrix is created from irregular vectors

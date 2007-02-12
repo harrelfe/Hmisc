@@ -206,10 +206,8 @@ The function has also been verified to work on R under Linux.
 #  in order to get dataset in proper form for event.history function;
 #  need to create one line per subject and sort by time under observation, 
 #  with those experiencing event coming before those tied with censoring time;
-if(.R.) {  # get access to heart data frame
-  require('survival')
-  data(heart)
-}
+require('survival')
+data(heart)
 
 # creation of event.history version of heart dataset (call heart.one):
 

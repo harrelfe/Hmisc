@@ -93,11 +93,13 @@ trap.rule <- function(x,y) sum(diff(x)*(y[-1]+y[-length(y)]))/2
 uncbind <- function(x, prefix="", suffix="")
 {
   nn <- dimnames(x)[[2]]
+  warning("You are using uncbind.  This is a really bad idea. It will if you had any variables in the global environment named ", paste(prefix, nn, suffix, sep=""), " they are now over writen.\n\nYou have been warned.", immediate. = TRUE, )
   for(i in 1:ncol(x))
-    if(.R.)
+    if(.R.) {
       assign(paste(prefix,nn[i],suffix,sep=""), x[,i], pos=1)
-    else
+    } else {
       assign(paste(prefix,nn[i],suffix,sep=""), x[,i], where=1)
+    }
   invisible()
 }
 
@@ -373,19 +375,21 @@ rowsumFast <- function(x, group, reorder=FALSE)
     group <- as.factor(group)
   
   storage.mode(x) <- "double"
-  temp <- if(.R.) .C('R_rowsum', dd=as.integer(dd),
-                     as.double(na.indicator),
-                     x=x, as.double(group), PACKAGE='base')
-          else
-            .C(
-               if(under.unix || version$major < 4 ||
-                  (version$major == 4 && version$minor < 7))
-                 "rowsum"
-               else "S_rowsum",
-               dd = as.integer(dd),
-               as.double(na.indicator),
-               x = x,
-               as.double(group))
+  rowsumFun <- if(.R.) {
+    'R_rowsum'
+  } else {
+    if(under.unix || version$major < 4 ||
+       (version$major == 4 && version$minor < 7)) {
+      "rowsum"
+    } else {
+      "S_rowsum"
+    }
+  }
+  
+  temp <- .C(rowsumFun, dd=as.integer(dd),
+             as.double(na.indicator),
+             x=x, as.double(group))
+
   new.n <- temp$dd[1]
   x <- temp$x[1:new.n,]
   if(reorder) {
@@ -1191,54 +1195,6 @@ Names2names <- function(x)
   x
 }
 
-## Use R function for S-Plus, just changed to .Options
-format.pval <- function (pv, digits = max(1, .Options$digits - 2),
-                           eps = .Machine$double.eps, 
-                           na.form = "NA") 
-  {
-    if ((has.na <- any(ina <- is.na(pv)))) 
-      pv <- pv[!ina]
-    
-    r <- character(length(is0 <- pv < eps))
-    if (any(!is0)) {
-      rr <- pv <- pv[!is0]
-      expo <- floor(log10(pv))
-      fixp <- expo >= -3 | (expo == -4 & digits > 1)
-      if (any(fixp)) 
-        rr[fixp] <- format(round(pv[fixp], digits = digits),
-                                     nsmall = digits)
-      if (any(!fixp)) 
-        rr[!fixp] <- format(round(pv[!fixp], digits = digits),
-                                      nsmall = digits)
-      r[!is0] <- rr
-    }
-    
-    if (any(is0)) {
-      digits <- max(1, digits - 2)
-      if (any(!is0)) {
-        nc <- max(nchar(rr))
-        if (digits > 1 && digits + 6 > nc) 
-          digits <- max(1, nc - 7)
-        sep <- if (digits == 1 && nc <= 6) 
-                 ""
-               else " "
-      }
-      else sep <- if(digits == 1) 
-                    ""
-                  else " "
-      
-      r[is0] <- paste("<", format(eps, digits = digits), sep = sep)
-    }
-    if (has.na) {
-      rok <- r
-      r <- character(length(ina))
-      r[!ina] <- rok
-      r[ina] <- na.form
-    }
-    r
-}
-
-
 if(!existsFunction('tempdir')) {
   tempdir <- function()
   {
@@ -1747,3 +1703,4 @@ clowess <- function(x, y=NULL, iter=3, ...) {
     f <- lowess(x, y, iter=0)
   f
 }
+

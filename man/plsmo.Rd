@@ -189,7 +189,7 @@ plsmo(age, survival.time < 1, fun=qlogis, group=sex) # plot logit by sex
 
 #Plot points and smooth trend line using trellis 
 # (add type='l' to suppress points or type='p' to suppress trend lines)
-if(.R.) library(lattice)
+require(lattice)
 xyplot(survival.time ~ age, panel=panel.plsmo)
 
 

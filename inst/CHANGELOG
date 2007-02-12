@@ -1,0 +1,12 @@
+3.2-1 1/25/2007:
+      Hmisc function 'ecdf' has been renamed 'Ecdf' to deconfilt it
+      with the existing 'ecdf' function in base.
+
+      Fixed Bug in format.df that would create numbers with many
+      trailing zeros.
+
+      Added arguments 'math.row.names' and 'math.col.names' to
+      indecate that the row or col names should be wrapped in the
+      latex math enviroment.
+
+      Fixed problem with 'histbackback' function.

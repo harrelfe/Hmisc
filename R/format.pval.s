@@ -1,7 +1,7 @@
 ## Use R function for S-Plus, just changed to .Options
-format.pval <- function (pv, digits = max(1, .Options$digits - 2),
+format.pval <- function (x, pv=x, digits = max(1, .Options$digits - 2),
                          eps = .Machine$double.eps, 
-                         na.form = "NA", nsmall = 0) {
+                         na.form = "NA", ...) {
   if ((has.na <- any(ina <- is.na(pv)))) 
     pv <- pv[!ina]
     
@@ -12,10 +12,10 @@ format.pval <- function (pv, digits = max(1, .Options$digits - 2),
     fixp <- expo >= -3 | (expo == -4 & digits > 1)
     if (any(fixp)) 
       rr[fixp] <- format(round(pv[fixp], digits = digits),
-                         nsmall = nsmall)
+                         ...)
     if (any(!fixp)) 
       rr[!fixp] <- format(round(pv[!fixp], digits = digits),
-                          nsmall = nsmall)
+                          ...)
     r[!is0] <- rr
   }
     
@@ -33,7 +33,7 @@ format.pval <- function (pv, digits = max(1, .Options$digits - 2),
       ""
     else " "
     
-    r[is0] <- paste("<", format(eps, digits = digits), sep = sep)
+    r[is0] <- paste("<", format(eps, digits = digits, ...), sep = sep)
   }
   if (has.na) {
     rok <- r

@@ -5,17 +5,17 @@
   \code{format.pval} is intended for formatting p-values.
 }
 \usage{
-format.pval(pv, digits = max(1, .Options$digits - 2), eps = .Machine$double.eps, na.form = "NA", nsmall = 0)
+format.pval(x, pv=x, digits = max(1, .Options$digits - 2), eps = .Machine$double.eps, na.form = "NA", \ldots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{pv}{a numeric vector.}
+  \item{x}{argument for method compliance.}
   \item{digits}{how many significant digits are to be used.}
   \item{eps}{a numerical tolerance: see Details.}
   \item{na.form}{character representation of \code{NA}s.}
-  \item{nsmall}{the minimum number of digits to the right of the decimal
-    point in formatting real/complex numbers in non-scientific formats.
-    Allowed values are \code{0 <= nsmall <= 20}.}
+  \item{\ldots}{arguments passed to \code{\link{format}} in the
+    \code{format.pval} function body.}
 }
 \details{
   \code{format.pval} is mainly an auxiliary function for

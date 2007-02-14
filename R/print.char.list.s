@@ -94,14 +94,14 @@ partition.matrix <- function(x, rowsep, colsep, ...) {
 
   ## Separate x into row chunks
   if(!rowmissing) {
-    set <- lapply(split(seq(NROW(x)), rep(seq(rowsep), times=rowsep)), function(index) x[index,,drop=FALSE])
+    set <- lapply(split(seq(NROW(x)), rep(seq(along.with=rowsep), times=rowsep)), function(index) x[index,,drop=FALSE])
   } else {
     set <- NULL
   }
 
   if(!colmissing) {
     FUN <- function(x)
-      lapply(split(seq(NCOL(x)), rep(seq(colsep), times=colsep)), function(index) x[,index,drop=FALSE])
+      lapply(split(seq(NCOL(x)), rep(seq(along.with=colsep), times=colsep)), function(index) x[,index,drop=FALSE])
     
     if(is.null(set)) {
       FUN(x)
@@ -294,7 +294,7 @@ print.char.list <- function(x, ..., hsep = c("|"), vsep = c("-"), csep = c("+"),
     bars <- character(length(entries) + 1)
     alt <- rep(c(1,2), length.out=length(widths))
 #    blank <- c(list(rep(TRUE, length(widths))), blank)
-    for(i in seq(entries)) {
+    for(i in seq(along.with=entries)) {
       len <- length(entries[[i]])
 
       comp <- entries[[i]][-len]
@@ -362,7 +362,7 @@ print.char.list <- function(x, ..., hsep = c("|"), vsep = c("-"), csep = c("+"),
 
     ## Convert to a matrix
     matrix <- do.call(rbind, x)
-    matrix <- do.call(rbind, tapply(matrix, row(matrix), FUN='do.call', what='c'))
+    matrix <- do.call(rbind, tapply(matrix, row(matrix), FUN='unlist'))
 
   } else {
     rownames <- dimnames(x)[[1]]
@@ -420,20 +420,21 @@ print.char.list <- function(x, ..., hsep = c("|"), vsep = c("-"), csep = c("+"),
     superrowheight <- superrowDims$height
   }
 
-  ## Find the overall height and width of the matrix
+  ## Find the overall height of the matrix
   height <- pmax(tapply(listDims$height, row(matrix), max), rowheight)
   height <- equalBins(superrowheight, partition.vector(height, rowsets))
 
+  ## Find the overall width of the matrix
   width  <- pmax(tapply(listDims$width, col(matrix), max), colwidth)
   width  <- equalBins(supercolwidth, partition.vector(width, colsets))
                 
   ## Calculate actual supercol widths that is the sum of the subcol or total lenght to supercol
   ## which ever is greater
-  supercolwidth <- tapply(width, rep.int(seq(colsets), times=colsets), sum) + colsets - 1
+  supercolwidth <- tapply(width, rep.int(seq(along.with=colsets), times=colsets), sum) + colsets - 1
   supercolheight <- max(superrowDims$height)
   colheight <- max(colDims$height)
 
-  superrowheight <- tapply(height, rep.int(seq(rowsets), times=rowsets), sum)
+  superrowheight <- tapply(height, rep.int(seq(along.with=rowsets), times=rowsets), sum)
 
   if(missing(prefix.width)) {
     if(!is.null(rownames)) {
@@ -456,8 +457,7 @@ print.char.list <- function(x, ..., hsep = c("|"), vsep = c("-"), csep = c("+"),
   rows <- NULL
   entries <- list()
   blanks <- list()
-  superrows <- matrix(superrows, ncol=1)
-  supercols <- matrix(supercols, nrow=1)
+
   
   ## Figure out the centering of the cells.
   rowNameHalign <- match.arg(rowname.halign)
@@ -469,6 +469,8 @@ print.char.list <- function(x, ..., hsep = c("|"), vsep = c("-"), csep = c("+"),
 
   ## create the superrowname column
   superrow <- if(!is.null(superrows)) {
+    superrows <- matrix(superrows, ncol=1)
+
     header <- NA
     headerwidth <- superprefix.width
     ## perform verical and horizontal centering.
@@ -491,8 +493,10 @@ print.char.list <- function(x, ..., hsep = c("|"), vsep = c("-"), csep = c("+"),
   
   ## Create the super column name row and the column name row
   if(!is.null(supercols)) {
+    supercols <- matrix(supercols, nrow=1)
+    
     supercolwidth <- c(headerwidth, supercolwidth)
-    entry <- c(header, rep(seq(colsets), colsets), 0)
+    entry <- c(header, rep(seq(along.with=colsets), colsets), 0)
     entries <- c(entries, list(ifelse(is.na(entry), FALSE, !duplicated(entry))))
 
     blank <- ifelse(is.na(c(header, rep(supercols, colsets))), TRUE, FALSE)
@@ -503,7 +507,7 @@ print.char.list <- function(x, ..., hsep = c("|"), vsep = c("-"), csep = c("+"),
   }
 
   if(!is.null(colnames)) {
-    entry <- c(header, rep(seq(colnames), 1), 0)
+    entry <- c(header, rep(seq(along.with=colnames), 1), 0)
     entries <- c(entries, list(ifelse(is.na(entry), FALSE, !duplicated(entry))))
     
     blank <- ifelse(is.na(c(header, colnames)), TRUE, FALSE)
@@ -517,11 +521,11 @@ print.char.list <- function(x, ..., hsep = c("|"), vsep = c("-"), csep = c("+"),
 
   env <- environment()
 
-  rows <- c(rows, unlist(lapply(split(body, rep(seq(rowsets), rowsets)), function(set) {
-    index <- seq(set)
+  rows <- c(rows, unlist(lapply(split(body, rep(seq(along.with=rowsets), rowsets)), function(set) {
+    index <- seq(along.with=set)
 
     mapply(FUN = function(line, index) {
-      entry <- c(ifelse(is.na(line), NA, rep(seq(line), 1)), 0)
+      entry <- c(ifelse(is.na(line), NA, rep(seq(along.with=line), 1)), 0)
       entry <- ifelse(is.na(entry), FALSE, !duplicated(entry))
       
       assign('entries', c(entries, list(entry)), env)

@@ -1,7 +1,7 @@
 ## $Id$
 
 responseSummary <- function(formula, data=parent.frame(), na.action=na.pass,
-                            FUN=function(y) apply(y, 2, mean), fun,
+                            FUN=mean, fun,
                             overall=TRUE, continuous=10, na.rm=TRUE,
                             na.include=TRUE, g, quantile.groups=4,
                             groups=quantile.groups, nmin=0, ...) {
@@ -328,4 +328,22 @@ print.responseSummary <- function(x,
 
   print.char.list(x, abbreviate.dimnames=abbreviate.dimnames, print.it=TRUE, ...)
   invisible(x.orig)
+}
+
+
+latex.responseSummary <- function(object,
+                                  title=first.word(deparse(substitute(object))),
+                                  caption,
+                                  trios,
+                                  vnames=c('labels', 'names'),
+                                  prn=TRUE,
+                                  prUnits=TRUE,
+                                  rowlabel='',
+                                  cdec=2,
+                                  ncaption=TRUE,
+                                  ...) {
+  ## Fix lazy evaluation
+  title <- title
+  
+  
 }

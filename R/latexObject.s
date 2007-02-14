@@ -1,6 +1,6 @@
-ESC <- '\\'
-BS <- paste(ESC, ESC, sep='')
-NL <- paste(BS, BS, sep='')
+.ESC <- '\\'
+.BS <- paste(.ESC, .ESC, sep='')
+.NL <- paste(.BS, .BS, sep='')
 
 attrCheck <- function(x, which) {
   ans <- attr(x=x, which=which)
@@ -218,10 +218,10 @@ latexMakeString <- function(body, space, verbatim = FALSE) {
   }
 
   ## split the string on spaces and newlines
-  body <- gsub('\\s*\n\\s*', escapestr(paste(" ", BS, " ", sep='')), body)
+  body <- gsub('\\s*\n\\s*', escapestr(paste(" ", .BS, " ", sep='')), body)
   newObjs <- lapply(strsplit(body, '\\s+')[[1]],
                     function(word) {
-                      if(word == BS) {
+                      if(word == .BS) {
                         obj <- structure(word, space=FALSE)
                       } else {
                         obj <- structure(word, space=TRUE)
@@ -322,7 +322,7 @@ latexMakeAssign <- function(cmd, target, args) {
     stop('multiple arguments cannot be passed to an assignment')
   }
   
-  newObj <- latexMakeCmd(cmd, args = c(latexMakeArg(latexMakeString(paste(BS, target, sep=''))), args))
+  newObj <- latexMakeCmd(cmd, args = c(latexMakeArg(latexMakeString(paste(.BS, target, sep=''))), args))
 }
 
 ## makes latex object for functions
@@ -411,7 +411,7 @@ processLatexThings <- function(obj, lines = character(), indent, delta, ...) {
       
       lines <- c(lines, line, results[[i]][-1])
       line <- ''
-    } else if(results[[i]] == BS) {
+    } else if(results[[i]] == .BS) {
       line <- strwrap(line, indent = indent, exdent = indent, width = pagewidth)
 
       lines <- c(lines, line)
@@ -527,7 +527,7 @@ format.latexObj.enviroment <- function(x, indent=0, delta=2, ...) {
   body <- getLatexBody(x)
   args <- getLatexArgs(x)
 
-  lines <- paste(ESC, "begin{", env.name, "}", sep = '')
+  lines <- paste(.ESC, "begin{", env.name, "}", sep = '')
 
   ## Process args
   if(!is.null(args)) {
@@ -540,7 +540,7 @@ format.latexObj.enviroment <- function(x, indent=0, delta=2, ...) {
   ## Run body
   lines <- processLatexThings(body, lines, indent = indent + delta, delta = delta, ...)
   
-  setLatexAttribs(c(lines, paste(ESC, 'end{', env.name, '}', sep='')))
+  setLatexAttribs(c(lines, paste(.ESC, 'end{', env.name, '}', sep='')))
 }
 
 format.latexObj.command <- function(x, indent=0, delta = 2, ...) {
@@ -549,7 +549,7 @@ format.latexObj.command <- function(x, indent=0, delta = 2, ...) {
   pagewidth <- options('width')[[1]]
   textwidth <- pagewidth - indent
 
-  string <- paste(ESC, x[[1]], sep='')
+  string <- paste(.ESC, x[[1]], sep='')
 
   args <- getLatexArgs(x)
   if(! is.null(args)) {

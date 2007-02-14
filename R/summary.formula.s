@@ -34,8 +34,10 @@ summary.formula <-
                   plotmathstat='chi[df]^2')
            },
            ordTest=function(group, x) {
-             requirePackage('Design')
-
+#             requirePackage('Design')
+# require and requirePackage will only accept a character string
+# if character.only = TRUE, so just give the Design package name instead
+             requirePackage(Design)
              f <- lrm(x ~ group)$stats
              list(P=f['P'], stat=f['Model L.R.'], df=f['d.f.'],
                   testname='Proportional odds likelihood ratio',

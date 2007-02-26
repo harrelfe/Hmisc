@@ -433,12 +433,13 @@ print.describe.single <- function(x, condense=TRUE, ...)
 }
 
 
-latex.describe <- function(object, title=NULL, condense=TRUE,
-                           file=paste('describe',
-                                      first.word(expr=attr(object, 'descript')),
-                                      'tex', sep='.'),
-                           append=FALSE, size='small',
-                           tabular=TRUE, greek=TRUE, ...)
+latex.describe <-
+  function(object, title=NULL, condense=TRUE,
+           file=paste('describe',
+             first.word(expr=attr(object, 'descript')),
+             'tex', sep='.'),
+           append=FALSE, size='small',
+           tabular=TRUE, greek=TRUE, ...)
 {
   at <- attributes(object)
   ct <- function(..., file, append=FALSE)
@@ -476,7 +477,8 @@ latex.describe <- function(object, title=NULL, condense=TRUE,
       if(!potentiallyLong) cat('\\vbox{', file=file, append=TRUE)
 
       latex.describe.single(z, condense=condense, vname=vnames[i],
-                            file=file, append=TRUE, tabular=tabular, greek=greek)
+                            file=file, append=TRUE,
+                            tabular=tabular, greek=greek)
       ct('\\vspace{-.5ex}\\hrule\\smallskip\n', file=file, append=TRUE)
       if(!potentiallyLong) cat('}\n', file=file, append=TRUE)
     }
@@ -489,17 +491,25 @@ latex.describe <- function(object, title=NULL, condense=TRUE,
       mv <- paste(mv, collapse=', ')
       ct(mv, file=file, append=TRUE)
     }
-    
-#    ct('}', file=file, append=TRUE)
-  } else latex.describe.single(object,
-                               vname=first.word(expr=at$descript),
-                               condense=condense,
-                               file=file, append=TRUE, size=size,
-                               tabular=tabular)
-  
-  ct('}\\end{spacing}\n', file=file, append=TRUE)
+    ct('}\\end{spacing}\n', file=file, append=TRUE)
+  }
+  else
+    {
+      val <- object$values
+      potentiallyLong <-
+        length(val) && !is.matrix(val) &&
+        length(val) != 10 || !all(names(val)==
+                c("L1","L2","L3","L4","L5","H5","H4","H3","H2","H1"))
+      if(!potentiallyLong) cat('\\vbox{', file=file, append=TRUE)
+      latex.describe.single(object,
+                            vname=first.word(expr=at$descript),
+                            condense=condense,
+                            file=file, append=TRUE, size=size,
+                            tabular=tabular)
+      if(!potentiallyLong) cat('}\n', file=file, append=TRUE)
+      ct('\\end{spacing}\n', file=file, append=TRUE)
+    }
 
-  ##if(!.SV4.)   18Oct01
   structure(list(file=file,  style=c('setspace','relsize')),
             class='latex')
 }

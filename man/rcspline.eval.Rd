@@ -21,8 +21,9 @@ a vector representing a predictor variable
 }
 \item{knots}{
 knot locations. If not given, knots will be estimated using default
-quantiles of \code{x}. For 3-5 knots, the outer quantiles used are .05 and .95.
-For \code{nk>5}, the outer quantiles are .025 and .975. The knots are
+quantiles of \code{x}. For 3 knots, the outer quantiles used are .10 and .90.
+For 4-6 knots, the outer quantiles used are .05 and .95. For \code{nk>6}, the
+outer quantiles are .025 and .975. The knots are
 equally spaced between these on the quantile scale. For fewer than 100
 non-missing values of \code{x}, the outer knots are the 5th smallest and
 largest \code{x}.

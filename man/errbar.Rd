@@ -63,7 +63,7 @@ if corresponding values represent simple estimates, \code{2} if they
 represent differences.
 }
 \item{...}{
-other parameters passed to plot function.
+other parameters passed to all graphics functions except \code{axis}.
 }}
 \author{
 Charles Geyer, University of Chicago.  Modified by Frank Harrell,

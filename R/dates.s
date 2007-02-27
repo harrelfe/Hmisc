@@ -66,8 +66,7 @@
   } else {
     return("x is not a chron object")
   }
-
-  return given
+  return(given)
 }
   
 hour.minute.second <- function(x) {

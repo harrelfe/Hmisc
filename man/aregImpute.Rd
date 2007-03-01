@@ -41,18 +41,18 @@ For the imputations, the minimum value of \code{nk} is used.
 Instead of defaulting to taking random draws from fitted imputation
 models using random residuals as is done by \code{transcan},
 \code{aregImpute} by default uses predictive mean matching with optional
-weighted 
-probability sampling of donors rather than using only the closest match.
-Predictive mean matching works for binary, categorical, and continuous
-variables without the need for iterative maximum likelihood fitting for
-binary and categorical variables, and without the need for computing
-residuals or for curtailing imputed values to be in the range of actual
-data.  Predictive mean matching is especially attractive when the
-variable being imputed is also being transformed automatically.  See
-Details below for more information about the algorithm.  A
-\code{"regression"} method is also available that is similar to that
-used in \code{transcan}.  This option should be used when mechanistic
-missingness requires the use of extrapolation during imputation.
+weighted probability sampling of donors rather than using only the
+closest match.  Predictive mean matching works for binary, categorical,
+and continuous variables without the need for iterative maximum
+likelihood fitting for binary and categorical variables, and without the
+need for computing residuals or for curtailing imputed values to be in
+the range of actual data.  Predictive mean matching is especially
+attractive when the variable being imputed is also being transformed
+automatically.  See Details below for more information about the
+algorithm.  A \code{"regression"} method is also available that is
+similar to that used in \code{transcan}.  This option should be used
+when mechanistic missingness requires the use of extrapolation during
+imputation.
 
 A \code{print} method summarizes the results, and a \code{plot} method plots
 distributions of imputed values.  Typically, \code{fit.mult.impute} will
@@ -82,7 +82,11 @@ of variables.  The function automatically determines which variables
 are categorical (i.e., \code{factor}, \code{category}, or character vectors).
 Binary variables are automatically restricted to be linear.  Force
 linear transformations of continuous variables by enclosing variables
-by the identify function (\code{I()}).
+by the identify function (\code{I()}).  It is recommended that
+\code{factor()} or \code{as.factor()} do not appear in the formula but
+instead variables be converted to factors as needed and stored in the
+data frame.  That way imputations for factor variables (done using
+\code{\link{impute.trans}} for example) will be correct.
 }
 \item{x}{
   an object created by \code{aregImpute}.  For \code{aregImpute}, set

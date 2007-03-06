@@ -1,3 +1,16 @@
+.CronSetup <- FALSE
+.NeededCronFuns <- list("month.day.year", "leap.year")
+month.length <- c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+
+.SetUpCron <- function() {
+  if(.CronSetup) {
+    return()
+  }
+#  .ImportFrom("chron", "month.day.year", "leap.year")
+#  do.call(".ImportForm", c(list("chron"), .NeededCronFuns))
+  .CronSetup <- TRUE
+}
+
 ## round.chron <- function(x, units=c("minutes", "hours", "days", "months", "years")) {
 ##   if(missing(units)) {
 ##     return(floor(unclass(x)))
@@ -49,7 +62,7 @@
 ##          },
 ## }
 .checkRoundChron <- function(x, units) {
-  given <- list(dates=NULL, times=NULL)
+  given <- list(dates=FALSE, times=FALSE)
 
   if(is(x, 'chron')) {
     given[c("dates", "times")] <- TRUE
@@ -66,10 +79,13 @@
   } else {
     return("x is not a chron object")
   }
+
   return(given)
 }
   
 hour.minute.second <- function(x) {
+  .SetUpCron()
+  
   ## get the total number of seconds
   X <- as.numeric(x)
 
@@ -99,6 +115,8 @@ hour.minute.second <- function(x) {
 }
 
 second.minute.hour.day.month.year <- function(x, origin.) {
+  .SetUpCron()
+  
   mdy <- month.day.year(x, origin.)
 
   hms <- hour.minute.second(x)
@@ -107,40 +125,39 @@ second.minute.hour.day.month.year <- function(x, origin.) {
        day = mdy$day, month = mdy$month, year = mdy$year)
 }
 
-month.days <- function(x) {
-  non.na <- !is.na(x)
-  mdy <- month.day.year(x)
-  year <- as.numeric(mdy$year)
-  month <- as.numeric(mdy$month)
+## month.days <- function(x) {
+##   non.na <- !is.na(x)
+##   mdy <- month.day.year(x)
+##   year <- as.numeric(mdy$year)
+##   month <- as.numeric(mdy$month)
 
-  non.na <- !is.na(mo)
-  bad <- seq(along = mo)[non.na][mo[non.na] < 1 |
-               mo[non.na] >  12]
-  if (n.bad <- length(bad)) {
-    if (n.bad > 10) 
-      msg <- paste(n.bad, "months out of range set to NA")
-    else {
-      if(n.bad > 1) {
-        msg <- paste("month(s) out of range in positions", 
-                     paste(bad, collapse = ","))
-      } else {
-        msg <- paste("month out of range in position", bad)
-      }
-      msg <- paste(msg, "set to NA")
-    }
-    warning(msg)
-    mo[bad] <- NA
-    non.na[bad] <- FALSE
-  }
+##   non.na <- !is.na(mo)
+##   bad <- seq(along = mo)[non.na][mo[non.na] < 1 |
+##                mo[non.na] >  12]
+##   if (n.bad <- length(bad)) {
+##     if (n.bad > 10) 
+##       msg <- paste(n.bad, "months out of range set to NA")
+##     else {
+##       if(n.bad > 1) {
+##         msg <- paste("month(s) out of range in positions", 
+##                      paste(bad, collapse = ","))
+##       } else {
+##         msg <- paste("month out of range in position", bad)
+##       }
+##       msg <- paste(msg, "set to NA")
+##     }
+##     warning(msg)
+##     mo[bad] <- NA
+##     non.na[bad] <- FALSE
+##   }
   
   
-  month.days <- month.length[month]
-}  
+##   month.days <- month.length[month]
+## }  
 
 floor.chron <- function(x,
-                        units=c("seconds", "minutes", "hours", "days", "months", "years"),
-                        inclusive=TRUE) {
-  require('chron', character.only=TRUE)
+                        units=c("seconds", "minutes", "hours", "days", "months", "years")) {
+  .SetUpCron()
 
   if(missing(units)) {
     return(floor(unclass(x)))
@@ -159,6 +176,7 @@ floor.chron <- function(x,
     ncol <- 4
   }
 
+  nrow <- length(x)
   ## save attribes
   attribs <- attributes(x)
 
@@ -167,14 +185,54 @@ floor.chron <- function(x,
 
   index <- match(units, default.arg(units))
 
+  if(index == 1) {
+    ## floor on seconds which is a integer so floor it.
+    time[,1] <- floor(time[,1])
+  } else {
+    min.vals <- c(0,0,0,1,1)
+    length(min.vals) <- ncol - 1
+    
+    rep.seq <- seq(from=1, to=index - 1)
+    min.vals <- matrix(rep(min.vals[rep.seq], each=nrow), nrow=nrow)
+
+    ## Create a matrix that is true for each element that should be replaced
+    ## with its minimum value
+    not.rep <- matrix(logical(length(time)), nrow=nrow)
+    not.rep[,rep.seq] <- time[,rep.seq] > min.vals
+
+    ## if there is no change return orginal value
+    if(! any(not.rep)) {
+      return(x)
+    }
+    
+    ## replace time values that are less significant then the index
+    ## with the minimum values.
+    time[not.rep] <- min.vals[not.rep]
+
+  }
+
+  ## Find the interger representation of the date
+  if(given$dates) {
+    result <- julian(x=time[,5], d=time[,4], y=time[,6], origin.=attribs$origin)
+  } else {
+    result <- 0
+  }
+
+  ## Find the decimal representation of the time and add it the the result
+  if(given$times) {
+    result <- result + ((3600 * time[,3] + 60 * time[,2] + time[,1]) / (24 * 3600))
+  }
+
+  ## set the existing attributes on the result
+  attributes(result) <- attribs
+
+  return(result)
 }
 
 ceiling.chron <- function(x,
                           units=c("seconds", "minutes", "hours", "days", "months", "years"),
                           inclusive=TRUE) {
-  require('chron', character.only=TRUE)
-
-  require('chron', character.only=TRUE)
+  .SetUpCron()
   
   if(missing(units)) {
     return(ceiling(unclass(x)))
@@ -194,6 +252,7 @@ ceiling.chron <- function(x,
     ncol <- 4
   }
 
+  nrow <- length(x)
   ## save attribes
   attribs <- attributes(x)
 
@@ -239,21 +298,30 @@ ceiling.chron <- function(x,
     time[not.rep] <- replacement.vals[not.rep]
 
     if(inclusive) {
-      inc(time[sapply(split(not.rep[,rep.seq], 1:nrow), any), index]) <- 1
-      
+      rep.indx <- sapply(split(not.rep[,rep.seq], 1:nrow), any)
+      time[rep.indx, index] <- time[rep.indx, index] + 1
+
+      test <- rep.int(TRUE, times=nrow)
       for(i in seq(from=index, to=ncol - 1)) {
         ## find which rows have larger then max vals
-        test <- time[,i] > max.vals[,i]
+        test[test] <- time[test,i] > max.vals[test,i]
 
-        ## For all rows where test is true
-        ## increment the value of the next col and
-        ## set the cols value to the minium value.
-        inc(time[test, i + 1]) <- 1
-        time[test, i] <- min.vals[test, i]
-        
-        ## remove the test var
-        rm(test)
+        if(any(test)) {
+          ## For all rows where test is true
+          ## increment the value of the next col and
+          ## set the cols value to the minium value.
+          time[test, i + 1] <- time[test, i + 1] + 1
+          time[test, i] <- min.vals[test, i]
+        } else {
+          break
+        }        
       }
+
+      ## remove the test var
+      rm(test)
+      
+      ## remove the rep.indx var
+      rm(rep.indx)
     }
   }
 
@@ -267,7 +335,7 @@ ceiling.chron <- function(x,
 
   ## Find the decimal representation of the time and add it the the result
   if(given$times) {
-    inc(result) <- (3600 * hh + 60 * mm + ss) / (24 * 3600)
+    result <- result + ((3600 * time[,3] + 60 * time[,2] + time[,1]) / (24 * 3600))
   }
 
   ## set the existing attributes on the result

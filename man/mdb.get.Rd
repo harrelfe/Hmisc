@@ -12,7 +12,8 @@
   one table is imported, the result is a list of data frames.
 }
 \usage{
-mdb.get(file, tables=NULL, lowernames=FALSE, allow=NULL, ...)
+mdb.get(file, tables=NULL, lowernames=FALSE, allow=NULL,
+        dateformat='%m/%d/%y', ...)
 }
 \arguments{
   \item{file}{the file name containing the Access database}
@@ -25,6 +26,8 @@ mdb.get(file, tables=NULL, lowernames=FALSE, allow=NULL, ...)
     converted to periods in variable names.  By default, underscores in
     variable names are converted to periods as with \R before version
     1.9.}
+  \item{dateformat}{see \code{\link{cleanup.import}}.  Default is the
+	usual Access format used in the U.S.}
   \item{\dots}{arguments to pass to \code{csv.get}}
 }
 \details{
@@ -43,11 +46,13 @@ mdb.get(file, tables=NULL, lowernames=FALSE, allow=NULL, ...)
 \examples{
 \dontrun{
 # Read all tables in the Microsoft Access database Nwind.mdb
-d <- mdb.get('Nwind.mdb', dateformat='%m/%d/%y')
+d <- mdb.get('Nwind.mdb')
 contents(d)
 for(z in d) print(contents(z))
 # Just print the names of tables in the database
 mdb.get('Nwind.mdb', tables=TRUE)
+# Import one table
+Orders <- mdb.get('Nwind.mdb', tables='Orders')
 }
 }
 \keyword{manip}

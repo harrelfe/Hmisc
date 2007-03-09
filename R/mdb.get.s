@@ -1,4 +1,4 @@
-## $Id: $
+## $Id$
 mdb.get <- function(file, tables=NULL, lowernames=FALSE, allow=NULL, ...)
 {
   rettab <- length(tables) && is.logical(tables)

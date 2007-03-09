@@ -1114,31 +1114,33 @@ sas.get.macro <-
     " PUT vname +_bk_ __delim IB1. val +_bk_ __delim IB1. obs +_bk_ __delim IB1.;",
     " RUN;", " %END;", "%mend sas_get;")
 
-cleanup.import <- function(obj, labels=NULL, lowernames=FALSE, 
-                           force.single=TRUE, force.numeric=TRUE,
-                           rmnames=TRUE,
-                           big=1e20, sasdict, 
-                           pr=prod(dimobj) > 5e5,
-                           datevars=NULL,
-                           dateformat='%F', fixdates=c('none','year'),
-                           charfactor=FALSE)
+cleanup.import <-
+  function(obj, labels=NULL, lowernames=FALSE, 
+           force.single=TRUE, force.numeric=TRUE,
+           rmnames=TRUE,
+           big=1e20, sasdict, 
+           pr=prod(dimobj) > 5e5,
+           datevars=NULL, datetimevars=NULL,
+           dateformat='%F', fixdates=c('none','year'),
+           charfactor=FALSE)
 {
   fixdates <- match.arg(fixdates)
   nam <- names(obj)
   dimobj <- dim(obj)
   nv <- length(nam)
 
-  if(!missing(sasdict)) {
-    sasvname <- makeNames(sasdict$NAME)
-    if(any(w <- nam %nin% sasvname))
-      stop(paste('The following variables are not in sasdict:',
-                 paste(nam[w],collapse=' ')))
-    
-    saslabel <- structure(as.character(sasdict$LABEL), 
-                          names=as.character(sasvname))
-    labels <- saslabel[nam]
-    names(labels) <- NULL
-  }
+  if(!missing(sasdict))
+    {
+      sasvname <- makeNames(sasdict$NAME)
+      if(any(w <- nam %nin% sasvname))
+        stop(paste('The following variables are not in sasdict:',
+                   paste(nam[w],collapse=' ')))
+      
+      saslabel <- structure(as.character(sasdict$LABEL), 
+                            names=as.character(sasvname))
+      labels <- saslabel[nam]
+      names(labels) <- NULL
+    }
 	
   if(length(labels) && length(labels) != dimobj[2])
     stop('length of labels does not match number of variables')
@@ -1149,158 +1151,189 @@ cleanup.import <- function(obj, labels=NULL, lowernames=FALSE,
   if(pr)
     cat(dimobj[2],'variables; Processing variable:')
 
-  for(i in 1:dimobj[2]) {
-    if(pr)
-      cat(i,'')
+  for(i in 1:dimobj[2])
+    {
+      if(pr) cat(i,'')
 
-    x <- obj[[i]];
-    modif <- FALSE
-    if(length(dim(x)))
-      next     # 6Jan03
-
-    if(rmnames) {
-      if(length(attr(x,'names'))) {
-        attr(x,'names') <- NULL
-        modif <- TRUE
-      } else if(length(attr(x,'.Names'))) {
-        attr(x,'.Names') <- NULL
+      x <- obj[[i]];
+      modif <- FALSE
+      if(length(dim(x)))
+        next
+      
+      if(rmnames)
+        {
+          if(length(attr(x,'names')))
+            {
+              attr(x,'names') <- NULL
+              modif <- TRUE
+            } else if(length(attr(x,'.Names')))
+              {
+                attr(x,'.Names') <- NULL
+                modif <- TRUE
+              }
+        }
+      
+      if(.R. && length(attr(x,'Csingle'))) {
+        attr(x,'Csingle') <- NULL
         modif <- TRUE
       }
-    }
-
-    if(.R. && length(attr(x,'Csingle'))) {
-      attr(x,'Csingle') <- NULL
-      modif <- TRUE
-    }
     
-    ## The following is to fix imports of S+ transport format data
-    ## that were created in SV3
-    if(.SV4.) {
-      cl <- oldClass(x)
-      xlev <- length(attr(x, 'levels'))
-      if(any(cl=='AsIs')) {
-        modif <- TRUE
-        cat('Removed AsIs class from variable\t\t', nam[i], '\n')
-        oldClass(x) <- cl[cl != 'AsIs']
-        cl <- cl[cl != 'AsIs']
-      }
-      if(any(cl=='labelled')) {
-        modif <- TRUE
-        ##For some strange reason if class=c('labelled','factor'),
-        ##removing labelled class changes class to 'category'
-        cl <- oldClass(x) <-
-          if(length(cl)==1 ||
-             (length(cl)==2 && cl[2]=='factor' &&
-              !xlev)) NULL
-          else
-            cl[cl != 'labelled']
+      ## The following is to fix imports of S+ transport format data
+      ## that were created in SV3
+      if(.SV4.)
+        {
+          cl <- oldClass(x)
+          xlev <- length(attr(x, 'levels'))
+          if(any(cl=='AsIs'))
+            {
+              modif <- TRUE
+              cat('Removed AsIs class from variable\t\t', nam[i], '\n')
+              oldClass(x) <- cl[cl != 'AsIs']
+              cl <- cl[cl != 'AsIs']
+            }
+      if(any(cl=='labelled'))
+        {
+          modif <- TRUE
+          ##For some strange reason if class=c('labelled','factor'),
+          ##removing labelled class changes class to 'category'
+          cl <- oldClass(x) <-
+            if(length(cl)==1 ||
+               (length(cl)==2 && cl[2]=='factor' &&
+                !xlev)) NULL
+            else
+              cl[cl != 'labelled']
         
-        cat('Removed labelled class from variable\t', nam[i], '\n')
-      }
+          cat('Removed labelled class from variable\t', nam[i], '\n')
+        }
       
-      if(any(cl=='factor') && !xlev) {
-        modif <- TRUE
-        oldClass(x) <- cl[cl != 'factor']
-        cat('Removed factor class from variable having no levels\t',
-            nam[i], '\n')
-      }
-    }
+      if(any(cl=='factor') && !xlev)
+        {
+          modif <- TRUE
+          oldClass(x) <- cl[cl != 'factor']
+          cat('Removed factor class from variable having no levels\t',
+              nam[i], '\n')
+        }
+        }
 
-    if(length(datevars) && nam[i] %in% datevars && !all(is.na(x))) {
-      if(!is.factor(x) || is.character(x))
-        stop(paste('variable',nam[i],
-                   'must be a factor or character variable for date conversion'))
-      
-      x <- as.character(x)
-      if(fixdates != 'none') {
-        if(dateformat %nin% c('%F','%y-%m-%d','%m/%d/%y','%m/%d/%Y'))
-          stop('fixdates only supported for dateformat %F %y-%m-%d %m/%d/%y %m/%d/%Y')
-
+    if(length(c(datevars,datetimevars)) &&
+       nam[i] %in% c(datevars,datetimevars) &&
+       !all(is.na(x)))
+      {
+        if(!(is.factor(x) || is.character(x)))
+          stop(paste('variable',nam[i],
+                     'must be a factor or character variable for date conversion'))
+        
+        x <- as.character(x)
         ## trim leading and trailing white space
         x <- sub('^[[:space:]]+','',sub('[[:space:]]+$','', x))
-        x <- switch(dateformat,
-                    '%F'      =gsub('^([0-9]{2})-([0-9]{1,2})-([0-9]{1,2})', '20\\1-\\2-\\3',x),
-                    '%y-%m-%d'=gsub('^[0-9]{2}([0-9]{2})-([0-9]{1,2})-([0-9]{1,2})', '\\1-\\2-\\3',x),
-                    '%m/%d/%y'=gsub('^([0-9]{1,2})/([0-9]{1,2})/[0-9]{2}([0-9]{2})', '\\1/\\2/\\3',x),
-                    '%m/%d/%Y'=gsub('^([0-9]{1,2})/([0-9]{1,2})/([0-9]{2})$','\\1/\\2/20\\3',x))
-      }
+        xt <- NULL
+        if(nam[i] %in% datetimevars)
+          {
+            xt <- gsub('.* ([0-9][0-9]:[0-9][0-9]:[0-9][0-9])','\\1',x)
+            xtnna <- setdiff(xt, c('',' ','00:00:00'))
+            if(!length(xtnna)) xt <- NULL
+            x <- gsub(' [0-9][0-9]:[0-9][0-9]:[0-9][0-9]','',x)
+          }
+        if(fixdates != 'none')
+          {
+            if(dateformat %nin% c('%F','%y-%m-%d','%m/%d/%y','%m/%d/%Y'))
+              stop('fixdates only supported for dateformat %F %y-%m-%d %m/%d/%y %m/%d/%Y')
 
-      x <- as.Date(x, format=dateformat)
-      modif <- TRUE
-    }
-
-    if(length(labels)) {
-      label(x) <- labels[i]
-      modif <- TRUE
-    }
-
-    if(force.numeric && length(lev <- levels(x))) {
-      ##.Options$warn <- -1   6Aug00
-      ##s <- lev != ''
-      ##if(all(!is.na(as.numeric(lev[s])))) {
-      if(all.is.numeric(lev)) {
-        labx <- attr(x,'label')
-        x <- as.numeric(as.character(x))
-        label(x) <- labx
+            x <- switch(dateformat,
+                        '%F'      =gsub('^([0-9]{2})-([0-9]{1,2})-([0-9]{1,2})', '20\\1-\\2-\\3',x),
+                        '%y-%m-%d'=gsub('^[0-9]{2}([0-9]{2})-([0-9]{1,2})-([0-9]{1,2})', '\\1-\\2-\\3',x),
+                        '%m/%d/%y'=gsub('^([0-9]{1,2})/([0-9]{1,2})/[0-9]{2}([0-9]{2})', '\\1/\\2/\\3',x),
+                        '%m/%d/%Y'=gsub('^([0-9]{1,2})/([0-9]{1,2})/([0-9]{2})$','\\1/\\2/20\\3',x))
+          }
+        x <- if(length(xt))
+          {
+            require('chron')
+            cform <- if(dateformat=='%F') 'y-m-d'
+            else gsub('%','',tolower(dateformat))
+            chron(x, xt, format=c(dates=cform,times='h:m:s'))
+          }
+        else as.Date(x, format=dateformat)
         modif <- TRUE
       }
-    }
 
-    if(storage.mode(x) == 'double') {
-      xu <- oldUnclass(x)
-      j <- is.infinite(xu) | is.nan(xu) | abs(xu) > big
-      if(any(j,na.rm=TRUE)) {
-        x[j] <- NA
-        modif <- TRUE
-        if(pr)
-          cat('\n')
-        
-        cat(sum(j,na.rm=TRUE),'infinite values set to NA for variable',
-            nam[i],'\n')
-      }
-         
-      isdate <- testDateTime(x)  ## 31aug02
-      if(force.single && !isdate) {
-        allna <- all(is.na(x))
-        if(allna) {
-          storage.mode(x) <- 'integer'
+      if(length(labels))
+        {
+          label(x) <- labels[i]
           modif <- TRUE
         }
-        
-        if(!allna) {
-          notfractional <- !any(floor(x) != x, na.rm=TRUE)  ## 28Mar01
-          ## max(abs()) 22apr03
-          if(max(abs(x),na.rm=TRUE) <= (2^31-1) && notfractional) {   ## 29may02
-            storage.mode(x) <- 'integer'
+
+      if(force.numeric && length(lev <- levels(x)))
+        {
+          if(all.is.numeric(lev))
+            {
+              labx <- attr(x,'label')
+              x <- as.numeric(as.character(x))
+              label(x) <- labx
+              modif <- TRUE
+            }
+        }
+
+    if(storage.mode(x) == 'double')
+      {
+        xu <- oldUnclass(x)
+        j <- is.infinite(xu) | is.nan(xu) | abs(xu) > big
+        if(any(j,na.rm=TRUE))
+          {
+            x[j] <- NA
             modif <- TRUE
-          } else if(!.R.) {
-            storage.mode(x) <- 'single'
+            if(pr)
+              cat('\n')
+            
+            cat(sum(j,na.rm=TRUE),'infinite values set to NA for variable',
+                nam[i],'\n')
+          }
+         
+      isdate <- testDateTime(x)
+        if(force.single && !isdate)
+          {
+            allna <- all(is.na(x))
+            if(allna) {
+              storage.mode(x) <- 'integer'
+              modif <- TRUE
+            }
+        
+            if(!allna)
+              {
+                notfractional <- !any(floor(x) != x, na.rm=TRUE)
+                if(max(abs(x),na.rm=TRUE) <= (2^31-1) && notfractional)
+                  {
+                    storage.mode(x) <- 'integer'
+                    modif <- TRUE
+                  } else if(!.R.)
+                    {
+                      storage.mode(x) <- 'single'
+                      modif <- TRUE
+                    }
+              }
+          }
+      }
+
+    if(charfactor && is.character(x))
+      {
+        if(max(nchar(x)) >= 2 && (length(unique(x)) < .5*length(x)))
+          {
+            x <- factor(x)
             modif <- TRUE
           }
-        }
       }
-    }
-
-    if(charfactor && is.character(x)) {
-      if(max(nchar(x)) >= 2 && (length(unique(x)) < .5*length(x))) {
-        x <- factor(x)
-        modif <- TRUE
-      }
-    }
     
-    if(modif)
-      obj[[i]] <- x
-    
+      if(modif) obj[[i]] <- x
     NULL
-  }
+    }
 
   if(pr) cat('\n')
-  if(!missing(sasdict)) {
-    sasat <- sasdict[1,]
-    attributes(obj) <- c(attributes(obj),
-                         sasds=as.character(sasat$MEMNAME),
-                         sasdslabel=as.character(sasat$MEMLABEL))
-  }
+  if(!missing(sasdict))
+    {
+      sasat <- sasdict[1,]
+      attributes(obj) <- c(attributes(obj),
+                           sasds=as.character(sasat$MEMNAME),
+                           sasdslabel=as.character(sasat$MEMLABEL))
+    }
   
   obj
 }
@@ -1969,7 +2002,7 @@ if(.R.) {
 }
 
 
-csv.get <- function(file, lowernames=FALSE, datevars=NULL,
+csv.get <- function(file, lowernames=FALSE, datevars=NULL, datetimevars=NULL,
                     dateformat='%F', fixdates=c('none','year'),
                     comment.char = "", autodates=TRUE, allow=NULL,
                     charfactor=FALSE, ...)
@@ -1995,9 +2028,9 @@ csv.get <- function(file, lowernames=FALSE, datevars=NULL,
     }
   }
   cleanup.import(w,
-                 labels=if(changed)n
-                        else NULL,
-                 datevars=datevars, dateformat=dateformat,
+                 labels=if(changed)n else NULL,
+                 datevars=datevars, datetimevars=datetimevars,
+                 dateformat=dateformat,
                  fixdates=fixdates, charfactor=charfactor)
 }
 

@@ -6,7 +6,8 @@
   to lower case for variable names after making them valid S names.
 }
 \usage{
-csv.get(file, lowernames=FALSE, datevars=NULL, dateformat='\%F',
+csv.get(file, lowernames=FALSE, datevars=NULL, datetimevars=NULL,
+        dateformat='\%F',
         fixdates=c('none','year'), comment.char="", autodates=TRUE,
         allow=NULL, charfactor=FALSE, \dots)
 }
@@ -18,6 +19,12 @@ csv.get(file, lowernames=FALSE, datevars=NULL, dateformat='\%F',
     applied) of variables to consider as a factor or character vector
     containing dates in a format matching \code{dateformat}.  The
     default is \code{"\%F"} which uses the yyyy-mm-dd format.}
+  \item{datetimevars}{character vector of names (after \code{lowernames}
+	is applied) of variables to consider to be date-time variables, with
+	date formats as described under \code{datevars} followed by a space
+	followed by time in hh:mm:ss format.  \code{chron} is used to store
+	such variables.  If all times in the variable
+	are 00:00:00 the variable will be converted to an ordinary date variable.}
   \item{dateformat}{for \code{cleanup.import} is the input format (see
     \code{\link{strptime}})}
   \item{fixdates}{for any of the variables listed in \code{datevars}
@@ -29,9 +36,9 @@ csv.get(file, lowernames=FALSE, datevars=NULL, dateformat='\%F',
     \code{fixdates='year'} is implemented, which will cause 2-digit or
     4-digit years to be shifted to the alternate number of digits when
     \code{dateform} is the default \code{"\%F"} or is \code{"\%y-\%m-\%d"},
-    \code{"\%m/\%d/\%y"}, or \code{"\%m/\%d/\%Y"}.  Two-digits years are padded with \code{20}
-    on the left.  Set \code{dateformat} to the desired format, not the
-    exceptional format.}
+    \code{"\%m/\%d/\%y"}, or \code{"\%m/\%d/\%Y"}.  Two-digits years are
+	padded with \code{20} on the left.  Set \code{dateformat} to the
+	desired format, not the exceptional format.}
   \item{comment.char}{a character vector of length one containing a
     single character or an empty string.  Use '""' to turn off the
     interpretation of comments altogether.}
@@ -63,8 +70,7 @@ csv.get(file, lowernames=FALSE, datevars=NULL, dateformat='\%F',
 }
 \examples{
 \dontrun{
-dat <- read.table('myfile.csv')
-dat <- cleanup.import(dat)
+dat <- csv.get('myfile.csv')
 }
 }
 \keyword{manip}

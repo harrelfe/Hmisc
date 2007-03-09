@@ -1,5 +1,6 @@
 ## $Id$
-mdb.get <- function(file, tables=NULL, lowernames=FALSE, allow=NULL, ...)
+mdb.get <- function(file, tables=NULL, lowernames=FALSE, allow=NULL,
+                    dateformat='%m/%d/%y', ...)
 {
   rettab <- length(tables) && is.logical(tables)
   if(rettab) tables <- NULL
@@ -24,7 +25,8 @@ mdb.get <- function(file, tables=NULL, lowernames=FALSE, allow=NULL, ...)
     datetime <- vnames[grep('DateTime', s)]
     system(paste('mdb-export', file, dQuote(tab), '>', f))
     d <- csv.get(f, datetimevars=datetime,
-                 lowernames=lowernames, allow=allow, ...)
+                 lowernames=lowernames, allow=allow,
+                 dateformat=dateformat, ...)
     if(length(tables) == 1) return(d)
     else D[[tab]] <- d
   }

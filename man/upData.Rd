@@ -53,7 +53,8 @@ attributes.  Otherwise \code{exportData} will fail.
 \usage{
 cleanup.import(obj, labels, lowernames=FALSE, 
                force.single=TRUE, force.numeric=TRUE, rmnames=TRUE,
-               big=1e20, sasdict, pr, datevars=NULL, dateformat='\%F',
+               big=1e20, sasdict, pr, datevars=NULL, datetimevars=NULL,
+               dateformat='\%F',
                fixdates=c('none','year'), charfactor=FALSE)
 
 upData(object, \dots, 
@@ -117,6 +118,12 @@ exceeds 500,000.
   applied) of variables to consider as a factor or character vector
   containing dates in a format matching \code{dateformat}.  The
 default is \code{"\%F"} which uses the yyyy-mm-dd format.}
+\item{datetimevars}{character vector of names (after \code{lowernames}
+  is applied) of variables to consider to be date-time variables, with
+  date formats as described under \code{datevars} followed by a space
+  followed by time in hh:mm:ss format.  \code{chron} is used to store
+  date-time variables.  If all times in the variable
+  are 00:00:00 the variable will be converted to an ordinary date variable.}
 \item{dateformat}{for \code{cleanup.import} is the input format (see
   \code{\link{strptime}})}
 \item{fixdates}{for any of the variables listed in \code{datevars}

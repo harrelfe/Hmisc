@@ -1221,8 +1221,7 @@ dotchart2 <-
            cex.labels = cex, cex.group.labels = cex.labels*1.25, sort.=TRUE, 
            add=FALSE, dotfont=par('font'),
            groupfont=2, reset.par=add, xaxis=TRUE,
-           width.factor=if(.R.)1.5 else 1,
-           lcolor=if(.R.) 'gray' else par('col'),
+           width.factor=1.1, lcolor=if(.R.) 'gray' else par('col'),
            ...)
 {
   if(.R. && !add)

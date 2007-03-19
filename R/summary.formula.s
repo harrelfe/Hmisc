@@ -78,6 +78,13 @@ summary.formula <-
   nact <- attr(X, "na.action")
   nvar <- ncol(X)-1
   strat <- attr(Terms,'specials')$stratify
+
+  getlab <- function(x, default)
+    {
+      lab <- attr(x, 'label')
+      if(!length(lab) || lab=='') default else lab
+    }
+  
   if(length(strat)) {
     if(method!='response') 
       stop('stratify only allowed for method="response"')
@@ -88,8 +95,7 @@ summary.formula <-
     strat <- if(length(temp$vars)==1) as.factor(X[[temp$vars]])
              else stratify(X[,temp$vars])
 
-    strat.label <- if(length(l <- attr(X[,temp$vars[1]],'label'))) l
-                   else strat.name
+    strat.label <- getlab(X[,temp$vars[1]], strat.name)
 
     X[[temp$vars]] <- NULL   # remove strata factors
   } else {
@@ -104,8 +110,7 @@ summary.formula <-
     yname <- if(.R.) as.character(attr(Terms,'variables'))[2]
              else as.character(attr(Terms, "variables"))[1]  ## 25May01
 
-    ylabel <- if(length(laby <- attr(Y,'label'))) laby
-              else yname
+    ylabel <- getlab(Y, yname)
 
     if(!is.matrix(Y))
       Y <- matrix(Y, dimnames=list(names(Y),yname))
@@ -212,8 +217,7 @@ summary.formula <-
            else X[[v]]
       if(inherits(x,'mChoice')) x <- as.numeric(x)
 
-      labels[i] <- if(length(l <- attr(x,'label'))) l
-                   else nams[i]
+      labels[i] <- getlab(x, nams[i])
       
       units[i]  <- if(length(l <- attr(x,'units'))) l
                    else ''
@@ -494,8 +498,7 @@ summary.formula <-
       else if(is.matrix(xi) && ncol(xi) > 1) 
         stop('matrix variables not allowed for method="cross"')
 
-      labels[i] <- if(length(l <- attr(xi,'label'))) l
-                   else nams[i]
+      labels[i] <- getlab(xi, nams[i])
 
       if(is.factor(xi))
         xi <- xi[,drop=TRUE]

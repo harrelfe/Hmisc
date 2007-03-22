@@ -13,7 +13,7 @@ mdb.get <- function(file, tables=NULL, lowernames=FALSE, allow=NULL,
   names(D) <- tables
 
   for(tab in tables) {
-    s <- system(paste('mdb-schema -T', dQuote(tab), file), intern=TRUE)
+    s <- system(paste('mdb-schema -T', shQuote(tab), file), intern=TRUE)
     start <- grep('^ \\($', s) + 1
     end   <- grep('^\\);$', s) - 1
     s <- s[start:end]
@@ -23,7 +23,7 @@ mdb.get <- function(file, tables=NULL, lowernames=FALSE, allow=NULL,
     if(lowernames) vnames <- casefold(vnames)
     types  <- sapply(s, function(x)x[length(x)])
     datetime <- vnames[grep('DateTime', s)]
-    system(paste('mdb-export', file, dQuote(tab), '>', f))
+    system(paste('mdb-export', file, shQuote(tab), '>', f))
     d <- csv.get(f, datetimevars=datetime,
                  lowernames=lowernames, allow=allow,
                  dateformat=dateformat, ...)

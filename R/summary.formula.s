@@ -698,11 +698,12 @@ print.summary.formula.response <- function(x,
   invisible()
 }
 
-latex.summary.formula.response <- function(object, 
-                                           title=first.word(deparse(substitute(object))), caption,
-                                           trios, vnames=c('labels','names'), prn=TRUE, prUnits=TRUE,
-                                           rowlabel='', cdec=2,
-                                           ncaption=TRUE, ...)
+latex.summary.formula.response <-
+  function(object, 
+           title=first.word(deparse(substitute(object))), caption,
+           trios, vnames=c('labels','names'), prn=TRUE, prUnits=TRUE,
+           rowlabel='', cdec=2,
+           ncaption=TRUE, ...)
 {
   stats <- object
 
@@ -725,8 +726,7 @@ latex.summary.formula.response <- function(object,
       stop('length of trios must be 1/3 the number of statistics computed')
   }
 
-  if(missing(caption))
-    caption <- at$ylabel
+  if(missing(caption)) caption <- latexTranslate(at$ylabel)
   
   if(ns>1) caption <- paste(caption,' by', if(ul)at$strat.label else 
                             at$strat.name)
@@ -755,9 +755,7 @@ latex.summary.formula.response <- function(object,
               length=(if(missing(trios))nstat
                       else 1+(nstat-1)/3)-1)
 
-  cdec <- rep(c(if(prn)0
-                else NULL,cdec),
-              ns)
+  cdec <- rep(c(if(prn)0 else NULL,cdec), ns)
 
   if(missing(trios))
     cstats <- oldUnclass(stats)

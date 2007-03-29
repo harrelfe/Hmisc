@@ -103,7 +103,7 @@ cut2 <- function(x, cuts, m=150, g, levels.mean=FALSE, digits, minmax=TRUE,
     l <- length(cuts)
     k2 <- cuts-min.dif
     k2[l] <- cuts[l]
-    y <- if(version$major < 5) cut(x, k2) else oldCut(x, k2)
+    y <- cut(x, k2)
     
     if(!levels.mean) {
       brack <- rep(")",l-1)
@@ -115,10 +115,7 @@ cut2 <- function(x, cuts, m=150, g, levels.mean=FALSE, digits, minmax=TRUE,
                     brack,sep="")   
     
       if(oneval) {
-        nu <- table(if(version$major < 5)
-                      cut(x.unique,k2)
-                    else
-                      oldCut(x.unique,k2))
+        nu <- table(cut(x.unique,k2))
         
         if(length(nu)!=length(levels(y)))
           stop('program logic error')

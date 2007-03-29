@@ -1661,16 +1661,16 @@ getLatestSource <- function(x=NULL, package='Hmisc',
   w <- w[i]
   
   files <- switch(type,
-                  cvs=sub('href=\"\(.*\)\\?.*','\\1', w),
-                  svn=sub('href=\".*/trunk/R/\(.*\)\\?.*','\\1', w))
+                  cvs=sub('href=\"\\(.*\\)\\?.*','\\1', w),
+                  svn=sub('href=\".*/trunk/R/\\(.*\\)\\?.*','\\1', w))
   files <- sub('\\.s$','',files)
   ver <- switch(type,
                 cvs=if(length(recent))
-                sub('^.*rev=\(.*\);.*','\\1',w) else
+                sub('^.*rev=\\(.*\\);.*','\\1',w) else
                 sub('\"$','',sub('^.*rev=','',w)),
                 svn=if(length(recent))
-                sub('^.*rev=\(.*\)&amp.*', '\\1', w) else
-                sub('^.*rev=\(.*\)\"', '\\1', w))
+                sub('^.*rev=\\(.*\\)&amp.*', '\\1', w) else
+                sub('^.*rev=\\(.*\\)\"', '\\1', w))
 
   if(avail) return(data.frame(file=files, version=ver))
 

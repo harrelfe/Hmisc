@@ -1,12 +1,13 @@
 Package: Hmisc
-Version: 3.2-1
+Version: 3.3-1
 Date: 2007-12-25
 Title: Harrell Miscellaneous
 Author: Frank E Harrell Jr <f.harrell@vanderbilt.edu>, with
   contributions from many other users.
 Maintainer: Charles Dupont <charles.dupont@vanderbilt.edu>
-Depends: R (>= 2.4.0), methods
-Suggests: lattice, grid, nnet, acepack, foreign, survival, chron,
+Depends: R (>= 2.4.0), methods, acepack
+Imports: lattice, cluster
+Suggests: lattice, grid, nnet, foreign, survival, chron,
   TeachingDemos, Design, cluster
 Description: The Hmisc library contains many functions useful for data
 	analysis, high-level graphics, utility operations, functions for
@@ -17,4 +18,3 @@ Description: The Hmisc library contains many functions useful for data
         'http://biostat.mc.vanderbilt.edu/trac/Hmisc'.
 License: GPL version 2 or newer
 URL: http://biostat.mc.vanderbilt.edu/s/Hmisc, http://biostat.mc.vanderbilt.edu/twiki/pub/Main/RS/sintro.pdf, http://biostat.mc.vanderbilt.edu/twiki/pub/Main/StatReport/summary.pdf, http://biostat.mc.vanderbilt.edu/trac/Hmisc
-

@@ -145,11 +145,11 @@ areg.boot <- function(x, data, weights, subset, na.action=na.delete,
       lin  <- c(0[ytype=='l'], (0:(p-1))[xtype=='l'])
       categ<- c(0[ytype=='c'], (0:(p-1))[xtype=='c'])
       if(.R.) avas(x, y, weights, cat=categ, mon=mono, lin=lin) else
-       avas(x, y, weights, monotone=mono, linear=lin, categorical=categ)
+       avas(x, y, weights, mon=mono, lin=lin, cat=categ)
     }
     Avas(x, y, xtype, ytype, weights)
   }
-  rsquared.app <- f$rsq
+  rsquared.app <- f$rsquared
 
   f.orig <- lm.fit.qr.bare(f$tx, f$ty)
   coef.orig <- f.orig$coefficients

@@ -8,12 +8,12 @@ Enhanced Dot Chart
 with several new options.
 }
 \usage{
-dotchart2(data, labels, groups, gdata, horizontal=TRUE, pch=16,
+dotchart2(data, labels, groups=NULL, gdata=NA, horizontal=TRUE, pch=16,
           xlab='', ylab='', auxdata, auxgdata=NULL, auxtitle,
           lty=if(.R.) 1 else 2, lines=TRUE, dotsize = .8,
           cex = par("cex"), cex.labels = cex,
           cex.group.labels = cex.labels*1.25, sort.=TRUE, 
-	      add=FALSE, dotfont=par('font'), groupfont=1, 
+	      add=FALSE, dotfont=par('font'), groupfont=2, 
 	      reset.par=add, xaxis=TRUE, width.factor=if(.R.)1.5 else 1,
           lcolor=if(.R.)'gray' else par('col'), ...)
 }

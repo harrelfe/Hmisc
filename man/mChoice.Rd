@@ -5,6 +5,8 @@
 \alias{summary.mChoice}
 \alias{as.double.mChoice}
 \alias{inmChoice}
+\alias{[.mChoice}
+\alias{print.summary.mChoice}
 \title{Methods for Storing and Analyzing Multiple Choice Variables}
 \description{
   \code{mChoice} is a function that is useful for defining a group of
@@ -42,19 +44,21 @@
   contains at least one of the codes or value labels in the second argument.
 }
 \usage{
-mChoice(\dots, sort.=TRUE, label='', 
+mChoice(\dots, label='', sort.=TRUE,
         sort.levels=c('original','alphabetic'), 
         add.none=FALSE, drop=TRUE)
 
 \method{format}{mChoice}(x, minlength=NULL, sep=";", \dots)
 
-\method{as.double}{mChoice}(x, drop=TRUE)
+\method{as.double}{mChoice}(x, drop=FALSE, ...)
 
-\method{print}{mChoice}(x, long=FALSE)
+\method{print}{mChoice}(x, long=FALSE, ...)
 
-\method{summary}{mChoice}(x, minlength=NULL)
+\method{summary}{mChoice}(object, ncombos=5, minlength=NULL, drop=TRUE, ...)
 
-\method{print}{summary.mChoice}(x, prlabel=TRUE)
+\method{print}{summary.mChoice}(x, prlabel=TRUE, ...)
+
+\method{[}{mChoice}(x, ..., drop=FALSE)
 
 inmChoice(x, values)
 }
@@ -84,6 +88,9 @@ inmChoice(x, values)
   }
   \item{x}{an object of class \code{"mchoice"} such as that created by
 	\code{mChoice}}
+\item{object}{an object of class \code{"mchoice"} such as that created by
+	\code{mChoice}}
+\item{ncombos}{maximum number of combos.}
   \item{minlength}{By default no abbreviation of levels is done in
 	\code{format} and \code{summary}.  Specify a positive integer to use
 	abbreviation in those functions.  See \code{\link{abbreviate}}.}
@@ -185,7 +192,3 @@ print(f, long=TRUE)
 \keyword{category}
 \keyword{manip}
 \concept{multiple choice}
-
-
-
-

@@ -262,7 +262,9 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
             class='areg')
 }
 
-aregTran <- function(z, type, nk=length(parms), parms=NULL, functions=FALSE) {
+aregTran <- function(z, type, nk = length(parms), parms = NULL,
+                     functions = FALSE)
+{
   if(type=='l' || (type=='s' && nk==0)) 
     return(if(functions)
            structure(as.matrix(z),
@@ -280,16 +282,16 @@ aregTran <- function(z, type, nk=length(parms), parms=NULL, functions=FALSE) {
     z[cbind(1:n, x-1)] <- 1
     attr(z, 'parms') <- if(lp)parms else levels(w)
     if(functions) {
-      f <- function(x, parms, coef) {
+      attr(z, 'fun') <- function(x, parms, coef) {
         if(length(parms) > length(coef)) coef <- c(0,coef)
         coef[-1] <- coef[-1] + coef[1]
         names(coef) <- parms
         coef[x]
       }
-      formals(f) <- list(x=integer(0), parms=parms, coef=numeric(0))
-      attr(z, 'fun') <- f
+      formals(attr(z, 'fun')) <- list(x=integer(0), parms=parms, coef=numeric(0))
+
       ## what is ignored; for compatibility with inverseFunction in Misc.s
-      f <- function(y, parms, coef, what=character(0)) {
+      attr(z, 'inversefun') <- function(y, parms, coef, what=character(0)) {
         if(length(parms) > length(coef)) coef <- c(0, coef)
         isna <- is.na(y)
         y[isna] <- 0
@@ -297,9 +299,9 @@ aregTran <- function(z, type, nk=length(parms), parms=NULL, functions=FALSE) {
         x[isna] <- NA
         x
       }
-      formals(f) <- list(y=numeric(0), parms=parms,
+      formals(attr(z, 'inversefun')) <- list(y=numeric(0), parms=parms,
                          coef=numeric(0), what=character(0))
-      attr(z, 'inversefun') <- f
+
     }
     z
   } else {

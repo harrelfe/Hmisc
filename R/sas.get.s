@@ -802,8 +802,6 @@ importConvertDateTime <-
              z <- as.POSIXct(format(z, tz='GMT'), tz='')
              structure(z, class=c('timePOSIXt','POSIXt','POSIXct'))},
            datetime = {
-             require(chron) ||
-             stop('you must install chron package to handle date-time variables')
              chron((x - adjdays*86400)/86400,
                    out.format=c(dates='day mon year', times='h:m:s'))})
   } else if(.SV4.) 

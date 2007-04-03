@@ -39,7 +39,7 @@ mChoice <- function(..., label='', sort.=TRUE,
   structure(Y, label=label, levels=lev, class=c('mChoice','labelled'))
 }
 
-print.mChoice <- function(x, long=FALSE) {
+print.mChoice <- function(x, long=FALSE, ...) {
   if(long) print(format(x)) else {
     print(as.vector(x), quote=FALSE)
     cat('\nLevels:\n')
@@ -62,11 +62,11 @@ format.mChoice <- function(x, minlength=NULL, sep=";", ...)
   atr <- attributes(x)
   atr$names <- NULL
   x <- NextMethod('[')
-  attributes(x) <- atr
+  combine(attributes(x)) <- atr
   x
 }
 
-as.double.mChoice <- function(x, drop=FALSE) {
+as.double.mChoice <- function(x, drop=FALSE, ...) {
   lev <- attr(x,'levels')
   X <- matrix(0, nrow=length(x), ncol=length(lev),
               dimnames=list(names(x), lev))
@@ -80,28 +80,28 @@ as.double.mChoice <- function(x, drop=FALSE) {
   X
 }
 
-summary.mChoice <- function(x, ncombos=5, minlength=NULL, drop=TRUE) {
-  nunique <- length(unique(x))
-  y <- gsub('[^;]', '', x)
+summary.mChoice <- function(object, ncombos=5, minlength=NULL, drop=TRUE, ...) {
+  nunique <- length(unique(object))
+  y <- gsub('[^;]', '', object)
   nchoices <- nchar(y)+1
-  nchoices[x==''] <- 0
+  nchoices[object == ''] <- 0
   nchoices <- table(nchoices)
   
-  X <- as.numeric(x, drop=drop)
+  X <- as.numeric(object, drop=drop)
   if(length(minlength)) dimnames(X)[[2]] <- abbreviate(dimnames(X)[[2]],minlength)
   crosstab <- crossprod(X)
 
-  combos <- table(format(x,minlength))
+  combos <- table(format(object, minlength))
   i <- order(-combos)
   combos <- combos[i[1:min(ncombos,length(combos))]]
   
   structure(list(nunique=nunique, nchoices=nchoices,
                  crosstab=crosstab, combos=combos,
-                 label=label(x)),
+                 label=label(object)),
             class='summary.mChoice')
 }
 
-print.summary.mChoice <- function(x, prlabel=TRUE) {
+print.summary.mChoice <- function(x, prlabel=TRUE, ...) {
   if(prlabel) cat(x$label, '   ', x$nunique, ' unique combinations\n', sep='')
   cat('Frequencies of Numbers of Choices Per Observation\n\n')
   print(x$nchoices)

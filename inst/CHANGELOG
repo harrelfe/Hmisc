@@ -1,3 +1,79 @@
+3.3-1 3/29/2007
+      Created functions trunc.POSIXt, ceil.POSIXt, round.POSIXt to do
+      those ops on POSIXt objects.
+
+      Placed Hmisc in a namespace
+
+      Factored out category levels that are identical (and in the same
+      order) for multiple variables.  Changed print and html methods
+      accordingly, and made new default for html output, levelType='list'.
+
+      new argument levelType in html.contents.data.frame
+
+      enhanced html.data.frame to set column headings in h2
+
+      had forgotten to update defaults for nk, tlinear
+      
+      added curtail option (default: FALSE) for type='regression' to
+      set imputed values to the boundaries of real data if outside
+
+      added datadensity argument to plot.aregImpute
+
+      fixed bug with curtail, added datadensity argument to
+      plot.aregImpute
+
+      fixed typo related to bass argument
+
+      fixed bug in latex.describe to translate underscores in variable
+      names when listing those with all NAs
+
+      fixed inmChoice by unclassing first argument when pasting
+
+      handled underscore in dataset name in latex.describe by calling
+      latexTranslate
+
+      Finished addition of listunique and listnchar, handled listing
+      of character values in latex.describe.*
+
+      listunique and listnchar
+
+      For listunique option ignored multiple white spaces, leading and
+      trailing white spaces, and case in tabulating character strings.
+
+      For listunique ignored leading and trailing white space,
+      multiple white spaces, and case when tabulating character
+      strings. Carriage returns without new lines are changed to a single
+      space.
+
+      Modified extracolheads such that when cgroup and n.cgroup are
+      used in a latex.summary.formula.reverse statement the extra N=
+      columns line up correctly.
+
+      added boot.method argument to implement approximate Bayesian
+      bootstrap when group is not used
+
+      'R/dates.s'  reworked floor.cron and ceiling.cron for a better implementation.
+      
+      'R/inc-dec.s' created 2 new functions 'inc<-' and 'dec<-'.  'inc<-' increments
+      'x' by value assigned to it.  'dec<-' does the same thing but decrements 'x'.
+
+      'R/responseSummary.s' changed 'responseSummary' 'FUN' argument
+      so that is it run on each row of the response instead of the
+      entriorty of the response.
+
+      'R/latexObject.s' changed names of constant escapes.
+
+      'R/combine.s' functions to perform element wise combination.
+
+      'R/print.char.list.s'  various code simplifications.
+
+      'R/default.arg.s'  a function to extact the default value of
+      a function argument.
+
+      'man/valueTags.Rd'  added a new line to end of file.
+
+      Corrected extra escapes in latexSN function.  fixes #10.
+
 3.2-1 1/25/2007:
       Hmisc function 'ecdf' has been renamed 'Ecdf' to deconfilt it
       with the existing 'ecdf' function in base.

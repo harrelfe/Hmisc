@@ -62,7 +62,7 @@ in weighted means, quantiles, and frequency tables.
 \usage{
 \method{describe}{vector}(x, descript, exclude.missing=TRUE, digits=4,
          listunique=0, listnchar=12,
-         weights, normwt, \dots)
+         weights=NULL, normwt=FALSE, minlength=NULL, \dots)
 \method{describe}{matrix}(x, descript, exclude.missing=TRUE, digits=4, \dots)
 \method{describe}{data.frame}(x, descript, exclude.missing=TRUE,
     digits=4, \dots)
@@ -116,6 +116,7 @@ in weighted means, quantiles, and frequency tables.
   a numeric vector of frequencies or sample weights.  Each observation
   will be treated as if it were sampled \code{weights} times.
 }
+\item{minlength}{value passed to summary.mChoice.}
 \item{normwt}{
   The default, \code{normwt=FALSE} results in the use of \code{weights} as
   weights in computing various statistics.  In this case the sample size

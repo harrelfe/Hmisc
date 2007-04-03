@@ -1,6 +1,6 @@
 .ElmtCombine <- function(x, value, protect=FALSE, ...) {
-  if(!is.list(x) || !is.vector(x) ||
-     !is.list(value) || !is.vector(value)) {
+  if((is.list(x) || is.vector(x)) &&
+     (is.list(value) || is.vector(value))) {
     value.names <- names(value)
     x.names <- names(x)
 
@@ -21,23 +21,10 @@
     target[rep.names] <- rep.vals[rep.names]
     return(target)
   }
-  return(callNextMethod())
+  stop("unable to combine these objects")
 }
 
-.ElmtCombineError <- function(x, value, ...) {
-  stop("cannot combine these two objects")
-}
-
-setGeneric('combine')
-setMethod(f = combine, signature=signature(x="list", value="list"), definition = .ElmtCombine, valueClass="list")
-setMethod(f = combine, signature=signature(x="list", value="vector"), definition = .ElmtCombine, valueClass="list")
-setMethod(f = combine, signature=signature(x="vector", value="list"), definition = .ElmtCombine, valueClass="list")
-setMethod(f = combine, signature=signature(x="vector", value="vector"), definition = .ElmtCombine, valueClass="vector")
-setMethod(f = combine, signature=signature(x="ANY", y="ANY"), definition = .ElmtCombineError)
-
-setGeneric('combine<-')
-setMethod(f = `combine<-`, signature=signature(x="list", value="list"), definition=.ElmtCombine, valueClass="list")
-setMethod(f = `combine<-`, signature=signature(x="list", value="vector"), definition=.ElmtCombine, valueClass="list")
-setMethod(f = `combine<-`, signature=signature(x="vector", value="list"), definition=.ElmtCombine, valueClass="list")
-setMethod(f = `combine<-`, signature=signature(x="vector", value="vector"), definition=.ElmtCombine, valueClass="vector")
-setMethod(f = `combine<-`, signature=signature(x="ANY", y="ANY"), definition = .ElmtCombineError)
+combine <- .ElmtCombine
+'combine<-' <- as.function(c(formals(.ElmtCombine)[c('x','protect','...','value')],
+                             body(.ElmtCombine)),
+                           environment(.ElmtCombine))

@@ -59,31 +59,35 @@ biVar(formula, statinfo, data=NULL, subset=NULL,
 
 spearman2(x, ...)
 
-\method{spearman2}{default}(x, y, p=1, minlev=0, exclude.imputed=TRUE, ...)
+\method{spearman2}{default}(x, y, p=1, minlev=0, na.rm=TRUE, exclude.imputed=na.rm, ...)
 
-\method{spearman2}{formula}(x, p=1, 
-          data, subset, na.action, minlev=0, exclude.imputed=TRUE, ...)
+\method{spearman2}{formula}(formula, data=NULL,
+          subset, na.action=na.retain, exclude.imputed=TRUE, ...)
 
 spearman(x, y)
 
 spearman.test(x, y, p=1)
 
-chiSquare(x, g=3, data, subset, na.action,
-          minlev=0, exclude.imputed=TRUE, ...)
+chiSquare(formula, data=NULL, subset=NULL, na.action=na.retain,
+          exclude.imputed=TRUE, ...)
 }
 \arguments{
   \item{formula}{a formula with a single left side variable}
   \item{statinfo}{see \code{spearman2.formula} or \code{chiSquare} code}
   \item{data, subset, na.action}{
-	the usual options for models.  Default for \code{na.action} is to retain
-	all values, NA or not, so that NAs can be deleted in only a pairwise
-	fashion.}
+    the usual options for models.  Default for \code{na.action} is to retain
+    all values, NA or not, so that NAs can be deleted in only a pairwise
+    fashion.
+  }
   \item{exclude.imputed}{
-	set to \code{FALSE} to include imputed values (created by
-	\code{impute}) in the calculations.}
+    set to \code{FALSE} to include imputed values (created by
+    \code{impute}) in the calculations.
+  }
   \item{...}{other arguments that are passed to the function used to
-	compute the bivariate statistics or to \code{dotchart2} for
-	\code{plot}.}
+    compute the bivariate statistics or to \code{dotchart2} for
+    \code{plot}.
+  }
+  \item{na.rm}{logical; delete NA values?}
   \item{x}{
 	a numeric matrix with at least 5 rows and at least 2 columns (if
 	\code{y} is absent).  For \code{spearman2}, the first argument may
@@ -98,11 +102,11 @@ chiSquare(x, g=3, data, subset, na.action,
 	\code{spearman.test} \code{x} is a numeric vector, as is \code{y}.  For
 	\code{chiSquare}, \code{x} is a formula.
   }
-  \item{type}{
-	specifies the type of correlations to compute.  Spearman correlations
-	are the Pearson linear correlations computed on the ranks of non-missing
-	elements, using midranks for ties.
-  }
+%  \item{type}{
+%	specifies the type of correlations to compute.  Spearman correlations
+%	are the Pearson linear correlations computed on the ranks of non-missing
+%	elements, using midranks for ties.
+%  }
   \item{y}{
 	a numeric vector
   }
@@ -135,8 +139,8 @@ chiSquare(x, g=3, data, subset, na.action,
   \item{xlab}{
 	x-axis label.  Default constructed from \code{what}.
   }
-  \item{g}{number of quantile groups into which to categorize continuous
-	predictors having more than \code{g} unique values, for \code{chiSquare}}
+%  \item{g}{number of quantile groups into which to categorize continuous
+%	predictors having more than \code{g} unique values, for \code{chiSquare}}
 }
 \value{
   \code{spearman2.default} (the

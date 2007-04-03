@@ -13,7 +13,7 @@
 \usage{
 rcorr(x, y, type=c("pearson","spearman"))
 
-\method{print}{rcorr}(x, ...)
+\method{print}{rcorr}(x, \dots)
 }
 \arguments{
 \item{x}{
@@ -30,6 +30,7 @@ rcorr(x, y, type=c("pearson","spearman"))
   are the Pearson linear correlations computed on the ranks of non-missing
   elements, using midranks for ties.
 }
+\item{\dots}{argument for method compatiblity.}
 }
 \value{
 \code{rcorr} returns a list with elements \code{r}, the

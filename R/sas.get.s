@@ -2003,16 +2003,29 @@ if(.R.) {
 csv.get <- function(file, lowernames=FALSE, datevars=NULL, datetimevars=NULL,
                     dateformat='%F', fixdates=c('none','year'),
                     comment.char = "", autodates=TRUE, allow=NULL,
-                    charfactor=FALSE, ...)
+                    charfactor=FALSE,
+                    sep=',', skip=0, vnames=NULL, labels=NULL, ...)
 {
   fixdates <- match.arg(fixdates)
-  w <- read.csv(file, check.names=FALSE, comment.char=comment.char, ...)
-  n <- names(w)
+  if(length(vnames))
+    vnames <- scan(file, what=character(0), skip=vnames-1, nlines=1,
+                   sep=sep, quiet=TRUE)
+  if(length(labels))
+    labels <- scan(file, what=character(0), skip=labels-1, nlines=1,
+                   sep=sep, quiet=TRUE)
+
+  w <- if(length(vnames))
+    read.csv(file, check.names=FALSE, comment.char=comment.char,
+             header=FALSE, col.names=vnames, skip=skip, sep=sep, ...)
+  else read.csv(file, check.names=FALSE, comment.char=comment.char,
+                sep=sep, skip=skip, ...)
+  n <- nam <- names(w)
   m <- makeNames(n, unique=TRUE, allow=allow)
+  if(length(labels)) n <- labels
   if(lowernames)
     m <- casefold(m)
   
-  changed <- any(m != n)
+  changed <- any(m != nam)
   if(changed)
     names(w) <- m
 
@@ -2026,7 +2039,7 @@ csv.get <- function(file, lowernames=FALSE, datevars=NULL, datetimevars=NULL,
     }
   }
   cleanup.import(w,
-                 labels=if(changed)n else NULL,
+                 labels=if(length(labels))labels else if(changed)n else NULL,
                  datevars=datevars, datetimevars=datetimevars,
                  dateformat=dateformat,
                  fixdates=fixdates, charfactor=charfactor)

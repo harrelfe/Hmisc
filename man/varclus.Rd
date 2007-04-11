@@ -47,7 +47,7 @@ the third variable was not missing.
 varclus(x, similarity=c("spearman","pearson","hoeffding","bothpos","ccbothpos"),
         type=c("data.matrix","similarity.matrix"), 
         method=if(.R.)"complete" else "compact",
-        data, subset, na.action, minlev=0.05)
+        data, subset, na.action=na.retain, ...)
 \method{print}{varclus}(x, abbrev=FALSE, ...)
 \method{plot}{varclus}(x, ylab, abbrev=FALSE, legend.=FALSE, loc, maxlen, labels, \dots)
 
@@ -124,9 +124,14 @@ see \code{hclust}.  The default, for both \code{varclus} and \code{naclus}, is
 \item{subset}{
 }
 \item{na.action}{
-These may be specified if \code{x} is a formula.  The default \code{na.action} is
-\code{na.retain}, defined by \code{varclus}.  This causes all observations to
-be kept in the model frame, with later pairwise deletion of \code{NA}s.
+These may be specified if \code{x} is a formula.  The default
+\code{na.action} is \code{na.retain}, defined by \code{varclus}.  This
+causes all observations to be kept in the model frame, with later
+pairwise deletion of \code{NA}s.}
+\item{...}{for \code{varclus} these are optional arguments to pass to
+  the \code{\link{dataframeReduce}} function.  Otherwise,
+passed to \code{plclust} (or to \code{dotchart} or \code{dotchart2} for
+\code{naplot}).
 }
 \item{ylab}{
 y-axis label.  Default is constructed on the basis of \code{similarity}.
@@ -146,9 +151,6 @@ longer than \code{maxlen} characters are truncated at \code{maxlen}.
 a vector of character strings containing labels corresponding to
 columns in the similar matrix, if the column names of that matrix are
 not to be used
-}
-\item{...}{
-passed to \code{plclust} (or to \code{dotchart} or \code{dotchart2} for \code{naplot}).
 }
 \item{obj}{an object created by \code{naclus}}
 \item{which}{
@@ -231,10 +233,9 @@ the \code{hclust} object is \code{NULL}.
 \details{
 \code{options(contrasts= c("contr.treatment", "contr.poly"))} is issued 
 temporarily by \code{varclus} to make sure that ordinary dummy variables
-are generated for \code{factor} variables.  If a categorical or character
-variable has no level containing at least a fraction \code{minlev} of the
-data, that variable is omitted from consideration and a warning is
-printed.
+are generated for \code{factor} variables.  Pass arguments to the
+\code{\link{dataframeReduce}} function to remove problematic variables
+(especially if analyzing all variables in a data frame).
 }
 \author{
 Frank Harrell
@@ -275,6 +276,9 @@ plot(v)
 # the -1 causes k dummies to be generated for k countries
 # plot(varclus(~ age + factor(disease.code) - 1))
 #
+#
+# use varclus(~., data= fracmiss= maxlevels= minprev=) to analyze all
+# "useful" variables - see dataframeReduce for details about arguments
 
 
 df <- data.frame(a=c(1,2,3),b=c(1,2,3),c=c(1,2,NA),d=c(1,NA,3),

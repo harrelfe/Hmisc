@@ -2,7 +2,8 @@
 \alias{cleanup.import}
 \alias{upData}
 \alias{exportDataStripped}
-\title{
+\alias{reduce
+\title{dataframeReduce}
 Update a Data Frame or Cleanup a Data Frame after Importing
 }
 \description{
@@ -45,10 +46,18 @@ variables being set to \code{factor} in some cases.  Extraneous \code{"AsIs"}
 classes are also removed.
 
 For S-Plus, a function \code{exportDataStripped} is provided that allows
-exporting of data to other systems 
-by removing attributes \code{label, imputed, format, units}, and
-\code{comment}.  It calls \code{exportData} after stripping these
-attributes.  Otherwise \code{exportData} will fail.
+exporting of data to other systems by removing attributes \code{label,
+  imputed, format, units}, and \code{comment}.  It calls
+\code{exportData} after stripping these attributes.  Otherwise
+\code{exportData} will fail.
+
+The \code{dataframeReduce} function removes variables from a data frame
+that are problematic for certain analyses.  Variables can be removed
+because the fraction of missing values exceeds a threshold, because they
+are character or categorical variables having too many levels, or
+because they are binary and have too small a prevalence in one of the
+two values.  Categorical variables can also have their levels combined
+when a level is of low prevalence.
 }
 \usage{
 cleanup.import(obj, labels, lowernames=FALSE, 
@@ -62,6 +71,8 @@ upData(object, \dots,
        force.single=TRUE, lowernames=FALSE, moveUnits=FALSE, charfactor=FALSE)
 
 exportDataStripped(data, \dots)
+
+dataframeReduce(data, fracmiss=1, maxlevels=NULL,  minprev=0, pr=TRUE)
 }
 \arguments{
 \item{obj}{a data frame or list}
@@ -112,8 +123,8 @@ name and label.
 set to \code{TRUE} or \code{FALSE} to force or prevent printing of the current
 variable number being processed.  By default, such messages are printed if the
 product of the number of variables and number of observations in \code{obj}
-exceeds 500,000.
-}
+exceeds 500,000.  For \code{dataframeReduce} set \code{pr} to
+\code{FALSE} to suppress printing information about dropped or modified variables.}
 \item{datevars}{character vector of names (after \code{lowernames} is
   applied) of variables to consider as a factor or character vector
   containing dates in a format matching \code{dateformat}.  The
@@ -174,6 +185,16 @@ redefining \code{levels} (in order) or another list (see
   in a label is enclosed in parentheses or brackets it is assumed to be
   units if \code{moveUnits=TRUE}.
 }
+\item{data}{a data frame}
+\item{fracmiss}{the maximum permissable proportion of \code{NA}s for a
+  variable to be kept.  Default is to keep all variables no matter how
+  many \code{NA}s are present.}
+\item{maxlevels}{the maximum number of levels of a character or
+  categorical or factor variable before the variable is dropped}
+\item{minprev}{the minimum proportion of non-missing observations in a
+  category for a binary variable to be retained, and the minimum
+  relative frequency of a category before it will be combined with other
+  small categories}
 }
 \value{a new data frame}
 \author{
@@ -202,6 +223,11 @@ describe(dat2)
 dat <- dat2    # copy to original name and delete dat2 if OK
 rm(dat2)
 
+# Remove hard to analyze variables from a redundancy analysis of all
+# variables in the data frame
+d <- dataframeReduce(d, fracmiss=.1, minprev=.05, maxlevels=5)
+redun(~., data=d)
+
 # If you import a SAS dataset created by PROC CONTENTS CNTLOUT=x.datadict,
 # the LABELs from this dataset can be added to the data.  Let's also
 # convert names to lower case for the main data file
@@ -211,5 +237,3 @@ mydata2 <- cleanup.import(mydata2, lowernames=TRUE, sasdict=datadict)
 }
 \keyword{data}
 \keyword{manip}
-
-

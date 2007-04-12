@@ -3,19 +3,20 @@
 \alias{print.redun}
 \title{Redundancy Analysis}
 \description{
-Uses flexible parametric additive models (see \code{\link{areg}}) to
+Uses flexible parametric additive models (see \code{\link{areg}} and its
+use of regression splines) to
 determine how well each variable can be predicted from the remaining
 variables.  Variables are dropped in a stepwise fashion, removing the
-most predictable variable at each step. The
-remaining variables are used to predict.  The process continues until no
-variable still in the list of predictors can be predicted with an
-\eqn{R^2} or adjusted \eqn{R^2} of at least \code{r2} or until dropping
-the variable with the highest \eqn{R^2} (adjusted or ordinary) would
-cause a variable that was dropped earlier to no longer be predicted at least
-at the \code{r2} level from the now smaller list of predictors.
+most predictable variable at each step. The remaining variables are used
+to predict.  The process continues until no variable still in the list
+of predictors can be predicted with an \eqn{R^2} or adjusted \eqn{R^2}
+of at least \code{r2} or until dropping the variable with the highest
+\eqn{R^2} (adjusted or ordinary) would cause a variable that was dropped
+earlier to no longer be predicted at least at the \code{r2} level from
+the now smaller list of predictors.  
 }
 \usage{
-redun(formula, data, subset, r2 = 0.9,
+redun(formula, data=NULL, subset=NULL, r2 = 0.9,
       type = c("ordinary", "adjusted"), nk = 3, tlinear = TRUE,
       pr = FALSE, ...)
 \method{print}{redun}(object, digits=3, long=TRUE, ...)
@@ -30,18 +31,35 @@ redun(formula, data, subset, r2 = 0.9,
   \item{nk}{number of knots to use for continuous variables.  Use
 	\code{nk=0} to force linearity for all variables.}
   \item{tlinear}{set to \code{FALSE} to allow a variable to be automatically
-	nonlinearly transformed (see \code{areg}) while being predicted}
+	nonlinearly transformed (see \code{areg}) while being predicted.  By
+  default, only continuous variables on the right hand side (i.e., while
+  they are being predictors) are automatically transformed, using
+  regression splines.  Estimating transformations for target (dependent)
+  variables causes more overfitting than doing so for predictors.}
   \item{pr}{set to \code{TRUE} to monitor progress of the stepwise algorithm}
   \item{\dots}{arguments to pass to \code{dataframeReduce} to remove
-	"difficult" variables from \code{data} (\code{data} must be
+	"difficult" variables from \code{data} if \code{formula} is
+	\code{~.} to use all variables in \code{data} (\code{data} must be
 	specified when these arguments are used).  Ignored for \code{print}.}
   \item{object}{an object created by \code{redun}}
   \item{digits}{number of digits to which to round \eqn{R^2} values when
 	printing}
   \item{long}{set to \code{FALSE} to prevent the \code{print} method
-	from printing the \eqn{R^2} history}
+	from printing the \eqn{R^2} history and the original \eqn{R^2} with
+	which each variable can be predicted from ALL other variables.}
 }
 \value{an object of class \code{"redun"}}
+\details{
+A categorical variable is deemed
+redundant if a linear combination of dummy variables representing it can
+be predicted from a linear combination of other variables.  For example,
+if there were 4 cities in the data and each city's rainfall was also
+present as a variable, with virtually the same rainfall reported for all
+observations for a city, city would be redundant given rainfall (or
+vice-versa; the one declared redundant would be the first one in the
+formula). If two cities had the same rainfall, \code{city} might be
+declared redundant even though tied cities might be deemed non-redundant
+in another setting.}
 \author{
 Frank Harrell
 \cr

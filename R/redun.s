@@ -1,5 +1,5 @@
 # $Id$
-redun <- function(formula, data, subset,
+redun <- function(formula, data=NULL, subset=NULL,
                   r2=.9, type=c('ordinary','adjusted'),
                   nk=3, tlinear=TRUE, pr=FALSE, ...)
 {
@@ -10,40 +10,27 @@ redun <- function(formula, data, subset,
     stop('formula must be a formula')
 
   a <- as.character(formula)
-  if(length(a)==2 && a[1]=='~' && a[2]=='.')
-    {
-      if(length(list(...))) data <- dataframeReduce(data, ...)
-      nam <- names(data)
-      linear <- character(0)
-    }
-  else
-    {
-      nam <- var.inner(formula)
+  if(length(a)==2 && a[1]=='~' && a[2]=='.' &&
+     length(list(...))) data <- dataframeReduce(data, ...)
 
-      m <- match.call(expand = FALSE)
-      Terms <- terms(formula, specials='I')
-      m$formula <- formula
-      m$r2 <- m$type <- m$nk <- m$tlinear <- m$pr <- m$... <- NULL
-      m$na.action <- na.delete
-
-      m[[1]] <- as.name("model.frame")
-      linear <- nam[attr(Terms,'specials')$I]
-      data <- eval(m, sys.parent())
-    }
+  Terms <- terms(formula, specials='I', data=data)
+  m <- list(formula=formula, data=data, subset=subset, na.action=na.delete)
+  data <- do.call('model.frame', m)
+  nam <- names(data)
+  linear <- nam[attr(Terms,'specials')$I]
   p <- length(data)
   n <- nrow(data)
+  at <- attributes(data)
+  na.action <- at$na.action
   if(pr) cat(n, 'observations used in analysis\n')
 
   cat.levels <- vector('list',p)
   names(cat.levels) <- nam
   vtype <- rep('s', p); names(vtype) <- nam
 
-  na <- rep(FALSE, n)
   for(i in 1:p)
     {
       xi  <- data[[i]]
-      nai <- is.na(xi)
-      na[nai] <- TRUE
       ni  <- nam[i]
 
       iscat <- FALSE
@@ -66,7 +53,7 @@ redun <- function(formula, data, subset,
         }
       else
         {
-          u <- unique(xi[!nai])
+          u <- unique(xi)
           if(length(u) == 1) stop(paste(ni,'is constant'))
           else
             if(nk==0 || length(u) == 2 || ni %in% linear)
@@ -79,7 +66,6 @@ redun <- function(formula, data, subset,
   if(any(j)) for(i in which(j)) xdf[i] <- length(cat.levels[[i]]) - 1
   names(xdf) <- nam
 
-  n <- sum(!na)
   orig.df <- sum(xdf)
   X <- matrix(NA, nrow=n, ncol=orig.df)
   st <- en <- integer(p)
@@ -87,7 +73,6 @@ redun <- function(formula, data, subset,
   for(i in 1:p)
     {
       xi <- data[[i]]
-      xi <- if(is.matrix(xi)) xi[,!na,drop=FALSE] else xi[!na]
       x <- aregTran(xi, vtype[i], nk)
       st[i] <- start
       nc    <- ncol(x)
@@ -116,7 +101,7 @@ redun <- function(formula, data, subset,
       r2 <- f$cor[1]^2
       if(type=='ordinary') return(r2)
       dof <- sum(k) + ifelse(ytype=='l', 0, ncol(Y))
-      n <- nrow(y)
+      n <- nrow(Y)
       max(0, 1 - (1 - r2)*(n-1)/dof)
     }
 
@@ -134,8 +119,8 @@ redun <- function(formula, data, subset,
         l <- l + 1
         k <- setdiff(In, j)
         Rsq[l] <- fcan(k, j, X, st, en, vtype, tlinear, type)
-        if(is.na(Rsq[l]))stop('w')
       }
+    if(i==1) {Rsq1 <- Rsq; names(Rsq1) <- nam}
     if(max(Rsq) < r2) break
     removed   <- In[which.max(Rsq)]
     r2removed <- max(Rsq)
@@ -166,8 +151,8 @@ redun <- function(formula, data, subset,
   
   structure(list(call=acall, formula=formula,
                  In=nam[In], Out=nam[Out],
-                 rsquared=r2r, r2later=r2l,
-                 n=n, p=p, m=sum(na),
+                 rsquared=r2r, r2later=r2l, rsq1=Rsq1,
+                 n=n, p=p, na.action=na.action,
                  vtype=vtype, tlinear=tlinear, nk=nk, df=xdf,
                  cat.levels=cat.levels,
                  r2=r2, type=type),
@@ -180,10 +165,23 @@ print.redun <- function(object, digits=3, long=TRUE, ...)
   dput(object$call)
   cat("\n")
   cat('n:',object$n,'\tp:',object$p, '\tnk:',object$nk,'\n')
-  cat('\nNumber of NAs:\t', object$m, '\n')
+  cat('\nNumber of NAs:\t', length(object$na.action$omit), '\n')
+  a <- object$na.action
+  if(length(a)) naprint(a)
+  
   if(object$tlinear)
     cat('\nTransformation of target variables forced to be linear\n')
   cat('\nR-squared cutoff:', object$r2, '\tType:', object$type,'\n')
+  if(long)
+    {
+      cat('\nR^2 with which each variable can be predicted from all other variables:\n\n')
+      print(round(object$rsq1, digits))
+    }
+  if(!length(object$Out))
+    {
+      cat('\nNo redundant variables\n\n')
+      return(invisible())
+    }
   cat('\nRendundant variables:\n\n')
   print(object$Out, quote=FALSE)
   cat('\nPredicted from variables:\n\n')

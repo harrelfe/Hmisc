@@ -5,12 +5,11 @@ varclus <-
            type=c("data.matrix","similarity.matrix"),
            method=if(.R.)"complete"
                   else "compact",
-           data, subset=NULL, na.action=na.retain, ...)
+           data=NULL, subset=NULL, na.action=na.retain, ...)
 {
   call <- match.call()
   type <- match.arg(type)
-  if(type!="similarity.matrix")
-    similarity <- match.arg(similarity)
+  if(type!="similarity.matrix") similarity <- match.arg(similarity)
 
   nact <- NULL
 
@@ -35,8 +34,7 @@ varclus <-
   else form <- FALSE
 
   n <- NULL
-  if(mode(x)!="numeric")
-    stop("x matrix must be numeric")
+  if(mode(x)!="numeric") stop("x matrix must be numeric")
 
   if(type=="data.matrix")
     { ## assume not a correlation matrix
@@ -79,10 +77,8 @@ varclus <-
   if(similarity=='ccbothpos') w <- NULL
   else
     w <-
-      if(.R.)
-        hclust(as.dist(1-x), method=method)
-      else
-        hclust(sim=x, method=method)
+      if(.R.) hclust(as.dist(1-x), method=method)
+      else hclust(sim=x, method=method)
   
   structure(list(call=call, sim=x, n=n, hclust=w, similarity=similarity,
                  method=method, na.action=nact),class="varclus")
@@ -106,15 +102,16 @@ print.varclus <- function(x, abbrev=FALSE, ...)
   dimnames(k) <- list(lab,lab)
   print.default(round(k, 2))
   n <- x$n
-  if(length(n)) {
-    if(length(n)==1)
-      cat("\nNo. of observations used=", n,"\n\n")
-    else {
-      cat("\nNo. of observations used for each pair:\n\n")
-      dimnames(n) <- list(lab,lab)
-      print(n)
+  if(length(n))
+    {
+      if(length(n)==1)
+        cat("\nNo. of observations used=", n,"\n\n")
+      else {
+        cat("\nNo. of observations used for each pair:\n\n")
+        dimnames(n) <- list(lab,lab)
+        print(n)
+      }
     }
-  }
 
   cat("\nhclust results (method=",x$method,")\n\n",sep="")
   print(x$hclust)
@@ -194,11 +191,12 @@ naclus <- function(df, method=if(.R.)"complete" else "compact")
   nc <- ncol(na)
   mean.na <- rep(NA, nc)
   names(mean.na) <- dimnames(na)[[2]]
-  for(i in 1:nc) {
-    y <- na[,i]==1
-    if(any(y)) mean.na[i] <- mean(na.per.obs[y]) - 1
-    NULL
-  }
+  for(i in 1:nc)
+    {
+      y <- na[,i]==1
+      if(any(y)) mean.na[i] <- mean(na.per.obs[y]) - 1
+      NULL
+    }
 
   res$na.per.obs <- na.per.obs
   res$mean.na    <- mean.na
@@ -231,38 +229,39 @@ naplot <- function(obj, which=c('all','na per var','na per obs','mean na',
              main='Mean Number of Other Variables Missing for\nObservations where Indicated Variable is NA',
              ...)
 
-  if(which %in% c('all','na per var vs mean na')) {
-    if(.R.)
-      {
-        xpd <- par('xpd')
-        par(xpd=NA)
-        on.exit(par(xpd=xpd))
-      }
+  if(which %in% c('all','na per var vs mean na'))
+    {
+      if(.R.)
+        {
+          xpd <- par('xpd')
+          par(xpd=NA)
+          on.exit(par(xpd=xpd))
+        }
 
-    plot(na.per.var, mean.na, xlab='Fraction of NAs for Single Variable',
-         ylab='Mean # Other Variables Missing', type='p')
-    usr <- par('usr')
-    eps <- .015*diff(usr[1:2]);
-    epsy <- .015*diff(usr[3:4])
+      plot(na.per.var, mean.na, xlab='Fraction of NAs for Single Variable',
+           ylab='Mean # Other Variables Missing', type='p')
+      usr <- par('usr')
+      eps <- .015*diff(usr[1:2]);
+      epsy <- .015*diff(usr[3:4])
     
-    s <- (1:length(na.per.var))[!is.na(mean.na)]
-    taken.care.of <- NULL
-    for(i in s)
-      {
-        if(i %in% taken.care.of)
-          next
+      s <- (1:length(na.per.var))[!is.na(mean.na)]
+      taken.care.of <- NULL
+      for(i in s)
+        {
+          if(i %in% taken.care.of)
+            next
 
-        w <- s[s > i & abs(na.per.var[s]-na.per.var[i]) < eps &
-               abs(mean.na[s]-mean.na[i]) < epsy]
-        if(any(w))
-          {
-            taken.care.of <- c(taken.care.of, w)
-            text(na.per.var[i]+eps, mean.na[i],
-                 paste(names(na.per.var[c(i,w)]),collapse='\n'),adj=0)
-          }
-        else text(na.per.var[i]+eps, mean.na[i], names(na.per.var)[i], adj=0)
-      }
-  }
+          w <- s[s > i & abs(na.per.var[s]-na.per.var[i]) < eps &
+                 abs(mean.na[s]-mean.na[i]) < epsy]
+          if(any(w))
+            {
+              taken.care.of <- c(taken.care.of, w)
+              text(na.per.var[i]+eps, mean.na[i],
+                   paste(names(na.per.var[c(i,w)]),collapse='\n'),adj=0)
+            }
+          else text(na.per.var[i]+eps, mean.na[i], names(na.per.var)[i], adj=0)
+        }
+    }
   
   invisible(tab)
 }
@@ -286,12 +285,10 @@ combine.levels <- function(x, minlev=.05)
       names(keepsep) <- keepsep
       w <- c(list(OTHER=comb), keepsep)
       levels(x) <- w
-  }
+    }
   else levels(x) <-
-    if(si==1)
-      list(OTHER=names(sort(f))[1:2])
-    else
-      list(OTHER=names(f)[i])
+    if(si==1) list(OTHER=names(sort(f))[1:2])
+    else list(OTHER=names(f)[i])
   x
 }
 
@@ -306,8 +303,7 @@ plotMultSim <- function(s, x=1:dim(s)[3],
   if(!length(vname))
     vname <- dimnames(s)[[1]]
   p <- dim(s)[1]
-  if(length(vname) != p)
-    stop('wrong length for vname')
+  if(length(vname) != p) stop('wrong length for vname')
   
   if(p != dim(s)[2])
     stop('similarity matrix not square')
@@ -330,16 +326,17 @@ plotMultSim <- function(s, x=1:dim(s)[3],
   if(slimds)
     {
       slim.diag <- -1e10
-      for(k in 1:length(x)) {
-        sk <- s[,,k]
-        r <- max(diag(sk))
-        slim.diag <- max(slim.diag, r)
-      }
+      for(k in 1:length(x))
+        {
+          sk <- s[,,k]
+          r <- max(diag(sk))
+          slim.diag <- max(slim.diag, r)
+        }
 
       slim.diag <- range(pretty(c(0,slim.diag)))
       slim.offdiag <- slim.diag - diff(slim.diag)/2
     }
-
+  
   rx  <- range(x)
   rxe <- c(rx[1]-u*diff(rx), rx[2]+u*diff(rx))
 
@@ -349,29 +346,29 @@ plotMultSim <- function(s, x=1:dim(s)[3],
         {
           if((i==j) && all(s[i,j,]==1))
             next
-
+          
           sl <- if(slimds) if(i==j) slim.diag
           else slim.offdiag
           else slim
-
+          
           sle <- c(sl[1]-u*diff(sl), sl[2]+u*diff(sl))
 
-    if(!add)
-      {
-        lines(c(i-w/2,i+w/2,i+w/2,
-                i-w/2,i-w/2),
-              c(j-h/2,j-h/2,j+h/2,
-                j+h/2,j-h/2), col=if(.R.)gray(.5) else .5, lwd=.65)
-        xc <- rep(i-w/2-u/3,2)
-        yc <- scaleit(sl, sle, c(j-h/2,j+h/2))
-        if(i==1 && j<=2)
+          if(!add)
+            {
+              lines(c(i-w/2,i+w/2,i+w/2,
+                      i-w/2,i-w/2),
+                    c(j-h/2,j-h/2,j+h/2,
+                      j+h/2,j-h/2), col=if(.R.)gray(.5) else .5, lwd=.65)
+              xc <- rep(i-w/2-u/3,2)
+              yc <- scaleit(sl, sle, c(j-h/2,j+h/2))
+              if(i==1 && j<=2)
           {
             text(xc, yc,
                  format(sl,digits=2), adj=1, cex=.7)
             segments(rep(xc+u/8,2),yc,
                      rep(xc+u/3,2),yc)
           }
-      }
+            }
           lines(scaleit(x, rxe, c(i-w/2,i+w/2)),
                 scaleit(s[i,j,], sle, c(j-h/2,j+h/2)),
                 lty=lty, lwd=lwd, col=col)

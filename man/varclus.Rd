@@ -47,7 +47,7 @@ the third variable was not missing.
 varclus(x, similarity=c("spearman","pearson","hoeffding","bothpos","ccbothpos"),
         type=c("data.matrix","similarity.matrix"), 
         method=if(.R.)"complete" else "compact",
-        data, subset, na.action=na.retain, ...)
+        data=NULL, subset=NULL, na.action=na.retain, ...)
 \method{print}{varclus}(x, abbrev=FALSE, ...)
 \method{plot}{varclus}(x, ylab, abbrev=FALSE, legend.=FALSE, loc, maxlen, labels, \dots)
 

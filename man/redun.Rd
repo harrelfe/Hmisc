@@ -18,7 +18,7 @@ the now smaller list of predictors.
 \usage{
 redun(formula, data=NULL, subset=NULL, r2 = 0.9,
       type = c("ordinary", "adjusted"), nk = 3, tlinear = TRUE,
-      pr = FALSE, ...)
+      allcat=FALSE, minfreq=0, pr = FALSE, ...)
 \method{print}{redun}(object, digits=3, long=TRUE, ...)
 }
 \arguments{
@@ -36,6 +36,11 @@ redun(formula, data=NULL, subset=NULL, r2 = 0.9,
   they are being predictors) are automatically transformed, using
   regression splines.  Estimating transformations for target (dependent)
   variables causes more overfitting than doing so for predictors.}
+  \item{allcat}{set to \code{TRUE} to ensure that all categories of
+	categorical variables having more than two categories are redundant
+	(see details below)}
+  \item{minfreq}{the minimum frequency of a category or its complement
+	before that category is considered when \code{allcat=TRUE}}
   \item{pr}{set to \code{TRUE} to monitor progress of the stepwise algorithm}
   \item{\dots}{arguments to pass to \code{dataframeReduce} to remove
 	"difficult" variables from \code{data} if \code{formula} is
@@ -59,7 +64,13 @@ observations for a city, city would be redundant given rainfall (or
 vice-versa; the one declared redundant would be the first one in the
 formula). If two cities had the same rainfall, \code{city} might be
 declared redundant even though tied cities might be deemed non-redundant
-in another setting.}
+in another setting.  To ensure that all categories may be predicted well
+from other variables, use the \code{allcat} option.  To ignore
+categories that are too infrequent or too frequent, set \code{minfreq}
+to a nonzero integer.  When the number of observations in the category
+is below this number or the number of observations not in the category
+is below this number, no attempt is made to predict observations being
+in that category individually for the purpose of redundancy detection.}
 \author{
 Frank Harrell
 \cr
@@ -81,6 +92,10 @@ x4 <- x1 + x2 + x3 + runif(n)/10
 x5 <- factor(sample(c('a','b','c'),n,replace=TRUE))
 x6 <- 1*(x5=='a' | x5=='c')
 redun(~x1+x2+x3+x4+x5+x6, r2=.8)
+redun(~x1+x2+x3+x4+x5+x6, r2=.8, allcat=TRUE)
+# x5 is no longer redundant but x6 is
+# adding minfreq=40 to last command would give same result as
+# allcat=FALSE, as frequencies of categories b and c are 35
 }
 \keyword{smooth}
 \keyword{regression}

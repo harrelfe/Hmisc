@@ -1,7 +1,6 @@
-# $Id$
 redun <- function(formula, data=NULL, subset=NULL,
                   r2=.9, type=c('ordinary','adjusted'),
-                  nk=3, tlinear=TRUE, pr=FALSE, ...)
+                  nk=3, tlinear=TRUE, allcat=FALSE, minfreq=0, pr=FALSE, ...)
 {
   acall   <- match.call()
   type    <- match.arg(type)
@@ -36,13 +35,13 @@ redun <- function(formula, data=NULL, subset=NULL,
       iscat <- FALSE
       if(is.character(xi))
         {
-          xi <- as.factor(xi)
-          lev <- levels(xi)
+          xi    <- as.factor(xi)
+          lev   <- levels(xi)
           iscat <- TRUE
         }
       else if(is.category(xi))
         {
-          lev <- levels(xi)
+          lev   <- levels(xi)
           iscat <- TRUE
         }
       if(iscat)
@@ -89,7 +88,8 @@ redun <- function(formula, data=NULL, subset=NULL,
   
   In <- 1:p; Out <- integer(0)
 
-  fcan <- function(ix, iy, X, st, en, vtype, tlinear, type)
+  fcan <- function(ix, iy, X, st, en, vtype, tlinear, type,
+                   allcat, r2, minfreq)
     {
       ## Get all subscripts for variables in the right hand side
       k <- rep(FALSE, ncol(X))
@@ -97,12 +97,38 @@ redun <- function(formula, data=NULL, subset=NULL,
       ytype <- if(tlinear && vtype[iy]=='s')'l' else vtype[iy]
       Y <- if(ytype=='l') X[,st[iy],drop=FALSE] else
        X[,st[iy]:en[iy],drop=FALSE]
+      d <- dim(Y); n <- d[1]; ny <- d[2]
       f <- cancor(X[,k,drop=FALSE], Y)
-      r2 <- f$cor[1]^2
-      if(type=='ordinary') return(r2)
-      dof <- sum(k) + ifelse(ytype=='l', 0, ncol(Y))
-      n <- nrow(Y)
-      max(0, 1 - (1 - r2)*(n-1)/dof)
+      R2 <- f$cor[1]^2
+      if(type=='adjusted')
+        {
+          dof <- sum(k) + ny - 1
+          R2 <- max(0, 1 - (1 - r2)*(n-1)/dof)
+        }
+    ## If variable to possibly remove is categorical with more than 2
+    ## categories (more than one dummy variable) make sure ALL frequent
+    ## categories are redundant (not just the linear combination of
+    ## dummies) if allcat is TRUE.  Do this by substituting for R^2 the
+    ## minimum R^2 over predicting each dummy variable.
+    if(R2 > r2 && allcat && ytype=='c' && (en[iy] > st[iy]))
+      {
+        for(j in st[iy]:en[iy])
+          {
+            y <- X[,j,drop=FALSE]
+            if(sum(y) >= minfreq && n-sum(y) >= minfreq)
+              {
+                f <- cancor(X[,k,drop=FALSE], y)
+                R2c <- f$cor[1]^2
+                if(type=='adjusted')
+                  {
+                    dof <- sum(k)
+                    R2c <- max(0, 1 - (1 - R2c)*(n-1)/dof)
+                  }
+                R2 <- min(R2, R2c, na.rm=TRUE)
+              }
+          }
+      }
+      R2
     }
 
   r2r <- numeric(0)
@@ -118,7 +144,8 @@ redun <- function(formula, data=NULL, subset=NULL,
       {
         l <- l + 1
         k <- setdiff(In, j)
-        Rsq[l] <- fcan(k, j, X, st, en, vtype, tlinear, type)
+        Rsq[l] <- fcan(k, j, X, st, en, vtype, tlinear, type,
+                       allcat, r2, minfreq)
       }
     if(i==1) {Rsq1 <- Rsq; names(Rsq1) <- nam}
     if(max(Rsq) < r2) break
@@ -136,7 +163,8 @@ redun <- function(formula, data=NULL, subset=NULL,
         for(j in Out)
           {
             l <- l+1
-            r2later[l] <- fcan(k, j, X, st, en, vtype, tlinear, type)
+            r2later[l] <-
+              fcan(k, j, X, st, en, vtype, tlinear, type, allcat, r2, minfreq)
           }
         if(min(r2later) < r2) break
       }
@@ -153,7 +181,7 @@ redun <- function(formula, data=NULL, subset=NULL,
                  In=nam[In], Out=nam[Out],
                  rsquared=r2r, r2later=r2l, rsq1=Rsq1,
                  n=n, p=p, na.action=na.action,
-                 vtype=vtype, tlinear=tlinear, nk=nk, df=xdf,
+                 vtype=vtype, tlinear=tlinear, allcat=allcat, nk=nk, df=xdf,
                  cat.levels=cat.levels,
                  r2=r2, type=type),
             class='redun')
@@ -171,11 +199,15 @@ print.redun <- function(object, digits=3, long=TRUE, ...)
   
   if(object$tlinear)
     cat('\nTransformation of target variables forced to be linear\n')
+  if(object$allcat)
+    cat('\nAll levels of a categorical variable had to be redundant before the\nvariable was declared redundant\n')
   cat('\nR-squared cutoff:', object$r2, '\tType:', object$type,'\n')
   if(long)
     {
       cat('\nR^2 with which each variable can be predicted from all other variables:\n\n')
       print(round(object$rsq1, digits))
+      if(object$allcat)
+        cat('\n(For categorical variables the minimum R^2 for any dummy variable is displayed)\n\n')
     }
   if(!length(object$Out))
     {

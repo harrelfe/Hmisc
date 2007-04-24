@@ -26,6 +26,7 @@ redun <- function(formula, data=NULL, subset=NULL,
   cat.levels <- vector('list',p)
   names(cat.levels) <- nam
   vtype <- rep('s', p); names(vtype) <- nam
+  enough <- rep(TRUE, p)
 
   for(i in 1:p)
     {
@@ -49,16 +50,32 @@ redun <- function(formula, data=NULL, subset=NULL,
           data[[i]] <- as.integer(xi)
           cat.levels[[ni]] <- lev
           vtype[ni] <- 'c'
+          if(minfreq > 0 && sum(table(xi) >= minfreq) < 2) enough[i] <- FALSE
         }
       else
         {
           u <- unique(xi)
-          if(length(u) == 1) stop(paste(ni,'is constant'))
-          else
-            if(nk==0 || length(u) == 2 || ni %in% linear)
-              vtype[ni] <- 'l'
+          if(length(u) == 1)
+            {
+              warning(paste(ni,'is constant'))
+              enough[i] <- FALSE
+            }
+          if(minfreq > 0 && length(u)==2 && sum(table(xi) >= minfreq) < 2)
+            enough[i] <- FALSE
+          if(nk==0 || length(u) < 3 || ni %in% linear)
+            vtype[ni] <- 'l'
         }
   }
+
+  toofew <- nam[!enough]
+  if(length(toofew))
+    {
+      p <- sum(enough)
+      nam <- nam[enough]
+      cat.levels <- cat.levels[enough]
+      vtype <- vtype[enough]
+      data  <- data[enough]
+    }
 
   xdf <- ifelse(vtype=='l', 1, nk-1)
   j <- vtype=='c'
@@ -85,9 +102,8 @@ redun <- function(formula, data=NULL, subset=NULL,
 
   nc <- ncol(X)
   if(nc < orig.df) X <- X[, 1:nc, drop=FALSE]
+  ## if couldn't derive the requested number of knots in splines
   
-  In <- 1:p; Out <- integer(0)
-
   fcan <- function(ix, iy, X, st, en, vtype, tlinear, type,
                    allcat, r2, minfreq)
     {
@@ -131,8 +147,10 @@ redun <- function(formula, data=NULL, subset=NULL,
       R2
     }
 
+  In <- 1:p; Out <- integer(0)
   r2r <- numeric(0)
   r2l <- list()
+
   for(i in 1:p) {
     if(pr) cat('Step',i,'of a maximum of', p, '\r')
     ## For each variable currently on the right hand side ("In")
@@ -147,7 +165,7 @@ redun <- function(formula, data=NULL, subset=NULL,
         Rsq[l] <- fcan(k, j, X, st, en, vtype, tlinear, type,
                        allcat, r2, minfreq)
       }
-    if(i==1) {Rsq1 <- Rsq; names(Rsq1) <- nam}
+    if(i==1) {Rsq1 <- Rsq; names(Rsq1) <- nam[In]}
     if(max(Rsq) < r2) break
     removed   <- In[which.max(Rsq)]
     r2removed <- max(Rsq)
@@ -178,10 +196,11 @@ redun <- function(formula, data=NULL, subset=NULL,
   if(pr) cat('\n')
   
   structure(list(call=acall, formula=formula,
-                 In=nam[In], Out=nam[Out],
+                 In=nam[In], Out=nam[Out], toofew=toofew,
                  rsquared=r2r, r2later=r2l, rsq1=Rsq1,
                  n=n, p=p, na.action=na.action,
-                 vtype=vtype, tlinear=tlinear, allcat=allcat, nk=nk, df=xdf,
+                 vtype=vtype, tlinear=tlinear,
+                 allcat=allcat, minfreq=minfreq, nk=nk, df=xdf,
                  cat.levels=cat.levels,
                  r2=r2, type=type),
             class='redun')
@@ -201,13 +220,20 @@ print.redun <- function(object, digits=3, long=TRUE, ...)
     cat('\nTransformation of target variables forced to be linear\n')
   if(object$allcat)
     cat('\nAll levels of a categorical variable had to be redundant before the\nvariable was declared redundant\n')
+  if(object$minfreq > 0)
+    cat('\nMinimum category frequency required for retention of a binary or\ncategorical variable:', object$minfreq, '\n')
+  if(length(object$toofew))
+    {
+      cat('\nBinary or categorical variables removed because of inadequate frequencies:\n\n')
+      cat(object$toofew, '\n')
+    }
   cat('\nR-squared cutoff:', object$r2, '\tType:', object$type,'\n')
   if(long)
     {
       cat('\nR^2 with which each variable can be predicted from all other variables:\n\n')
       print(round(object$rsq1, digits))
       if(object$allcat)
-        cat('\n(For categorical variables the minimum R^2 for any dummy variable is displayed)\n\n')
+        cat('\n(For categorical variables the minimum R^2 for any sufficiently\nfrequent dummy variable is displayed)\n\n')
     }
   if(!length(object$Out))
     {
@@ -215,10 +241,9 @@ print.redun <- function(object, digits=3, long=TRUE, ...)
       return(invisible())
     }
   cat('\nRendundant variables:\n\n')
-  print(object$Out, quote=FALSE)
-  cat('\nPredicted from variables:\n\n')
-  print(object$In,  quote=FALSE)
-  cat('\n')
+  cat(object$Out)
+  cat('\n\nPredicted from variables:\n\n')
+  cat(object$In, '\n\n')
   w <- object$r2later
   vardel <- names(object$rsquared)
   if(!long)
@@ -235,7 +260,7 @@ print.redun <- function(object, digits=3, long=TRUE, ...)
       i <- i + 1
       for(z in w)
         {
-          if(length(z) && any(names(z)==v))
+          if(length(z) && v %in% names(z))
             later[i] <- paste(later[i], round(z[v], digits), sep=' ')
         }
     }

@@ -133,3 +133,5 @@ inmChoice <- function(x, values) {
   }
   res
 }
+
+is.mChoice <- function(x) inherits(x, 'mChoice')

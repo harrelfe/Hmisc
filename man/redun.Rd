@@ -39,8 +39,12 @@ redun(formula, data=NULL, subset=NULL, r2 = 0.9,
   \item{allcat}{set to \code{TRUE} to ensure that all categories of
 	categorical variables having more than two categories are redundant
 	(see details below)}
-  \item{minfreq}{the minimum frequency of a category or its complement
-	before that category is considered when \code{allcat=TRUE}}
+  \item{minfreq}{For a binary or categorical variable, there must be at
+	least two categories with at least \code{minfreq} observations or
+	the variable will be dropped and not checked for redundancy against
+	other variables.  \code{minfreq} also specifies the minimum
+	frequency of a category or its complement 
+	before that category is considered when \code{allcat=TRUE}.}
   \item{pr}{set to \code{TRUE} to monitor progress of the stepwise algorithm}
   \item{\dots}{arguments to pass to \code{dataframeReduce} to remove
 	"difficult" variables from \code{data} if \code{formula} is
@@ -92,10 +96,9 @@ x4 <- x1 + x2 + x3 + runif(n)/10
 x5 <- factor(sample(c('a','b','c'),n,replace=TRUE))
 x6 <- 1*(x5=='a' | x5=='c')
 redun(~x1+x2+x3+x4+x5+x6, r2=.8)
+redun(~x1+x2+x3+x4+x5+x6, r2=.8, minfreq=40)
 redun(~x1+x2+x3+x4+x5+x6, r2=.8, allcat=TRUE)
 # x5 is no longer redundant but x6 is
-# adding minfreq=40 to last command would give same result as
-# allcat=FALSE, as frequencies of categories b and c are 35
 }
 \keyword{smooth}
 \keyword{regression}

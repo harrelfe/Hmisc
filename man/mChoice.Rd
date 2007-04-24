@@ -7,6 +7,7 @@
 \alias{inmChoice}
 \alias{[.mChoice}
 \alias{print.summary.mChoice}
+\alias{is.mChoice}
 \title{Methods for Storing and Analyzing Multiple Choice Variables}
 \description{
   \code{mChoice} is a function that is useful for defining a group of
@@ -41,7 +42,11 @@
 
   \code{inmChoice} creates a logical vector the same length as \code{x}
   whose elements are \code{TRUE} when the observation in \code{x}
-  contains at least one of the codes or value labels in the second argument.
+  contains at least one of the codes or value labels in the second
+  argument.
+
+  \code{is.mChoice} returns \code{TRUE} is the argument is a multiple
+  choice variable.
 }
 \usage{
 mChoice(\dots, label='', sort.=TRUE,
@@ -61,6 +66,8 @@ mChoice(\dots, label='', sort.=TRUE,
 \method{[}{mChoice}(x, ..., drop=FALSE)
 
 inmChoice(x, values)
+
+is.mChoice(x}
 }
 \arguments{
   \item{...}{a series of vectors}
@@ -87,7 +94,7 @@ inmChoice(x, values)
     produced by \code{mChoice}
   }
   \item{x}{an object of class \code{"mchoice"} such as that created by
-	\code{mChoice}}
+	\code{mChoice}.  For \code{is.mChoice} is any object.}
 \item{object}{an object of class \code{"mchoice"} such as that created by
 	\code{mChoice}}
 \item{ncombos}{maximum number of combos.}

@@ -1,8 +1,25 @@
 .ElmtCombine <- function(x, value, protect=FALSE, ...) {
+  if(is.null(x)) {
+    x <- vector()
+  }
+
+  if(is.null(value)) {
+    value <- vector()
+  }
+  
   if((is.list(x) || is.vector(x)) &&
      (is.list(value) || is.vector(value))) {
-    value.names <- names(value)
-    x.names <- names(x)
+    if(length(value)) {
+      value.names <- names(value)
+    } else {
+      value.names <- vector()
+    }
+    
+    if(length(x)) {
+      x.names <- names(x)
+    } else {
+      x.names <- vector()
+    }
 
     if(is.null(x.names) || is.null(value.names)) {
       stop("objects 'x' and 'value' must have names")

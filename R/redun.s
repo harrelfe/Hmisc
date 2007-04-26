@@ -8,12 +8,6 @@ redun <- function(formula, data=NULL, subset=NULL,
   if(!inherits(formula,'formula'))
     stop('formula must be a formula')
 
-  if(length(data))
-    {
-      mc <- sapply(data, is.mChoice)
-      if(any(mc)) for(i in which(mc)) data[[i]] <- as.factor(data[[i]])
-    }
-
   a <- as.character(formula)
   if(length(a)==2 && a[1]=='~' && a[2]=='.' &&
      length(list(...))) data <- dataframeReduce(data, ...)

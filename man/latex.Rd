@@ -502,6 +502,9 @@ commands which are assumed to be in the system path.
   \code{/tmp} (Unix/Linux) or \code{\\windows\\temp} (Windows), add your
   own \code{tempdir} function such as \code{
 	tempdir <- function() "/yourmaindirectory/yoursubdirectory"}
+
+  To prevent the latex file from being displayed store the result of
+  \code{latex} in an object, e.g. \code{w <- latex(object, file='foo.tex')}.
   }
 \author{
 Frank E. Harrell, Jr.,

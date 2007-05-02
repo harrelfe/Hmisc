@@ -86,7 +86,7 @@ by the identify function (\code{I()}).  It is recommended that
 \code{factor()} or \code{as.factor()} do not appear in the formula but
 instead variables be converted to factors as needed and stored in the
 data frame.  That way imputations for factor variables (done using
-\code{\link{impute.trans}} for example) will be correct.
+\code{\link{impute.transcan}} for example) will be correct.
 }
 \item{x}{
   an object created by \code{aregImpute}.  For \code{aregImpute}, set

@@ -7,13 +7,13 @@
   one or more tables in a Microsoft Access database.  Date-time
   variables are converted to dates or \code{chron} package date-time
   variables.  The \code{csv.get} function is used to import
-  automatically exported csv files.  If \codes{tables} 
+  automatically exported csv files.  If \code{tables} 
   is unspecified all tables in the database are retrieved.  If more than
   one table is imported, the result is a list of data frames.
 }
 \usage{
 mdb.get(file, tables=NULL, lowernames=FALSE, allow=NULL,
-        dateformat='%m/%d/%y', ...)
+        dateformat='\%m/\%d/\%y', ...)
 }
 \arguments{
   \item{file}{the file name containing the Access database}

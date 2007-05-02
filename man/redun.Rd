@@ -19,7 +19,7 @@ the now smaller list of predictors.
 redun(formula, data=NULL, subset=NULL, r2 = 0.9,
       type = c("ordinary", "adjusted"), nk = 3, tlinear = TRUE,
       allcat=FALSE, minfreq=0, pr = FALSE, ...)
-\method{print}{redun}(object, digits=3, long=TRUE, ...)
+\method{print}{redun}(x, digits=3, long=TRUE, ...)
 }
 \arguments{
   \item{formula}{a formula.  Enclose a variable in \code{I()} to force
@@ -50,7 +50,7 @@ redun(formula, data=NULL, subset=NULL, r2 = 0.9,
 	"difficult" variables from \code{data} if \code{formula} is
 	\code{~.} to use all variables in \code{data} (\code{data} must be
 	specified when these arguments are used).  Ignored for \code{print}.}
-  \item{object}{an object created by \code{redun}}
+  \item{x}{an object created by \code{redun}}
   \item{digits}{number of digits to which to round \eqn{R^2} values when
 	printing}
   \item{long}{set to \code{FALSE} to prevent the \code{print} method

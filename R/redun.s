@@ -206,50 +206,50 @@ redun <- function(formula, data=NULL, subset=NULL,
             class='redun')
 }
 
-print.redun <- function(object, digits=3, long=TRUE, ...)
+print.redun <- function(x, digits=3, long=TRUE, ...)
 {
   cat("\nRedundancy Analysis\n\n")
-  dput(object$call)
+  dput(x$call)
   cat("\n")
-  cat('n:',object$n,'\tp:',object$p, '\tnk:',object$nk,'\n')
-  cat('\nNumber of NAs:\t', length(object$na.action$omit), '\n')
-  a <- object$na.action
+  cat('n:',x$n,'\tp:',x$p, '\tnk:',x$nk,'\n')
+  cat('\nNumber of NAs:\t', length(x$na.action$omit), '\n')
+  a <- x$na.action
   if(length(a)) naprint(a)
   
-  if(object$tlinear)
+  if(x$tlinear)
     cat('\nTransformation of target variables forced to be linear\n')
-  if(object$allcat)
+  if(x$allcat)
     cat('\nAll levels of a categorical variable had to be redundant before the\nvariable was declared redundant\n')
-  if(object$minfreq > 0)
-    cat('\nMinimum category frequency required for retention of a binary or\ncategorical variable:', object$minfreq, '\n')
-  if(length(object$toofew))
+  if(x$minfreq > 0)
+    cat('\nMinimum category frequency required for retention of a binary or\ncategorical variable:', x$minfreq, '\n')
+  if(length(x$toofew))
     {
       cat('\nBinary or categorical variables removed because of inadequate frequencies:\n\n')
-      cat(object$toofew, '\n')
+      cat(x$toofew, '\n')
     }
-  cat('\nR-squared cutoff:', object$r2, '\tType:', object$type,'\n')
+  cat('\nR-squared cutoff:', x$r2, '\tType:', x$type,'\n')
   if(long)
     {
       cat('\nR^2 with which each variable can be predicted from all other variables:\n\n')
-      print(round(object$rsq1, digits))
-      if(object$allcat)
+      print(round(x$rsq1, digits))
+      if(x$allcat)
         cat('\n(For categorical variables the minimum R^2 for any sufficiently\nfrequent dummy variable is displayed)\n\n')
     }
-  if(!length(object$Out))
+  if(!length(x$Out))
     {
       cat('\nNo redundant variables\n\n')
       return(invisible())
     }
   cat('\nRendundant variables:\n\n')
-  cat(object$Out)
+  cat(x$Out)
   cat('\n\nPredicted from variables:\n\n')
-  cat(object$In, '\n\n')
-  w <- object$r2later
-  vardel <- names(object$rsquared)
+  cat(x$In, '\n\n')
+  w <- x$r2later
+  vardel <- names(x$rsquared)
   if(!long)
     {
       print(data.frame('Variable Deleted'=vardel,
-                       'R^2'=round(object$rsquared,digits),
+                       'R^2'=round(x$rsquared,digits),
                        row.names=NULL, check.names=FALSE))
       return(invisible())
     }
@@ -265,7 +265,7 @@ print.redun <- function(object, digits=3, long=TRUE, ...)
         }
     }
   print(data.frame('Variable Deleted'=vardel,
-                   'R^2'=round(object$rsquared,digits),
+                   'R^2'=round(x$rsquared,digits),
                    'R^2 after later deletions'=later,
                    row.names=NULL,
                    check.names=FALSE))

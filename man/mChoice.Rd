@@ -67,7 +67,7 @@ mChoice(\dots, label='', sort.=TRUE,
 
 inmChoice(x, values)
 
-is.mChoice(x}
+is.mChoice(x)
 }
 \arguments{
   \item{...}{a series of vectors}

@@ -591,7 +591,7 @@ summary.formula <-
     df$Missing <- Missing
       
     a <- list(heading=heading,byvarnames=lab2,Levels=Levels,labels=labels,
-              na.action=nact,formula=formula,call=call,yname=yname,ylab=laby,
+              na.action=nact,formula=formula,call=call,yname=yname,ylabel=ylabel,
               class=c("summary.formula.cross","data.frame"))
     attributes(df) <- c(attributes(df), a)
     df

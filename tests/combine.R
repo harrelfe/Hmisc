@@ -44,7 +44,6 @@ a7 <- structure(list(q = 5, h = 2, b = 14, a = 5, c = 4),
 a8 <- structure(list(q = 5, h = 2, b = 14, w = 2, e = 21),
                 .Names = c("q", "h", "b", "w", "e"))
 
-str(a1)
 r1 <- combine(a, b, protect=FALSE)
 r2 <- combine(a, c, protect=FALSE)
 r3 <- combine(c, a, protect=FALSE)

@@ -8,7 +8,7 @@
   generalization of Somers' Dxy rank correlation for a censored response
   variable. Also works for uncensored and binary responses, 
   although its use of all possible pairings
-  makes it slow for this purpose.
+  makes it slow for this purpose.  Dxy and c are related by Dxy = 2*(c-.5).
 }
 \usage{
 rcorr.cens(x, S, outx=FALSE)

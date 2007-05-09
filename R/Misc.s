@@ -351,11 +351,11 @@ xySortNoDupNoNA <- function(x, y)
 }
 
 ## Lifted from rowsum in 4.5
-rowsumFast <- function(x, group, reorder=FALSE)
+rowsumFast <- if(.R.) rowsum else function(x, group, reorder=TRUE)
 {
   ## assumes x is a matrix
-  ## by default, results are in order that unique group values
-  ## encountered
+  ## by default, results are not in order that unique group values
+  ## encountered but by sorted group values
   ## is fast and solves error that reorder= omitted from S+ 2000
   
   if(!is.numeric(x))

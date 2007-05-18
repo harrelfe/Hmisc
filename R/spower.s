@@ -206,6 +206,15 @@ plot.Quantile2 <- function(x,
 
 logrank <- function(S, group)
 {
+  group <- as.factor(group)
+  i <- is.na(S) | is.na(group)
+  if(any(i))
+    {
+      i <- !i
+      S <- S[i,,drop=FALSE]
+      group <- group[i]
+    }
+  group <- as.integer(group)
   y     <- S[,1]
   event <- S[,2]
   i     <- order(-y)
@@ -213,17 +222,46 @@ logrank <- function(S, group)
   event <- event[i]
   group <- group[i]
   x     <- cbind(group==1, group==2, (group==1)*event, (group==2)*event)
-  s     <- rowsumFast(x, y, FALSE)
-  nr1 <- cumsum(s[,1])
-  nr2 <- cumsum(s[,2])
-  d1  <- s[,3]
-  d2  <- s[,4]
-  rd  <- d1+d2
-  rs  <- nr1+nr2-rd
-  n   <- nr1+nr2
-  oecum <- d1 - rd*nr1/n
-  vcum  <- rd * rs * nr1 * nr2 / n / n / (n-1)
-  sum(oecum)^2 / sum(vcum,na.rm=TRUE)
+  if(TRUE)
+    {
+      s     <- rowsumFast(x, y, FALSE)
+      nr1 <- cumsum(s[,1])
+      nr2 <- cumsum(s[,2])
+      d1  <- s[,3]
+      d2  <- s[,4]
+      rd  <- d1+d2
+      rs  <- nr1+nr2-rd
+      n   <- nr1+nr2
+      oecum <- d1 - rd*nr1/n
+      vcum  <- rd * rs * nr1 * nr2 / n / n / (n-1)
+      chisq <- sum(oecum)^2 / sum(vcum,na.rm=TRUE)
+      hr <- sum(d1*(nr1-d1)/n)/sum(d2*(nr2-d2)/n)
+    }
+  else
+    {  # non-working code; trying to get stratification to work
+      OE <- v <- hrn <- hrd <- 0
+      for(strat in unique(strata))
+        {
+          j <- strata==strat
+          s <- rowsumFast(x[j,], y[j], FALSE)
+          nr1 <- cumsum(s[,1])
+          nr2 <- cumsum(s[,2])
+          d1  <- s[,3]
+          d2  <- s[,4]
+          rd  <- d1+d2
+          rs  <- nr1+nr2-rd
+          n   <- nr1+nr2
+          oecum <- d1 - rd*nr1/n
+          vcum  <- rd * rs * nr1 * nr2 / n / n / (n-1)
+          OE <- OE + sum(oecum)
+          v  <- v + sum(vcum, na.rm=TRUE)
+          hrn <- hrn + sum(d1*(nr1-d1)/n)
+          hrd <- hrd + sum(d2*(nr2-d2)/n)
+        }
+      chisq <- OE^2 / v
+      hr <- hrn/hrd
+    }
+  structure(chisq, hr=hr)
 }
 
 

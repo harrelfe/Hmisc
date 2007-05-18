@@ -34,9 +34,8 @@ distributions by numerical differentiation and integration using a
 grid of (by default) 7500 equally-spaced time points.
 
 The \code{logrank} function is intended to be used with \code{spower}
-but it can be used by itself as long as the \code{group} variable has
-only the values \code{1} and \code{2} and there are no missing data.  It
-returns the 1 degree of freedom chi-square statistic.
+but it can be used by itself.  It returns the 1 degree of freedom
+chi-square statistic, with the hazard ratio estimate as an attribute.
 
 The \code{Weibull2} function accepts as input two vectors, one
 containing two times and one containing two survival probabilities, and
@@ -108,8 +107,7 @@ a \code{Surv} object or other two-column matrix for right-censored survival
 times
 }
 \item{group}{
-group indicators have length equal to the number of rows in \code{S}.  Only
-values allowed are 1 and 2.
+group indicators have length equal to the number of rows in \code{S}.
 }
 \item{times}{
 a vector of two times
@@ -312,6 +310,29 @@ set.seed(211)
 spower(rcontrol, rinterv, rcens, nc=350, ni=350, 
        test=logrank, nsim=50)  # normally nsim=500 or more
 par(mfrow=c(1,1))
+
+\dontrun{
+# Do an unstratified logrank test
+library(survival)
+# From SAS/STAT PROC LIFETEST manual, p. 1801
+days <- c(179,256,262,256,255,224,225,287,319,264,237,156,270,257,242,
+          157,249,180,226,268,378,355,319,256,171,325,325,217,255,256,
+          291,323,253,206,206,237,211,229,234,209)
+status <- c(1,1,1,1,1,0,1,1,1,1,0,1,1,1,1,1,1,1,1,0,
+            0,rep(1,19))
+treatment <- c(rep(1,10), rep(2,10), rep(1,10), rep(2,10))
+sex <- Cs(F,F,M,F,M,F,F,M,M,M,F,F,M,M,M,F,M,F,F,M,
+          M,M,M,M,F,M,M,F,F,F,M,M,M,F,F,M,F,F,F,F)
+data.frame(days, status, treatment, sex)
+table(treatment, status)
+logrank(Surv(days, status), treatment)  # agrees with p. 1807
+# For stratified tests the picture is puzzling.
+# survdiff(Surv(days,status) ~ treatment + strata(sex))$chisq
+# is 7.246562, which does not agree with SAS (7.1609)
+# But summary(coxph(Surv(days,status) ~ treatment + strata(sex)))
+# yields 7.16 whereas summary(coxph(Surv(days,status) ~ treatment))
+# yields 5.21 as the score test, not agreeing with SAS or logrank() (5.6485)
+}
 }
 \keyword{htest}
 \keyword{survival}

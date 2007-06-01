@@ -132,9 +132,16 @@ for \code{wtd.loess.noiter}.
 The functions correctly combine weights of observations having
 duplicate values of \code{x} before computing estimates.
 
+When \code{normwt=FALSE} the weighted variance will not equal the
+unweighted variance even if the weights are identical.  That is because
+of the subtraction of 1 from the sum of the weights in the denominator
+of the variance formula.  If you want the weighted variance to equal the
+unweighted variance when weights do not vary, use \code{normwt=TRUE}.
+The articles by Gatz and Smith discuss alternative approaches, to arrive
+at estimators of the standard error of a weighted mean.
 
-\code{wtd.rank} does not handle NAs as elegantly as \code{rank} if \code{weights} is
-specified.
+\code{wtd.rank} does not handle NAs as elegantly as \code{rank} if
+\code{weights} is specified.
 }
 \author{
 Frank Harrell
@@ -147,7 +154,15 @@ f.harrell@vanderbilt.edu
 }
 \references{
 Research Triangle Institute (1995): SUDAAN User's Manual, Release
-6.40, pp. 8--16 to 8--17.
+6.40, pp. 8-16 to 8-17.
+
+Gatz DF, Smith L (1995): The standard error of a weighted mean
+concentration--I.  Bootstrapping vs other methods.  Atmospheric Env
+11:1185-1193.
+
+Gatz DF, Smith L (1995): The standard error of a weighted mean
+concentration--II.  Estimating confidence intervals.  Atmospheric Env
+29:1195-1200.
 }
 \seealso{
 \code{\link{mean}}, \code{\link{var}}, \code{\link{quantile}}, \code{\link{table}}, \code{\link{rank}}, \code{\link{loess.smooth}}, \code{\link{lowess}},

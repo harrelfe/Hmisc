@@ -1560,7 +1560,6 @@ print.summary.formula.reverse <-
   invisible(cstats)
 }
 
-
 ## Function to format subtable for categorical var, for method='reverse'
 formatCats <- function(tab, nam, tr, type, group.freq,
                        npct, pctdig, exclude1, long, prtest,
@@ -1641,7 +1640,49 @@ formatCats <- function(tab, nam, tr, type, group.freq,
   else
     cs[(long+1):nrow(cs),1:nw] <- cpct[jstart:nrow(cpct),gnames]
 
+  if(latex) {
+    locs <- c(3,-3,5,-5,7,-7,9,-9)
+    points <- c("\\circle*{4}","\\circle{4}","\\drawline(0,2)(-1.414213562,-1)(1.414213562,-1)(0,2)")
+    
+    point.loc <- sapply(jstart:nrow(pct),
+                        function(i) {
+                          paste(ifelse(is.na(pct[i,]), "",
+                                       paste("\\put(", pct[i,], ",0){",points[1:ncol(pct)],"}",sep='')),
+                                collapse='')
+                        })
+
+    error.loc <- character(nrow(tab) - exc)
+    k <- 0
+    for(i in jstart:ncol(tab)) {
+      if(i > jstart) {
+        p1prime <- (tab[,i] + 1)/(denom[i] + 2)
+        d1 <- p1prime*(1-p1prime)/denom[i]
+        for(j in jstart:(i-1)) {
+          k <- k + 1
+          p2prime <- (tab[,j] + 1)/(denom[j] + 2)
+          error <- 196 * sqrt(d1 + p2prime * (1 - p2prime)/denom[j])
+          bar <- ifelse(is.na(error), "",
+                        paste("\\put(", (pct[,i] + pct[,j])/2 - error, ",",
+                              locs[k],"){\\line(1,0){",error*2,"}}",
+                              sep=''))
+          error.loc <- paste(error.loc, bar, sep='')
+        }
+      }
+    }
+
+    scale <- character(nrow(tab) - exc)
+    scale[1] <- "\\multiput(0,2)(25,0){5}{\\color[gray]{0.5}\\line(0,-1){4}}\\put(-5,0){\\makebox(0,0){\\tiny 0}}\\put(108,0){\\makebox(0,0){\\tiny 1}}"
+                     
+    cl <- paste("\\setlength\\unitlength{1in/100}\\begin{picture}(100,10)(0,-5)",
+                scale,"\\put(0,0){\\color[gray]{0.5}\\line(1,0){100}}",
+                point.loc, error.loc,
+                "\\end{picture}", sep='')
+    cat("nrow(cs)", nrow(cs), "length(cl)",length(cl), file='')
+    cs[(long+1):nrow(cs),ncol(cs)] <- cl
+  }
+
   if(length(tr)) {
+    str(tr)
     ct <- formatTestStats(tr, type==3,
                           if(type==1)1
                           else 1:nr,

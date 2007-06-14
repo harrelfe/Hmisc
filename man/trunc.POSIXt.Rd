@@ -13,32 +13,38 @@
   \code{floor.POSIXt} \code{trunk.POSIXt} by another name.
   \code{round.POSIXt} returns the date or time value rounded to nearest
   specified unit selected in \code{digits}.
+
+  \code{trunc.POSIXt} and \code{round.POSIXt} have been extended from
+  the \code{base} package functions.
 }
 \usage{
-ceil(x, units)
-\method{ceil}{default}(x, units)
-\method{trunc}{POSIXt}(x, units = c("secs", "mins", "hours", "days", "months", "years"))
-\method{ceil}{POSIXt}(x, units = c("secs", "mins", "hours", "days", "months", "years"))
+ceil(x, units,\dots)
+\method{ceil}{default}(x, units, \dots)
+\method{trunc}{POSIXt}(x, units = c("secs", "mins", "hours", "days",
+"months", "years"), \dots)
+\method{ceil}{POSIXt}(x, units = c("secs", "mins", "hours", "days",
+"months", "years"), \dots)
 \method{round}{POSIXt}(x, digits = c("secs", "mins", "hours", "days", "months", "years"))
 }
 \arguments{
-  \item{x}{ date to be floored or ceilinged }
+  \item{x}{ date to be floored, ceilinged, truncated, or rounded }
   \item{units}{ unit to that is is rounded up or down to. }
   \item{digits}{
     same as \code{units} but different name to be compatible
     with \code{\link{round}} generic.
   }
+  \item{\dots}{further arguments to be passed to or from other methods.}
 }
 \value{
   An object of class \code{POSIXlt}.
 }
 \author{ Charles Dupont }
-\seealso{ \code{\link{Date}} \code{\link{POSIXt}} \code{\link{POSIXlt}} }
+\seealso{ \code{\link{Date}} \code{\link{POSIXt}} \code{\link{POSIXlt}} \code{\link{DateTimeClasses}}}
 \examples{
 date <- ISOdate(1832, 7, 12)
-ceil(date, units='months')  # '1-8-1832'
-trunc(date, units='years')     # '1-1-1832'
-round.POSIXt(date, digits='months')    # '1-7-1832'
+ceil(date, units='months')  # '1832-8-1'
+trunc(date, units='years')     # '1832-1-1'
+round.POSIXt(date, digits='months')    # '1832-7-1'
 }
 \keyword{ manip }% at least one, from doc/KEYWORDS
 \keyword{ utilities }

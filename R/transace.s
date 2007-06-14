@@ -63,10 +63,7 @@ areg.boot <- function(x, data, weights, subset, na.action=na.delete,
   if(.R. && method=='avas') require('acepack')
 
   if(!inherits(x,'formula')) stop('first argument must be a formula')
-  nam <- all.vars(x)
-  ylab <- nam[1]
-  nam  <- nam[-1]
-    
+
   m <- match.call(expand = FALSE)
   Terms <- terms(x, specials=c('I','monotone'))
   m$formula <- x
@@ -76,6 +73,11 @@ areg.boot <- function(x, data, weights, subset, na.action=na.delete,
   
   m[[1]] <- as.name("model.frame")
   x <- eval(m, sys.parent())
+
+  nam <- names(x)
+  ylab <- nam[1]
+  nam <- nam[-1]
+
   k <- length(x)
   p <- k - 1
   nact <- attr(x,"na.action")

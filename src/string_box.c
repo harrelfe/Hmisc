@@ -24,7 +24,6 @@ SEXP string_box(SEXP string)
       int str_width = 0;
       int str_subwidth = 0;
       int str_height= 0;
-      int str_len;
 
       char *substring = CHAR(STRING_ELT(string, i));
       
@@ -60,6 +59,3 @@ SEXP string_box(SEXP string)
    UNPROTECT(1);
    return(ans);
 }
-
-      
-      

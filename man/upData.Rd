@@ -225,7 +225,8 @@ rm(dat2)
 # Remove hard to analyze variables from a redundancy analysis of all
 # variables in the data frame
 d <- dataframeReduce(dat, fracmiss=.1, minprev=.05, maxlevels=5)
-redun(~., data=d)
+# Could run redun(~., data=d) at this point or include dataframeReduce
+# arguments in the call to redun
 
 # If you import a SAS dataset created by PROC CONTENTS CNTLOUT=x.datadict,
 # the LABELs from this dataset can be added to the data.  Let's also

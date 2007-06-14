@@ -122,9 +122,9 @@ if(FALSE) rcorrs <- function(x, y, weights=rep(1,length(y)),
 
   list(x=x, y=y, weights=weights)
 
-  storage.mode(x) <- "single"
-  storage.mode(y) <- "single"
-  storage.mode(event) <- "logical"
+  #storage.mode(x) <- "single"
+  #storage.mode(y) <- "single"
+  #storage.mode(event) <- "logical"
 
   ## wcidxy doesn't exist yet
   z <- .Fortran("wcidxy",as.single(x),as.single(y),as.integer(weights),as.integer(n),

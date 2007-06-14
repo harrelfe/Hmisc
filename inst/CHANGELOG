@@ -1,3 +1,75 @@
+3.4-1 5/02/2007
+      Changed mChoice variables to factors up front if data given
+      (don't know how to handle this when data is not given) to make
+      model.frame work
+
+      Added is.mChoice function
+
+      Fixed new code that excludes variables with poor distributions.
+
+      Added minfreq argument
+
+      Fixed data default value=NULL to allow for absence of data=.
+
+      Updated model.frame approach.
+
+      New function for formal redundancy analysis.
+
+      Changed to use dataframeReduce function, cleaned up code
+      formatting, used explicit model.frame call so could modified
+      data first.
+
+      Changed varclus to use dataframeReduce instead of minlev.
+
+      Added dataframeReduce function.
+
+      Added documentation for skip, sep, vnames, labels.
+
+      Enhanced csv.get to allow for a row containing variable labels,
+      and to allow variable names to be in a row other than row one.
+
+      Ran caption through latexTranslate for
+      latex.summary.formula.response, to handle underscores in
+      response variable names.
+
+      In label made a "" label use the default argument if it had
+      nonzero length.
+
+      Added datetimevars argument.
+
+      Enhanced cleanup.import and csv.get to handle date-time
+      variables as need with mdb.get.
+
+      New function to import a Microsoft Access database.
+
+      Added example function for bootstrap confidence interval for the
+      difference in two means.
+
+      Added ref to texi2dvi in tools package, for compiling latex
+      files and producing pdf.
+
+      Added warning about using factor() or as.factor() in formula.
+
+      Clarified ... argument to match bug fix.
+
+      ... was not passed to enough graphics functions; add=TRUE did
+      not result in points being plotted; fixed.
+
+      Fixed documentation error for nk.  Thanks: Todd Nick.
+
+      Fixed bug in unmatched brace for latex.describe, added back vbox
+      for individual output when not verbose.
+
+      Clarified documentation of trunc.POSIXt
+
+      Changed all calls to storage.mode <- "single" to 
+      mode <- "single"
+
+      Fixed invalid name assign problem in areg.boot.
+
+      Added dotplot in test output cells in latex table of
+      summary.formula.reverse.
+
 3.3-2 3/29/2007
       Fixed bug with combine<- function not handling NULL values.
 

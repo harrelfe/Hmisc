@@ -1,3 +1,4 @@
+\encoding{latin1}
 \name{latex}
 \alias{latex}
 \alias{latex.default}

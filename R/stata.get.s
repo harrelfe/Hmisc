@@ -10,7 +10,7 @@ if (.R.) {
     ## If file is a url download and set file = to temp file name
     if(length(grep('^http://', file))){
       tf <- tempfile()
-      download.file(file, tf, mode='wb', quite=TRUE)
+      download.file(file, tf, mode='wb', quiet=TRUE)
       file <- tf
     }
 

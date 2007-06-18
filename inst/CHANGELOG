@@ -70,6 +70,9 @@
       Added dotplot in test output cells in latex table of
       summary.formula.reverse.
 
+      Changed storage.mode <- "single" calls to mode <- "single" calls
+      in rm.boot.s
+
 3.3-2 3/29/2007
       Fixed bug with combine<- function not handling NULL values.
 

@@ -90,8 +90,8 @@ only the first \code{n/2} observations are shown on either side of the
 median, where \code{n} is the total number of observations. 
 }
 \item{datadensity}{
-set to \code{FALSE} to invoke \code{scat1d} to draw a data density (one-dimensional
-scatter diagram or rug plot) inside each box plot.
+set to \code{TRUE} to invoke \code{scat1d} to draw a data density
+(one-dimensional scatter diagram or rug plot) inside each box plot.
 }
 \item{scat1d.opts}{
 a list containing named arguments (without abbreviations) to pass to

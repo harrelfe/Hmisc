@@ -57,6 +57,8 @@ f.harrell@vanderbilt.edu
 }
 \references{
   Schemper M (2003): Stat in Med 22:2299-2308.
+
+  Tian L, Cai T, Goetghebeur E, Wei LJ (2007): Biometrika 94:297-311.
   }
 \examples{
 set.seed(1)         # so can regenerate results

@@ -179,7 +179,7 @@ x[i,j]
       insert.bottom = TRUE, dcolumn = FALSE,
       prtest = c('P', 'stat', 'df', 'name'), prmsd = FALSE,
       msdsize = NULL, long = FALSE, pdig = 3, eps = 0.001,
-      auxCol = NULL, \dots)
+      auxCol = NULL, dotchart=FALSE, \dots)
 
 
 % \method{summary}{formula}(formula, data, subset, na.action, fun,
@@ -621,6 +621,10 @@ cumcategory(y)
   \item{shortlabel}{
     set to \code{FALSE} to include stratification variable names and equal signs
     in labels for strata levels
+  }
+  \item{dotchart}{
+    set to \code{TRUE} to output a dotchart in the latex table being
+    generated.
   }
 }
 \value{

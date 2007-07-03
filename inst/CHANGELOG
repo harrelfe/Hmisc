@@ -1,3 +1,13 @@
+3.4-2
+      Removed some debug statements that had been missed.
+
+      Fixed bug with way that dotchart2 displays auxdata when auxdata
+      is an expression.
+
+      Added option to enable to output of a dotchart in the latex
+      table of 'latex.summary.formula.reverse'.  Use arg 'dotchart =
+      TRUE' to enable the feature.
+
 3.4-1 5/02/2007
       Changed mChoice variables to factors up front if data given
       (don't know how to handle this when data is not given) to make

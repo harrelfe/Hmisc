@@ -116,7 +116,7 @@
 % g=4, nmin=0, \dots)
 \method{print}{summary.formula.response}(x, vnames=c('labels','names'), prUnits=TRUE,
       abbreviate.dimnames=FALSE,
-      prefix.width, min.colwidth, formatArgs, \dots)
+      prefix.width, min.colwidth, formatArgs=NULL, \dots)
 
 \method{plot}{summary.formula.response}(x, which = 1, vnames = c('labels','names'), xlim, xlab,
      pch = c(16, 1, 2, 17, 15, 3, 4, 5, 0), superposeStrata = TRUE,
@@ -155,7 +155,7 @@ x[i,j]
       npct = c('numerator', 'both', 'denominator', 'none'),
       exclude1 = TRUE, vnames = c('labels', 'names'), prUnits = TRUE,
       sep = '/', abbreviate.dimnames = FALSE,
-      prefix.width = max(nchar(lab)), min.colwidth, formatArgs,
+      prefix.width = max(nchar(lab)), min.colwidth, formatArgs=NULL, round=NULL,
       prtest = c('P','stat','df','name'), prmsd = FALSE, long = FALSE,
       pdig = 3, eps = 0.001, \dots)
 
@@ -176,7 +176,7 @@ x[i,j]
       npct.size = 'scriptsize', Nsize = 'scriptsize', exclude1 = TRUE,
       vnames=c("labels", "names"), prUnits = TRUE, middle.bold = FALSE,
       outer.size = "scriptsize", caption, rowlabel = "",
-      insert.bottom = TRUE, dcolumn = FALSE,
+      insert.bottom = TRUE, dcolumn = FALSE, formatArgs=NULL, round=NULL,
       prtest = c('P', 'stat', 'df', 'name'), prmsd = FALSE,
       msdsize = NULL, long = FALSE, pdig = 3, eps = 0.001,
       auxCol = NULL, \dots)
@@ -419,9 +419,10 @@ cumcategory(y)
   \item{formatArgs}{
     a list containing other arguments to pass to \code{format.default} such as
     \code{scientific}, e.g., \code{formatArgs=list(scientific=c(-5,5))}.  For
-    \code{print.summary.formula.reverse}, \code{formatArgs} applies only to
+    \code{print.summary.formula.reverse} and
+	\code{format.summary.formula.reverse}, \code{formatArgs} applies only to
     statistics computed on continuous variables, not to percents,
-    numerators, and denominators.
+    numerators, and denominators.  The \code{round} argument may be preferred.
   }
   \item{digits}{
     number of significant digits to print.  Default is to use the current
@@ -478,6 +479,12 @@ cumcategory(y)
     print any tests.  This applies to \code{print}, \code{latex}, and
     \code{plot} methods for \code{method='reverse'}.
   }
+  \item{round}{
+	for \code{print.summary.formula.reverse} and
+	\code{latex.summary.formula.reveres} specify \code{round} to round
+	the quantiles and optional mean and standard deviation to
+	\code{round} digits after the decimal point
+	}
   \item{prmsd}{
     set to \code{TRUE} to print mean and SD after the three quantiles, for
     continuous variables with \code{method="reverse"}

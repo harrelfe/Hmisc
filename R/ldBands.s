@@ -28,24 +28,25 @@ ldBands <- function(n=length(times), times=NULL,  alpha=.05,
   
   sp <- c('OBrien-Fleming'=1,'Pocock'=2,'alpha*t^phi'=3,
           'Hwang-Shih-DeCani'=4)[spending]
-  if(sided != 3) {
-    spending2 <- spending; sp2 <- sp
-  } else
+  if(sided != 3)
+    {
+      spending2 <- spending
+      sp2 <- sp
+    }
+  else
     sp2 <- c('OBrien-Fleming'=1,'Pocock'=2,'alpha*t^phi'=3,
              'Hwang-Shih-DeCani'=4)[spending2]
 
-  if(phi==0) {
-    warning('phi may not be zero.  Set to 1')
-    phi <- 1
-  }
+  if(phi==0)
+    {
+      warning('phi may not be zero.  Set to 1')
+      phi <- 1
+    }
   
-  if(length(times))
-    times <- sort(times)
+  if(length(times)) times <- sort(times)
   
-  if(length(information))
-    information <- sort(information)
+  if(length(information)) information <- sort(information)
 
-  fi <- tempfile()
   ## Note: times always has length>0 below
   ## When power is given, assumes spending function always determines
   ## bounds
@@ -55,127 +56,119 @@ ldBands <- function(n=length(times), times=NULL,  alpha=.05,
   ## If running Linux/Unix can avoid creating an input file, just pipe
   ## echo output as stdin.  echo needs embedded '\n' hence output \\n
     
-  w <- paste(if(under.unix)
-               'echo -e "'
-             else '',
+  w <- paste(if(under.unix) 'echo "' else '',
              p(0),
              p(if(length(power))
-                 2
-               else 1),
+               2
+             else 1),
              
              p(n),
              p(if(length(times))
-                 c(0,paste(times,collapse=' '))
-               else 1),
+               c(0,paste(times,collapse=' '))
+             else 1),
              p(if(length(power))
-                 1
-               else if(length(information))
-                 c(1,paste(information,collapse=' '))
-               else 0),
+               1
+             else if(length(information))
+               c(1,paste(information,collapse=' '))
+             else 0),
              
              p(alpha), p(sided),
              if(sided==3)
-               p(alphaLower)
+             p(alphaLower)
              else '',
              
              p(sp),
              if(sp %in% 3:4)
-               p(phi)
+             p(phi)
              else '',
              
              if(sided==3)
-               p(c(sp2,
-                   if(sp2 %in% 3:4)
-                     phi2
-                   else NULL))
+             p(c(sp2,
+                 if(sp2 %in% 3:4)
+                 phi2
+                 else NULL))
              else '',
              
              p(if(is.infinite(truncate))
-                 0
-               else c(1,truncate)),
+               0
+             else c(1,truncate)),
              
              if(length(power))
-               p(power)
+             p(power)
              else '',
              
-             p(0),p(0),
-             if(under.unix)
-               '"'
-             else '',
-             
+             p(0),p(0),'', if(under.unix)'"',
              sep='')
 
-  if(under.unix)
-    sys(paste(w,'| ld98 >',fi))
-  else {
+  com <- if(under.unix) paste(w, '| ld98') else
+  {
     fin <- tempfile()
     cat(w, file=fin)
-    sys(paste('ld98 <',fin,'>',fi))
-    unlink(fin)
+    paste('ld98 <',fin)
   }
+  w <- sys(com)
+  if(!under.unix) unlink(fin)
   
-  w <- if(.R.) scan(fi, what=list(z=''),sep='\n',quiet=TRUE)$z
-       else scan(fi, what=list(z=''),sep='\n')$z
   
   if(pr)
     cat(w,sep='\n')
-  
-  unlink(fi)
+  w <- w[w != '']
   if(length(power)) {
     i <- grep('drift =',w)
     j <- substring.location(w[i], 'drift =')$last
     drift <- as.numeric(substring(w[i],j+1))
   } else drift <- NULL
   
-  head <- grep(if(length(power))
-                 'cum exit pr'
-               else 'cum alpha',
+  head <- grep(if(length(power)) 'cum exit pr' else 'cum alpha',
                w)
   
   w <- w[(head+1):length(w)]
   tail <- grep(if(length(power))
-                 'Would you like to start again'
-               else 'Do you want to see a graph',
+               'Would you like to start again'
+  else 'Do you want to see a graph',
                w)
   
   w <- w[1:(tail-1)]
-  z <- if(.R.) unPaste(w, ' +', extended=TRUE)
-       else    unPaste(sedit(w,'  ',' '),' ')
+  z <- if(.R.) unPaste(w, ' +', extended=TRUE) else
+   unPaste(sedit(w,'  ',' '),' ')
 
-  if(length(power)) {
-    i <- 1   ## 19dec02
-    tim        <- as.numeric(z[[i+2]])
-    if(max(abs(tim-times)) > .01)
-      stop('program logic error')
+  if(length(power))
+    {
+      i <- 1
+      tim        <- as.numeric(z[[i+2]])
+      if(max(abs(tim-times)) > .01)
+        stop('program logic error')
     
-    low       <- as.numeric(z[[i+3]])
-    hi        <- as.numeric(z[[i+4]])
-    exit.prob <- as.numeric(z[[i+5]])
-    cum.exit.prob <- as.numeric(z[[i+6]])
-    data <- data.frame(time=times, lower=low,upper=hi,
-                       exit.prob=exit.prob,cum.exit.prob=cum.exit.prob)
-  } else {
-    tim <- as.numeric(z[[2]])
-    if(max(abs(tim-times)) > .01)
-      stop('program logic error')
+      low       <- as.numeric(z[[i+3]])
+      hi        <- as.numeric(z[[i+4]])
+      exit.prob <- as.numeric(z[[i+5]])
+      cum.exit.prob <- as.numeric(z[[i+6]])
+      data <- data.frame(time=times, lower=low,upper=hi,
+                         exit.prob=exit.prob,cum.exit.prob=cum.exit.prob)
+    }
+  else
+    {
+      tim <- as.numeric(z[[2]])
+      if(max(abs(tim-times)) > .01)
+        stop('program logic error')
     
-    i <- if(length(information))1
-         else 0
+      i <- if(length(information))1
+      else 0
     
-    low       <- as.numeric(z[[3+i]])
-    hi        <- as.numeric(z[[4+i]])
-    alpha.inc <- as.numeric(z[[5+i]])
-    cum.alpha <- as.numeric(z[[6+i]])
-    data <- data.frame(time=times, lower=low,upper=hi,
-                       alpha.inc=alpha.inc,cum.alpha=cum.alpha)
-  }
+      low       <- as.numeric(z[[3+i]])
+      hi        <- as.numeric(z[[4+i]])
+      alpha.inc <- as.numeric(z[[5+i]])
+      cum.alpha <- as.numeric(z[[6+i]])
+      data <- data.frame(time=times, lower=low,upper=hi,
+                         alpha.inc=alpha.inc,cum.alpha=cum.alpha)
+    }
   
   if(length(information))
     data$information <- information
   
   res <- structure(list(data=data, power=power, drift=drift,
                         type=if(length(power))
-                          'power'
+                        'power'
                         else 'boundaries',
                         
                         n=n, alpha=alpha, alphaLower=alphaLower,
@@ -198,7 +191,8 @@ print.ldBands <- function(x, ...)
     
     if(x$spending=='Hwang-Shih-DeCani')
       cat('\tPhi:',x$phi,sep='')
-  } else {
+  } else
+  {
     cat('Lower bounds:\n\n')
     cat('alpha=',format(x$alphaLower),
         '\tSpending function:',x$spending,sep='')
@@ -232,19 +226,21 @@ plot.ldBands <- function(x, xlab='Time', ylab='Z', actual=NULL,
 {
   d <- x$data
   mfr <- par('mfrow')
-  if(prod(mfr) != 1) {
-    on.exit(par(mfrow=mfr))
-    par(mfrow=c(2,1))
-  }
+  if(prod(mfr) != 1)
+    {
+      on.exit(par(mfrow=mfr))
+      par(mfrow=c(2,1))
+    }
   
   plot(d$time, d$lower, type=type, ylim=range(d$lower,d$upper),
        xlab=xlab, ylab=ylab, axes=length(labels)==0)
-  if(length(labels)) {
-    axis(2)
-    if(length(labels) != length(d$time))
-      stop('length of labels not equal to length of times generated by ldBands')
-    axis(1, at=d$time, labels=labels)
-  }
+  if(length(labels))
+    {
+      axis(2)
+      if(length(labels) != length(d$time))
+        stop('length of labels not equal to length of times generated by ldBands')
+      axis(1, at=d$time, labels=labels)
+    }
   
   lines(d$time, d$upper, type=type)
   if(length(actual))
@@ -265,53 +261,59 @@ summary.ldBands <- function(object, stdiff=NULL, n=NULL,
                             hr=NULL, events=NULL,
                             pbar=NULL, sd=NULL, ...)
 {  
-  if(length(pbar) + length(sd) == 0) {
-    drift <- object$drift
-    if(!length(drift))
-      stop('did not specify power= to ldBands')
+  if(length(pbar) + length(sd) == 0)
+    {
+      drift <- object$drift
+      if(!length(drift))
+        stop('did not specify power= to ldBands')
 
-    if(length(p1))
-      stdiff <- (p1-p2)/sqrt(p1*(1-p1)+p2*(1-p2))
+      if(length(p1))
+        stdiff <- (p1-p2)/sqrt(p1*(1-p1)+p2*(1-p2))
     
-    if(length(events))
-      hr <- exp(2*drift/sqrt(events))
+      if(length(events))
+        hr <- exp(2*drift/sqrt(events))
     
-    if(length(hr))
-      events <- 4*((drift/log(hr))^2)
+      if(length(hr))
+        events <- 4*((drift/log(hr))^2)
   
-    if(length(stdiff)+length(n)+length(events)==0)
-      stop('must specify stdiff, n, hr, or events')
+      if(length(stdiff)+length(n)+length(events)==0)
+        stop('must specify stdiff, n, hr, or events')
 
-    if(length(stdiff))
-      n <- (drift/stdiff)^2
-    else if(length(n))
-      stdiff <- drift/sqrt(n)
+      if(length(stdiff))
+        n <- (drift/stdiff)^2
+      else if(length(n))
+        stdiff <- drift/sqrt(n)
     
-    structure(list(stdiff=stdiff, n=n, p1=p1, p2=p2, hr=hr, events=events,
-                   drift=drift, power=object$power),
-              class='summary.ldBands')
-  } else {
-    if(length(n) != nrow(object$data))
-      stop('length of n must equal number of looks')
-    d <- object$data
-    d$n <- n
-    if(length(pbar)) {
-      sepdiff      <- sqrt(2*pbar*(1-pbar)/n)
-      d$diff.lower <- d$lower*sepdiff
-      d$diff.upper <- d$upper*sepdiff
-      selogOR      <- sqrt(2/(pbar*(1-pbar)*n))
-      d$or.lower   <- exp(d$lower*selogOR)
-      d$or.upper   <- exp(d$upper*selogOR)
-      object$data     <- d
-      object
-    } else {
-      semeandiff   <- sd*sqrt(2/n)
-      d$diff.lower <- d$lower*semeandiff
-      d$diff.upper <- d$upper*semeandiff
-      object$data     <- d
-      object
+      structure(list(stdiff=stdiff, n=n, p1=p1, p2=p2, hr=hr, events=events,
+                     drift=drift, power=object$power),
+                class='summary.ldBands')
     }
-  }
+  else
+    {
+      if(length(n) != nrow(object$data))
+        stop('length of n must equal number of looks')
+      d <- object$data
+      d$n <- n
+      if(length(pbar))
+        {
+          sepdiff      <- sqrt(2*pbar*(1-pbar)/n)
+          d$diff.lower <- d$lower*sepdiff
+          d$diff.upper <- d$upper*sepdiff
+          selogOR      <- sqrt(2/(pbar*(1-pbar)*n))
+          d$or.lower   <- exp(d$lower*selogOR)
+          d$or.upper   <- exp(d$upper*selogOR)
+          object$data     <- d
+          object
+        }
+      else
+        {
+          semeandiff   <- sd*sqrt(2/n)
+          d$diff.lower <- d$lower*semeandiff
+          d$diff.upper <- d$upper*semeandiff
+          object$data     <- d
+          object
+        }
+    }
 }
 
 
@@ -327,7 +329,7 @@ print.summary.ldBands <- function(x, ...)
   
   if(length(x$events))
     cat('Maximum number of events (both treatments combined):',
-                           x$events,'\n',sep='')
+        x$events,'\n',sep='')
   ## Thanks: marcel wolbers <marcel.wolbers@gmx.ch>
   if(length(x$stdiff))
     cat('Detectible standardized effect:\t', x$stdiff,'\n',sep='')

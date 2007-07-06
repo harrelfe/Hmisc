@@ -1449,7 +1449,7 @@ print.summary.formula.reverse <-
            exclude1=TRUE, vnames=c("labels","names"), prUnits=TRUE,
            sep="/", abbreviate.dimnames=FALSE, 
            prefix.width=max(nchar(lab)), 
-           min.colwidth, formatArgs=NULL,
+           min.colwidth, formatArgs=NULL, round=NULL,
            prtest=c('P','stat','df','name'), prmsd=FALSE, long=FALSE,
            pdig=3, eps=0.001, ...)
 {
@@ -1502,7 +1502,7 @@ print.summary.formula.reverse <-
                        pdig=pdig, eps=eps)
       nn <- c(nn, rep(NA, nrow(cs)-1))
     } else cs <- formatCons(stats[[i]], nam, tr, x$group.freq, prmsd,
-                            sep, formatArgs, prtest,
+                            sep, formatArgs, round, prtest,
                             pdig=pdig, eps=eps)
 
     cstats <- rbind(cstats, cs)
@@ -1660,7 +1660,7 @@ formatCats <- function(tab, nam, tr, type, group.freq,
 
 ## Function to format subtable for continuous var, for method='reverse'
 formatCons <- function(stats, nam, tr, group.freq, prmsd, sep='/',
-                       formatArgs=NULL, prtest,
+                       formatArgs=NULL, round=NULL, prtest,
                        latex=FALSE, testUsed=character(0),
                        middle.bold=FALSE, outer.size=NULL, msdsize=NULL,
                        pdig=3, eps=.001, footnoteTest=TRUE)
@@ -1678,7 +1678,7 @@ formatCons <- function(stats, nam, tr, group.freq, prmsd, sep='/',
   qu <- stats[,c(q1,med,q3),drop=FALSE]
   if(prmsd)
     qu <- cbind(qu,stats[,c('Mean','SD'),drop=FALSE])
-
+  if(length(round)) qu <- round(qu, round)
   ww <- c(list(qu), formatArgs)
   cqu <- do.call('format', ww)
   cqu[is.na(qu)] <- ''
@@ -1847,7 +1847,7 @@ latex.summary.formula.reverse <-
            exclude1=TRUE,  vnames=c("labels","names"), prUnits=TRUE,
            middle.bold=FALSE, outer.size="scriptsize",
            caption, rowlabel="",
-           insert.bottom=TRUE, dcolumn=FALSE,
+           insert.bottom=TRUE, dcolumn=FALSE, formatArgs=NULL, round=NULL,
            prtest=c('P','stat','df','name'), prmsd=FALSE, msdsize=NULL,
            long=FALSE, pdig=3, eps=.001, auxCol=NULL, ...)
 {
@@ -1924,7 +1924,7 @@ latex.summary.formula.reverse <-
                        footnoteTest=gt1.test)
       nn <- c(nn, rep(NA, nrow(cs)-1))
     } else cs <- formatCons(stats[[i]], nam, tr, x$group.freq, prmsd,
-                            prtest=prtest,
+                            prtest=prtest, formatArgs=formatArgs, round=round,
                             latex=TRUE, testUsed=testUsed,
                             middle.bold=middle.bold,
                             outer.size=outer.size, msdsize=msdsize,

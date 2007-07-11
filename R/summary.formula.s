@@ -25,7 +25,13 @@ summary.formula <-
                if(!is.matrix(tab) || nrow(tab) < 2 | ncol(tab) < 2)
                  list(p.value=NA, statistic=NA, parameter=NA)
                else
-                 chisq.test(tab, correct=FALSE)
+                 {
+                   rowcounts <- tab %*% rep(1, ncol(tab))
+                   tab <- tab[rowcounts > 0,]
+                   if(!is.matrix(tab)) 
+                     list(p.value=NA, statistic=NA, parameter=NA)
+                   else chisq.test(tab, correct=FALSE)
+                 }
 
              list(P=st$p.value, stat=st$statistic,
                   df=st$parameter,

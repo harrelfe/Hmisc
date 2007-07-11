@@ -63,9 +63,17 @@ errbar <-
     plot(x, y, ylim=ylim, xlab=xlab, ylab=ylab, ...)
   
   xcoord <- par()$usr[1:2]
-  segments(x, yminus, x, yplus , lty=lty, lwd=lwd, ...)
   smidge <- cap * ( xcoord[2] - xcoord[1] ) / 2
-  segments( x - smidge, yminus, x + smidge, yminus, lwd=lwd, ...)
-  segments( x - smidge, yplus, x + smidge, yplus, lwd=lwd, ...)
+
+  segments(x, yminus, x, yplus , lty=lty, lwd=lwd, ...)
+  if(par()$xlog) {
+    xstart <- x * 10 ^ (-smidge)
+    xend <- x * 10 ^ (smidge)
+  } else {
+    xstart <- x - smidge
+    xend <- x + smidge
+  }
+  segments( xstart, yminus, xend, yminus, lwd=lwd, ...)
+  segments( xstart, yplus, xend, yplus, lwd=lwd, ...)
   invisible()
 }

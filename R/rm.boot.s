@@ -295,8 +295,8 @@ rm.boot <- function(time, y, id=seq(along=time), subset=TRUE,
         round(srho,3),'\n')
   }
 
-  storage.mode(Coef) <- 'single'
-  storage.mode(sse)  <- 'single'
+  mode(Coef) <- 'single'
+  mode(sse)  <- 'single'
   structure(list(Coef=Coef, sse=sse, loglik=loglik, loglik.dep=loglik.dep,
                  times=times, X.times=X.times,
                  xlab=xlab, ylab=ylab, ylim=ylim, 

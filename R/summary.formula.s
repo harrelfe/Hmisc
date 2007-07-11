@@ -1361,7 +1361,7 @@ dotchart2 <-
       points(alldat, ypos, pch = pch, cex = dotsize * cex, font=dotfont)
       if(!add && !missing(auxdata))
         {
-          faux <- paste(' ', if(ieaux) auxdata else format(auxdata), sep='')
+          faux <- if(ieaux) auxdata else paste(' ', format(auxdata), sep='')
 
           upedge <- par('usr')[4]
           outerText(faux, ypos[nongrp], adj=1, cex=cex.labels)
@@ -1560,13 +1560,12 @@ print.summary.formula.reverse <-
   invisible(cstats)
 }
 
-
 ## Function to format subtable for categorical var, for method='reverse'
 formatCats <- function(tab, nam, tr, type, group.freq,
                        npct, pctdig, exclude1, long, prtest,
                        latex=FALSE, testUsed=character(0),
                        npct.size='scriptsize', pdig=3, eps=.001,
-                       footnoteTest=TRUE)
+                       footnoteTest=TRUE, dotchart=FALSE)
 {
   gnames <- names(group.freq)
   nr <- nrow(tab)
@@ -1640,6 +1639,46 @@ formatCats <- function(tab, nam, tr, type, group.freq,
     cs[(long+1):nrow(cs),1] <- cpct[jstart:nr,]
   else
     cs[(long+1):nrow(cs),1:nw] <- cpct[jstart:nrow(cpct),gnames]
+
+  if(latex && dotchart && length(jstart:nrow(pct)) <= 3) {
+    locs <- c(3,-3,5,-5,7,-7,9,-9)
+    points <- c("\\circle*{4}","\\circle{4}","\\drawline(0,2)(-1.414213562,-1)(1.414213562,-1)(0,2)")
+    
+    point.loc <- sapply(jstart:nrow(pct),
+                        function(i) {
+                          paste(ifelse(is.na(pct[i,]), "",
+                                       paste("\\put(", pct[i,], ",0){",points[1:ncol(pct)],"}",sep='')),
+                                collapse='')
+                        })
+
+    error.loc <- character(nrow(tab) - exc)
+    k <- 0
+    for(i in jstart:ncol(tab)) {
+      if(i > jstart) {
+        p1prime <- (tab[,i] + 1)/(denom[i] + 2)
+        d1 <- p1prime*(1-p1prime)/denom[i]
+        for(j in jstart:(i-1)) {
+          k <- k + 1
+          p2prime <- (tab[,j] + 1)/(denom[j] + 2)
+          error <- 196 * sqrt(d1 + p2prime * (1 - p2prime)/denom[j])
+          bar <- ifelse(is.na(error), "",
+                        paste("\\put(", (pct[,i] + pct[,j])/2 - error, ",",
+                              locs[k],"){\\line(1,0){",error*2,"}}",
+                              sep=''))
+          error.loc <- paste(error.loc, bar, sep='')
+        }
+      }
+    }
+
+    scale <- character(nrow(tab) - exc)
+    scale[1] <- "\\multiput(0,2)(25,0){5}{\\color[gray]{0.5}\\line(0,-1){4}}\\put(-5,0){\\makebox(0,0){\\tiny 0}}\\put(108,0){\\makebox(0,0){\\tiny 1}}"
+                     
+    cl <- paste("\\setlength\\unitlength{1in/100}\\begin{picture}(100,10)(0,-5)",
+                scale,"\\put(0,0){\\color[gray]{0.5}\\line(1,0){100}}",
+                point.loc, error.loc,
+                "\\end{picture}", sep='')
+    cs[(long+1):nrow(cs),ncol(cs)] <- cl
+  }
 
   if(length(tr)) {
     ct <- formatTestStats(tr, type==3,
@@ -1849,7 +1888,7 @@ latex.summary.formula.reverse <-
            caption, rowlabel="",
            insert.bottom=TRUE, dcolumn=FALSE, formatArgs=NULL, round=NULL,
            prtest=c('P','stat','df','name'), prmsd=FALSE, msdsize=NULL,
-           long=FALSE, pdig=3, eps=.001, auxCol=NULL, ...)
+           long=FALSE, pdig=3, eps=.001, auxCol=NULL, dotchart=FALSE, ...)
 {
   x      <- object
   npct   <- match.arg(npct)
@@ -1921,7 +1960,7 @@ latex.summary.formula.reverse <-
                        npct, pctdig, exclude1, long, prtest,
                        latex=TRUE, testUsed=testUsed,
                        npct.size=npct.size,
-                       footnoteTest=gt1.test)
+                       footnoteTest=gt1.test, dotchart=dotchart)
       nn <- c(nn, rep(NA, nrow(cs)-1))
     } else cs <- formatCons(stats[[i]], nam, tr, x$group.freq, prmsd,
                             prtest=prtest, formatArgs=formatArgs, round=round,

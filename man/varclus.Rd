@@ -320,7 +320,7 @@ for(sx in c('female','male')) {
   for(i in 1:4) {
     mon <- (i-1)*4
     s[,,i] <- varclus(~x1 + x2 + x3, sim='ccbothpos', data=d,
-                      subset=month==mon & sex==sx)$sim
+                      subset=d$month==mon & d$sex==sx)$sim
     }
   plotMultSim(s, c(0,4,8,12), vname=c('x1','x2','x3'),
               add=sx=='male', slimds=TRUE,

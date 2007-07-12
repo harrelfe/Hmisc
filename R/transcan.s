@@ -172,7 +172,7 @@ transcan <-
     rnam <- as.character(1:nrow(x))
   
   p <- ncol(x)
-  if(is.null(nam))
+  if(!length(nam))
     stop("x must have column names")
 
   n <- nrow(x)
@@ -740,10 +740,11 @@ summary.transcan <- function(object, long=FALSE, ...)
   print(round(object$rsq,3))
   cat("\nAdjusted R-squared:\n\n")
   print(round(object$rsq.adj,3))
-  if(length(shr <- object$shrink)) {
-    cat("\nShrinkage factors:\n\n")
-    print(round(shr,3))
-  }
+  if(length(shr <- object$shrink))
+    {
+      cat("\nShrinkage factors:\n\n")
+      print(round(shr,3))
+    }
 
   cat("\nCoefficients of canonical variates for predicting each (row) variable\n\n")
   xcoef <- object$xcoef[,-1]
@@ -752,27 +753,31 @@ summary.transcan <- function(object, long=FALSE, ...)
   print(g, quote=FALSE)
 
   imp <- object$imputed
-  if(length(imp)) {
-    nimp <- TRUE
-    for(nn in names(imp)) {
-      if(length(z <- imp[[nn]])) {
-        if(nimp & !long)
-          cat("\nSummary of imputed values\n\n");
+  if(length(imp))
+    {
+      nimp <- TRUE
+      for(nn in names(imp))
+        {
+          if(length(z <- imp[[nn]]))
+            {
+              if(nimp & !long)
+                cat("\nSummary of imputed values\n\n");
+              
+              nimp <- FALSE
+              if(long)
+                {
+                  cat("\nImputed values for",nn,"\n\n");
+                  print(z)
+                }
 
-        nimp <- FALSE
-        if(long) {
-          cat("\nImputed values for",nn,"\n\n");
-          print(z)
-        }
-
-        print(describe(as.vector(z), nn))
-      }
-    }	
-  }
+              print(describe(as.vector(z), nn))
+            }
+        }	
+    }
   if(object$imp.con) 
     cat("\nImputed values set to these constants:\n\n")
   else cat("\nStarting estimates for imputed values:\n\n")
-
+  
   print(object$fillin)
   
   invisible()
@@ -782,19 +787,23 @@ summary.transcan <- function(object, long=FALSE, ...)
 print.transcan <- function(x, long=FALSE, ...)
 {
   ## Check for old style
-  if(!is.list(x)) {
-    trans <- x
-    cal   <- attr(x, 'call')
-  } else {
-    trans <- x$transformed
-    cal   <- x$call
-  }
+  if(!is.list(x))
+    {
+      trans <- x
+      cal   <- attr(x, 'call')
+    }
+  else
+    {
+      trans <- x$transformed
+      cal   <- x$call
+    }
   
   dput(cal); cat("\n")
-  if(length(trans)) {
-    if(long) print(oldUnclass(x))
-    else print.default(trans)
-  }
+  if(length(trans))
+    {
+      if(long) print(oldUnclass(x))
+      else print.default(trans)
+    }
 
   invisible()
 }
@@ -813,175 +822,197 @@ impute.transcan <-
   imp <- if(is.list(x)) x$imputed
          else attr(x, 'imputed')
   
-  if(is.null(imp)) { 
-    if(missing(var) && missing(name)) 
-      stop('imputed=TRUE was not specified to transcan')
+  if(!length(imp))
+    { 
+      if(missing(var) && missing(name)) 
+        stop('imputed=TRUE was not specified to transcan')
     
-    warning("imputed was not specified to transcan")
-    return(if(!missing(var))var)
-  }
-
-  if(missing(var) && missing(name)) {
-    nams   <- names(imp)
-    if(list.out) {
-      outlist <- vector('list', length(nams))
-      names(outlist) <- nams
-    }
-    if(missing(data)) {
-      if(missing(where.in))
-        where.in <- find(nams[1])[1]
-
-      var1   <- get(nams[1],where.in)
-    } else {
-      if(any(ni <- nams %nin% names(data)))
-        stop(paste('variable',paste(nams[ni],collapse=','),
-                   'not in data'))
-      var1 <- data[[nams[1]]]
+      warning("imputed was not specified to transcan")
+      return(if(!missing(var))var)
     }
 
-    namvar <- names(var1)
-    if(!length(namvar) && !missing(data))
-      namvar <- row.names(data)
+  if(missing(var) && missing(name))
+    {
+      nams   <- names(imp)
+      if(list.out)
+        {
+          outlist <- vector('list', length(nams))
+          names(outlist) <- nams
+        }
+      if(missing(data))
+        {
+          if(missing(where.in))
+            where.in <- find(nams[1])[1]
 
-    if(check && length(namvar)==0)
-      warning(paste('variable',nams[1],
-                    'does not have a names() attribute\nand data does not have row.names. Assuming row names are integers.'))
+          var1   <- get(nams[1],where.in)
+        }
+      else
+        {
+          if(any(ni <- nams %nin% names(data)))
+            stop(paste('variable',paste(nams[ni],collapse=','),
+                       'not in data'))
+          var1 <- data[[nams[1]]]
+        }
 
-    nimp <- integer(length(nams));
-    names(nimp) <- nams
+      namvar <- names(var1)
+      if(!length(namvar) && !missing(data))
+        namvar <- row.names(data)
+
+      if(check && length(namvar)==0)
+        warning(paste('variable',nams[1],
+                      'does not have a names() attribute\nand data does not have row.names. Assuming row names are integers.'))
+
+      nimp <- integer(length(nams))
+      names(nimp) <- nams
     
-    for(nam in nams) {
-      i <- imp[[nam]]
-      if(!length(i)) {
-        if(list.out) outlist[[nam]] <-
-          if(missing(data)) get(nam, where.in) else data[[nam]]
+      for(nam in nams)
+        {
+          i <- imp[[nam]]
+          if(!length(i))
+            {
+              if(list.out) outlist[[nam]] <-
+                if(missing(data)) get(nam, where.in) else data[[nam]]
+              
+              next
+            }
 
-        next
-      }
+          d <- dim(i)
+          obsImputed <- if(length(d)) dimnames(i)[[1]] else names(i)
+          ## i[,imputation] drops names if only one obs. imputed
+          if(!missing(imputation))
+            {
+              if(!length(d)) 
+                stop('imputation can only be given when transcan used n.impute')
+              
+              if(imputation < 1 || imputation > d[2])
+                stop(paste('imputation must be between 1 and',d[2]))
 
-      d <- dim(i)
-      obsImputed <- if(length(d)) dimnames(i)[[1]] else names(i)
-      ## i[,imputation] drops names if only one obs. imputed
-      if(!missing(imputation)) {
-        if(!length(d)) 
-          stop('imputation can only be given when transcan used n.impute')
+              i <- i[,imputation]
+            }
+          else if(length(d)) 
+            stop('imputation must be specified when transcan used n.impute')
 
-        if(imputation < 1 || imputation > d[2])
-          stop(paste('imputation must be between 1 and',d[2]))
-
-        i <- i[,imputation]
-      } else if(length(d)) 
-        stop('imputation must be specified when transcan used n.impute')
-
-      v <- if(missing(data)) get(nam, where.in)
-           else data[[nam]]
+          v <- if(missing(data)) get(nam, where.in)
+          else data[[nam]]
 
       ## Below was names(i) instead of match(...)
-      if(length(namvar)) {
-        sub <- match(obsImputed, namvar, nomatch=0)
-        i <- i[sub > 0]
-        sub <- sub[sub > 0]
-      } else {
-        if(!all.is.numeric(obsImputed))
-          stop(paste('names attribute of ',nam,
-                     ' is not all numeric\n',
-                     'and original observations did not have names',sep=''))
-
-        sub <- as.integer(obsImputed)
-      }
-      if(check)
-        if((missing(imputation) || imputation==1) &&
-           !all(is.na(v[sub])))
-          stop(paste('variable',nam,
-                     'does not have same missing values as were present when transcan was run'))
-      v[sub] <- if(is.factor(v)) levels(v)[as.integer(i)] else i
-      ## Note: if v was empty before, new v would have arbitrary length
-      ## Avoid problem by requiring all variables to be in data
-      attr(v,'imputed') <- sub
-      if(!.SV4.)
-        attr(v,'class') <- c('impute', attr(v,'class'))
-
-      nimp[nam] <- length(i)
-      if(list.out)
-        outlist[[nam]] <- v
-      else {
-        if(.R.)
-          assign(nam, v, env=.GlobalEnv)
-        else {
-          if(missing(frame.out))
-            assign(nam, v, where=where.out)
+          if(length(namvar))
+            {
+              sub <- match(obsImputed, namvar, nomatch=0)
+              i <- i[sub > 0]
+              sub <- sub[sub > 0]
+            }
           else
-            assign(nam, v, frame=frame.out)
+            {
+              if(!all.is.numeric(obsImputed))
+                stop(paste('names attribute of ',nam,
+                           ' is not all numeric\n',
+                           'and original observations did not have names',sep=''))
+
+              sub <- as.integer(obsImputed)
+            }
+          if(check)
+            if((missing(imputation) || imputation==1) &&
+               !all(is.na(v[sub])))
+              stop(paste('variable',nam,
+                         'does not have same missing values as were present when transcan was run'))
+          v[sub] <- if(is.factor(v)) levels(v)[as.integer(i)] else i
+          ## Note: if v was empty before, new v would have arbitrary length
+          ## Avoid problem by requiring all variables to be in data
+          attr(v,'imputed') <- sub
+          if(!.SV4.)
+            attr(v,'class') <- c('impute', attr(v,'class'))
+          
+          nimp[nam] <- length(i)
+          if(list.out)
+            outlist[[nam]] <- v
+          else
+            {
+              if(.R.)
+                assign(nam, v, env=.GlobalEnv)
+              else
+                {
+                  if(missing(frame.out))
+                    assign(nam, v, where=where.out)
+                  else
+                    assign(nam, v, frame=frame.out)
+                }
+            }
         }
-      }
-    }
 
-    if(pr) {
-      cat('\n\nImputed missing values with the following frequencies\n',
-          'and stored them in variables with their original names:\n\n')
-      print(nimp[nimp>0])
-    }
-
-    if(list.out) {
-      z <- sapply(outlist,length)
-      if(diff(range(z)) > 0) {
-        cat('\n\nLengths of variable vectors:\n\n')
-        print(z)
-        stop('inconsistant naming of observations led to differing length vectors')
+    if(pr)
+      {
+        cat('\n\nImputed missing values with the following frequencies\n',
+            'and stored them in variables with their original names:\n\n')
+        print(nimp[nimp>0])
       }
-      return(outlist)
-    }
+
+    if(list.out)
+      {
+        z <- sapply(outlist,length)
+        if(diff(range(z)) > 0) {
+          cat('\n\nLengths of variable vectors:\n\n')
+          print(z)
+          stop('inconsistant naming of observations led to differing length vectors')
+        }
+        return(outlist)
+      }
     
-    return(invisible(nimp))
-  }
+      return(invisible(nimp))
+    }
   
   impval <- imp[[name]]
   if(name %nin% names(imp))
     warning(paste('Variable',name,
                   'was not specified to transcan or had no NAs'))
 
-  if(!length(impval))
-    return(var)
+  if(!length(impval)) return(var)
   
   d <- dim(impval)
 
-  if(!missing(imputation)) {
-    if(!length(d)) 
-      stop('imputation can only be given when transcan used n.impute')
+  if(!missing(imputation))
+    {
+      if(!length(d)) 
+        stop('imputation can only be given when transcan used n.impute')
 
-    if(imputation < 1 || imputation > d[2])
-      stop(paste('imputation must be between 1 and',d[2]))
+      if(imputation < 1 || imputation > d[2])
+        stop(paste('imputation must be between 1 and',d[2]))
 
-    impval <- impval[,imputation]
-  } else if(length(d)) 
+      impval <- impval[,imputation]
+    }
+  else if(length(d)) 
     stop('imputation must be specified when transcan used n.impute')
 
   namvar <- names(var)
-
-  if(!length(namvar)) {
-    if(missing(data))
-      stop(paste('variable',name,
-                 'does not have a names() attribute\nand data= was not given.\nAssuming identifiers stored by transcan are integer subscripts'))
-    else
-      namvar <- row.names(data)
-
-    if(!length(namvar))
-      stop(paste('variable',name,
-                 'does not have a names() attribute\nand data has no row.names'))
-  }
   
-  if(length(namvar)) {
-    sub <- match(names(impval), namvar, nomatch=0)
-    impval <- impval[sub > 0]
-    sub <- sub[sub > 0]
-  } else {
-    if(!all.is.numeric(names(impval)))
-      stop(paste('names attribute of ',name,
-                 ' is not all numeric\n',
-                 'and original observations did not have names',sep=''))
-
-    sub <- as.integer(names(impval))
-  }
+  if(!length(namvar))
+    {
+      if(missing(data))
+        stop(paste('variable',name,
+                   'does not have a names() attribute\nand data= was not given.\nAssuming identifiers stored by transcan are integer subscripts'))
+      else
+        namvar <- row.names(data)
+      
+      if(!length(namvar))
+        stop(paste('variable',name,
+                   'does not have a names() attribute\nand data has no row.names'))
+    }
+  
+  if(length(namvar))
+    {
+      sub <- match(names(impval), namvar, nomatch=0)
+      impval <- impval[sub > 0]
+      sub <- sub[sub > 0]
+    }
+  else
+    {
+      if(!all.is.numeric(names(impval)))
+        stop(paste('names attribute of ',name,
+                   ' is not all numeric\n',
+                   'and original observations did not have names',sep=''))
+      
+      sub <- as.integer(names(impval))
+    }
 
   ##Now take into account fact that transcan may have been
   ##run on a superset of current data frame
@@ -995,7 +1026,7 @@ impute.transcan <-
   if(m==0)
     return(var)
   var[sub] <- if(is.factor(var)) levels(var)[as.integer(impval)]
-              else impval
+  else impval
 
   attr(var,'imputed') <- sub
   attr(var,'class') <- c("impute", attr(var,'class'))
@@ -1005,41 +1036,46 @@ impute.transcan <-
 "[.transcan" <- function(x, rows=1:d[1], cols=1:d[2], drop=TRUE)
 {
   ## Check for old style object
-  if(is.list(x)) {
-    if(length(x$imputed) && sum(sapply(x$imputed,length))) {
-      d <- dim(x$transformed)
-      original.rownames <- dimnames(x$transformed)[[1]]
-      subset.rownames   <- original.rownames[rows]
-      for(v in names(x$imputed)) {
-        z <- x$imputed[[v]]
-        if(length(z)) {
-          use <- names(z) %in% subset.rownames
-          x$imputed[[v]] <- z[use]
+  if(is.list(x))
+    {
+      if(length(x$imputed) && sum(sapply(x$imputed,length)))
+        {
+          d <- dim(x$transformed)
+          original.rownames <- dimnames(x$transformed)[[1]]
+          subset.rownames   <- original.rownames[rows]
+          for(v in names(x$imputed))
+            {
+              z <- x$imputed[[v]]
+              if(length(z))
+                {
+                  use <- names(z) %in% subset.rownames
+                  x$imputed[[v]] <- z[use]
+                }
+            }
         }
-      }
+      x$transformed <- x$transformed[rows,cols, drop=drop]
+      return(x)
     }
-    x$transformed <- x$transformed[rows,cols, drop=drop]
-    return(x)
-  }
 
   ats <- attributes(x)
   ats$dimnames <- ats$dim <- ats$names <- NULL
   attr(x, 'class') <- NULL
   y <- x[..., drop = drop]
   attributes(y) <- c(attributes(y), ats)
-  if(is.null(dim(y))) {
-    aty <- attributes(y)
-    aty$call <- aty$iter <- aty$rsq <- aty$parms <- aty$coef <- 
-      aty$xcoef <- aty$rsq.adj <- aty$shrink <-
-        aty$fillin <- aty$imputed <- aty$class <- aty$ranges <- 
-          aty$imp.con <- aty$scale <- aty$categorical <- aty$asis <-
-            aty$trantab <- NULL
-    attributes(y) <- aty
-    if(is.character(z <- list(...)[[1]]))
-      attr(y,"label") <- paste("Transformed",z)
-    ##May someday have to use label(y) <- for this ?
-  }
-
+  if(!length(dim(y)))
+    {
+      aty <- attributes(y)
+      aty$call <- aty$iter <- aty$rsq <- aty$parms <- aty$coef <- 
+        aty$xcoef <- aty$rsq.adj <- aty$shrink <-
+          aty$fillin <- aty$imputed <- aty$class <- aty$ranges <- 
+            aty$imp.con <- aty$scale <- aty$categorical <- aty$asis <-
+              aty$trantab <- NULL
+      attributes(y) <- aty
+      if(is.character(z <- list(...)[[1]]))
+        attr(y,"label") <- paste("Transformed",z)
+      ##May someday have to use label(y) <- for this ?
+    }
+  
   y
 }
 
@@ -1070,39 +1106,45 @@ predict.transcan <- function(object, newdata=NULL, iter.max=50, eps=.01,
   
   if(!length(tolInverse)) tolInverse <- 0.05
 
-  if(type=="original" & is.null(trantab))
+  if(type=="original" & !length(trantab))
     stop('type="trantab" and trantab=TRUE not specified to transcan')
 
-  if(length(formula)) {
-    oldop <- options(na.action="na.retain")
-    y <- model.frame(formula, data=newdata)
+  if(length(formula))
+    {
+      oldop <- options(na.action="na.retain")
+      y <- model.frame(formula, data=newdata)
 
-    options(oldop)
-    d <- dim(y)
-    p <- d[2]
-    newdata <- matrix(NA, nrow=d[1], ncol=p,
-                      dimnames=list(attr(y,"row.names"), names(y)))
-    for(i in 1:p) {
-      w <- y[[i]]
-      if(is.character(w)) {
-        warning("character predictor present.  Depending on levels being same as in original fit,\nthat all levels are present in the data, and that levels were in alphabetical order")
-        w <- factor(w)
-      }
+      options(oldop)
+      d <- dim(y)
+      p <- d[2]
+      newdata <- matrix(NA, nrow=d[1], ncol=p,
+                        dimnames=list(attr(y,"row.names"), names(y)))
+      for(i in 1:p)
+        {
+          w <- y[[i]]
+          if(is.character(w))
+            {
+              warning("character predictor present.  Depending on levels being same as in original fit,\nthat all levels are present in the data, and that levels were in alphabetical order")
+              w <- factor(w)
+            }
 
-      newdata[,i] <- oldUnclass(w)
+          newdata[,i] <- oldUnclass(w)
+        }
     }
-  } else {
-    if(is.null(newdata))
-      stop("newdata must be given (unless formula was given to transcan)")
+  else
+    {
+      if(!length(newdata))
+        stop("newdata must be given (unless formula was given to transcan)")
 
-    p <- ncol(newdata)
-  }
-  if(!is.matrix(newdata)) {
-    if(is.null(names(newdata)))
-      names(newdata) <- dimnames(object)[[2]]
-
-    newdata <- t(as.matrix(newdata))
-  }
+      p <- ncol(newdata)
+    }
+  if(!is.matrix(newdata))
+    {
+      if(!length(names(newdata)))
+        names(newdata) <- dimnames(object)[[2]]
+      
+      newdata <- t(as.matrix(newdata))
+    }
 
   if(imp.con || !any(is.na(newdata)))
     iter.max <- 1  
@@ -1113,7 +1155,7 @@ predict.transcan <- function(object, newdata=NULL, iter.max=50, eps=.01,
   if(ncol(ranges)!=p)
     stop("wrong number of columns in newdata")
 
-  if(is.null(dimnames(xt)[[2]]))
+  if(!length(dimnames(xt)[[2]]))
     dimnames(xt) <- list(dimnames(xt)[[1]],nam)
   else if(check && any(dimnames(newdata)[[2]]!=nam))
     warning("column names in newdata do not match column names in object")
@@ -1121,73 +1163,83 @@ predict.transcan <- function(object, newdata=NULL, iter.max=50, eps=.01,
   if(length(dimnames(xt)[[1]])==0)
     dimnames(xt) <- list(as.character(1:nrow(xt)),
                          dimnames(xt)[[2]])
+  
+  for(iter in 1:iter.max)
+    {
+      dmax <- 0
+      for(i in 1:p)
+        {
+          lab <- nam[i]
+          j <- is.na(newdata[,i])
+          prm <- parms[[lab]]
+          if(length(prm)==0)
+            {
+              newy <- newdata[,i]
+              if(any(j))newy[j] <- if(iter==1) fillin[i] else
+              drop(cbind(1,xt[j,-i,drop=FALSE]) %*% xcoef[i,-i-1])
+            }
+          else
+            {
+              browser()
+              if(is.matrix(prm))
+                {
+                  lev <- attr(prm, "codes")
+                  consec.lev <- match(newdata[,i], lev)  #may give NAs - OK for next line
+                  R <- prm[consec.lev,, drop=FALSE]
+                  if(iter==1 && any(match(newdata[!j,i], lev, 0)==0))
+                    stop("codes for categorical variable not in original list")
+                } else R <- rcspline.eval(newdata[,i], prm, inclx=TRUE)
+              
+              newy <- drop(cbind(1,R) %*% coef[[i]])
+              if(any(j))
+                newy[j] <-
+                  if(iter==1) 0
+                  else
+                    drop(cbind(1, xt[j,-i,drop=FALSE]) %*%xcoef[i, -i-1])
+            }
 
-  for(iter in 1:iter.max) {
-    dmax <- 0
-    for(i in 1:p) {
-      lab <- nam[i]
+          if(curtail) newy <- pmax(pmin(newy,ranges[2,i]),ranges[1,i])
+          if(iter>1) dmax <- max(dmax, min(max(abs(xt[,i]-newy),na.rm=TRUE),
+                                           max(abs(-xt[,i]-newy),na.rm=TRUE))/
+                                 scale[i])
+          xt[,i] <- newy
+        }	#end i
+
+      niter <- iter
+      if(niter>1 && dmax<eps)
+        break
+
+      if(rhsImp=='random' && niter>4)
+        break
+    }	#end iter
+
+  if(rhsImp=='mean')
+    {
+      if(iter.max>3 & niter==iter.max)
+        stop(paste("no convergence in",iter.max,"iterations"))
+      cat("Convergence in",niter,"iterations\n")
+    }
+  
+  if(type=="transformed") return(xt)
+
+  for(i in 1:p)
+    {
+      ft <- trantab[[i]]
       j <- is.na(newdata[,i])
-      prm <- parms[[lab]]
-      if(length(prm)==0) {
-        newy <- newdata[,i]
-        if(any(j))newy[j] <- if(iter==1) fillin[i] else
-        drop(cbind(1,xt[j,-i,drop=FALSE]) %*% xcoef[i,-i-1])
-      } else {
-        if(is.matrix(prm)) {
-          lev <- attr(prm, "codes")
-          consec.lev <- match(newdata[,i], lev)  #may give NAs - OK for next line
-          R <- prm[consec.lev,, drop=FALSE]
-          if(iter==1 && any(match(newdata[!j,i], lev, 0)==0))
-            stop("codes for categorical variable not in original list")
-        } else R <- rcspline.eval(newdata[,i], prm, inclx=TRUE)
-
-        newy <- drop(cbind(1,R) %*% coef[[i]])
-        if(any(j))
-          newy[j] <-
-            if(iter==1) 0
-            else
-              drop(cbind(1, xt[j,-i,drop=FALSE]) %*%xcoef[i, -i-1])
-      }
-
-      if(curtail) newy <- pmax(pmin(newy,ranges[2,i]),ranges[1,i])
-      if(iter>1) dmax <- max(dmax, min(max(abs(xt[,i]-newy),na.rm=TRUE),
-                                       max(abs(-xt[,i]-newy),na.rm=TRUE))/scale[i])
-      xt[,i] <- newy
-    }	#end i
-
-    niter <- iter
-    if(niter>1 && dmax<eps)
-      break
-
-    if(rhsImp=='random' && niter>4)
-      break
-  }	#end iter
-
-  if(rhsImp=='mean') {
-    if(iter.max>3 & niter==iter.max)
-      stop(paste("no convergence in",iter.max,"iterations"))
-    cat("Convergence in",niter,"iterations\n")
-  }
-
-  if(type=="transformed")
-    return(xt)
-
-  for(i in 1:p) {
-    ft <- trantab[[i]]
-    j <- is.na(newdata[,i])
-    if(any(j)) {
-      newdata[j,i] <-
-        if(imp.con) fillin[i]
-        else {
-          ww <- invertTabulated(ft, aty=xt[j,i], name=nam[i],
-                                inverse=inverse, tolInverse=tolInverse)
-          if(nam[i] %in% categorical)
-            ww <- round(ww)
-
-          ww
+      if(any(j))
+        {
+          newdata[j,i] <- if(imp.con) fillin[i]
+          else
+            {
+              ww <- invertTabulated(ft, aty=xt[j,i], name=nam[i],
+                                    inverse=inverse, tolInverse=tolInverse)
+              if(nam[i] %in% categorical)
+                ww <- round(ww)
+              
+              ww
+            }
         }
     }
-  }
 
   newdata
 }
@@ -1209,31 +1261,36 @@ Function.transcan <- function(object, prefix=".", suffix="", where=1, ...)
   parms       <- at$parms
   fnames      <- character(p)
 
-  for(i in 1:p)	{
-    nam <- Nam[i]
-    cof <- coef[[nam]]
-    if(nam %in% asis)
-      f <- function(x) x
-    else if(nam %in% categorical) {
-      codes <- attr(parms[[nam]], "codes")
-      g <- "{x <- oldUnclass(x);"
-      cof[-1] <- cof[-1] + cof[1]  #convert from ref cell to cell means model
-      for(j in 1:length(codes))	{
-	if(j>1 && cof[j]>0) g <- paste(g,"+")
-	g <- paste(g, format(cof[j]), "*(x==",format(codes[j]),")",sep="")
-      }
+  for(i in 1:p)
+    {
+      nam <- Nam[i]
+      cof <- coef[[nam]]
+      if(nam %in% asis)
+        f <- function(x) x
+      else if(nam %in% categorical)
+        {
+          codes <- attr(parms[[nam]], "codes")
+          g <- "{x <- oldUnclass(x);"
+          cof[-1] <- cof[-1] + cof[1]  #convert from ref cell to cell means model
+          for(j in 1:length(codes))
+            {
+              if(j>1 && cof[j]>0) g <- paste(g,"+")
+              g <- paste(g, format(cof[j]),
+                         "*(x==",format(codes[j]),")",sep="")
+            }
 
-      g <- paste(g, "}", sep="")
-      f <- function(x) NULL
-      f[[2]] <- parse(text=g)[[1]]
-    } else f <- attr(rcspline.restate(parms[[nam]], cof), "function")
+          g <- paste(g, "}", sep="")
+          f <- function(x) NULL
+          f[[2]] <- parse(text=g)[[1]]
+        }
+      else f <- attr(rcspline.restate(parms[[nam]], cof), "function")
  
-    fun.name <- paste(prefix,nam,suffix,sep="")
-    cat("Function for transforming",nam,"stored as",fun.name,"\n")
-    assign(fun.name, f, where=where)
-    fnames[i] <- fun.name
-  }
-
+      fun.name <- paste(prefix,nam,suffix,sep="")
+      cat("Function for transforming",nam,"stored as",fun.name,"\n")
+      assign(fun.name, f, where=where)
+      fnames[i] <- fun.name
+    }
+  
   invisible(fnames)
 }
 
@@ -1244,8 +1301,7 @@ na.retain <- function(mf) mf
 plot.transcan <- function(x, ...)
 {
   ## check for old style object
-  if(!is.list(x))
-    x <- attributes(x)
+  if(!is.list(x)) x <- attributes(x)
 
   trantab <- x$trantab
   imputed <- x$imputed
@@ -1258,15 +1314,17 @@ plot.transcan <- function(x, ...)
     z <- trantab[[w]]
     plot(z, xlab=w, ylab=paste('Transformed',w))
     title(sub=paste('R2=',format(round(x$rsq[w],2)),sep=''),cex=.4,adj=0)
-    if(length(imputed)) {
-      m <- imputed[[w]]
-      if(L <- length(m)) {
-        title(sub=paste(L,'missing'),cex=.4,adj=1)
-        m.trans <- approx(z, xout=m, rule=2)$y
-        scat1d(m, 3, ...)
-        scat1d(m.trans, 4, ...)
+    if(length(imputed))
+      {
+        m <- imputed[[w]]
+        if(L <- length(m))
+          {
+            title(sub=paste(L,'missing'),cex=.4,adj=1)
+            m.trans <- approx(z, xout=m, rule=2)$y
+            scat1d(m, 3, ...)
+            scat1d(m.trans, 4, ...)
+          }
       }
-    }
   }
 }
 
@@ -1280,67 +1338,72 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
   used.mice <- any(oldClass(xtrans)=='mids')
   if(used.mice && missing(n.impute)) n.impute <- xtrans$m
   
-  for(i in 1:n.impute) {
-    if(used.mice)
-      completed.data <- complete(xtrans, i)
-    else {
-      completed.data <- data
-      imputed.data <-
-        impute.transcan(xtrans, imputation=i, data=data,
-                        list.out=TRUE, pr=FALSE, check=FALSE)
-      ## impute.transcan works for aregImpute
-      completed.data[names(imputed.data)] <- imputed.data
-    }
+  for(i in 1:n.impute)
+    {
+      if(used.mice) completed.data <- complete(xtrans, i)
+    else
+      {
+        completed.data <- data
+        imputed.data <-
+          impute.transcan(xtrans, imputation=i, data=data,
+                          list.out=TRUE, pr=FALSE, check=FALSE)
+        ## impute.transcan works for aregImpute
+        completed.data[names(imputed.data)] <- imputed.data
+      }
 
-    if(!missing(derived)) {
-      stop('derived variables in fit.mult.imputed not yet implemented')
-      eval(derived, completed.data)
-    }
+    if(!missing(derived))
+      {
+        stop('derived variables in fit.mult.imputed not yet implemented')
+        eval(derived, completed.data)
+      }
 
-    if(using.Design) options(Design.attr=da)
-    f <- if(missing(subset)) fitter(formula, data=completed.data, ...)
-         else fitter(formula, data=completed.data[subset,], ...)
+      if(using.Design) options(Design.attr=da)
+      f <- if(missing(subset)) fitter(formula, data=completed.data, ...)
+      else fitter(formula, data=completed.data[subset,], ...)
     
-    # For some reason passing subset= causes model.frame bomb in R
-    if(fit.reps)
-      fits[[i]] <- f
+      ## For some reason passing subset= causes model.frame bomb in R
+      if(fit.reps) fits[[i]] <- f
 
-    cof <- f$coef
-    v <- Varcov(f, regcoef.only=FALSE)
-    ## From Rainer Dyckerhoff to work correctly with models that have
-    ## a scale parameter (e.g. psm).  Check whether length of the
-    ## coefficient vector is different from the the number of rows of
-    ## the covariance matrix. If so, the model contains scale
-    ## parameters that are not fixed at some value and we have to 
-    ## append the scale parameters to the coefficient vector.
-    nvar0 <- length(cof)
-    nvar <- nrow(v)
-    if(nvar > nvar0) {
-      cof <- c(cof, log(f$scale))
-      names(cof) <- c(names(f$coef),
-                      if((nvar - nvar0) == 1) "Log(scale)"
-                      else names(f$scale))
+      cof <- f$coef
+      v <- Varcov(f, regcoef.only=FALSE)
+      ## From Rainer Dyckerhoff to work correctly with models that have
+      ## a scale parameter (e.g. psm).  Check whether length of the
+      ## coefficient vector is different from the the number of rows of
+      ## the covariance matrix. If so, the model contains scale
+      ## parameters that are not fixed at some value and we have to 
+      ## append the scale parameters to the coefficient vector.
+      nvar0 <- length(cof)
+      nvar <- nrow(v)
+      if(nvar > nvar0)
+        {
+          cof <- c(cof, log(f$scale))
+          names(cof) <- c(names(f$coef),
+                          if((nvar - nvar0) == 1) "Log(scale)"
+                          else names(f$scale))
+        }
+
+    if(i==1)
+      {
+        vavg <- 0*v
+        p <- length(cof)
+        bar <- rep(0, p)
+        vname <- names(cof)
+        cov <- matrix(0, nrow=p, ncol=p, dimnames=list(vname,vname))
+        
+        if(inherits(f,'Design'))
+          {
+            using.Design <- TRUE
+            da <- f$Design
+            if(!length(da)) da <- getOldDesign(f)
+          }
+        else warning('Not using a Design fitting function; summary(fit) will use\nstandard errors, t, P from last imputation only.  Use Varcov(fit) to get the\ncorrect covariance matrix, sqrt(diag(Varcov(fit))) to get s.e.\n\n')
+      }
+
+      vavg <- vavg + v
+      bar <- bar + cof
+      cof <- as.matrix(cof)
+      cov <- cov + cof %*% t(cof)
     }
-
-    if(i==1) {
-      vavg <- 0*v
-      p <- length(cof)
-      bar <- rep(0, p)
-      vname <- names(cof)
-      cov <- matrix(0, nrow=p, ncol=p, dimnames=list(vname,vname))
-
-      if(inherits(f,'Design')) {
-        using.Design <- TRUE
-        da <- f$Design
-        if(!length(da)) da <- getOldDesign(f)
-      } else warning('Not using a Design fitting function; summary(fit) will use\nstandard errors, t, P from last imputation only.  Use Varcov(fit) to get the\ncorrect covariance matrix, sqrt(diag(Varcov(fit))) to get s.e.\n\n')
-    }
-
-    vavg <- vavg + v
-    bar <- bar + cof
-    cof <- as.matrix(cof)
-    cov <- cov + cof %*% t(cof)
-  }
 
   vavg <- vavg / n.impute    ## matrix \bar{U} in Rubin's notation
   bar <- bar/n.impute
@@ -1357,14 +1420,15 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
   tau  <- (1 + 1/n.impute)*B/U
   missingInfo <- tau/(1+tau)
   dfmi <- (n.impute-1)*((1 + 1/tau)^2)
-  if(pr) {
-    cat('\nVariance Inflation Factors Due to Imputation:\n\n')
-    print(round(r,2))
-    cat('\nRate of Missing Information:\n\n')
-    print(round(missingInfo,2))
-    cat('\nd.f. for t-distribution for Tests of Single Coefficients:\n\n')
-    print(round(dfmi,2))
-  }
+  if(pr)
+    {
+      cat('\nVariance Inflation Factors Due to Imputation:\n\n')
+      print(round(r,2))
+      cat('\nRate of Missing Information:\n\n')
+      print(round(missingInfo,2))
+      cat('\nd.f. for t-distribution for Tests of Single Coefficients:\n\n')
+      print(round(dfmi,2))
+    }
   
   f$coefficients <- drop(bar)
   f$var <- cov
@@ -1374,7 +1438,7 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
   f$fits <- fits
   f$formula <- formula
   if(using.Design) options(Design.attr=NULL)
-
+  
   f
 }
 
@@ -1389,21 +1453,21 @@ Varcov <- function(object, ...) UseMethod("Varcov")
 Varcov.default <- function(object, regcoef.only=FALSE, ...)
 {
   vc <- object$Varcov
-  if(length(vc)) {
-    if(regcoef.only)
-      return(object$var)
-    else
-      return(vc(object,which='var'))
-  }
+  if(length(vc))
+    {
+      if(regcoef.only) return(object$var)
+      else return(vc(object,which='var'))
+    }
 
   cov <- object$var
-  if(is.null(cov))
+  if(!length(cov))
     stop("object does not have variance-covariance matrix")
 
-  if(regcoef.only) {
-    p <- length(object$coef)
-    cov <- cov[1:p, 1:p, drop=FALSE]
-  }
+  if(regcoef.only)
+    {
+      p <- length(object$coef)
+      cov <- cov[1:p, 1:p, drop=FALSE]
+    }
 
   cov
 }
@@ -1412,13 +1476,16 @@ Varcov.default <- function(object, regcoef.only=FALSE, ...)
 Varcov.lm <- function(object, ...)
 {
   cof <- object$coefficients
-  if(.R.) {
-    Qr <- object$qr
-    cov <- chol2inv(Qr$qr)
-  } else {
-    rinv <- solve(object$R, diag(length(cof)))
-    cov <- rinv %*% t(rinv)
-  }
+  if(.R.)
+    {
+      Qr <- object$qr
+      cov <- chol2inv(Qr$qr)
+    }
+  else
+    {
+      rinv <- solve(object$R, diag(length(cof)))
+      cov <- rinv %*% t(rinv)
+    }
   
   cov <- sum(object$residuals^2)*cov/object$df.residual
   nm  <- names(cof)
@@ -1445,10 +1512,11 @@ invertTabulated <- function(x, y, freq=rep(1,length(x)),
                             tolInverse=0.05, rule=2)
 {
   inverse <- match.arg(inverse)
-  if(is.list(x)) {
-    freq <- x[[3]]
-    y <- x[[2]]
-    x <- x[[1]]
+  if(is.list(x))
+    {
+      freq <- x[[3]]
+      y <- x[[2]]
+      x <- x[[1]]
   }
   
   if(inverse=='linearInterp')
@@ -1462,50 +1530,53 @@ invertTabulated <- function(x, y, freq=rep(1,length(x)),
   cant <- if(.R.)double(0)
           else single(0)
 
-  for(i in 1:m) {
-    a <- aty[i]
-    s <- abs(y-a) < (tolInverse * del)
-    nclose <- sum(s)
-    if(nclose < 2) {
-      if(nclose==0)
-        cant <- c(cant, a)
-
-      xest <- approx(y, x, xout=a, rule=rule)$y
-      ## If a outside range of y, approx(rule=2) will return min or max
-      ## x.  There may be many x's with y values near this extreme x.
-      ## Take a random draw from them.
-      a <- approx(x, y, xout=xest, rule=rule)$y
-      s <- abs(y - a) < (tolInverse * del)
+  for(i in 1:m)
+    {
+      a <- aty[i]
+      s <- abs(y-a) < (tolInverse * del)
       nclose <- sum(s)
-      if(nclose > 1) {
-        maxdist <- max((y[s] - a)^2)
-        wt <- if(maxdist==0) freq[s]
+      if(nclose < 2)
+        {
+          if(nclose==0)
+            cant <- c(cant, a)
+          
+          xest <- approx(y, x, xout=a, rule=rule)$y
+          ## If a outside range of y, approx(rule=2) will return min or max
+          ## x.  There may be many x's with y values near this extreme x.
+          ## Take a random draw from them.
+          a <- approx(x, y, xout=xest, rule=rule)$y
+          s <- abs(y - a) < (tolInverse * del)
+          nclose <- sum(s)
+          if(nclose > 1)
+            {
+              maxdist <- max((y[s] - a)^2)
+              wt <- if(maxdist==0) freq[s]
               else (1 - ((y[s] - a)^2) / maxdist) * freq[s]
 
-        if(all(wt==0))
-          wt <- freq[s]  # y[s] all the same
+              if(all(wt==0)) wt <- freq[s]  # y[s] all the same
 
-        if(any(wt==0))
-          wt[wt==0] <- min(wt[wt>0])/2
+        if(any(wt==0)) wt[wt==0] <- min(wt[wt>0])/2
 
-        xest <- x[s][sample(nclose, 1, replace=FALSE,  prob=wt/sum(wt))]
-      }
-    } else {
-      maxdist <- max((y[s] - a)^2)
-      wt <- if(maxdist==0) freq[s]
-            else (1 - ((y[s] - a)^2) / maxdist) * freq[s]
-
-      if(all(wt==0))
-        wt <- freq[s]  # y[s] all the same
-
-      if(any(wt==0))
-        wt[wt==0] <- min(wt[wt>0])/2
-      
-      xest <- x[s][sample(nclose, 1, replace=FALSE,  prob=wt/sum(wt))]
-      ## sample(x[s],...) fails if x[s] is scalar; thanks: Bill Dunlap
+              xest <- x[s][sample(nclose, 1, replace=FALSE,  prob=wt/sum(wt))]
+            }
     }
-    yinv[i] <- xest
-  }
+      else
+        {
+          maxdist <- max((y[s] - a)^2)
+          wt <- if(maxdist==0) freq[s]
+          else (1 - ((y[s] - a)^2) / maxdist) * freq[s]
+
+          if(all(wt==0))
+            wt <- freq[s]  # y[s] all the same
+
+          if(any(wt==0))
+            wt[wt==0] <- min(wt[wt>0])/2
+          
+          xest <- x[s][sample(nclose, 1, replace=FALSE,  prob=wt/sum(wt))]
+          ## sample(x[s],...) fails if x[s] is scalar; thanks: Bill Dunlap
+        }
+      yinv[i] <- xest
+    }
   
   if(length(cant))
     warning(paste('No actual ',name, ' has y value within ',
@@ -1535,10 +1606,11 @@ rMultinom <- function(probs, m)
   if(any(abs(z-1) > .00001))
      stop('error in multinom: probabilities do not sum to 1')
 
-  for(i in 1:m) {
-    un <- rep(runif(n), rep(k,n))
-    ran[,i] <- lev[1 + apply(un > apply(probs,1,cumsum),2,sum)]
-  }
-
+  for(i in 1:m)
+    {
+      un <- rep(runif(n), rep(k,n))
+      ran[,i] <- lev[1 + apply(un > apply(probs,1,cumsum),2,sum)]
+    }
+  
   ran
 }

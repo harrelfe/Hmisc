@@ -306,27 +306,26 @@ all.is.numeric <- function(x, what=c('test','vector'),
 Lag <- function(x, shift=1)
 {
   ## Lags vector x shift observations, padding with NAs or blank strings
-  ## on the left, preserving attributes of x
+  ## preserving attributes of x
 
-  # check to see if shift == 0
-  if(shift == 0)
-    return(x)
-
+  xLen <- length(x)
+  if(shift == 0) return(x)
+  
   # Create base vector use character to generate "" for mode "character"
   # Coerce base vector to be type of x
-  xLen <- length(x)
   ret <- as.vector(character(xLen), mode=storage.mode(x))
   
   # set resp attributes equal to x attributes
   attrib <- attributes(x)
 
-  if(!is.null(attrib$label))
+  if(length(attrib$label))
     atr$label <- paste(attrib$label, 'lagged', shift, 'observations')
 
-  if(xLen > shift){
-    retrange = 1:shift
-    ret[-retrange] <- x[1:(xLen - shift)]
-  }
+  if(abs(shift) < xLen)
+    {
+      if(shift > 0) ret[-(1:shift)] <- x[1:(xLen - shift)]
+      else ret[1:(xLen+shift)] <- x[(1-shift):xLen]
+    }
   
   attributes(ret) <- attrib
   return(ret)

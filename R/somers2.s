@@ -7,7 +7,7 @@
 ## 
 ##    Usage:
 ## 
-##         somers2(X,Y)
+##         somers2(x, y, weights)
 ##
 ##    Returns vector whose elements are C Index, Dxy, n and missing, where
 ##    C Index is the concordance probability and Dxy=2(C Index-.5).
@@ -22,44 +22,43 @@ somers2 <- function(x, y, weights=NULL, normwt=FALSE, na.rm=TRUE)
   if(wtpres && (wtpres != length(x)))
     stop('weights must have same length as x')
 
-  if(na.rm) {
-    miss <- if(wtpres) is.na(x + y + weights)
-            else is.na(x + y)
+  if(na.rm)
+    {
+      miss <- if(wtpres) is.na(x + y + weights)
+      else is.na(x + y)
 
-    nmiss <- sum(miss)
-    if(nmiss>0)	{
-      miss <- !miss
-      x <- x[miss]
-      y <- y[miss]
-      if(wtpres)
-        weights <- weights[miss]
+      nmiss <- sum(miss)
+      if(nmiss>0)
+        {
+          miss <- !miss
+          x <- x[miss]
+          y <- y[miss]
+          if(wtpres) weights <- weights[miss]
+        }
     }
-  } else nmiss <- 0
+  else nmiss <- 0
 		
   u <- sort(unique(y))
-  if(any(y %nin% 0:1))
-    stop('y must be binary')  ## 7dec02
+  if(any(y %nin% 0:1)) stop('y must be binary')
 
-  if(wtpres) {
-    if(normwt)
-      weights <- length(x)*weights/sum(weights)
+  if(wtpres)
+    {
+      if(normwt)
+        weights <- length(x)*weights/sum(weights)
+      n <- sum(weights)
+    }
+  else n <- length(x)
 
-    n <- sum(weights)
-  } else n <- length(x)
+  if(n<2) stop("must have >=2 non-missing observations")
 
-  if(n<2)
-    stop("must have >=2 non-missing observations")
-
-  n1 <- if(wtpres)sum(weights[y==1])
-        else sum(y==1)
+  n1 <- if(wtpres)sum(weights[y==1]) else sum(y==1)
 
   if(n1==0 || n1==n)
-    return(c(C=NA,Dxy=NA,n=n,Missing=nmiss))  ## 7dec02
+    return(c(C=NA,Dxy=NA,n=n,Missing=nmiss))
 
-  ## added weights > 0 30Mar00
   mean.rank <-
     if(wtpres)
-      mean(wtd.rank(x, weights, na.rm=FALSE)[weights > 0 & y==1])
+      wtd.mean(wtd.rank(x, weights, na.rm=FALSE), weights*y)
     else 
       mean(rank(x)[y==1])
 

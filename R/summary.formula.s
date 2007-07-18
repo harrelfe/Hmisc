@@ -1640,7 +1640,7 @@ formatCats <- function(tab, nam, tr, type, group.freq,
   else
     cs[(long+1):nrow(cs),1:nw] <- cpct[jstart:nrow(cpct),gnames]
 
-  if(latex && dotchart && length(jstart:nrow(pct)) <= 3) {
+  if(latex && dotchart && ncol(pct) <= 3) {
     locs <- c(3,-3,5,-5,7,-7,9,-9)
     points <- c("\\circle*{4}","\\circle{4}","\\drawline(0,2)(-1.414213562,-1)(1.414213562,-1)(0,2)")
     
@@ -1888,7 +1888,7 @@ latex.summary.formula.reverse <-
            caption, rowlabel="",
            insert.bottom=TRUE, dcolumn=FALSE,
            prtest=c('P','stat','df','name'), prmsd=FALSE, msdsize=NULL,
-           long=FALSE, pdig=3, eps=.001, auxCol=NULL, dotchart=FALSE, ...)
+           long=dotchart, pdig=3, eps=.001, auxCol=NULL, dotchart=FALSE, ...)
 {
   x      <- object
   npct   <- match.arg(npct)
@@ -2079,11 +2079,16 @@ latex.summary.formula.reverse <-
     if(length(col.just)) col.just <- c('r', col.just)
     if(length(extracolheads)) extracolheads <- c(heads[2], extracolheads)
   }
-  latex.default(cstats, title=title, caption=caption, rowlabel=rowlabel,
-                col.just=col.just, numeric.dollar=FALSE, 
-                insert.bottom=legend,  rowname=lab, dcolumn=dcolumn,
-                extracolheads=extracolheads, extracolsize=Nsize,
-                ...)
+  resp <- latex.default(cstats, title=title, caption=caption, rowlabel=rowlabel,
+                        col.just=col.just, numeric.dollar=FALSE, 
+                        insert.bottom=legend,  rowname=lab, dcolumn=dcolumn,
+                        extracolheads=extracolheads, extracolsize=Nsize,
+                        ...)
+
+  if(dotchart) 
+    resp$style <- unique(c(resp$style, 'calc', 'epic', 'color'))
+  
+  resp
 }
 
 

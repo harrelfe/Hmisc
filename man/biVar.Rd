@@ -54,8 +54,8 @@ biVar(formula, statinfo, data=NULL, subset=NULL,
 \method{print}{biVar}(x, ...)
 
 \method{plot}{biVar}(x, what=info$defaultwhat,
-                       sort.=TRUE,
-                       main, xlab, ...)
+                       sort.=TRUE, main, xlab,
+                       vnames=c('names','labels'), ...)
 
 spearman2(x, ...)
 
@@ -139,6 +139,10 @@ chiSquare(formula, data=NULL, subset=NULL, na.action=na.retain,
   \item{xlab}{
 	x-axis label.  Default constructed from \code{what}.
   }
+  \item{vnames}{
+	set to \code{"labels"} to use variable labels in place of names for
+	plotting.  If a variable does not have a label the name is always
+	used.}
 %  \item{g}{number of quantile groups into which to categorize continuous
 %	predictors having more than \code{g} unique values, for \code{chiSquare}}
 }

@@ -6,7 +6,9 @@ biVar <- function(formula, statinfo, data=NULL, subset=NULL,
                list(formula, data=data, subset=subset, na.action=na.action))
   nam <- names(x); yname <- nam[1]
   y <- x[[1]]
+  ylabel <- label(y)
   x <- x[-1]
+  xlabel <- sapply(x, label)
   m <- ncol(x)
   statnames <- statinfo$names
   stats <- matrix(NA, nrow=m, ncol=length(statnames),
@@ -27,7 +29,9 @@ biVar <- function(formula, statinfo, data=NULL, subset=NULL,
      rep(NA, length(statnames))
   }
   stats <- cbind(stats, n=N)
-  structure(stats, class='biVar', yname=yname, statinfo=statinfo, call=call)
+  structure(stats, class='biVar', yname=yname,
+            ylabel=ylabel, xlabel=xlabel,
+            statinfo=statinfo, call=call)
 }
 
 print.biVar <- function(x, ...) {
@@ -40,7 +44,7 @@ print.biVar <- function(x, ...) {
     x[,i] <- round(x[,i],dig[i])
   
   attr(x,'yname') <- attr(x, 'statinfo') <- attr(x, 'call') <-
-    oldClass(x) <- NULL
+    attr(x, 'ylabel') <- attr(x, 'xlabel') <- oldClass(x) <- NULL
   print(x)
   invisible()
 }
@@ -49,9 +53,14 @@ print.biVar <- function(x, ...) {
 plot.biVar <- function(x,
                        what=info$defaultwhat,
                        sort.=TRUE,
-                       main, xlab, ...) {
+                       main, xlab,
+                       vnames=c('names','labels'), ...) {
 
+  vnames <- match.arg(vnames)
   yname <- attr(x, 'yname')
+  ylabel <- attr(x, 'ylabel')
+  if(vnames=='labels' && ylabel!='') yname <- sedit(ylabel, ' ', '~')
+  xlabel <- attr(x, 'xlabel')
   info  <- attr(x, 'statinfo')
   aux   <- info$aux
   auxlabel <- info$auxlabel
@@ -75,6 +84,8 @@ plot.biVar <- function(x,
     auxdata  <- paste(format(x[,'n']), format(x[,aux]))
   }
   stat <- x[,what]
+  if(vnames=='labels')
+    names(stat) <- ifelse(xlabel=='', names(stat), xlabel)
   if(sort.) {
     i <- order(stat)
     stat <- stat[i]

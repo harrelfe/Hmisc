@@ -2751,6 +2751,9 @@ matrix2dataFrame <- function(x, at=origAttributes, restoreAll=TRUE)
         a$levels <- NULL
         if(length(a$class)) a$class <- setdiff(a$class, 'factor')
       }
+      if('factor' %in% a$class) storage.mode(xi) <- 'integer'
+      ## R won't let something be assigned class factor by brute
+      ## force unless it's an integer object
       attributes(xi) <- a
     } else {
       if(length(l   <- a$label))

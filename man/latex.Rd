@@ -6,6 +6,7 @@
 \alias{latex.list}
 \alias{latexTranslate}
 \alias{latexSN}
+\alias{latexTabular}
 \alias{latexVerbatim}
 \alias{dvi}
 \alias{print.dvi}
@@ -50,6 +51,9 @@ e.g. \code{[) [] (] ()}, and that surrounding  by \code{$$} is OK.
 \code{latexSN} converts a vector floating point numbers to character
 strings using LaTeX exponents.  Dollar signs to enter math mode are not
 added.
+
+\code{latexTabular} creates a character vector representing a matrix or
+data frame in a simple \code{tabular} environment.
 
 \code{latexVerbatim} on an object executes the object's \code{print} method,
 capturing the output for a file inside a LaTeX verbatim environment.
@@ -141,6 +145,9 @@ latexTranslate(object, inn=NULL, out=NULL, pb=FALSE, greek=FALSE, \dots)
 
 latexSN(x)
 
+latexTabular(x, headings=colnames(x), 
+             align=rep('c',ncol(x)), halign=rep('c',ncol(x)), ...)
+
 latexVerbatim(x, title=first.word(deparse(substitute(x))),
     file=paste(title, ".tex", sep=""),
     append=FALSE, size=NULL, hspace=NULL,
@@ -165,7 +172,8 @@ dvigv(object, \dots)
   }
   \item{x}{
     any object to be \code{print}ed verbatim for \code{latexVerbatim}.  For
-    \code{latexSN} \code{x} is a numeric vector.
+    \code{latexSN} \code{x} is a numeric vector.  For
+	\code{latexTabular} \code{x} is a matrix or data frame.
   }
   \item{title}{
     name of file to create without the \code{.tex} extension.  If this
@@ -433,7 +441,9 @@ dvigv(object, \dots)
     passes arguments to \code{format.df} (e.g., \code{col.just} and other
     formatting options like \code{dec}, \code{rdec}, and \code{cdec}).  For
     \code{latexVerbatim} these arguments are passed to the \code{print}
-    function.  Ignored for \code{latexTranslate}.
+    function.  Ignored for \code{latexTranslate}.  For
+	\code{latexTabular} if these extra arguments are specified, \code{x}
+	is run through \code{format.df} with those arguments.
   }
   \item{inn, out}{
     specify additional input and translated strings over the usual
@@ -445,6 +455,14 @@ dvigv(object, \dots)
   }
   \item{greek}{set to \code{TRUE} to have \code{latexTranslate} put names
     for greek letters in math mode and add backslashes}
+  \item{headings}{a vector of character strings specifying column
+	headings for \code{latexTabular}, defaulting to \code{x}'s
+	\code{colnames}}
+  \item{align}{a vector of character strings specifying column
+	alignments for \code{latexTabular}, defaulting to
+	\code{rep('c',ncol(x))} to center.}
+  \item{halign}{a vector of character strings specifying alignment for
+	column headings, defaulting to centered.}
   \item{hspace}{
     horizontal space, e.g., extra left margin for verbatim text.  Default
     is none.  Use e.g. \code{hspace="10ex"} to add 10 extra spaces to the left

@@ -10,8 +10,8 @@
 \alias{is.mChoice}
 \title{Methods for Storing and Analyzing Multiple Choice Variables}
 \description{
-  \code{mChoice} is a function that is useful for defining a group of
-  variables on the right side of the formula.  The variables can represent
+  \code{mChoice} is a function that is useful for grouping 
+  variables that represent
   individual choices on a multiple choice question.  These choices are
   typically factor or character values but may be of any type.  Levels
   of component factor variables need not be the same; all unique levels

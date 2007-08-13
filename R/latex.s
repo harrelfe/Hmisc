@@ -1365,3 +1365,25 @@ latexSN <- function(x) {
                '\\!\\times\\!10^{*}','\\!\\times\\!10^{*}'))
   x
 }
+
+latexTabular <- function(x, headings=colnames(x), 
+                         align=rep('c',ncol(x)), halign=rep('c',ncol(x)), ...)
+  {
+    x <- latexTranslate(x)
+    if(length(list(...))) x <- format.df(x, ...)
+    align  <- paste(align,  collapse='')
+    w <- paste('\\begin{tabular}{', align, '}', sep='')
+    if(length(headings))
+      {
+        headings <- latexTranslate(headings)
+        h <- if(any(halign != align))
+          latexTranslate(paste(paste(paste('\\multicolumn{1}{', halign, '}{', 
+                                           headings, '}',sep=''),
+                                     collapse='&'), '\\\\', sep=''))
+        else paste(paste(headings, collapse='&'), '\\\\', sep='')
+      }
+    v <- apply(x, 1, paste, collapse='&')
+    v <- paste(paste(v, '\\\\'), collapse='\n')
+    if(length(headings)) v <- paste(h, v, sep='\n')
+    paste(w, v, '\\end{tabular}', sep='\n')
+  }

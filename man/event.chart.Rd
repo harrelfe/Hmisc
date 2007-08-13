@@ -44,6 +44,8 @@ event.chart(data, subset.r = 1:dim(data)[1], subset.c = 1:dim(data)[2],
         point.pch = 1:length(subset.c),
         point.cex = rep(0.6,length(subset.c)),
         point.col = rep(1,length(subset.c)),
+	point.cex.mult = 1., point.cex.mult.var = NA, 
+    	extra.points.no.mult = rep(NA, length(subset.c)), 
 
 
         legend.plot =FALSE, legend.location = 'o', legend.titl = titl,
@@ -384,7 +386,37 @@ lengths are equal; a warning message will verify this condition.
 vector of colors of points representing each event.
 If length(point.col) < length(subset.c), point.col will be repeated until
 lengths are equal; a warning message will verify this condition.
-
+}
+\item{point.cex.mult}{
+a single number (may be non-integer), which is the base multiplier for the value of
+the cex of the plotted points, when interest lies in 
+a variable size allowed for certain points, as a function of
+the quantity of the variable(s) in the dataset specified in the point.cex.mult.var argument;
+multiplied by original point.cex value and then the value of interest (for an individual)
+from the point.cex.mult.var argument; 
+used only when non-NA arguments are provided to point.cex.mult.var;
+default is 1. .
+}
+\item{point.cex.mult.var}{
+vector of variables to be used in determining what point.cex.mult is multiplied by
+for determining size of plotted points from (possibly a subset of) 
+subset.c variables, when interest lies in 
+a variable size allowed for certain points, as a function of
+the level of some variable(s) in the dataset;
+default is NA.
+}
+\item{extra.points.no.mult}{
+vector of variables in the dataset to ignore for purposes of using 
+point.cex.mult; for example, for some variables there may be interest in
+allowing a variable size allowed for the plotting of the points, whereas
+other variables (e.g., dropout time), there may be no interest in such manipulation;
+the vector should be the same size as the number of variables specified in subset.c,
+with NA entries where variable point size is of interest 
+and the variable name (or location in subset.c) specified when the variable
+point size is not of interest; in this latter case, 
+the associated argument in point.cex is instead used as the point cex;
+used only when non-NA arguments are provided to point.cex.mult.var;
+default is NA
 
 }
 \item{legend.plot}{
@@ -515,13 +547,11 @@ jjlee@mdanderson.org, khess@mdanderson.org
 
 Joel A. Dubin
 \cr
-Division of Biostatistics
+Department of Statistics
 \cr
-Department of Epidemiology and Public Health
+University of Waterloo
 \cr
-Yale University
-\cr
-joel.dubin@yale.edu
+jdubin@uwaterloo.ca
 }
 \references{
 Lee J.J., Hess, K.R., Dubin, J.A. (2000).  Extensions and applications

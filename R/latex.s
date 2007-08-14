@@ -1367,17 +1367,20 @@ latexSN <- function(x) {
 }
 
 latexTabular <- function(x, headings=colnames(x), 
-                         align=rep('c',ncol(x)), halign=rep('c',ncol(x)), ...)
+                         align =paste(rep('c',ncol(x)),collapse=''),
+                         halign=paste(rep('c',ncol(x)),collapse=''),
+                         helvetica=TRUE, ...)
   {
     x <- latexTranslate(x)
     if(length(list(...))) x <- format.df(x, ...)
-    align  <- paste(align,  collapse='')
+    xhalign <- substring(halign, 1:nchar(halign), 1:nchar(halign))
     w <- paste('\\begin{tabular}{', align, '}', sep='')
+    if(helvetica) w <- paste('{\\fontfamily{phv}\\selectfont', w, sep='')
     if(length(headings))
       {
         headings <- latexTranslate(headings)
-        h <- if(any(halign != align))
-          latexTranslate(paste(paste(paste('\\multicolumn{1}{', halign, '}{', 
+        h <- if(halign != align)
+          latexTranslate(paste(paste(paste('\\multicolumn{1}{', xhalign, '}{', 
                                            headings, '}',sep=''),
                                      collapse='&'), '\\\\', sep=''))
         else paste(paste(headings, collapse='&'), '\\\\', sep='')
@@ -1385,5 +1388,5 @@ latexTabular <- function(x, headings=colnames(x),
     v <- apply(x, 1, paste, collapse='&')
     v <- paste(paste(v, '\\\\'), collapse='\n')
     if(length(headings)) v <- paste(h, v, sep='\n')
-    paste(w, v, '\\end{tabular}', sep='\n')
+    paste(w, v, '\\end{tabular}', if(helvetica)'}', sep='\n')
   }

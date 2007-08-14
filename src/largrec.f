@@ -45,8 +45,8 @@ C
                      y2 = yu
                   ENDIF
                ENDDO
+ 1             CONTINUE
             ENDDO
- 1          CONTINUE
          ENDDO
       ENDDO
       rx(1)=x1
@@ -55,5 +55,3 @@ C
       ry(2)=y2
       RETURN
       END
-
- 

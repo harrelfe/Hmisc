@@ -1606,10 +1606,11 @@ rMultinom <- function(probs, m)
   if(any(abs(z-1) > .00001))
      stop('error in multinom: probabilities do not sum to 1')
 
+  U <- apply(probs, 1, cumsum)
   for(i in 1:m)
     {
       un <- rep(runif(n), rep(k,n))
-      ran[,i] <- lev[1 + apply(un > apply(probs,1,cumsum),2,sum)]
+      ran[,i] <- lev[1 + apply(un > U, 2, sum)]
     }
   
   ran

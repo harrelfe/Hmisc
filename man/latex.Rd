@@ -146,7 +146,9 @@ latexTranslate(object, inn=NULL, out=NULL, pb=FALSE, greek=FALSE, \dots)
 latexSN(x)
 
 latexTabular(x, headings=colnames(x), 
-             align=rep('c',ncol(x)), halign=rep('c',ncol(x)), ...)
+             align =paste(rep('c',ncol(x)),collapse=''),
+             halign=paste(rep('c',ncol(x)),collapse=''),
+             helvetica=TRUE, ...)
 
 latexVerbatim(x, title=first.word(deparse(substitute(x))),
     file=paste(title, ".tex", sep=""),
@@ -458,11 +460,14 @@ dvigv(object, \dots)
   \item{headings}{a vector of character strings specifying column
 	headings for \code{latexTabular}, defaulting to \code{x}'s
 	\code{colnames}}
-  \item{align}{a vector of character strings specifying column
+  \item{align}{a character strings specifying column
 	alignments for \code{latexTabular}, defaulting to
-	\code{rep('c',ncol(x))} to center.}
-  \item{halign}{a vector of character strings specifying alignment for
+	\code{paste(rep('c',ncol(x)),collapse='')} to center.  You may
+	specify \code{align='c|c'} and other LaTeX tabular formatting.}
+  \item{halign}{a character strings specifying alignment for
 	column headings, defaulting to centered.}
+  \item{helvetica}{set to \code{FALSE} to use default LaTeX font in
+	\code{latexTabular} instead of helvetica.}
   \item{hspace}{
     horizontal space, e.g., extra left margin for verbatim text.  Default
     is none.  Use e.g. \code{hspace="10ex"} to add 10 extra spaces to the left

@@ -2661,7 +2661,7 @@ smean.cl.boot <- if(.R.) {
                           'if(na.rm) x <- x[!is.na(x)]',
                           'n <- length(x)',
                           'xbar <- mean(x)',
-                          'if(n < 2) return(Mean=xbar, Lower=NA, Upper=NA)',
+                          'if(n < 2) return(c(Mean=xbar, Lower=NA, Upper=NA))',
                           'z <- unlist(lapply(1:B, function(i,x,N)',
                           'sum(x[.Internal(sample(N, N, TRUE, NULL))]),',
                           'x=x, N=n)) / n',
@@ -2680,7 +2680,7 @@ smean.cl.boot <- if(.R.) {
   n <- length(x)
   xbar <- mean(x)
   if(n < 2)
-    return(Mean=xbar, Lower=NA, Upper=NA)
+    return(c(Mean=xbar, Lower=NA, Upper=NA))
 
   z <- unlist(lapply(1:B, function(i,x,N)
                      sum(x[.Internal(sample.index(N, N, TRUE),

@@ -382,13 +382,15 @@ event.chart <-
              pch = point.pch[j], cex = point.cex[j], col = point.col[j])
     ## loop for points to magnify based on level of covariates 
     for(i in 1:length(t.whotoplot)) {
+      k <- 0
       for(j in which(is.na(extra.points.no.mult))) {
+        k <- k + 1
         points(as.vector(unlist(targdata[t.whotoplot[i], j])),
                whattoplot[i], pch = point.pch[j],
-               cex = ifelse(is.na(data[whotoplot[i], point.cex.mult.var[j]]),
+               cex = ifelse(is.na(data[whotoplot[i], point.cex.mult.var[k]]),
                  point.cex[j],
                  point.cex.mult * data[whotoplot[i], 
-                                       point.cex.mult.var[j]] * point.cex[j]), col = point.col[j])
+                                       point.cex.mult.var[k]] * point.cex[j]), col = point.col[j])
       }
     }
   }

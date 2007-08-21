@@ -587,7 +587,9 @@ EVENTCHARTS:  Visualizing Survival and Other Timed-Events Data.
 # Here, we have included only children 4 years old and younger.
 # We have also added a new field, dethdate, which
 # represents a fictitious death date for each patient.  There was
-# no recording of death date on the original dataset.
+# no recording of death date on the original dataset.  In addition, we have
+# added a fictitious viral load reading (copies/ml) for each patient at time of AIDS diagnosis,
+# noting viral load was also not part of the original dataset.
 #   
 # All dates are julian with julian=0 being 
 # January 1, 1960, and julian=14000 being 14000 days beyond
@@ -613,15 +615,20 @@ dethdate=c(
 9547,9755,NA,9686,10084),
 censdate=c(
 NA,NA,8321,NA,NA,8519,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,
-NA,NA,NA,NA,NA,NA,NA,NA,NA,10095,NA,NA))
-
+NA,NA,NA,NA,NA,NA,NA,NA,NA,10095,NA,NA),
+viralload=c(
+13000,36000,70000,90000,21000,110000,75000,12000,125000,110000,13000,39000,79000,135000,14000,
+42000,123000,20000,12000,18000,16000,140000,16000,58000,11000,120000,85000,31000,24000,115000,
+17000,13100,72000,13500)
+)
 
 cdcaids <- upData(cdcaids,
  labels=c(age     ='Age, y', infedate='Date of blood transfusion',
           diagdate='Date of AIDS diagnosis',
           diffdate='Incubation period (days from HIV to AIDS)',
           dethdate='Fictitious date of death',
-          censdate='Fictitious censoring date'))
+          censdate='Fictitious censoring date',
+	  viralload='Fictitious viral load'))
 
 
 # Note that the style options listed with these
@@ -651,6 +658,22 @@ cdcaids <- upData(cdcaids,
   y.lab='patients (sorted by AIDS diagnosis date)',
   titl='AIDS data interval event chart 1',
   point.pch=c(1,2,15,0), point.cex=c(1,1,0.8,0.8),
+  legend.plot=TRUE, legend.location='i', legend.cex=1.0,
+  legend.point.text=c('transfusion','AIDS diagnosis','death','censored'),
+  x.reference='infedate', x.julian=TRUE,
+  legend.bty='o', legend.point.at = list(c(1400, 1950), c(7, -1)))
+
+
+# To produce simple interval event chart (with internal legend),
+# but now with flexible diagdate symbol size based on viral load variable:
+# postscript('example2a.ps', horizontal=TRUE)
+ event.chart(cdcaids,
+  subset.c=c('infedate','diagdate','dethdate','censdate'),
+  x.lab = 'time since transfusion (in days)',
+  y.lab='patients (sorted by AIDS diagnosis date)',
+  titl='AIDS data interval event chart 1a, with viral load at diagdate represented',
+  point.pch=c(1,2,15,0), point.cex=c(1,1,0.8,0.8),
+  point.cex.mult = 0.00002, point.cex.mult.var = 'viralload', extra.points.no.mult = c(1,NA,1,1), 
   legend.plot=TRUE, legend.location='i', legend.cex=1.0,
   legend.point.text=c('transfusion','AIDS diagnosis','death','censored'),
   x.reference='infedate', x.julian=TRUE,

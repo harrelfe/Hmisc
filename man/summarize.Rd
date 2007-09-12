@@ -4,7 +4,7 @@
 \alias{matrix2dataFrame}
 \title{Summarize Scalars or Matrices by Cross-Classification}
 \description{
-\code{summarize} is a fast version of \code{summary(formula,
+\code{summarize} is a fast version of \code{summary.formula(formula,
 method="cross",overall=FALSE)} for producing stratified summary statistics
 and storing them in a data frame for plotting (especially with trellis
 \code{xyplot} and \code{dotplot} and Hmisc \code{xYplot}).  Unlike

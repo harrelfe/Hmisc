@@ -1,7 +1,7 @@
 SUBROUTINE wclosest(w, x, lw, lx, j)
-IMPLICIT REAL*8 (a-h,o-z)
+IMPLICIT DOUBLE PRECISION (a-h,o-z)
 INTEGER lw, lx, j(lw)
-REAL*8 w(lw), x(lx)
+DOUBLE PRECISION w(lw), x(lx)
 
 do i=1,lw {
   wi=w(i)
@@ -20,8 +20,8 @@ return
 end
 
 SUBROUTINE wclosepw(w, x, r, f, lw, lx, xd, j)
-IMPLICIT REAL*8 (a-h,o-z)
-REAL*8 w(lw),x(lx),r(lw),xd(lx)
+IMPLICIT DOUBLE PRECISION (a-h,o-z)
+DOUBLE PRECISION w(lw),x(lx),r(lw),xd(lx)
 INTEGER lw, lx, j(lw)
 do i=1, lw {
   wi = w(i)

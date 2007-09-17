@@ -1,7 +1,7 @@
 SUBROUTINE hoeffd(xx, n, p, dmat, npair, x, y, rx, ry, rj, work, iwork)
 INTEGER p, npair(p,p)
-REAL*4 xx(n,p), dmat(p,p), x(1), y(1), rx(1), ry(1), rj(1), work(1)
-INTEGER*4 iwork(1)
+DOUBLE PRECISION xx(n,p), dmat(p,p), x(1), y(1), rx(1), ry(1), rj(1), work(1)
+INTEGER iwork(1)
 
 DO i=1, p {
   np=0
@@ -40,8 +40,8 @@ RETURN
 END  
 
 	SUBROUTINE hoeff(x, y, n, d, rx, ry, rj, work, iwork)
-	REAL*4 x(1), y(1), rx(1), ry(1), rj(1)
-	INTEGER*4 iwork(1)
+	DOUBLE PRECISION x(1), y(1), rx(1), ry(1), rj(1)
+	INTEGER iwork(1)
 	CALL rank(n, x, work, iwork, rx)
 	CALL rank(n, y, work, iwork, ry)
 	CALL jrank(x, y, n, rj)
@@ -79,7 +79,7 @@ END
 #	END
 
 	SUBROUTINE jrank(x, y, n, r) # joint rank with midranks for ties
-	REAL*4 x(1), y(1), r(1)
+	DOUBLE PRECISION x(1), y(1), r(1)
 	DO i=1,n {
 	  xi=x(i)
 	  yi=y(i)

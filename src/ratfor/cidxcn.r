@@ -10,10 +10,10 @@
 #                   Modification of SAS Procedure KGKC (1980)
 #-------------------------------------------------------------------------
 SUBROUTINE cidxcn(x,y,e,n,nrel,nconc,nuncert,c,gamma,sd,outx)
-IMPLICIT REAL*8 (a-h,o-z)
-real x(n),y(n),dx,dy
+IMPLICIT DOUBLE PRECISION (a-h,o-z)
+DOUBLE PRECISION x(n),y(n),dx,dy
 LOGICAL e(n),outx
-real*8 nrel,nuncert,nconc
+DOUBLE PRECISION nrel,nuncert,nconc
 nconc=0d0
 nrel=0d0
 nuncert=0d0

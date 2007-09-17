@@ -1,12 +1,13 @@
-      subroutine cidxcp(x1,x2,y,e,n,method,outx,nrel,nuncer,c1,c2,
-     &     gamma1,gamma2,gamma,sd,c12,c21)
-      implicit real*8 (a-h,o-z)
-      real*8 x1(n),x2(n),y(n)
-      logical*4 e(n),outx
+C Output from Public domain Ratfor, version 1.01
+      subroutine cidxcp(x1,x2,y,e,n,method,outx, nrel,nuncer,c1,c2,gamma
+     *1,gamma2,gamma,sd,c12,c21)
+      implicit double precision (a-h,o-z)
+      double precision x1(n),x2(n),y(n)
+      logical e(n),outx
       integer n,method,i,j
-      real*8 nrel,nuncer,nconc1,nconc2,c1,c2,gamma1,gamma2,sumr,sumr2,
-     &     sumw,sumw2,sumrw,wi,ri,sumc,c12,c21,gamma,sd
-      real*8 dx,dx2,dy
+      double precision nrel,nuncer,nconc1,nconc2,c1,c2,gamma1,gamma2, su
+     *mr,sumr2,sumw,sumw2,sumrw, wi,ri,sumc,c12,c21,gamma,sd
+      double precision dx,dx2,dy
       nconc1=0d0
       nconc2=0d0
       nrel=0d0
@@ -17,61 +18,57 @@
       sumw2=0d0
       sumrw=0d0
       sumc=0d0
-      do 23000 i=1,n
+      do23000 i=1,n 
       wi=0d0
       ri=0d0
-      do 23002 j=1,n
+      do23002 j=1,n 
       dx=x1(i)-x1(j)
       dx2=x2(i)-x2(j)
-      if(.not.((i.ne.j) .and. 
-     &  (.not.outx .or. dx.ne.0d0 .or. dx2.ne.0d0)))
-     &     goto 23004
+      if((i.ne.j) .and. (.not.outx .or. dx.ne.0. .or. dx2.ne.0.))then
       dy=y(i)-y(j)
-      if(.not.((e(i).and.(dy.lt.0d0)).or.(e(i).and.
-     &   .not.e(j).and.(dy.eq. 0d0))))goto 23006
+      if((e(i).and.(dy.lt.0.)).or.(e(i).and..not.e(j).and.(dy.eq.0.)))th
+     *en
       nrel=nrel+1d0
-      nconc1=nconc1+(z(dx.lt.0d0)+.5d0*z(dx.eq.0d0))
-      nconc2=nconc2+(z(dx2.lt.0d0)+.5d0*z(dx2.eq.0d0))
+      nconc1=nconc1+(z(dx.lt.0.)+.5d0*z(dx.eq.0.))
+      nconc2=nconc2+(z(dx2.lt.0.)+.5d0*z(dx2.eq.0.))
       ri=ri+1d0
-      if(.not.(method.eq.1))goto 23008
+      if(method.eq.1)then
       wi=wi+(z(dx.lt.dx2)-z(dx.gt.dx2))
       sumc=sumc+z(dx.lt.dx2)
-      goto 23009
-23008 continue
-      wi=wi+(z(dx.lt.0d0.and.dx2.ge.0d0)-z(dx.gt.0d0.and.dx2.le.0d0))
-      sumc=sumc+z(dx.lt.0d0.and.dx2.ge.0d0)
-23009 continue
-      goto 23007
-23006 continue
-      if(.not.((e(j).and.(dy.gt.0d0)).or.(e(j).and..not.e(i).and.(dy.eq.
-     &     0d0))))goto 23010
+      else
+      wi=wi+(z(dx.lt.0..and.dx2.ge.0.)-z(dx.gt.0..and.dx2.le.0.))
+      sumc=sumc+z(dx.lt.0..and.dx2.ge.0.)
+      endif
+      else
+      if((e(j).and.(dy.gt.0.)).or.(e(j).and..not.e(i).and.(dy.eq.0.)))th
+     *en
       nrel=nrel+1d0
-      nconc1=nconc1+(z(dx.gt.0d0)+.5d0*z(dx.eq.0d0))
-      nconc2=nconc2+(z(dx2.gt.0d0)+.5d0*z(dx2.eq.0d0))
+      nconc1=nconc1+(z(dx.gt.0.)+.5d0*z(dx.eq.0.))
+      nconc2=nconc2+(z(dx2.gt.0.)+.5d0*z(dx2.eq.0.))
       ri=ri+1d0
-      if(.not.(method.eq.1))goto 23012
+      if(method.eq.1)then
       wi=wi+(z(dx.gt.dx2)-z(dx.lt.dx2))
       sumc=sumc+z(dx.gt.dx2)
-      goto 23013
-23012 continue
-      wi=wi+(z(dx.gt.0d0.and.dx2.le.0d0)-z(dx.lt.0d0.and.dx2.ge.0d0))
-      sumc=sumc+z(dx.gt.0d0.and.dx2.le.0d0)
-23013 continue
-      goto 23011
-23010 continue
-      if(.not.(.not.(e(i).and.e(j))))goto 23014
+      else
+      wi=wi+(z(dx.gt.0..and.dx2.le.0.)-z(dx.lt.0..and.dx2.ge.0.))
+      sumc=sumc+z(dx.gt.0..and.dx2.le.0.)
+      endif
+      else
+      if(.not.(e(i).and.e(j)))then
       nuncer=nuncer+1d0
-23014 continue
-23011 continue
-23007 continue
-23004 continue
+      endif
+      endif
+      endif
+      endif
 23002 continue
+23003 continue
       sumr=sumr+ri
       sumr2=sumr2+ri*ri
       sumw=sumw+wi
       sumw2=sumw2+wi*wi
       sumrw=sumrw+ri*wi
 23000 continue
+23001 continue
       c1=nconc1/nrel
       gamma1=2d0*(c1-.5d0)
       c2=nconc2/nrel
@@ -84,13 +81,12 @@
       return
       end
       function z(a)
-      real*8 z
-      logical*4 a
-      if(.not.(a))goto 23016
+      double precision z
+      logical a
+      if(a)then
       z=1d0
-      goto 23017
-23016 continue
+      else
       z=0d0
-23017 continue
+      endif
       return
       end

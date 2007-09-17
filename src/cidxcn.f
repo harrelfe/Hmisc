@@ -1,8 +1,20 @@
+C Output from Public domain Ratfor, version 1.01
+C------------------------------------------------------------------------
+C       Compute c-index (c) and Brown-Hollander-Krowar-Goodman-Kruskal-Somer
+C       rank correlation (gamma) between X and Y with censoring indicator E
+C       Also returns number of relevant, concordant, and uncertain pairs
+C       (nrel, nconc, nuncert) and estimated s.d. of gamma (sd) using
+C       Quade formula (see SAS PROC MATPAR).  Pairs with tied x are
+C       excluded if outx=.TRUE.
+C
+C       F. Harrell  27Nov90
+C                   Modification of SAS Procedure KGKC (1980)
+C-------------------------------------------------------------------------
       subroutine cidxcn(x,y,e,n,nrel,nconc,nuncert,c,gamma,sd,outx)
-      implicit real*8 (a-h,o-z)
-      real*8 x(n),y(n),dx,dy
+      implicit double precision (a-h,o-z)
+      double precision x(n),y(n),dx,dy
       logical e(n),outx
-      real*8 nrel,nuncert,nconc
+      double precision nrel,nuncert,nconc
       nconc=0d0
       nrel=0d0
       nuncert=0d0
@@ -11,67 +23,66 @@
       sumw=0d0
       sumw2=0d0
       sumrw=0d0
-      do 23000 i=1,n
+      do23000 i=1,n 
       wi=0d0
       ri=0d0
-      do 23002 j=1,n
-      if(.not.(j.ne.i))goto 23004
+      do23002 j=1,n
+      if(j.ne.i)then
       dx=x(i)-x(j)
       dy=y(i)-y(j)
-      if(.not.(dx.ne.0d0 .or. .not.outx))goto 23006
-      if(.not.((e(i).and.dy.lt.0d0).or.(e(i).and.
-     & .not.e(j).and.dy.eq.0d0)) ) goto 23008
-      if(.not.(dx.lt.0d0))goto 23010
+      if(dx.ne.0. .or. .not.outx)then
+      if((e(i).and.dy.lt.0.).or.(e(i).and..not.e(j).and.dy.eq.0.))then
+      if(dx.lt.0.)then
       nconc=nconc+1d0
-      wi=wi+1d0
-      goto 23011
-23010 continue
-      if(.not.(dx.eq.0d0))goto 23012
+      wi=wi+1d0 
+      else
+      if(dx.eq.0.)then
       nconc=nconc+.5d0
-      goto 23013
-23012 continue
+      else
       wi=wi-1d0
-23013 continue
-23011 continue
+      endif
+      endif
       nrel=nrel+1d0
-      ri=ri+1d0
-      goto 23009
-23008 continue
-      if(.not.((e(j).and.dy.gt.0d0).or.(e(j).and.
-     & .not.e(i).and.dy.eq.0d0)) ) goto 23014
-      if(.not.(dx.gt.0d0))goto 23016
+      ri=ri+1d0 
+      else
+      if((e(j).and.dy.gt.0.).or.(e(j).and..not.e(i).and.dy.eq.0.))then
+      if(dx.gt.0.)then
       nconc=nconc+1d0
-      wi=wi+1d0
-      goto 23017
-23016 continue
-      if(.not.(dx.eq.0d0))goto 23018
+      wi=wi+1d0 
+      else
+      if(dx.eq.0.)then
       nconc=nconc+.5d0
-      goto 23019
-23018 continue
+      else
       wi=wi-1d0
-23019 continue
-23017 continue
+      endif
+      endif
       nrel=nrel+1d0
-      ri=ri+1d0
-      goto 23015
-23014 continue
-      if(.not.(.not.(e(i).and.e(j))))goto 23020
+      ri=ri+1d0 
+      else
+      if(.not.(e(i).and.e(j)))then
       nuncert=nuncert+1d0 
-23020 continue
-23015 continue
-23009 continue
-23006 continue
-23004 continue
+      endif
+      endif
+      endif
+      endif
+      endif
 23002 continue
+23003 continue
       sumr=sumr+ri
       sumr2=sumr2+ri*ri
       sumw=sumw+wi
       sumw2=sumw2+wi*wi
       sumrw=sumrw+ri*wi
 23000 continue
+23001 continue
       c=nconc/nrel
-      gamma=2.*(c-.5d0)
+      gamma=2.*(c-.5)
+Ccall dblepr('sumr',4,sumr,1)
+Ccall dblepr('sumw',4,sumw,1)
+Ccall dblepr('sumr2',5,sumr2,1)
+Ccall dblepr('sumw2',5,sumw2,1)
+Ccall dblepr('sumrw',5,sumrw,1)
       sd=sumr2*sumw**2-2d0*sumr*sumw*sumrw+sumw2*sumr**2
-      sd=2d0*dsqrt(sd)/sumr/sumr
+      sd=2.*dsqrt(sd)/sumr/sumr
       return
       end

@@ -1,8 +1,8 @@
       SUBROUTINE largrec(x, y, n, xlim, ylim, width, height,
      &                   numbins, itype, rx, ry)
-      IMPLICIT REAL*8 (A-H,O-Z)
-      REAL*8 x(*),y(*),xlim(2),ylim(2),rx(2),ry(2)
-      INTEGER*4 numbins,itype
+      IMPLICIT DOUBLE PRECISION (A-H,O-Z)
+      DOUBLE PRECISION x(*),y(*),xlim(2),ylim(2),rx(2),ry(2)
+      INTEGER numbins,itype
 C
       xd   = xlim(2)-xlim(1)
       yd   = ylim(2)-ylim(1)

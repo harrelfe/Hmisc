@@ -344,12 +344,13 @@ print.describe <- function(x, condense=TRUE, ...)
         ' Observations\n')
     
     if(length(at$naprint)) cat('\n',at$naprint,'\n')
-    cat('---------------------------------------------------------------------------\n')
+    w <- paste(rep('-', .Options$width), collapse='')
+    cat(w, '\n', sep='')
     for(z in x) {
       if(length(z)==0)
         next
       print.describe.single(z, condense=condense)
-      cat('---------------------------------------------------------------------------\n')
+      cat(w, '\n', sep='')
     }
     if(length(at$missing.vars)) {
       cat('\nVariables with all observations missing:\n\n')

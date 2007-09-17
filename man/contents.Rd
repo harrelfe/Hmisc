@@ -32,12 +32,12 @@
 contents(object, \dots)
 \method{contents}{data.frame}(object, \dots)
 \method{print}{contents.data.frame}(x,
-    sort=c('none','names','labels','NAs'), prlevels=TRUE, \dots) 
+    sort=c('none','names','labels','NAs'), prlevels=TRUE, number=FALSE, \dots) 
 \method{html}{contents.data.frame}(object,
            sort=c('none','names','labels','NAs'), prlevels=TRUE,
            file=paste('contents',object$dfname,'html',sep='.'),
            levelType=c('list','table'),
-           append=FALSE, \dots)
+           append=FALSE, number=FALSE, \dots)
 \method{contents}{list}(object, dslabels, \dots)
 \method{print}{contents.list}(x,
     sort=c('none','names','labels','NAs','vars'), \dots)
@@ -62,6 +62,10 @@ contents(object, \dots)
   \item{prlevels}{
     set to \code{FALSE} to not print all levels of \code{factor} variables
   }
+  \item{number}{
+	set to \code{TRUE} to have the \code{print} and \code{latex} methods
+	number the variables by their order in the data frame
+	}
   \item{file}{
     file to which to write the html code.  Default is
     \code{"conents.dfname.html"} where \code{dfname} is the name of the data

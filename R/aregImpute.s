@@ -117,6 +117,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
     }
   z <- NULL
   wna <- (1:p)[nna > 0]
+  nu <- apply(xf, 2, function(z)length(unique(z)))
 
   
   ## xf = original data matrix (categorical var -> integer codes)
@@ -179,8 +180,18 @@ aregImpute <- function(formula, data, subset, n.impute=5,
           nami <- nam[i]
           nm <- c(nami, nam[-i])
 
-          X <- xf[,-i,drop=FALSE]
+          xch <- which(vtype=='c')
+          if(length(xch))
+            {
+              nus <- apply(xf[s, xch, drop=FALSE], 2,
+                           function(z)length(unique(z)))
+              xtf <- nus < nu[xch]
+              if(any(xtf))
+                stop(paste('a bootstrap resample had too few unique values of the following variables:',paste(nam[xch[xtf]],collapse=','),sep='\n'))
+            }
           
+          X <- xf[,-i,drop=FALSE]
+
           f <- areg(X[s,], xf[s,i], xtype=vtype[-i], ytype=ytype,
                     nk=min(nk), na.rm=FALSE, tolerance=tolerance)
           dof[names(f$xdf)] <- f$xdf

@@ -817,15 +817,15 @@ print.contents.data.frame <-
 
   switch(sort,
          names={
-           cont <- cont[order(nam),]
+           cont <- cont[order(nam),,drop=FALSE]
          },
          labels={
            if(length(cont$Labels)) 
-             cont <-  cont[order(cont$Labels, nam),]
+             cont <-  cont[order(cont$Labels, nam),,drop=FALSE]
          },
          NAs={
            if(maxnas>0)
-             cont <- cont[order(cont$NAs,nam),]
+             cont <- cont[order(cont$NAs,nam),,drop=FALSE]
          })
 
   if(length(cont$Levels))
@@ -907,13 +907,13 @@ html.contents.data.frame <-
     }
 
   switch(sort,
-         names={cont <- cont[order(nam),]},
+         names={cont <- cont[order(nam),,drop=FALSE]},
          labels={
            if(length(cont$Labels)) 
-             cont <-  cont[order(cont$Labels, nam),]
+             cont <-  cont[order(cont$Labels, nam),,drop=FALSE]
          },
          NAs={
-           if(maxnas>0) cont <- cont[order(cont$NAs,nam),]
+           if(maxnas>0) cont <- cont[order(cont$NAs,nam),,drop=FALSE]
          })
   
   link <- matrix('', nrow=nrow(cont), ncol=1+ncol(cont),

@@ -194,8 +194,8 @@ aregImpute <- function(formula, data, subset, n.impute=5,
 
           f <- areg(X[s,], xf[s,i], xtype=vtype[-i], ytype=ytype,
                     nk=min(nk), na.rm=FALSE, tolerance=tolerance)
-          dof[names(f$xdf)] <- f$xdf
-          dof[nami] <- f$ydf
+          dof[nam[-i]] <- f$xdf
+          dof[nami]    <- f$ydf
       
           if(plotTrans) plot(f)
       

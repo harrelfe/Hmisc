@@ -24,7 +24,7 @@ labelPlotmath <- function(label, units=NULL, plotmath=.R., grid=FALSE)
 {
   if(!length(label)) label <- ''
   
-  if(!length(units)) units <- ''
+  if(!length(units) || (length(units)==1 && is.na(units))) units <- ''
   
   g <-
     if(plotmath && .R.) function(x,y=NULL, xstyle=NULL, ystyle=NULL)

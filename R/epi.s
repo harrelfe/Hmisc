@@ -45,3 +45,70 @@ print.mhgr <- function(x, ...)
     invisible()
   }
 
+
+lrcum <- function(a, b, c, d, conf.int=0.95)
+  {
+    if(any(is.na(a+b+c+d))) stop('NAs not allowed')
+    if(min(a,b,c,d)==0)
+      {
+        warning('A frequency of zero exists.  Adding 0.5 to all frequencies.')
+        a <- a + .5
+        b <- b + .5
+        c <- c + .5
+        d <- d + .5
+      }
+    
+    lrpos <- a/(a+c) / (b/(b+d))
+    lrneg <- c/(a+c) / (d/(b+d))
+
+    zcrit <- qnorm((1+conf.int)/2)
+    
+    varloglrpos <- 1/a - 1/(a+c) + 1/b - 1/(b+d)
+    varloglrneg <- 1/d - 1/(b+d) + 1/c - 1/(a+c)
+    upperlrpos <- exp(log(lrpos) + zcrit*sqrt(varloglrpos))
+    lowerlrpos <- exp(log(lrpos) - zcrit*sqrt(varloglrpos))
+    upperlrneg <- exp(log(lrneg) + zcrit*sqrt(varloglrneg))
+    lowerlrneg <- exp(log(lrneg) - zcrit*sqrt(varloglrneg))
+
+    lrposcum <- cumprod(lrpos)
+    lrnegcum <- cumprod(lrneg)
+
+    varloglrposcum <- cumsum(varloglrpos)
+    varloglrnegcum <- cumsum(varloglrneg)
+
+    upperlrposcum <- exp(log(lrposcum) + zcrit*sqrt(varloglrposcum))
+    lowerlrposcum <- exp(log(lrposcum) - zcrit*sqrt(varloglrposcum))
+    upperlrnegcum <- exp(log(lrnegcum) + zcrit*sqrt(varloglrnegcum))
+    lowerlrnegcum <- exp(log(lrnegcum) - zcrit*sqrt(varloglrnegcum))
+
+    structure(llist(lrpos, upperlrpos, lowerlrpos,
+                    lrneg, upperlrneg, lowerlrneg,
+                    lrposcum, upperlrposcum, lowerlrposcum,
+                    lrnegcum, upperlrnegcum, lowerlrnegcum, conf.int),
+              class='lrcum')
+  }
+
+print.lrcum <- function(x, dec=3, ...)
+  {
+    ci <- x$conf.int
+    l <- paste('Lower', ci)
+    u <- paste('Upper', ci)
+    a <- with(x,
+              cbind(lrpos,    lowerlrpos,    upperlrpos,
+                    lrposcum, lowerlrposcum, upperlrposcum))
+    b <- with(x,
+              cbind(lrneg,    lowerlrneg,    upperlrneg,
+                    lrnegcum, lowerlrnegcum, upperlrnegcum))
+    a <- round(a, dec)
+    b <- round(b, dec)
+    colnames(a) <- c('LR+', l, u, 'Cum. LR+', l, u)
+    colnames(b) <- c('LR-', l, u, 'Cum. LR-', l, u)
+    rownames(a) <- rownames(b) <- rep('', nrow(a))
+    print(a)
+    cat('\n')
+    print(b)
+    invisible()
+  }
+
+                    '
+    

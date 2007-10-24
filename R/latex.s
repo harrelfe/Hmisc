@@ -1028,12 +1028,12 @@ latexTranslate <- function(object, inn=NULL, out=NULL, pb=FALSE,
 {
   text <- object
   
-  inn <- c("|",  "%",  "#", "<=",     "<",  ">=",     ">",  "_", "\\243",
+  inn <- c("|",  "%",  "#", "~", "<=",     "<",  ">=",     ">",  "_", "\\243",
            inn, 
            if(pb)
              c("[","(","]",")"))
 
-  out <- c("$|$","\\%","\\#", "$\\leq$","$<$","$\\geq$","$>$","\\_", "\\pounds",
+  out <- c("$|$","\\%","\\#", "\\~", "$\\leq$","$<$","$\\geq$","$>$","\\_", "\\pounds",
            out, 
            if(pb)
              c("$\\left[","$\\left(","\\right]$","\\right)$"))

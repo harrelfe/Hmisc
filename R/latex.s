@@ -1,6 +1,7 @@
 ##!!WRONG ARG x in !.SV4. def latex generic!
 ##Changed x to object inside latex() for !.SV4. (Thanks David Lovell)
 
+
 ##Thanks to David R. Lovell <David.Lovell@cmis.csiro.au> CSIRO
 ##for scientific=    8Feb2000
 

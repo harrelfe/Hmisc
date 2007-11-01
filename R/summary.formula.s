@@ -2367,8 +2367,9 @@ stratify <- function(..., na.group = FALSE, shortlabel = TRUE)
 }
 
 
-'[.summary.formula.response' <- function(z,i,j,drop=FALSE)
+'[.summary.formula.response' <- function(x,i,j,drop=FALSE, ...)
 {
+  z <- x
   at <- attributes(z)
   at$dim <- at$dimnames <- NULL
 

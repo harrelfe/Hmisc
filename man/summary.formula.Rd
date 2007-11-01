@@ -126,7 +126,8 @@
 \method{latex}{summary.formula.response}(object, title = first.word(deparse(substitute(object))), caption,
       trios, vnames = c('labels', 'names'), prn = TRUE, prUnits = TRUE,
       rowlabel = '', cdec = 2, ncaption = TRUE, \dots)
-x[i,j]
+
+\method{[}{summary.formula.response}(x, i, j, drop=FALSE, \dots)
 
 
 % \method{summary}{formula}(formula, data, subset, na.action, method='reverse',
@@ -178,7 +179,7 @@ x[i,j]
       outer.size = "scriptsize", caption, rowlabel = "",
       insert.bottom = TRUE, dcolumn = FALSE,
       prtest = c('P', 'stat', 'df', 'name'), prmsd = FALSE,
-      msdsize = NULL, long = FALSE, pdig = 3, eps = 0.001,
+      msdsize = NULL, long = dotchart, pdig = 3, eps = 0.001,
       auxCol = NULL, dotchart=FALSE, \dots)
 
 
@@ -372,6 +373,9 @@ cumcategory(y)
     to just be printed to standard output rather than be stored in a
     permanent file.
   }
+  \item{drop}{logical.  If 'TRUE' the result is coerced to the lowest
+              possible dimension.  The default is to drop if only one
+              column is left, but *not* to drop if only one row is left.}
   \item{object}{an object created by \code{summary.formula}}
   \item{quant}{
     vector of quantiles to use for summarizing data with

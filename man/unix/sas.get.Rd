@@ -52,7 +52,7 @@ sas.get(library, member, variables=character(0), ifs=character(0),
 
 is.special.miss(x, code)
 
-x[\dots]
+\method{[}{special.miss}(x,\dots, drop=FALSE)
 
 \method{print}{special.miss}(x, ...)
 
@@ -153,6 +153,10 @@ correspond to special missing values.
 The describe
 function uses this information in printing a data summary.  
 }
+  \item{drop}{
+    set \code{drop=FALSE} to keep unused factor levels as columns of the matrix
+    produced by \code{mChoice}
+  }
 \item{id}{
 The name of the variable to be used as the row names of the S dataset.
 The id variable becomes the \code{row.names} attribute of a data frame, but

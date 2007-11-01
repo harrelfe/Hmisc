@@ -54,7 +54,7 @@ sas.get(library, member, variables=character(0), ifs=character(0),
 
 is.special.miss(x, code)
 
-x[\dots]
+\method{[}{special.miss}(x, \dots)
 
 \method{print}{special.miss}(x, ...)
 

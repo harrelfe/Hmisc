@@ -6,7 +6,7 @@
 Does a 2-sample t-test for clustered data.
 }
 \usage{
-t.test.cluster(y, cluster, group, conf.int = 0.95)
+t.test.cluster(y, cluster, group, conf.int = 0.95, \dots)
 \method{print}{t.test.cluster}(x, digits, \dots)
 }
 \arguments{

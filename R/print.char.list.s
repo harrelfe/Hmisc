@@ -1,8 +1,23 @@
 if(!exists("string.bounding.box")) {
-  string.bounding.box <- function(string) {
+  string.bounding.box <- function(string, type=c("chars", "width")) {
+    thisfun <- function(x, type) {
+      height <- length(x)
+      # get rid of ':' on last string 
+      x[height] <- substr(x[height], start=1, stop=nchar(x[height], type='chars') - 1)
+
+      c(height = height, width = max(nchar(x, type=type)))
+    }
+
     mode(string) <- "character"
 
-    .Call('string_box', string)
+    type <- match.arg(type)
+
+    ## Add remove '\n' if it is ends the string and add a ':' so that string split
+    ## functions the way I want it to.
+    string <- paste(string, ':', sep='')
+
+    ans <- sapply(strsplit(string, '\n', fixed=TRUE), FUN=thisfun, type=type, USE.NAMES=FALSE)
+    return(list(columns = ans[2,], rows = ans[1,]))
   }
 }
 

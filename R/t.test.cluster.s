@@ -1,4 +1,4 @@
-t.test.cluster <- function(y, cluster, group, conf.int=.95)
+t.test.cluster <- function(y, cluster, group, conf.int=.95, ...)
 {
   ## See:
   ## Donner A, Birkett N, Buck C, Am J Epi 114:906-914, 1981.

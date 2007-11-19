@@ -273,6 +273,10 @@ opinion.  Stat in Med 5:1--13.
 Joseph, Lawrence and Belisle, Patrick (1997): Bayesian sample size
 determination for normal means and differences between normal means.
 The Statistician 46:209--226.
+
+Grouin, JM, Coste M, Bunouf P, Lecoutre B (2007): Bayesian sample size
+determination in non-sequential clinical trials: Statistical aspects and
+some regulatory considerations.  Stat in Med 26:4914--4924.
 }
 \examples{
 # Compare 2 proportions using the var stabilizing transformation

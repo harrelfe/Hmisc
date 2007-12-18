@@ -109,6 +109,3 @@ print.lrcum <- function(x, dec=3, ...)
     print(b)
     invisible()
   }
-
-                    '
-    

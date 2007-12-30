@@ -1076,9 +1076,9 @@ setps <- function(filename, w=0, h=3, pointsize=10, sublines=0, toplines=0,
     }
     
     if(.R.)
-      par(lwd=lwd, mgp=c(2.2,.45,0), tcl=-0.4,
-          mar=c(3+sublines+.25*(sublines>0),3.5+leftlines,
-                1+toplines,1)+.1, bty=bty)
+      par(lwd=lwd, mgp=c(2,.475,0), tcl=-0.4,
+          mar=c(3.25+sublines, 3.5+leftlines,
+                .5+toplines,.5), bty=bty)
     else
       par(lwd=lwd, mgp=c(2,.4,0),
           mar=c(3+sublines+.25*(sublines>0),3+leftlines,
@@ -1186,15 +1186,13 @@ setpdf <- function(filename, w=0, h=4, pointsize=10, sublines=0, toplines=0,
 
   if(!trellis) {
     if(.R.)
-      par(lwd=lwd, mgp=c(2.2,.45,0), tcl=-0.4,
-          mar=c(3+sublines+.25*(sublines>0),3.5+leftlines,
-                1+toplines,1)+.1, bty=bty)
+      par(lwd=lwd, mgp=c(2,.475,0), tcl=-0.4,
+          mar=c(3.25+sublines,3.5+leftlines,
+                .5+toplines,.5), bty=bty)
     else
       par(lwd=lwd, mgp=c(2,.4,0),
           mar=c(3+sublines+.25*(sublines>0),3+leftlines,
                 1+toplines, 1)+.1, bty=bty)
-
-    ## was mgp=c(2.5,.6,0) R c(2,.6,0) S+ 27jan03
     par(smo = 0)
   }
   

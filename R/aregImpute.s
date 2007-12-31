@@ -260,7 +260,7 @@ print.aregImpute <- function(x, digits=3, ...)
   cat("\nMultiple Imputation using Bootstrap and PMM\n\n")
   dput(x$call)
   cat("\n")
-  cat('tn:',x$n,'\tp:',x$p,
+  cat('n:',x$n,'\tp:',x$p,
       '\tImputations:',x$n.impute,' \tnk:',x$nk,'\n')
   cat('\nNumber of NAs:\n'); print(x$nna); cat('\n')
   info <- data.frame(type=x$type, d.f.=x$df,

@@ -18,7 +18,7 @@ the now smaller list of predictors.
 \usage{
 redun(formula, data=NULL, subset=NULL, r2 = 0.9,
       type = c("ordinary", "adjusted"), nk = 3, tlinear = TRUE,
-      allcat=FALSE, minfreq=0, pr = FALSE, ...)
+      allcat=FALSE, minfreq=0, iterms=FALSE, pr = FALSE, ...)
 \method{print}{redun}(x, digits=3, long=TRUE, ...)
 }
 \arguments{
@@ -45,6 +45,9 @@ redun(formula, data=NULL, subset=NULL, r2 = 0.9,
 	other variables.  \code{minfreq} also specifies the minimum
 	frequency of a category or its complement 
 	before that category is considered when \code{allcat=TRUE}.}
+  \item{iterms}{set to \code{TRUE} to consider derived terms (dummy
+	variables and nonlinear spline components) as separate variables.
+	This will perform a redundancy analysis on pieces of the variables.}
   \item{pr}{set to \code{TRUE} to monitor progress of the stepwise algorithm}
   \item{\dots}{arguments to pass to \code{dataframeReduce} to remove
 	"difficult" variables from \code{data} if \code{formula} is

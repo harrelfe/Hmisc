@@ -1,6 +1,7 @@
 redun <- function(formula, data=NULL, subset=NULL,
                   r2=.9, type=c('ordinary','adjusted'),
-                  nk=3, tlinear=TRUE, allcat=FALSE, minfreq=0, pr=FALSE, ...)
+                  nk=3, tlinear=TRUE, allcat=FALSE, minfreq=0, iterms=FALSE,
+                  pr=FALSE, ...)
 {
   acall   <- match.call()
   type    <- match.arg(type)
@@ -100,10 +101,9 @@ redun <- function(formula, data=NULL, subset=NULL,
       start <- end + 1
     }
 
-  nc <- ncol(X)
-  if(nc < orig.df) X <- X[, 1:nc, drop=FALSE]
+  if(end < orig.df) X <- X[, 1:end, drop=FALSE]
   ## if couldn't derive the requested number of knots in splines
-  
+
   fcan <- function(ix, iy, X, st, en, vtype, tlinear, type,
                    allcat, r2, minfreq)
     {
@@ -145,6 +145,25 @@ redun <- function(formula, data=NULL, subset=NULL,
           }
       }
       R2
+    }
+
+  if(iterms)
+    {
+      nc <- ncol(X)
+      nm <- NULL
+      for(i in 1:p)
+        {
+          m <- nam[i]
+          np <- en[i] - st[i] + 1
+          if(np > 1) for(j in 1:(np-1))
+            m <- c(m, paste(nam[i], paste(rep("'", j), collapse=''), sep=''))
+          nm <- c(nm, m)
+        }
+      colnames(X) <- nm
+      p <- nc
+      nam <- nm
+      st <- en <- 1:nc
+      vtype <- rep('l', nc)
     }
 
   In <- 1:p; Out <- integer(0)

@@ -21,6 +21,7 @@ none
 \examples{
 \dontrun{
 eip(summary.formula}  # make temporary bug fix in central area
-}}
+}
+}
 \keyword{utilities}
 

@@ -18,7 +18,7 @@ the now smaller list of predictors.
 \usage{
 redun(formula, data=NULL, subset=NULL, r2 = 0.9,
       type = c("ordinary", "adjusted"), nk = 3, tlinear = TRUE,
-      allcat=FALSE, minfreq=0, iterms=FALSE, pr = FALSE, ...)
+      allcat=FALSE, minfreq=0, iterms=FALSE, pc=FALSE, pr = FALSE, ...)
 \method{print}{redun}(x, digits=3, long=TRUE, ...)
 }
 \arguments{
@@ -48,6 +48,10 @@ redun(formula, data=NULL, subset=NULL, r2 = 0.9,
   \item{iterms}{set to \code{TRUE} to consider derived terms (dummy
 	variables and nonlinear spline components) as separate variables.
 	This will perform a redundancy analysis on pieces of the variables.}
+  \item{pc}{if \code{iterms=TRUE} you can set \code{pc} to \code{TRUE}
+	to replace the submatrix of terms corresponding to each variable
+	with the orthogonal principal components before doing the redundancy
+	analysis.  The components are based on the correlation matrix.}
   \item{pr}{set to \code{TRUE} to monitor progress of the stepwise algorithm}
   \item{\dots}{arguments to pass to \code{dataframeReduce} to remove
 	"difficult" variables from \code{data} if \code{formula} is

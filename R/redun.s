@@ -1,6 +1,7 @@
 redun <- function(formula, data=NULL, subset=NULL,
                   r2=.9, type=c('ordinary','adjusted'),
-                  nk=3, tlinear=TRUE, allcat=FALSE, minfreq=0, iterms=FALSE,
+                  nk=3, tlinear=TRUE, allcat=FALSE, minfreq=0,
+                  iterms=FALSE, pc=FALSE,
                   pr=FALSE, ...)
 {
   acall   <- match.call()
@@ -158,6 +159,7 @@ redun <- function(formula, data=NULL, subset=NULL,
           if(np > 1) for(j in 1:(np-1))
             m <- c(m, paste(nam[i], paste(rep("'", j), collapse=''), sep=''))
           nm <- c(nm, m)
+          if(pc) X[,st[i]:en[i]] <- prcomp(X[,st[i]:en[i]], scale=TRUE)$x
         }
       colnames(X) <- nm
       p <- nc

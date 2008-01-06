@@ -31,92 +31,87 @@
 ##		   26 Jun 93 - added evasive action if <3 knots
 
 rcspline.eval <- function(x,knots=NULL,nk=5,inclx=FALSE,knots.only=FALSE,
-                          type="ordinary",norm=2, rpm=NULL)
+                          type="ordinary",norm=2, rpm=NULL, pc=FALSE)
 {
-  if(!length(knots)) {
-    xx <- x[!is.na(x)]
-    n <- length(xx)
-    if(n<6)
-      stop('fewer than 6 non-missing observations with knots omitted')
+  if(!length(knots))
+    {
+      xx <- x[!is.na(x)]
+      n <- length(xx)
+      if(n<6)
+        stop('fewer than 6 non-missing observations with knots omitted')
     
-    if(nk<3)
-      stop('nk must be >= 3')
+      if(nk<3)
+        stop('nk must be >= 3')
     
-    outer <- .1
-    if(nk>3)
-      outer <- .05
+      outer <- if(nk > 3) .05 else .1
+      if(nk>6) outer <- .025
     
-    if(nk>6)
-      outer <- .025
+      knots <- quantile(xx,seq(outer,1.0-outer,length=nk))
+      if(length(unique(knots))<3)
+        {
+          knots <- quantile(xx,seq(outer,1.0-outer,length=2*nk))
+          if((nu <- length(unique(knots)))<3) {
+            cat("Fewer than 3 unique knots.  Frequency table of variable:\n")
+            print(table(xx))
+            stop()
+          }
+          
+          warning(paste("could not obtain",nk,"knots with default algorithm.\n",
+                        "Used alternate algorithm to obtain",
+                        nu,"knots"))
+        }
     
-    knots <- quantile(xx,seq(outer,1.0-outer,length=nk))
-    if(length(unique(knots))<3) {
-      knots <- quantile(xx,seq(outer,1.0-outer,length=2*nk))
-      if((nu <- length(unique(knots)))<3) {
-        cat("Fewer than 3 unique knots.  Frequency table of variable:\n")
-        print(table(xx))
-        stop()
-      }
-      
-      warning(paste("could not obtain",nk,"knots with default algorithm.\n",
-                    "Used alternate algorithm to obtain",
-                    nu,"knots"))
-
+      if(n<100)
+        {
+          xx <- sort(xx)
+          knots[1]<-xx[5]
+          knots[nk]<-xx[n-4]
+        }
     }
-    
-    if(n<100) {
-      xx <- sort(xx)
-      knots[1]<-xx[5]
-      knots[nk]<-xx[n-4]
-    }
-  }
   
   knots <- sort(unique(knots))
   nk <- length(knots)
-  if(nk<3) {
-    cat("fewer than 3 unique knots.  Frequency table of variable:\n")
-    print(table(x))
-    stop()
-  }
+  if(nk<3)
+    {
+      cat("fewer than 3 unique knots.  Frequency table of variable:\n")
+      print(table(x))
+      stop()
+    }
 
-  if(knots.only)
-    return(knots)
+  if(knots.only) return(knots)
 
-  ##x <- as.matrix(x)     10Mar01
-  ##storage.mode(x) <- "single"
-  if(!is.null(rpm))
-    x[is.na(x)] <- rpm
+  if(length(rpm)) x[is.na(x)] <- rpm
   
-  xx <- matrix(1.1,length(x),nk-2)  # 10Mar01
-  knot1 <- knots[1]
-  knotnk <- knots[nk]
+  xx <- matrix(1.1,length(x),nk-2)
+  knot1   <- knots[1]
+  knotnk  <- knots[nk]
   knotnk1 <- knots[nk-1]
-  if(norm==0)
-    kd <- 1
-  else if(norm==1)
-    kd <- knotnk-knotnk1
-  else
-    kd <- (knotnk-knot1)^.66666666666666666666666
+  kd <- if(norm==0) 1
+  else if(norm==1) knotnk-knotnk1
+  else (knotnk-knot1)^(2/3)
 
-  if(type=="integral")
-    power <- 4
-  else power <- 3
+  power <- if(type=="integral")4 else 3
 
-  for(j in 1:(nk-2)) {
-    xx[,j]<-pmax((x-knots[j])/kd,0)^power + 
-      ((knotnk1-knots[j])*pmax((x-knotnk)/kd,0)^power -
-       (knotnk-knots[j])*(pmax((x-knotnk1)/kd,0)^power))/
-         (knotnk-knotnk1)
-  }
+  for(j in 1:(nk-2))
+    {
+      xx[,j]<-pmax((x-knots[j])/kd,0)^power + 
+        ((knotnk1-knots[j])*pmax((x-knotnk)/kd,0)^power -
+         (knotnk-knots[j])*(pmax((x-knotnk1)/kd,0)^power))/
+           (knotnk-knotnk1)
+    }
 
-  if(power==4)
-    xx <- cbind(x, x*x/2, xx*kd/4)
-  else if(inclx)
-    xx <- cbind(x, xx)
+  if(power==4)   xx <- cbind(x, x*x/2, xx*kd/4)
+  else if(inclx) xx <- cbind(x, xx)
   
-  if(!.R.)
-    storage.mode(xx) <- 'single'  # 10Mar01
+  if(!.R.) storage.mode(xx) <- 'single'
   
-  attr(xx,"knots") <- knots
+  if(pc)
+    {
+      p <- prcomp(xx, scale=TRUE, center=TRUE)
+      pcparms <- p[c('center','scale','rotation')]
+      xx <- p$x
+      attr(xx, 'pcparms') <- pcparms
+    }
+  attr(xx, 'knots') <- knots
   xx
 }

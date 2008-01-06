@@ -13,7 +13,7 @@ estimated from the marginal distribution of \code{x}.
 }
 \usage{
 rcspline.eval(x, knots, nk=5, inclx=FALSE, knots.only=FALSE, 
-              type="ordinary", norm=2, rpm=NULL)
+              type="ordinary", norm=2, rpm=NULL, pc=FALSE)
 }
 \arguments{
 \item{x}{
@@ -51,11 +51,20 @@ nonlinear terms be on the \code{x}-scale.
 \item{rpm}{
 If given, any NAs in \code{x} will be replaced with the value \code{rpm} after
 estimating any knot locations.
-}}
+}
+\item{pc}{
+  Set to \code{TRUE} to replace the design matrix with orthogonal
+  (uncorrelated) principal components computed on the scaled, centered
+  design matrix
+  }
+}
 \value{
 If \code{knots.only=TRUE}, returns a vector of knot locations. Otherwise returns
 a matrix with \code{x} (if \code{inclx=TRUE}) followed by \code{nk-2} nonlinear terms.
-The matrix has an attribute \code{knots} which is the vector of knots used.
+The matrix has an attribute \code{knots} which is the vector of knots
+used.  When \code{pc} is \code{TRUE}, an additional attribute is stored:
+\code{pcparms}, which contains the \code{center} and \code{scale}
+vectors and the \code{rotation} matrix.
 }
 \references{
 Devlin TF and Weeks BJ (1986): Spline functions for logistic regression

@@ -137,10 +137,10 @@ var.inner <- function(formula)
   if(length(formula) > 2)
     formula[[2]] <- NULL  # remove response variable
   
-  av <- all.vars(formula)
+  av <- all.vars(formula, max.names=1e6)
   ## Thanks to Thomas Lumley <tlumley@u.washington.edu> 28Jul01 :
   unique(sapply(attr(terms(formula),"term.labels"),
                 function(term,av)
-                  av[match(all.vars(parse(text=term)),av)][1],
+                  av[match(all.vars(parse(text=term), max.names=1e6),av)][1],
                   av=av))
 }

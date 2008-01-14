@@ -565,7 +565,16 @@ University of Newcastle upon Tyne, UK.
 x <- matrix(1:6, nrow=2, dimnames=list(c('a','b'),c('c','d','enLine 2')))
 \dontrun{
 latex(x)   # creates x.tex in working directory
+# The result of the above command is an object of class "latex"
+# which here is automatically printed by the latex print method.
+# The latex print method prepends and appends latex headers and
+# calls the latex program in the PATH.  If the latex program is
+# not in the PATH, you will get error messages from the operating
+# system.
+
 w <- latex(x, file='/tmp/my.tex')
+# Does not call the latex program as the print method was not invoked
+
 d <- dvi(w)  # compile LaTeX document, make .dvi
              # latex assumed to be in path
 d            # or show(d) : run xdvi (assumed in path) to display

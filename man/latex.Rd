@@ -562,7 +562,7 @@ University of Newcastle upon Tyne, UK.
 \code{\link{html}}, \code{\link{format.df}}, \code{\link[tools]{texi2dvi}}
 }
 \examples{
-x <- matrix(1:6, nrow=2, dimnames=list(c('a','b'),c('c','d','enLine 2')))
+x <- matrix(1:6, nrow=2, dimnames=list(c('a','b'),c('c','d','this that')))
 \dontrun{
 latex(x)   # creates x.tex in working directory
 # The result of the above command is an object of class "latex"
@@ -574,6 +574,8 @@ latex(x)   # creates x.tex in working directory
 
 w <- latex(x, file='/tmp/my.tex')
 # Does not call the latex program as the print method was not invoked
+print.default(w)
+# Shows the contents of the w variable without attempting to latex it.
 
 d <- dvi(w)  # compile LaTeX document, make .dvi
              # latex assumed to be in path

@@ -516,6 +516,14 @@ commands which are assumed to be in the system path.
   \code{geometry} and \code{ctable} styles in MikTeX to make optimum use
   of \code{latex()}.
 
+  On Mac OS X, you may have to append the /usr/texbin directory to the
+  system path.  Thanks to Kevin Thorpe
+  (\email{kevin.thorpe@utoronto.ca}) the best way to set up Mac OS X is
+  to install \code{X11} and \code{X11SDK} if not already installed,
+  start \code{X11} within the R GUI, and issue the command
+  \code{Sys.setenv( PATH=paste(Sys.getenv("PATH"),"/usr/texbin",sep=":")
+  )}.
+
   System options can be used to specify external commands to be used.
   Defaults are given by \code{options(xdvicmd='xdvi')} or
   \code{options(xdvicmd='yap')}, \code{options(dvipscmd='dvips')},

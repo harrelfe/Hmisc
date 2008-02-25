@@ -480,7 +480,7 @@ latex.default <-
     new.index <- NULL
     new.col <- dim(cx)[2] + 1
     for (i in my.index)
-      new.index <- c(new.index, my.index, new.col)
+      new.index <- c(new.index, i, new.col)
     
     new.index <- new.index[-length(new.index)]
     cellTexCmds <- cbind(cellTexCmds, "")[, new.index]

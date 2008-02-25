@@ -361,7 +361,8 @@ latex.default <-
            title=first.word(deparse(substitute(object))),
            file=paste(title, ".tex", sep=""),
            append=FALSE, label=title,
-           rowlabel=title, rowlabel.just="l", cgroup=NULL, n.cgroup=NULL,
+           rowlabel=title, rowlabel.just="l",
+           cgroup=NULL, n.cgroup=NULL,
            rgroup=NULL, n.rgroup=NULL,
            cgroupTexCmd="bfseries",
            rgroupTexCmd="bfseries",
@@ -475,11 +476,11 @@ latex.default <-
   ## If there are column groups, add a blank column
   ## of formats between the groups.
   if (length(cgroup) & !is.null(cellTexCmds)) {
-    my.index <- cumsum(n.cgroup)
+    my.index <- split(1:NCOL(cellTexCmds), rep(cumsum(n.cgroup), times=n.cgroup))
     new.index <- NULL
     new.col <- dim(cx)[2] + 1
-    for (i in seq(along=my.index))
-      new.index <- c(new.index, my.index[i], new.col)
+    for (i in my.index)
+      new.index <- c(new.index, my.index, new.col)
     
     new.index <- new.index[-length(new.index)]
     cellTexCmds <- cbind(cellTexCmds, "")[, new.index]
@@ -530,6 +531,7 @@ latex.default <-
     cxx <- cxi[[1]]
     col.justxx <- col.just[col.subs[[1]]]
     collabel.justxx <- collabel.just[col.subs[[1]]]
+    colheadsxx <-  colheads[col.subs[[1]]]
     extracolheadsxx <- extracolheads[col.subs[[1]]]
 
     cgroupxx <- cgroup[1]
@@ -541,8 +543,11 @@ latex.default <-
                            collabel.just[col.subs[[i]]])
       cgroupxx <- c(cgroupxx, "", cgroup[i])
       n.cgroupxx <- c(n.cgroupxx, 1, n.cgroup[i])
-      extracolheadsxx <- c(extracolheadsxx, "",
-                                         extracolheads[col.subs[[i]]])
+      colheadsxx <- c(colheadsxx, "", colheads[col.subs[[i]]])
+      if(!is.null(extracolheads)) {
+        extracolheadsxx <- c(extracolheadsxx, "",
+                             extracolheads[col.subs[[i]]])
+      }
     }
     
     cgroup.colsxx <- cgroup.cols + 0:(nrow(cgroup.cols)-1)

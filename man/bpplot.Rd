@@ -60,11 +60,8 @@ umsfjban@bill.oscs.montana.edu
 Modified by F. Harrell 30Jun97
 }
 \references{
-Esty, W. W. and Banfield, J. D. (1992)
-"The Box-Percentile Plot,"
-Technical Report (May 15, 1992),
-Department of Mathematical Sciences,
-Montana State University.
+Esty WW, Banfield J: The box-percentile plot.  J Statistical
+Software 8 No. 17, 2003.
 }
 \seealso{
 \code{\link{panel.bpplot}}, \code{\link{boxplot}}, \code{\link{Ecdf}},

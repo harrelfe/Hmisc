@@ -518,17 +518,21 @@ commands which are assumed to be in the system path.
 
   On Mac OS X, you may have to append the /usr/texbin directory to the
   system path.  Thanks to Kevin Thorpe
-  (\email{kevin.thorpe@utoronto.ca}) the best way to set up Mac OS X is
+  (\email{kevin.thorpe@utoronto.ca}) one way to set up Mac OS X is
   to install \code{X11} and \code{X11SDK} if not already installed,
   start \code{X11} within the R GUI, and issue the command
   \code{Sys.setenv( PATH=paste(Sys.getenv("PATH"),"/usr/texbin",sep=":")
-  )}.
+  )}.  To avoid any complications of using \code{X11} under MacOS, users
+  can install the \code{TeXShop} package, which will associate
+  \code{.dvi} files with a viewer that displays a \code{pdf} version of
+  the file after a hidden conversion from \code{dvi} to \code{pdf}.
 
   System options can be used to specify external commands to be used.
   Defaults are given by \code{options(xdvicmd='xdvi')} or
   \code{options(xdvicmd='yap')}, \code{options(dvipscmd='dvips')},
   \code{options(latexcmd='latex')}.  For MacOS specify
-  \code{options(xdvicmd='MacdviX')}.
+  \code{options(xdvicmd='MacdviX') or if TeXShop is installed,
+  \code{options(xdvicmd='open')}}.
   
   If running S-Plus and your directory for temporary files is not
   \code{/tmp} (Unix/Linux) or \code{\\windows\\temp} (Windows), add your

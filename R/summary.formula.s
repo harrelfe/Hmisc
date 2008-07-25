@@ -1966,6 +1966,7 @@ latex.summary.formula.reverse <-
                        npct, pctdig, exclude1, long, prtest,
                        latex=TRUE, testUsed=testUsed,
                        npct.size=npct.size,
+                       pdig=pdig, eps=eps,
                        footnoteTest=gt1.test, dotchart=dotchart)
       nn <- c(nn, rep(NA, nrow(cs)-1))
     } else cs <- formatCons(stats[[i]], nam, tr, x$group.freq, prmsd,

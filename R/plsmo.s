@@ -2,14 +2,15 @@ plsmo <- function(x,y,method=c("lowess","supsmu","raw"),
                   xlab,ylab,add=FALSE,lty=1:nlev,col=par('col'),lwd=par('lwd'),
                   iter=if(length(unique(y))>2) 3
                        else 0,
-                  bass=0, trim, fun, group=rep(1,length(x)), prefix, xlim, ylim, 
+                  bass=0, f=2/3, trim, fun, group=rep(1,length(x)),
+                  prefix, xlim, ylim, 
                   label.curves=TRUE, datadensity=FALSE, lines.=TRUE,
                   subset=TRUE, grid=FALSE, ...)
 {
   gfun <- ordGridFun(grid)
   nam <- as.character(sys.call())[2:3]
   method <- match.arg(method)
-  if(!missing(subset)) {  ## 20jul02
+  if(!missing(subset)) {
     x <- x[subset]
     y <- y[subset]
     group <- group[subset]
@@ -34,7 +35,7 @@ plsmo <- function(x,y,method=c("lowess","supsmu","raw"),
   for(g in lev) {
     s <- group==g
     z <- switch(method, 
-                lowess=lowess(x[s],y[s],iter=iter),
+                lowess=lowess(x[s],y[s],iter=iter,f=f),
                 supsmu=supsmu(x[s],y[s], bass=bass),
                 raw=approx(x[s],y[s],xout=sort(unique(x[s]))))
     
@@ -52,7 +53,7 @@ plsmo <- function(x,y,method=c("lowess","supsmu","raw"),
     
     if(!missing(fun)) {
       yy <- fun(z$y)
-      s <- !is.infinite(yy) & !is.na(yy)   ## was is.inf 11Apr02
+      s <- !is.infinite(yy) & !is.na(yy)
       z <- list(x=z$x[s],y=yy[s])
     }
 
@@ -65,8 +66,6 @@ plsmo <- function(x,y,method=c("lowess","supsmu","raw"),
     if(grid)
       stop('add=T not implemented under grid/lattice in R')
     
-    ##if(missing(xlab)) xlab <- if(label(x)!='') label(x) else nam[1] 26sep02
-    ##if(missing(ylab)) ylab <- if(label(y)!='') label(y) else nam[2]
     if(missing(xlab))
       xlab <- label(x, units=TRUE, plot=TRUE, default=nam[1])
     
@@ -86,13 +85,13 @@ plsmo <- function(x,y,method=c("lowess","supsmu","raw"),
   if(missing(lwd) &&
      is.list(label.curves) &&
      length(label.curves$lwd))
-    lwd <- label.curves$lwd  # 20Feb00
+    lwd <- label.curves$lwd
   
   lwd <- rep(lwd, length=nlev)
 
   if(lines.)
     for(i in 1:nlev)
-      gfun$lines(curves[[i]], lty=lty[i], col=col[i], lwd=lwd[i])  # 20Feb00
+      gfun$lines(curves[[i]], lty=lty[i], col=col[i], lwd=lwd[i])
 
   if(datadensity) {
     for(i in 1:nlev) {

@@ -43,7 +43,7 @@ mouse click.
 \usage{
 plsmo(x, y, method=c("lowess","supsmu","raw"), xlab, ylab, 
       add=FALSE, lty=1:nlev, col=par("col"), lwd=par("lwd"),
-      iter=if(length(unique(y))>2) 3 else 0, bass=0, trim, 
+      iter=if(length(unique(y))>2) 3 else 0, bass=0, f=2/3, trim, 
       fun, group, prefix, xlim, ylim, 
       label.curves=TRUE, datadensity=FALSE, lines.=TRUE, subset=TRUE,
       grid=FALSE, \dots)
@@ -93,11 +93,12 @@ Default is current \code{par("lwd")}.
 \code{label.curves} is a list.
 }
 \item{iter}{
-iter parameter if method="lowess", default=0 if \code{y} is binary, and 3 otherwise.
+iter parameter if \code{method="lowess"}, default=0 if \code{y} is binary, and 3 otherwise.
 }
 \item{bass}{
-bass parameter if method="supsmu", default=0.
+bass parameter if \code{method="supsmu"}, default=0.
 }
+\item{f}{passed to the \code{lowess} function, for \code{method="lowess"}}
 \item{trim}{
 only plots smoothed estimates between trim and 1-trim quantiles
 of x.  Default is to use 10th smallest to 10th largest x in the group if the number of observations in the group exceeds 200 (0 otherwise).

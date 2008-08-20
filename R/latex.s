@@ -432,7 +432,7 @@ latex.default <-
     if(ctable)
       paste(sl, 'NN', sep='')
     else
-      paste(sl,sl,sep='')
+      paste(sl,"tabularnewline",sep='')
   
   if(booktabs) {  # 27may02
     toprule    <- paste(sl,"toprule",sep="")
@@ -520,9 +520,7 @@ latex.default <-
     last.col <- cumsum(n.cgroup)
     first.col <- c(1, 1+last.col[-length(last.col)])
     cgroup.cols <- cbind(first.col,last.col)
-    col.subs <- list()	
-    for (i in seq(along=first.col))
-      col.subs[[i]] <- first.col[i]:last.col[i]
+    col.subs <- split(seq(length.out=nc), rep.int(seq_along(n.cgroup), times=n.cgroup))
     
     cxi <- list()
     for (i in seq(along=col.subs))
@@ -558,6 +556,7 @@ latex.default <-
     n.cgroup <- n.cgroupxx
     cgroup.cols <- cgroup.colsxx[cgroup!="",,drop=FALSE]
     cgroup <- cgroupxx
+    colheads <- colheadsxx
     extracolheads <- extracolheadsxx
     nc <- ncol(cx)
   }
@@ -643,8 +642,10 @@ latex.default <-
                        'rotate',
                      paste(']{',tabular.cols, '}',sep=''),
                      if(length(insert.bottom))
-                       paste('{',sl,'tnote[]{',sedit(insert.bottom,'\\\\',' '),
-                             '}}',
+                       paste('{',
+                             paste(sl,'tnote[]{',sedit(insert.bottom,'\\\\',' '),'}',
+                                   sep='', collapse=''),
+                             '}',
                              sep='')
                      else '{}',
                      ## tnote does not allow \\ in its argument
@@ -686,7 +687,7 @@ latex.default <-
                    if(caption.loc=='bottom' && !missing(caption))
                      paste(caption,'\n'),   # 3oct03
                    if(length(insert.bottom))
-                     insert.bottom,
+                     paste(insert.bottom, collapse='\\\\'),
                    if(table.env)
                      paste(sl, "end{table}\n", sep=""),
                    if(landscape)
@@ -703,7 +704,7 @@ latex.default <-
                            paste(sl,"begin{longtable}{", tabular.cols, "}",sep=""),
                            sep="\n"),
                      if(caption.loc=='top' && !missing(caption))
-                       paste(caption, sl,sl,"\n", sep=""),
+                       paste(caption, eol,"\n", sep=""),
                      paste(toprule, "\n", sep="")    #11Jun95
                      )
     
@@ -810,12 +811,12 @@ latex.default <-
           sep="",file=file, append=file!='')
       cat(midrule, "\n", sep="",file=file, append=file!='')
       cat(labs, file=file, sep="&", append=file!='')
-      cat(sl, sl, " ", midrule, "\n", sl, "endhead", midrule, "\n",
+      cat(eol, " ", midrule, "\n", sl, "endhead", midrule, "\n",
           sep="", file=file, append=file!='')
       if(length(insert.bottom)) {
-        cat(sl, 'multicolumn{', nc, '}{l}{', sl, "parbox[t]", sl, 'LTcapwidth{',
-            insert.bottom, '}}', sl, sl, '\n',
-            sep="", file=file, append=file!='')
+        cat(paste(sl, 'multicolumn{', nc, '}{', sl, "p{",sl,'linewidth}{', 
+                  insert.bottom, '}', eol, sep='', collapse='\n'), '\n',
+                  sep="", file=file, append=file!='')
       }
     
       cat(sl,"endfoot\n", sep="",file=file, append=file!='')

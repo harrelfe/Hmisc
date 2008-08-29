@@ -1,5 +1,5 @@
 if (.R.) {
-  stata.get2 <- function(file, lowernames=FALSE,
+  stata.get <- function(file, lowernames=FALSE,
                         convert.dates=TRUE, convert.factors=TRUE,
                         missing.type=FALSE, convert.underscore=TRUE,
                         warn.missing.labels=TRUE, force.single=TRUE,

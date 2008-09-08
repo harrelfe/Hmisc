@@ -1364,9 +1364,9 @@ formatDateTime <- function(x, at, roundDay=FALSE)
          fmt <- at$format
          if(roundDay) {
            if(length(fmt)==2 && is.character(fmt))
-             format.dates(x, fmt[1])
+             format(dates(x), fmt[1])
            else
-             format.dates(x)
+             format(dates(x))
          }
          else x
        } else if(.R.) {

@@ -735,6 +735,12 @@ When calling \code{fit.mult.impute} with \code{glm} as the \code{fitter} argumen
 you need to pass a \code{family} argument to \code{glm} do it by quoting the
 family, e.g., \code{family="binomial"}.
 
+\code{fit.mult.impute} will not work with proportional odds models when
+regression imputation was used (as opposed to predictive mean
+matching).  That's because regression imputation will create values of
+the response variable that did not exist in the dataset, altering the
+intercept terms in the model.
+
 
 You should be able to use a variable in the formula given to
 \code{fit.mult.impute} as a numeric variable in the regression model even

@@ -921,7 +921,7 @@ putKey <- function(z, labels, type=NULL,
           if(!all(is.na(pch)))
             w$points <- list(pch=pch, col=col)
       
-          m$key <- w
+          m$key <- c(w, key.opts)
           m$draw <- plot
           if(plot)
             m$vp <- viewport(x=unit(z[[1]], 'native'),

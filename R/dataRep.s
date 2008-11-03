@@ -8,10 +8,6 @@ dataRep <- function(formula, data, subset, na.action)
   
   y[[1]] <- as.name("model.frame")
   
-  ## See if Des argument exists in current model.frame.default
-  if(length(model.frame.default$Des))
-    y$Des  <- FALSE   #turn off Design
-  
   X <- eval(y, sys.parent())
   nact <- attr(X,"na.action")
   n <- nrow(X)
@@ -149,8 +145,6 @@ predict.dataRep <- function(object, newdata, ...)
   types    <- object$types
   X        <- object$X
 
-  ##Xn <- if(length(model.frame.default$Des))   3Aug02
-  ##        model.frame(object$formula, newdata, na.action=na.keep, Des=FALSE) else
   Xn <- model.frame(object$formula, newdata, na.action=na.keep)
   names(Xn) <- nam
 

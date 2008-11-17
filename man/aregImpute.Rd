@@ -343,7 +343,7 @@ f.harrell@vanderbilt.edu
 }
 \references{
   Little R, An H.  Robust likelihood-based analysis of multivariate data
-  with missing values. Statistica Sinica 14:933-952, 2004.
+  with missing values. Statistica Sinica 14:949-968, 2004.
 
   van Buuren S, Brand JPL, Groothuis-Oudshoorn CGM, Rubin DB.  Fully
   conditional specifications in multivariate imputation.  Draft

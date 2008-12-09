@@ -1,7 +1,7 @@
 \name{rcorrp.cens}
 \alias{rcorrp.cens}
 \title{
-Rank Correlation for Paired Predictors with a Censored Response
+Rank Correlation for Paired Predictors with a Possibly Censored Response
 }
 \description{
   Computes U-statistics to test for whether predictor X1 is more concordant
@@ -42,8 +42,14 @@ rcorrp.cens(x1, x2, S, outx=FALSE, method=1)
   \cr
   \email{f.harrell@vanderbilt.edu}
 }
+\references{
+  Pencina MJ, D'Agostino Sr RB, D'Agostino Jr RB, Vasan RS (2007):
+  Evaluating the added predictive ability of a new marker: From area
+  under the ROC curve to reclassification and beyond.  Stat in Med 26.
+}
 \seealso{
-\code{\link[Hmisc]{rcorr.cens}}, \code{\link[Hmisc]{somers2}}, \code{\link[survival]{Surv}}
+\code{\link[Hmisc]{rcorr.cens}}, \code{\link[Hmisc]{somers2}},
+\code{\link[survival]{Surv}}, \code{\link[Design]{val.prob}}
 }
 \examples{
 set.seed(1)
@@ -60,4 +66,4 @@ rcorrp.cens(x1, x2, Surv(d.time, death))
 }
 \keyword{survival}
 \keyword{nonparametric}
-% Converted by Sd2Rd version 1.21.
+

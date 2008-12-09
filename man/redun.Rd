@@ -92,7 +92,8 @@ Vanderbilt University
 f.harrell@vanderbilt.edu
 }
 \seealso{\code{\link{areg}}, \code{\link{dataframeReduce}},
-  \code{\link{transcan}}, \code{\link{varclus}}}
+  \code{\link{transcan}}, \code{\link{varclus}},
+  \code{\link[subselect]{genetic}}}
 \examples{
 set.seed(1)
 n <- 100

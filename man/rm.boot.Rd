@@ -388,6 +388,10 @@ structure in logitudinal data.  Biometrics 54:401--415.
 Chapman IM, Hartman ML, et al (1997): Effect of aging on the
 sensitivity of growth hormone secretion to insulin-like growth
 factor-I negative feedback.  J Clin Endocrinol Metab 82:2996--3004.
+
+Li Y, Wang YG (2008): Smooth bootstrap methods for analysis of
+longitudinal data.  Stat in Med 27:937-953. (potential improvements to
+cluster bootstrap; not implemented here)
 }
 \seealso{
 \code{\link{rcspline.eval}}, \code{\link{lm}}, \code{\link{lowess}}, \code{\link{supsmu}}, \code{\link[Design]{bootcov}},

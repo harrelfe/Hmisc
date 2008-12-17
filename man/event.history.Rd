@@ -174,7 +174,7 @@ Event history graphs for censored survival data.
 \emph{Statistics in Medicine}, \bold{20}, 2951-2964.
 }
 \author{Joel Dubin\cr
-  joel.dubin@yale.edu}
+  jdubin@uwaterloo.ca}
 
 \note{The authors have found better control of the use of color by 
 producing the graphs via the postscript plotting device

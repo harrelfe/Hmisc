@@ -71,3 +71,111 @@ rcorrp.cens <- function(x1, x2, S, outx=FALSE, method=1)
                 "Relevant Pairs","Uncertain","C X1","C X2","Dxy X1","Dxy X2")
   r
 }
+
+improveProb <- function(x1, x2, y)
+  {
+    s <- is.na(x1+x2+y)
+    if(any(s))
+      {
+        s <- !s
+        x1 <- x1[s]
+        x2 <- x2[s]
+        y  <- y[s]
+      }
+    n <- length(y)
+    y <- as.numeric(y)
+    u <- sort(unique(y))
+    if(length(u) != 2 || u[1] != 0 || u[2] != 1)
+      stop('y must have two values: 0 and 1')
+    r <- range(x1,x2)
+    if(r[1] < 0 || r[2] > 1)
+      stop('x1 and x2 must be in [0,1]')
+
+    a <- y==1
+    b <- y==0
+    na <- sum(a)
+    nb <- sum(b)
+    d  <- x2 - x1
+    
+    pup.ev   <- mean(d[a] > 0)
+    pup.ne   <- mean(d[b] > 0)
+    pdown.ev <- mean(d[a] < 0)
+    pdown.ne <- mean(d[b] < 0)
+    
+    nri <- pup.ev - pdown.ev - (pup.ne - pdown.ne)
+    se.nri <- sqrt((pup.ev + pdown.ev)/na + (pup.ne + pdown.ne)/nb)
+    z.nri  <- nri/se.nri
+    
+    nri.ev <- pup.ev - pdown.ev
+    se.nri.ev <- sqrt((pup.ev + pdown.ev)/na)
+    z.nri.ev <- nri.ev/se.nri.ev
+    
+    nri.ne   <- pdown.ne - pup.ne
+    se.nri.ne <- sqrt((pdown.ne + pup.ne)/nb)
+    z.nri.ne <- nri.ne/se.nri.ne
+
+    improveSens <-  sum(d[a])/na
+    improveSpec <- -sum(d[b])/nb
+    idi <- mean(d[a]) - mean(d[b])
+    var.ev <- var(d[a])/na
+    var.ne <- var(d[b])/nb
+    se.idi <- sqrt(var.ev + var.ne)
+    z.idi <- idi/se.idi
+
+    structure(llist(n, na, nb, pup.ev, pup.ne, pdown.ev, pdown.ne,
+                    nri,    se.nri,    z.nri,
+                    nri.ev, se.nri.ev, z.nri.ev,
+                    nri.ne, se.nri.ne, z.nri.ne,
+                    improveSens, improveSpec,
+                    idi, se.idi, z.idi, labels=FALSE), class='improveProb')
+  }
+
+print.improveProb <- function(x, digits=3, conf.int=.95,  ...)
+  {
+    cat('\nAnalysis of Proportions of Subjects with Improvement in Predicted Probability\n\n')
+    cat('Number of events:', x$na,'\tNumber of non-events:', x$nb, '\n\n')
+
+    p <- matrix(c(x$pup.ev, x$pup.ne, x$pdown.ev, x$pdown.ne),
+                dimnames=list(c(
+                  'Increase for events     (1)',
+                  'Increase for non-events (2)',
+                  'Decrease for events     (3)',
+                  'Decrease for non-events (4)'),
+                  'Proportion'))
+    cat('Proportions of Positive and Negative Changes in Probabilities\n\n')
+    print(p, digits=digits)
+
+    zpci <- function(m, se, conf.int)
+      {
+        z <- qnorm((1+conf.int)/2)
+        cbind(m/se, (1 - pnorm(abs(m/se)))*2, m - z*se, m + z*se)
+      }
+
+    p <- cbind(c(x$nri, x$nri.ev, x$nri.ne),
+               c(x$se.nri, x$se.nri.ev, x$se.nri.ne), 
+               zpci(c(x$nri, x$nri.ev, x$nri.ne),
+                   c(x$se.nri, x$se.nri.ev, x$se.nri.ne),
+                   conf.int=conf.int))
+    low <- paste('Lower', conf.int)
+    hi  <- paste('Upper', conf.int)
+    dimnames(p) <- list(c('NRI            (1-3+4-2)',
+                          'NRI for events     (1-3)',
+                          'NRI for non-events (4-2)'),
+                        c('Index', 'SE', 'Z', '2P', low, hi))
+    cat('\n\nNet Reclassification Improvement\n\n')
+    print(p, digits=digits)
+
+    cat('\n\nAnalysis of Changes in Predicted Probabilities\n\n')
+
+    p <- matrix(c(x$improveSens, x$improveSpec),
+                dimnames=list(c('Increase for events (sensitivity)',
+                  'Decrease for non-events (specificity)'),
+                  'Mean Change in Probability'))
+    print(p, digits=digits)
+
+    cat("\n\nIntegrated Discrimination Improvement\n (average of sensitivity and 1-specificity over [0,1];\n also is difference in Yates' discrimination slope)\n\n")
+    p <- c(x$idi, x$se.idi, zpci(x$idi, x$se.idi, conf.int=conf.int))
+    names(p) <- c('IDI', 'SE', 'Z', '2P', low, hi)
+    print(p, digits=digits)
+    invisible()
+  }

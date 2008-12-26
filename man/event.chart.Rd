@@ -497,7 +497,7 @@ event.convert(data2, event.time = 1, event.code = 2)
 
   if dates in original data frame are in a specialized form
   (eg., mm/dd/yy) of mode CHARACTER, the user must convert those columns to
-  become class dates or julian numeric mode (see \code{\link{dates}} for more information).
+  become class dates or julian numeric mode (see \code{\link{Date}} for more information).
   For example, in a data frame called \code{testdata}, with specialized
   dates in columns 4 thru 10, the following code could be used:
   \code{as.numeric(dates(testdata[,4:10]))}.  This will convert the columns
@@ -561,7 +561,7 @@ event.convert(data2, event.time = 1, event.code = 2)
 }
 
 \seealso{
-  \code{\link{event.history}}, \code{\link{dates}}
+  \code{\link{event.history}}, \code{\link{Date}}
 }
 
 \examples{

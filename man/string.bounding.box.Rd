@@ -7,11 +7,12 @@
   each string in a vector.
 }
 \usage{
-string.bounding.box(string)
+string.bounding.box(string, type = c("chars", "width"))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{string}{vector of strings}
+  \item{type}{character: whether to count characters or screen columns}
 }
 \value{
   \item{rows}{vector containing the number of character rows in each string.}

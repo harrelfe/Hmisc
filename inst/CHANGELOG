@@ -1,3 +1,5 @@
+      Fixed segment width problem in errbar bug #16
+
 3.4-2
       Removed some debug statements that had been missed.
 

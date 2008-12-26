@@ -7,11 +7,7 @@ dataRep <- function(formula, data, subset, na.action)
     y$na.action <- na.delete
   
   y[[1]] <- as.name("model.frame")
-  
-  ## See if Des argument exists in current model.frame.default
-  if(length(model.frame.default$Des))
-    y$Des  <- FALSE   #turn off Design
-  
+    
   X <- eval(y, sys.parent())
   nact <- attr(X,"na.action")
   n <- nrow(X)

@@ -13,72 +13,78 @@
 \alias{as.data.frame.labelled}
 \alias{data.frame.labelled}
 \alias{reLabelled}
+\alias{label.data.frame}
+\alias{label<-.data.frame}
 \title{
-Label Attribute of an Object
+  Label Attribute of an Object
 }
 \description{
-\code{label(x)} retrieves the \code{label} attribute of \code{x}.
-\code{label(x) <- "a label"} stores the label attribute, and also puts
-the class \code{labelled} as the first class of \code{x} (for S-Plus 5
-and later this class is not used and methods for handling this class are
-not defined so the \code{"label"} and \code{"units"} attributes are lost
-upon subsetting).  The reason for having this class is so that the
-subscripting method for \code{labelled}, \code{[.labelled}, can preserve
-the \code{label} attribute in R and S-Plus 2000.  Also, the \code{print}
-method for \code{labelled} objects prefaces the print with the object's
-\code{label} (and \code{units} if there).  If the variable is also given
-a \code{"units"} attribute using the \code{units} function, subsetting
-the variable (using \code{[.labelled}) will also retain the
-\code{"units"} attribute.
+  \code{label(x)} retrieves the \code{label} attribute of \code{x}.
+  \code{label(x) <- "a label"} stores the label attribute, and also puts
+  the class \code{labelled} as the first class of \code{x} (for S-Plus 5
+  and later this class is not used and methods for handling this class are
+  not defined so the \code{"label"} and \code{"units"} attributes are lost
+  upon subsetting).  The reason for having this class is so that the
+  subscripting method for \code{labelled}, \code{[.labelled}, can preserve
+  the \code{label} attribute in R and S-Plus 2000.  Also, the \code{print}
+  method for \code{labelled} objects prefaces the print with the object's
+  \code{label} (and \code{units} if there).  If the variable is also given
+  a \code{"units"} attribute using the \code{units} function, subsetting
+  the variable (using \code{[.labelled}) will also retain the
+  \code{"units"} attribute.
 
-\code{label} can optionally append a \code{"units"} attribute to the
-string, and it can optionally return a string or expression (for \R's
-\code{plotmath} facility) suitable for plotting.  \code{labelPlotmath}
-is a function that also has this function, when the input arguments are
-the \code{'label'} and \code{'units'} rather than a vector having those
-attributes.  When \code{plotmath} mode is used to construct labels, the
-\code{'label'} or \code{'units'} may contain math expressions but they
-are typed verbatim if they contain percent signs, blanks, or underscores.
+  \code{label} can optionally append a \code{"units"} attribute to the
+  string, and it can optionally return a string or expression (for \R's
+  \code{plotmath} facility) suitable for plotting.  \code{labelPlotmath}
+  is a function that also has this function, when the input arguments are
+  the \code{'label'} and \code{'units'} rather than a vector having those
+  attributes.  When \code{plotmath} mode is used to construct labels, the
+  \code{'label'} or \code{'units'} may contain math expressions but they
+  are typed verbatim if they contain percent signs, blanks, or underscores.
 
-\code{Label} (actually \code{Label.data.frame}) is a function which generates
-S-Plus source code that makes the labels in all the variables in a data
-frame easy to edit. 
+  \code{Label} (actually \code{Label.data.frame}) is a function which generates
+  S-Plus source code that makes the labels in all the variables in a data
+  frame easy to edit. 
 
-\code{llist} is like \code{list} except that it preserves the names or
-labels of the component variables in the variables \code{label}
-attribute.  This can be useful when looping over variables or using
-\code{sapply} or \code{lapply}. By using \code{llist} instead of
-\code{list} one can annotate the output with the current variable's name
-or label.  \code{llist} also defines a \code{names} attribute for the
-list and pulls the \code{names} from the arguments' expressions for
-non-named arguments.
+  \code{llist} is like \code{list} except that it preserves the names or
+  labels of the component variables in the variables \code{label}
+  attribute.  This can be useful when looping over variables or using
+  \code{sapply} or \code{lapply}. By using \code{llist} instead of
+  \code{list} one can annotate the output with the current variable's name
+  or label.  \code{llist} also defines a \code{names} attribute for the
+  list and pulls the \code{names} from the arguments' expressions for
+  non-named arguments.
 
-\code{plotmathTranslate} is a simple function that translates certain
-character strings to character strings that can be used as part of \R
-\code{plotmath} expressions.  If the input string has a space or percent
-inside, the string is surrounded by a call to \code{plotmath}'s
-\code{paste} function.
+  \code{plotmathTranslate} is a simple function that translates certain
+  character strings to character strings that can be used as part of \R
+  \code{plotmath} expressions.  If the input string has a space or percent
+  inside, the string is surrounded by a call to \code{plotmath}'s
+  \code{paste} function.
 
-\code{as.data.frame.labelled} is a utility function that is called by
-\code{[.data.frame}.  It is just a copy of \code{as.data.frame.vector}.
-\code{data.frame.labelled} is another utility function, that adds a
-class \code{"labelled"} to every variable in a data frame that has a
-\code{"label"} attribute but not a \code{"labelled"} class.
+  \code{as.data.frame.labelled} is a utility function that is called by
+  \code{[.data.frame}.  It is just a copy of \code{as.data.frame.vector}.
+  \code{data.frame.labelled} is another utility function, that adds a
+  class \code{"labelled"} to every variable in a data frame that has a
+  \code{"label"} attribute but not a \code{"labelled"} class.
 
-\code{reLabelled} is used to add a \code{'labelled'} class back to
-variables in data frame that have a 'label' attribute but no 'labelled'
-oldClass.  Useful for changing \code{cleanup.import()}'d S-Plus 6 data
-frames back to general form for \R and S-Plus 2000.
+  \code{reLabelled} is used to add a \code{'labelled'} class back to
+  variables in data frame that have a 'label' attribute but no 'labelled'
+  oldClass.  Useful for changing \code{cleanup.import()}'d S-Plus 6 data
+  frames back to general form for \R and S-Plus 2000.
 }
 \usage{
-label(x, ...)
+label(x, default=NULL, ...)
 
-\method{label}{default}(x, units=FALSE, plot=FALSE, default=NULL,
-      grid=FALSE, \ldots)
+\method{label}{default}(x, default=NULL, units=FALSE, plot=FALSE,
+      grid=FALSE, \dots)
 
-label(x) <- value
+\method{label}{data.frame}(x, default=NULL, self=FALSE, \dots)
 
-\method{label}{default}(x) <- value
+label(x, ...) <- value
+
+\method{label}{default}(x, ...) <- value
+
+\method{label}{data.frame}(x, self=TRUE, ...) <- value
 
 labelPlotmath(label, units=NULL, plotmath=.R., grid=FALSE)
 
@@ -100,6 +106,7 @@ reLabelled(object)
   \item{x}{
     any object (for \code{plotmathTranslate} is a character string)
   }
+  \item{self}{lgoical, where to interact with the object or its components}
   \item{units}{
     set to \code{TRUE} to append the \code{'units'} attribute (if present)
     to the returned label.  The \code{'units'} are surrounded
@@ -155,13 +162,13 @@ reLabelled(object)
   }
 }
 \value{
-\code{label} returns the label attribute of x, if any; otherwise, "".  
-\code{label} is used
-most often for the individual variables in data frames.  The function
-\code{sas.get} copies labels over from SAS if they exist.
+  \code{label} returns the label attribute of x, if any; otherwise, "".  
+  \code{label} is used
+  most often for the individual variables in data frames.  The function
+  \code{sas.get} copies labels over from SAS if they exist.
 }
 \seealso{
-\code{\link{sas.get}}, \code{\link{describe}}
+  \code{\link{sas.get}}, \code{\link{describe}}
 }
 \examples{
 age <- c(21,65,43)
@@ -169,6 +176,11 @@ y   <- 1:3
 label(age) <- "Age in Years"
 plot(age, y, xlab=label(age))
 
+data <- data.frame(age=age, y=y)
+label(data)
+
+label(data, self=TRUE) <- "A data frame"
+label(data, self=TRUE)
 
 x1 <- 1:10
 x2 <- 10:1

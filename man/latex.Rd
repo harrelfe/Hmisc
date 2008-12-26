@@ -97,7 +97,8 @@ latex(object, title=first.word(deparse(substitute(object))), \dots)
     title=first.word(deparse(substitute(object))),
     file=paste(title, ".tex", sep=""),
     append=FALSE, label=title,
-    rowlabel=title, rowlabel.just="l", cgroup=NULL, n.cgroup=NULL,
+    rowlabel=title, rowlabel.just="l",
+    cgroup=NULL, n.cgroup=NULL,
     rgroup=NULL, n.rgroup=NULL,
     cgroupTexCmd="bfseries",
     rgroupTexCmd="bfseries",
@@ -199,7 +200,7 @@ dvigv(object, \dots)
     postscript file.
   }
   \item{append}{
-    defaults to \code{FALSE}. Set to \code{TRUE} to append output to an existing file.
+   defaults to \code{FALSE}. Set to \code{TRUE} to append output to an existing file.
   }
   \item{label}{
     a text string representing a symbolic label for the table for referencing
@@ -246,9 +247,8 @@ dvigv(object, \dots)
     the current font to 'bold'.  It is possible to supply a vector of
     strings so that each column group label is formatted differently.
     Please note that the first item of the vector is used to format the
-    title (even if a title is not used), and that there is an empty
-    column between each column group. Currently the user needs to handle
-    these issues.  Multiple effects can be achieved by creating custom
+    title (even if a title is not used). Currently the user needs to handle
+    these issue.  Multiple effects can be achieved by creating custom
     LaTeX commands; for example,
     \code{\providecommand{\redscshape}{\color{red}\scshape}} creates a
     LaTeX command called \code{redscshape} that formats the text in red
@@ -272,8 +272,7 @@ dvigv(object, \dots)
     label differently. If column groups are not used, the first item in
     the vector will be used to format the title. Please note that if
     column groups are used the first item of \code{cgroupTexCmd} and not
-    \code{colnamesTexCmd} is used to format the title, and that there
-    are empty columns between each group. The user needs to allow for
+    \code{colnamesTexCmd} is used to format the title. The user needs to allow for
     these issues when supplying a vector of commands.  See also
     \code{cgroupTexCmd} above regarding multiple effects.
   }

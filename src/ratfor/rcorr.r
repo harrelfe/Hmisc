@@ -56,7 +56,7 @@ END
 
 	SUBROUTINE docorr(x, y, n, d, rx, ry, work, iwork)
 	DOUBLE PRECISION x(1), y(1), rx(1), ry(1)
-	INTEGER*4 iwork(1)
+	INTEGER iwork(1)
 	DOUBLE PRECISION sumx,sumx2,sumy,sumy2,sumxy,a,b,z
 	CALL rank(n, x, work, iwork, rx)
 	CALL rank(n, y, work, iwork, ry)

@@ -1,7 +1,7 @@
 \name{units}
 \alias{units}
 \alias{units.default}
-\alias{units<-}
+\alias{units<-.default}
 \title{
 Units Attribute of a Vector  
 }
@@ -14,9 +14,9 @@ retain the \code{"units"} attribute.  For S-Plus 6 which uses version 4
 of the S language, the latter does not work.
 }
 \usage{
-units(x, ...)
+units(x, \dots)
 \method{units}{default}(x, none='', \dots)
-units(x) <- value
+\method{units}{default}(x) <- value
 }
 \arguments{
 \item{x}{any object}

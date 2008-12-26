@@ -37,7 +37,7 @@ x                  # c(A=1,B=2,C=3,D=4,E=5)
 y                  # c(D=6,E=7,F=8,G=9,H=10)
 
 combine(x, y)      # c(A=1,B=2,C=3,D=6,E=7,F=8,G=9,H=10)
-combine(x, y, protect=TRUE)      # c(A=1,B=2,C=3,D=5,E=5,F=8,G=9,H=10)
+combine(x, y, protect=TRUE)      # c(A=1,B=2,C=3,D=4,E=5,F=8,G=9,H=10)
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

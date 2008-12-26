@@ -781,7 +781,7 @@ Dotplot <-
     xvname <- xvname[[2]]  # ignore conditioning var
   xv <- eval(xvname, data)
   if(!length(xlab)) xlab <- label(xv, units=TRUE, plot=TRUE,
-                                  default=as.character(xvname), grid=TRUE)
+                                  default=as.character(xvname)[1], grid=TRUE)
   ##    xlab <- attr(xv, 'label')  26sep02
   ##    if(!length(xlab)) xlab <- as.character(xvname)
   ##  }

@@ -1,28 +1,29 @@
 \name{\%nin\%}
 \alias{\%nin\%}
 \title{
-Find Matching (or Non-Matching) Elements
+  Find Matching (or Non-Matching) Elements
 }
 \description{
-\%nin\% is a binary operator, which returns a logical vector indicating
-if there is a match or not for its left operand. A true vector element
-indicates no match in left operand, false indicates a match.
+  \code{\%nin\%} is a binary operator, which returns a logical vector indicating
+  if there is a match or not for its left operand. A true vector element
+  indicates no match in left operand, false indicates a match.
 }
 \usage{
-a \%nin\% b
+x \%nin\% table
 }
 \arguments{
-\item{a}{
-a vector (numeric, character, factor)
+  \item{x}{
+    a vector (numeric, character, factor)
+  }
+  \item{table}{
+    a vector (numeric, character, factor), matching the mode of \code{x}
+  }
 }
-\item{b}{
-a vector (numeric, character, factor), matching the mode of a
-}}
 \value{
-vector of logical values with length equal to length of \code{a}.
+  vector of logical values with length equal to length of \code{x}.
 }
 \seealso{
-\code{\link{match}} \code{\link{\%in\%}}
+  \code{\link{match}} \code{\link{\%in\%}}
 }
 \examples{
 c('a','b','c') \%nin\% c('a','b')

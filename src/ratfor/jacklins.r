@@ -3,7 +3,7 @@
 # column of w for the data n-vector x
 
 subroutine jacklins(x, w, n, k, res)
-integer n, k, l
+INTEGER n, k, l
 DOUBLE PRECISION x(n), w(n-1,k), res(n,k)
 
 do l=1,k {

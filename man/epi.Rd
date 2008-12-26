@@ -5,9 +5,9 @@
 \alias{print.lrcum}
 \title{Miscellaneous Functions for Epidemiology}
 \description{
-The \code{mhgr} function computes the Cochran-Mantel-Haenszel stratified
-risk ratio and its confidence limits using the Greenland-Robins variance
-estimator.
+  The \code{mhgr} function computes the Cochran-Mantel-Haenszel stratified
+  risk ratio and its confidence limits using the Greenland-Robins variance
+  estimator.
 
 The \code{lrcum} function takes the results of a series of 2x2 tables
 representing the relationship between test positivity and diagnosis and
@@ -35,13 +35,15 @@ lrcum(a, b, c, d, conf.int = 0.95)
   \item{b}{frequency of false positive tests}
   \item{c}{frequency of false negative tests}
   \item{d}{frequency of true negative tests}
-  \item{dec}{number of places to the right of the decimal to print for \code{lrcum}}
+  \item{dec}{number of places to the right of the decimal to print for
+    \code{lrcum}}
+  \item{\dots}{addtitional arguments to be passed to other print functions}
 }
 \details{
-Uses equations 4 and 13 from Greenland and Robins.
+  Uses equations 4 and 13 from Greenland and Robins.
 }
 \value{
-a list of class \code{"mhgr"} or of class \code{"lrcum"}.
+  a list of class \code{"mhgr"} or of class \code{"lrcum"}.
 }
 \references{
   Greenland S, Robins JM (1985): Estimation of a common effect parameter

@@ -23,7 +23,7 @@ rcorrp.cens(x1, x2, S, outx=FALSE, method=1)
 
 improveProb(x1, x2, y)
 
-\method{print}{print.improveProb}(x, digits=3, conf.int=.95, \dots)
+\method{print}{improveProb}(x, digits=3, conf.int=.95, \dots)
 }
 \arguments{
   \item{x1}{

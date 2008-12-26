@@ -41,6 +41,7 @@
 \alias{nafitted.delete}
 \alias{na.include}
 \alias{Names2names}
+\alias{GetModelFrame}
 \alias{naprint.keep}
 \alias{naresid.keep}
 \alias{naprint.delete}
@@ -71,6 +72,9 @@
 \alias{xySortNoDupNoNA}
 \alias{yInch}
 \alias{zoom}
+\alias{latex.responseSummary}
+\alias{print.responseSummary}
+\alias{responseSummary}
 \description{Internal Hmisc functions.}
 \details{These are not to be called by the user or are undocumented.}
 \keyword{internal}

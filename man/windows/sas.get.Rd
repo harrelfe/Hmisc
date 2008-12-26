@@ -8,38 +8,38 @@
 \alias{code.levels}
 \title{Convert a SAS Dataset to an S Data Frame}
 \description{
-Converts a SAS dataset into an S data frame.  
-You may choose to extract only a subset of variables 
-or a subset of observations in the SAS dataset.
-The function will automatically convert PROC FORMAT-coded
-variables to factor objects.  The original SAS codes are stored in an
-attribute called \code{sas.codes} and these may be added back to the
-\code{levels} of a \code{factor} variable using the \code{code.levels}
-function. 
-Information about special missing values may be captured in an attribute
-of each variable having special missing values.  This attribute is
-called \code{special.miss}, and such variables are given class \code{special.miss}.
-There are \code{print}, \code{[]}, \code{format}, and \code{is.special.miss}
-methods for such variables.
-date, time, and date-time variables use respectively
-\code{\link{Dates}}, \code{\link{DateTimeClasses}}, and
-\code{\link[chron]{chron}} variables.
-If using S-Plus 5 or 6 or later, the \code{timeDate} function is used instead.
-If a date variable represents a partial date (.5 added if
-month missing, .25 added if day missing, .75 if both), an attribute
-\code{partial.date} is added to the variable, and the variable also becomes
-a class \code{imputed} variable.
-The \code{describe} function uses information about partial dates and
-special missing values.
-There is an option to automatically \code{PKUNZIP} compressed
-SAS datasets.
+  Converts a \acronym{SAS} dataset into an S data frame.  
+  You may choose to extract only a subset of variables 
+  or a subset of observations in the \acronym{SAS} dataset.
+  The function will automatically convert PROC FORMAT-coded
+  variables to factor objects.  The original \acronym{SAS} codes are stored in an
+  attribute called \code{sas.codes} and these may be added back to the
+  \code{levels} of a \code{factor} variable using the \code{code.levels}
+  function. 
+  Information about special missing values may be captured in an attribute
+  of each variable having special missing values.  This attribute is
+  called \code{special.miss}, and such variables are given class \code{special.miss}.
+  There are \code{print}, \code{[]}, \code{format}, and \code{is.special.miss}
+  methods for such variables.
+  date, time, and date-time variables use respectively
+  \code{\link{Dates}}, \code{\link{DateTimeClasses}}, and
+  \code{\link[chron]{chron}} variables.
+  If using S-Plus 5 or 6 or later, the \code{timeDate} function is used instead.
+  If a date variable represents a partial date (.5 added if
+  month missing, .25 added if day missing, .75 if both), an attribute
+  \code{partial.date} is added to the variable, and the variable also becomes
+  a class \code{imputed} variable.
+  The \code{describe} function uses information about partial dates and
+  special missing values.
+  There is an option to automatically \code{PKUNZIP} compressed
+  \acronym{SAS} datasets.
 
-\code{sas.get} works by composing and running a SAS job that
-creates various ASCII files that are read and analyzed
-by \code{sas.get}.  You can also run the SAS \code{sas_get} macro,
-which writes the ASCII files for downloading, in a separate
-step or on another computer, and then tell \code{sas.get} (through the
-\code{sasout} argument) to access these files instead of running SAS.
+  \code{sas.get} works by composing and running a \acronym{SAS} job that
+  creates various ASCII files that are read and analyzed
+  by \code{sas.get}.  You can also run the \acronym{SAS} \code{sas_get} macro,
+  which writes the ASCII files for downloading, in a separate
+  step or on another computer, and then tell \code{sas.get} (through the
+  \code{sasout} argument) to access these files instead of running \acronym{SAS}.
 }
 \usage{
 sas.get(library, member, variables=character(0), ifs=character(0),
@@ -54,7 +54,7 @@ sas.get(library, member, variables=character(0), ifs=character(0),
 
 is.special.miss(x, code)
 
-x[\dots]
+\method{[}{special.miss}(x, ..., drop=FALSE)
 
 \method{print}{special.miss}(x, ...)
 
@@ -65,288 +65,292 @@ sas.codes(object)
 code.levels(object)
 }
 \arguments{
-\item{library}{
-character string naming the directory in which the dataset is kept.
-The default is \code{library="."}, indicating that the current
-directory is to be used.
-}
-\item{member}{
-character string giving the second part of the two part SAS dataset name.  
-(The first part is irrelevant here - it is mapped to the directory name.)
-}
-\item{x}{
-a variable that may have been created by \code{sas.get} with \code{special.miss=T}
-or with \code{recode} in effect.
-}
-\item{variables}{
-vector of character strings naming the variables in the SAS dataset.  
-The resulting data frame will contain only those variables from the
-SAS dataset.  
-To get all of the variables (the default), an empty string may be given.
-It is a fatal error if any one of the variables is not
-in the SAS dataset.  If you have retrieved a subset of the variables
-in the SAS dataset and which to retrieve the same list of variables
-from another dataset, you can program the value of \code{variables} - see
-one of the last examples.
-}
-\item{ifs}{
-a vector of character strings, each containing one SAS "subsetting if"
-statement.  
-These will be used to extract a subset of the observations in the SAS dataset.
-}
-\item{format.library}{
-The directory containing the file \bold{formats.sc2}, which contains
-the definitions of the user defined formats used in this dataset.
-By default, we look for the formats in the same directory as the data.
-The user defined formats must be available (so SAS can read the data).
-}
-\item{formats}{
-Set \code{formats} to \code{FALSE} to keep \code{sas.get} from telling the SAS macro to 
-retrieve value label formats from \code{format.library}.  When you do not
-specify \code{formats} or \code{recode}, \code{sas.get} will set \code{format} to \code{T} if a
-SAS format catalog (\code{.sct} or \code{.sc2}) file exists in \code{format.library}.
-\code{sas.get} stores SAS PROC FORMAT VALUE definitions
-as the \code{formats} attribute of the returned
-object (see below). A format is used if it is referred to by one or more 
-variables
-in the dataset, if it contains no ranges of values (i.e., it identifies
-value labels for single values), and if it is a character format
-or a numeric format that is not used just to label missing values.
-To fetch the values and labels for variable \code{x} in the dataset \code{d} you
-could type:
-\cr
-    f <- attr(d\$x, "format")
-\cr
-    formats <- attr(d, "formats")
-\cr
-    formats\$f\$values; formats\$f\$labels
-}
-\item{recode}{
-This parameter defaults to \code{T} if \code{formats} is \code{T}.  If it is
-\code{T}, variables that have an appropriate format (see above) are
-recoded as \code{factor} objects, which map the values
-to the value labels for the format.  Alternatively, set \code{recode} to
-1 to use labels of the form value:label, e.g. 1:good 2:better 3:best.
-Set \code{recode} to 2 to use labels such as good(1) better(2) best(3).
-Since \code{sas.codes} and \code{code.levels} add flexibility, the usual choice
-for \code{recode} is \code{T}.
-}
-\item{special.miss}{
-For numeric variables, any missing values are stored as NA in S.
-You can recover special missing values by setting \code{special.miss} to
-\code{T}.  This will cause the \code{special.miss} attribute and the
-\code{special.miss} class to be added
-to each variable that has at least one special missing value.  
-Suppose that variable  \code{y} was .E in observation 3 and .G
-in observation 544.  The \code{special.miss} attribute for \code{y} then has the
-value
-\cr
-    list(codes=c("E","G"),obs=c(3,544))
-\cr
-To fetch this information for variable \code{y} you would say for example
-\cr
-    s <- attr(y, "special.miss")
-\cr
-    s\$codes; s\$obs
-\cr
-or use \code{is.special.miss(x)} or the \code{print.special.miss} method, which
-will replace \code{NA} values for the variable with \code{E} or \code{G} if they
-correspond to special missing values.
-The describe
-function uses this information in printing a data summary.  
-}
-\item{id}{
-The name of the variable to be used as the row names of the S dataset.
-The id variable becomes the \code{row.names} attribute of a data frame, but
-the id variable is still retained as a variable in the data frame.
-You can also specify a vector of variable names as the \code{id}
-parameter.  After fetching the data from SAS, all these variables will be
-converted to character format and concatenated (with a space as a separator)
-to form a (hopefully) unique ID variable.
-}
-\item{dates.}{specifies the format for storing SAS dates in the
-  resulting data frame}
-\item{as.is}{
-SAS character variables are converted to S factor
-objects if \code{as.is=FALSE} or if \code{as.is} is a number between 0 and 1 inclusive and
-the number of unique values of the variable is less than
-the number of observations (\code{n}) times \code{as.is}.  The default if \code{as.is} is .5,
-so character variables are converted to factors only if they have fewer
-than \code{n/2} unique values.  The primary purpose of this is to keep unique
-identification variables as character values in the data frame instead
-of using more space to store both the integer factor codes and the
-factor labels.
-}
-\item{check.unique.id}{
-If \code{id} is specified, the row names are checked for
-uniqueness if \code{check.unique.id=T}.  If any are duplicated, a warning
-is printed.  Note that if a data frame is being created with duplicate
-row names, statements such as \code{my.data.frame["B23",]} will retrieve
-only the first row with a row name of \code{"B23"}.
-}
-\item{force.single}{
-By default, SAS numeric variables having \code{LENGTH}s > 4 are stored as
-S double precision numerics, which allow for the same precision as
-a SAS \code{LENGTH} 8 variable.  Set \code{force.single=T} to store every
-numeric variable in single precision (7 digits of precision).
-This option is useful when the creator of the SAS dataset has
-failed to use a \code{LENGTH} statement.
-R does not have single precision,
-so no attempt is made to convert to single if running R.
-}
-\item{keep.log}{
-logical flag: if \code{FALSE}, delete the SAS log file upon completion.
-}
-\item{log.file}{
-the name of the SAS log file.
-}
-\item{macro}{
-the name of an S object in the current search path that contains the text of
-the SAS macro called by S. The S object is a character vector that
-can be edited using, for example, sas.get.macro <- editor(sas.get.macro).
-}
-\item{data.frame.out}{
-  set to \code{FALSE} to make the result a list instead of a data frame}
-\item{clean.up}{
-logical flag: if \code{TRUE}, remove all temporary files when finished.  You
-may want to keep these while debugging the SAS macro.  Not needed for \R.
-}
-\item{quiet}{logical flag: if \code{FALSE}, print the contents of the
-  SAS log file if there has been an error.
-}
-\item{temp}{
-  the prefix to use for the temporary files.  Two characters
-  will be added to this, the resulting name
-  must fit on your file system.
-}
-\item{sasprog}{
-the name of the system command to invoke SAS
-}
-\item{uncompress}{
-set to \code{FALSE} by default.  Set it
-to \code{T} to automatically invoke the DOS \code{PKUNZIP} command
-if \code{member.zip} exists,
-to uncompress the SAS dataset before
-proceeding.  This assumes you have the file permissions to allow
-uncompressing in place.  If the file is already uncompressed, this
-option is ignored.
-}
-\item{where}{
-by default, a list or data frame which contains all the variables
-is returned.  If you specify \code{where}, each individual variable
-is placed into a separate object (whose name is the name
-of the variable) using the \code{assign} function with the
-\code{where} argument.  For example, you can put each variable
-in its own file in a directory, which in some cases may
-save memory over attaching a data frame.
-}
-\item{code}{
-a special missing value code (A through Z or underscore) to check against.
-If \code{code} is omitted, \code{is.special.miss} will return a \code{T} for each
-observation that has any special missing value.
-}
-\item{object}{a variable in a data frame created by \code{sas.get}}
-\item{\dots}{ignored}
+  \item{library}{
+    character string naming the directory in which the dataset is kept.
+    The default is \code{library = "."}, indicating that the current
+    directory is to be used.
+  }
+  \item{member}{
+    character string giving the second part of the two part \acronym{SAS} dataset name.  
+    (The first part is irrelevant here - it is mapped to the directory name.)
+  }
+  \item{x}{
+    a variable that may have been created by \code{sas.get} with \code{special.miss=TRUE}
+    or with \code{recode} in effect.
+  }
+  \item{variables}{
+    vector of character strings naming the variables in the \acronym{SAS} dataset.  
+    The resulting data frame will contain only those variables from the
+    \acronym{SAS} dataset.  
+    To get all of the variables (the default), an empty string may be given.
+    It is a fatal error if any one of the variables is not
+    in the \acronym{SAS} dataset.  If you have retrieved a subset of the variables
+    in the \acronym{SAS} dataset and which to retrieve the same list of variables
+    from another dataset, you can program the value of \code{variables} - see
+    one of the last examples.
+  }
+  \item{ifs}{
+    a vector of character strings, each containing one \acronym{SAS} \dQuote{\code{subsetting if}}
+    statement.  
+    These will be used to extract a subset of the observations in the \acronym{SAS} dataset.
+  }
+  \item{format.library}{
+    The directory containing the file \bold{formats.sc2}, which contains
+    the definitions of the user defined formats used in this dataset.
+    By default, we look for the formats in the same directory as the data.
+    The user defined formats must be available (so \acronym{SAS} can read the data).
+  }
+  \item{formats}{
+    Set \code{formats} to \code{FALSE} to keep \code{sas.get} from telling the \acronym{SAS} macro to 
+    retrieve value label formats from \code{format.library}.  When you do not
+    specify \code{formats} or \code{recode}, \code{sas.get} will set \code{format} to \code{TRUE} if a
+    \acronym{SAS} format catalog (\code{.sct} or \code{.sc2}) file exists in \code{format.library}.
+    \code{sas.get} stores \acronym{SAS} PROC FORMAT VALUE definitions
+    as the \code{formats} attribute of the returned
+    object (see below). A format is used if it is referred to by one or more 
+    variables
+    in the dataset, if it contains no ranges of values (i.e., it identifies
+    value labels for single values), and if it is a character format
+    or a numeric format that is not used just to label missing values.
+    To fetch the values and labels for variable \code{x} in the dataset \code{d} you
+    could type:
+    \cr
+    \code{f <- attr(d\$x, "format")}
+    \cr
+    \code{formats <- attr(d, "formats")}
+    \cr
+    \code{formats\$f\$values; formats\$f\$labels}
+  }
+  \item{recode}{
+    This parameter defaults to \code{TRUE} if \code{formats} is \code{TRUE}.  If it is
+    \code{TRUE}, variables that have an appropriate format (see above) are
+    recoded as \code{factor} objects, which map the values
+    to the value labels for the format.  Alternatively, set \code{recode} to
+    1 to use labels of the form value:label, e.g. 1:good 2:better 3:best.
+    Set \code{recode} to 2 to use labels such as good(1) better(2) best(3).
+    Since \code{sas.codes} and \code{code.levels} add flexibility, the usual choice
+    for \code{recode} is \code{TRUE}.
+  }
+  \item{drop}{
+    logical. If \code{TRUE} the result is coerced to the
+    lowest possible dimension.
+  }
+  \item{special.miss}{
+    For numeric variables, any missing values are stored as NA in S.
+    You can recover special missing values by setting \code{special.miss} to
+    \code{TRUE}.  This will cause the \code{special.miss} attribute and the
+    \code{special.miss} class to be added
+    to each variable that has at least one special missing value.  
+    Suppose that variable  \code{y} was .E in observation 3 and .G
+    in observation 544.  The \code{special.miss} attribute for \code{y} then has the
+    value
+    \cr
+    \code{list(codes=c("E","G"),obs=c(3,544))}
+    \cr
+    To fetch this information for variable \code{y} you would say for example
+    \cr
+    \code{s <- attr(y, "special.miss")}
+    \cr
+    \code{s\$codes; s\$obs}
+    \cr
+    or use \code{is.special.miss(x)} or the \code{print.special.miss} method, which
+    will replace \code{NA} values for the variable with \code{E} or \code{G} if they
+    correspond to special missing values.
+    The describe
+    function uses this information in printing a data summary.  
+  }
+  \item{id}{
+    The name of the variable to be used as the row names of the S dataset.
+    The id variable becomes the \code{row.names} attribute of a data frame, but
+    the id variable is still retained as a variable in the data frame.
+    You can also specify a vector of variable names as the \code{id}
+    parameter.  After fetching the data from \acronym{SAS}, all these variables will be
+    converted to character format and concatenated (with a space as a separator)
+    to form a (hopefully) unique ID variable.
+  }
+  \item{dates.}{specifies the format for storing \acronym{SAS} dates in the
+    resulting data frame}
+  \item{as.is}{
+    \acronym{SAS} character variables are converted to S factor
+    objects if \code{as.is=FALSE} or if \code{as.is} is a number between 0 and 1 inclusive and
+    the number of unique values of the variable is less than
+    the number of observations (\code{n}) times \code{as.is}.  The default if \code{as.is} is .5,
+    so character variables are converted to factors only if they have fewer
+    than \code{n/2} unique values.  The primary purpose of this is to keep unique
+    identification variables as character values in the data frame instead
+    of using more space to store both the integer factor codes and the
+    factor labels.
+  }
+  \item{check.unique.id}{
+    If \code{id} is specified, the row names are checked for
+    uniqueness if \code{check.unique.id = TRUE}.  If any are duplicated, a warning
+    is printed.  Note that if a data frame is being created with duplicate
+    row names, statements such as \code{my.data.frame["B23",]} will retrieve
+    only the first row with a row name of \code{"B23"}.
+  }
+  \item{force.single}{
+    By default, \acronym{SAS} numeric variables having \code{LENGTH} > 4 are stored as
+    S double precision numerics, which allow for the same precision as
+    a \acronym{SAS} \code{LENGTH} 8 variable.  Set \code{force.single = TRUE} to store every
+    numeric variable in single precision (7 digits of precision).
+    This option is useful when the creator of the \acronym{SAS} dataset has
+    failed to use a \code{LENGTH} statement.
+    R does not have single precision,
+    so no attempt is made to convert to single if running \R.
+  }
+  \item{keep.log}{
+    logical: if \code{FALSE}, delete the \acronym{SAS} log file upon completion.
+  }
+  \item{log.file}{
+    the name of the \acronym{SAS} log file.
+  }
+  \item{macro}{
+    the name of an S object in the current search path that contains the text of
+    the \acronym{SAS} macro called by S. The S object is a character vector that
+    can be edited using, for example, \code{sas.get.macro <- editor(sas.get.macro)}.
+  }
+  \item{data.frame.out}{
+    set to \code{FALSE} to make the result a list instead of a data frame}
+  \item{clean.up}{
+    logical flag: if \code{TRUE}, remove all temporary files when finished.  You
+    may want to keep these while debugging the \acronym{SAS} macro.  Not needed for \R.
+  }
+  \item{quiet}{logical flag: if \code{FALSE}, print the contents of the
+    \acronym{SAS} log file if there has been an error.
+  }
+  \item{temp}{
+    the prefix to use for the temporary files.  Two characters
+    will be added to this, the resulting name
+    must fit on your file system.
+  }
+  \item{sasprog}{
+    the name of the system command to invoke \acronym{SAS}
+  }
+  \item{uncompress}{
+    set to \code{FALSE} by default.  Set it
+    to \code{TRUE} to automatically invoke the DOS \code{PKUNZIP} command
+    if \code{member.zip} exists,
+    to uncompress the \acronym{SAS} dataset before
+    proceeding.  This assumes you have the file permissions to allow
+    uncompressing in place.  If the file is already uncompressed, this
+    option is ignored.
+  }
+  \item{where}{
+    by default, a list or data frame which contains all the variables
+    is returned.  If you specify \code{where}, each individual variable
+    is placed into a separate object (whose name is the name
+    of the variable) using the \code{assign} function with the
+    \code{where} argument.  For example, you can put each variable
+    in its own file in a directory, which in some cases may
+    save memory over attaching a data frame.
+  }
+  \item{code}{
+    a special missing value code (\samp{A} through \samp{Z} or \samp{_}) to check against.
+    If \code{code} is omitted, \code{is.special.miss} will return a \code{TRUE} for each
+    observation that has any special missing value.
+  }
+  \item{object}{a variable in a data frame created by \code{sas.get}}
+  \item{\dots}{ignored}
 }
 \value{
-A data frame resembling the SAS dataset.  If \code{id}
-was specified, that column of the data frame will be used
-as the row names of the data frame.  Each variable in the data frame
-or vector in the list will have the attributes \code{label} and \code{format}
-containing SAS labels and formats.  Underscores in formats are
-converted to periods.  Formats for character variables have \code{\$} placed
-in front of their names.
-If \code{formats} is \code{T} and there are any 
-appropriate format definitions in \code{format.library}, the returned
-object will have attribute \code{formats} containing lists named the
-same as the format names (with periods substituted for underscores and
-character formats prefixed by \$).
-Each of these lists has a vector called \code{values} and one called
-\code{labels} with the PROC FORMAT; VALUE \dots   definitions.
+  A data frame resembling the \acronym{SAS} dataset.  If \code{id}
+  was specified, that column of the data frame will be used
+  as the row names of the data frame.  Each variable in the data frame
+  or vector in the list will have the attributes \code{label} and \code{format}
+  containing \acronym{SAS} labels and formats.  Underscores in formats are
+  converted to periods.  Formats for character variables have \code{\$} placed
+  in front of their names.
+  If \code{formats} is \code{TRUE} and there are any 
+  appropriate format definitions in \code{format.library}, the returned
+  object will have attribute \code{formats} containing lists named the
+  same as the format names (with periods substituted for underscores and
+  character formats prefixed by \code{\$}).
+  Each of these lists has a vector called \code{values} and one called
+  \code{labels} with the PROC FORMAT; VALUE \dots   definitions.
 }
 \section{Side Effects}{
-if a SAS error occurs the SAS log file will be
-printed under the control of the \code{pager} function.
+  if a \acronym{SAS} error occurs the \acronym{SAS} log file will be
+  printed under the control of the \code{pager} function.
 }
 \details{
-If you specify \code{special.miss=T} and there are no special missing
-values in the data SAS dataset, the SAS step will bomb.
+  If you specify \code{special.miss = TRUE} and there are no special missing
+  values in the data \acronym{SAS} dataset, the \acronym{SAS} step will bomb.
 
-For variables having a \code{PROC FORMAT VALUE}
-format with some of the levels undefined, \code{sas.get} will interpret those
-values as \code{NA} if you are using \code{recode}.
+  For variables having a \code{PROC FORMAT VALUE}
+  format with some of the levels undefined, \code{sas.get} will interpret those
+  values as \code{NA} if you are using \code{recode}.
 
 
-If you leave the \code{sasprog} argument at its default value of
-\code{"sas"}, be sure that the SAS executable is in the \code{PATH}
-specified in your \code{autoexec.bat} file.  Also make sure that
-you invoke S so that your current project directory is known
-to be the current working directory.  This is best done by creating
-a shortcut in Windows95, for which the command to execute will be
-something like \code{drive:\\spluswin\\cmd\\splus.exe HOME=.} and the
-program is flagged to start in \code{drive:\\myproject} for example.
-In this way, you will be able to examine the SAS log file easily
-since it will be placed in \code{drive:\\myproject} by default.
+  If you leave the \code{sasprog} argument at its default value of
+  \code{"sas"}, be sure that the \acronym{SAS} executable is in the \code{PATH}
+  specified in your \file{autoexec.bat} file.  Also make sure that
+  you invoke S so that your current project directory is known
+  to be the current working directory.  This is best done by creating
+  a shortcut in Windows95, for which the command to execute will be
+  something like \code{drive:\\spluswin\\cmd\\splus.exe HOME=.} and the
+  program is flagged to start in \code{drive:\\myproject} for example.
+  In this way, you will be able to examine the \acronym{SAS} log file easily
+  since it will be placed in \code{drive:\\myproject} by default.
 
-SAS will create \code{SASWORK} and \code{SASUSER} directories in what it thinks
-are the current working directories.  To specify where SAS should
-put these instead, edit the \code{config.sas} file or specify a
-\code{sasprog} argument of the following form:
-\code{sasprog="\\sas\\sas.exe -saswork c:\\saswork -sasuser c:\\sasuser"}.
+  \acronym{SAS} will create \code{SASWORK} and \code{SASUSER} directories in what it thinks
+  are the current working directories.  To specify where \acronym{SAS} should
+  put these instead, edit the \file{config.sas} file or specify a
+  \code{sasprog} argument of the following form:
+  \code{sasprog="\\sas\\sas.exe -saswork c:\\saswork -sasuser c:\\sasuser"}.
 
-When \code{sas.get} needs to run SAS it is run in iconized form.
+  When \code{sas.get} needs to run \acronym{SAS} it is run in iconized form.
 
-The SAS macro \code{sas_get} uses record lengths of up to 4096 in two
-places.  If you are exporting records that are very long (because of
-a large number of variables and/or long character variables), you
-may want to edit these \code{LRECL}s to quadruple them, for example.
+  The \acronym{SAS} macro \code{sas_get} uses record lengths of up to 4096 in two
+  places.  If you are exporting records that are very long (because of
+  a large number of variables and/or long character variables), you
+  may want to edit these \code{LRECL}s to quadruple them, for example.
 }
 \note{
-If \code{sasout} is not given, you
-must be able to run SAS on your system.  
+  If \code{sasout} is not given, you
+  must be able to run \acronym{SAS} on your system.  
 
 
-If you are reading time or
-date-time variables, you will need to execute the command \code{library(chron)}
-to print those variables or the data frame if the \code{timeDate} function
-is not available.
+  If you are reading time or
+  date-time variables, you will need to execute the command \code{library(chron)}
+  to print those variables or the data frame if the \code{timeDate} function
+  is not available.
 }
 \section{BACKGROUND}{
-The references cited below explain the structure of SAS datasets and how
-they are stored.
-See \emph{SAS Language} 
-for a discussion of the "subsetting if" statement.
+  The references cited below explain the structure of \acronym{SAS} datasets and how
+  they are stored.
+  See \emph{\acronym{SAS} Language} 
+  for a discussion of the \dQuote{subsetting if} statement.
 }
 \author{
-Terry Therneau, Mayo Clinic
-\cr
-Frank Harrell, Vanderbilt University
-\cr
-Bill Dunlap, University of Washington and Insightful Corp.
-\cr
-Michael W. Kattan, Cleveland Clinic Foundation
+  Terry Therneau, Mayo Clinic
+  \cr
+  Frank Harrell, Vanderbilt University
+  \cr
+  Bill Dunlap, University of Washington and Insightful Corp.
+  \cr
+  Michael W. Kattan, Cleveland Clinic Foundation
 }
 \references{
-SAS Institute Inc. (1990).
-\emph{SAS Language: Reference, Version 6.}
-First Edition.
-SAS Institute Inc., Cary, North Carolina.
+  \acronym{SAS} Institute Inc. (1990).
+  \emph{\acronym{SAS} Language: Reference, Version 6.}
+  First Edition.
+  \acronym{SAS} Institute Inc., Cary, North Carolina.
 
 
-SAS Institute Inc. (1988).
-SAS Technical Report P-176,
-\emph{Using the SAS System, Release 6.03, under UNIX Operating Systems and Derivatives.  }
-SAS Institute Inc., Cary, North Carolina.
+  \acronym{SAS} Institute Inc. (1988).
+  \acronym{SAS} Technical Report P-176,
+  \emph{Using the \acronym{SAS} System, Release 6.03, under UNIX Operating Systems and Derivatives.  }
+  \acronym{SAS} Institute Inc., Cary, North Carolina.
 
 
-SAS Institute Inc. (1985).
-\emph{SAS Introductory Guide.}
-Third Edition.
-SAS Institute Inc., Cary, North Carolina.
+  \acronym{SAS} Institute Inc. (1985).
+  \emph{\acronym{SAS} Introductory Guide.}
+  Third Edition.
+  \acronym{SAS} Institute Inc., Cary, North Carolina.
 }
 \seealso{
-\code{\link{data.frame}}, \code{\link[Hmisc]{describe}},
-\code{\link[Hmisc]{label}}, \code{\link[Hmisc]{upData}}
+  \code{\link{data.frame}}, \code{\link[Hmisc]{describe}},
+  \code{\link[Hmisc]{label}}, \code{\link[Hmisc]{upData}}
 }
 \examples{
 \dontrun{

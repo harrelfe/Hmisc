@@ -1,11 +1,12 @@
 ## $Id$
 
-responseSummary <- function(formula, data=parent.frame(), na.action=na.pass,
-                            FUN=mean, fun,
+responseSummary <- function(formula, data, na.action=na.pass,
+                            FUN=function(y) sapply(y, mean), fun,
                             overall=TRUE, continuous=10, na.rm=TRUE,
                             na.include=TRUE, g, quantile.groups=4,
                             groups=quantile.groups, nmin=0, ...) {
-
+  func.call <- match.call()
+  
   ## Print warnings for obsolete function arguments
   if(!missing(g)) {
     warning("argument g is depricated; use quantile.groups instead",
@@ -18,16 +19,13 @@ responseSummary <- function(formula, data=parent.frame(), na.action=na.pass,
     FUN <- fun
   }
   
-  Terms <- terms(formula,'stratify',data=data)
-
   ## create model.frame call to create data.frame needed to use formula.
-  m <- eval(call("model.frame", formula=Terms, data=data,
-                 na.action=na.action),
-            sys.parent())
+  m <- GetModelFrame(formula=formula,specials="stratify", default.na.action=na.action)
+  Terms <- attr(m, "terms")
 
   ## Extract response and remove from model
   Y <- model.extract(m, "response")
-
+  
   if(is.null(Y))
     stop("must have a variable on the left hand side of the formula")
 
@@ -65,23 +63,25 @@ responseSummary <- function(formula, data=parent.frame(), na.action=na.pass,
   nstratified <- length(levels(stratified))
 
   ## Create X from m using newTerms.
-  X <- eval(call("model.frame", formula=newTerms, data=data,
-                 na.action=na.action), sys.parent())
+  X <- GetModelFrame(formula=newTerms, default.na.action=na.action)
 
   ## Throw warning if name overall exists in X
-  if(any(names(X) == "Overall") && overall)
+  if("Overall" %in% names(X) && overall)
     stop("Data Frame contains a column named 'Overall'; Name confilcts with 'overall=TRUE' argument in function")
 
   funlab <- NULL
   ## Check to see if fun = "%"
-  if(!is.function(FUN) && FUN == '%') {
-    FUN <- function(y) {
-      stats <- 100 * apply(y, 2, mean)
-      names(stats) <- paste(dimnames(y)[[2]], "%")
-      stats
-    }
+  if(!is.function(FUN)) {
+    if (FUN == '%') {
+      FUN <- function(y) {
+        stats <- 100 * apply(y, 2, mean)
+        names(stats) <- paste(dimnames(y)[[2]], "%")
+        stats
+      }
 
-    funlab <- paste("% of", yname)
+      funlab <- paste("% of", yname)
+    } else 
+      FUN <- match.fun(FUN)
   }
 
   ## Compute number of descriptive statistics per cell
@@ -172,9 +172,6 @@ responseSummary <- function(formula, data=parent.frame(), na.action=na.pass,
         nn <- table(x)
         levels(x) <- ifelse(nn >= nmin, names(nn), NA)
       }
-
-      valueTags(x) <- tags
-      return(x)
     }
     else {
       cnames <- colnames(x)
@@ -202,41 +199,36 @@ responseSummary <- function(formula, data=parent.frame(), na.action=na.pass,
 
       ## Convert the true falses to column name or NA
       x <- ifelse(x, rep(cnames, each=n), NA)
-
-      valueTags(x) <- tags
-      return(x)
     }
+
+    valueTags(x) <- tags
+    return(x)
   }
 
   ## Subset X
   X <- lapply(X, FUN=subsetX, ...)
   
-  if(is.matrix(Y)) {
-    Y <- split(Y, row(Y))
-    
-    procY <- function(y) do.call(rbind, y)
-  } else {
-    procY <- function(y) y
-  }
+##  if(is.matrix(Y)) {
+##    Y <- split(Y, row(Y))
+##    
+##     procY <- function(y) do.call(rbind, y)
+##   } else {
+##     procY <- function(y) y
+##   }
   
 
-  comp.stats <- function(row) {
-    ans <- c(length(row), FUN(procY(row)))
+  comp.stats <- function(grouped.y) {
+    ans <- c(length(grouped.y), FUN(grouped.y))
     names(ans) <- c('N', name.stats)
     ans
   }
 
   ## create stats for each element of X
   processX <- function(x) {
-    if(is.matrix(x))
-      xstats <- do.call(rbind, apply(x, 2, FUN=function(index) {
-        tapply(Y, list(index, stratified), FUN=comp.stats)
-      }))
-    else {
+    if(is.mChoice(x)) {
+    } else {
       xstats <- tapply(Y, list(x, stratified), FUN=comp.stats)
     }
-    
-#    colnames(xstats) <- colNames
     
     valueTags(xstats) <- valueTags(x)
     xstats
@@ -260,7 +252,6 @@ responseSummary <- function(formula, data=parent.frame(), na.action=na.pass,
   oldClass(Xstats)<- 'responseSummary'
   return(Xstats)
 }
-
 
 print.responseSummary <- function(x,
                                   valueNames = c('labels','names'),

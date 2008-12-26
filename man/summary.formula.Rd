@@ -114,6 +114,9 @@
 % \method{summary}{formula}(formula, data, subset, na.action, fun, method='response',
 %               overall=TRUE, continuous=10, na.rm=FALSE, na.include=TRUE,
 % g=4, nmin=0, \dots)
+
+\method{[}{summary.formula.response}(x,i,j,drop=FALSE)
+
 \method{print}{summary.formula.response}(x, vnames=c('labels','names'), prUnits=TRUE,
       abbreviate.dimnames=FALSE,
       prefix.width, min.colwidth, formatArgs=NULL, \dots)
@@ -126,7 +129,6 @@
 \method{latex}{summary.formula.response}(object, title = first.word(deparse(substitute(object))), caption,
       trios, vnames = c('labels', 'names'), prn = TRUE, prUnits = TRUE,
       rowlabel = '', cdec = 2, ncaption = TRUE, \dots)
-x[i,j]
 
 
 % \method{summary}{formula}(formula, data, subset, na.action, method='reverse',
@@ -178,7 +180,7 @@ x[i,j]
       outer.size = "scriptsize", caption, rowlabel = "",
       insert.bottom = TRUE, dcolumn = FALSE, formatArgs=NULL, round=NULL,
       prtest = c('P', 'stat', 'df', 'name'), prmsd = FALSE,
-      msdsize = NULL, long = FALSE, pdig = 3, eps = 0.001,
+      msdsize = NULL, long = dotchart, pdig = 3, eps = 0.001,
       auxCol = NULL, dotchart=FALSE, \dots)
 
 
@@ -220,6 +222,10 @@ cumcategory(y)
   \item{y}{
     a numeric, character, category, or factor vector for \code{cumcategory}.
     Is converted to a categorical variable is needed.
+  }
+  \item{drop}{
+    logical. If \code{TRUE} the result is coerced to the
+    lowest possible dimension.
   }
   \item{data}{
     name or number of a data frame.  Default is the current frame.

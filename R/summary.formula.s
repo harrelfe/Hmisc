@@ -1,5 +1,6 @@
 ## $Id$
 ##note: ars may always be T
+
 summary.formula <-
   function(formula, data, subset, na.action, 
            fun=NULL,
@@ -55,20 +56,20 @@ summary.formula <-
   method <- match.arg(method)
     
   X <- match.call(expand=FALSE)
-  X$fun <- X$method <- X$na.rm <- X$na.include <- X$g <- 
+  X$fun <- X$method <- X$na.rm <- X$na.include <- X$g <-
     X$overall <- X$continuous <- X$quant <- X$nmin <- X$test <-
       X$conTest <- X$catTest <- X$... <- NULL
   if(missing(na.action))
     X$na.action <- na.retain
 
   Terms <- if(missing(data)) terms(formula,'stratify')
-           else terms(formula,'stratify',data=data)
+  else terms(formula,'stratify',data=data)
 
   X$formula <- Terms
   X[[1]] <- as.name("model.frame")
-    
+
   X <- eval(X, sys.parent())
-  
+
   Terms <- attr(X,"terms")
   resp <- attr(Terms,"response")
     
@@ -2027,47 +2028,31 @@ latex.summary.formula.reverse <-
   if(!insert.bottom)
     legend <- NULL
   else {
-    legend <- paste(if(any(type==2)) {
-                      paste("\\noindent {\\",outer.size," $a$\\ }{",bld,"$b$\\ }{\\",
-                            outer.size," $c$\\ } represent the lower quartile $a$, the median $b$, and the upper quartile $c$\\ for continuous variables.",
-                            if(prmsd) '~~$x\\pm s$ represents $\\bar{X}\\pm 1$ SD.'
-                            else '',
-                            '\\\\', sep="")
-                    } else NULL,
-                    if(prn) '$N$\\ is the number of non--missing values.\\\\',
-                    if(any(type==1) && npct=='numerator')
-                      'Numbers after percents are frequencies.\\\\',
-                    sep="\n")
-    legend <- NULL
+    legend <- character()
     if(any(type==2)) {
       legend <- paste("\\noindent {\\", outer.size, " $a$\\ }{", bld,
                       "$b$\\ }{\\", outer.size,
                       " $c$\\ } represent the lower quartile $a$, the median $b$, and the upper quartile $c$\\ for continuous variables.",
                       if(prmsd) '~~$x\\pm s$ represents $\\bar{X}\\pm 1$ SD.'
                       else '',
-                      '\\\\\n', sep="")
+                      sep="")
     }
     
     if(prn) {
-      legend <- paste(legend,
-                      '$N$\\ is the number of non--missing values.\\\\\n',
-                      sep='')
+      legend <- c(legend, '$N$\\ is the number of non--missing values.')
     }
 
     if(any(type==1) && npct=='numerator') {
-      legend <- paste(legend,
-                      'Numbers after percents are frequencies.\\\\\n',
-                      sep='')
+      legend <- c(legend, 'Numbers after percents are frequencies.')
     }
       
     if(length(testUsed))
-      legend <-paste(legend,
-                     if(length(testUsed)==1)'\\noindent Test used:'
-                     else '\\indent Tests used:',
-                     if(length(testUsed)==1) paste(testUsed,'test')
-                     else
-                       paste(paste('$^{',1:length(testUsed),'}$',testUsed,
-                                   ' test',sep=''),collapse='; '))
+      legend <-c(legend,
+                 if(length(testUsed)==1)'\\noindent Test used:'
+                 else '\\indent Tests used:',
+                 if(length(testUsed)==1) paste(testUsed,'test')
+                 else paste(paste('\textsuperscript{\normalfont ',1:length(testUsed),'}',testUsed,
+                                  ' test',sep=''),collapse='; '))
 
     ## added rowname=lab 12aug02  added '\n\n' 4mar03 for ctable=T
   }
@@ -2374,19 +2359,19 @@ stratify <- function(..., na.group = FALSE, shortlabel = TRUE)
 }
 
 
-'[.summary.formula.response' <- function(z,i,j,drop=FALSE)
+'[.summary.formula.response' <- function(x,i,j,drop=FALSE)
 {
-  at <- attributes(z)
+  at <- attributes(x)
   at$dim <- at$dimnames <- NULL
 
   if(!missing(j)) {
-    z <- oldUnclass(z)[,j,drop=FALSE]
+    x <- oldUnclass(x)[,j,drop=FALSE]
     at$ycolname <- at$ycolname[j]
-    attributes(z) <- c(attributes(z), at)
+    attributes(x) <- c(attributes(x), at)
   }
 
   if(missing(i))
-    return(z)
+    return(x)
 
   if(is.character(i)) {
     vn <- at$vname[at$vname!='']
@@ -2414,9 +2399,9 @@ stratify <- function(..., na.group = FALSE, shortlabel = TRUE)
   at$nlevels <- at$nlevels[i]
   at$labels  <- at$labels[i]
 
-  z <- oldUnclass(z)[j,,drop=FALSE]
-  attributes(z) <- c(attributes(z), at)
-  z
+  x <- oldUnclass(x)[j,,drop=FALSE]
+  attributes(x) <- c(attributes(x), at)
+  x
 }
 
 

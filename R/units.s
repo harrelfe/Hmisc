@@ -1,6 +1,7 @@
-if(.R.) units <- function(x,...)  UseMethod("units")
+units <- function(x, ...)
+  UseMethod("units")
 
-"units<-"  <- function(x, value)
+"units<-.default"  <- function(x, value)
 {
   attr(x, "units") <- value
   x

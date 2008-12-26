@@ -3,11 +3,16 @@
 \alias{format.mChoice}
 \alias{print.mChoice}
 \alias{summary.mChoice}
+\alias{as.character.mChoice}
 \alias{as.double.mChoice}
 \alias{inmChoice}
+\alias{match.mChoice}
 \alias{[.mChoice}
 \alias{print.summary.mChoice}
 \alias{is.mChoice}
+\alias{Math.mChoice}
+\alias{Ops.mChoice}
+\alias{Summary.mChoice}
 \title{Methods for Storing and Analyzing Multiple Choice Variables}
 \description{
   \code{mChoice} is a function that is useful for grouping 
@@ -40,16 +45,19 @@
   frequency distribution of the number of choices per observation.  This
   \code{summary} output is used in the \code{describe} function.
 
-  \code{inmChoice} creates a logical vector the same length as \code{x}
+  \code{in.mChoice} creates a logical vector the same length as \code{x}
   whose elements are \code{TRUE} when the observation in \code{x}
   contains at least one of the codes or value labels in the second
   argument.
+
+  \code{match.mChoice} creats an integer vector of the indecies of all
+  elements in \code{table} which contain any of the speicified levels
 
   \code{is.mChoice} returns \code{TRUE} is the argument is a multiple
   choice variable.
 }
 \usage{
-mChoice(\dots, label='', sort.=TRUE,
+mChoice(\dots, label='',
         sort.levels=c('original','alphabetic'), 
         add.none=FALSE, drop=TRUE)
 
@@ -57,7 +65,10 @@ mChoice(\dots, label='', sort.=TRUE,
 
 \method{as.double}{mChoice}(x, drop=FALSE, ...)
 
-\method{print}{mChoice}(x, long=FALSE, ...)
+\method{print}{mChoice}(x, quote=FALSE, max.levels=NULL,
+       width=getOption("width"), ...)
+
+\method{as.character}{mChoice}(x, ...)
 
 \method{summary}{mChoice}(object, ncombos=5, minlength=NULL, drop=TRUE, ...)
 
@@ -65,15 +76,36 @@ mChoice(\dots, label='', sort.=TRUE,
 
 \method{[}{mChoice}(x, ..., drop=FALSE)
 
+match.mChoice(x, table, nomatch=NA, incomparables=FALSE)
+
 inmChoice(x, values)
 
 is.mChoice(x)
+
+\method{Summary}{mChoice}(..., na.rm)
 }
 \arguments{
-  \item{...}{a series of vectors}
-  \item{sort.}{By default, choice codes are sorted in ascending numeric
-	order.  Set \code{sort=FALSE} to preserve the original left to right
-	ordering from the input variables.}
+  \item{na.rm}{
+    Logical: remove \code{NA}'s from data
+  }
+  \item{table}{
+    a vector (mChoice) of values to be matched against.
+  }
+  \item{nomatch}{
+    value to return if a value for \code{x} does not exist in
+    \code{table}.
+  }
+  \item{incomparables}{
+    logical whether incomparable values should be compaired.
+  }
+  \item{...}{
+    a series of vectors
+  }
+  \item{sort.}{
+    By default, choice codes are sorted in ascending numeric
+    order.  Set \code{sort=FALSE} to preserve the original left to right
+    ordering from the input variables.
+  }
   \item{label}{
     a character string \code{label} attribute to attach to the matrix created
     by \code{mChoice}
@@ -85,33 +117,50 @@ is.mChoice(x)
     any input variables that were factors)
   }
   \item{add.none}{
-	  Set \code{add.none} to \code{TRUE} to make a new category
-	  \code{'none'} if it doesn't already exist and if there is an
-	  observations with no choices selected.
+    Set \code{add.none} to \code{TRUE} to make a new category
+    \code{'none'} if it doesn't already exist and if there is an
+    observations with no choices selected.
   }
   \item{drop}{
     set \code{drop=FALSE} to keep unused factor levels as columns of the matrix
     produced by \code{mChoice}
   }
-  \item{x}{an object of class \code{"mchoice"} such as that created by
-	\code{mChoice}.  For \code{is.mChoice} is any object.}
-\item{object}{an object of class \code{"mchoice"} such as that created by
-	\code{mChoice}}
-\item{ncombos}{maximum number of combos.}
-  \item{minlength}{By default no abbreviation of levels is done in
-	\code{format} and \code{summary}.  Specify a positive integer to use
-	abbreviation in those functions.  See \code{\link{abbreviate}}.}
-  \item{sep}{character to use to separate levels when formatting}
-  \item{long}{
-    Set to \code{TRUE} to print the formatted levels.  Otherwise integer
-	codes are printed.
+  \item{x}{
+    an object of class \code{"mchoice"} such as that created by
+    \code{mChoice}.  For \code{is.mChoice} is any object.
   }
-  \item{prlabel}{set to \code{FALSE} to keep
-	\code{print.summary.mChoice} from printing the variable label and
-	number of unique values}
-  \item{values}{a scalar or vector.  If \code{values} is integer, it is
-	the choice codes, and if it is a character vector, it is assumed to
-	be value labels.}
+  \item{object}{
+    an object of class \code{"mchoice"} such as that created by
+    \code{mChoice}
+  }
+  \item{ncombos}{
+    maximum number of combos.
+  }
+  \item{width}{
+    With of a line of text to be formated
+  }
+  \item{quote}{
+    quote the output
+  }
+  \item{max.levels}{max levels to be displayed}
+  \item{minlength}{
+    By default no abbreviation of levels is done in
+    \code{format} and \code{summary}.  Specify a positive integer to use
+    abbreviation in those functions.  See \code{\link{abbreviate}}.
+  }
+  \item{sep}{
+    character to use to separate levels when formatting
+  }
+  \item{prlabel}{
+    set to \code{FALSE} to keep
+    \code{print.summary.mChoice} from printing the variable label and
+    number of unique values
+  }
+  \item{values}{
+    a scalar or vector.  If \code{values} is integer, it is
+    the choice codes, and if it is a character vector, it is assumed to
+    be value labels.
+  }
 }
 \value{
   \code{mChoice} returns a character vector of class \code{"mChoice"}

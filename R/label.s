@@ -3,11 +3,19 @@
 ##  x
 ##}
 
-label <- function(x, ...) UseMethod("label")
+## Define 'labelled' as an Splus oldClass name
+if(.SV4.) {
+  setOldClass('labelled')
+}
 
-label.default <- function(x, units=FALSE, plot=FALSE, default=NULL,
+label <- function(x, default=NULL, ...) UseMethod("label")
+
+label.default <- function(x, default=NULL, units=FALSE, plot=FALSE,
                           grid=FALSE, ...)
 {
+  if(length(default) > 1)
+    stop("the default string cannot be of length greater then one")
+  
   at <- attributes(x)
   lab <- at$label
   if(length(default) && (!length(lab) || lab==''))
@@ -19,6 +27,20 @@ label.default <- function(x, units=FALSE, plot=FALSE, default=NULL,
                 plotmath=plot, grid=grid)
 }
 
+
+label.data.frame <- function(x, default=NULL, self=FALSE, ...) {
+  if(self) {
+    label.default(x)
+  } else {
+    if(length(default) > 0 && length(default) != length(x)) {
+      stop('length of default must same as x')
+    }
+    
+    labels <- mapply(FUN=label, x=x, default=default, MoreArgs=list(self=TRUE), USE.NAMES=FALSE)
+    names(labels) <- names(x)
+    return(labels)
+  }
+}
 
 labelPlotmath <- function(label, units=NULL, plotmath=.R., grid=FALSE)
 {
@@ -66,21 +88,62 @@ plotmathTranslate <- function(x)
   x
 }
 
-"label<-" <- function(x, value) UseMethod("label<-")
+"label<-" <- function(x, ..., value) UseMethod("label<-")
 
 ##From Bill Dunlap, StatSci  15Mar95:
-if(!.SV4.) "label<-.default" <- function(x, value)
-  structure(x, label=value,
-            class=c('labelled',
-              attr(x,'class')[attr(x,'class')!='labelled'])) else
-"label<-.default" <- function(x, value)
-  {
-    ## Splus 5.x, 6.x
-    ##  oldClass(x) <- unique(c('labelled', oldClass(x),
-    ##                          if(is.matrix(x))'matrix'))
-    attr(x,'label') <- value
-    x
+"label<-.default" <- function(x, ..., value)
+{
+  if(is.list(value)) {
+    stop("cannot assign a list to be a object label")
   }
+    
+  if(length(value) != 1L) {
+    stop("value must be character vector of length 1")
+  }
+
+  attr(x, 'label') <- value
+
+  if('labelled' %nin% oldClass(x)) {
+    oldClass(x) <- c('labelled', oldClass(x))
+  }
+  return(x)
+}
+## } else function(x, ..., value)
+##   {
+##     ## Splus 5.x, 6.x
+##     ##  oldClass(x) <- unique(c('labelled', oldClass(x),
+##     ##                          if(is.matrix(x))'matrix'))
+##     attr(x,'label') <- value
+##     return(x)
+##   }
+
+"label<-.data.frame" <- function(x, self=TRUE, ..., value) {
+  if(!is.data.frame(x)) {
+    stop("x must be a data.frame")
+  }
+
+  if(missing(self) && is.list(value)) {
+    self <- FALSE
+  }
+  
+  if(self) {
+    xc <- class(x)
+    xx <- unclass(x)
+    label(xx) <- value
+    class(xx) <- xc
+    return(xx)
+  } else {
+    if(length(value) != length(x)) {
+      stop("value must have the same length as x")
+    }
+
+    for (i in seq(along.with=x)) {
+      label(x[[i]]) <- value[[i]]
+    }
+  }
+
+  return(x)
+}
 
 if(!.SV4.) "[.labelled"<- function(x, ...)
 {
@@ -147,7 +210,6 @@ if(!.R. && version$major < 5) as.data.frame.labelled <- function(x, ...)
     as.data.frame.AsIs(y, ...)
   }
 }
-
 
 Label <- function(object, ...) UseMethod("Label")
 

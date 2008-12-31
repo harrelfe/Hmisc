@@ -117,6 +117,7 @@ print(k, sort='names', prlevels=FALSE)
 html(k)
 html(contents(dfr))            # same result
 w <- html(k, file='my.html')   # create my.html, don't display
+latex(k$contents)              # latex.default just the main information
 }
 }
 \keyword{data}

@@ -1330,7 +1330,8 @@ plot.transcan <- function(x, ...)
 
 
 fit.mult.impute <- function(formula, fitter, xtrans, data,
-                            n.impute=xtrans$n.impute, fit.reps=FALSE, derived,
+                            n.impute=xtrans$n.impute, fit.reps=FALSE,
+                            dtrans, derived,
                             pr=TRUE, subset, ...)
 {
   using.Design <- FALSE
@@ -1351,11 +1352,13 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
         completed.data[names(imputed.data)] <- imputed.data
       }
 
-    if(!missing(derived))
-      {
-        stop('derived variables in fit.mult.imputed not yet implemented')
-        eval(derived, completed.data)
-      }
+      if(!missing(dtrans)) completed.data <- dtrans(completed.data)
+
+      if(!missing(derived))
+        {
+          stop('derived variables in fit.mult.imputed not yet implemented')
+          eval(derived, completed.data)
+        }
 
       if(using.Design) options(Design.attr=da)
       f <- if(missing(subset)) fitter(formula, data=completed.data, ...)

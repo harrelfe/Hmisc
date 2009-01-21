@@ -169,7 +169,7 @@ transcan(x, method=c("canonical","pc"),
        where.out=1, frame.out, list.out=FALSE, pr=TRUE, check=TRUE, ...)
 
 fit.mult.impute(formula, fitter, xtrans, data, n.impute, fit.reps=FALSE,
-                derived, pr=TRUE, subset, \dots)
+                dtrans, derived, pr=TRUE, subset, \dots)
 
 \method{predict}{transcan}(object, newdata, iter.max=50, eps=0.01, curtail=TRUE, 
         type=c("transformed","original"),
@@ -521,6 +521,21 @@ set to \code{TRUE} to save all fit objects from the fit for each imputation in
 \code{fit.mult.impute}.  Then the object returned will have a component
 \code{fits} which is a list whose \code{i}th element is the \code{i}th fit object.
 }
+\item{dtrans}{
+  provides an approach to creating derived variables from a single
+  filled-in dataset.  The function specified as \code{dtrans} can even
+  reshape the imputed dataset.  An example of such usage is fitting
+  time-dependent covariates in a Cox model that are created by
+  "start,stop" intervals.  Imputations may be done on a one record per
+  subject data frame that is converted by \code{dtrans} to multiple
+  records per subject.  The imputation can enforce consistency of
+  certain variables across records so that for example a missing value
+  of \code{sex} will not be imputed as \code{'male'} for one of the
+  subject's records and \code{'female'} as another.  An example of how
+  \code{dtrans} might be specified is \code{dtrans=function(w) \{w$age <-
+	w$years + w$months/12; w\}} where \code{months} might have been imputed
+  but \code{years} was never missing.
+  }
 \item{derived}{
 an expression containing S expressions for computing derived
 variables that are used in the model formula.  This is useful when
@@ -532,7 +547,8 @@ variables use the form \code{derived=expression(\{ratio <- weight/height;
 product <- weight*height\})} or put the expression on separate input
 lines.   To monitor the multiply-imputed derived
 variables you can add to the \code{expression} a command such as
-\code{print(describe(ratio))}.  See the example below.
+\code{print(describe(ratio))}.  See the example below.  Note that
+\code{derived} is not yet implemented.
 }
 \item{type}{
 By default, the matrix of transformed variables is returned, with imputed

@@ -50,7 +50,7 @@
   less than \code{p}, the smooth is evaluated at the unique \code{x}
   values.  Otherwise it is evaluated at an equally spaced set of
   \code{x} points over the observed range.  If fewer than 3 unique
-  \code{x}s are in a curve, those points are used and smoothing is not done.
+  \code{x} values are in a curve, those points are used and smoothing is not done.
 }
 \usage{
 curveRep(x, y, id, kn = 5, kxdist = 5, k = 5, p = 5,
@@ -87,11 +87,11 @@ curveSmooth(x, y, id, p=NULL, pr=TRUE)
   distribution}
   \item{force1}{By default if any curves have only one point, all curves
 	consisting of one point will be placed in a separate stratum.  To
-	prevent this separation, set \code{force1=FALSE}.}
+	prevent this separation, set \code{force1 = FALSE}.}
   \item{metric}{see \code{\link[cluster]{clara}}}
   \item{smooth}{By default, linear interpolation is used on raw data to
 	obtain \code{y} values to cluster to determine x-y profiles.
-	Specify \code{smooth=TRUE} to replace observed points with
+	Specify \code{smooth = TRUE} to replace observed points with
 	\code{\link{lowess}} before computing \code{y} points on the grid.
 	Also, when \code{smooth} is used, it may be desirable to use
 	\code{extrap=TRUE}.}
@@ -109,21 +109,21 @@ curveSmooth(x, y, id, p=NULL, pr=TRUE)
 	with x distributions going across and clusters going down.}
   \item{m}{the number of curves in a cluster to randomly sample if there
 	are more than \code{m} in a cluster.  Default is to draw all curves
-	in a cluster.  For \code{method='lattice'} you can specify
-	\code{m='quantiles'} to use the \code{xYplot} function to show
-	quantiles of \code{y} as a function of {x}, with the quantiles
+	in a cluster.  For \code{method = "lattice"} you can specify
+	\code{m = "quantiles"} to use the \code{xYplot} function to show
+	quantiles of \code{y} as a function of \code{x}, with the quantiles
 	specified by the \code{probs} argument.  This cannot be used to draw
-	a group containing \code{n=1}.}
-  \item{nx}{applies if \code{m='quantiles'}.  See \code{\link{xYplot}}.}
+	a group containing \code{n = 1}.}
+  \item{nx}{applies if \code{m = "quantiles"}.  See \code{\link{xYplot}}.}
   \item{probs}{3-vector of probabilities with the central quantile
 	first.  Default uses quartiles.}
-  \item{fill}{for \code{method='all'}, by default if a sample size
+  \item{fill}{for \code{method = "all"}, by default if a sample size
 	x-distribution stratum did not have enough curves to stratify into
 	\code{k} x-y profiles, empty graphs are drawn so that a matrix of
 	graphs will have the next row starting with a different sample size
 	range or x-distribution.  See the example below.}
   \item{idcol}{a named vector to be used as a table lookup for color
-	assignments (does not apply when \code{m='quantile'}).  The names of
+	assignments (does not apply when \code{m = "quantile"}).  The names of
 	this vector are curve \code{id}s and the values are color names or
 	numbers.}
   \item{freq}{a named vector to be used as a table lookup for a grouping
@@ -131,14 +131,14 @@ curveSmooth(x, y, id, p=NULL, pr=TRUE)
 	values are any values useful for grouping in a frequency tabulation.}
   \item{plotfreq}{set to \code{TRUE} to plot the frequencies from the
 	\code{freq} variable as horizontal bars instead of printing them.
-	Applies only to \code{method='lattice'}.  By default the largest bar
+	Applies only to \code{method = "lattice"}.  By default the largest bar
 	is 0.1 times the length of a panel's x-axis.  Specify
-	\code{plotfreq=.5} for example to make the longest bar half this long.}
+	\code{plotfreq = 0.5} for example to make the longest bar half this long.}
   \item{xlim, ylim, xlab, ylab}{plotting parameters.  Default ranges are
 	the ranges in the entire set of raw data given to \code{curveRep}.}
   \item{\dots}{arguments passed to other functions.}
 }
-\value{a list of class \code{'curveRep'} with the following elements
+\value{a list of class \code{"curveRep"} with the following elements
   \item{res}{a hierarchical list first split by sample size intervals,
 	then by x distribution clusters, then containing a vector of cluster
   numbers with \code{id} values as a names attribute}
@@ -162,7 +162,7 @@ curveSmooth(x, y, id, p=NULL, pr=TRUE)
   In the graph titles for the default graphic output, \code{n} refers to the
   minimum sample size, \code{x} refers to the sequential x-distribution
   cluster, and \code{c} refers to the sequential x-y profile cluster.  Graphs
-  from \code{method='lattice'} are produced by
+  from \code{method = "lattice"} are produced by
   \code{\link[lattice]{xyplot}} and in the panel titles
   \code{distribution} refers to the x-distribution stratum and
   \code{cluster} refers to the x-y profile cluster.

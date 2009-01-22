@@ -1034,12 +1034,12 @@ latexTranslate <- function(object, inn=NULL, out=NULL, pb=FALSE,
 {
   text <- object
   
-  inn <- c("|",  "%",  "#", "~", "<=",     "<",  ">=",     ">",  "_", "\\243",
+  inn <- c("|",  "%",  "#", "<=",     "<",  ">=",     ">",  "_", "\\243",
            inn, 
            if(pb)
              c("[","(","]",")"))
 
-  out <- c("$|$","\\%","\\#", "\\~", "$\\leq$","$<$","$\\geq$","$>$","\\_", "\\pounds",
+  out <- c("$|$","\\%","\\#", "$\\leq$","$<$","$\\geq$","$>$","\\_", "\\pounds",
            out, 
            if(pb)
              c("$\\left[","$\\left(","\\right]$","\\right)$"))
@@ -1172,22 +1172,23 @@ show.dvi <- function(object, width=5.5, height=7)
 {
   viewer <- optionsCmds('xdvi')
   cmd <-
-    if(viewer=='yap') {
-      paste(viewer,object$file)
+    if(viewer == 'yap') {
+      paste(viewer, object$file)
     }
-    else {
-      if(viewer=='kdvi') {
-        paste(viewer,object$file,'&')
-      }
-      else {
-        paste(viewer, ' -paper ',
-              width,'x',height,'in -s 0 ',
-              object$file,' &',sep='')
-      }
+    else if(viewer == 'kdvi') {
+      paste(viewer, object$file)
     }
+    else if(viewer == 'xdvi') {
+      paste(viewer, ' -paper ',
+            width, 'x', height, 'in -s 0 ',
+            object$file, sep='')
+    } else {
+      paste(viewer, object$file)
+    }
+
   
-  sys(cmd)
-  invisible()
+  system(cmd, intern = TRUE, wait=TRUE)
+  invisible(NULL)
 }
 
 

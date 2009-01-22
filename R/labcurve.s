@@ -1053,14 +1053,14 @@ largest.empty <- function(x, y,
 
   a <-
     if(.R.)
-      .Fortran('largrec', x, y, length(x), 
+      .Fortran('largrec', x, y, as.integer(length(x)), 
                xlim, ylim, 
-               width, height, numbins, itype,
+               width, height, as.integer(numbins), as.integer(itype),
                rx=double(2), ry=double(2), PACKAGE="Hmisc")
     else
-      .Fortran('largrec', x, y, length(x), 
+      .Fortran('largrec', x, y, as.integer(length(x)), 
                xlim, ylim, 
-               width, height, numbins, itype,
+               width, height, as.integer(numbins), as.interger(itype),
                rx=double(2), ry=double(2))
   
   x <- a$rx

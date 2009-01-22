@@ -20,7 +20,7 @@ none
 \seealso{\code{\link{edit}}}
 \examples{
 \dontrun{
-eip(summary.formula}  # make temporary bug fix in central area
+eip(summary.formula)  # make temporary bug fix in central area
 }
 }
 \keyword{utilities}

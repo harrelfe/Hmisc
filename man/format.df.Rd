@@ -65,8 +65,9 @@ format.df(x,
     number of places to the right of the decimal. \code{dcolumn} can line up
     all such numbers on the decimal point, with integer values right
     justified at the decimal point location of numbers that actually
-    contain decimal places.  When you use \code{dcolumn=TRUE}, 
-    \code{numeric.dollar} is set by default to \code{FALSE}.  When you use \code{dcolumn=TRUE}, the
+    contain decimal places.  When you use \code{dcolumn = TRUE}, 
+    \code{numeric.dollar} is set by default to \code{FALSE}.  When you
+    use \code{dcolumn = TRUE}, the
     \code{"style"} element is set to \code{"dcolumn"} as the \code{latex} \code{\\usepackage}
     must reference \code{[dcolumn]}.
     The three files \code{dcolumn.sty}, \code{newarray.sty}, and
@@ -76,9 +77,9 @@ format.df(x,
   }
   \item{numeric.dollar}{
     logical, default \code{!dcolumn}.  Set to \code{TRUE} to place dollar
-    signs around numeric values when \code{dcolumn=FALSE}.  This 
+    signs around numeric values when \code{dcolumn = FALSE}.  This 
     assures that \code{latex} will use minus signs rather than hyphens to indicate
-    negative numbers.  Set to \code{FALSE} when \code{dcolumn=TRUE}, as
+    negative numbers.  Set to \code{FALSE} when \code{dcolumn = TRUE}, as
     \code{dcolumn.sty} automatically uses minus signs.
   }
   \item{math.row.names}{
@@ -105,7 +106,7 @@ format.df(x,
     whose length is equal to the number of columns of the result matrix.
     When \code{format.df} is called by \code{latex.default}, the
     \code{col.just} is used as the \code{cols} argument to the
-    \code{\tabular} environment and the letters \code{"l"}, \code{"r"},
+    \code{\\tabular} environment and the letters \code{"l"}, \code{"r"},
     and \code{"c"} are valid values.  When \code{format.df} is called by
     \code{sas}, the \code{col.just} is used to determine whether a
     \code{$} is needed on the \code{input} line of the \code{sysin} file,

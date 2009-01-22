@@ -39,7 +39,7 @@ print.char.matrix(x, file = "", col.name.align = "cen", col.txt.align = "right",
 
   \item{row.names}{logical: are we printing the names of the rows?}
   \item{col.names}{logical: are we printing the names of the columns?}
-  \item{append}{logical: if {file} is not \code{""}, are we appending to
+  \item{append}{logical: if \code{file} is not \code{""}, are we appending to
     the file or overwriting?}
   \item{top.border}{logical: do we want a border along the top above the
     columns?}

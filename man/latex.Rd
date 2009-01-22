@@ -321,7 +321,7 @@ dvigv(object, \dots)
     size for \code{extracolheads} or for any second lines in column names;
     default is \code{"scriptsize"} 
   }
-  \item{dcolumn} {see \code{format.df}}
+  \item{dcolumn}{see \code{\link{format.df}}}
   \item{numeric.dollar}{
     logical, default \code{!dcolumn}.  Set to \code{TRUE} to place dollar
     signs around numeric values when \code{dcolumn=FALSE}.  This 

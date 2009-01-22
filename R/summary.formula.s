@@ -7,8 +7,7 @@ summary.formula <-
            method=c('response','reverse','cross'),
            overall=method=='response'|method=='cross', 
            continuous=10, na.rm=TRUE, na.include=method!='reverse',
-           g=4, 
-           quant=c(.025,.05,.125,.25,.375,.5,.625,.75,.875,.95,.975),
+           g=4, quant = c(0.025, 0.05, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 0.95, 0.975),
            nmin=if(method=='reverse') 100
                 else 0,
            test=FALSE,
@@ -328,6 +327,7 @@ summary.formula <-
   }
 
   if(method=='reverse') {
+    quants <- unique(c(quant, 0.025, 0.05, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 0.95, 0.975))
     if(resp) {
       group <- as.factor(X[[resp]])[,drop=TRUE]
       group.freq <- table(group)
@@ -418,17 +418,17 @@ summary.formula <-
               c(quantile(x,quant), Mean=mean(x), SD=sqrt(var(x)))
             }
 
-            qu <- tapply(w, g, sfn, simplify=TRUE, quant)
+            qu <- tapply(w, g, sfn, simplify=TRUE, quants)
             ## Added simplify=TRUE to work with R 7Jun01
             if(test)
               testresults[[i]] <- conTest(g, w)
 
             if(overall)
-              qu$Combined <- sfn(w, quant)
+              qu$Combined <- sfn(w, quants)
 
-            comp[[i]] <- matrix(unlist(qu),ncol=length(quant)+2,byrow=TRUE,
+            comp[[i]] <- matrix(unlist(qu),ncol=length(quants)+2,byrow=TRUE,
                                 dimnames=list(names(qu),
-                                              c(format(quant),'Mean','SD')))
+                                              c(format(quants),'Mean','SD')))
             if(any(group.freq <= nmin))
               dat[[i]] <-
                 lapply(split(w,g),nmin=nmin,
@@ -1166,6 +1166,29 @@ plot.summary.formula.reverse <-
                     dotfont=dotfont[1],
                     add=j > 1, ...)
         }
+
+        Key2 <- function(x=NULL, y=NULL, quant, ...)
+          {
+            quant <- format(quant)
+            txt <- paste('(',quant[2],',',quant[3],',',quant[4], 
+                         ') quantiles shown\nx-axes scaled to (',quant[1],',',
+                         quant[5],') quantiles', sep='')
+            if(length(x)) {
+              if(is.list(x)) {
+                y <- x$y;
+                x <- x$x
+              }
+
+              text(x,y,txt, cex=.8, adj=0, ...)
+            } else
+            mtitle(lr=txt, cex.l=.8, line=1, ...)
+
+            invisible()
+          }
+
+        formals(Key2) <- list(x=NULL,y=NULL,quant=obj$quant)
+        storeTemp(Key2)
+        
       } else if(conType=='bp')
         bpplt(st, xlab=nam, cex.points=cex.means)
       else
@@ -1178,28 +1201,6 @@ plot.summary.formula.reverse <-
         title(fts, line=.5)  ## .5 ignored in S-Plus
       }
     }
-
-    Key2 <- function(x=NULL, y=NULL, quant, ...)
-    {
-      quant <- format(quant)
-      txt <- paste('(',quant[2],',',quant[3],',',quant[4], 
-                   ') quantiles shown\nx-axes scaled to (',quant[1],',',
-                   quant[5],') quantiles', sep='')
-      if(length(x)) {
-        if(is.list(x)) {
-          y <- x$y;
-          x <- x$x
-        }
-
-        text(x,y,txt, cex=.8, adj=0, ...)
-      } else
-        mtitle(lr=txt, cex.l=.8, line=1, ...)
-
-      invisible()
-    }
-
-    formals(Key2) <- list(x=NULL,y=NULL,quant=obj$quant)
-    storeTemp(Key2)
   }
 
   invisible(npages)

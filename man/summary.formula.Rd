@@ -81,8 +81,7 @@
         method = c("response", "reverse", "cross"),
         overall = method == "response" | method == "cross",
         continuous = 10, na.rm = TRUE, na.include = method != "reverse",
-        g = 4, quant  = c(0.025, 0.05, 0.125, 0.25, 0.375, 0.5, 0.625,
-                          0.75, 0.875, 0.95, 0.975),
+        g = 4, quant  = c(0.025, 0.05, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 0.95, 0.975),
         nmin = if (method == "reverse") 100
                else 0,
          test = FALSE,
@@ -100,14 +99,14 @@
                 else chisq.test(tab, correct = FALSE)
           list(P = st$p.value, stat = st$statistic, df = st$parameter,
                testname = "Pearson", statname = "Chi-square",
-               latexstat = "\\chi^{2}_{df}", plotmathstat = "chi[df]^2")
+               latexstat = "\\\\chi^{2}_{df}", plotmathstat = "chi[df]^2")
         },
         ordTest = function(group, x) {
           f <- lrm(x ~ group)$stats
           list(P = stats["P"], stat = stats["Model L.R."],
                df = stats["d.f."],
                testname = "Proportional odds likelihood ratio",
-               statname = "Chi-square", latexstat = "\\chi^{2}_{df}",
+               statname = "Chi-square", latexstat = "\\\\chi^{2}_{df}",
                plotmathstat = "chi[df]^2")
         }, \dots)
 

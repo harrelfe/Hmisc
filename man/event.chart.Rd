@@ -1,6 +1,5 @@
 \name{event.chart}
 \alias{event.chart}
-\alias{event.convert}
 \title{
   Flexible Event Chart for Time-to-Event Data
 }
@@ -14,43 +13,52 @@
   utility and ease of use will be seen with a data frame.
 }
 \usage{
-event.chart <-
-  function(data, subset.r = 1:dim(data)[1], subset.c = 1:dim(data)[2], 
-           sort.by = NA, sort.ascending = TRUE, sort.na.last = TRUE, 
-           sort.after.subset = TRUE, y.var = NA, y.var.type = "n", y.jitter = FALSE, 
-           y.jitter.factor = 1, y.renum = FALSE, NA.rm = FALSE, x.reference = NA, 
-           now = max(data[, subset.c], na.rm = TRUE), now.line = FALSE, 
-           now.line.lty = 2, now.line.lwd = 1, now.line.col = 1, pty = "m", 
-           date.orig = c(1, 1, 1960), titl = "Event Chart", y.idlabels = NA, 
-           y.axis = "auto", y.axis.custom.at = NA, y.axis.custom.labels = NA, 
+event.chart(data, subset.r = 1:dim(data)[1], subset.c = 1:dim(data)[2],
+
+           sort.by = NA, sort.ascending = TRUE,
+           sort.na.last = TRUE, sort.after.subset = TRUE,
+           y.var = NA, y.var.type = "n",
+           y.jitter = FALSE, y.jitter.factor = 1,
+           y.renum = FALSE, NA.rm = FALSE, x.reference = NA,
+           now = max(data[, subset.c], na.rm = TRUE),
+           now.line = FALSE, now.line.lty = 2,
+           now.line.lwd = 1, now.line.col = 1, pty = "m",
+           date.orig = c(1, 1, 1960), titl = "Event Chart",
+
+           y.idlabels = NA, y.axis = "auto",
+           y.axis.custom.at = NA, y.axis.custom.labels = NA,
            y.julian = FALSE, y.lim.extend = c(0, 0),
-           y.lab = ifelse(is.na(y.idlabels), 
-             "", as.character(y.idlabels)), x.axis.all = TRUE, x.axis = "auto", 
-           x.axis.custom.at = NA, x.axis.custom.labels = NA, x.julian = FALSE, 
-           x.lim.extend = c(0, 0), x.scale = 1,
-           x.lab = ifelse(x.julian, 
-             "Follow-up Time", "Study Date"), line.by = NA, line.lty = 1, 
-           line.lwd = 1, line.col = 1, line.add = NA, line.add.lty = NA, 
-           line.add.lwd = NA, line.add.col = NA, point.pch = 1:length(subset.c), 
-           point.cex = rep(0.6, length(subset.c)),            
-           point.cex.mult = 1., point.cex.mult.var = NA, 
-           extra.points.no.mult = rep(NA, length(subset.c)), 
+           y.lab = ifelse(is.na(y.idlabels), "", as.character(y.idlabels)),
+
+           x.axis.all = TRUE, x.axis = "auto",
+           x.axis.custom.at = NA, x.axis.custom.labels = NA,
+           x.julian = FALSE, x.lim.extend = c(0, 0), x.scale = 1,
+           x.lab = ifelse(x.julian, "Follow-up Time", "Study Date"),
+
+           line.by = NA, line.lty = 1, line.lwd = 1, line.col = 1,
+           line.add = NA, line.add.lty = NA,
+           line.add.lwd = NA, line.add.col = NA,
+           point.pch = 1:length(subset.c),
+           point.cex = rep(0.6, length(subset.c)),
            point.col = rep(1, length(subset.c)),
-           legend.plot = FALSE, legend.location = "o", 
-           legend.titl = titl, legend.titl.cex = 3, legend.titl.line = 1, 
+
+           point.cex.mult = 1., point.cex.mult.var = NA,
+           extra.points.no.mult = rep(NA, length(subset.c)),
+
+           legend.plot = FALSE, legend.location = "o", legend.titl = titl,
+           legend.titl.cex = 3, legend.titl.line = 1,
            legend.point.at = list(x = c(5, 95), y = c(95, 30)),
-           legend.point.pch = point.pch, 
-           legend.point.text = ifelse(rep(is.data.frame(data), length(subset.c)), 
-             names(data[, subset.c]), subset.c), legend.cex = 2.5, 
-           legend.bty = "n",
+           legend.point.pch = point.pch,
+           legend.point.text = ifelse(rep(is.data.frame(data), length(subset.c)),
+                                      names(data[, subset.c]),
+                                      subset.c),
+           legend.cex = 2.5, legend.bty = "n",
            legend.line.at = list(x = c(5, 95), y = c(20, 5)),
-           legend.line.text = names(table(as.character(data[, 
-             line.by]), exclude = c("", "NA"))),
-           legend.line.lwd = line.lwd, 
-           legend.loc.num = 1, \dots) 
+           legend.line.text = names(table(as.character(data[, line.by]),
+                                          exclude = c("", "NA"))),
+           legend.line.lwd = line.lwd, legend.loc.num = 1,
 
-
-event.convert(data2, event.time = 1, event.code = 2)
+           \dots)
 }
 \arguments{
   \item{data}{
@@ -59,11 +67,6 @@ event.convert(data2, event.time = 1, event.code = 2)
     matrix containing multiple time-to-event
     data (e.g., time to recurrence, time to death, and time to
     last follow-up), one column is required for each specific event.
-  }
-  \item{data2}{
-    a matrix or dataframe with at least 2 columns; by default, the first
-    column contains the event time and the second column contains the k
-    event codes (e.g. 1=dead, 0=censord)
   }
   \item{subset.r}{
     subset of rows of original matrix or data frame to place in event chart.
@@ -273,7 +276,7 @@ event.convert(data2, event.time = 1, event.code = 2)
   \item{x.lim.extend}{
     two-dimensional vector representing the number of time units (usually in days)
     that the user wants to increase \code{xlim} on left-hand side and right-hand
-    side of x-axis, respectively.  Default is code{c(0,0)}.  This argument will not
+    side of x-axis, respectively.  Default is \code{c(0,0)}.  This argument will not
     take effect if the Goldman chart is utilized.
   }
   \item{x.scale}{
@@ -469,12 +472,6 @@ event.convert(data2, event.time = 1, event.code = 2)
     user is to locate only the top left corner of the legend box.  If 2, user
     is to locate both the top left corner and the lower right corner.  This will
     be done twice when \code{line.by} is specified (once for points and once for lines).
-  }
-  \item{event.time}{
-    the column number in data contains the event time
-  }
-  \item{event.code}{
-    the column number in data contains the event code
   }
   \item{...}{
     additional par arguments for use in main plot.

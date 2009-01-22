@@ -107,7 +107,9 @@ bpplt <- function(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
     Means <- stats[,'Mean']
     stats <- stats[,dimnames(stats)[[2]] %nin% c('Mean','SD'),drop=FALSE]
   }
-  
+
+  stats <- stats[,order(as.numeric(dimnames(stats)[[2]])), drop=FALSE]
+
   groups <- dimnames(stats)[[1]]
   qq <- as.numeric(dimnames(stats)[[2]])
   probs2 <- qq
@@ -116,10 +118,10 @@ bpplt <- function(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
   
   i <- integer(0)
   for(a in c(.5,qomit))
-    i <- c(i, (1:length(probs2))[abs(probs2-a)<.001])
+    i <- c(i, seq.int(along.with=probs2)[abs(probs2-a)<.001])
   
   probs2 <- probs2[-i]
-  probs  <- probs2[1:(floor(length(probs2)/2))]
+  probs  <- probs2[seq.int(length.out=floor(length(probs2)/2))]
 
   if(grid) {
     lines <- llines;
@@ -132,10 +134,14 @@ bpplt <- function(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
 
   m  <- length(probs)
   m2 <- length(probs2)
-  j <- c(1,sort(rep(2:m2,2)),-sort(-rep(1:(m2-1),2)))
-  z <- c(sort(rep(probs,2)),-sort(-rep(probs[1:(m-1)],2)))
-  z <- c(z, -z, probs[1])
-  k <- max(z)
+  j <- c(1,rep(seq.int(along.with=probs2[c(-1,-m2)])+1, each=2), m2)
+  j <- c(j, rev(j), NA)
+
+
+  z <- c(rep(probs[-m], each=2), probs[m])
+  z <- c(z, rev(z))
+  z <- c(z, -z, NA)
+  k <- max(z, na.rm=TRUE)
   k <-
     if(k > .48)
       .5
@@ -146,18 +152,17 @@ bpplt <- function(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
     size.qref[qref==.5] <- k
   }
 
-  if(.R.)
-    plot.new()
-  
-  mai <- omai <- par('mai')
-  on.exit(par(mai=omai))
+  plot.new()
+
+  mai <- par('mai')
   mxlab <- .3+max(strwidth(groups, units='inches',cex=cex.labels))
-  ## was .2+max  31jan03
+
   mai[2] <- mxlab
-  par(mai=mai, new=TRUE)
-  
-  plot(xlim, c(.5,length(groups)+.5), xlim=xlim, xlab='', ylab='',
-       axes=FALSE, type='n')
+  opar <- par(mai=mai)
+  on.exit(par(opar))
+
+  plot.window(xlim=xlim, ylim=c(0.5,length(groups)+0.5))
+
   if(!prototype) {
     box()
     mgp.axis(1, axistitle=xlab)  ## 28jan03
@@ -170,18 +175,21 @@ bpplt <- function(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
     mtext(paste(groups,''), 2, 0, at=length(groups):1,
           adj=1, srt=0, cex=cex.labels)
 
-  y <- 0
-  for(Y in length(groups):1) {
-    y <- y + 1
-    q <- stats[Y,match(c(probs2,qref),qq)]
-    if(length(qref)) 
-      do.call('segments',c(list(q[-(1:m2)],      y-w*size.qref/k,
-                                q[-(1:m2)], 	 y+w*size.qref/k)))
-    
-    lines(q[j], y + w*z/k)
-    if(means)
-      points(Means[Y], y, pch=pch, cex=cex.points)
-  }
+  y <- seq.int(from=length(groups), to=1, length.out=length(groups))
+
+  qref.x <- as.vector(stats[,match(qref,qq)])
+  qref.y <- rep.int(y, times=length(size.qref))
+  qref.mod <- rep(w*size.qref/k, each=length(groups))
+  print(qref.x)
+  print(qref.y + qref.mod)
+  segments(x0=qref.x, y0=qref.y-qref.mod,
+           x1=qref.x, y1=qref.y+qref.mod)
+
+  polygon(x=as.vector(t(stats[,match(probs2,qq)[j]])),
+          y=rep(y, each=length(j)) + w*z/k)
+
+  if(means)
+    points(Means, y, pch=pch, cex=cex.points)
   
   if(prototype) {
     mar <- par('mar')

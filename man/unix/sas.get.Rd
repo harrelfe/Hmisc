@@ -52,7 +52,7 @@ sas.get(library, member, variables=character(0), ifs=character(0),
 
 is.special.miss(x, code)
 
-\method{\[}{special.miss}(x, ..., drop=FALSE)
+\method{[}{special.miss}(x, ..., drop=FALSE)
 
 \method{print}{special.miss}(x, ...)
 
@@ -97,7 +97,7 @@ code.levels(object)
     These will be used to extract a subset of the observations in the \acronym{SAS} dataset.
   }
   \item{format.library}{
-    The UNIX directory containing the file \bold{formats.sct}, which contains
+    The UNIX directory containing the file \file{formats.sct}, which contains
     the definitions of the user defined formats used in this dataset.
     By default, we look for the formats in the same directory as the data.
     The user defined formats must be available (so \acronym{SAS} can read the data).
@@ -106,7 +106,7 @@ code.levels(object)
     Set \code{formats} to \code{FALSE} to keep \code{sas.get} from telling the \acronym{SAS} macro to 
     retrieve value label formats from \code{format.library}.  When you do not
     specify \code{formats} or \code{recode}, \code{sas.get} will set \code{format} to \code{TRUE} if a
-    \acronym{SAS} format catalog (\code{.sct} or \code{.sc2}) file exists in \code{format.library}.
+    \acronym{SAS} format catalog (\file{.sct} or \file{.sc2}) file exists in \code{format.library}.
     Value label formats if present are stored as the \code{formats} attribute of the returned
     object (see below). A format is used if it is referred to by one or more 
     variables
@@ -117,11 +117,11 @@ code.levels(object)
     To fetch the values and labels for variable \code{x} in the dataset \code{d} you
     could type:
     \cr
-    \code{f <- attr(d$x, "format")}
+    \code{f <- attr(d\$x, "format")}
     \cr
     \code{formats <- attr(d, "formats")}
     \cr
-    \code{formats$f$values; formats$f$labels}
+    \code{formats\$f\$values; formats\$f\$labels}
   }
   \item{recode}{
     This parameter defaults to \code{TRUE} if \code{formats} is \code{TRUE}.  If it is
@@ -149,10 +149,10 @@ code.levels(object)
     \cr
     \code{s <- attr(y, "special.miss")}
     \cr
-    \code{s$codes; s$obs}
+    \code{s\$codes; s\$obs}
     \cr
     or use \code{is.special.miss(x)} or the \code{print.special.miss} method, which
-    will replace \code{NA} values for the variable with \code{E} or \code{G} if they
+    will replace \code{NA} values for the variable with \samp{E} or \samp{G} if they
     correspond to special missing values.
     The describe
     function uses this information in printing a data summary.  
@@ -161,19 +161,21 @@ code.levels(object)
     The name of the variable to be used as the row names of the S dataset.
     The id variable becomes the \code{row.names} attribute of a data frame, but
     the id variable is still retained as a variable in the data frame.
-    (if \code{data.frame.out} is \code{FALSE}, this will be the attribute \code{"id"} of the S
+    (if \code{data.frame.out} is \code{FALSE}, this will be the attribute \samp{id} of the \R
     dataset.)  You can also specify a vector of variable names as the \code{id}
     parameter.  After fetching the data from \acronym{SAS}, all these variables will be
     converted to character format and concatenated (with a space as a separator)
-    to form a (hopefully) unique ID variable.
+    to form a (hopefully) unique identification variable.
   }
-  \item{dates.}{specifies the format for storing \acronym{SAS} dates in the
-    resulting data frame}
+  \item{dates.}{
+    specifies the format for storing \acronym{SAS} dates in the
+    resulting data frame
+  }
   \item{as.is}{
     IF \code{data.frame.out = TRUE}, \acronym{SAS} character variables are converted to S factor
     objects if \code{as.is = FALSE} or if \code{as.is} is a number between 0 and 1 inclusive and
     the number of unique values of the variable is less than
-    the number of observations (\code{n}) times \code{as.is}.  The default if \code{as.is} is .5,
+    the number of observations (\code{n}) times \code{as.is}.  The default if \code{as.is} is 0.5,
     so character variables are converted to factors only if they have fewer
     than \code{n/2} unique values.  The primary purpose of this is to keep unique
     identification variables as character values in the data frame instead
@@ -185,31 +187,31 @@ code.levels(object)
     uniqueness if \code{check.unique.id = TRUE}.  If any are duplicated, a warning
     is printed.  Note that if a data frame is being created with duplicate
     row names, statements such as \code{my.data.frame["B23",]} will retrieve
-    only the first row with a row name of \code{"B23"}.
+    only the first row with a row name of \preformatted{B23}.
   }
   \item{force.single}{
-    By default, \acronym{SAS} numeric variables having \code{LENGTH} > 4 are stored as
+    By default, \acronym{SAS} numeric variables having \eqn{LENGTH > 4} are stored as
     S double precision numerics, which allow for the same precision as
-    a \acronym{SAS} \code{LENGTH} 8 variable.  Set \code{force.single = TRUE} to store every
+    a \acronym{SAS} \preformatted{LENGTH} 8 variable.  Set \code{force.single = TRUE} to store every
     numeric variable in single precision (7 digits of precision).
     This option is useful when the creator of the \acronym{SAS} dataset has
-    failed to use a \code{LENGTH} statement.
+    failed to use a \preformatted{LENGTH} statement.
     R does not have single precision, so no attempt is made to convert to
     single if running R.
   }
   \item{dates}{
     One of the character strings \code{"sas"}, \code{"yearfrac"}, \code{"yearfrac2"}, \code{"yymmdd"}.
-    If a \acronym{SAS} variable has a date format (one of \code{"DATE", "MMDDYY", "YYMMDD",
-      "DDMMYY", "YYQ", "MONYY", "JULIAN"}), it will be converted to the format
+    If a \acronym{SAS} variable has a date format (one of \code{"DATE"}, \code{"MMDDYY"}, \code{"YYMMDD"},
+      \code{"DDMMYY"}, \code{"YYQ"}, \code{"MONYY"}, \code{"JULIAN"}), it will be converted to the format
     specified by \code{dates} before being given to S.  \code{"sas"} gives
     days from 1/1/1960 (from 1/1/1970 if using \code{chron}), 
     \code{"yearfrac"} gives days from 1/1/1900 divided by
     365.25, \code{"yearfrac2"} gives year plus fraction of current year,
-    and \code{"yymmdd"} gives a 6 digit number YYMMDD (year\%\%100, month, day).
-    Note that S will store these as numbers, not as
-    character strings.  If dates="sas" and a variable has one of the \acronym{SAS}
-    date formats listed above, the variable will be given a class of "date"
-    to work with Terry Therneau's implementation of the "date" class in S.
+    and \code{"yymmdd"} gives a 6 digit number \preformatted{YYMMDD} (year\%\%100, month, day).
+    Note that \R will store these as numbers, not as
+    character strings.  If \code{dates="sas"} and a variable has one of the \acronym{SAS}
+    date formats listed above, the variable will be given a class of \samp{date}
+    to work with Terry Therneau's implementation of the \samp{date} class in S.
     If the \code{chron} package or \code{timeDate} function is available, these are
     used instead.
   }
@@ -221,8 +223,8 @@ code.levels(object)
   }
   \item{macro}{
     the name of an S object in the current search path that contains the text of
-    the \acronym{SAS} macro called by S. The S object is a character vector that
-    can be edited using for example sas.get.macro <- editor(sas.get.macro).
+    the \acronym{SAS} macro called by \R. The \R object is a character vector that
+    can be edited using for example \code{sas.get.macro <- editor(sas.get.macro)}.
   }
   \item{data.frame.out}{
     logical flag: if \code{TRUE}, the return value will be an S data frame,
@@ -245,9 +247,9 @@ code.levels(object)
     the name of the system command to invoke \acronym{SAS}
   }
   \item{uncompress}{
-    set to \code{TRUE} to automatically invoke the UNIX \code{gunzip} command
-    (if \code{member.ssd01.gz} exists) or the \code{uncompress} command 
-    (if \code{member.ssd01.Z} exists) to uncompress the \acronym{SAS} dataset before
+    set to \code{TRUE} to automatically invoke the \acronym{UNIX} \command{gunzip} command
+    (if \file{\var{member}.ssd01.gz} exists) or the \command{uncompress} command 
+    (if \file{\var{member}.ssd01.Z} exists) to uncompress the \acronym{SAS} dataset before
     proceeding.  This assumes you have the file permissions to allow
     uncompressing in place.  If the file is already uncompressed, this
     option is ignored.
@@ -261,11 +263,13 @@ code.levels(object)
     may save memory over attaching a data frame.
   }
   \item{code}{
-    a special missing value code (A through Z or underscore) to check
+    a special missing value code (\samp{A} through \samp{Z} or \samp{\_}) to check
     against.  If \code{code} is omitted, \code{is.special.miss} will return
     a \code{TRUE} for each observation that has any special missing value.
   }
-  \item{object}{a variable in a data frame created by \code{sas.get}}
+  \item{object}{
+    a variable in a data frame created by \code{sas.get}
+  }
   \item{\dots}{ignored}
 }
 \value{
@@ -275,15 +279,15 @@ code.levels(object)
   as the row names of the data frame.  Each variable in the data frame
   or vector in the list will have the attributes \code{label} and \code{format}
   containing \acronym{SAS} labels and formats.  Underscores in formats are
-  converted to periods.  Formats for character variables have \code{$} placed
+  converted to periods.  Formats for character variables have \code{\$} placed
   in front of their names.
   If \code{formats} is \code{TRUE} and there are any 
   appropriate format definitions in \code{format.library}, the returned
   object will have attribute \code{formats} containing lists named the
   same as the format names (with periods substituted for underscores and
-  character formats prefixed by \code{$}).
+  character formats prefixed by \code{\$}).
   Each of these lists has a vector called \code{values} and one called
-  \code{labels} with the \code{PROC FORMAT; VALUE \dots}   definitions.
+  \code{labels} with the \preformatted{PROC FORMAT; VALUE ...}   definitions.
 
 
   If \code{data.frame.out} is \code{FALSE}, the output will
@@ -293,23 +297,23 @@ code.levels(object)
 }
 \section{Side Effects}{
   if a \acronym{SAS} error occurs and \code{quiet} is \code{FALSE}, then the \acronym{SAS} log file will be
-  printed under the control of  the \bold{less} pager.
+  printed under the control of  the \command{less} pager.
 }
 \details{
   If you specify \code{special.miss = TRUE} and there are no special missing
   values in the data \acronym{SAS} dataset, the \acronym{SAS} step will bomb.
 
-  For variables having a \code{PROC FORMAT VALUE}
+  For variables having a \preformatted{PROC FORMAT VALUE}
   format with some of the levels undefined, \code{sas.get} will interpret those
   values as \code{NA} if you are using \code{recode}.
 
-  The \acronym{SAS} macro \code{sas_get} uses record lengths of up to 4096 in two
+  The \acronym{SAS} macro \file{sas_get} uses record lengths of up to 4096 in two
   places.  If you are exporting records that are very long (because of
   a large number of variables and/or long character variables), you
-  may want to edit these \code{LRECL}s to quadruple them, for example.
+  may want to edit these \preformatted{LRECL}s to quadruple them, for example.
 }
 \note{
-  You must be able to run \acronym{SAS} (by typing \bold{sas}) on your system.
+  You must be able to run \acronym{SAS} (by typing \command{sas}) on your system.
   If the S command \code{!sas} does not start \acronym{SAS}, then this function cannot work.
 
   If you are reading time or
@@ -319,7 +323,7 @@ code.levels(object)
 }
 \section{BACKGROUND}{
   The references cited below explain the structure of \acronym{SAS} datasets and how
-  they are stored under UNIX.
+  they are stored under \acronym{UNIX}.
   See \emph{\acronym{SAS} Language} 
   for a discussion of the \dQuote{subsetting if} statement.
 }

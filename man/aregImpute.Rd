@@ -346,8 +346,15 @@ f.harrell@vanderbilt.edu
   with missing values. Statistica Sinica 14:949-968, 2004.
 
   van Buuren S, Brand JPL, Groothuis-Oudshoorn CGM, Rubin DB.  Fully
-  conditional specifications in multivariate imputation.  Draft
-  available from \url{http://web.inter.nl.net/users/S.van.Buuren/publications/FCS\%20(revised\%20Jan\%202005).pdf}.
+  conditional specifications in multivariate imputation.  J Stat Comp
+  Sim 72:1049-1064, 2006.
+
+  de Groot JAH, Janssen KJM, Zwinderman AH, Moons KGM, Reitsma JB.
+  Multiple imputation to correct for partial verification bias
+  revisited.  Stat Med 27:5880-5889, 2008.
+
+  Siddique J. Multiple imputation using an iterative hot-deck with
+  distance-based donor selection.  Stat Med 27:83-102, 2008.
   }
 \seealso{
 \code{\link{fit.mult.impute}}, \code{\link{transcan}}, \code{\link{areg}}, \code{\link{naclus}}, \code{\link{naplot}}, \code{\link[mice]{mice}},

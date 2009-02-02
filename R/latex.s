@@ -566,12 +566,13 @@ latex.default <-
     cx <- cbind(rowname, cx)
     dimnames(cx)[[2]][1] <- rowlabel
     col.just <- c(rowlabel.just, col.just)
+    colheads <- c('', colheads)
     if(length(extracolheads))
       extracolheads <- c('', extracolheads)  ## 16jun03
     
     collabel.just <- c(rowlabel.just, collabel.just)
-    if (!length(cgroup))
-      n.cgroup <- c(1, nc)
+    if (length(cgroup) > 0L)
+      n.cgroup <- c(1L, nc)
     else {
       cgroup <- c(rowlabel, cgroup)
       dimnames(cx)[[2]][1] <- ""

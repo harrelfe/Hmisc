@@ -571,7 +571,7 @@ latex.default <-
       extracolheads <- c('', extracolheads)  ## 16jun03
     
     collabel.just <- c(rowlabel.just, collabel.just)
-    if (length(cgroup) > 0L)
+    if (length(cgroup) == 0L)
       n.cgroup <- c(1L, nc)
     else {
       cgroup <- c(rowlabel, cgroup)

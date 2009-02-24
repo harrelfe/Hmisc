@@ -75,7 +75,6 @@ first.word <- function(x, i=1, expr=substitute(x))
 ##    27May02 - added booktabs FEH
 ## 13Dec02 - added ctable   FEH
 ## arguments included check.names=TRUE 23jan03
-
 format.df <- function(x,
                       digits, dec=NULL, rdec=NULL, cdec=NULL,
                       numeric.dollar=cdot, na.blank=FALSE,
@@ -83,6 +82,12 @@ format.df <- function(x,
                       cdot=FALSE, dcolumn=FALSE, matrix.sep=' ', scientific=c(-4,4),
                       math.row.names=FALSE, math.col.names=FALSE, ...)
 {
+  cleanLatex <- function(string) {
+    string <- gsub('<', '\\\\textless', as.character(string))
+    string <- gsub('>', '\\\\textgreater', string)
+    string
+  }
+  
   if(cdot && dcolumn)
     stop('cannot have both cdot=T and dcolumn=T')
   
@@ -159,6 +164,7 @@ format.df <- function(x,
       dimnames(x)[[2]]
     else
       ''
+
   
   ## Added Check to see that if the user passed col.just into format.df
   ## that the length of col.just if >= ncx 29apr05
@@ -180,7 +186,7 @@ format.df <- function(x,
     else
       length(x)
   
-  rnam <-
+  rnams <-
     if(xtype==1)
       attr(x,'row.names')
     else if(xtype==2)
@@ -214,6 +220,18 @@ format.df <- function(x,
     ifelse(x == blanks.x, ".", x)
   }
   
+  if(math.col.names) {
+    nams <- paste('$', nams, '$', sep='')
+  } else {
+    nams <- cleanLatex(nams)
+  }
+
+  if(math.row.names) {
+    rnams <- paste('$', rnams, '$', sep='')
+  } else {
+    rnams <- cleanLatex(rnams)
+  }
+
   for(j in 1:ncx) {
     xj <-
       if(xtype==1)
@@ -222,11 +240,6 @@ format.df <- function(x,
         x[,j]
       else
         x
-    
-    namj <- nams[j]
-    if(math.col.names) {
-      namj <- paste('$', namj, '$', sep='')
-    }
     
     num <- is.numeric(xj) || all(is.na(xj)) ## 16sep03
     if(testDateTime(xj))
@@ -257,12 +270,12 @@ format.df <- function(x,
           if(math.row.names) {
             paste('$', dn, '$', sep='')
           } else {
-            dn
+            cleanLatex(dn)
           }
         } else ''
       
-      namk <- paste(namj,
-                    if(namj!='' && namk!='')
+      namk <- paste(nams[j],
+                    if(nams[j]!='' && namk!='')
                       matrix.sep
                     else '',
                     namk, sep='')
@@ -318,7 +331,7 @@ format.df <- function(x,
             col.just[j]
           else 'l'
         
-        cxk <- as.character(xk)
+        cxk <- cleanLatex(xk)
       }
       
       cx <- cbind(cx, cxk)
@@ -327,7 +340,7 @@ format.df <- function(x,
     }    #end for k
   }#end for j
 
-  dimnames(cx) <- list(rnam, nam)
+  dimnames(cx) <- list(rnams, nam)
   attr(cx,"col.just") <- cjust
   cx
 }
@@ -566,14 +579,15 @@ latex.default <-
     cx <- cbind(rowname, cx)
     dimnames(cx)[[2]][1] <- rowlabel
     col.just <- c(rowlabel.just, col.just)
-    colheads <- c('', colheads)
+
     if(length(extracolheads))
       extracolheads <- c('', extracolheads)  ## 16jun03
     
     collabel.just <- c(rowlabel.just, collabel.just)
     if (length(cgroup) == 0L)
-      n.cgroup <- c(1L, nc)
+      colheads <- c(rowlabel, colheads)
     else {
+      colheads <- c('', colheads)
       cgroup <- c(rowlabel, cgroup)
       dimnames(cx)[[2]][1] <- ""
       rlj <- ifelse(rowlabel.just=="l", "l", "c")
@@ -1378,23 +1392,22 @@ latexTabular <- function(x, headings=colnames(x),
                          align =paste(rep('c',ncol(x)),collapse=''),
                          halign=paste(rep('c',ncol(x)),collapse=''),
                          helvetica=TRUE, ...)
-  {
-    x <- latexTranslate(x)
-    if(length(list(...))) x <- format.df(x, ...)
-    xhalign <- substring(halign, 1:nchar(halign), 1:nchar(halign))
-    w <- paste('\\begin{tabular}{', align, '}', sep='')
-    if(helvetica) w <- paste('{\\fontfamily{phv}\\selectfont', w, sep='')
-    if(length(headings))
-      {
-        headings <- latexTranslate(headings)
-        h <- if(halign != align)
-          latexTranslate(paste(paste(paste('\\multicolumn{1}{', xhalign, '}{', 
-                                           headings, '}',sep=''),
-                                     collapse='&'), '\\\\', sep=''))
-        else paste(paste(headings, collapse='&'), '\\\\', sep='')
-      }
-    v <- apply(x, 1, paste, collapse='&')
-    v <- paste(paste(v, '\\\\'), collapse='\n')
-    if(length(headings)) v <- paste(h, v, sep='\n')
-    paste(w, v, '\\end{tabular}', if(helvetica)'}', sep='\n')
+{
+  x <- latexTranslate(x)
+  if(length(list(...))) x <- format.df(x, ...)
+  xhalign <- substring(halign, 1:nchar(halign), 1:nchar(halign))
+  w <- paste('\\begin{tabular}{', align, '}', sep='')
+  if(helvetica) w <- paste('{\\fontfamily{phv}\\selectfont', w, sep='')
+  if(length(headings)) {
+    headings <- latexTranslate(headings)
+    h <- if(halign != align)
+      latexTranslate(paste(paste(paste('\\multicolumn{1}{', xhalign, '}{', 
+                                       headings, '}',sep=''),
+                                 collapse='&'), '\\\\', sep=''))
+    else paste(paste(headings, collapse='&'), '\\\\', sep='')
   }
+  v <- apply(x, 1, paste, collapse='&')
+  v <- paste(paste(v, '\\\\'), collapse='\n')
+  if(length(headings)) v <- paste(h, v, sep='\n')
+  paste(w, v, '\\end{tabular}', if(helvetica)'}', sep='\n')
+}

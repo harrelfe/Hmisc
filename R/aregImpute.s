@@ -96,6 +96,15 @@ aregImpute <- function(formula, data, subset, n.impute=5,
       }
       if(iscat)
         {
+          if(length(lev) < 2) stop(paste(ni,'is constant'))
+          tab <- table(xi)
+          if(any(tab==0))
+            stop(paste(ni,'has the following levels with no observations:',
+                       paste(names(tab)[tab==0],collapse=' ')))
+          if(any(tab < 5))
+            warning(paste(ni,'has the following levels with < 5 observations:',
+                          paste(names(tab)[tab < 5],collapse=' '),
+                          '\nConsider using the group parameter to balance bootstrap samples'))
           cat.levels[[ni]] <- lev
           xi <- as.integer(xi)
           vtype[ni] <- 'c'

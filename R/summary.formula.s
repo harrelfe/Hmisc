@@ -592,6 +592,7 @@ summary.formula <-
     heading <- paste(funlab,"by",lab2)
     ##if(length(name.stats)) yname <- funlab <- name.stats
 
+    S <- S[,,drop=TRUE]
     attr(S,"label") <- yname    #funlab
     df$S <- S
     df$N <- N

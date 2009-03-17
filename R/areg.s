@@ -199,7 +199,7 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
       }
 
     puy  <- yinv(lp, what='sample')
-    if(length(y) != length(puy)) browser()
+    if(length(y) != length(puy)) stop('program logic error')
     mad  <- mean(abs(y-puy))
     med  <- median(abs(y-puy))
     
@@ -335,7 +335,7 @@ aregTran <- function(z, type, nk = length(parms), parms = NULL,
       ## Assume z is integer code if parms is given
       w <- if(lp) z else factor(z)
       x <- as.integer(w)
-      if(!lp) parms <- 1:max(x)
+      if(!lp) parms <- 1:max(x, na.rm=TRUE)
       z <- matrix(0, nrow=n, ncol=length(parms)-1)
       z[cbind(1:n, x-1)] <- 1
       attr(z, 'parms') <- if(lp)parms else levels(w)

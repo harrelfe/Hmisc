@@ -179,6 +179,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
                   gi <- (group.inds[[i]])[[ji]]
                   s[gi] <- sample(gi, length(gi), replace=TRUE)
                 }
+              s <- s[!is.na(s)]
             }
           else
             { ## sample of non-NAs
@@ -218,7 +219,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
                 
                 ## Jitter predicted transformed values for non-NAs to randomly
                 ## break ties in matching with predictions for NAs in xf[,i]
-                ## Becuase of normalization used by fitter, pti usually ranges
+                ## Because of normalization used by fitter, pti usually ranges
                 ## from about -4 to 4
                 pti[j] <- pti[j] + runif(npr,-.0001,.0001)
                 

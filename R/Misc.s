@@ -68,7 +68,7 @@ spearman <- function(x, y)
 }
 
 plotCorrPrecision <- function(rho=c(0,0.5), n=seq(10,400,length=100),
-                              conf.int=0.95)
+                              conf.int=0.95, offset=.025, ...)
 {
   ## Thanks to Xin Wang for computations
   curves <- vector('list', length(rho))
@@ -84,7 +84,7 @@ plotCorrPrecision <- function(rho=c(0,0.5), n=seq(10,400,length=100),
     precision <- pmax(rhi-r, r-rlo)
     curves[[i]] <- list(N=n, Precision=precision)
   }
-  labcurve(curves, pl=TRUE, xrestrict=quantile(n,c(.25,1)), offset=.025)
+  labcurve(curves, pl=TRUE, xrestrict=quantile(n,c(.25,1)), offset=offset, ...)
   invisible()
 }
 

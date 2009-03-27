@@ -843,7 +843,7 @@ latex.default <-
       cat(eol, "\n", midrule, "\n", sl, "endhead", '\n', midrule, "\n",
           sep="", file=file, append=file!='')
       if(length(insert.bottom)) {
-        cat(paste(sl, 'multicolumn{', nc, '}{', sl, "p{",sl,'linewidth}{', 
+        cat(paste(sl, 'multicolumn{', nc, '}{', "p{",sl,'linewidth}}{', 
                   insert.bottom, '}', eol, sep='', collapse='\n'), '\n',
                   sep="", file=file, append=file!='')
       }

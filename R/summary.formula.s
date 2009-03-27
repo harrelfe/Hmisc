@@ -2053,7 +2053,7 @@ latex.summary.formula.reverse <-
                  if(length(testUsed)==1)'\\noindent Test used:'
                  else '\\indent Tests used:',
                  if(length(testUsed)==1) paste(testUsed,'test')
-                 else paste(paste('\textsuperscript{\normalfont ',1:length(testUsed),'}',testUsed,
+                 else paste(paste('\\textsuperscript{\\normalfont ',1:length(testUsed),'}',testUsed,
                                   ' test',sep=''),collapse='; '))
 
     ## added rowname=lab 12aug02  added '\n\n' 4mar03 for ctable=T

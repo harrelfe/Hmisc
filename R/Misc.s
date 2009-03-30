@@ -112,11 +112,19 @@ stepfun.eval <- function(x, y, xout, type=c("left","right"))
   approx(x[s], y[s], xout=xout, method="constant", f=if(type=="left")0 else 1)$y
 }
 
+
+survfit.km <- function(...)
+  {
+    if(!.R.) stop('this function should not override an S-Plus function')
+    require(survival)
+    getFromNamespace(
+      if(packageDescription('survival',fields='Version') >= "2.35-3")
+                     'survfitKM' else 'survfit.km',
+                     'survival')(...)
+  }
+
 km.quick <- function(S, times, q)
 {
-  if(.R. && !existsFunction('survfit.km'))
-    survfit.km <- getFromNamespace('survfit.km','survival')
-
   S <- S[!is.na(S),]
   n <- nrow(S)
   stratvar <- factor(rep(1,nrow(S)))

@@ -1,8 +1,5 @@
 bootkm <- function(S, q=.5, B=500, times, pr=TRUE)
 {
-  if(.R. && !existsFunction('survfit.km'))
-    survfit.km <- getFromNamespace('survfit.km','survival')
-  
   tthere <- !missing(times)
   if(tthere && length(times)>1)
     stop('presently bootkm only works for a single time')
@@ -29,7 +26,7 @@ bootkm <- function(S, q=.5, B=500, times, pr=TRUE)
 
   for(i in 1:B) {
     if(pr && (i %% 10)==0)
-      cat(i,'')
+      cat(i,'\r')
     
     f <- survfit.km(stratvar, S[sample(n,n,replace=TRUE),],
                     se.fit=FALSE, conf.type='none')

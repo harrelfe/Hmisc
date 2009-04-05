@@ -1,5 +1,7 @@
 \name{rcorr.cens}
 \alias{rcorr.cens}
+\alias{rcorrcens}
+\alias{rcorrcens.formula}
 \title{
   Rank Correlation for Censored Data
 }
@@ -8,10 +10,17 @@
   generalization of Somers' Dxy rank correlation for a censored response
   variable. Also works for uncensored and binary responses, 
   although its use of all possible pairings
-  makes it slow for this purpose.  Dxy and c are related by Dxy = 2*(c-.5).
+  makes it slow for this purpose.  Dxy and c are related by Dxy =
+  2*(c-.5).
+
+  \code{rcorr.cens} handles one predictor variable.  \code{rcorrcens}
+  computes rank correlation measures separately by a series of predictors.
 }
 \usage{
 rcorr.cens(x, S, outx=FALSE)
+
+\method{rcorrcens}{formula}(formula, data=NULL,
+          subset, na.action=na.retain, outx=FALSE, exclude.imputed=TRUE, ...)
 }
 \arguments{
   \item{x}{
@@ -26,9 +35,21 @@ rcorr.cens(x, S, outx=FALSE)
     relevant pair.  This results in a Goodman--Kruskal gamma type rank
     correlation.
   }
+  \item{formula}{a formula with a \code{Surv} object or a numeric vector
+on the left-hand side
+  }
+  \item{data, subset, na.action}{
+    the usual options for models.  Default for \code{na.action} is to retain
+    all values, NA or not, so that NAs can be deleted in only a pairwise
+    fashion.
+  }
+  \item{exclude.imputed}{
+    set to \code{FALSE} to include imputed values (created by
+    \code{impute}) in the calculations.
+  }
 }
 \value{
-  a vector with the following named elements:
+  \code{rcorr.cens} returns a vector with the following named elements:
   \code{C Index}, \code{Dxy}, \code{S.D.}, \code{n}, \code{missing},
   \code{uncensored}, \code{Relevant Pairs}, \code{Concordant}, and
   \code{Uncertain}
@@ -45,7 +66,11 @@ rcorr.cens(x, S, outx=FALSE)
   
   \item{uncertain}{number of pairs of non-missing observations for which
   censoring prevents classification of concordance of \code{x} and
-  \code{S}.}
+  \code{S}.
+  }
+
+  \code{rcorrcens.formula} returns an object of class \code{"biVar"}
+which is documented with the \code{\link{byVar}} function.
 }
 \author{
 Frank Harrell
@@ -57,7 +82,7 @@ Vanderbilt University
 f.harrell@vanderbilt.edu
 }
 \seealso{
-\code{\link{somers2}}
+\code{\link{somers2}}, \code{\link{biVar}}, \code{\link{rcorrp.cens}}
 }
 \references{
 Newson R: Confidence intervals for rank statistics: Somers' D and extensions.  Stata Journal 6:309-334; 2006.
@@ -69,11 +94,16 @@ y <- rnorm(200)
 rcorr.cens(x, y, outx=TRUE)   # can correlate non-censored variables
 library(survival)
 age <- rnorm(400, 50, 10)
+bp  <- rnorm(400,120, 15)
+bp[1]  <- NA
 d.time <- rexp(400)
 cens   <- runif(400,.5,2)
 death  <- d.time <= cens
 d.time <- pmin(d.time, cens)
 rcorr.cens(age, Surv(d.time, death))
+r <- rcorrcens(Surv(d.time, death) ~ age + bp)
+r
+plot(r)
 
 # Show typical 0.95 confidence limits for ROC areas for a sample size
 # with 24 events and 62 non-events, for varying population ROC areas

@@ -14,7 +14,14 @@
   2*(c-.5).
 
   \code{rcorr.cens} handles one predictor variable.  \code{rcorrcens}
-  computes rank correlation measures separately by a series of predictors.
+  computes rank correlation measures separately by a series of
+  predictors.  In addition, \code{rcorrcens} has a rough way of handling
+  categorical predictors.  If a categorical (factor) predictor has two
+  levels, it is coverted to a numeric having values 1 and 2.  If it has
+  more than 2 levels, an indicator variable is formed for the most
+  frequently level vs. all others, and another indicator for the second
+  most frequent level and all others.  The correlation is taken as the
+  maximum of the two (in absolute value).
 }
 \usage{
 rcorr.cens(x, S, outx=FALSE)

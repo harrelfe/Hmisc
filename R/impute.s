@@ -138,7 +138,7 @@ summary.impute <- function(object, ...)
 
 is.imputed <- function(x)
 {
-  w <- rep(FALSE, length(x))
+  w <- rep(FALSE, if(is.matrix(x))nrow(x) else length(x))
   if(length(z <- attr(x,"imputed")))
     w[z] <- TRUE
   

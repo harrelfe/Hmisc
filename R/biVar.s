@@ -227,7 +227,17 @@ rcorrcens.formula <- function(formula, data=NULL, subset=NULL,
 {
   g <- function(x, y, outx)
     {
-      u <- rcorr.cens(x, y, outx=outx)[c('C Index','Dxy','S.D.','n')]
+      lev <- levels(x)
+      if(is.factor(x) && length(lev)==2) x <- as.integer(x)
+      
+      u <- if(is.factor(x))
+        {
+          i <- order(-table(x))
+          u <- rcorr.cens(1*(x==lev[i[1]]), y, outx=outx)
+          v <- rcorr.cens(1*(x==lev[i[2]]), y, outx=outx)
+          if(abs(v['Dxy']) > abs(u['Dxy'])) v else u
+        }
+      else rcorr.cens(x, y, outx=outx)
       Dxy <- u['Dxy']
       SE <- u['S.D.']
       aDxy <- abs(Dxy)

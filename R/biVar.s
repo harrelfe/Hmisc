@@ -217,3 +217,36 @@ statinfo <- list(fun=g,
 biVar(formula, statinfo=statinfo, data=data, subset=subset,
       na.action=na.action, exclude.imputed=exclude.imputed, ...)
 }
+
+
+rcorrcens <- function(x, ...) UseMethod("rcorrcens") 
+
+rcorrcens.formula <- function(formula, data=NULL, subset=NULL,
+                              na.action=na.retain,
+                              exclude.imputed=TRUE, outx=FALSE, ...)
+{
+  g <- function(x, y, outx)
+    {
+      u <- rcorr.cens(x, y, outx=outx)[c('C Index','Dxy','S.D.','n')]
+      Dxy <- u['Dxy']
+      SE <- u['S.D.']
+      aDxy <- abs(Dxy)
+      z <- aDxy/SE
+      P <- 2*(1-pnorm(z))
+      c(C=u['C Index'], Dxy=Dxy, aDxy=aDxy, SD=SE, Z=z, P=P)
+    }
+  
+statinfo <- list(fun=g,
+                 title="Somers' Rank Correlation for Censored Data",
+                 main="Somers' Rank Correlation",
+                 rmain=expression(paste("Somers' ", D[xy])),
+                 names=c('C','Dxy','aDxy','SD','Z','P'),
+                 xlab=c('C','Dxy','|Dxy|','SD','Z','P-value'),
+                 rxlab=expression(C-index, D[xy], paste('|',D[xy],'|'), SD, Z, P-value),
+                 digits=c(3,3,3,3,2,4),
+#                 aux='n', auxlabel='N',
+                 nmin=2, defaultwhat='aDxy')
+
+biVar(formula, statinfo=statinfo, data=data, subset=subset,
+      na.action=na.action, exclude.imputed=exclude.imputed, outx=outx, ...)
+}

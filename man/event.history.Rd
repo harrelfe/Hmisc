@@ -260,7 +260,7 @@ heart.one[,3][heart.one[,3] == 2] <- 0
 #        and event = 1 is death, while event = 0 is censored
 
 # plot single Kaplan-Meier curve from heart data, first creating survival object
-heart.surv <- survfit(Surv(heart.one$stop, heart.one$event), conf.int = FALSE)
+heart.surv <- survfit(Surv(stop, event) ~ 1, data=heart.one, conf.int = FALSE)
 
 # figure 3: traditional Kaplan-Meier curve
 # postscript('ehgfig3.ps', horiz=TRUE)

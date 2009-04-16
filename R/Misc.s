@@ -113,16 +113,6 @@ stepfun.eval <- function(x, y, xout, type=c("left","right"))
 }
 
 
-survfit.km <- function(...)
-  {
-    if(!.R.) stop('this function should not override an S-Plus function')
-    require(survival)
-    getFromNamespace(
-      if(packageDescription('survival',fields='Version') >= "2.35-3")
-                     'survfitKM' else 'survfit.km',
-                     'survival')(...)
-  }
-
 km.quick <- function(S, times, q)
 {
   S <- S[!is.na(S),]

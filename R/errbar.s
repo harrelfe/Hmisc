@@ -7,14 +7,18 @@
 
 errbar <-
   function(x, y, yplus, yminus, cap=.015,
+           main=NULL, sub=NULL,
            xlab=as.character(substitute(x)),
-           ylab=if(is.factor(x) || is.character(x)) ''
-           else
-           as.character(substitute(y)),
-           add=FALSE, lty=1, ylim, lwd=1,
-           Type=rep(1,length(y)), ... )
+           ylab=if(is.factor(x) || is.character(x)) '' else as.character(substitute(y)),
+           add=FALSE, lty=1, xlim=NULL, ylim=NULL, lwd=1, pch=16,
+           Type=rep(1,length(y)), axes=FALSE, ann=par("ann"),
+           panel.first = NULL, panel.last=NULL, asp=NA, ...)
 {
-  if(missing(ylim))
+  localAxis <- function(..., col, bg, pch, cex, lty, lwd) Axis(...)
+  localWindow <- function(..., col, bg, pch, cex, lty, lwd) plot.window(...)
+  localTitle <- function(..., col, bg, pch, cex, lty, lwd) title(...)
+
+  if(is.null(ylim)) 
     ylim <- range(y[Type==1], yplus[Type==1], yminus[Type==1],
                   na.rm=TRUE)
   
@@ -25,47 +29,78 @@ errbar <-
     t2 <- Type==2
     n1 <- sum(t1)
     n2 <- sum(t2)
+
+    if(is.null(xlim))
+      xlim <- c(1, n+1)
     
     omai <- par('mai')
     mai <- omai
-    mai[2] <- max(strwidth(x, 'inches')) + .25 * .R.
+    if(.R.) {
+      mai[2] <- max(strwidth(x, 'inches')) + .25
+    } else {
+      mai[2] <- max(strwidth(x, 'inched'))
+    }
+    
     par(mai=mai)
     on.exit(par(mai=omai))
-    plot(0,0,xlab=ylab,ylab='',xlim=ylim,ylim=c(1,n+1),axes=FALSE,...)
-    axis(1)
+    plot.new()
+    localWindow(xlim=ylim, ylim=xlim, ...)
+    panel.first
+    
+
+    localAxis()
     w <-
       if(any(t2))
         n1+(1:n2)+1
       else
         numeric(0)
     
-    axis(2, at=c(1:n1,w), labels=c(x[t1],x[t2]), las=1,adj=1)
-    points(y[t1], 1:n1, pch=16, ...)
-    segments(yplus[t1], 1:n1, yminus[t1], 1:n1, lwd=lwd, ...)
+    points(y[t1], seq.int(length.out=n1), pch=pch, ...)
+    segments(yplus[t1], seq.int(length.out=n1), yminus[t1], seq.int(length.out=n1), lwd=lwd, ...)
 
     if(any(Type==2)) {
       abline(h=n1+1, lty=2, ...)
       offset <- mean(y[t1]) - mean(y[t2])
+
       if(min(yminus[t2]) < 0 & max(yplus[t2]) > 0)
         lines(c(0,0)+offset, c(n1+1,par('usr')[4]), lty=2, ...)
+
       
-      points(y[t2] + offset, w, pch=16, ...)
-      segments(yminus[t2]+offset, w, yplus[t2]+offset, w, lwd=lwd, ...)
-      at <- pretty(range(y[t2],yplus[t2],yminus[t2]))
-      axis(3, at=at+offset, label=format(round(at,6)))
+      points(y[t2] + offset, w, pch=pch, ...)
+      
+      segments(yminus[t2] + offset, w, yplus[t2] + offset, w, lwd=lwd, ...)
     }
+
+    panel.last
+
+    if(axes) {
+      if(any(Type==2)) {
+        at <- pretty(range(y[t2], yplus[t2], yminus[t2]))
+      
+        localXAxis(side=3, at=at + offset, labels=format(round(at, 6)),
+                   ..., cex.xaxis=cex.xaxis, col.xaxis=col.xaxis, font.xaxis=font.xaxis)
+      }        
+      localYAxis(side=1, ..., cex.yaxis=cex.yaxis, col.yaxis=col.yaxis, font.yaxis=font.yaxis)
+      localXAxis(side=2, at=c(seq.int(length.out=n1), w), labels=c(x[t1], x[t2]), las=1, adj=1,
+                 ..., cex.xaxis=cex.xaxis, col.xaxis=col.xaxis, font.xaxis=font.xaxis)
+    }
+
+    if(ann)
+      localTitle(main = main, sub = sub, xlab = ylab, ylab = "", ...)
     
     return(invisible())
   }
   
-  if(add) points(x, y, ...)
+  if(add)
+    points(x, y, pch=pch, ...)
   else
-    plot(x, y, ylim=ylim, xlab=xlab, ylab=ylab, ...)
+    plot(x, y, ylim=ylim, xlab=xlab, ylab=ylab, axes=FALSE, panel.last=NULL, pch=pch, asp=asp, ...)
   
   xcoord <- par()$usr[1:2]
   smidge <- cap * ( xcoord[2] - xcoord[1] ) / 2
 
   segments(x, yminus, x, yplus , lty=lty, lwd=lwd, ...)
+  
   if(par()$xlog) {
     xstart <- x * 10 ^ (-smidge)
     xend <- x * 10 ^ (smidge)
@@ -75,5 +110,17 @@ errbar <-
   }
   segments( xstart, yminus, xend, yminus, lwd=lwd, ...)
   segments( xstart, yplus, xend, yplus, lwd=lwd, ...)
+
+  panel.last
+
+  if(axes) {
+    localYAxis(side=1, ..., cex.yaxis=cex.yaxis, col.yaxis=col.yaxis, font.yaxis=font.yaxis)
+    localXAxis(side=2, at=c(seq.int(length.out=n1), w), labels=c(x[t1], x[t2]), las=1, adj=1,
+               ..., cex.xaxis=cex.xaxis, col.xaxis=col.xaxis, font.xaxis=font.xaxis)
+  }
+
+  if(ann)
+    localTitle(main = main, sub = sub, xlab = xlab, ylab = ylab,, ...)
+  
   invisible()
 }

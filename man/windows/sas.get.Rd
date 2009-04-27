@@ -42,8 +42,8 @@
   \code{sasout} argument) to access these files instead of running \acronym{SAS}.
 }
 \usage{
-sas.get(library, member, variables=character(0), ifs=character(0),
-     format.library=library, id,
+sas.get(libraryName, member, variables=character(0), ifs=character(0),
+     format.library=libraryName, id,
      dates.=c("sas","yymmdd","yearfrac","yearfrac2"),
      keep.log=TRUE, log.file="_temp_.log", macro=sas.get.macro,
      data.frame.out=existsFunction("data.frame"), clean.up=!.R., quiet=FALSE,
@@ -65,9 +65,9 @@ sas.codes(object)
 code.levels(object)
 }
 \arguments{
-  \item{library}{
+  \item{libraryName}{
     character string naming the directory in which the dataset is kept.
-    The default is \code{library = "."}, indicating that the current
+    The default is \code{libraryName = "."}, indicating that the current
     directory is to be used.
   }
   \item{member}{
@@ -319,8 +319,7 @@ code.levels(object)
 
   If you are reading time or
   date-time variables, you will need to execute the command \code{library(chron)}
-  to print those variables or the data frame if the \code{\link{timeDate}} function
-  is not available.
+  to print those variables or the data frame.
 }
 \section{BACKGROUND}{
   The references cited below explain the structure of \acronym{SAS} datasets and how

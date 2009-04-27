@@ -6,12 +6,12 @@
   Rank Correlation for Censored Data
 }
 \description{
-  Computes the \code{c} index and the corresponding
-  generalization of Somers' Dxy rank correlation for a censored response
+  Computes the \var{c} index and the corresponding
+  generalization of Somers' \var{Dxy} rank correlation for a censored response
   variable. Also works for uncensored and binary responses, 
   although its use of all possible pairings
-  makes it slow for this purpose.  Dxy and c are related by Dxy =
-  2*(c-.5).
+  makes it slow for this purpose.  \var{Dxy} and \var{c} are related by
+  \eqn{\var{Dxy} = 2 ( \var{c} - 0.5 )}{Dxy = 2*(c-.5)}.
 
   \code{rcorr.cens} handles one predictor variable.  \code{rcorrcens}
   computes rank correlation measures separately by a series of
@@ -26,8 +26,9 @@
 \usage{
 rcorr.cens(x, S, outx=FALSE)
 
-\method{rcorrcens}{formula}(formula, data=NULL,
-          subset, na.action=na.retain, outx=FALSE, exclude.imputed=TRUE, ...)
+\method{rcorrcens}{formula}(formula, data=NULL, subset=NULL,
+          na.action=na.retain, exclude.imputed=TRUE, outx=FALSE,
+          \dots)
 }
 \arguments{
   \item{x}{
@@ -42,8 +43,9 @@ rcorr.cens(x, S, outx=FALSE)
     relevant pair.  This results in a Goodman--Kruskal gamma type rank
     correlation.
   }
-  \item{formula}{a formula with a \code{Surv} object or a numeric vector
-on the left-hand side
+  \item{formula}{
+    a formula with a \code{Surv} object or a numeric vector
+    on the left-hand side
   }
   \item{data, subset, na.action}{
     the usual options for models.  Default for \code{na.action} is to retain
@@ -53,6 +55,9 @@ on the left-hand side
   \item{exclude.imputed}{
     set to \code{FALSE} to include imputed values (created by
     \code{impute}) in the calculations.
+  }
+  \item{\dots}{
+    extra arguments passed to \code{\link{biVar}}.
   }
 }
 \value{
@@ -76,8 +81,8 @@ on the left-hand side
   \code{S}.
   }
 
-  \code{rcorrcens.formula} returns an object of class \code{"biVar"}
-which is documented with the \code{\link{byVar}} function.
+  \code{rcorrcens.formula} returns an object of class \code{biVar}
+which is documented with the \code{\link{biVar}} function.
 }
 \author{
 Frank Harrell
@@ -86,7 +91,7 @@ Department of Biostatistics
 \cr
 Vanderbilt University
 \cr
-f.harrell@vanderbilt.edu
+\email{f.harrell@vanderbilt.edu}
 }
 \seealso{
 \code{\link{somers2}}, \code{\link{biVar}}, \code{\link{rcorrp.cens}}

@@ -6,19 +6,19 @@
 \description{
   \code{format.df} does appropriate rounding and decimal alignment, and outputs
   a character matrix containing the formatted data.  If \code{x} is a
-  data.frame, then do each component separately.
+  \code{data.frame}, then do each component separately.
   If \code{x} is a matrix, but not a data.frame, make it a data.frame
   with individual components for the columns.
   If a component \code{x$x} is a matrix, then do all columns the same.
 }
 
 \usage{
-format.df(x,
-          digits, dec=NULL, rdec=NULL, cdec=NULL,
-          numeric.dollar=cdot,
-          na.blank=FALSE, na.dot=FALSE, blank.dot=FALSE,
-          col.just=NULL, cdot=FALSE, dcolumn=FALSE, matrix.sep=' ', 
-          scientific=c(-4,4), math.row.names, math.col.names, \dots)
+format.df(x, digits, dec=NULL, rdec=NULL, cdec=NULL,
+          numeric.dollar=!dcolumn, na.blank=FALSE, na.dot=FALSE,
+          blank.dot=FALSE, col.just=NULL, cdot=FALSE,
+          dcolumn=FALSE, matrix.sep=' ', scientific=c(-4,4),
+          math.row.names=FALSE, math.col.names=FALSE,
+          double.slash=FALSE, \dots)
 }
 \arguments{
   \item{x}{
@@ -58,7 +58,7 @@ format.df(x,
     This usually looks better in \code{latex}.
   }
   \item{dcolumn}{
-    Set to \code{TRUE} to use David Carlisle's \code{dcolumn} style for
+    Set to \code{TRUE} to use David Carlisle's dcolumn style for
     decimal alignment in \code{latex}.
     Default is \code{FALSE}. You will probably want to
     use \code{dcolumn} if you use \code{rdec}, as a column may then contain varying
@@ -68,11 +68,11 @@ format.df(x,
     contain decimal places.  When you use \code{dcolumn = TRUE}, 
     \code{numeric.dollar} is set by default to \code{FALSE}.  When you
     use \code{dcolumn = TRUE}, the
-    \code{"style"} element is set to \code{"dcolumn"} as the \code{latex} \code{\\usepackage}
-    must reference \code{[dcolumn]}.
-    The three files \code{dcolumn.sty}, \code{newarray.sty}, and
-    \code{array.sty} will 
-    need to be in a directory in your \code{$TEXINPUTS} path.
+    object attribute \code{"style"} set to \samp{dcolumn} as the \code{latex} \preformatted{\\usepackage}
+    must reference \preformatted{[dcolumn]}.
+    The three files \file{dcolumn.sty}, \file{newarray.sty}, and
+    \file{array.sty} will 
+    need to be in a directory in your \file{\var{$TEXINPUTS}} path.
     When you use \code{dcolumn=TRUE}, \code{numeric.dollar} should be set to \code{FALSE}.
   }
   \item{numeric.dollar}{
@@ -91,26 +91,27 @@ format.df(x,
   \item{na.dot}{
     Set to \code{TRUE} to use periods rather than \code{NA} for missing
     numeric values. 
-    This works with the \code{sas} convention that periods indicate missing values.
+    This works with the \acronym{SAS} convention that periods indicate missing values.
   }
   \item{blank.dot}{
     Set to \code{TRUE} to use periods rather than blanks for missing character values.
-    This works with the \code{sas} convention that periods indicate missing values.
+    This works with the \acronym{SAS} convention that periods indicate missing values.
   }
   \item{col.just}{
     Input vector \code{col.just} must have number of columns equal to
     number of columns of the output matrix.  When \code{NULL}, the
     default, the \code{col.just} attribute of the result is set to
-    \code{"l"} for character columns and to \code{"r"} for numeric
+    \samp{l} for character columns and to \samp{r} for numeric
     columns.  The user can override the default by an argument vector
     whose length is equal to the number of columns of the result matrix.
     When \code{format.df} is called by \code{latex.default}, the
     \code{col.just} is used as the \code{cols} argument to the
-    \code{\\tabular} environment and the letters \code{"l"}, \code{"r"},
-    and \code{"c"} are valid values.  When \code{format.df} is called by
-    \code{sas}, the \code{col.just} is used to determine whether a
-    \code{$} is needed on the \code{input} line of the \code{sysin} file,
-    and the letters \code{"l"} and \code{"r"} are valid values.  }
+    \preformatted{\\tabular} environment and the letters \samp{l}, \samp{r},
+    and \samp{c} are valid values.  When \code{format.df} is called by
+    \acronym{SAS}, the \code{col.just} is used to determine whether a
+    \samp{$} is needed on the \samp{input} line of the \file{sysin} file,
+    and the letters \samp{l} and \samp{r} are valid values.
+  }
   \item{matrix.sep}{
     When \code{x} is a data frame containing a matrix, so that new column names
     are constructed from the name of the matrix object and the names of
@@ -122,7 +123,10 @@ format.df(x,
     specifies ranges of exponents (or a logical vector) specifying values
     not to convert to scientific notation.  See \code{format.default} for details.
   }
-  \item{...}{
+  \item{double.slash}{
+    should escaping backslashes be themselves escaped.
+  }
+  \item{\dots}{
     other arguments are accepted and ignored.  For \code{latexVerbatim} these
     arguments are passed to the \code{print} function.
   }
@@ -131,12 +135,12 @@ format.df(x,
   a character matrix with character images of properly rounded \code{x}.
   Matrix components of input \code{x} are now just sets of columns of
   character matrix.
-  \code{attr(,col.just)} repeats the input \code{col.just} when provided,
+  Object attribute\code{"col.just"} repeats the value of the argument \code{col.just} when provided,
   otherwise, it includes the recommended justification for columns of output.
   See the discussion of the argument \code{col.just}.
-  The default justification is \code{"l"} for characters and factors,
-  \code{"r"} for numeric.
-  When \code{dcolumn==TRUE}, numerics will have \code{"."} as the justification character.
+  The default justification is \samp{l} for characters and factors,
+  \samp{r} for numeric.
+  When \code{dcolumn==TRUE}, numerics will have \samp{.} as the justification character.
 }
 
 \author{
@@ -146,7 +150,7 @@ format.df(x,
   \cr
   Vanderbilt University,
   \cr
-  \code{f.harrell@vanderbilt.edu}
+  \email{f.harrell@vanderbilt.edu}
 
 
   Richard M. Heiberger,
@@ -155,7 +159,7 @@ format.df(x,
   \cr
   Temple University, Philadelphia, PA.
   \cr
-  \code{rmh@astro.ocis.temple.edu}
+  \email{rmh@astro.ocis.temple.edu}
 
 
 }
@@ -163,6 +167,7 @@ format.df(x,
   \code{\link{latex}}
 }
 \examples{
+\dontrun{
 x <- data.frame(a=1:2, b=3:4)
 x$m <- matrix(5:8,nrow=2)
 names(x)
@@ -170,6 +175,7 @@ dim(x)
 x
 format.df(x)
 dim(format.df(x))
+}
 }
 \keyword{utilities}
 \keyword{interface}

@@ -1,18 +1,28 @@
 ## $Id$
 sas.get <- if(under.unix || .R.)
-  function(library, member, variables = character(0), 
+  function(libraryName,
+           member,
+           variables = character(0), 
            ifs = character(0), 
-           format.library = library, id, 
+           format.library = libraryName,
+           id, 
            dates. = c("sas","yymmdd","yearfrac","yearfrac2"), 
-           keep.log = TRUE, log.file = "_temp_.log", 
+           keep.log = TRUE,
+           log.file = "_temp_.log", 
            macro = sas.get.macro,
            data.frame.out = existsFunction("data.frame"), 
            clean.up = !.R.,
-           quiet = FALSE, temp = tempfile("SaS"), 
-           formats=TRUE, recode=formats, 
-           special.miss=FALSE, sasprog="sas", as.is=.5, check.unique.id=TRUE,
+           quiet = FALSE,
+           temp = tempfile("SaS"), 
+           formats=TRUE,
+           recode=formats, 
+           special.miss=FALSE,
+           sasprog="sas",
+           as.is=.5,
+           check.unique.id=TRUE,
            force.single=FALSE,
-           where, uncompress=FALSE)
+           where,
+           uncompress=FALSE)
 {
   if(.R. && force.single) stop('force.single does not work under R')
   dates. <- match.arg(dates.)
@@ -37,17 +47,18 @@ sas.get <- if(under.unix || .R.)
       file.access(name,4)==0
     else access(name,4)==0
 
-  fileShow <- if(.R.) function(x) file.show(x)
-              else function(x) page(filename=x)
+  if(.R.)
+    fileShow <- function(x) file.show(x)
+  else
+    fileShow <- function(x) page(filename=x)
 
   if(recode) formats <- TRUE
 
   if(missing(formats) || formats) {
     ## *****  Next line begins mod from Mike Kattan edits 11 Sep 97
     ## Redone FEH 22Oct00
-    no.format <- all(!fexists(paste(format.library,
-                                    c('formats.sc2','formats.sct','formats.sct01','formats.sas7bcat'),
-                                    sep='/')))
+    no.format <- all(!fexists(file.path(format.library,
+                                    c('formats.sc2','formats.sct','formats.sct01','formats.sas7bcat'))))
     if(no.format) {
       if((!missing(formats) && formats) || (!missing(recode) && recode))
         warning(paste(paste(format.library, 
@@ -88,7 +99,7 @@ sas.get <- if(under.unix || .R.)
   if(missing(member))
     stop("SAS member name is required")
   
-  if(missing(library))
+  if(missing(libraryName))
     stop("SAS library name is required")
   
   cat(macro, sep="\n", file=sasin)
@@ -96,7 +107,7 @@ sas.get <- if(under.unix || .R.)
   sasds.suffix <- c('sd2','sd7','ssd01','ssd02','ssd03','ssd04','sas7bdat') 
   ## 22Oct00
 
-  if(library == "") {
+  if(libraryName == "") {
     if(uncompress) {  # 22Oct00
       unix.file <- paste(member, sasds.suffix, sep=".")
       if(any(fe <- fexists(paste(unix.file,".gz",sep=""))))
@@ -117,12 +128,12 @@ sas.get <- if(under.unix || .R.)
         "  specmiss=", as.integer(special.miss), ");\n",
         file = sasin, append = TRUE, sep = "")
   } else {
-    if(!file.is.dir(library))
-      stop(paste(sep = "", "library, \"", library, 
+    if(!file.is.dir(libraryName))
+      stop(paste(sep = "", "library, \"", libraryName, 
                  "\", is not a directory"))
     
-    unix.file <- paste(library, "/", member, ".", sasds.suffix,
-                       sep='')
+    unix.file <- file.path(libraryName, paste(member, sasds.suffix, sep="."))
+
     ##23Nov00
     if(uncompress) {  #22Oct00
       if(any(fe <- fexists(paste(unix.file,".gz",sep=""))))
@@ -144,7 +155,7 @@ sas.get <- if(under.unix || .R.)
       }
     }
     
-    cat("libname temp '", library, "';\n", file = sasin, append = TRUE,
+    cat("libname temp '", libraryName, "';\n", file = sasin, append = TRUE,
         sep = "")
     
     ## format.library should contain formats.sct containing user defined
@@ -170,9 +181,9 @@ sas.get <- if(under.unix || .R.)
     if(!quiet && fexists(log.file)) fileShow(log.file)  ## 4oct03
     stop(paste("SAS job failed with status", status))
   }
-										#
-										# Read in the variable information
-										#
+  ##
+  ## Read in the variable information
+  ##
   if(!(fexists(sasout1) && fexists(sasout2))) {
     if(!quiet)
       fileShow(log.file)  ## 4oct03
@@ -416,9 +427,9 @@ sas.get <- if(under.unix || .R.)
 
   attributes(ds) <- c(attributes(ds),atr)
   ds
-} else function(library=".", member, variables = character(0), 
+} else function(libraryName=".", member, variables = character(0), 
                 ifs = character(0), 
-                format.library = library, id, sasout, 
+                format.library = libraryName, id, sasout, 
                 keep.log = TRUE, log.file = "_temp_.log", macro = sas.get.macro,
                 clean.up = TRUE, formats=TRUE, recode=formats, 
                 special.miss=FALSE, sasprog="sas", as.is=.5, check.unique.id=TRUE,
@@ -433,7 +444,7 @@ sas.get <- if(under.unix || .R.)
   sasran <- !missing(sasout)
 
   if(sasran) {
-    if(missing(library)+missing(member)+missing(variables)+
+    if(missing(libraryName)+missing(member)+missing(variables)+
        missing(ifs)+missing(format.library)+missing(keep.log)+
        missing(log.file)+missing(formats)+
        missing(special.miss)+missing(sasprog)+
@@ -494,7 +505,7 @@ sas.get <- if(under.unix || .R.)
     if(missing(member))
       stop('must specify member')
     
-    if(library != '.' && !is.dir(library))
+    if(libraryName != '.' && !is.dir(libraryName))
       stop('library is not a valid directory name')
 
     nvariables <- length(variables)
@@ -508,9 +519,9 @@ sas.get <- if(under.unix || .R.)
     cat(macro, sep="\n", file=sasin)
     if(unzip) {
       file <- paste(member,".zip",sep="")
-      if(library != '.') file <- paste(library,'/',file,sep='')
-      if(access(file)==0) dos(if(library=='.') paste("pkunzip",file)
-                              else paste("pkunzip",file,library),
+      if(libraryName != '.') file <- paste(libraryName,'/',file,sep='')
+      if(access(file)==0) dos(if(libraryName=='.') paste("pkunzip",file)
+                              else paste("pkunzip",file,libraryName),
                               out=FALSE, translate=TRUE)
       else
         cat(file,'does not exist.  No unzipping attempted.\n')
@@ -518,14 +529,14 @@ sas.get <- if(under.unix || .R.)
 
     file <- paste(member, 
                   c('sd2','sd7','ssd01','ssd02','ssd03','ssd04','sas7bdat'), sep='.')
-    if(library != '.')
-      file <- paste(library, '/', file, sep='')
+    if(libraryName != '.')
+      file <- paste(libraryName, '/', file, sep='')
 
     if(all(access(file,4) < 0)) 
       stop(paste('file',paste(file,collapse=' '),
                  'does not exist or you do not have read access'))	
 
-    cat("libname temp '", library, "';\n", file = sasin, append = TRUE,
+    cat("libname temp '", libraryName, "';\n", file = sasin, append = TRUE,
         sep = "")
     if(format.library != '.' && (!is.dir(format.library) || access(format.library,4)<0))
       stop('format.library does not exist or you do not have read access for it')

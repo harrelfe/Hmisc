@@ -27,8 +27,8 @@
   Under R, \code{\link{Dates}} is used for dates and \code{\link[chron]{chron}}
   for date-times.  For times without
   dates, these still need to be stored in date-time format in POSIX.
-  Such \acronym{SAS} time variables are given a major class of \code{timePOSIXt} and a
-  \code{format.timePOSIXt} function so that the date portion (which will
+  Such \acronym{SAS} time variables are given a major class of \code{POSIXt} and a
+  \code{format.POSIXt} function so that the date portion (which will
   always be 1/1/1970) will not print by default.
   If a date variable represents a partial date (0.5 added if
   month missing, 0.25 added if day missing, 0.75 if both), an attribute
@@ -40,8 +40,8 @@
   \acronym{SAS} datasets.
 }
 \usage{
-sas.get(library, member, variables=character(0), ifs=character(0),
-     format.library=library, id,
+sas.get(libraryName, member, variables=character(0), ifs=character(0),
+     format.library=libraryName, id,
      dates.=c("sas","yymmdd","yearfrac","yearfrac2"),
      keep.log=TRUE, log.file="_temp_.log", macro=sas.get.macro,
      data.frame.out=existsFunction("data.frame"), clean.up=!.R., quiet=FALSE,
@@ -63,7 +63,7 @@ sas.codes(object)
 code.levels(object)
 }
 \arguments{
-  \item{library}{
+  \item{libraryName}{
     character string naming the directory in which the dataset is kept.
   }
   \item{drop}{

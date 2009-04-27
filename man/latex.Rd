@@ -106,7 +106,7 @@ latex(object, title=first.word(deparse(substitute(object))), \dots)
     colnamesTexCmd=NULL,
     cellTexCmds=NULL,
     rowname, cgroup.just=rep("c",length(n.cgroup)),
-    colheads=dimnames(cx)[[2]],
+    colheads=NULL,
     extracolheads=NULL, extracolsize='scriptsize',
     dcolumn=FALSE, numeric.dollar=!dcolumn, cdot=FALSE,
     longtable=FALSE, draft.longtable=TRUE, ctable=FALSE, booktabs=FALSE,

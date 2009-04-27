@@ -47,8 +47,6 @@ errbar <-
     localWindow(xlim=ylim, ylim=xlim, ...)
     panel.first
     
-
-    localAxis()
     w <-
       if(any(t2))
         n1+(1:n2)+1
@@ -86,7 +84,7 @@ errbar <-
     }
 
     if(ann)
-      localTitle(main = main, sub = sub, xlab = ylab, ylab = "", ...)
+      localTitle(main = main, sub = sub, xlab = ylab, ylab = xlab, ...)
     
     return(invisible())
   }
@@ -120,7 +118,7 @@ errbar <-
   }
 
   if(ann)
-    localTitle(main = main, sub = sub, xlab = xlab, ylab = ylab,, ...)
+    localTitle(main = main, sub = sub, xlab = xlab, ylab = ylab, ...)
   
   invisible()
 }

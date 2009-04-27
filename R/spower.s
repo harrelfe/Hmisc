@@ -6,8 +6,7 @@ spower <- function(rcontrol, rinterv, rcens, nc, ni,
   nexceed <- 0
 
   for(i in 1:nsim) {
-    if(pr && i %% 10 == 0)
-      cat(i,'')
+    if(pr && i %% 10 == 0) cat(i,'\r')
 
     yc <- rcontrol(nc)
     yi <- rinterv(ni)
@@ -16,6 +15,7 @@ spower <- function(rcontrol, rinterv, rcens, nc, ni,
     S <- cbind(pmin(y,cens), 1*(y <= cens))
     nexceed <- nexceed + (test(S, group) > crit)
   }
+  cat('\n')
   nexceed/nsim
 }
   

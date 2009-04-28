@@ -123,7 +123,9 @@ rm.boot <- function(time, y, id=seq(along=time), subset=TRUE,
     used <- 0
     i <- 0
     meanres <- tapply(res, time, mean)
+    names(meanres) <- as.numeric(names(meanres))
     sdres   <- sqrt(tapply(res, time, var))
+    names(sdres) <- as.numeric(names(sdres))
     if(any(is.na(sdres)))
       stop('one or more times occur in only one subject')
 

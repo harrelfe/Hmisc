@@ -72,7 +72,7 @@ format.df(x, digits, dec=NULL, rdec=NULL, cdec=NULL,
     must reference \preformatted{[dcolumn]}.
     The three files \file{dcolumn.sty}, \file{newarray.sty}, and
     \file{array.sty} will 
-    need to be in a directory in your \file{\var{$TEXINPUTS}} path.
+    need to be in a directory in your \env{TEXINPUTS} path.
     When you use \code{dcolumn=TRUE}, \code{numeric.dollar} should be set to \code{FALSE}.
   }
   \item{numeric.dollar}{
@@ -109,7 +109,7 @@ format.df(x, digits, dec=NULL, rdec=NULL, cdec=NULL,
     \preformatted{\\tabular} environment and the letters \samp{l}, \samp{r},
     and \samp{c} are valid values.  When \code{format.df} is called by
     \acronym{SAS}, the \code{col.just} is used to determine whether a
-    \samp{$} is needed on the \samp{input} line of the \file{sysin} file,
+    \samp{\$} is needed on the \samp{input} line of the \file{sysin} file,
     and the letters \samp{l} and \samp{r} are valid values.
   }
   \item{matrix.sep}{

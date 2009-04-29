@@ -1,5 +1,5 @@
-\name{Overview}
-\alias{Overview}
+\name{HmiscOverview}
+\alias{HmiscOverview}
 \alias{Hmisc.Overview}
 \title{
 	Overview of Hmisc Library

@@ -1,5 +1,6 @@
 \name{spower}
 \alias{spower}
+\alias{print.spower}
 \alias{Quantile2}
 \alias{print.Quantile2}
 \alias{plot.Quantile2}
@@ -14,8 +15,11 @@ Simulate Power of 2-Sample Test for Survival under Complex Conditions
 Given functions to generate random variables for survival times and censoring
 times, \code{spower} simulates the power of a user-given 2-sample test for
 censored data.  By default, the logrank (Cox 2-sample) test is used,
-and a \code{logrank} function for comparing 2 groups is provided.  For
-composing S-Plus functions to generate random survival times under
+and a \code{logrank} function for comparing 2 groups is provided.
+Optionally a Cox model is fitted for each each simulated dataset and the
+log hazard ratios are saved (this requires the \code{survival} package).
+A \code{print} method prints various measures from these.  For
+composing S functions to generate random survival times under
 complex conditions, the \code{Quantile2} function allows the user to
 specify the intervention:control hazard ratio as a function of time,
 the probability of a control subject actually receiving the
@@ -41,7 +45,7 @@ The \code{Weibull2} function accepts as input two vectors, one
 containing two times and one containing two survival probabilities, and
 it solves for the scale and shape parameters of the Weibull distribution
 (\code{S(t)=exp(-alpha*t^ gamma)}) which will yield those estimates.  It
-creates an S-Plus function to evaluate survival probabilities from this
+creates an S function to evaluate survival probabilities from this
 Weibull distribution.  \code{Weibull2} is useful in creating functions
 to pass as the first argument to \code{Quantile2}.
 
@@ -52,6 +56,8 @@ log-normal and Gompertz distributions.
 \usage{
 spower(rcontrol, rinterv, rcens, nc, ni, 
        test=logrank, nsim=500, alpha=0.05, pr=TRUE)
+
+\method{print}{spower}(x, conf.int=.95)
 
 Quantile2(scontrol, hratio, 
           dropin=function(times)0, dropout=function(times)0,
@@ -100,8 +106,11 @@ a function of time which specifies the intervention:control hazard
 ratio (treatment effect)
 }
 \item{x}{
-an object of class \code{"Quantile2"} created by \code{Quantile2}
+an object of class \code{"Quantile2"} created by \code{Quantile2}, or of
+class \code{"spower"} created by \code{spower}
 }
+\item{conf.int}{confidence level for determining fold-change margins of
+  error in estimating the hazard ratio}
 \item{S}{
 a \code{Surv} object or other two-column matrix for right-censored survival
 times
@@ -190,7 +199,9 @@ optional list which is passed as the \code{opts} argument to \code{labcurve}.
 }}
 \value{
 \code{spower} returns the power estimate (fraction of simulated chi-squares
-greater than the alpha-critical value).  \code{Quantile2} returns an S-Plus
+greater than the alpha-critical value).  If \code{cox=TRUE},
+\code{spower} returns an object of class \code{"spower"} containing the
+power and various other quantities.  \code{Quantile2} returns an S
 function of class \code{"Quantile2"} with attributes that drive the \code{plot} method.  The major
 attribute is a list containing several lists.  Each of these
 sub-lists contains a \code{Time} vector along with one of the following:
@@ -228,7 +239,9 @@ with survival outcomes.  Stat in Med 22:3431--3447.
 Barthel FMS, Babiker A et al (2006): Evaluation of sample size and power for multi-arm survival trials allowing for non-uniform accrual, non-proportional hazards, loss to follow-up and cross-over.  Stat in Med 25:2521--2542.
 }
 \seealso{
-\code{\link{cpower}}, \code{\link{ciapower}}, \code{\link{bpower}}, \code{\link[Design]{cph}}, \code{\link[survival]{coxph}}, \code{\link{labcurve}}
+\code{\link{cpower}}, \code{\link{ciapower}}, \code{\link{bpower}},
+\code{\link[Design]{cph}}, \code{\link[survival]{coxph}},
+\code{\link{labcurve}}
 }
 \examples{
 # Simulate a simple 2-arm clinical trial with exponential survival so
@@ -262,6 +275,18 @@ set.seed(11)   # So can reproduce results
 spower(rcontrol, rinterv, rcens, nc=500, ni=500, 
        test=logrank, nsim=50)  # normally use nsim=500 or 1000
 
+\dontrun{
+# Run the same simulation but fit the Cox model for each one to
+# get log hazard ratios for the purpose of assessing the tightness
+# confidence intervals that are likely to result
+
+set.seed(11)
+u <- spower(rcontrol, rinterv, rcens, nc=500, ni=500, 
+       test=logrank, nsim=50, cox=TRUE)
+u
+v <- print(u)
+v[c('MOElower','MOEupper','SE')]
+}
 
 # Simulate a 2-arm 5-year follow-up study for which the control group's
 # survival distribution is Weibull with 1-year survival of .95 and

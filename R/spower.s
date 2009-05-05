@@ -1,10 +1,15 @@
 spower <- function(rcontrol, rinterv, rcens, nc, ni,
-                   test=logrank, nsim=500, alpha=.05, pr=TRUE)
+                   test=logrank, cox=FALSE, nsim=500, alpha=.05, pr=TRUE)
 {
   crit <- qchisq(1-alpha, 1)
   group <- c(rep(1,nc), rep(2,ni))
   nexceed <- 0
-
+  if(cox)
+    {
+      require(survival)
+      beta <- numeric(nsim)
+    }
+  
   for(i in 1:nsim) {
     if(pr && i %% 10 == 0) cat(i,'\r')
 
@@ -14,12 +19,51 @@ spower <- function(rcontrol, rinterv, rcens, nc, ni,
     y <- c(yc, yi)
     S <- cbind(pmin(y,cens), 1*(y <= cens))
     nexceed <- nexceed + (test(S, group) > crit)
+    if(cox)
+      {
+        fit <- coxph.fit(as.matrix(group), S, strata=NULL,
+                         offset=NULL, init=NULL,
+                         control=coxph.control(iter.max=10, eps=.0001), 
+                         method="efron", rownames=NULL)
+        beta[i] <- fit$coefficients
+      }
   }
   cat('\n')
-  nexceed/nsim
+  power <- nexceed/nsim
+  if(cox) structure(list(power=power, betas=beta, nc=nc, ni=ni,
+                         alpha=alpha, nsim=nsim), class='spower') else power
 }
-  
 
+print.spower <- function(x, conf.int=.95)
+  {
+    b <- x$betas
+    hr <- exp(b)
+    cl <- quantile(hr, c((1-conf.int)/2, (1+conf.int)/2))
+    meanbeta <- mean(b)
+    medbeta <- median(b)
+    hrmean <- exp(meanbeta)
+    hrmed  <- exp(medbeta)
+    moehi <- cl[2]/hrmed
+    moelo <- hrmed/cl[1]
+    g <- function(w) round(w, 4)
+    cat('\nTwo-Group Event Time Comparison Simulation\n\n',
+        x$nsim,' simulations\talpha: ', x$alpha, '\tpower: ', x$power,
+        '\t', conf.int, ' confidence interval\n',
+        '\nHazard ratio from mean   beta     : ', g(hrmean),
+        '\nHazard ratio from median beta     : ', g(hrmed),
+        '\nStandard error of log hazard ratio: ', g(sd(b)),
+        '\nConfidence limits for hazard ratio: ', g(cl[1]), ', ', g(cl[2]),
+        '\nFold-change margin of error high  : ', g(moehi),
+        '\t(upper CL/median HR)',
+        '\nFold-change margin of error low   : ', g(moelo),
+        '\t(median HR/lower CL)\n\n',sep='')
+
+    res <- c(cl, hrmean, hrmed, sd(b), moelo, moehi, x$power)
+    names(res) <- c('CLlower','CLupper','HRmean','HRmedian','SE',
+                    'MOElower','MOEupper','Power')
+    invisible(res)
+  }
+      
 Quantile2 <- function(scontrol, hratio, 
                       dropin=function(times)0, 
                       dropout=function(times)0,

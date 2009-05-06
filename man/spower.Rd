@@ -142,11 +142,14 @@ calculates \code{tmax}.
 }
 \item{dropin}{
 a function of time specifying the probability that a control subject
-actually becomes an intervention subject at the corresponding time
+actually is treated with the new intervention at the corresponding time
 }
 \item{dropout}{
 a function of time specifying the probability of an intervention
-subject dropping out to control conditions
+subject dropping out to control conditions.  As a function of time,
+\code{dropout} specifies the probability that a patient is treated with
+the control therapy at time t.  \code{dropin} and \code{dropout} form
+mixing proportions for control and intervention hazard functions.
 }
 \item{m}{
 number of time points used for approximating functions (default is 7500)
@@ -335,6 +338,28 @@ set.seed(211)
 spower(rcontrol, rinterv, rcens, nc=350, ni=350, 
        test=logrank, nsim=50)  # normally nsim=500 or more
 par(mfrow=c(1,1))
+
+# Compose a censoring time generator function such that at 1 year
+# 5% of subjects are accrued, at 3 years 70% are accured, and at 10
+# years 100% are accrued.  Use linear interporation between these 3
+# points
+
+rcens <- function(n)
+{
+  times <- c(0,1,3,10)
+  accrued <- c(0,.05,.7,1)
+  # Compute inverse of notAccrued function at U(0,1) random variables
+  accrual.times <- approx(accrued, times, xout=runif(n))$y
+  censor.times <- 10 - accrual.times
+  censor.times
+}
+
+censor.times <- rcens(500)
+# hist(censor.times, nclass=20)
+accrual.times <- 10 - censor.times
+# Ecdf(accrual.times)
+# lines(c(0,1,3,10), c(0,.05,.7,1), col='red')
+# spower(..., rcens=rcens, ...)
 
 \dontrun{
 # Do an unstratified logrank test

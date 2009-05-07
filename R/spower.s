@@ -9,7 +9,8 @@ spower <- function(rcontrol, rinterv, rcens, nc, ni,
       require(survival)
       beta <- numeric(nsim)
     }
-  
+
+  maxfail <- 0; maxcens <- 0
   for(i in 1:nsim) {
     if(pr && i %% 10 == 0) cat(i,'\r')
 
@@ -17,6 +18,8 @@ spower <- function(rcontrol, rinterv, rcens, nc, ni,
     yi <- rinterv(ni)
     cens <- rcens(nc+ni)
     y <- c(yc, yi)
+    maxfail <- max(maxfail, max(y))
+    maxcens <- max(maxcens, max(cens))
     S <- cbind(pmin(y,cens), 1*(y <= cens))
     nexceed <- nexceed + (test(S, group) > crit)
     if(cox)
@@ -29,6 +32,9 @@ spower <- function(rcontrol, rinterv, rcens, nc, ni,
       }
   }
   cat('\n')
+  if(maxfail < 0.99*maxcens)
+      stop(paste('Censoring time distribution defined at later times than\nsurvival time distribution. There will likely be uncensored failure times\nstacked at the maximum allowed survival time.\nMaximum simulated failure time:', max(y),'\nMaximum simulated censoring time:', max(cens)))
+
   power <- nexceed/nsim
   if(cox) structure(list(power=power, betas=beta, nc=nc, ni=ni,
                          alpha=alpha, nsim=nsim), class='spower') else power

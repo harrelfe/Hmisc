@@ -38,7 +38,8 @@ print.spower <- function(x, conf.int=.95)
   {
     b <- x$betas
     hr <- exp(b)
-    cl <- quantile(hr, c((1-conf.int)/2, (1+conf.int)/2))
+    pp <- (1+conf.int)/2
+    cl <- quantile(hr, c((1-conf.int)/2, pp))
     meanbeta <- mean(b)
     medbeta <- median(b)
     hrmean <- exp(meanbeta)
@@ -46,6 +47,7 @@ print.spower <- function(x, conf.int=.95)
     moehi <- cl[2]/hrmed
     moelo <- hrmed/cl[1]
     g <- function(w) round(w, 4)
+    mmoe <- max(moehi, moelo)
     cat('\nTwo-Group Event Time Comparison Simulation\n\n',
         x$nsim,' simulations\talpha: ', x$alpha, '\tpower: ', x$power,
         '\t', conf.int, ' confidence interval\n',
@@ -56,7 +58,17 @@ print.spower <- function(x, conf.int=.95)
         '\nFold-change margin of error high  : ', g(moehi),
         '\t(upper CL/median HR)',
         '\nFold-change margin of error low   : ', g(moelo),
-        '\t(median HR/lower CL)\n\n',sep='')
+        '\t(median HR/lower CL)',
+        '\nMax fold-change margin of error   : ', g(mmoe),'\n\n')
+
+    cat('The fold change margin of error of', g(mmoe),
+        'represents the margin of error\n',
+        'the study is likely to achieve in estimating the intervention:control\n',
+        'hazard ratio. It is the ratio of a', conf.int, 'confidence limit on the\n',
+        'hazard ratio to the median hazard ratio obtained over the', x$nsim, 'simulations.\n',
+        'The confidence limit was obtained by computing the', pp, 'quantile of the\n',
+        x$nsim, 'observed hazard ratios.  The standard error is the standard deviation\n',
+        'of the', x$nsim, 'simulated log hazard ratios.\n\n')
 
     res <- c(cl, hrmean, hrmed, sd(b), moelo, moehi, x$power)
     names(res) <- c('CLlower','CLupper','HRmean','HRmedian','SE',

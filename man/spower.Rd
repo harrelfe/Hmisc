@@ -243,7 +243,10 @@ contamination in randomized clinical trials. Stat in Med 16:1017--1029.
 Cook, T (2003): Methods for mid-course corrections in clinical trials
 with survival outcomes.  Stat in Med 22:3431--3447.
 
-Barthel FMS, Babiker A et al (2006): Evaluation of sample size and power for multi-arm survival trials allowing for non-uniform accrual, non-proportional hazards, loss to follow-up and cross-over.  Stat in Med 25:2521--2542.
+Barthel FMS, Babiker A et al (2006): Evaluation of sample size and power
+for multi-arm survival trials allowing for non-uniform accrual,
+non-proportional hazards, loss to follow-up and cross-over.  Stat in Med
+25:2521--2542.
 }
 \seealso{
 \code{\link{cpower}}, \code{\link{ciapower}}, \code{\link{bpower}},
@@ -345,27 +348,45 @@ par(mfrow=c(1,1))
 
 # Compose a censoring time generator function such that at 1 year
 # 5% of subjects are accrued, at 3 years 70% are accured, and at 10
-# years 100% are accrued.  Use linear interporation between these 3
-# points
+# years 100% are accrued.  The trial procees two years past the last
+# accrual for a total of 12 years of follow-up for the first subject.
+# Use linear interporation between these 3 points
 
 rcens <- function(n)
 {
   times <- c(0,1,3,10)
   accrued <- c(0,.05,.7,1)
-  # Compute inverse of notAccrued function at U(0,1) random variables
+  # Compute inverse of accrued function at U(0,1) random variables
   accrual.times <- approx(accrued, times, xout=runif(n))$y
-  censor.times <- 10 - accrual.times
+  censor.times <- 12 - accrual.times
   censor.times
 }
 
 censor.times <- rcens(500)
 # hist(censor.times, nclass=20)
-accrual.times <- 10 - censor.times
+accrual.times <- 12 - censor.times
 # Ecdf(accrual.times)
 # lines(c(0,1,3,10), c(0,.05,.7,1), col='red')
 # spower(..., rcens=rcens, ...)
 
 \dontrun{
+# To define a control survival curve from a fitted survival curve
+# with coordinates (tt, surv) with min(tt)=0:
+
+Scontrol <- function(times, tt, surv) approx(tt, surv, xout=times)$y
+tt <- 0:6
+surv <- c(1, .9, .8, .75, .7, .65, .64)
+formals(Scontrol) <- list(times=NULL, tt=tt, surv=surv)
+
+# Check that spower can detect a situation where generated censoring times
+# are later than all failure times
+
+rcens <- function(n) runif(n, 0, 7)
+f <- Quantile2(scontrol=Scontrol, hratio=function(x).8, tmax=6)
+cont <- function(n) f(n, what='control')
+int  <- function(n) f(n, what='intervention')
+spower(rcontrol=cont, rinterv=int, rcens=rcens, nc=300, ni=300, nsim=20)
+
 # Do an unstratified logrank test
 library(survival)
 # From SAS/STAT PROC LIFETEST manual, p. 1801

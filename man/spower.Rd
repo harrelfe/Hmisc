@@ -52,6 +52,10 @@ to pass as the first argument to \code{Quantile2}.
 The \code{Lognorm2} and \code{Gompertz2} functions are similar to
 \code{Weibull2} except that they produce survival functions for the
 log-normal and Gompertz distributions.
+
+When \code{cox=TRUE} is specified to \code{spower}, the analyst may wish
+to extract the two margins of error using \code{spower}'s \code{print}
+method (see example below) and take the maximum of the two.
 }
 \usage{
 spower(rcontrol, rinterv, rcens, nc, ni, 

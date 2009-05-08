@@ -245,7 +245,8 @@ cumcategory(y)
     You can specify \code{fun="\%"} to compute percentages (100 times the mean of a 
     series of logical or binary variables).
     User--specified functions can also return a matrix.  For example, you might 
-    compute quartiles on a bivariate response.
+    compute quartiles on a bivariate response.  Does not apply to
+    \code{method="reverse"}. 
   }
   \item{method}{
     The default is \code{"response"}, in which case the response variable may

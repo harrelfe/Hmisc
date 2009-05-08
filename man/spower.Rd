@@ -348,7 +348,7 @@ par(mfrow=c(1,1))
 
 # Compose a censoring time generator function such that at 1 year
 # 5% of subjects are accrued, at 3 years 70% are accured, and at 10
-# years 100% are accrued.  The trial procees two years past the last
+# years 100% are accrued.  The trial proceeds two years past the last
 # accrual for a total of 12 years of follow-up for the first subject.
 # Use linear interporation between these 3 points
 
@@ -371,7 +371,7 @@ accrual.times <- 12 - censor.times
 
 \dontrun{
 # To define a control survival curve from a fitted survival curve
-# with coordinates (tt, surv) with min(tt)=0:
+# with coordinates (tt, surv) with tt[1]=0, surv[1]=1:
 
 Scontrol <- function(times, tt, surv) approx(tt, surv, xout=times)$y
 tt <- 0:6

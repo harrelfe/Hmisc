@@ -378,6 +378,14 @@ tt <- 0:6
 surv <- c(1, .9, .8, .75, .7, .65, .64)
 formals(Scontrol) <- list(times=NULL, tt=tt, surv=surv)
 
+# To use a mixture of two survival curves, with e.g. mixing proportions
+# of .2 and .8, use the following as a guide:
+#
+# Scontrol <- function(times, t1, s1, t2, s2)
+#  .2*approx(t1, s1, xout=times)$y + .8*approx(t2, s2, xout=times)$y
+# t1 <- ...; s1 <- ...; t2 <- ...; s2 <- ...;
+# formals(Scontrol) <- list(times=NULL, t1=t1, s1=s1, t2=t2, s2=s2)
+
 # Check that spower can detect a situation where generated censoring times
 # are later than all failure times
 

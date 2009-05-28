@@ -508,6 +508,8 @@ Varcov(object, ...)
     If \code{var} is not specified, you can set \code{list.out = TRUE} to have
     \code{impute.transcan} return a list containing variables with needed
     values imputed.  This list will contain a single imputation.
+	Variables not needing imputation are copied to the list as-is.  You
+	can use this list for analysis just like a data frame.
   }
   \item{check}{
     set to \code{FALSE} to suppress certain warning messages
@@ -932,8 +934,15 @@ table(x1)/sum(table(x1))
 x2 <- runif(1000)
 z  <- transcan(~ x1 + I(x2), n.impute=20, impcat='multinom')
 table(z$imputed$x1)/sum(table(z$imputed$x1))
-}
 
+# Here is how to create a completed dataset
+d <- data.frame(x1, x2)
+z <- transcan(~x1 + I(x2), n.impute=5, data=d)
+imputed <- impute(z, imputation=1, data=d,
+                  list.out=TRUE, pr=FALSE, check=FALSE)
+sapply(imputed, function(x)sum(is.imputed(x)))
+sapply(imputed, function(x)sum(is.na(x)))
+}
 
 # Example where multiple imputations are for basic variables and
 # modeling is done on variables derived from these

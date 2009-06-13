@@ -2491,6 +2491,7 @@ summarize <- function(X, by, FUN, ...,
   rdimn <- dimnames(r)[[1]]
   if(.R.) {   # someday can use unpaste defined in Misc.s
     ans <- strsplit(if(nc==1) names(r) else rdimn,'\\|')
+    ans <- sapply(ans, function(x)if(length(x))x else '')
 
     ## strsplit returns list "transpose" of unpaste
     bb <- matrix(unlist(ans), nrow=nby)

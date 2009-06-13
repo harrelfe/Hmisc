@@ -1694,3 +1694,41 @@ clowess <- function(x, y=NULL, iter=3, ...) {
   f
 }
 
+prselect <- function(x, start=NULL, stop=NULL, i=0, j=0, pr=TRUE)
+  {
+    f <- function(pattern, x)
+      {
+        y <- grep(pattern, x)
+        if(length(y) > 1) y <- y[1]
+        y
+      }
+    lx <- length(x)
+    k <- if(length(start)) f(start, x) else 1
+    if(length(k))
+      {
+        k <- k + i
+        m <- if(length(stop))
+          {
+            w <- f(stop, x[k:lx])
+            if(length(w)) w + k - 1 + j else -1
+          }
+        else lx
+        if(m > 0) x <- if(k==1) (if(m==lx) '...' else c('...', x[-(k:m)]))
+        else
+          {
+            if(m==lx) c(x[-(k:m)], '...')
+            else c(x[1:(k-1)], '...', x[(m+1):lx])
+          }
+      }
+    else # no start specified; keep lines after stop
+      {
+        m <- f(stop, x)
+        if(length(m) > 0)
+          {
+            m <- if(length(m)) m + j - 1 else lx
+            x <- if(m==lx) '...' else c('...', x[-(1:m)])
+          }
+      }
+    if(pr) cat(x, sep='\n')
+    invisible(x)
+  }

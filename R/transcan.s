@@ -295,7 +295,7 @@ transcan <-
   Details.impcat <- NULL
 
   last.iter <- FALSE
-  cat("Convergence criterion:")
+  if(pr) cat("Convergence criterion:")
 
   milab <- as.character(1:n.impute)
 
@@ -632,10 +632,10 @@ transcan <-
 	
     }   #end i
 
-    if(iter>1)
+    if(pr && iter>1)
       cat(format(round(dmax,3)),"")
 
-    if(iter %% 10 == 0)
+    if(pr && (iter %% 10 == 0))
       cat("\n")
 
     niter <- iter
@@ -646,7 +646,7 @@ transcan <-
                  (rhsImp=='random' && iter==5)
   }        #end iter
 
-  cat("\n")
+  if(pr) cat("\n")
 
   if(iter.max>3 & niter==iter.max & dmax>=eps)
     stop(paste("no convergence in",iter.max,"iterations"))
@@ -655,7 +655,7 @@ transcan <-
   ## match ones from predict() or Function() since coefficients have
   ## been updated
 
-  if(rhsImp=='mean')
+  if(pr && rhsImp=='mean')
     cat("Convergence in",niter,"iterations\n")
 
   if(imputed.actual=='datadensity') {

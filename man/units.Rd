@@ -10,8 +10,7 @@ Sets or retrieves the \code{"units"} attribute of an object.
 For \code{units.default} replaces the builtin
 version, which only works for time series objects.  If the variable is
 also given a \code{label}, subsetting (using \code{[.labelled}) will
-retain the \code{"units"} attribute.  For S-Plus 6 which uses version 4
-of the S language, the latter does not work.
+retain the \code{"units"} attribute.  For S-Plus, the latter does not work.
 }
 \usage{
 units(x, \dots)

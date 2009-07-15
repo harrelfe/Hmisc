@@ -21,12 +21,12 @@
 \description{
   \code{label(x)} retrieves the \code{label} attribute of \code{x}.
   \code{label(x) <- "a label"} stores the label attribute, and also puts
-  the class \code{labelled} as the first class of \code{x} (for S-Plus 5
-  and later this class is not used and methods for handling this class are
+  the class \code{labelled} as the first class of \code{x} (for S-Plus
+  this class is not used and methods for handling this class are
   not defined so the \code{"label"} and \code{"units"} attributes are lost
   upon subsetting).  The reason for having this class is so that the
   subscripting method for \code{labelled}, \code{[.labelled}, can preserve
-  the \code{label} attribute in R and S-Plus 2000.  Also, the \code{print}
+  the \code{label} attribute in S.  Also, the \code{print}
   method for \code{labelled} objects prefaces the print with the object's
   \code{label} (and \code{units} if there).  If the variable is also given
   a \code{"units"} attribute using the \code{units} function, subsetting
@@ -43,7 +43,7 @@
   are typed verbatim if they contain percent signs, blanks, or underscores.
 
   \code{Label} (actually \code{Label.data.frame}) is a function which generates
-  S-Plus source code that makes the labels in all the variables in a data
+  S source code that makes the labels in all the variables in a data
   frame easy to edit. 
 
   \code{llist} is like \code{list} except that it preserves the names or
@@ -69,8 +69,8 @@
 
   \code{reLabelled} is used to add a \code{'labelled'} class back to
   variables in data frame that have a 'label' attribute but no 'labelled'
-  oldClass.  Useful for changing \code{cleanup.import()}'d S-Plus 6 data
-  frames back to general form for \R and S-Plus 2000.
+  oldClass.  Useful for changing \code{cleanup.import()}'d S-Plus data
+  frames back to general form for \R and old versions of S-Plus.
 }
 \usage{
 label(x, default=NULL, ...)
@@ -150,7 +150,7 @@ reLabelled(object)
     Ignored for \code{print.labelled}.
   }
   \item{file}{
-    the name of a file to which to write S-Plus source code.  Default is
+    the name of a file to which to write S source code.  Default is
     \code{""}, meaning standard output.
   }
   \item{append}{

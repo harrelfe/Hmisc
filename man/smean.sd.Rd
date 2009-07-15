@@ -40,7 +40,7 @@ for summary functions \code{smean.*}, \code{smedian.hilow}, a numeric vector
 from which NAs will be removed automatically
 }
 \item{na.rm}{
-defaults to \code{TRUE} unlike built-in S-Plus functions, so that by
+defaults to \code{TRUE} unlike built-in functions, so that by
 default \code{NA}s are automatically removed
 }
 \item{mult}{

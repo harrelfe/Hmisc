@@ -21,7 +21,7 @@ Statistics by Categories
   \code{bystats2} handles the special case in which there are 2
   classifcation variables, and places the first one in rows and the
   second in columns.  The \code{print} method for \code{bystats2} uses
-  the S-Plus \code{print.char.matrix} function to organize statistics
+  the \code{print.char.matrix} function to organize statistics
   for cells into boxes. }
 
 \usage{
@@ -77,7 +77,7 @@ data to analyze
 }
 \item{abbreviate.dimnames}{set to \code{TRUE} to abbreviate
   \code{dimnames} in output}
-\item{prefix.width}{see \code{\link{print.char.matrix}} if using S-Plus}
+\item{prefix.width}{see \code{\link{print.char.matrix}}}
 \item{title}{
 \code{title} to pass to \code{latex.default}.  Default is the first word of
 the character string version of the first calling argument.

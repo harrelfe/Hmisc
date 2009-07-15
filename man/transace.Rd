@@ -325,7 +325,7 @@ Quantile(object, \dots)
   \item{frame}{
     frame number in which to store functions (see \code{assign}).  The default
     is frame 0, the session database, which disappears at the end of the
-    S-Plus session.
+    session.
   }
   \item{where}{
     location in which to store functions (see \code{assign}).  If \code{where} is

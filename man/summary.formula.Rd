@@ -17,7 +17,7 @@
   Summarize Data for Making Tables and Plots
 }
 \description{
-  \code{summary.formula} summarizes the variables listed in an S-Plus formula,
+  \code{summary.formula} summarizes the variables listed in an S formula,
   computing descriptive statistics (including ones in a
   user-specified function).  The summary statistics may be passed to
   \code{print} methods, \code{plot} methods for making annotated dot charts, and
@@ -36,8 +36,7 @@
   frames which contain summary statistics that are passed to \code{trellis}
   as raw data (to make multi-panel dot charts, for example).  The
   \code{print} methods use the \code{print.char.matrix} function to print boxed
-  tables, if it is available (it is included in S-Plus versions 3.2 and
-  later).
+  tables, if it is available (it is included in S-Plus).
 
 
   The right hand side of \code{formula} may contain \code{mChoice}
@@ -52,7 +51,7 @@
   mouse button.  This key is for categorical variables, so to have the
   opportunity to put the key on the graph you will probably want to use
   the command \code{plot(object, which="categorical")} [Note however that
-  in Windows S-Plus you can switch back and forth between multiple pages
+  in S-Plus you can switch back and forth between multiple pages
   on a graph sheet, and issue a \code{Key()} or \code{Key2()} command
   according to which graph sheet page is active.].  A second function
   \code{Key2} is created if continuous variables are being plotted.  It is
@@ -821,7 +820,7 @@ age.groups <- cut2(age, c(45,60))
 g <- function(y) apply(y, 2, quantile, c(.25,.5,.75))
 y <- cbind(Chol=chol,Bili=bili)
 label(y) <- 'Cholesterol and Bilirubin'
-#You can give new column names that are not legal S-Plus names
+#You can give new column names that are not legal S names
 #by enclosing them in quotes, e.g. 'Chol (mg/dl)'=chol
 
 

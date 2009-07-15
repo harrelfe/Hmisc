@@ -112,7 +112,7 @@ ftuss           \tab Sample size for 2-sample binomial test using  "  "  "  "\cr
 gbayes          \tab Bayesian posterior and predictive distributions when both\cr
                 \tab the prior and the likelihood are Gaussian\cr
 getHdata        \tab Fetch and list datasets on our web site\cr
-gs.slide        \tab Sets nice defaults for graph sheets for S-Plus 2000 for\cr
+gs.slide        \tab Sets nice defaults for graph sheets for S-Plus for\cr
                 \tab copying graphs into Microsoft applications\cr
 hdquantile      \tab Harrell-Davis nonparametric quantile estimator with s.e.\cr
 histbackback    \tab Back-to-back histograms (Pat Burns, Salomon Smith\cr

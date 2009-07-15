@@ -5,14 +5,14 @@ Tips for Creating, Modifying, and Checking Data Frames
 }
 \description{
 This help file contains a template for importing data to create an
-S-Plus data frame, correcting some problems resulting from the import
+S data frame, correcting some problems resulting from the import
 and making the data frame be stored more efficiently, modifying the
 data frame (including better annotating it and changing the names of
 some of its variables), and checking and inspecting the data frame for
 reasonableness of the values of its variables and to describe patterns
 of missing data.  Various built-in functions and functions in the
 Hmisc library are used.  At the end some methods for creating data
-frames "from scratch" within S-Plus are presented.
+frames "from scratch" within S are presented.
 
 
 The examples below attempt to clarify the separation of operations
@@ -20,7 +20,7 @@ that are done on a data frame as a whole, operations that are done on
 a small subset of its variables without attaching the whole data
 frame, and operations that are done on many variables after attaching
 the data frame in search position one.  It also tries to clarify that
-for analyzing several separate variables using S-Plus commands that do
+for analyzing several separate variables using S commands that do
 not support a \code{data=} argument, it is helpful to attach the data frame
 in a search position later than position one.
 
@@ -60,7 +60,7 @@ with the Hmisc \code{label} function are used by \code{describe},
 }
 \references{
 Alzola CF, Harrell FE (2001):
-\emph{An Introduction to S-Plus and the Hmisc and Design Libraries.}
+\emph{An Introduction to S and the Hmisc and Design Libraries.}
 Chapters 3 and 4,
 \url{http://biostat.mc.vanderbilt.edu/twiki/pub/Main/RS/sintro.pdf}.
 }
@@ -75,8 +75,8 @@ Chapters 3 and 4,
 \examples{
 \dontrun{
 # First, we do steps that create or manipulate the data
-# frame in its entirety.  These are done with .Data
-# in search position one (the S-Plus default at the
+# frame in its entirety.  For S-Plus, these are done with
+# .Data in search position one (the default at the
 # start of the session).
 #
 # -----------------------------------------------------------------------
@@ -94,10 +94,9 @@ Chapters 3 and 4,
 # names during the import process, using the Options
 # tab, rather than renaming all fields later Of
 # course, if the data to be imported already have
-# field names (e.g., in Excel), let S-Plus use those
-# automatically.  If using S-Plus 4.x on Windows/NT,
-# you can use a command to execute File \dots  Import,
-# e.g.:
+# field names (e.g., in Excel), let S use those
+# automatically.  If using S-Plus, you can use a
+# command to execute File \dots  Import, e.g.:
 
 
 import.data(FileName = "/windows/temp/fev.asc",
@@ -107,7 +106,7 @@ import.data(FileName = "/windows/temp/fev.asc",
 # Here we name the new data frame FEV rather than
 # fev, because we wanted to distinguish a variable
 # in the data frame named fev from the data frame
-# name.  For S-Plus 6.x the command will look
+# name.  For S-Plus the command will look
 # instead like the following:
 
 
@@ -288,7 +287,7 @@ FEV2 <- upData(FEV,
 # describe(FEV) will write the results to the
 # current output window.  To put the results in a
 # new window that can persist, even upon exiting
-# S-Plus, we use the page function.  The describe
+# S, we use the page function.  The describe
 # output can be minimized to an icon but kept ready
 # for guiding later steps of the analysis.
 
@@ -444,7 +443,7 @@ detach()
 # -----------------------------------------------------------------------
 # Creating data frames from scratch
 # 
-# Data frames can be created from within S-Plus.  To
+# Data frames can be created from within S.  To
 # create a small data frame containing ordinary
 # data, you can use something like
 

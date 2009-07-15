@@ -11,11 +11,11 @@
 }
 \description{
   This suite of functions was written to implement many of the features
-  of the UNIX \code{sed} program entirely within S-PLUS (function \code{sedit}).
+  of the UNIX \code{sed} program entirely within S (function \code{sedit}).
   The \code{substring.location} function returns the first and last position
   numbers that a sub-string occupies in a larger string.  The \code{substring2<-}
   function does the opposite of the builtin function \code{substring}.
-  It is named \code{substring2} because for S-Plus 5.x there is a built-in
+  It is named \code{substring2} because for S-Plus there is a built-in
   function \code{substring}, but it does not handle multiple replacements in
   a single string.
   \code{replace.substring.wild} edits character strings in the fashion of

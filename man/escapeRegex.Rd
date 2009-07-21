@@ -19,7 +19,7 @@ escapeBS(string)
   special meaning in a reqular expression. For any string
   \code{grep(regexpEscape(string), string)} will always be true.
 
-  \code{escapeBS} will escape any backslash \code{\backslash} in a string.
+  \code{escapeBS} will escape any backslash \preformatted{\backslash} in a string.
 }
 \value{
   The value of the string with any characters that would have

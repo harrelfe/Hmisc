@@ -1,12 +1,12 @@
 Package: Hmisc
-Version: 3.6-0
+Version: 3.6-1
 Date: 2009-04-27
 Title: Harrell Miscellaneous
 Author: Frank E Harrell Jr <f.harrell@vanderbilt.edu>, with
   contributions from many other users.
 Maintainer: Charles Dupont <charles.dupont@vanderbilt.edu>
 Depends: R (>= 2.4.0), methods
-Imports: lattice, cluster, survival
+Imports: lattice, cluster, survival (>= 2.35-2)
 Suggests: lattice, grid, nnet, foreign, chron, acepack,
   TeachingDemos, Design, cluster
 Description: The Hmisc library contains many functions useful for data

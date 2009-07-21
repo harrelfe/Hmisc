@@ -44,7 +44,7 @@ stata.get(file, lowernames = FALSE, convert.dates = TRUE,
 }
 \value{A data frame}
 \author{Charles Dupont}
-\seealso{\code{\link[foreign]{read.dta}},\code{\link{cleanup.import}},\code{\link{label}},\code{\label{data.frame}},\code{\link{Date}}}
+\seealso{\code{\link[foreign]{read.dta}},\code{\link{cleanup.import}},\code{\link{label}},\code{\link{data.frame}},\code{\link{Date}}}
 \examples{
 \dontrun{
 w <- stata.get(\sQuote{/tmp/my.dta})

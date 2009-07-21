@@ -65,12 +65,12 @@ space at the bottom of the graph.  When drawing points, the user may
 want to specify \code{cex=0.7}.  It may be better to use \code{setps} followed
 by \code{topdf()}.
 
-\code{tex} is a little function to save typing when including \code{\tex}
+\preformatted{tex} is a little function to save typing when including \preformatted{tex}
 commands in graphs that are used with the psfrag package in LaTeX to
-typeset any LaTeX text inside a postscript graphic.  \code{tex} surrounds
+typeset any LaTeX text inside a postscript graphic.  \preformatted{tex} surrounds
 the input character string with \\tex[options]\{\}.  This is especially
 useful for getting Greek letters and math symbols in postscript
-graphs.  By default \code{tex} returns a string with \code{psfrag} commands
+graphs.  By default \preformatted{tex} returns a string with \code{psfrag} commands
 specifying that the string be centered, not rotated, and not specially
 enlarged or shrunk.
 

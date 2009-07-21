@@ -179,18 +179,18 @@ dvigv(object, \dots)
 	\code{latexTabular} \code{x} is a matrix or data frame.
   }
   \item{title}{
-    name of file to create without the \code{.tex} extension.  If this
+    name of file to create without the \preformatted{.tex} extension.  If this
     option is not set, value/string of \code{x} (see above) is printed
     in the top left corner of the table.  Set \code{title=''} to
     suppress this output.
   }
   \item{file}{
-    name of the file to create.  The default file name is \code{x.tex} where
+    name of the file to create.  The default file name is \file{x.tex} where
     \code{x} is the first word in the name of the argument for \code{x}.
     Set \code{file=""} to have the generated LaTeX code just printed to
     standard output.  This is especially useful when running under Sweave in
-    R using its \code{results=tex} tag, to save having to manage many
-    small external files.  When \code{file=""}, \code{latex} keeps track of
+    R using its \preformatted{results=tex} tag, to save having to manage many
+    small external files.  When \code{file=""}, \preformatted{latex} keeps track of
     LaTeX styles that are called for by creating or modifying an object
     \code{latexStyles} (in \code{.GlobalTemp} in R or in frame 0 in
     S-Plus).  \code{latexStyles} is a vector containing the base names of
@@ -204,7 +204,7 @@ dvigv(object, \dots)
   }
   \item{label}{
     a text string representing a symbolic label for the table for referencing
-    in the LaTeX \code{\\label} and \code{\\ref} commands.
+    in the latex \preformatted{\\label} and \preformatted{\\ref} commands.
     \code{label} is only used if \code{caption} is given.
   }
   \item{rowlabel}{
@@ -243,19 +243,19 @@ dvigv(object, \dots)
     of rows.
   }
   \item{cgroupTexCmd}{A character string specifying a LaTeX command to be
-    used to format column group labels.  The default, "bfseries", sets
+    used to format column group labels.  The default, \dQuote{bfseries}, sets
     the current font to 'bold'.  It is possible to supply a vector of
     strings so that each column group label is formatted differently.
     Please note that the first item of the vector is used to format the
     title (even if a title is not used). Currently the user needs to handle
     these issue.  Multiple effects can be achieved by creating custom
     LaTeX commands; for example,
-    \code{\providecommand{\redscshape}{\color{red}\scshape}} creates a
-    LaTeX command called \code{redscshape} that formats the text in red
+    \preformatted{\providecommand{\redscshape}{\color{red}\scshape}} creates a
+    LaTeX command called \preformatted{redscshape} that formats the text in red
     small-caps.
   }
   \item{rgroupTexCmd}{A character string specifying a LaTeX command to be
-    used to format row group labels.  The default, "bfseries", sets the
+    used to format row group labels.  The default, \dQuote{bfseries}, sets the
     current font to 'bold'.  A vector of strings can be supplied to
     format each row group label differently.  Normal recycling applies
     if the vector is shorter than \code{n.rgroups}.  See also
@@ -290,7 +290,7 @@ dvigv(object, \dots)
   }
   \item{na.blank}{
     Set to \code{TRUE} to use blanks rather than \code{NA} for missing values.
-    This usually looks better in \code{latex}.
+    This usually looks better in latex.
   }
   \item{insert.bottom}{
     an optional character string to typeset at the bottom of the table.
@@ -452,7 +452,7 @@ dvigv(object, \dots)
   }
   \item{pb}{
     If \code{pb}=\code{TRUE}, \code{latexTranslate} also translates \code{[()]} to math mode using
-    \code{\left, \right}.
+    \preformatted{\\left, \\right}.
   }
   \item{greek}{set to \code{TRUE} to have \code{latexTranslate} put names
     for greek letters in math mode and add backslashes}
@@ -486,7 +486,7 @@ dvigv(object, \dots)
     file.
   }
   \item{multicol}{
-    set  to \code{FALSE} to not use \code{\multicolumn} in header
+    set  to \code{FALSE} to not use \preformatted{\\multicolumn} in header
     of table
   }
 
@@ -499,7 +499,7 @@ dvigv(object, \dots)
 list of class \code{latex} or \code{dvi} containing character string
 elements \code{file} and \code{style}.  \code{file} contains the name of the
 generated file, and \code{style} is a vector (possibly empty) of styles to
-be included using the LaTeX2e \code{\usepackage} command.
+be included using the LaTeX2e \preformatted{\\usepackage} command.
 
 \code{latexTranslate} returns a vector of character strings
 }

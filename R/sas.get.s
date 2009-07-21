@@ -111,9 +111,9 @@ sas.get <- if(under.unix || .R.)
     if(uncompress) {  # 22Oct00
       unix.file <- paste(member, sasds.suffix, sep=".")
       if(any(fe <- fexists(paste(unix.file,".gz",sep=""))))
-        sys(paste("gunzip ",attr(fe,'which'),'.gz',sep=''))
+        system(paste("gunzip ",attr(fe,'which'),'.gz',sep=''))
       else if(any(fe <- fexists(paste(unix.file,".Z",sep=""))))
-        sys(paste("uncompress ",attr(fe,'which'),'.Z',sep=''))
+        system(paste("uncompress ",attr(fe,'which'),'.Z',sep=''))
     }
 
     cat("%sas_get(", member, ",\n",
@@ -137,9 +137,9 @@ sas.get <- if(under.unix || .R.)
     ##23Nov00
     if(uncompress) {  #22Oct00
       if(any(fe <- fexists(paste(unix.file,".gz",sep=""))))
-        sys(paste("gunzip ", attr(fe,'which'),'.gz',sep=''))
+        system(paste("gunzip ", attr(fe,'which'),'.gz',sep=''))
       else if(any(fe <- fexists(paste(unix.file,".Z",sep=""))))
-        sys(paste("uncompress ",attr(fe,'which'),'.Z',sep=''))
+        system(paste("uncompress ",attr(fe,'which'),'.Z',sep=''))
     }
     
     if(!any(fe <- fexists(unix.file))) {
@@ -175,7 +175,8 @@ sas.get <- if(under.unix || .R.)
         file = sasin, append = TRUE, sep = "")
   }
   
-  status <- sys(paste(shQuote(sasprog), shQuote(sasin), "-log", shQuote(log.file)))
+  status <- system(paste(shQuote(sasprog), shQuote(sasin), "-log",
+                         shQuote(log.file)), intern=TRUE)
   ## 24nov03 added output=F
   if(status != 0) {
     if(!quiet && fexists(log.file)) fileShow(log.file)  ## 4oct03
@@ -2014,8 +2015,8 @@ if(.R.) {
     n <- length(dsnames)
     w <- vector('list', n); names(w) <- dsnames
     for(a in dsnames) {
-      status <- sys(paste('dataload', outf, 'zzzz.rda', a),
-                    output=FALSE)
+      status <- system(paste('dataload', outf, 'zzzz.rda', a),
+                       intern=FALSE)
       if(status==0) {
         load('zzzz.rda')
         names(zzzz) <- makeNames(names(zzzz))

@@ -71,9 +71,9 @@ result of \code{improveProb}}
   \email{f.harrell@vanderbilt.edu}
 }
 \references{
-  Pencina MJ, D'Agostino Sr RB, D'Agostino Jr RB, Vasan RS (2007):
+  Pencina MJ, D'Agostino Sr RB, D'Agostino Jr RB, Vasan RS (2008):
   Evaluating the added predictive ability of a new marker: From area
-  under the ROC curve to reclassification and beyond.  Stat in Med 26.
+  under the ROC curve to reclassification and beyond.  Stat in Med 27:157-172.
 }
 \seealso{
 \code{\link[Hmisc]{rcorr.cens}}, \code{\link[Hmisc]{somers2}},

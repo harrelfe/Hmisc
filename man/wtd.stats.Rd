@@ -187,6 +187,29 @@ y <- runif(500)
 g <- function(y) wtd.mean(y[,1],y[,2])
 summarize(cbind(y, wts), llist(xg), g, stat.name='y')
 
+# Empirically determine how methods used by wtd.quantile match with
+# methods used by quantile, when all weights are unity
+set.seed(1)
+u <-  eval(formals(wtd.quantile)$type)
+v <- as.character(1:9)
+r <- matrix(0, nrow=length(u), ncol=9, dimnames=list(u,v))
+
+for(n in c(8, 13, 22, 29))
+  {
+    x <- rnorm(n)
+    for(i in 1:5) {
+      probs <- sort( runif(9))
+      for(wtype in u) {
+        wq <- wtd.quantile(x, type=wtype, weights=rep(1,length(x)), probs=probs)
+        for(qtype in 1:9) {
+          rq <- quantile(x, type=qtype, probs=probs)
+          r[wtype, qtype] <- max(r[wtype,qtype], max(abs(wq-rq)))
+        }
+      }
+    }
+  }
+
+r
 
 # Restructure data to generate a dichotomous response variable
 # from records containing numbers of events and numbers of trials

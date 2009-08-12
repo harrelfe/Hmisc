@@ -817,7 +817,7 @@ ordGridFun <- function(grid)
                     else
                       function(...) arrows(...),
          rect     = function(...) rect(...),
-         polygon  = function(...) polygon(...),
+         polygon  = function(...) polygon(..., border=NA),
          abline   = function(...) abline(...),
          unit     = function(x, units='native')
                     {
@@ -886,7 +886,8 @@ ordGridFun <- function(grid)
                      default.units='native', gp=gpar(...))
          },
          polygon = function(x, y, col=par('col'), ...)
-         grid.polygon(x, y, default.units='native', gp=gpar(fill=col,...)),
+         grid.polygon(x, y, default.units='native',
+                      gp=gpar(fill=col,col='transparent',...)),
          abline=function(...) panel.abline(...),
          unit = function(x, units='native', ...) unit(x, units=units, ...),
        

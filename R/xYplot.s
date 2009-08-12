@@ -284,7 +284,8 @@ panel.xYplot <-
       for(gg in levnum) {
         s <- g == gg
         gfun$polygon(x = c(x[s], rev(x[s])),
-                     y = c(lower[s], rev(upper[s])), col =  col.fill[gg])
+                     y = c(lower[s], rev(upper[s])),
+                     col =  col.fill[gg])
       }
     }  ## end MB
 
@@ -317,10 +318,11 @@ panel.xYplot <-
     if(method == "filled bands") {
       if(.R.)
         grid.polygon(x = c(x, rev(x)), y = c(lower, rev(upper)),
-                     gp=gpar(fill = col.fill),
+                     gp=gpar(fill = col.fill, col='transparent'),
                      default.units='native')
       else
-        polygon(x = c(x, rev(x)), y = c(lower, rev(upper)), col = col.fill)
+        polygon(x = c(x, rev(x)), y = c(lower, rev(upper)),
+                col = col.fill, border=NA)
     } ## end MB
 
     ppanel(x, y, lwd = lwd, lty = lty, pch = pch, cex = cex,

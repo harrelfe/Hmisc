@@ -19,9 +19,9 @@ subplot <- function (fun, x, y = NULL, size = c(1, 1), vadj = 0.5,
     xy <- cnvrt.coords(xy, , "usr")$fig
   }
 
-  par(pars)
+  if(length(pars)) par(pars)
   par(plt = c(xy$x, xy$y), new = TRUE)
-  fun
+  if(is.function(fun))fun() else fun
   tmp.par <- par(no.readonly = TRUE)
 
   return(invisible(tmp.par))

@@ -11,7 +11,7 @@ subplot(fun, x, y, size=c(1,1), vadj=0.5, hadj=0.5, pars=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{fun}{an expression defining the new plot to be embedded.}
+  \item{fun}{an expression or function defining the new plot to be embedded.}
   \item{x}{\code{x}-coordinate(s) of the new plot (in user coordinates
     of the existing plot).}
   \item{y}{\code{y}-coordinate(s) of the new plot, \code{x} and \code{y}

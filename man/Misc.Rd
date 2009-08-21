@@ -7,6 +7,7 @@
 \alias{km.quick}
 \alias{lm.fit.qr.bare}
 \alias{matxv}
+\alias{makeSteps}
 \alias{nomiss}
 \alias{outerText}
 \alias{sepUnitsTrans}
@@ -63,6 +64,12 @@
   \code{matxv} multiplies a matrix by a vector, handling automatic
   addition of intercepts if the matrix does not have a column of ones.
   If the first argument is not a matrix, it will be converted to one.
+
+  \code{makeSteps} is a copy of the dostep function inside the
+  \code{survival} package's \code{plot.survfit} function.  It expands a
+  series of points to include all the segments needed to plot step
+  functions.  This is useful for drawing polygons to shade confidence
+  bands for step functions.
 
   \code{nomiss} returns a data frame (if its argument is one) with rows
   corresponding to \code{NA}s removed, or it returns a matrix with rows

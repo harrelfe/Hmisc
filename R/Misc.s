@@ -817,7 +817,20 @@ ordGridFun <- function(grid)
                     else
                       function(...) arrows(...),
          rect     = function(...) rect(...),
-         polygon  = function(...) polygon(..., border=NA),
+         polygon  = function(x, y=NULL, ..., type=c('l','s'))
+         {
+           type <- match.arg(type)
+           if(!length(y))
+             {
+               y <- x$y
+               x <- x$x
+             }
+           j <- !is.na(x+y)
+           x <- x[j]
+           y <- y[j]
+           if(type=='s') polygon(makeSteps(x, y), ..., border=NA)
+           else polygon(x, y, ..., border=NA)
+         },
          abline   = function(...) abline(...),
          unit     = function(x, units='native')
                     {
@@ -886,8 +899,23 @@ ordGridFun <- function(grid)
                      default.units='native', gp=gpar(...))
          },
          polygon = function(x, y, col=par('col'), ...)
-         grid.polygon(x, y, default.units='native',
-                      gp=gpar(fill=col,col='transparent',...)),
+         polygon  = function(x, y=NULL, col=par('col'), type=c('l','s'), ...)
+         {
+           type <- match.arg(type)
+           if(!length(y))
+             {
+               y <- x$y
+               x <- x$x
+             }
+           j <- !is.na(x+y)
+           x <- x[j]
+           y <- y[j]
+           if(type=='s') grid.polygon(makeSteps(x, y),
+                default.units='native',
+                gp=gpar(fill=col, col='transparent', ...))
+           else grid.polygon(x, y, default.units='native',
+                      gp=gpar(fill=col,col='transparent',...))
+              },
          abline=function(...) panel.abline(...),
          unit = function(x, units='native', ...) unit(x, units=units, ...),
        
@@ -1733,3 +1761,26 @@ prselect <- function(x, start=NULL, stop=NULL, i=0, j=0, pr=TRUE)
     if(pr) cat(x, sep='\n')
     invisible(x)
   }
+
+## The following is taken from survival:::plot.survfit internal dostep function
+
+makeSteps <- function(x, y)
+{
+  if (is.na(x[1] + y[1]))
+    {
+      x <- x[-1]
+      y <- y[-1]
+    }
+  n <- length(x)
+  if (n > 2)
+    {
+      dupy <- c(!duplicated(y)[-n], TRUE)
+      n2 <- sum(dupy)
+      xrep <- rep(x[dupy], c(1, rep(2, n2 - 1)))
+      yrep <- rep(y[dupy], c(rep(2, n2 - 1), 1))
+      list(x = xrep, y = yrep)
+    }
+  else if (n == 1)
+    list(x = x, y = y)
+  else list(x = x[c(1, 2, 2)], y = y[c(1, 1, 2)])
+}

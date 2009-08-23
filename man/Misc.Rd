@@ -11,6 +11,7 @@
 \alias{nomiss}
 \alias{outerText}
 \alias{sepUnitsTrans}
+\alias{strgraphwrap}
 \alias{trap.rule}
 \alias{trellis.strip.blank}
 \alias{under.unix}
@@ -88,6 +89,9 @@
   and if those units are present in the character strings they are
   ignored.  The target units are added to the resulting vector as the
   \code{"units"} attribute.
+
+  \code{strgraphwrap} is like \code{strwrap} but is for the current
+  graphics environment.
   
   \code{trap.rule} computes the area under a curve using the trapezoidal
   rule, assuming \code{x} is sorted.
@@ -141,6 +145,9 @@ outerText(string, y, setAside=string[1], side=4, space=1,
           adj=1, cex=par('cex'))
 sepUnitsTrans(x, conversion=c(day=1, month=365.25/12, year=365.25, week=7),
               round=FALSE, digits=0)
+strgraphwrap(x, width = 0.9 * getOption("width"),
+             indent = 0, exdent = 0,
+             prefix = "", simplify = TRUE, units='user', cex=NULL)
 trap.rule(x, y)
 trellis.strip.blank()
 unPaste(str, sep="/", extended=FALSE)
@@ -213,14 +220,21 @@ xless(x, \dots, title)
 	\code{clowess}, \code{x} may also be a list with x and y
 	components.  For \code{inverseFunction}, \code{x} and \code{y}
 	contain evaluations of the function whose inverse is needed.
-	\code{x} is typically an equally-spaced grid of 1000 points.}
+	\code{x} is typically an equally-spaced grid of 1000 points.  For
+	\code{strgraphwrap} is a character vector.}
   \item{xpxi}{set to \code{TRUE} to add an element to the result
 	containing the inverse of \eqn{X'X}}
   \item{y}{a numeric vector.  For \code{inverseFunction} \code{y} is the
-  evaluated function values at \code{x}.}
+	evaluated function values at \code{x}.}
+  \item{width}{}
+  \item{indent}{}
+  \item{exdent}{}
+  \item{prefix}{see \code{\link{strwrap}}}
+  \item{simplify}{see \code{\link{sapply}}}
+  \item{units}{see \code{\link{par}}}
   \item{\dots}{arguments passed through to another function}
 }
-\author{Frank Harrell}
+\author{Frank Harrell and Charles Dupont}
 \examples{
 
 
@@ -258,3 +272,4 @@ getLatestSource(avail=TRUE) # list available files and latest versions
 }
 \keyword{programming}
 \keyword{utilities}
+\keyword{iplot}

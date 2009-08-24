@@ -1368,7 +1368,7 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
       if(fit.reps) fits[[i]] <- f
 
       cof <- f$coef
-      v <- Varcov(f, regcoef.only=FALSE)
+      v <- vcov(f, regcoef.only=FALSE)
       ## From Rainer Dyckerhoff to work correctly with models that have
       ## a scale parameter (e.g. psm).  Check whether length of the
       ## coefficient vector is different from the the number of rows of
@@ -1393,13 +1393,12 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
         vname <- names(cof)
         cov <- matrix(0, nrow=p, ncol=p, dimnames=list(vname,vname))
         
-        if(inherits(f,'Design'))
+        if(inherits(f,'Design') | inherits(f, 'rms'))
           {
             using.Design <- TRUE
             da <- f$Design
-            if(!length(da)) da <- getOldDesign(f)
           }
-        else warning('Not using a Design fitting function; summary(fit) will use\nstandard errors, t, P from last imputation only.  Use Varcov(fit) to get the\ncorrect covariance matrix, sqrt(diag(Varcov(fit))) to get s.e.\n\n')
+        else warning('Not using a Design fitting function; summary(fit) will use\nstandard errors, t, P from last imputation only.  Use vcov(fit) to get the\ncorrect covariance matrix, sqrt(diag(vcov(fit))) to get s.e.\n\n')
       }
 
       vavg <- vavg + v
@@ -1446,26 +1445,23 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
 }
 
 
-Varcov.fit.mult.impute <- function(object, ...) object$var
-
+vcov.fit.mult.impute <- function(object, ...) object$var
 
 ##The following needed if Design is not in effect, to make anova work
-Varcov <- function(object, ...) UseMethod("Varcov")
 
-
-Varcov.default <- function(object, regcoef.only=FALSE, ...)
+vcov.default <- function(object, regcoef.only=FALSE, ...)
 {
   vc <- object$Varcov
   if(length(vc))
     {
       if(regcoef.only) return(object$var)
-      else return(vc(object,which='var'))
+      else return(vc(object, which='var'))
     }
 
   cov <- object$var
   if(!length(cov))
     stop("object does not have variance-covariance matrix")
-
+  
   if(regcoef.only)
     {
       p <- length(object$coef)
@@ -1476,7 +1472,7 @@ Varcov.default <- function(object, regcoef.only=FALSE, ...)
 }
 
 
-Varcov.lm <- function(object, ...)
+if(FALSE) Varcov.lm <- function(object, ...)
 {
   cof <- object$coefficients
   if(.R.)
@@ -1497,7 +1493,7 @@ Varcov.lm <- function(object, ...)
 }
 
 
-Varcov.glm <- function(object, ...)
+if(FALSE) Varcov.glm <- function(object, ...)
 {
   if(length(object$var))
     return(object$var)  ## for glmD
@@ -1507,7 +1503,7 @@ Varcov.glm <- function(object, ...)
 }
 
 
-Varcov.multinom <- function(object, ...) vcov(object)
+#Varcov.multinom <- function(object, ...) vcov(object)
 
 invertTabulated <- function(x, y, freq=rep(1,length(x)),
                             aty, name='value',

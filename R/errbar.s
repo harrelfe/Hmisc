@@ -9,8 +9,10 @@ errbar <-
   function(x, y, yplus, yminus, cap=.015,
            main=NULL, sub=NULL,
            xlab=as.character(substitute(x)),
-           ylab=if(is.factor(x) || is.character(x)) '' else as.character(substitute(y)),
-           add=FALSE, lty=1, xlim=NULL, ylim=NULL, lwd=1, pch=16,
+           ylab=if(is.factor(x) || is.character(x)) ''
+           else
+           as.character(substitute(y)),
+           add=FALSE, lty=1, type='p', xlim=NULL, ylim=NULL, lwd=1, pch=16,
            Type=rep(1,length(y)), axes=FALSE, ann=par("ann"),
            panel.first = NULL, panel.last=NULL, asp=NA, ...)
 {
@@ -35,14 +37,10 @@ errbar <-
     
     omai <- par('mai')
     mai <- omai
-    if(.R.) {
-      mai[2] <- max(strwidth(x, 'inches')) + .25
-    } else {
-      mai[2] <- max(strwidth(x, 'inched'))
-    }
-    
+    mai[2] <- max(strwidth(x, 'inches')) + .25*.R.
     par(mai=mai)
     on.exit(par(mai=omai))
+
     plot.new()
     localWindow(xlim=ylim, ylim=xlim, ...)
     panel.first
@@ -53,7 +51,7 @@ errbar <-
       else
         numeric(0)
     
-    points(y[t1], seq.int(length.out=n1), pch=pch, ...)
+    points(y[t1], seq.int(length.out=n1), pch=pch, type=type, ...)
     segments(yplus[t1], seq.int(length.out=n1), yminus[t1], seq.int(length.out=n1), lwd=lwd, ...)
 
     if(any(Type==2)) {
@@ -64,7 +62,7 @@ errbar <-
         lines(c(0,0)+offset, c(n1+1,par('usr')[4]), lty=2, ...)
 
       
-      points(y[t2] + offset, w, pch=pch, ...)
+      points(y[t2] + offset, w, pch=pch, type=type, ...)
       
       segments(yminus[t2] + offset, w, yplus[t2] + offset, w, lwd=lwd, ...)
     }
@@ -90,7 +88,7 @@ errbar <-
   }
   
   if(add)
-    points(x, y, pch=pch, ...)
+    points(x, y, pch=pch, type=type, ...)
   else
     plot(x, y, ylim=ylim, xlab=xlab, ylab=ylab, axes=FALSE, panel.last=NULL, pch=pch, asp=asp, ...)
   

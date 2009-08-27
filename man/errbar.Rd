@@ -10,7 +10,7 @@ errbar(x, y, yplus, yminus, cap=0.015, main = NULL,
        sub=NULL, xlab=as.character(substitute(x)),
        ylab=if(is.factor(x) || is.character(x)) ""
            else as.character(substitute(y)),
-       add=FALSE, lty=1, xlim=NULL, ylim=NULL,
+       add=FALSE, lty=1, type='p', xlim=NULL, ylim=NULL,
        lwd=1, pch=16, Type=rep(1, length(y)), axes=FALSE, ann=par("ann"),
        panel.first=NULL, panel.last=NULL, asp=NA, \dots)
 }
@@ -52,6 +52,9 @@ errbar(x, y, yplus, yminus, cap=0.015, main = NULL,
   \item{lty}{
     type of line for error bars
   }
+  \item{type}{
+	type of point.  Use \code{type="b"} to connect dots.
+	}
   \item{xlim}{
     x-axis limits.  Default is range of \code{x} values.
   }

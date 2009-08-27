@@ -53,10 +53,7 @@ errbar(x, y, yplus, yminus, cap=0.015, main = NULL,
     type of line for error bars
   }
   \item{type}{
-	type of point.  Use \code{type="b"} to connect dots.
-	}
-  \item{xlim}{
-    x-axis limits.  Default is range of \code{x} values.
+    type of point.  Use \code{type="b"} to connect dots.
   }
   \item{ylim}{
     y-axis limits.  Default is to use range of \code{y}, \code{yminus}, and \code{yplus}.  For
@@ -73,25 +70,6 @@ errbar(x, y, yplus, yminus, cap=0.015, main = NULL,
     used for horizontal bars only.  Is an integer vector with values \code{1}
     if corresponding values represent simple estimates, \code{2} if they
     represent differences.
-  }
-  \item{ann}{
-    a logical value indicating whether the default annotation
-    (title and x and y axis labels) should appear on the plot.
-  }
-  \item{axes}{
-    a logical value indicating whether both axes should be drawn on
-    the plot.
-  }
-  \item{panel.first}{
-    an expression to be evaluated after the plot axes
-    are set up but before any plotting takes place.
-  }
-  \item{panel.last}{
-    an expression to be evaluated after plotting has
-    taken place.
-  }
-  \item{asp}{
-    the \eqn{y/x} aspect ratio, see \code{\link{plot.window}}.
   }
   \item{...}{
     other parameters passed to all graphics functions.

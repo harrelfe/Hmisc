@@ -898,7 +898,6 @@ ordGridFun <- function(grid)
                      height=ytop-ybottom, just='left',
                      default.units='native', gp=gpar(...))
          },
-         polygon = function(x, y, col=par('col'), ...)
          polygon  = function(x, y=NULL, col=par('col'), type=c('l','s'), ...)
          {
            type <- match.arg(type)

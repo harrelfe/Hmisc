@@ -59,9 +59,9 @@ method (see example below) and take the maximum of the two.
 }
 \usage{
 spower(rcontrol, rinterv, rcens, nc, ni, 
-       test=logrank, nsim=500, alpha=0.05, pr=TRUE)
+       test=logrank, cox=FALSE, nsim=500, alpha=0.05, pr=TRUE)
 
-\method{print}{spower}(x, conf.int=.95)
+\method{print}{spower}(x, conf.int=.95, \dots)
 
 Quantile2(scontrol, hratio, 
           dropin=function(times)0, dropout=function(times)0,
@@ -132,6 +132,7 @@ a vector of two survival probabilities
 any function of a \code{Surv} object and a grouping variable which computes
 a chi-square for a two-sample censored data test.  The default is \code{logrank}.
 }
+\item{cox}{see above}
 \item{nsim}{
 number of simulations to perform (default=500)
 }
@@ -173,9 +174,9 @@ simulated value will be \code{tmax}.
 number of points used for approximating functions for use in plotting
 (default is 200 equally spaced points)
 }
-\item{...}{
+\item{\dots}{
 optional arguments passed to the \code{scontrol} function when it's
-evaluated by \code{Quantile2}
+evaluated by \code{Quantile2}.  Unused for \code{print.spower}.
 }
 \item{what}{
 a single character constant (may be abbreviated) specifying which

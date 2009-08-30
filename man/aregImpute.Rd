@@ -416,7 +416,7 @@ par(mfrow=c(1,1))
 plot(orig.x2, apply(f$imputed$x2, 1, mean))
 fmi <- fit.mult.impute(y ~ x1 + x2 + x3, lm, f, 
                        data=d)
-sqrt(diag(Varcov(fmi)))
+sqrt(diag(vcov(fmi)))
 fcc <- lm(y ~ x1 + x2 + x3)
 summary(fcc)   # SEs are larger than from mult. imputation
 
@@ -456,7 +456,7 @@ plot(orig.x2, apply(f$imputed$x2, 1, mean))
 
 fmi <- fit.mult.impute(y ~ x1 + x2, lm, f, 
                        data=d)
-sqrt(diag(Varcov(fmi)))
+sqrt(diag(vcov(fmi)))
 fcc <- lm(y ~ x1 + x2)
 summary(fcc)   # SEs are larger than from mult. imputation
 

@@ -139,7 +139,7 @@ smearingEst(transEst, inverseTrans, res,
 
 \method{Function}{areg.boot}(object, type=c('list','individual'),
          ytype=c('transformed','inverse'),
-         prefix='.', suffix='', frame=0, where=1, \dots)
+         prefix='.', suffix='', frame=if(.R.)1 else 0, where=1, \dots)
 
 Mean(object, \dots)
 

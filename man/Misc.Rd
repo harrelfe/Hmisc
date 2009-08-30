@@ -210,7 +210,8 @@ xless(x, \dots, title)
 	\code{'cvs'}, which is now outdated as Subversion has replaced CVS
 	in the Vanderbilt Biostatistics server.}
   \item{w}{a numeric vector}
-  \item{width}{width of confidence rectanges in user units}
+  \item{width}{width of confidence rectanges in user units, or see
+	\code{\link{strwrap}}} 
   \item{x}{a numeric vector (matrix for \code{lm.fit.qr.bare}) or data
 	frame.  For \code{xless} may be any object that is sensible to
 	\code{print}.  For \code{sepUnitsTrans} is a character or factor
@@ -226,7 +227,6 @@ xless(x, \dots, title)
 	containing the inverse of \eqn{X'X}}
   \item{y}{a numeric vector.  For \code{inverseFunction} \code{y} is the
 	evaluated function values at \code{x}.}
-  \item{width}{}
   \item{indent}{}
   \item{exdent}{}
   \item{prefix}{see \code{\link{strwrap}}}

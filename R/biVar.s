@@ -164,7 +164,7 @@ spearman2.default <- function(x, y, p=1, minlev=0,
       x <- combine.levels(x, minlev)
       if(length(levels(x))<2) {
         warning(paste('x did not have >= 2 categories with >=',
-                      mlev,'of the observations'))
+                      minlev,'of the observations'))
         return(c(rho2=NA,F=NA,df1=0,df2=n,P=NA,n=n,'Adjusted rho2'=NA))
       }
     }

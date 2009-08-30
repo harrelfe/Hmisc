@@ -923,8 +923,9 @@ ordGridFun <- function(grid)
          {
            if(!length(at))stop('not implemented for at= unspecified')
            if(side > 2) stop('not implemented for side=3 or 4')
-           if(side==1) grid.xaxis(at=at, label=labels, ticks=ticks, gp=gpar(...))
-           if(side==2) grid.yaxis(at=at, label=labels, ticks=ticks, gp=gpar(...))
+           ## ticks=ticks removed from grid.?axis FEH 30Aug09
+           if(side==1) grid.xaxis(at=at, label=labels, gp=gpar(...))
+           if(side==2) grid.yaxis(at=at, label=labels, gp=gpar(...))
          })
   }
 }

@@ -26,7 +26,7 @@ is.discrete <- function(x) inherits(x, 'discrete')
   y <- NextMethod("[")
 
   attr(y, 'levels') <- attr(x, 'levels')
-  class(y) <- Oldclass(x)
+  class(y) <- oldClass(x)
   if( drop ) {
     factor(y)
   } else {

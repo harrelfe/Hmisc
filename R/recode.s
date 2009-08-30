@@ -16,7 +16,7 @@ recode <- function(..., ret=c('numeric','factor'),
 
   nam <- names(w)
   ##.Options$warn <- -1   6Aug00
-  ##numnam <- as.numeric(nam)
+  numnam <- as.numeric(nam)
   ##if(missing(ret)) ret <- if(any(is.na(numnam))) 'factor' else 'numeric'
   if(missing(ret))
     ret <- if(all.is.numeric(nam))'numeric'

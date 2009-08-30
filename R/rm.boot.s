@@ -361,7 +361,7 @@ plot.rm.boot <-
   
   i <- i[1:round(conf*B)]
   if(i[1] != 1)
-    warning(past('design is imbalanced enough that best log likelihood or SSE was not\n',
+    warning(paste('design is imbalanced enough that best log likelihood or SSE was not\n',
                  'obtained from overall fit (objective=',format(sse[1]),') but from\n',
                  'a bootstrap fit (objective=',format(sse[i[1]]),
                  ')\nThis can also happen if the objective is not -2 log L',sep=''))

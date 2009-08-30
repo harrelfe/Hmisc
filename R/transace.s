@@ -545,7 +545,7 @@ plot.areg.boot <- function(x, ylim, boot=TRUE,
 Function.areg.boot <-
   function(object, type=c('list','individual'),
            ytype=c('transformed','inverse'),
-           prefix='.', suffix='', frame=0,
+           prefix='.', suffix='', frame=if(.R.)1 else 0,
            where=1, ...)
 {
   type <- match.arg(type)
@@ -603,7 +603,10 @@ Function.areg.boot <-
   fun.name <- paste(prefix, nam, suffix, sep='')
   for(i in 1:k)
     if(missing(where))
-      assign(fun.name[i], g[[i]], frame=frame)
+      {
+        if(.R.) assign(fun.name[i], g[[i]], pos=frame)
+        else assign(fun.name[i], g[[i]], frame=frame)
+      }
     else if(.R.)
       assign(fun.name[i], g[[i]], pos=where)
     else
@@ -631,7 +634,7 @@ predict.areg.boot <-
     lp <- object$linear.predictors
     y <- smearingEst(lp, fity, res, statistic=statistic, q=q)
     nac <- object$na.action
-    return(if(length(nac)) nafitted(nac, y)
+    return(if(length(nac)) naresid(nac, y)   ## FEH30Aug09 was nafitted
            else y)
   }
   

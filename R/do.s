@@ -102,7 +102,7 @@ do <- function(condition, expressions, device=NULL, file, append=FALSE,
   ## generic functions whose body ends in UseMethod but are invisible
   ## this list should grow
   for(ex in substitute(expressions)) {
-    lv <- eval(ex, local=1)
+    lv <- eval(ex)
     exs <- strip.comments(ex)
     m <- mode(exs)
     if(m == 'name' ||

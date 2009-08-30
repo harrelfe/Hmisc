@@ -40,7 +40,7 @@ spower <- function(rcontrol, rinterv, rcens, nc, ni,
                          alpha=alpha, nsim=nsim), class='spower') else power
 }
 
-print.spower <- function(x, conf.int=.95)
+print.spower <- function(x, conf.int=.95, ...)
   {
     b <- x$betas
     hr <- exp(b)

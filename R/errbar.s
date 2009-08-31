@@ -19,77 +19,80 @@ errbar <-
     ylim <- range(y[Type==1], yplus[Type==1], yminus[Type==1],
                   na.rm=TRUE)
   
-  if(is.factor(x) || is.character(x)) {
-    x <- as.character(x)
-    n <- length(x)
-    t1 <- Type==1
-    t2 <- Type==2
-    n1 <- sum(t1)
-    n2 <- sum(t2)
-
-    omai <- par('mai')
-    mai <- omai
-    if(.R.)
-      mai[2] <- max(strwidth(x, 'inches')) + .25
-    else
-      mai[2] <- max(strwidth(x, 'inches'))
-    
-    par(mai=mai)
-    on.exit(par(mai=omai))
-
-    plot(NA, NA, xlab=ylab, ylab='',
-         xlim=ylim, ylim=c(1, n+1),
-         axes=FALSE, ...)
-    axis(1)
-    
-    w <-
-      if(any(t2))
-        n1+(1:n2)+1
-      else
-        numeric(0)
-    
-    axis(2, at=c(seq.int(length.out=n1), w), labels=c(x[t1], x[t2]),
-         las=1, adj=1)
-    points(y[t1], seq.int(length.out=n1), pch=pch, type=type, ...)
-    segments(yplus[t1], seq.int(length.out=n1), yminus[t1], seq.int(length.out=n1), lwd=lwd, ...)
-
-    if(any(Type==2)) {
-      abline(h=n1+1, lty=2, ...)
-      offset <- mean(y[t1]) - mean(y[t2])
-
-      if(min(yminus[t2]) < 0 & max(yplus[t2]) > 0)
-        lines(c(0,0)+offset, c(n1+1,par('usr')[4]), lty=2, ...)
-
+  if(is.factor(x) || is.character(x))
+    {
+      x <- as.character(x)
+      n <- length(x)
+      t1 <- Type==1
+      t2 <- Type==2
+      n1 <- sum(t1)
+      n2 <- sum(t2)
       
-      points(y[t2] + offset, w, pch=pch, type=type, ...)
-      segments(yminus[t2] + offset, w, yplus[t2] + offset, w, lwd=lwd, ...)
+      omai <- par('mai')
+      mai <- omai
+      mai[2] <- max(strwidth(x, 'inches')) + .25*.R.
+    
+      par(mai=mai)
+      on.exit(par(mai=omai))
 
-      at <- pretty(range(y[t2], yplus[t2], yminus[t2]))      
-      axis(side=3, at=at + offset, labels=format(round(at, 6)))      
+      plot(NA, NA, xlab=ylab, ylab='',
+           xlim=ylim, ylim=c(1, n+1),
+           axes=FALSE, ...)
+      axis(1)
+    
+      w <-
+        if(any(t2)) n1+(1:n2)+1
+        else
+          numeric(0)
+    
+      axis(2, at=c(seq.int(length.out=n1), w), labels=c(x[t1], x[t2]),
+           las=1, adj=1)
+      points(y[t1], seq.int(length.out=n1), pch=pch, type=type, ...)
+      segments(yplus[t1], seq.int(length.out=n1), yminus[t1],
+               seq.int(length.out=n1), lwd=lwd, lty=lty)
+
+      if(any(Type==2))
+        {
+          abline(h=n1+1, lty=2, ...)
+          offset <- mean(y[t1]) - mean(y[t2])
+          
+          if(min(yminus[t2]) < 0 & max(yplus[t2]) > 0)
+            lines(c(0,0)+offset, c(n1+1,par('usr')[4]), lty=2, ...)
+          
+          
+          points(y[t2] + offset, w, pch=pch, type=type, ...)
+          segments(yminus[t2] + offset, w, yplus[t2] + offset, w,
+                   lwd=lwd, lty=lty)
+          
+          at <- pretty(range(y[t2], yplus[t2], yminus[t2]))      
+          axis(side=3, at=at + offset, labels=format(round(at, 6)))      
+        }
+      
+      return(invisible())
     }
-
-    return(invisible())
-  }
   
   if(add)
     points(x, y, pch=pch, type=type, ...)
   else
-    plot(x, y, ylim=ylim, xlab=xlab, ylab=ylab, pch=pch, ...)
+    plot(x, y, ylim=ylim, xlab=xlab, ylab=ylab, pch=pch, type=type, ...)
   
   xcoord <- par()$usr[1:2]
   smidge <- cap * ( xcoord[2] - xcoord[1] ) / 2
-
-  segments(x, yminus, x, yplus , lty=lty, lwd=lwd, ...)
   
-  if(par()$xlog) {
-    xstart <- x * 10 ^ (-smidge)
-    xend <- x * 10 ^ (smidge)
-  } else {
-    xstart <- x - smidge
-    xend <- x + smidge
-  }
-  segments( xstart, yminus, xend, yminus, lwd=lwd, ...)
-  segments( xstart, yplus, xend, yplus, lwd=lwd, ...)
-
+  segments(x, yminus, x, yplus , lty=lty, lwd=lwd)
+  
+  if(par()$xlog)
+    {
+      xstart <- x * 10 ^ (-smidge)
+      xend <- x * 10 ^ (smidge)
+    }
+  else
+    {
+      xstart <- x - smidge
+      xend <- x + smidge
+    }
+  segments( xstart, yminus, xend, yminus, lwd=lwd, lty=lty)
+  segments( xstart, yplus, xend, yplus, lwd=lwd, lty=lty)
+  
   return(invisible())
 }

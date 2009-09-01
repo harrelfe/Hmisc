@@ -122,7 +122,7 @@ Department of Biostatistics, Vanderbilt University
 f.harrell@vanderbilt.edu
 }
 \seealso{
-\code{\link[Design]{lrm}}, \code{\link[Design]{cph}}, \code{\link{rcspline.eval}}, \code{\link{plot}}, \code{\link{supsmu}}, \code{\link[survival]{coxph.fit}}, \code{\link[Design]{lrm.fit}}
+\code{\link[Design]{lrm}}, \code{\link[Design]{cph}}, \code{\link{rcspline.eval}}, \code{\link[graphics]{plot}}, \code{\link{supsmu}}, \code{\link[survival:survival-internal]{coxph.fit}}, \code{\link[Design]{lrm.fit}}
 }
 \examples{
 #rcspline.plot(cad.dur, tvdlm, m=150)

@@ -25,7 +25,7 @@ requirePackage(package, character.only = FALSE, ...)
 }
 \author{ Charles Dupont }
 \seealso{
-  \code{\link[base]{library}}, \code{\link[base]{require}}
+  \code{\link[base]{library}}, \code{\link[base:library]{require}}
 }
 \examples{
 \dontrun{

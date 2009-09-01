@@ -99,7 +99,7 @@ rcsplineFunction(knots, coef, norm=2)
   \email{f.harrell@vanderbilt.edu}
 }
 \seealso{
-  \code{\link{rcspline.eval}}, \code{\link[splines]{ns}}, \code{\link[Design]{rcs}}, \code{\link{latex}}, \code{\link{Function.transcan}}
+  \code{\link{rcspline.eval}}, \code{\link[splines]{ns}}, \code{\link[Design:Design.trans]{rcs}}, \code{\link{latex}}, \code{\link{Function.transcan}}
 }
 \examples{
 set.seed(1)

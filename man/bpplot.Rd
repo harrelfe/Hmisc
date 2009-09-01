@@ -65,7 +65,7 @@ Software 8 No. 17, 2003.
 }
 \seealso{
 \code{\link{panel.bpplot}}, \code{\link{boxplot}}, \code{\link{Ecdf}},
-\code{\link[lattice]{bwplot}} 
+\code{\link[lattice:xyplot]{bwplot}} 
 }
 \examples{
 set.seed(1)

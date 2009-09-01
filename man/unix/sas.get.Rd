@@ -358,7 +358,7 @@ code.levels(object)
   \code{\link{data.frame}}, \code{\link[Hmisc]{describe}},
   \code{\link[Hmisc]{label}},
   \code{\link[Hmisc]{upData}},
-  \code{\link[Hmisc]{cleanup.import}}
+  \code{\link[Hmisc:upData]{cleanup.import}}
 }
 \examples{
 \dontrun{

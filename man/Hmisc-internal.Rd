@@ -62,7 +62,7 @@
 \alias{setParNro}
 \alias{stepfun.eval}
 \alias{stripChart}
-\alias{survfit.km}
+\alias{survfitKM}
 \alias{[.terms}
 \alias{termsDrop}
 \alias{testDateTime}

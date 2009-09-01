@@ -54,7 +54,7 @@ event.convert(data2, event.time = 1, event.code = 2)
   \email{jdubin@uwaterloo.ca}
 }
 \seealso{
-  \code{\link{event.history}}, \code{\link{Date}, \code{\link{event.chart}}}
+  \code{\link{event.history}}, \code{\link{Date}}, \code{\link{event.chart}}
 }
 \examples{
 # To convert coded time-to-event data, then, draw an event chart:

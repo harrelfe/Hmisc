@@ -37,7 +37,7 @@ a vector containing \code{B} bootstrap estimates
 updates \code{.Random.seed}, and, if \code{pr=TRUE}, prints progress of simulations
 }
 \details{
-\code{bootkm} uses Therneau's \code{survfit.km} function to efficiently compute
+\code{bootkm} uses Therneau's \code{survfitKM} function to efficiently compute
 Kaplan-Meier estimates.
 }
 \author{
@@ -54,7 +54,7 @@ Akritas MG (1986): Bootstrapping the Kaplan-Meier estimator.  JASA
 81:1032--1038.
 }
 \seealso{
-\code{\link[survival]{survfit}}, \code{\link[survival]{survfit.km}}, \code{\link[survival]{Surv}}, \code{\link[Design]{Survival.cph}}, \code{\link[Design]{Quantile.cph}}
+\code{\link[survival]{survfit}}, \code{\link[survival]{Surv}}, \code{\link[Design:cph]{Survival.cph}}, \code{\link[Design:cph]{Quantile.cph}}
 }
 \examples{
 # Compute 0.95 nonparametric confidence interval for the difference in

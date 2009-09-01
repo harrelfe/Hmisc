@@ -53,7 +53,7 @@
   means given a response variable (which may be binary) and a grouping
   indicator.
 
-  \code{km.quick} provides a fast way to invoke \code{survfit.km} in the
+  \code{km.quick} provides a fast way to invoke \code{survfitKM} in the
   \code{survival} package to get Kaplan-Meier estimates for a
   single stratum for a vector of time points (if \code{times} is given) or to
   get a vector of survival time quantiles (if \code{q} is given).

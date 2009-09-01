@@ -72,7 +72,7 @@ modeling. Proc 11th Annual SAS Users Group Intnl Conf, p. 646--651.
 Cary NC: SAS Institute, Inc.
 }
 \seealso{
-\code{\link[splines]{ns}}, \code{\link{rcspline.restate}}, \code{\link[Design]{rcs}}
+\code{\link[splines]{ns}}, \code{\link{rcspline.restate}}, \code{\link[Design:Design.trans]{rcs}}
 }
 \examples{
 x <- 1:100

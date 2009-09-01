@@ -24,7 +24,7 @@
   Convert an S object to LaTeX, and Related Utilities
 }
 \description{
-\code{latex} converts its argument to a \code{.tex} file appropriate
+\code{latex} converts its argument to a \file{.tex} file appropriate
 for inclusion in a LaTeX2e document.  \code{latex} is a generic
 function that calls one of \code{latex.default},
 \code{latex.function}, \code{latex.list}. 
@@ -41,32 +41,32 @@ commands that are similar to those in the
 \code{latex.list} calls \code{latex} recursively for each element in the argument.
 
 \code{latexTranslate} translates particular items in character
-strings to LaTeX format, e.g., makes \code{a^2 = a$^2$} for superscript within
+strings to LaTeX format, e.g., makes \samp{a^2 = a$^2$} for superscript within
 variable labels.   LaTeX names of greek letters (e.g., \code{"alpha"})
 will have backslashes added if \code{greek==TRUE}.  Math mode is
 inserted as needed. 
 \code{latexTranslate} assumes that input text always has matches,
-e.g. \code{[) [] (] ()}, and that surrounding  by \code{$$} is OK.
+e.g. \code{[) [] (] ()}, and that surrounding  by \samp{$$} is OK.
 
 \code{latexSN} converts a vector floating point numbers to character
 strings using LaTeX exponents.  Dollar signs to enter math mode are not
 added.
 
 \code{latexTabular} creates a character vector representing a matrix or
-data frame in a simple \code{tabular} environment.
+data frame in a simple \samp{tabular} environment.
 
 \code{latexVerbatim} on an object executes the object's \code{print} method,
 capturing the output for a file inside a LaTeX verbatim environment.
 
 \code{dvi} uses the system \code{latex} command to compile LaTeX code produced
 by \code{latex}, including any needed styles.  \code{dvi}
-will put a documentclass\{report\} and end\{document\} wrapper
-around a file produced by \code{latex}.  By default, the \code{geometry} LaTeX package is
+will put a \samp{\documentclass\{report\}} and \samp{\end\{document\}} wrapper
+around a file produced by \code{latex}.  By default, the \samp{geometry} LaTeX package is
 used to omit all margins and to set the paper size to a default of
 5.5in wide by 7in tall.  The result of \code{dvi} is a .dvi file.  To both
 format and screen display a non-default size, use for example
 \code{print(dvi(latex(x), width=3, height=4),width=3,height=4)}.  Note that
-you can use something like \code{xdvi -geometry 460x650 -margins 2.25in
+you can use something like \samp{xdvi -geometry 460x650 -margins 2.25in
 file} without changing LaTeX defaults to emulate this.
 
 \code{dvips} will use the system \code{dvips} command to print the .dvi file to
@@ -76,10 +76,10 @@ is specified.
 \code{dvigv} uses the system \code{dvips} command to convert the input object
 to a .dvi file, and uses the system \code{dvips} command to convert it to
 postscript.  Then the postscript file is displayed using Ghostview
-(assumed to be the system command \code{gv}).
+(assumed to be the system command \command{gv}).
 
 There are \code{show} methods for displaying typeset LaTeX
-on the screen using the system \code{xdvi}
+on the screen using the system \command{xdvi}
 command.   If you \code{show} a LaTeX file created by
 \code{latex} without running it through \code{dvi} using
 \code{show.dvi(object)}, the 
@@ -91,7 +91,7 @@ more automatic display of typesetting, e.g. typing \code{latex(x)} will
 invoke xdvi to view the typeset document.
 }
 \usage{
-latex(object, title=first.word(deparse(substitute(object))), \dots)
+latex(object, \dots)
 
 \method{latex}{default}(object,
     title=first.word(deparse(substitute(object))),
@@ -120,7 +120,7 @@ latex(object, title=first.word(deparse(substitute(object))), \dots)
     landscape=FALSE,
     multicol=TRUE,
     math.row.names=FALSE, math.col.names=FALSE,
-    ...) # x is a matrix or data.frame
+    \dots) # x is a matrix or data.frame
 
 \method{latex}{function}(
 	object,
@@ -140,7 +140,7 @@ latex(object, title=first.word(deparse(substitute(object))), \dots)
            caption.loc=c('top','bottom'),
            \dots)
 
-\method{print}{latex}(x, ...)
+\method{print}{latex}(x, \dots)
 
 latexTranslate(object, inn=NULL, out=NULL, pb=FALSE, greek=FALSE, \dots)
 
@@ -149,7 +149,7 @@ latexSN(x)
 latexTabular(x, headings=colnames(x), 
              align =paste(rep('c',ncol(x)),collapse=''),
              halign=paste(rep('c',ncol(x)),collapse=''),
-             helvetica=TRUE, ...)
+             helvetica=TRUE, \dots)
 
 latexVerbatim(x, title=first.word(deparse(substitute(x))),
     file=paste(title, ".tex", sep=""),
@@ -179,17 +179,17 @@ dvigv(object, \dots)
 	\code{latexTabular} \code{x} is a matrix or data frame.
   }
   \item{title}{
-    name of file to create without the \code{.tex} extension.  If this
+    name of file to create without the \samp{.tex} extension.  If this
     option is not set, value/string of \code{x} (see above) is printed
     in the top left corner of the table.  Set \code{title=''} to
     suppress this output.
   }
   \item{file}{
-    name of the file to create.  The default file name is \code{x.tex} where
+    name of the file to create.  The default file name is \file{x.tex} where
     \code{x} is the first word in the name of the argument for \code{x}.
     Set \code{file=""} to have the generated LaTeX code just printed to
     standard output.  This is especially useful when running under Sweave in
-    R using its \code{results=tex} tag, to save having to manage many
+    R using its \samp{results=tex} tag, to save having to manage many
     small external files.  When \code{file=""}, \code{latex} keeps track of
     LaTeX styles that are called for by creating or modifying an object
     \code{latexStyles} (in \code{.GlobalTemp} in R or in frame 0 in
@@ -204,7 +204,7 @@ dvigv(object, \dots)
   }
   \item{label}{
     a text string representing a symbolic label for the table for referencing
-    in the LaTeX \code{\\label} and \code{\\ref} commands.
+    in the LaTeX \samp{\label} and \samp{\ref} commands.
     \code{label} is only used if \code{caption} is given.
   }
   \item{rowlabel}{
@@ -243,31 +243,31 @@ dvigv(object, \dots)
     of rows.
   }
   \item{cgroupTexCmd}{A character string specifying a LaTeX command to be
-    used to format column group labels.  The default, "bfseries", sets
-    the current font to 'bold'.  It is possible to supply a vector of
+    used to format column group labels.  The default, \code{"bfseries"}, sets
+    the current font to \sQuote{bold}.  It is possible to supply a vector of
     strings so that each column group label is formatted differently.
     Please note that the first item of the vector is used to format the
     title (even if a title is not used). Currently the user needs to handle
     these issue.  Multiple effects can be achieved by creating custom
     LaTeX commands; for example,
-    \code{\providecommand{\redscshape}{\color{red}\scshape}} creates a
-    LaTeX command called \code{redscshape} that formats the text in red
+    \code{"\providecommand{\redscshape}{\color{red}\scshape}"} creates a
+    LaTeX command called \samp{\redscshape} that formats the text in red
     small-caps.
   }
   \item{rgroupTexCmd}{A character string specifying a LaTeX command to be
-    used to format row group labels.  The default, "bfseries", sets the
-    current font to 'bold'.  A vector of strings can be supplied to
+    used to format row group labels.  The default, \code{"bfseries"}, sets the
+    current font to \sQuote{bold}.  A vector of strings can be supplied to
     format each row group label differently.  Normal recycling applies
     if the vector is shorter than \code{n.rgroups}.  See also
     \code{cgroupTexCmd} above regarding multiple effects.
   }
   \item{rownamesTexCmd}{A character string specifying a LaTeX
-    command to be used to format rownames. The default, NULL, applies no
+    command to be used to format rownames. The default, \code{NULL}, applies no
     command.  A vector of different commands can also be supplied.
     See also \code{cgroupTexCmd} above regarding multiple effects.
   }
   \item{colnamesTexCmd}{A character string specifying a LaTeX command to be
-    used to format column labels. The default, NULL, applies no command.
+    used to format column labels. The default, \code{NULL}, applies no command.
     It is possible to supply a vector of strings to format each column
     label differently. If column groups are not used, the first item in
     the vector will be used to format the title. Please note that if
@@ -279,7 +279,7 @@ dvigv(object, \dots)
   \item{cellTexCmds}{A matrix of character strings which are LaTeX
     commands to be
     used to format each element, or cell, of the object.  The matrix
-    must have the same NROW() and NCOL() as the object.  The default,
+    must have the same \code{NROW()} and \code{NCOL()} as the object.  The default,
     NULL, applies no formats.  Empty strings also apply no formats, and
     one way to start might be to create a matrix of empty strings with
     \code{matrix(rep("", NROW(x) * NCOL(x)), nrow=NROW(x))} and then
@@ -340,40 +340,40 @@ dvigv(object, \dots)
     Set to \code{TRUE} to use David Carlisle's LaTeX \code{longtable} style, allowing
     long tables to be split over multiple pages with headers repeated on
     each page.
-    The \code{"style"} element is set to \code{"longtable"}. The \code{latex} \code{\\usepackage}
-    must reference \code{[longtable]}.
-    The file \code{longtable.sty} will
+    The \code{"style"} element is set to \code{"longtable"}. The \code{latex} \samp{\usepackage}
+    must reference \samp{[longtable]}.
+    The file \file{longtable.sty} will
     need to be in a directory in your \env{TEXINPUTS} path.
   }
   \item{draft.longtable}{
     I forgot what this does.
   }
   \item{ctable}{
-    set to \code{TRUE} to use Wybo Dekker's \code{ctable} style from
-    \code{CTAN}.  Even though for historical reasons it is not the
+    set to \code{TRUE} to use Wybo Dekker's \samp{ctable} style from
+    \acronym{CTAN}.  Even though for historical reasons it is not the
     default, it is generally the preferred method.  Thicker but not
-    doubled \code{hline}s are used to start a table when \code{ctable} is
+    doubled \samp{\hline}s are used to start a table when \code{ctable} is
     in effect.
   }
   \item{booktabs}{
-    set \code{booktabs=TRUE} to use the \code{booktabs} style of horizontal
-    rules for better tables.  In this case, double \code{hline}s are not
+    set \code{booktabs=TRUE} to use the \samp{booktabs} style of horizontal
+    rules for better tables.  In this case, double \samp{\hline}s are not
     used to start a table.
   }
   \item{table.env}{
     Set \code{table.env=FALSE} to suppress enclosing the table in a LaTeX
-    \code{table} environment.  \code{table.env} only applies when
+    \samp{table} environment.  \code{table.env} only applies when
     \code{longtable=FALSE}.  You may not specify a \code{caption} if
     \code{table.env=FALSE}.
   }
   \item{here}{
     Set to \code{TRUE} if you are using \code{table.env=TRUE} with \code{longtable=FALSE} and you
-    have installed David Carlisle's \code{here.sty} LaTeX style. This will cause
-    the LaTeX \code{table} environment to be set up with option \code{H} to guarantee
+    have installed David Carlisle's \file{here.sty} LaTeX style. This will cause
+    the LaTeX \samp{table} environment to be set up with option \samp{H} to guarantee
     that the table will appear exactly where you think it will in the text.
-    The \code{"style"} element is set to \code{"here"}. The \code{latex} \code{\\usepackage}
-    must reference \code{[here]}.  The file \code{here.sty} will
-    need to be in a directory in your \env{TEXINPUTS} path.  \code{here} is
+    The \code{"style"} element is set to \code{"here"}. The \code{latex} \samp{\usepackage}
+    must reference \samp{[here]}.  The file \file{here.sty} will
+    need to be in a directory in your \env{TEXINPUTS} path.  \samp{here} is
     largely obsolete with LaTeX2e.
   }
   \item{lines.page}{
@@ -386,14 +386,16 @@ dvigv(object, \dots)
     page of the table. Default is no caption.
   }
   \item{caption.lot}{
-    a text string representing a short caption to be used in the "List of Tables".
-    By default, LaTeX will use \code{caption}.  If you get inexplicable \code{latex} errors,
+    a text string representing a short caption to be used in the \dQuote{List of Tables}.
+    By default, LaTeX will use \code{caption}.  If you get inexplicable \samp{latex} errors,
     you may need to supply \code{caption.lot} to make the errors go away.
   }
-  \item{caption.loc}{set to \code{"bottom"} to position a caption below
-    the table instead of the default of \code{"top"}.}
+  \item{caption.loc}{
+    set to \code{"bottom"} to position a caption below
+    the table instead of the default of \code{"top"}.
+  }
   \item{double.slash}{
-    set to \code{TRUE} to output \code{\\} as \code{\\\\} in LaTeX commands. Useful when you
+    set to \code{TRUE} to output \samp{"\\"} as \samp{"\\\\"} in LaTeX commands. Useful when you
     are reading the output file back into an S vector for later output.
   }
   \item{vbar}{
@@ -417,25 +419,25 @@ dvigv(object, \dots)
   \item{size}{
     size of table text if a size change is needed (default is no change).
     For example you might specify \code{size="small"} to use LaTeX font size
-    "small".
+    \dQuote{small}.
   }
   \item{center}{
-    default is \code{"center"} to enclose the table in a \code{center}
+    default is \code{"center"} to enclose the table in a \samp{center}
     environment.  Use \code{center="centering"} to instead use a LaTeX
-    \code{centering} directive, or \code{center="none"} to use no
+    \samp{centering} directive, or \code{center="none"} to use no
     centering.  This option was implemented by Markus Jäntti
     \email{markus.jantti@iki.fi} of Abo Akademi University.
   }
   \item{landscape}{
-    set to \code{TRUE} to enclose the table in a \code{landscape}
+    set to \code{TRUE} to enclose the table in a \samp{landscape}
     environment.  When \code{ctable} is \code{TRUE}, will use the
     \code{rotate} argument to \code{ctable}.
   }
   \item{type}{
     The default uses the S \code{Example} environment for \code{latex.function},
-    assuming you have installed \code{S.sty} in a location that the system
+    assuming you have installed \file{S.sty} in a location that the system
     latex command automatically accesses.  Set \code{type="verbatim"} to
-    instead use the LaTeX \code{verbatim} environment.
+    instead use the LaTeX \samp{verbatim} environment.
   }
   \item{\dots}{
     other arguments are accepted and ignored except that \code{latex}
@@ -451,22 +453,22 @@ dvigv(object, \dots)
     defaults
   }
   \item{pb}{
-    If \code{pb}=\code{TRUE}, \code{latexTranslate} also translates \code{[()]} to math mode using
-    \code{\left, \right}.
+    If \code{pb=TRUE}, \code{latexTranslate} also translates \samp{[()]} to math mode using
+    \samp{\left, \right}.
   }
   \item{greek}{set to \code{TRUE} to have \code{latexTranslate} put names
     for greek letters in math mode and add backslashes}
   \item{headings}{a vector of character strings specifying column
-	headings for \code{latexTabular}, defaulting to \code{x}'s
+	headings for \samp{latexTabular}, defaulting to \code{x}'s
 	\code{colnames}}
   \item{align}{a character strings specifying column
-	alignments for \code{latexTabular}, defaulting to
+	alignments for \samp{latexTabular}, defaulting to
 	\code{paste(rep('c',ncol(x)),collapse='')} to center.  You may
 	specify \code{align='c|c'} and other LaTeX tabular formatting.}
   \item{halign}{a character strings specifying alignment for
 	column headings, defaulting to centered.}
   \item{helvetica}{set to \code{FALSE} to use default LaTeX font in
-	\code{latexTabular} instead of helvetica.}
+	\samp{latexTabular} instead of helvetica.}
   \item{hspace}{
     horizontal space, e.g., extra left margin for verbatim text.  Default
     is none.  Use e.g. \code{hspace="10ex"} to add 10 extra spaces to the left
@@ -486,7 +488,7 @@ dvigv(object, \dots)
     file.
   }
   \item{multicol}{
-    set  to \code{FALSE} to not use \code{\multicolumn} in header
+    set  to \code{FALSE} to not use \samp{\multicolumn} in header
     of table
   }
 
@@ -495,78 +497,68 @@ dvigv(object, \dots)
   }
 }
 \value{
-\code{latex} and \code{dvi} return a
-list of class \code{latex} or \code{dvi} containing character string
-elements \code{file} and \code{style}.  \code{file} contains the name of the
-generated file, and \code{style} is a vector (possibly empty) of styles to
-be included using the LaTeX2e \code{\usepackage} command.
+  \code{latex} and \code{dvi} return a
+  list of class \code{latex} or \code{dvi} containing character string
+  elements \code{file} and \code{style}.  \code{file} contains the name of the
+  generated file, and \code{style} is a vector (possibly empty) of styles to
+  be included using the LaTeX2e \samp{\usepackage} command.
 
-\code{latexTranslate} returns a vector of character strings
+  \code{latexTranslate} returns a vector of character strings
 }
 
 \section{Side Effects}{
-creates various system files and runs various Linux/UNIX system
-commands which are assumed to be in the system path.
+  creates various system files and runs various Linux/UNIX system
+  commands which are assumed to be in the system path.
 }
 \details{
-  If running under Windows and using MikTeX, \code{latex} and \code{yap}
-  must be in your system path, and \code{yap} is used to browse
-  \code{.dvi} files created by \code{latex}.  You should install the
-  \code{geometry} and \code{ctable} styles in MikTeX to make optimum use
+  If running under Windows and using MikTeX, \command{latex} and \command{yap}
+  must be in your system path, and \command{yap} is used to browse
+  \file{.dvi} files created by \command{latex}.  You should install the
+  \file{geometry.sty} and \file{ctable.sty} styles in MikTeX to make optimum use
   of \code{latex()}.
 
-  On Mac OS X, you may have to append the /usr/texbin directory to the
+  On Mac OS X, you may have to append the \file{/usr/texbin} directory to the
   system path.  Thanks to Kevin Thorpe
   (\email{kevin.thorpe@utoronto.ca}) one way to set up Mac OS X is
-  to install \code{X11} and \code{X11SDK} if not already installed,
-  start \code{X11} within the R GUI, and issue the command
+  to install \samp{X11} and \samp{X11SDK} if not already installed,
+  start \samp{X11} within the R GUI, and issue the command
   \code{Sys.setenv( PATH=paste(Sys.getenv("PATH"),"/usr/texbin",sep=":")
-  )}.  To avoid any complications of using \code{X11} under MacOS, users
-  can install the \code{TeXShop} package, which will associate
-  \code{.dvi} files with a viewer that displays a \code{pdf} version of
-  the file after a hidden conversion from \code{dvi} to \code{pdf}.
+  )}.  To avoid any complications of using \samp{X11} under MacOS, users
+  can install the \samp{TeXShop} package, which will associate
+  \file{.dvi} files with a viewer that displays a \file{pdf} version of
+  the file after a hidden conversion from \file{dvi} to \file{pdf}.
 
   System options can be used to specify external commands to be used.
   Defaults are given by \code{options(xdvicmd='xdvi')} or
   \code{options(xdvicmd='yap')}, \code{options(dvipscmd='dvips')},
   \code{options(latexcmd='latex')}.  For MacOS specify
-  \code{options(xdvicmd='MacdviX') or if TeXShop is installed,
-  \code{options(xdvicmd='open')}}.
+  \code{options(xdvicmd='MacdviX')} or if TeXShop is installed,
+  \code{options(xdvicmd='open')}.
   
   If running S-Plus and your directory for temporary files is not
-  \code{/tmp} (Unix/Linux) or \code{\\windows\\temp} (Windows), add your
+  \file{/tmp} (Unix/Linux) or \file{\\windows\\temp} (Windows), add your
   own \code{tempdir} function such as \code{
 	tempdir <- function() "/yourmaindirectory/yoursubdirectory"}
 
   To prevent the latex file from being displayed store the result of
   \code{latex} in an object, e.g. \code{w <- latex(object, file='foo.tex')}.
-  }
+}
 \author{
-Frank E. Harrell, Jr.,
-\cr
-Department of Biostatistics,
-\cr
-Vanderbilt University,
-\cr
-\code{f.harrell@vanderbilt.edu}
+  Frank E. Harrell, Jr.,\cr
+  Department of Biostatistics,\cr
+  Vanderbilt University,\cr
+  \email{f.harrell@vanderbilt.edu}
 
 
-Richard M. Heiberger,
-\cr
-Department of Statistics,
-\cr
-Temple University, Philadelphia, PA.
-\cr
-\code{rmh@astro.ocis.temple.edu}
+  Richard M. Heiberger,\cr
+  Department of Statistics,\cr
+  Temple University, Philadelphia, PA.\cr
+  \email{rmh@astro.ocis.temple.edu}
 
-David R. Whiting,
-\cr
-School of Clinical Medical Sciences (Diabetes),
-\cr
-University of Newcastle upon Tyne, UK.
-\cr
-\code{david.whiting@ncl.ac.uk}
-
+  David R. Whiting,\cr
+  School of Clinical Medical Sciences (Diabetes),\cr
+  University of Newcastle upon Tyne, UK.\cr
+  \email{david.whiting@ncl.ac.uk}
 
 }
 \seealso{

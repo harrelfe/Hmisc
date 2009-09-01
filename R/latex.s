@@ -1127,8 +1127,7 @@ latexTranslate <- function(object, inn=NULL, out=NULL, pb=FALSE,
 }
 
 
-latex <- function(object,
-                  title=first.word(deparse(substitute(object))),...)
+latex <- function(object, ...)
 {
   ## added title= 25May01
   if (!length(oldClass(object)))

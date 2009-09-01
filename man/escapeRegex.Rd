@@ -19,7 +19,7 @@ escapeBS(string)
   special meaning in a reqular expression. For any string
   \code{grep(regexpEscape(string), string)} will always be true.
 
-  \code{escapeBS} will escape any backslash \code{\backslash} in a string.
+  \code{escapeBS} will escape any backslash \samp{\\} in a string.
 }
 \value{
   The value of the string with any characters that would have
@@ -30,7 +30,7 @@ escapeBS(string)
   Department of Biostatistics\cr
   Vanderbilt University
 }
-\seealso{ \code{\link[base]{grep}} }
+\seealso{\code{\link[base]{grep}} }
 \examples{
 string <- "this\\\\(system) {is} [full]."
 escapeRegex(string)

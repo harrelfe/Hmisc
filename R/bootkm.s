@@ -7,7 +7,7 @@ bootkm <- function(S, q=.5, B=500, times, pr=TRUE)
   S <- S[!is.na(S),]
   n <- nrow(S)
   stratvar <- factor(rep(1,nrow(S)))
-  f <- survfit.km(stratvar, S)
+  f <- survfitKM(stratvar, S)
   tt <- c(0, f$time)
   ss <- c(1, f$surv)
   if(!tthere) {
@@ -28,7 +28,7 @@ bootkm <- function(S, q=.5, B=500, times, pr=TRUE)
     if(pr && (i %% 10)==0)
       cat(i,'\r')
     
-    f <- survfit.km(stratvar, S[sample(n,n,replace=TRUE),],
+    f <- survfitKM(stratvar, S[sample(n,n,replace=TRUE),],
                     se.fit=FALSE, conf.type='none')
     tt <- c(0, f$time)
     ss <- c(1, f$surv)

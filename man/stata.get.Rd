@@ -12,8 +12,8 @@ stata.get(file, lowernames = FALSE, convert.dates = TRUE,
           force.single = TRUE, allow=NULL, charfactor=FALSE, \dots)
 }
 \arguments{
-  \item{file}{input SPSS save file.  May be a file on the WWW, indicated
-    by \code{file} starting with \code{'http://'}.}
+  \item{file}{input \acronym{SPSS} save file.  May be a file on the \acronym{WWW}, indicated
+    by \code{file} starting with \samp{'http://'}.}
   \item{lowernames}{set to \code{TRUE} to convert variable names to
     lower case}
   \item{convert.dates}{see \code{\link[foreign]{read.dta}}}
@@ -44,10 +44,10 @@ stata.get(file, lowernames = FALSE, convert.dates = TRUE,
 }
 \value{A data frame}
 \author{Charles Dupont}
-\seealso{\code{\link[foreign]{read.dta}},\code{\link{cleanup.import}},\code{\link{label}},\code{\label{data.frame}},\code{\link{Date}}}
+\seealso{\code{\link[foreign]{read.dta}},\code{\link{cleanup.import}},\code{\link{label}},\code{\link{data.frame}},\code{\link{Date}}}
 \examples{
 \dontrun{
-w <- stata.get(\sQuote{/tmp/my.dta})
+w <- stata.get('/tmp/my.dta')
 }
 }
 \keyword{interface}

@@ -344,8 +344,8 @@ mbauer@usc.edu
 }
 \seealso{
 \code{\link[lattice]{xyplot}}, \code{\link[lattice]{panel.xyplot}}, \code{\link{summarize}}, \code{\link{label}}, \code{\link{labcurve}},
-\code{\link{errbar}}, \code{\link[lattice]{dotplot}}, 
-\code{\link{reShape}}, \code{\link{setps}}, \code{\link{cut2}}, \code{\link[lattice]{panel.abline}}
+\code{\link{errbar}}, \code{\link[lattice:xyplot]{dotplot}}, 
+\code{\link{reShape}}, \code{\link{setps}}, \code{\link{cut2}}, \code{\link[lattice:panel.functions]{panel.abline}}
 }
 \examples{
 # Plot 6 smooth functions.  Superpose 3, panel 2.

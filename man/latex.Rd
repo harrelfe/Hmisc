@@ -41,12 +41,12 @@ commands that are similar to those in the
 \code{latex.list} calls \code{latex} recursively for each element in the argument.
 
 \code{latexTranslate} translates particular items in character
-strings to LaTeX format, e.g., makes \samp{a^2 = a$^2$} for superscript within
+strings to LaTeX format, e.g., makes \samp{a^2 = a\$^2\$} for superscript within
 variable labels.   LaTeX names of greek letters (e.g., \code{"alpha"})
 will have backslashes added if \code{greek==TRUE}.  Math mode is
 inserted as needed. 
 \code{latexTranslate} assumes that input text always has matches,
-e.g. \code{[) [] (] ()}, and that surrounding  by \samp{$$} is OK.
+e.g. \code{[) [] (] ()}, and that surrounding  by \samp{\$\$} is OK.
 
 \code{latexSN} converts a vector floating point numbers to character
 strings using LaTeX exponents.  Dollar signs to enter math mode are not
@@ -60,7 +60,7 @@ capturing the output for a file inside a LaTeX verbatim environment.
 
 \code{dvi} uses the system \code{latex} command to compile LaTeX code produced
 by \code{latex}, including any needed styles.  \code{dvi}
-will put a \samp{\documentclass\{report\}} and \samp{\end\{document\}} wrapper
+will put a \samp{\\documentclass\{report\}} and \samp{\\end\{document\}} wrapper
 around a file produced by \code{latex}.  By default, the \samp{geometry} LaTeX package is
 used to omit all margins and to set the paper size to a default of
 5.5in wide by 7in tall.  The result of \code{dvi} is a .dvi file.  To both
@@ -204,7 +204,7 @@ dvigv(object, \dots)
   }
   \item{label}{
     a text string representing a symbolic label for the table for referencing
-    in the LaTeX \samp{\label} and \samp{\ref} commands.
+    in the LaTeX \samp{\\label} and \samp{\\ref} commands.
     \code{label} is only used if \code{caption} is given.
   }
   \item{rowlabel}{
@@ -251,7 +251,7 @@ dvigv(object, \dots)
     these issue.  Multiple effects can be achieved by creating custom
     LaTeX commands; for example,
     \code{"\providecommand{\redscshape}{\color{red}\scshape}"} creates a
-    LaTeX command called \samp{\redscshape} that formats the text in red
+    LaTeX command called \samp{\\redscshape} that formats the text in red
     small-caps.
   }
   \item{rgroupTexCmd}{A character string specifying a LaTeX command to be
@@ -340,7 +340,7 @@ dvigv(object, \dots)
     Set to \code{TRUE} to use David Carlisle's LaTeX \code{longtable} style, allowing
     long tables to be split over multiple pages with headers repeated on
     each page.
-    The \code{"style"} element is set to \code{"longtable"}. The \code{latex} \samp{\usepackage}
+    The \code{"style"} element is set to \code{"longtable"}. The \code{latex} \samp{\\usepackage}
     must reference \samp{[longtable]}.
     The file \file{longtable.sty} will
     need to be in a directory in your \env{TEXINPUTS} path.
@@ -352,12 +352,12 @@ dvigv(object, \dots)
     set to \code{TRUE} to use Wybo Dekker's \samp{ctable} style from
     \acronym{CTAN}.  Even though for historical reasons it is not the
     default, it is generally the preferred method.  Thicker but not
-    doubled \samp{\hline}s are used to start a table when \code{ctable} is
+    doubled \samp{\\hline}s are used to start a table when \code{ctable} is
     in effect.
   }
   \item{booktabs}{
     set \code{booktabs=TRUE} to use the \samp{booktabs} style of horizontal
-    rules for better tables.  In this case, double \samp{\hline}s are not
+    rules for better tables.  In this case, double \samp{\\hline}s are not
     used to start a table.
   }
   \item{table.env}{
@@ -371,7 +371,7 @@ dvigv(object, \dots)
     have installed David Carlisle's \file{here.sty} LaTeX style. This will cause
     the LaTeX \samp{table} environment to be set up with option \samp{H} to guarantee
     that the table will appear exactly where you think it will in the text.
-    The \code{"style"} element is set to \code{"here"}. The \code{latex} \samp{\usepackage}
+    The \code{"style"} element is set to \code{"here"}. The \code{latex} \samp{\\usepackage}
     must reference \samp{[here]}.  The file \file{here.sty} will
     need to be in a directory in your \env{TEXINPUTS} path.  \samp{here} is
     largely obsolete with LaTeX2e.
@@ -454,7 +454,7 @@ dvigv(object, \dots)
   }
   \item{pb}{
     If \code{pb=TRUE}, \code{latexTranslate} also translates \samp{[()]} to math mode using
-    \samp{\left, \right}.
+    \samp{\\left, \\right}.
   }
   \item{greek}{set to \code{TRUE} to have \code{latexTranslate} put names
     for greek letters in math mode and add backslashes}
@@ -488,7 +488,7 @@ dvigv(object, \dots)
     file.
   }
   \item{multicol}{
-    set  to \code{FALSE} to not use \samp{\multicolumn} in header
+    set  to \code{FALSE} to not use \samp{\\multicolumn} in header
     of table
   }
 
@@ -501,7 +501,7 @@ dvigv(object, \dots)
   list of class \code{latex} or \code{dvi} containing character string
   elements \code{file} and \code{style}.  \code{file} contains the name of the
   generated file, and \code{style} is a vector (possibly empty) of styles to
-  be included using the LaTeX2e \samp{\usepackage} command.
+  be included using the LaTeX2e \samp{\\usepackage} command.
 
   \code{latexTranslate} returns a vector of character strings
 }

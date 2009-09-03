@@ -1763,6 +1763,7 @@ prselect <- function(x, start=NULL, stop=NULL, i=0, j=0, pr=TRUE)
   }
 
 ## The following is taken from survival:::plot.survfit internal dostep function
+## Remove code to remove duplicates in y
 
 makeSteps <- function(x, y)
 {
@@ -1774,10 +1775,8 @@ makeSteps <- function(x, y)
   n <- length(x)
   if (n > 2)
     {
-      dupy <- c(!duplicated(y)[-n], TRUE)
-      n2 <- sum(dupy)
-      xrep <- rep(x[dupy], c(1, rep(2, n2 - 1)))
-      yrep <- rep(y[dupy], c(rep(2, n2 - 1), 1))
+      xrep <- rep(x, c(1, rep(2, n - 1)))
+      yrep <- rep(y, c(rep(2, n - 1), 1))
       list(x = xrep, y = yrep)
     }
   else if (n == 1)

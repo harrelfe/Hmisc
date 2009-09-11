@@ -36,7 +36,10 @@ file containing a LaTeX tabular environment to print the matrix or data.frame
 
 \code{latex.function} prepares an S function for printing by issuing \code{sed}
 commands that are similar to those in the
-\code{S.to.latex} procedure in the \code{s.to.latex} package (Chambers and Hastie, 1993).
+\code{S.to.latex} procedure in the \code{s.to.latex} package (Chambers
+and Hastie, 1993).  \code{latex.function} can also produce
+\code{verbatim} output or output that works with the \code{Sweavel}
+LaTeX style at \url{http://biostat.mc.vanderbilt.edu/SweaveTemplate}.
 
 \code{latex.list} calls \code{latex} recursively for each element in the argument.
 
@@ -127,7 +130,8 @@ latex(object, \dots)
 	title=first.word(deparse(substitute(object))),
 	file=paste(title, ".tex", sep=""),
 	append=FALSE,
-	assignment=TRUE,  type=c('example','verbatim'), \dots)
+	assignment=TRUE,  type=c('example','verbatim','Sinput'),
+    width.cutoff=70, size='', \dots)
 
 \method{latex}{list}(
            object,
@@ -408,8 +412,8 @@ dvigv(object, \dots)
     justification for column labels.
   }
   \item{assignment}{
-    logical.  When \code{TRUE}, the default, the name of the function and the assignment
-    arrow are printed to the file.
+    logical.  When \code{TRUE}, the default, the name of the function
+	and the assignment arrow are printed to the file.
   }
   \item{where}{
     specifies placement of floats if a table environment is used.  Default
@@ -419,7 +423,8 @@ dvigv(object, \dots)
   \item{size}{
     size of table text if a size change is needed (default is no change).
     For example you might specify \code{size="small"} to use LaTeX font size
-    \dQuote{small}.
+    \dQuote{small}.  For \code{latex.function} is a character string
+	that will be appended to \code{"Sinput"} such as \code{"small"}.
   }
   \item{center}{
     default is \code{"center"} to enclose the table in a \samp{center}
@@ -434,11 +439,15 @@ dvigv(object, \dots)
     \code{rotate} argument to \code{ctable}.
   }
   \item{type}{
-    The default uses the S \code{Example} environment for \code{latex.function},
-    assuming you have installed \file{S.sty} in a location that the system
-    latex command automatically accesses.  Set \code{type="verbatim"} to
-    instead use the LaTeX \samp{verbatim} environment.
+    The default uses the S \code{alltt} environment for \code{latex.function},
+    Set \code{type="verbatim"} to instead use the LaTeX \samp{verbatim}
+	environment.  Use \code{type="Sinput"} if using \code{Sweave},
+	especially if you have customized the \code{Sinput} environment, for
+	example using the \code{Sweavel} style which uses the
+	\code{listings} LaTeX package.
   }
+  \item{width.cutoff}{width of function text output in columns; see
+	\code{deparse}}
   \item{\dots}{
     other arguments are accepted and ignored except that \code{latex}
     passes arguments to \code{format.df} (e.g., \code{col.just} and other

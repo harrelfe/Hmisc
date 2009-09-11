@@ -948,41 +948,47 @@ latex.function <- function(object,
                            title=first.word(deparse(substitute(object))),
                            file=paste(title, ".tex", sep=""),
                            append=FALSE, assignment=TRUE,
-                           type=c('example','verbatim'), ...)
+                           type=c('example','verbatim','Sinput'),
+                           width.cutoff=70, size='', ...)
 {
   type <- match.arg(type)
-  type <- match.arg(type)
-  fctxt <- format(object)
+  fctxt <- deparse(object, width.cutoff=width.cutoff)
   if(assignment) fctxt[1] <- paste(title , '<-', fctxt[1]) 
   environment <- ifelse(type=='example', "alltt", "verbatim")
+  environment <- c(example='alltt', verbatim='verbatim',
+                   Sinput=paste('Sinput',size,sep=''))[type]
   preamble <- paste("\\begin{",environment,"}\n",sep="")
   cat(preamble, file=file, append=file!="")
-  rxs <-
-    if(type=='example')
-      c("\t=>    ",
-        "\\\\=>\\\\(\\\\backslash\\\\)",
-        "([{}])=>\\\\\\1",
-        "<-=>\\\\(\\\\leftarrow\\\\)",
-        "#(.*?$)=>{\\\\rm\\\\scriptsize\\\\#\\1}"
-        )
-    else c("\t=>    ")
-  
-  substitute <- strsplit( rxs, "=>" )
-  for(line in fctxt) {
-    for( subst in substitute ) {
-      line <- gsub( subst[1], subst[2], line, perl=TRUE )
+
+  if(type=='Sinput') cat(fctxt, sep='\n')
+  else
+    {
+      rxs <-
+        if(type=='example')
+          c("\t=>    ",
+            "\\\\=>\\\\(\\\\backslash\\\\)",
+            "([{}])=>\\\\\\1",
+            "<-=>\\\\(\\\\leftarrow\\\\)",
+            "#(.*?$)=>{\\\\rm\\\\scriptsize\\\\#\\1}"
+            )
+        else c("\t=>    ")
+      
+      substitute <- strsplit( rxs, "=>" )
+      for(line in fctxt) {
+        for( subst in substitute ) {
+          line <- gsub( subst[1], subst[2], line, perl=TRUE )
+        }
+        
+        line <- paste(line,"\n",sep="")
+        cat(line, file=file, append=file!="")
+      }
     }
-    
-    line <- paste(line,"\n",sep="")
-    cat(line, file=file, append=file!="")
-  }
   
   postamble <- paste("\\end{",environment,"}\n", sep="")
   cat(postamble, file=file, append=file!='')
 
   structure(list(file=file, style=if(type=='example')'alltt'), class='latex')
 }
-
 
 latexVerbatim <- function(x,
                           title=first.word(deparse(substitute(x))),

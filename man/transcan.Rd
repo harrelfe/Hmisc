@@ -79,7 +79,10 @@
   imputation-corrected variance-covariance matrix.  \code{fit.mult.impute}
   can also use the object created by the \code{mice} function in the \acronym{MICE}
   library to draw the multiple imputations, as well as objects created
-  by \code{aregImpute}.
+  by \code{aregImpute}.  The following components of fit objects are
+  also replaced with averages over the \code{n.impute} model fits:
+  \code{linear.predictors}, \code{fitted.values}, \code{stats}, \code{means},
+  \code{icoef}, \code{scale}, \code{center}, \code{y.imputed}.
 
   The \code{summary} method for \code{transcan} prints the function call,
   R-squares achieved in transforming each variable, and for each variable
@@ -210,7 +213,8 @@ invertTabulated(x, y, freq=rep(1,length(x)),
     any S model formula
   }
   \item{fitter}{
-    any S or Design modeling function (not in quotes) that computes a
+    any S, \code{rms}, or \code{Design} modeling function (not in
+	quotes) that computes a 
     vector of \code{coefficients} and for which \code{vcov} will return a
     variance-covariance matrix.  E.g., \code{fitter = lm}, \code{glm}, \code{ols}.  At present models
     involving non-regression parameters (e.g., scale parameters in
@@ -741,15 +745,18 @@ invertTabulated(x, y, freq=rep(1,length(x)),
   coefficients from \code{cancor} by \deqn{\sqrt{n-1}}{sqrt(n-1)}.
 
 
-  When specifying a non-Design library fitting function to
+  When specifying a non-\code{rms}, non-\code{Design} library fitting
+  function to 
   \code{fit.mult.impute} (e.g., \code{lm}, \code{glm}), running the result of
   \code{fit.mult.impute} through that fit's \code{summary} method will not use the
   imputation-adjusted variances.  You may obtain the new variances using
   \code{fit$var} or \code{vcov(fit)}.  
 
 
-  When you specify a Design function to \code{fit.mult.impute} (e.g.,
-  \code{lrm, ols, cph, psm, bj}), automatically computed transformation
+  When you specify a \code{rms} or \code{Design} function to
+  \code{fit.mult.impute} (e.g.,  
+  \code{lrm, ols, cph, psm, bj, Rq, Gls, Glm}), automatically computed
+  transformation 
   parameters (e.g., knot locations for \code{rcs}) that are estimated for the
   first imputation are used for all other imputations.  This ensures
   that knot locations will not vary, which would change the meaning of
@@ -763,8 +770,8 @@ invertTabulated(x, y, freq=rep(1,length(x)),
   Specifying \code{shrink = TRUE} solves a small part of this problem.  To fully
   account for all sources of variation you should consider putting the
   \code{transcan} invocation inside a bootstrap or loop, if execution time
-  allows.  Better still, use \code{aregImpute} or one of the libraries such
-  as MICE that uses real Bayesian posterior realizations to multiply
+  allows.  Better still, use \code{aregImpute} or a package such as 
+  as \code{MICE} that uses real Bayesian posterior realizations to multiply
   impute missing values correctly.
 
 
@@ -902,7 +909,7 @@ h.complete
 diag(vcov(h.complete))
 
 
-# Note: had Design's ols function been used in place of lm, any
+# Note: had the rms or Design ols function been used in place of lm, any
 # function run on h (anova, summary, etc.) would have automatically
 # used imputation-corrected variances and covariances
 

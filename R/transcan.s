@@ -1335,9 +1335,11 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
                             pr=TRUE, subset, ...)
 {
   using.Design <- FALSE
-  fits <- if(fit.reps)vector('list',n.impute)
+  fits <- if(fit.reps) vector('list', n.impute)
   used.mice <- any(oldClass(xtrans)=='mids')
   if(used.mice && missing(n.impute)) n.impute <- xtrans$m
+  stats.ok2average <- c('linear.predictors','fitted.values','stats', 'means',
+                        'icoef', 'scale', 'center', 'y.imputed')
   
   for(i in 1:n.impute)
     {
@@ -1392,6 +1394,11 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
         bar <- rep(0, p)
         vname <- names(cof)
         cov <- matrix(0, nrow=p, ncol=p, dimnames=list(vname,vname))
+
+        astats <- NULL
+        fitcomp <- names(f)[names(f) %in% stats.ok2average]
+        if(length(fitcomp)) for(ncomp in fitcomp)
+          astats[[ncomp]] <- f[[ncomp]]
         
         if(inherits(f,'Design') | inherits(f, 'rms'))
           {
@@ -1405,6 +1412,10 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
       bar <- bar + cof
       cof <- as.matrix(cof)
       cov <- cov + cof %*% t(cof)
+
+      if(i > 1 && length(fitcomp))
+        for(ncomp in fitcomp)
+          astats[[ncomp]] <- astats[[ncomp]] + f[[ncomp]]
     }
 
   vavg <- vavg / n.impute    ## matrix \bar{U} in Rubin's notation
@@ -1422,6 +1433,11 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
   tau  <- (1 + 1/n.impute)*B/U
   missingInfo <- tau/(1+tau)
   dfmi <- (n.impute-1)*((1 + 1/tau)^2)
+
+  if(length(fitcomp))
+    for(ncomp in fitcomp)
+      f[[ncomp]] <- astats[[ncomp]] / n.impute
+
   if(pr)
     {
       cat('\nVariance Inflation Factors Due to Imputation:\n\n')
@@ -1430,6 +1446,12 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
       print(round(missingInfo,2))
       cat('\nd.f. for t-distribution for Tests of Single Coefficients:\n\n')
       print(round(dfmi,2))
+      if(length(fitcomp))
+        {
+          cat('\nThe following fit components were averaged over the',
+              n.impute, 'model fits:\n\n')
+          cat(' ', fitcomp, '\n\n')
+        }
     }
   
   f$coefficients <- drop(bar)

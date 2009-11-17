@@ -176,7 +176,7 @@ sas.get <- if(under.unix || .R.)
   }
   
   status <- system(paste(shQuote(sasprog), shQuote(sasin), "-log",
-                         shQuote(log.file)), intern=TRUE)
+                         shQuote(log.file)), intern=FALSE)
   ## 24nov03 added output=F
   if(status != 0) {
     if(!quiet && fexists(log.file)) fileShow(log.file)  ## 4oct03

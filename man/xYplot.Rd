@@ -130,7 +130,7 @@ Cbind(\dots)
 xYplot(formula, data = sys.frame(sys.parent()), groups,
        subset, xlab=NULL, ylab=NULL, ylim=NULL,
        panel=panel.xYplot, prepanel=prepanel.xYplot, scales=NULL,
-       minor.ticks=NULL, \dots)
+       minor.ticks=NULL, sub=NULL, \dots)
 
 panel.xYplot(x, y, subscripts, groups=NULL, 
              type=if(is.function(method) || method=='quantiles') 
@@ -268,10 +268,11 @@ over the \code{groups} use e.g. \code{lwd.bands=list(rep(1,4), rep(2,4))} or
 \code{list(c(1,2,1,2), c(3,4,3,4))}.
 }
 \item{minor.ticks}{
-a list with elements \code{at} and \code{labels} specifying positions and labels for
-minor tick marks to be used on the x-axis of each panel, if any. This is
-intended for \code{timeDate} variables.
+a list with elements \code{at} and \code{labels} specifying positions
+and labels for minor tick marks to be used on the x-axis of each panel,
+if any. This is intended for \code{timeDate} variables.
 }
+\item{sub}{an optional subtitle}
 \item{col.fill}{
 used to override default colors used for the bands in method='filled
 bands'. This is a vector when \code{groups} is present, and the order of the

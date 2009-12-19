@@ -49,20 +49,25 @@ labelPlotmath <- function(label, units=NULL, plotmath=.R., grid=FALSE)
   if(!length(units) || (length(units)==1 && is.na(units))) units <- ''
   
   g <-
-    if(plotmath && .R.) function(x,y=NULL, xstyle=NULL, ystyle=NULL)
+    if(plotmath && .R.) function(x, y=NULL, xstyle=NULL, ystyle=NULL)
       {
         h <- function(w, style=NULL)
           if(length(style))
             paste(style,'(',w,')',sep='')
           else
             w
-      
+
+        tryparse <- function(z, original)
+          {
+            p <- try(parse(text=z), silent=TRUE)
+            if(is.character(p)) original else p
+          }
         if(!length(y))
-          return(parse(text=h(plotmathTranslate(x),xstyle)))
+          return(tryparse(h(plotmathTranslate(x), xstyle), x))
       
-        x <- paste('list(',h(plotmathTranslate(x),xstyle),',',
-                   h(plotmathTranslate(y),ystyle),')',sep='')
-        parse(text=x)
+        w <- paste('list(',h(plotmathTranslate(x), xstyle), ',',
+                   h(plotmathTranslate(y), ystyle), ')', sep='')
+        tryparse(w, paste(x, y))
       } else function(x, y=NULL, ...) if(length(y)) paste(x,y) else x
 
   if(units=='') g(label)

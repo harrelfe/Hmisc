@@ -1367,7 +1367,7 @@ dotchart2 <-
       if(!add && lines)
         abline(h = ypos[nongrp], lty = lty, lwd=1, col=lcolor)
 
-      points(alldat, ypos, pch = pch, cex = dotsize * cex, font=dotfont)
+      points(alldat, ypos, pch = pch, cex = dotsize * cex, font=dotfont, ...)
       if(!add && !missing(auxdata))
         {
           faux <- if(ieaux) auxdata else paste(' ', format(auxdata), sep='')
@@ -1426,7 +1426,7 @@ dotchart2 <-
       if(!add && lines)
         abline(v = ypos[nongrp], lty = lty, lwd=1, col=lcolor)
 
-      points(ypos, alldat, pch = pch, cex = dotsize * cex, font=dotfont)
+      points(ypos, alldat, pch = pch, cex = dotsize * cex, font=dotfont, ...)
       if(!add) mtextsrt(alllab[nongrp], 1, 0,
                         at = ypos[nongrp], srt = 90, adj = 1,
                         cex = cex.labels)

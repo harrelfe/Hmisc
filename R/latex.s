@@ -85,8 +85,14 @@ format.df <- function(x,
   sl <- ifelse(double.slash, "\\\\", "\\")
 
   cleanLatex <- function(string) {
-    string <- gsub('<', paste(sl,sl,'textless',sep=''), as.character(string))
-    string <- gsub('>', paste(sl,sl,'textgreater',sep=''), string)
+    ## Find strings not in math mode (surrounded by $)
+    s <- gsub("(^[[:space:]]+)|([[:space:]]+$)", "", string)
+    k <- !(substring(s, 1, 1) =='$' & substring(s, nchar(s))=='$')
+    if(!any(k)) return(string)
+    string[k] <- gsub('<', paste(sl, sl, 'textless', sep=''),
+                      as.character(string[k]))
+    string[k] <- gsub('>', paste(sl, sl, 'textgreater', sep=''),
+                      string[k])
     string
   }
 

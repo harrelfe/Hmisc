@@ -718,9 +718,9 @@ if(.R.) print.char.matrix <-
   }
 }
 
-unPaste <- if(.R.) function(str, sep='/', extended=FALSE)
+unPaste <- if(.R.) function(str, sep='/')
 {
-  w <- strsplit(str, sep, extended=extended)
+  w <- strsplit(str, sep)
   w <- matrix(unlist(w), ncol=length(str))
   nr <- nrow(w)
   ans <- vector('list', nr)

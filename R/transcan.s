@@ -1541,7 +1541,7 @@ invertTabulated <- function(x, y, freq=rep(1,length(x)),
   }
   
   if(inverse=='linearInterp')
-    return(approx(y, x, xout=aty, rule=rule)$y)
+    return(approx(y, x, xout=aty, rule=rule, ties=mean)$y)
 
   del <- diff(range(y, na.rm=TRUE))
   m <- length(aty)

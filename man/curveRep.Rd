@@ -189,7 +189,7 @@ curveSmooth(x, y, id, p=NULL, pr=TRUE)
 \note{The references describe other methods for deriving
   representative curves, but those methods were not used here.  The last
   reference which used a cluster analysis on principal components
-  motivated \code{curveRep} however.}
+  motivated \code{curveRep} however.  The \code{kml} package does k-means clustering of longitudinal data with imputation.}
 \seealso{\code{\link[cluster]{clara}},\code{\link[Hmisc]{dataRep}}}
 \examples{
 \dontrun{

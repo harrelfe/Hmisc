@@ -848,7 +848,7 @@ print.contents.data.frame <-
         varsUsingSame <- NULL
         if(sum(reusingLevels))
           {
-            for(k in which(reusingLevels)) if(L[[k]] == nam[j]) 
+            for(k in which(reusingLevels)) if(L[[k]] == namf[j]) 
               varsUsingSame <- c(varsUsingSame, nam[k])
             if(length(varsUsingSame))
               namf[j] <- paste(c(namf[j], varsUsingSame), collapse='\n')

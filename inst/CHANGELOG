@@ -1,3 +1,6 @@
+      Fixed bug in print.contents.data.frame where items are off set by number
+      of factors preceding it.
+
       Fixed segment width problem in errbar bug #16
 
 3.4-2

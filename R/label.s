@@ -282,3 +282,17 @@ llist <- function(..., labels=TRUE)
   names(dotlist) <- vname[1:length(dotlist)]
   dotlist
 }
+
+combineLabels <- function(...)
+  {
+    w <- list(...)
+    labs <- sapply(w[[1]], label)
+    lw <- length(w)
+    if(lw > 1) for(j in 2:lw)
+      {
+        lab <- sapply(w[[j]], label)
+        lab <- lab[lab != '']
+        if(length(lab)) labs[names(lab)] <- lab
+      }
+    labs[labs != '']
+  }

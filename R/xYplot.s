@@ -583,7 +583,7 @@ xYplot <- if(.R.)
   xv <- eval(xvname, data)
   if(!length(xlab))
     xlab <- label(xv, units=TRUE, plot=TRUE,
-                  default=as.character(xvname),
+                  default=as.character(xvname)[1],
                   grid=TRUE)
   
   if(!length(scales$x))

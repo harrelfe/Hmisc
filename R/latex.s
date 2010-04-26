@@ -462,11 +462,16 @@ latex.default <-
     rowname <- paste("~~",rowname,sep="")
 
   sl <- ifelse(double.slash, "\\\\", "\\")
-  eol <-
-    if(ctable)
-      paste(sl, 'NN', sep='')
-    else
-      paste(sl,"tabularnewline",sep='')
+  if(ctable) {
+    eol <- paste(sl, 'NN', sep='')
+    eog <- paste(sl, 'NN', sep='')
+  } else if(longtable) {
+    eol <- paste(sl,"tabularnewline*",sep='')
+    eog <- paste(sl, "tabularnewline", sep='')
+  } else {
+    eol <- paste(sl,"tabularnewline",sep='')
+    eog <- paste(sl, "tabularnewline", sep='')      
+  }
   
   if(booktabs) {  # 27may02
     toprule    <- paste(sl,"toprule",sep="")
@@ -845,8 +850,8 @@ latex.default <-
       cat(sl,"caption[]{\\em (continued)} ", eol, "\n",
           sep="",file=file, append=file!='')
       cat(midrule, "\n", sep="",file=file, append=file!='')
-      cat(labs, file=file, sep="&", append=file!='')
-      cat(eol, "\n", midrule, "\n", sl, "endhead", '\n', midrule, "\n",
+      cat(header, file=file, sep="&", append=file!='')
+      cat(midrule, "\n", sl, "endhead", '\n', midrule, "\n",
           sep="", file=file, append=file!='')
       if(length(insert.bottom)) {
         cat(paste(sl, 'multicolumn{', nc, '}{', "p{",sl,'linewidth}}{', 
@@ -925,7 +930,9 @@ latex.default <-
         }
         
         cat(if(!ctable || i < rg.end[j])
-              eol,
+              eol
+            else if(!ctable || i == rg.end[j])
+              eog,
             "\n", sep="",file=file, append=file!='')
         
         ## eol was sl,sl  added if( ) 13dec02

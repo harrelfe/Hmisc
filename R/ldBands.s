@@ -129,7 +129,7 @@ ldBands <- function(n=length(times), times=NULL,  alpha=.05,
                w)
   
   w <- w[1:(tail-1)]
-  z <- if(.R.) unPaste(w, ' +', extended=TRUE) else
+  z <- if(.R.) unPaste(w, ' +') else
    unPaste(sedit(w,'  ',' '),' ')
 
   if(length(power))

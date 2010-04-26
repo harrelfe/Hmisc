@@ -19,13 +19,14 @@ scat1d <- function(x, side=3, frac=.02, jitfrac=.008, tfrac,
 
   gfun <- ordGridFun(grid)
 
-  if(side==1 || side==3 || length(y) || length(curve)) {
-    l <- 1:2;
-    ax <- 1
-  } else {
-    l <- 3:4;
-    ax <- 2
-  }
+  if(side==1 || side==3 || length(y) || length(curve))
+    {
+      l <- 1:2;
+      ax <- 1
+    } else {
+      l <- 3:4;
+      ax <- 2
+    }
 
   pr <- parGrid(grid)
   usr <- pr$usr; pin <- pr$pin; uin <- pr$uin
@@ -45,7 +46,7 @@ scat1d <- function(x, side=3, frac=.02, jitfrac=.008, tfrac,
   ## Stop JOA 12.8.97
   
   if(length(curve))
-    y <- approx(curve, xout=x, rule=2)$y   #31Dec98
+    y <- approx(curve, xout=x, rule=2)$y
 
   n <- length(x)
   if(missing(tfrac))
@@ -62,35 +63,37 @@ scat1d <- function(x, side=3, frac=.02, jitfrac=.008, tfrac,
       ## Stop JOA 19.8.97
       x <- x + runif(n, -w*jitfrac, w*jitfrac)
 
-  ##  h <- (u.opp[2]-u.opp[1])*frac*min(fin)/fin[-ax]
   h <- min(pin)*frac/uin[-ax]
-  if(length(y)) {
-    a <- y - h/2;
-    b <- y + h/2
-  } else {
-    a <- if(side<3) u.opp[1]
-         else u.opp[2]-h
-
-    b <- if(side<3) u.opp[1]+h
-    else u.opp[2]
-  }
+  if(length(y))
+    {
+      a <- y - h/2;
+      b <- y + h/2
+    } else {
+      a <- if(side<3) u.opp[1]
+      else u.opp[2]-h
+      
+      b <- if(side<3) u.opp[1]+h
+      else u.opp[2]
+    }
   
-  if(tfrac<1) {
-    l <- tfrac*(b-a)
-    a <- a + runif(n)*(b-l-a)   ##runif(n, a, b-l) if frac>0
-    b <- a+l
-  }
+  if(tfrac<1)
+    {
+      l <- tfrac*(b-a)
+      a <- a + runif(n)*(b-l-a)   ##runif(n, a, b-l) if frac>0
+      b <- a+l
+    }
 
-  if(ax==1 && bottom.align) {
-    a <- a + h/2;
-    b <- b + h/2
-  }
+  if(ax==1 && bottom.align)
+    {
+      a <- a + h/2;
+      b <- b + h/2
+    }
 
   if(ax==1)
     gfun$segments(x, a, x, b, lwd=lwd, xpd=frac<0, col=col)
   else
     gfun$segments(a, x, b, x, lwd=lwd, xpd=frac<0, col=col)
-
+  
   invisible()
 }
 
@@ -106,10 +109,7 @@ jitter2.default <- function(x, fill=1/3, limit=TRUE, eps=0,
     x2 <- x2[o]
   }
 
-  if (eps>0)
-    r <- rle(round(x2/eps)*eps)
-  else
-    r <- rle(x2)
+  r <- if (eps>0)rle(round(x2/eps)*eps) else rle(x2)
 
   if ( length(r$length)<2 || max(r$length)<2 )
     return(x)
@@ -156,10 +156,11 @@ jitter2.data.frame <- function(x, ...)
 }
 
 
-datadensity <- function(object, ...) {  ## 7Nov00
+datadensity <- function(object, ...)
+{
   if(!length(oldClass(object)))
     oldClass(object) <- data.class(object)
-
+  
   UseMethod('datadensity')
 }
 
@@ -183,12 +184,11 @@ datadensity.data.frame <-
     sapply(object,
            function(x, n.unique)
            {
-             xp <- x[!is.na(x)] # 7jun03 and next;unique not handle empty factor var
+             xp <- x[!is.na(x)]
              nu <- if(length(xp)) length(unique(xp))
-                   else 0 # 18Oct01+next
+                   else 0
 
-             if(nu < 2)
-               c(0,0)
+             if(nu < 2) c(0,0)
              else
                c(type=if(is.category(x) || is.character(x) || nu < n.unique)
                         1
@@ -197,13 +197,13 @@ datadensity.data.frame <-
            },
            n.unique=n.unique)
 
-  types <- c('nil','cat','cont')[z[1,]+1]  # was unlist(z[1,]) unlist(z[2,])
+  types <- c('nil','cat','cont')[z[1,]+1]
   numna <- z[2,]
   fnumna <- format(numna)
   maxna <- max(numna)
 
   w <- switch(which,
-              all        = types != 'nil',   # 18Oct01
+              all        = types != 'nil',
               continuous = types == 'cont',
               categorical= types == 'cat')
 
@@ -229,7 +229,7 @@ datadensity.data.frame <-
         sc(.3,0)
 
   oldpar <- oPar()  # in Hmisc Misc.s
-  mgp  <- c(0,lmgp,0)   # 18Oct01, for axis
+  mgp  <- c(0,lmgp,0)
 
   mai  <- oldpar$mai
   if(.R.) {
@@ -244,138 +244,145 @@ datadensity.data.frame <-
                    else trunc(log10(maxna))+1
 
   if(maxna > 0)
-    mai[4] <- .1 + strwidth('Missing',units='inches',cex=cex.var)
+    mai[4] <- .1 + strwidth('Missing', units='inches', cex=cex.var)
 
   par(mgp=mgp, mai=mai,tck=tck)
   on.exit(setParNro(oldpar))
 
   if(!mgroup)
     group <- as.factor(group)
-  else {
-    group <- factor(rep(1,length(object[[1]])))
-    ngroup <- 0
-  }
+  else
+    {
+      group <- factor(rep(1,length(object[[1]])))
+      ngroup <- 0
+    }
 
   ngroup <- length(levels(group))
   col.group <- rep(col.group, length=ngroup)
 
   y <- 0
-  for(i in (1:length(nams))[w]) {
-    if(y < 1) {
-      plot(c(0,1),c(1,naxes),xlim=c(.02,.98),ylim=c(1,naxes),
-           xlab='',ylab='',type='n',axes=FALSE)
-      usr <- par('usr')
-      y <- naxes + 1
-      if(maxna > 0) {
-        outerText('Missing',
-                  y=naxes+strheight('Missing',units='user',cex=cex.var),
-                  cex=cex.var)
-      }
+  for(i in (1:length(nams))[w])
+    {
+      if(y < 1)
+        {
+          plot(c(0,1),c(1,naxes),xlim=c(.02,.98),ylim=c(1,naxes),
+               xlab='',ylab='',type='n',axes=FALSE)
+          usr <- par('usr')
+          y <- naxes + 1
+          if(maxna > 0)
+            {
+              outerText('Missing',
+                        y=naxes+strheight('Missing',units='user',cex=cex.var),
+                        cex=cex.var)
+            }
+          
+          charheight <- strheight('X',units='user',cex=.6)  ## par('cxy')[2]
+        }
+      
+      y <- y - 1
+      x <- object[[i]]
+      if(types[i] == 'cont' )
+        {  ## continuous variable
+          x <- oldUnclass(x)         ## handles dates
+          isna <- is.na(x)
+          nna  <- sum(isna)
+          N <- length(x) - nna
+          r <-
+            if(length(ranges) && length(ranges[[nams[i]]]))
+              ranges[[nams[i]]]
+            else
+              range(x, na.rm=TRUE)
+          
+          p <- pretty(r,
+                      if(nint==1)5
+                      else nint)
+          
+          if(nint < 2)
+            p <- c(p[1],p[length(p)]) ##bug in pretty for nint=1
 
-      charheight <- strheight('X',units='user',cex=.6)  ## par('cxy')[2]
-    }
-
-    y <- y - 1
-    x <- object[[i]]
-    if(types[i] == 'cont' ) {  ## continuous variable
-      x <- oldUnclass(x)          ## 29Jul97 - handles dates
-      isna <- is.na(x)
-      nna  <- sum(isna)
-      N <- length(x) - nna
-      r <-
-        if(length(ranges) && length(ranges[[nams[i]]]))
-         ranges[[nams[i]]]
-        else
-          range(x, na.rm=TRUE)  ## 7Nov00
-
-      p <- pretty(r,
-                  if(nint==1)5
-                  else nint)
-
-      if(nint < 2)
-        p <- c(p[1],p[length(p)]) ##bug in pretty for nint=1
-
-      xmin <- p[1]
-      xmax <- p[length(p)]
-      if(.R.)
-        cex <- par(cex=cex.axis)  # Bug in R: cex= ignored in
+          xmin <- p[1]
+          xmax <- p[length(p)]
+          if(.R.)
+            cex <- par(cex=cex.axis)  # Bug in R: cex= ignored in
                                         # axis( )
 
-      axis(side=1, at=(p-xmin)/(xmax-xmin), labels=format(p),
-           pos=y, cex=cex.axis)   # 18Oct01
+          axis(side=1, at=(p-xmin)/(xmax-xmin), labels=format(p),
+               pos=y, cex=cex.axis)
 
-      if(.R.) par(cex=cex)
-      if(mgroup)
-        scat1d((x-xmin)/(xmax-xmin), y=y, bottom.align=bottom.align, 
-               minf=.075, frac=sc(.02,.005), ...)
-      else for(g in 1:ngroup) {
-        j <- group==levels(group)[g]
-        scat1d((x[j]-xmin)/(xmax-xmin), y=y, bottom.align=bottom.align,
-               col=col.group[g], tfrac=if(N<125) 1 else max(.1, 125/N), 
-               minf=.075, frac=sc(.02,.005), ...)
-      }
+          if(.R.) par(cex=cex)
+          if(mgroup)
+            scat1d((x-xmin)/(xmax-xmin), y=y, bottom.align=bottom.align, 
+                   minf=.075, frac=sc(.02,.005), ...)
+          else for(g in 1:ngroup)
+            {
+              j <- group==levels(group)[g]
+              scat1d((x[j]-xmin)/(xmax-xmin), y=y, bottom.align=bottom.align,
+                     col=col.group[g], tfrac=if(N<125) 1 else max(.1, 125/N), 
+                     minf=.075, frac=sc(.02,.005), ...)
+            }
+          
+          if(!missing(q))
+            {
+              quant <- quantile(x, probs=q, na.rm=nna>0)
+              points((quant-xmin)/(xmax-xmin),
+                     rep(y-.5*charheight,length(q)),
+                     pch=17, cex=.6)
+            }
+        } else {  ## character or categorical or discrete numeric
+          if(is.character(x)) x <- as.factor(x)
+          isna <- is.na(x)
+          nna <- sum(isna)
+          
+          if(length(group) != length(x)) {
+            if(is.data.frame(object))
+              stop('length of group must equal length of variables in data frame')
 
-      if(!missing(q)) {
-        quant <- quantile(x, probs=q, na.rm=nna>0)
-        points((quant-xmin)/(xmax-xmin),
-               rep(y-.5*charheight,length(q)),
-               pch=17, cex=.6)
-      }
-    } else {  ## character or categorical or discrete numeric
-      if(is.character(x)) x <- as.factor(x)
-      isna <- is.na(x)
-      nna <- sum(isna)
+            group <- rep(1, length(x))
+          }
 
-      if(length(group) != length(x)) {  ## 7Nov00
-        if(is.data.frame(object))
-          stop('length of group must equal length of variables in data frame')
+          tab <- table(group,x)
+          lev <- dimnames(tab)[[2]]
+          nl  <- length(lev)
+      if(is.numeric(x))
+        {
+          xx <- as.numeric(lev)
+          xx <- (xx-min(xx))/(max(xx)-min(xx))
+        } else {
+          if(sum(nchar(lev)) > 200) 
+            lev <- substring(lev, 1, max(1, round(200/length(lev))))
 
-        group <- rep(1, length(x))
-      }
+          xx <- (0:(nl-1))/(nl-1)
+        }
 
-      tab <- table(group,x)
-      lev <- dimnames(tab)[[2]]
-      nl  <- length(lev)
-      if(is.numeric(x)) {
-        xx <- as.numeric(lev)
-        xx <- (xx-min(xx))/(max(xx)-min(xx))
-      } else {
-        if(sum(nchar(lev)) > 200) 
-          lev <- substring(lev, 1, max(1, round(200/length(lev))))
+          if(.R.)
+            {
+              cex <- par(cex=cex.axis)
+              axis(side=1, at=xx, labels=lev, pos=y, cex=cex.axis, tick=FALSE)
+              par(cex=cex)
+            } else axis(side=1, at=xx, labels=lev, pos=y, cex=cex.axis, ticks=FALSE)
+          
+          lines(c(0,1),c(y,y))
+          maxfreq <- max(tab)
+          for(g in if(ngroup==0) 1 else 1:ngroup)
+            {
+              tabg <- tab[g,]
+              if(method.cat=='bar')
+                symbols(xx, y+.4*tabg/maxfreq/2, add=TRUE,
+                        rectangles=cbind(.02, .4*tabg/maxfreq), inches=FALSE,
+                        col=col.group[g])
+              else text(xx, rep(y+.1,nl), format(tabg), cex=cex.axis*sqrt(tab/maxfreq),
+                        adj=.5)
+            }
+        }
+      
+      mtext(if(length(labels))labels[i]
+      else nams[i],
+            2, 0, at = y, srt = 0, cex = cex.var, adj = 1, las=1)
+    ## las=1 for R (also 3 lines down)
 
-        xx <- (0:(nl-1))/(nl-1)
-      }
-
-      if(.R.) {
-        cex <- par(cex=cex.axis)
-        axis(side=1, at=xx, labels=lev, pos=y, cex=cex.axis, tick=FALSE)
-        par(cex=cex)
-      } else axis(side=1, at=xx, labels=lev, pos=y, cex=cex.axis, ticks=FALSE)
-
-      lines(c(0,1),c(y,y))
-      maxfreq <- max(tab)
-      for(g in if(ngroup==0) 1 else 1:ngroup) {
-        tabg <- tab[g,]
-        if(method.cat=='bar')
-	  symbols(xx, y+.4*tabg/maxfreq/2, add=TRUE,
-                  rectangles=cbind(.02, .4*tabg/maxfreq), inches=FALSE,
-                  col=col.group[g])
-	else text(xx, rep(y+.1,nl), format(tabg), cex=cex.axis*sqrt(tab/maxfreq),
-                  adj=.5)
-      }
-    }
-
-    mtext(if(length(labels))labels[i]
-          else nams[i],   ## 14Dec01
-          2, 0, at = y, srt = 0, cex = cex.var, adj = 1, las=1)
-    ## las=1 for R 19Mar01 (also 3 lines down)
-
-    if(show.na && nna > 0) {
-      ##mtext(format(nna), 4, line = max.digits.na/3,
-      ##at = y, srt = 0, adj = 1, cex = cex.var*.66667, las=1)
+    if(show.na && nna > 0)
       outerText(fnumna[i], y, setAside='Missing', cex=cex.var)
     }
-  }
   
   invisible()
 }
@@ -395,78 +402,79 @@ histSpike <- function(x, side=1, nint=100, frac=.05, minf=NULL,
 {
   type <- match.arg(type)
   if(!add && side!=1)
-    stop('side must be 1 if add=F')
+    stop('side must be 1 if add=FALSE')
 
   if(add && type=='count')
-    warning('type="count" is ignored if add=T')
+    warning('type="count" is ignored if add=TRUE')
 
-  if(length(y) > 1) {   ## 12Sep00
-    if(length(y) != length(x))
-      stop('lengths of x and y must match')
-
-    if(length(curve))
-      warning('curve ignored when y specified')
-
-    i <- !is.na(x+y)
-    curve <- list(x=x[i], y=y[i])
-  }
-
+  if(length(y) > 1)
+    {
+      if(length(y) != length(x))
+        stop('lengths of x and y must match')
+      
+      if(length(curve))
+        warning('curve ignored when y specified')
+      
+      i <- !is.na(x+y)
+      curve <- list(x=x[i], y=y[i])
+    }
+  
   if(length(curve) && !missing(bottom.align) && bottom.align)
     warning('bottom.align=T specified with curve or y; ignoring bottom.align')
 
   gfun <- ordGridFun(grid)
   x <- x[!is.na(x)]
   x <- x[x >= xlim[1] & x <= xlim[2]]
+  
+  if(type != 'density')
+    {
+      if(is.character(nint) || length(x) <= 10)
+        {
+          f <- table(x)
+          x <- as.numeric(names(f))
+        } else {
+          ncut <- nint+1
+          bins <- seq(xlim[1], xlim[2], length = ncut)
+          delta <- (bins[2]-bins[1]) / 2
+          f <-
+            if(.SV4.)
+              table(oldCut(x, c(bins[1]-delta,bins)))
+            else
+              table(cut(x, c(bins[1]-delta,bins)))
+          
+          x <- bins
+          j <- f > 0
+          x <- x[j]
+          f <- f[j]
+        }
 
-  if(type != 'density') {
-    if(is.character(nint) || length(x) <= 10) {
-      f <- table(x)
-      x <- as.numeric(names(f))
+      if(type=='proportion')
+        f <- f / sum(f)
     } else {
-      ncut <- nint+1
-      bins <- seq(xlim[1], xlim[2], length = ncut)
-      delta <- (bins[2]-bins[1]) / 2
-      f <-
-        if(.SV4.)
-          table(oldCut(x, c(bins[1]-delta,bins)))
-        else
-          table(cut(x, c(bins[1]-delta,bins)))
-
-      x <- bins
-      j <- f > 0
-      x <- x[j]
-      f <- f[j]
+      nbar <- logb(length(x), base = 2) + 1
+      width <- diff(range(x))/nbar*.75*mult.width
+      den <- density(x,width=width,n=200,from=xlim[1],to=xlim[2])
+      x <- den$x
+      f <- den$y
     }
 
-    if(type=='proportion')
-      f <- f / sum(f)
-  } else {
-    nbar <- logb(length(x), base = 2) + 1
-    width <- diff(range(x))/nbar*.75*mult.width
-    den <- density(x,width=width,n=200,from=xlim[1],to=xlim[2])
-    x <- den$x
-    f <- den$y
-  }
+  if(!add)
+    {
+      if(grid)
+        stop('add=FALSE not implemented for lattice')
 
-  if(!add) {
-    if(grid)
-      stop('add=T not implemented for lattice')
+      plot(0, 0, xlim=xlim, ylim=ylim, xlab=xlab, ylab=ylab, type='n')
+    }
 
-    plot(0, 0, xlim=xlim, ylim=ylim, xlab=xlab, ylab=ylab, type='n')
-  }
-  ##if(type=='density') lines(x, f, col=col, lwd=lwd) else   12Sep00
-  ##   segments(x, 0, x, f, col=col, lwd=lwd)
-  ##return(invisible(xlim))
-  ##}
-
-  if(side==1 || side==3) {
-    l <- 1:2;
-    ax <- 1
-  } else {
-    l <- 3:4;
-    ax <- 2
-  }
-
+  if(side==1 || side==3)
+    {
+      l <- 1:2;
+      ax <- 1
+    } else {
+      l <- 3:4;
+      ax <- 2
+    }
+  
   f <- f / max(f)
   if(length(minf))
     f <- pmax(f, minf)
@@ -480,43 +488,46 @@ histSpike <- function(x, side=1, nint=100, frac=.05, minf=NULL,
   u.opp <- usr[-l]
 
   h <- min(pin)*frac/uin[-ax] * f
-  if(length(curve) || length(y)) {
-    if(length(curve))
-      y <- approx(curve, xout=x, rule=2)$y
+  if(length(curve) || length(y))
+    {
+      if(length(curve))
+        y <- approx(curve, xout=x, rule=2)$y
 
-    a <- y - h/2; b <- y + h/2
-  } else {
-    a <- if(side<3) u.opp[1]
-         else u.opp[2]-h
+      a <- y - h/2; b <- y + h/2
+    } else {
+      a <- if(side<3) u.opp[1]
+      else u.opp[2]-h
+      
+      b <- if(side<3) u.opp[1]+h
+      else u.opp[2]
+    }
 
-    b <- if(side<3) u.opp[1]+h
-         else u.opp[2]
-  }
+  if(ax==1 && bottom.align && type!='density')
+    {
+      a <- a + h/2;
+      b <- b + h/2
+    }
 
-  if(ax==1 && bottom.align && type!='density') {
-    a <- a + h/2;
-    b <- b + h/2
-  }
-
-  if(type=='density') {
-    lll <- gfun$lines
-    ## Problem in S+ getting right value of lwd
-    if(ax==1)
-      do.call('lll',list(x,
-                         if(side==1)b
-                         else a,
-                         lwd=lwd,  col=col))
-    else
-      do.call('lll',list(if(side==2)b
-                         else a,
-                         x, lwd=lwd, col=col))
-  } else {
-    lll <- gfun$segments
-    if(ax==1)
-      do.call('lll',list(x, a, x, b, lwd=lwd, xpd=frac<0, col=col))
-    else
-      do.call('lll',list(a, x, b, x, lwd=lwd, xpd=frac<0, col=col))
-  }
-
+  if(type=='density')
+    {
+      lll <- gfun$lines
+      ## Problem in S+ getting right value of lwd
+      if(ax==1)
+        do.call('lll',list(x,
+                           if(side==1)b
+                           else a,
+                           lwd=lwd,  col=col))
+      else
+        do.call('lll',list(if(side==2)b
+        else a,
+                           x, lwd=lwd, col=col))
+    } else {
+      lll <- gfun$segments
+      if(ax==1)
+        do.call('lll',list(x, a, x, b, lwd=lwd, xpd=frac<0, col=col))
+      else
+        do.call('lll',list(a, x, b, x, lwd=lwd, xpd=frac<0, col=col))
+    }
+  
   invisible(xlim)
 }

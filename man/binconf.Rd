@@ -60,7 +60,7 @@ Division of Vector-Borne Infectious Diseases
 \cr
 P.O. Box 2087, Fort Collins, CO, 80522-2087, USA
 \cr
-bkb5@cdc.gov
+\email{bkb5@cdc.gov}
 }
 \references{
 A. Agresti and B.A. Coull, Approximate is better than "exact" for

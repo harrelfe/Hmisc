@@ -193,17 +193,7 @@ y-coordinates.
 draw the main lines. For \code{Dotplot} the first argument to
 \code{Cbind} will be the main \code{x}-axis variable.  
 }
-\item{data}{}
-\item{subset}{}
-\item{ylim}{}
-\item{subscripts}{}
-\item{groups}{}
-\item{type}{}
-\item{scales}{}
-\item{panel}{}
-\item{prepanel}{}
-\item{xlab}{}
-\item{ylab}{
+\item{data,subset,ylim,subscripts,groups,type,scales,panel,prepanel,xlab,ylab}{
   see \code{trellis.args}.  \code{xlab} and \code{ylab} get default values from
   \code{"label"} attributes.
 }
@@ -333,7 +323,7 @@ Department of Biostatistics
 \cr
 Vanderbilt University
 \cr
-f.harrell@vanderbilt.edu
+\email{f.harrell@vanderbilt.edu}
 \cr
 Madeline Bauer
 \cr
@@ -341,7 +331,7 @@ Department of Infectious Diseases
 \cr
 University of Southern California School of Medicine
 \cr
-mbauer@usc.edu
+\email{mbauer@usc.edu}
 }
 \seealso{
 \code{\link[lattice]{xyplot}}, \code{\link[lattice]{panel.xyplot}}, \code{\link{summarize}}, \code{\link{label}}, \code{\link{labcurve}},

@@ -50,7 +50,7 @@ Department of Biostatistics
 \cr
 Vanderbilt University School of Medicine
 \cr
-f.harrell@vanderbilt.edu
+\email{f.harrell@vanderbilt.edu}
 }
 \seealso{
 \code{\link{lm}}, \code{\link[Design]{ols}}, \code{\link{cor}}, \code{\link[Design]{validate.ols}}

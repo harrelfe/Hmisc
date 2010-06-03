@@ -63,7 +63,7 @@ list.tree(X)
 # In R you can say str(X)
 }
 \author{
-Alan Zaslavsky, zaslavsk@hcp.med.harvard.edu
+Alan Zaslavsky, \email{zaslavsk@hcp.med.harvard.edu}
 }
 \keyword{documentation}
 % Converted by Sd2Rd version 1.21.

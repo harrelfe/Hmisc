@@ -1,6 +1,6 @@
 Package: Hmisc
 Version: 3.9-0
-Date: 2008-12-26
+Date: 2010-04-26
 Title: Harrell Miscellaneous
 Author: Frank E Harrell Jr <f.harrell@vanderbilt.edu>, with
   contributions from many other users.
@@ -18,4 +18,4 @@ Description: The Hmisc library contains many functions useful for data
         'http://biostat.mc.vanderbilt.edu/trac/Hmisc'.
 License: GPL version 2 or newer
 LazyLoad: Yes
-URL: http://biostat.mc.vanderbilt.edu/s/Hmisc, http://biostat.mc.vanderbilt.edu/twiki/pub/Main/RS/sintro.pdf, http://biostat.mc.vanderbilt.edu/twiki/pub/Main/StatReport/summary.pdf, http://biostat.mc.vanderbilt.edu/trac/Hmisc
+URL: http://biostat.mc.vanderbilt.edu/wiki/Main/Hmisc, http://biostat.mc.vanderbilt.edu/trac/Hmisc

@@ -15,6 +15,7 @@
 \alias{reLabelled}
 \alias{label.data.frame}
 \alias{label<-.data.frame}
+\alias{combineLabels}
 \title{
   Label Attribute of an Object
 }
@@ -101,6 +102,8 @@ plotmathTranslate(x)
 data.frame.labelled(object)
 
 reLabelled(object)
+
+combineLabels(\dots)
 }
 \arguments{
   \item{x}{

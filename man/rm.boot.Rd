@@ -363,7 +363,7 @@ Department of Biostatistics
 \cr
 Vanderbilt University School of Medicine
 \cr
-f.harrell@vanderbilt.edu
+\email{f.harrell@vanderbilt.edu}
 }
 \references{
 Feng Z, McLerran D, Grizzle J (1996): A comparison of statistical methods for

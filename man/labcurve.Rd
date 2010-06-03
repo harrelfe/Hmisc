@@ -478,7 +478,7 @@ coordinates of the center of the rectangle which was found.
   }
   
 The \code{labcurve} function used some code from the function \code{plot.multicurve} written
-by Rod Tjoelker of The Boeing Company (\code{tjoelker@espresso.rt.cs.boeing.com}).
+by Rod Tjoelker of The Boeing Company (\email{tjoelker@espresso.rt.cs.boeing.com}).
 
 If there is only one curve, a label is placed at the middle x-value,
 and no fancy features such as \code{angle} or positive/negative offsets are
@@ -500,7 +500,7 @@ Department of Biostatistics
 \cr
 Vanderbilt University
 \cr
-f.harrell@vanderbilt.edu
+\email{f.harrell@vanderbilt.edu}
 }
 \seealso{
 \code{\link{approx}}, \code{\link{text}}, \code{\link{legend}}, \code{\link{setps}}, \code{\link{scat1d}}, \code{\link{xYplot}}, \code{\link{abline}}

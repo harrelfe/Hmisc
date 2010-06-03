@@ -232,7 +232,7 @@ Department of Biostatistics
 \cr
 Vanderbilt University School of Medicine
 \cr
-f.harrell@vanderbilt.edu
+\email{f.harrell@vanderbilt.edu}
 }
 \references{
 Lakatos E (1988): Sample sizes based on the log-rank statistic in complex

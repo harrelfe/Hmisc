@@ -151,9 +151,7 @@ with respect too all variables being analyzed
 set to \code{p} to have \code{panel.plsmo} plot points (and not call \code{plsmo}), 
 \code{l} to call \code{plsmo} and not plot points, or use the default \code{b} to plot both.
 }
-\item{pch}{}
-\item{cex}{}
-\item{font}{
+\item{pch,cex,font}{
 vectors of graphical parameters corresponding to the \code{group}s (scalars
 if \code{group} is absent).  By default, the parameters set up by
 \code{trellis} will be used.

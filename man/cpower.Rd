@@ -84,7 +84,7 @@ Department of Biostatistics
 \cr
 Vanderbilt University
 \cr
-f.harrell@vanderbilt.edu
+\email{f.harrell@vanderbilt.edu}
 }
 \references{
 Peterson B, George SL: Controlled Clinical Trials 14:511--522; 1993.

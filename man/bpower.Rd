@@ -106,7 +106,7 @@ Department of Biostatistics
 Vanderbilt University
 
 
-f.harrell@vanderbilt.edu
+\email{f.harrell@vanderbilt.edu}
 }
 \references{
 Fleiss JL, Tytun A, Ury HK (1980): A simple approximation for calculating

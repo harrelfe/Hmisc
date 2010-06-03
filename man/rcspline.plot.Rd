@@ -119,7 +119,7 @@ Frank Harrell
 \cr
 Department of Biostatistics, Vanderbilt University
 \cr
-f.harrell@vanderbilt.edu
+\email{f.harrell@vanderbilt.edu}
 }
 \seealso{
 \code{\link[Design]{lrm}}, \code{\link[Design]{cph}}, \code{\link{rcspline.eval}}, \code{\link[graphics]{plot}}, \code{\link{supsmu}}, \code{\link[survival:survival-internal]{coxph.fit}}, \code{\link[Design]{lrm.fit}}

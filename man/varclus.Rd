@@ -242,7 +242,7 @@ Frank Harrell
 \cr
 Department of Biostatistics, Vanderbilt University
 \cr
-f.harrell@vanderbilt.edu
+\email{f.harrell@vanderbilt.edu}
 }
 \section{Side Effects}{
 plots

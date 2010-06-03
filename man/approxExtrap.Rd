@@ -10,13 +10,7 @@ all, and it is buggy in S-Plus 6.
 approxExtrap(x, y, xout, method = "linear", n = 50, rule = 2, f = 0, ties = "ordered", na.rm = FALSE)
 }
 \arguments{
-  \item{x}{}
-  \item{y}{}
-  \item{xout}{}
-  \item{method}{}
-  \item{n}{}
-  \item{rule}{}
-  \item{f}{see \code{\link{approx}}}
+  \item{x,y,xout,method,n,rule,f}{see \code{\link{approx}}}
   \item{ties}{applies only to R.  See \code{\link{approx}}}
   \item{na.rm}{set to \code{TRUE} to remove \code{NA}s in \code{x} and
 	\code{y} before proceeding}

@@ -18,37 +18,19 @@ rlegendg(x, y, legend, col=pr$col[1], lty=NULL,
          lwd=NULL, pch=NULL, cex=pr$cex[1], other=NULL) 
 }
 \arguments{
-  \item{x}{}
-  \item{y}{}
-  \item{legend}{}
-  \item{fill}{}
-  \item{col}{}
-  \item{lty}{}
-  \item{lwd}{}
-  \item{pch}{}
-  \item{angle}{}
-  \item{density}{}
-  \item{bty}{}
-  \item{bg}{}
-  \item{pt.bg}{}
-  \item{cex}{}
-  \item{xjust}{}
-  \item{yjust}{}
-  \item{x.intersp}{}
-  \item{y.intersp}{}
-  \item{adj}{}
-  \item{text.width}{}
-  \item{merge}{}
-  \item{trace}{}
-  \item{ncol}{}
-  \item{horiz}{see \code{\link{legend}}}
+  \item{x,y,legend,fill,col,lty,lwd,pch,angle,density,bty,bg,pt.bg,cex,xjust,
+    yjust,x.intersp,y.intersp,adj,text.width,merge,trace,ncol,horiz}{
+    see \code{\link{legend}}
+  }
   \item{plot}{set to \code{FALSE} to suppress drawing the legend.  This
-	is used the compute the size needed for when the legend is drawn
-	with a later call to \code{rlegend}.}
+    is used the compute the size needed for when the legend is drawn
+    with a later call to \code{rlegend}.
+  }
   \item{grid}{set to \code{TRUE} if the \code{grid} package is in effect}
   \item{\dots}{see \code{legend}}
   \item{other}{a list containing other arguments to pass to
-\code{draw.key}.  See the help file for \code{xyplot}.}
+    \code{draw.key}.  See the help file for \code{xyplot}.
+  }
 }
 \value{
   a list with elements \code{rect} and \code{text}.  \code{rect} has

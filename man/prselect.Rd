@@ -43,7 +43,7 @@ prselect(x,'t$','dog')       # omit lines 2-6; t must be at end
 
 # Example for Sweave: run a regression analysis with the Design package
 # then selectively output only a portion of what print.ols prints.
-# (Thanks to romain.francois@dbmail.com)
+# (Thanks to \email{romain.francois@dbmail.com})
 # <<z,eval=FALSE,echo=T>>=
 # library(Design)
 # y <- rnorm(20); x1 <- rnorm(20); x2 <- rnorm(20)

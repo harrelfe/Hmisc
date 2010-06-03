@@ -47,7 +47,7 @@ Department of Biostatistics
 \cr
 Vanderbilt University School of Medicine
 \cr
-f.harrell@vanderbilt.edu
+\email{f.harrell@vanderbilt.edu}
 }
 \references{
 Akritas MG (1986): Bootstrapping the Kaplan-Meier estimator.  JASA

@@ -124,7 +124,7 @@ Department of Biostatistics
 \cr
 Vanderbilt University
 \cr
-f.harrell@vanderbilt.edu
+\email{f.harrell@vanderbilt.edu}
 }
 \references{
 Ming K, Rosenbaum PR (2001): A note on optimal matching with variable

@@ -178,11 +178,7 @@ used by the non-Trellis versions of \code{Ecdf}.
 a function to transform the cumulative proportions, for the
 Trellis-type usage of \code{Ecdf}
 }
-\item{data}{}
-\item{groups}{}
-\item{subset}{}
-\item{prepanel}{}
-\item{panel}{the usual Trellis/Lattice parameters, with \code{groups}
+\item{data, groups, subset,prepanel, panel}{the usual Trellis/Lattice parameters, with \code{groups}
   causing \code{Ecdf.formula} to overlay multiple ECDFs on one panel.}
 }
 \value{

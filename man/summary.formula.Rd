@@ -762,9 +762,9 @@ summary(cbind(age,sysbp,diasbp) ~ x, na.rm=FALSE, fun=g, data=d)
 g <- function(y) {
   h <- function(x) {
     qu <- format(round(quantile(x, c(.25,.5,.75), na.rm=TRUE),1),nsmall=1)
-    paste('{\\scriptsize(',sum(!is.na(x)),
-          ')} \\hfill{\\scriptsize ', qu[1], '} \\textbf{', qu[2],
-          '} {\\scriptsize ', qu[3],'}', sep='')
+    paste('{\\\\scriptsize(',sum(!is.na(x)),
+          ')} \\\\hfill{\\\\scriptsize ', qu[1], '} \\\\textbf{', qu[2],
+          '} {\\\\scriptsize ', qu[3],'}', sep='')
   }
   apply(y, 2, h)
 }

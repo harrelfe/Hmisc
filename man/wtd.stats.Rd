@@ -150,7 +150,7 @@ Department of Biostatistics
 \cr
 Vanderbilt University School of Medicine
 \cr
-f.harrell@vanderbilt.edu
+\email{f.harrell@vanderbilt.edu}
 }
 \references{
 Research Triangle Institute (1995): SUDAAN User's Manual, Release

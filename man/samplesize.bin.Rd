@@ -39,7 +39,7 @@ Dept. of Statistics and Human Oncology
 University of Wisconsin at Madison
 
 
-chappell@stat.wisc.edu
+\email{chappell@stat.wisc.edu}
 }
 \examples{
 alpha <- .05

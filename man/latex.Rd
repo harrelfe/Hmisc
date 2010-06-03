@@ -485,8 +485,7 @@ dvigv(object, \dots)
   }
   \item{length}{for S-Plus only; is the length of the output page for
     printing and capturing verbatim text}
-  \item{width}{}
-  \item{height}{
+  \item{width,height}{
     are the \code{options( )} to have in effect only for when \code{print} is
     executed.  Defaults are current \code{options}.  For \code{dvi} these specify
     the paper width and height in inches if \code{nomargins=TRUE}, with

@@ -61,7 +61,7 @@ Department of Biostatistics
 \cr
 Vanderbilt University
 \cr
-f.harrell@vanderbilt.edu
+\email{f.harrell@vanderbilt.edu}
 }
 \references{
 Hoeffding W. (1948): A non-parametric test of independence.  Ann Math Stat

@@ -55,7 +55,7 @@ percentiles are marked with line segments across the box.
 \author{
 Jeffrey Banfield
 \cr
-umsfjban@bill.oscs.montana.edu
+\email{umsfjban@bill.oscs.montana.edu}
 \cr
 Modified by F. Harrell 30Jun97
 }

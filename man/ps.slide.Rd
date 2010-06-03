@@ -39,7 +39,7 @@ Windows systems.
 \code{setps} is a function that makes small postscript plots with minimal
 surrounding white space, suitable for inclusion in books and reports.
 Internally \code{setps} uses (and defines) the \code{psfig} function by
-Antonio Possolo (antonio@atc.boeing.com).  \code{setps} is especially good
+Antonio Possolo (\email{antonio@atc.boeing.com}).  \code{setps} is especially good
 for including plots in LaTeX.  \code{setps} creates a temporary function in the
 session database that when invoked will convert a completed postscript
 graphics file to a Adobe Acrobat .pdf if you have Ghostscript

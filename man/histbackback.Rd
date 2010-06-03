@@ -63,7 +63,7 @@ Salomon Smith Barney
 \cr
 London
 \cr
-pburns@dorado.sbi.com
+\email{pburns@dorado.sbi.com}
 }
 \seealso{
 \code{\link{hist}}, \code{\link[lattice]{histogram}}

@@ -26,7 +26,7 @@ Department of Biostatistics
 \cr
 Vanderbilt University
 \cr
-f.harrell@vanderbilt.edu
+\email{f.harrell@vanderbilt.edu}
 }
 \seealso{
 \code{\link{na.omit}}, \code{\link{na.keep}}, \code{\link{na.detail.response}}, \code{\link{model.frame.default}},

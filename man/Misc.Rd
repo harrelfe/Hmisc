@@ -150,7 +150,7 @@ strgraphwrap(x, width = 0.9 * getOption("width"),
              prefix = "", simplify = TRUE, units='user', cex=NULL)
 trap.rule(x, y)
 trellis.strip.blank()
-unPaste(str, sep="/", extended=FALSE)
+unPaste(str, sep="/")
 whichClosest(x, w)
 whichClosePW(x, w, f=0.2)
 xless(x, \dots, title)
@@ -170,7 +170,6 @@ xless(x, \dots, title)
   \item{conversion}{a named numeric vector}
   \item{digits}{number of digits used for \code{round}}
   \item{est}{vector of point estimates for confidence limits}
-  \item{extended}{see \code{\link{strsplit}} in \R}
   \item{f}{a scaling constant}
   \item{fun}{function to transform scale}
   \item{group}{a categorical grouping variable}
@@ -227,9 +226,7 @@ xless(x, \dots, title)
 	containing the inverse of \eqn{X'X}}
   \item{y}{a numeric vector.  For \code{inverseFunction} \code{y} is the
 	evaluated function values at \code{x}.}
-  \item{indent}{}
-  \item{exdent}{}
-  \item{prefix}{see \code{\link{strwrap}}}
+  \item{indent, exdent, prefix}{see \code{\link{strwrap}}}
   \item{simplify}{see \code{\link{sapply}}}
   \item{units}{see \code{\link{par}}}
   \item{\dots}{arguments passed through to another function}

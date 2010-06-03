@@ -28,8 +28,7 @@ mgp.axis.labels(value,type=c('xy','x','y','x and y'))
 }
 
 \arguments{
-  \item{side}{}
-  \item{at}{see \code{\link{par}}}
+  \item{side,at}{see \code{\link{par}}}
   \item{\dots}{arguments passed through to \code{\link{axis}}}
   \item{mgp}{see \code{\link{par}}}
   \item{axistitle}{if specified will cause \code{axistitle} to be drawn

@@ -15,7 +15,7 @@ dependent on (false) expectations that data distributions should be Gaussian.
 \code{bwplot}.  It draws box plots (without the whiskers) with any number
 of user-specified "corners" (corresponding to different quantiles),
 but it also draws box-percentile plots similar to those drawn by
-Jeffrey Banfield's (umsfjban@bill.oscs.montana.edu) \code{bpplot} function.
+Jeffrey Banfield's (\email{umsfjban@bill.oscs.montana.edu}) \code{bpplot} function.
 To quote from Banfield, "box-percentile plots supply more
 information about the univariate distributions.  At any height the
 width of the irregular 'box' is proportional to the percentile of that
@@ -97,18 +97,11 @@ set to \code{TRUE} to invoke \code{scat1d} to draw a data density
 a list containing named arguments (without abbreviations) to pass to
 \code{scat1d} when \code{datadensity=TRUE} or \code{nout > 0}
 }
-\item{font}{}
-\item{pch}{}
-\item{cex}{}
-\item{col}{see \code{\link[lattice]{panel.bwplot}}}
+\item{font,pch,cex,col}{see \code{\link[lattice]{panel.bwplot}}}
 \item{\dots}{arguments passed to \code{points}}
-\item{stats}{}
-\item{xlim}{}
-\item{xlab}{}
-\item{qomit}{}
-\item{cex.labels}{}
-\item{cex.points}{}
-\item{grid}{undocumented arguments to \code{bpplt}}
+\item{stats,xlim,xlab,qomit,cex.labels,cex.points,grid}{
+  undocumented arguments to \code{bpplt}
+}
 }
 \author{
 Frank Harrell
@@ -117,7 +110,7 @@ Department of Biostatistics
 \cr
 Vanderbilt University School of Medicine
 \cr
-f.harrell@vanderbilt.edu
+\email{f.harrell@vanderbilt.edu}
 }
 \references{
   Esty WW, Banfield J: The box-percentile plot.  J Statistical

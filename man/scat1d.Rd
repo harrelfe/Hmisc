@@ -348,7 +348,7 @@ Vanderbilt University
 \cr
 Charlottesville VA, USA
 \cr
-f.harrell@vanderbilt.edu
+\email{f.harrell@vanderbilt.edu}
 
 
 Martin Maechler (improved \code{scat1d})
@@ -357,7 +357,7 @@ Seminar fuer Statistik
 \cr
 ETH Zurich SWITZERLAND
 \cr
-maechler@stat.math.ethz.ch
+\email{maechler@stat.math.ethz.ch}
 
 
 Jens Oehlschlaegel-Akiyoshi (wrote \code{jitter2})
@@ -368,7 +368,7 @@ Christian-Belser-Strasse 79a
 \cr
 D-70597 Stuttgart Germany
 \cr
-oehl@psyres-stuttgart.de
+\email{oehl@psyres-stuttgart.de}
 }
 \seealso{
 \code{\link{segments}}, \code{\link{jitter}}, \code{\link{rug}}, \code{\link{plsmo}}, \code{\link{stripplot}}, 

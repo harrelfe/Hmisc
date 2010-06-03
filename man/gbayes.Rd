@@ -102,9 +102,7 @@ gbayes1PowerNP(d0, v0, delta, v, delta.w=0, alpha=0.05)
 \item{mean.prior}{
 mean of the prior distribution
 }
-\item{cut.prior}{}
-\item{cut.prob.prior}{}
-\item{var.prior}{
+\item{cut.prior,cut.prob.prior,var.prior}{
 variance of the prior.  Use a large number such as 10000 to effectively
 use a flat (noninformative) prior.  Sometimes it is useful to compute
 the variance so that the prior probability that \code{stat} is greater than
@@ -257,7 +255,7 @@ Department of Biostatistics
 \cr
 Vanderbilt University School of Medicine
 \cr
-f.harrell@vanderbilt.edu
+\email{f.harrell@vanderbilt.edu}
 }
 \references{
 Spiegelhalter DJ, Freedman LS, Parmar MKB (1994): Bayesian approaches to

@@ -99,7 +99,7 @@ errbar          \tab Plot with error bars (Charles Geyer, U. Chi., mod FEH)\cr
 event.chart     \tab Plot general event charts (Jack Lee, \email{jjlee@mdanderson.org}, \cr
                 \tab     Ken Hess, Joel Dubin; Am Statistician 54:63-70,2000)\cr
 event.history	\tab Event history chart with time-dependent cov. status\cr
-                \tab     (Joel Dubin, jdubin@uwaterloo.ca)\cr
+                \tab     (Joel Dubin, \email{jdubin@uwaterloo.ca})\cr
 find.matches    \tab Find matches (with tolerances) between columns of 2 matrices\cr
 first.word      \tab Find the first word in an S expression (R Heiberger)\cr
 fit.mult.impute \tab Fit most regression models over multiple transcan imputations,\cr

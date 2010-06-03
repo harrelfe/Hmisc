@@ -415,7 +415,7 @@ Department of Biostatistics
 \cr
 Vanderbilt University School of Medicine
 \cr
-f.harrell@vanderbilt.edu
+\email{f.harrell@vanderbilt.edu}
 }
 \seealso{
 \code{\link[acepack]{avas}}, \code{\link[acepack]{ace}}, \code{\link[Design]{ols}}, \code{\link[Design]{validate}}, \code{\link[Design]{predab.resample}}, \code{\link{label}},

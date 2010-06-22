@@ -465,7 +465,7 @@ latex.default <-
   if(ctable) {
     eol <- paste(sl, 'NN', sep='')
     eog <- paste(sl, 'NN', sep='')
-  } else if(longtable) {
+  } else if(longtable && length(n.rgroup)) {
     eol <- paste(sl,"tabularnewline*",sep='')
     eog <- paste(sl, "tabularnewline", sep='')
   } else {
@@ -929,10 +929,10 @@ latex.default <-
           cat(cx[i,], file=file, sep="&", append=file!='')
         }
         
-        cat(if(!ctable || i < rg.end[j])
-              eol
-            else if(!ctable || i == rg.end[j])
-              eog,
+        cat(if(i == rg.end[j] || !length(n.rgroup))
+              eog
+            else if(i < rg.end[j])
+              eol,
             "\n", sep="",file=file, append=file!='')
         
         ## eol was sl,sl  added if( ) 13dec02

@@ -2013,7 +2013,7 @@ latex.summary.formula.reverse <-
 
   dimnames(cstats) <- list(NULL,gl) 
   ## was dimnames(cstats) <- list(lab, gl) 12aug02
-  cstats <- data.frame(cstats, check.names=FALSE)
+  cstats <- data.frame(cstats, check.names=FALSE, stringsAsFactors=FALSE)
   
   ## Added row.names=lab below 10jul02 - S+ was dropping dimnames[[1]]
   ##attr(cstats,'row.names') <- lab  12aug02
@@ -2023,7 +2023,8 @@ latex.summary.formula.reverse <-
     col.just[length(col.just)] <- '.'
 
   if(prn) {
-    cstats <- data.frame(N=nn, cstats, check.names=FALSE)
+    cstats <- data.frame(N=nn, cstats, check.names=FALSE,
+                         stringsAsFactors=FALSE)
     col.just <- c("r",col.just)
   }
 
@@ -2174,7 +2175,7 @@ print.summary.formula.cross <- function(x, twoway=nvar==2,
     
   } else names(stats)[length(stats)] <- ylab
 
-  stats <- as.data.frame(stats)
+  stats <- as.data.frame(stats, stringsAsFactors=FALSE)
   invisible(print(stats, ...))
 }
 

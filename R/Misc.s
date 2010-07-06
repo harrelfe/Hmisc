@@ -699,7 +699,7 @@ if(.R.) print.char.matrix <-
     rpref <- c(rpref, 0)
   
   ## print to screen or file
-  if (top.border) {
+  if(top.border && line.sep !='') {
     write(line.sep, file = file, append = append)
     append <- TRUE
   }
@@ -713,7 +713,7 @@ if(.R.) print.char.matrix <-
     append <- TRUE
 
     ## print separator if row prefix is not same as next one
-    if (rpref[i] != rpref[i + 1]) 
+    if (rpref[i] != rpref[i + 1] && line.sep != '') 
       write(line.sep, file = file, append = TRUE)
   }
 }

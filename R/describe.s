@@ -603,9 +603,9 @@ latex.describe.single <-
     ct('\\begin{tabular}{',
        paste(rep('r',length(object$counts)),collapse=''),'}\n',
        file=file, append=TRUE)
-    ct(paste(names(object$counts), collapse='&'), '\\\\ \n',
+    ct(latexTranslate(paste(names(object$counts), collapse='&')), '\\\\ \n',
        file=file, append=TRUE)
-    ct(paste(object$counts, collapse='&'), '\\end{tabular}\n',
+    ct(latexTranslate(paste(object$counts, collapse='&')), '\\end{tabular}\n',
        file=file, append=TRUE)
   }
   

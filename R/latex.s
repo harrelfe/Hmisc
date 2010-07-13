@@ -349,7 +349,15 @@ format.df <- function(x,
             col.just[j]
           else 'l'
         
-        cxk <- cleanLatex(xk)
+        if(inherits(xk, "Date")) {
+          cxk <- cleanLatex(format(xk, format=format.Date))
+        } else if(inherits(xk, "POSIXt")) {
+          cxk <- cleanLatex(format(xk, format=format.POSIXt))
+        } else if(inherits(xk, "factor")) {
+          cxk <- cleanLatex(as.character(xk))
+        } else {
+          cxk <- cleanLatex(xk)
+        }
       }
       
       cx <- cbind(cx, cxk)

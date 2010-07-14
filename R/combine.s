@@ -1,47 +1,29 @@
-.ElmtCombine <- function(x, value, protect=FALSE, ...) {
-  if(is.null(x)) {
-    x <- vector()
-  }
-
-  if(is.null(value)) {
-    value <- vector()
-  }
-  
-  if((is.list(x) || is.vector(x)) &&
-     (is.list(value) || is.vector(value))) {
-    if(length(value)) {
-      value.names <- names(value)
-    } else {
-      value.names <- vector()
-    }
-    
-    if(length(x)) {
-      x.names <- names(x)
-    } else {
-      x.names <- vector()
-    }
-
-    if(is.null(x.names) || is.null(value.names)) {
-      stop("objects 'x' and 'value' must have names")
-    }
-
-    if(protect) {
-      target <- value
-      rep.vals <- x
-      rep.names <- x.names
-    } else {
-      target <- x
-      rep.vals <- value
-      rep.names <- value.names
-    }
-        
-    target[rep.names] <- rep.vals[rep.names]
-    return(target)
-  }
-  stop("unable to combine these objects")
+combine <- function(x, value, protect, ...) {
+  UseMethod("combine")
 }
 
-combine <- .ElmtCombine
-'combine<-' <- as.function(c(formals(.ElmtCombine)[c('x','protect','...','value')],
-                             body(.ElmtCombine)),
-                           environment(.ElmtCombine))
+'combine<-' <- function(x, protect, ..., value)
+  eval.parent(replace(match.call(expand.dots=FALSE), list=1,
+                      values=list(as.name("combine"))))
+
+combine.default <- function(x, value, protect=FALSE, ...) {
+  if(missing(x) || is.null(x))
+    x <- vector()
+
+  if(missing(value) || is.null(value))
+    value <- vector()
+  
+  xNames <- names(x)
+  valueNames <- names(value)
+
+  if(is.null(xNames) || is.null(valueNames) || all(valueNames == "") ||
+     all(xNames == ""))
+    return(c(x, value))
+  
+  vars <- intersect(xNames, valueNames[valueNames != ""])
+  if(!protect)
+    x[vars] <- value[vars]
+
+  c(x, value[!valueNames %in% vars])
+}
+

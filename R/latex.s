@@ -79,8 +79,11 @@ format.df <- function(x,
                       digits, dec=NULL, rdec=NULL, cdec=NULL,
                       numeric.dollar=!dcolumn, na.blank=FALSE,
                       na.dot=FALSE, blank.dot=FALSE, col.just=NULL,
-                      cdot=FALSE, dcolumn=FALSE, matrix.sep=' ', scientific=c(-4,4),
-                      math.row.names=FALSE, math.col.names=FALSE, double.slash=FALSE, ...)
+                      cdot=FALSE, dcolumn=FALSE, matrix.sep=' ',
+                      scientific=c(-4,4), math.row.names=FALSE,
+                      math.col.names=FALSE, double.slash=FALSE,
+                      format.Date='%m/%d/%Y',
+                      format.POSIXt="%m/%d/%Y %H:%M:%OS", ...)
 {
   sl <- ifelse(double.slash, "\\\\", "\\")
 
@@ -353,7 +356,13 @@ format.df <- function(x,
             col.just[j]
           else 'l'
         
-        cxk <- cleanLatex(xk)
+        if(inherits(xk, "Date")) {
+          cxk <- cleanLatex(format(xk, format=format.Date))
+        } else if(inherits(xk, "POSIXt")) {
+          cxk <- cleanLatex(format(xk, format=format.POSIXt))
+        } else {
+          cxk <- cleanLatex(xk)
+        }
       }
       
       cx <- cbind(cx, cxk)

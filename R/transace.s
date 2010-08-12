@@ -151,7 +151,7 @@ areg.boot <- function(x, data, weights, subset, na.action=na.delete,
     }
     Avas(x, y, xtype, ytype, weights)
   }
-  rsquared.app <- f$rsquared
+  rsquared.app <- f$rsq
 
   f.orig <- lm.fit.qr.bare(f$tx, f$ty)
   coef.orig <- f.orig$coefficients

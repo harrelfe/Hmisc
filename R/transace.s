@@ -74,9 +74,8 @@ areg.boot <- function(x, data, weights, subset, na.action=na.delete,
   m[[1]] <- as.name("model.frame")
   x <- eval(m, sys.parent())
 
-  nam <- names(x)
-  ylab <- nam[1]
-  nam <- nam[-1]
+  nam <- unique(var.inner(Terms))
+  ylab <- names(x)[1]
 
   k <- length(x)
   p <- k - 1

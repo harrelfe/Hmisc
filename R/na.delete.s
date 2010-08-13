@@ -78,7 +78,7 @@ naprint.delete <- function(x, ...)
 }
    
 
-naresid.delete <- function(omit, x, ...)
+naresid.delete <- napredict.delete <- function(omit, x, ...)
 {
   omit <- omit$omit
   ## 28Oct99:

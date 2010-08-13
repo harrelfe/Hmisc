@@ -46,6 +46,7 @@
 \alias{naresid.keep}
 \alias{naprint.delete}
 \alias{naresid.delete}
+\alias{napredict.delete}
 \alias{oldUnclass}
 \alias{oPar}
 \alias{optionsCmds}

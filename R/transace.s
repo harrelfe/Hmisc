@@ -17,7 +17,6 @@ transace <- function(x, monotonic=NULL, categorical=NULL, binary=NULL,
   rsq <- rep(NA, p)
   names(rsq) <- nam
 
-
   for(i in (1:p)[!(nam %in% binary)]) {
     lab <- nam[-i]
     w <- 1:(p-1)
@@ -137,20 +136,26 @@ areg.boot <- function(x, data, weights, subset, na.action=na.delete,
   if(length(weights)) stop('weights not implemented for areg') else
    weights <- rep(1,n)
 
-  f <- if(method=='areg')
-    areg(x, y, xtype=xtype, ytype=ytype,
-         nk=nk, na.rm=FALSE, tolerance=tolerance) else {
-    Avas <- function(x, y, xtype, ytype, weights) {
-      p <- ncol(x)
-      mono <- (0:(p-1))[xtype=='m']
-      lin  <- c(0[ytype=='l'], (0:(p-1))[xtype=='l'])
-      categ<- c(0[ytype=='c'], (0:(p-1))[xtype=='c'])
-      if(.R.) avas(x, y, weights, cat=categ, mon=mono, lin=lin) else
-       avas(x, y, weights, mon=mono, lin=lin, cat=categ)
-    }
-    Avas(x, y, xtype, ytype, weights)
+ if(method=='areg')
+   {
+    f <- areg(x, y, xtype=xtype, ytype=ytype,
+              nk=nk, na.rm=FALSE, tolerance=tolerance)
+    rsquared.app <- f$rsquared
   }
-  rsquared.app <- f$rsq
+ else
+   {
+     Avas <- function(x, y, xtype, ytype, weights)
+       {
+         p <- ncol(x)
+         types <- c(ytype, xtype)
+         mono  <- (0:p)[types == 'm']
+         lin   <- (0:p)[types == 'l']
+         categ <- (0:p)[types == 'c'] 
+         avas(x, y, weights, cat=categ, mon=mono, lin=lin)
+       }
+     f <- Avas(x, y, xtype, ytype, weights)
+     rsquared.app <- f$rsq
+   }
 
   f.orig <- lm.fit.qr.bare(f$tx, f$ty)
   coef.orig <- f.orig$coefficients
@@ -496,7 +501,7 @@ plot.areg.boot <- function(x, ylim, boot=TRUE,
     yl <- if(!missing(ylim))
       ylim
     else {
-      rbi <- quantile(booti,c(.01,.99),na.rm=TRUE)
+      rbi <- quantile(booti,c(.025,.975),na.rm=TRUE)
       if(i==1)
         range(approxExtrap(fiti, xout=rbi)$y)
       else range(rbi)
@@ -504,7 +509,7 @@ plot.areg.boot <- function(x, ylim, boot=TRUE,
 
     levi <- Levels[[i]]
     plot(xx, y, ylim=yl,
-         xlab=nam[i], ylab=paste('Transformed',nam[i]), type='n', lwd=3,
+         xlab=nam[i], ylab=paste('Transformed',nam[i]), type='n', lwd=2,
          axes=length(levi)==0)
     if(ll <- length(levi)) {
       mgp.axis(2, pretty(yl))
@@ -526,15 +531,15 @@ plot.areg.boot <- function(x, ylim, boot=TRUE,
       quant <- apply(booti[1:lx,],1,quantile,
                      na.rm=TRUE,probs=c((1-conf.int)/2, (1+conf.int)/2))
       if(i==1) {
-        lines(xx, approxExtrap(fiti, xout=quant[1,])$y, lwd=2)
-        lines(xx, approxExtrap(fiti, xout=quant[2,])$y, lwd=2)
+        lines(xx, approxExtrap(fiti, xout=quant[1,])$y, lwd=1.5)
+        lines(xx, approxExtrap(fiti, xout=quant[2,])$y, lwd=1.5)
       } else {
-        lines(xx, quant[1,], lwd=2)
-        lines(xx, quant[2,], lwd=2)
+        lines(xx, quant[1,], lwd=1.5)
+        lines(xx, quant[2,], lwd=1.5)
       }
     }
 
-    lines(xx, fiti[[2]], lwd=3)
+    lines(xx, fiti[[2]], lwd=2)
   }
 
   invisible()

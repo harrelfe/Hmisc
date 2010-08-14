@@ -450,7 +450,7 @@ print.summary.areg.boot <- function(x, ...)
   cat('\n\nValues to which predictors are set when estimating\neffects of other predictors:\n\n')
   print(adj.to)
 
-  cat('\nEstimates of differences of effects on',x$label,'Y (from first X value),\nand bootstrap standard errors of these differences.\nSettings for X are shown as row headings.\n')
+  cat('\nEstimates of differences of effects on',x$label,'Y (from first X\nvalue), and bootstrap standard errors of these differences.\nSettings for X are shown as row headings.\n')
   for(j in 1:length(nam)) {
     cat('\n\nPredictor:',nam[j],'\n')
     print(R[[j]])

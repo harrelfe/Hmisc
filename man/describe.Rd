@@ -138,7 +138,7 @@ in weighted means, quantiles, and frequency tables.
 \item{subset}{
 }
 \item{na.action}{
-  There are used if a formula is specified.  \code{na.action} defaults to
+  These are used if a formula is specified.  \code{na.action} defaults to
   \code{na.retain} which does not delete any \code{NA}s from the data frame.
   Use \code{na.action=na.omit} or \code{na.delete} to drop any observation with
   any \code{NA} before processing.

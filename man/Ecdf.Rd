@@ -93,7 +93,8 @@ Default is not to draw any.
 set to F to omit the plot, to just return estimates.
 }
 \item{add}{
-set toTRUE to add the cdf to an existing plot.
+set to TRUE to add the cdf to an existing plot.  Does not apply if using
+     lattice graphics (i.e., if a formula is given as the first argument).
 }
 \item{lty}{
 integer line type for plot.  If \code{group} is specified, this can be a vector.

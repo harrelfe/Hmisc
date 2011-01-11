@@ -24,7 +24,8 @@ numeric vector to classify into intervals
 cut points
 }
 \item{m}{
-desired minimum number of observations in a group
+desired minimum number of observations in a group.  The algorithm does
+not guarantee that all groups will have at least \code{m} observations.
 }
 \item{g}{
 number of quantile groups

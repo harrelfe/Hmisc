@@ -486,7 +486,7 @@ cumcategory(y)
   }
   \item{round}{
 	for \code{print.summary.formula.reverse} and
-	\code{latex.summary.formula.reveres} specify \code{round} to round
+	\code{latex.summary.formula.reverse} specify \code{round} to round
 	the quantiles and optional mean and standard deviation to
 	\code{round} digits after the decimal point
 	}

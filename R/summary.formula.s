@@ -363,9 +363,11 @@ summary.formula <-
         Units[i]  <- attr(w,'units')
 
       if(!inherits(w,'mChoice')) {
-          if(!is.factor(w) && length(unique(w[!is.na(w)])) < continuous) 
+          if(!is.factor(w) && !is.logical(w) && length(unique(w[!is.na(w)])) < continuous) 
             w <- as.factor(w)
+
           s <- !is.na(w)
+
           if(na.include && !all(s) && length(levels(w))) {
             w <- na.include(w)
             if(.R.)
@@ -377,7 +379,7 @@ summary.formula <-
           n[i] <- sum(s)
           w <- w[s]
           g <- group[s, drop=TRUE]
-          if(is.factor(w)) {
+          if(is.factor(w) || is.logical(w)) {
             tab <- table(w, g)
             if(test) {
               if(is.ordered(w))
@@ -714,12 +716,13 @@ latex.summary.formula.response <-
            ncaption=TRUE, ...)
 {
   stats <- object
+  if(!prn)
+    stats <- stats[, dimnames(stats)[[2]] != 'N', drop=FALSE]
+    
 
   title <- title   # otherwise problem with lazy evaluation 25May01
   stats <- oldUnclass(stats)
   at <- attributes(stats)
-  if(!prn)
-    stats <- stats[,dimnames(stats)[[2]]!='N',drop=FALSE]
 
   vnames <- match.arg(vnames)
   ul <- vnames=='labels'
@@ -730,7 +733,7 @@ latex.summary.formula.response <-
       trios <- at$ycolname
 
     ntrio <- length(trios)
-    if(ntrio*3!=(nstat-1))   #allow for N
+    if(ntrio*3 + prn != nstat)   #allow for N
       stop('length of trios must be 1/3 the number of statistics computed')
   }
 
@@ -759,23 +762,29 @@ latex.summary.formula.response <-
   }
 
   vn <- latexTranslate(vn, greek=.R.)
-  cdec <- rep(cdec,
-              length=(if(missing(trios))nstat
-                      else 1+(nstat-1)/3)-1)
-
+  if(missing(trios)) {
+    cdec <- rep(cdec, length = nstat)
+  } else {
+    cdec <- rep(cdec, length = nstat/3)
+  }
+  
   cdec <- rep(c(if(prn)0 else NULL,cdec), ns)
 
-  if(missing(trios))
+  if(missing(trios)) {
     cstats <- oldUnclass(stats)
-  else {
+  } else {
     fmt <- function(z, cdec) ifelse(is.na(z), '', format(round(z,cdec)))
     cstats <- list()
     k <- m <- 0
     for(is in 1:ns) {
-      k <- k+1;  m <- m+1
-      cstats[[k]] <- stats[,m]   ## N, numeric mode
+      if(prn) {
+        k <- k+1
+        m <- m+1
+        cstats[[k]] <- stats[,m]   ## N, numeric mode
+      }
       for(j in 1:ntrio) {
-        m <- m+1; k <- k+1
+        m <- m+1
+        k <- k+1
         cstats[[k]] <- paste('{\\scriptsize ',fmt(stats[,m],cdec[k]),'~}',
                              fmt(stats[,m+1],cdec[k]), ' {\\scriptsize ',
                              fmt(stats[,m+2],cdec[k]), '}',sep='')
@@ -788,7 +797,10 @@ latex.summary.formula.response <-
     
     attr(cstats, 'row.names') <- dm[[1]]
     attr(cstats,'class') <- 'data.frame'
-    nstat <- 2  # for n.cgroup below
+    if(prn)
+      nstat <- 2  # for n.cgroup below
+    else
+      nstat <- 1
   }
   
   insert.bottom <-

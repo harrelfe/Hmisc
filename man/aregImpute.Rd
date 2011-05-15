@@ -355,6 +355,10 @@ Vanderbilt University
 
   Siddique J. Multiple imputation using an iterative hot-deck with
   distance-based donor selection.  Stat Med 27:83-102, 2008.
+
+  White IR, Royston P, Wood AM.  Multiple imputation using chained
+  equations: Issues and guidance for practice.  Stat Med 30:377-399,
+  2011.
   }
 \seealso{
 \code{\link{fit.mult.impute}}, \code{\link{transcan}}, \code{\link{areg}}, \code{\link{naclus}}, \code{\link{naplot}}, \code{\link[mice]{mice}},

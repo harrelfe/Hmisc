@@ -122,6 +122,10 @@ improveProb(x1, x2, y)
   Pencina MJ, D'Agostino Sr RB, D'Agostino Jr RB, Vasan RS:
   Rejoinder: Comments on Integrated discrimination and net reclassification
   improvements-Practical advice. Stat in Med 2007; DOI: 10.1002/sim.3106  
+
+  Pencina MJ, D'Agostino RB, Steyerberg EW (2011): Extensions of net
+  reclassification improvement calculations to measure usefulness of new
+  biomarkers.  Stat in Med 30:11-21; DOI: 10.1002/sim.4085
 }
 \seealso{
 \code{\link[Hmisc]{rcorr.cens}}, \code{\link[Hmisc]{somers2}},

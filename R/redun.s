@@ -120,7 +120,7 @@ redun <- function(formula, data=NULL, subset=NULL,
       if(type=='adjusted')
         {
           dof <- sum(k) + ny - 1
-          R2 <- max(0, 1 - (1 - r2)*(n-1)/dof)
+          R2 <- max(0, 1 - (1 - R2)*(n-1)/(n-dof-1))
         }
     ## If variable to possibly remove is categorical with more than 2
     ## categories (more than one dummy variable) make sure ALL frequent
@@ -139,7 +139,7 @@ redun <- function(formula, data=NULL, subset=NULL,
                 if(type=='adjusted')
                   {
                     dof <- sum(k)
-                    R2c <- max(0, 1 - (1 - R2c)*(n-1)/dof)
+                    R2c <- max(0, 1 - (1 - R2c)*(n-1)/(n-dof-1))
                   }
                 R2 <- min(R2, R2c, na.rm=TRUE)
               }

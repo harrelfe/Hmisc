@@ -184,7 +184,7 @@ putKey          \tab Different way to use key()\cr
 putKeyEmpty     \tab Put key at most empty part of existing plot\cr
 rcorr           \tab Pearson or Spearman correlation matrix with pairwise deletion\cr
                 \tab     of missing data\cr
-rcorr.cens      \tab Somers' Dyx rank correlation with censored data\cr
+rcorr.cens      \tab Somers' Dxy rank correlation with censored data\cr
 rcorrp.cens     \tab Assess difference in concordance for paired predictors\cr
 rcspline.eval   \tab Evaluate restricted cubic spline design matrix\cr
 rcspline.plot   \tab Plot spline fit with nonparametric smooth and grouped estimates\cr

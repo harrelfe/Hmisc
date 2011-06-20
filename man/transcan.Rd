@@ -157,7 +157,7 @@ transcan(x, method=c("canonical","pc"),
          data, subset, na.action, treeinfo=FALSE, 
          rhsImp=c('mean','random'), details.impcat='', \dots)
 
-\method{summary}{transcan}(object, long=FALSE, ...)
+\method{summary}{transcan}(object, long=FALSE, digits=6, ...)
 
 \method{print}{transcan}(x, long=FALSE, ...)
 
@@ -457,6 +457,7 @@ invertTabulated(x, y, freq=rep(1,length(x)),
     for \code{summary}, set to \code{TRUE} to print all imputed values.
     For \code{print}, set to \code{TRUE} to print details of transformations/imputations.
   }
+  \item{digits}{number of significant digits for printing values by \code{summary}}
   \item{var}{
     For \code{impute}, is a variable that was originally a column in \code{x}, for
     which imputated values are to be filled in. \code{imputed = TRUE} must have been

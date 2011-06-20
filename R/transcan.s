@@ -724,7 +724,7 @@ transcan <-
 }
 
 
-summary.transcan <- function(object, long=FALSE, ...)
+summary.transcan <- function(object, long=FALSE, digits=6, ...)
 {
   ## Check for old style object
   if(!is.list(object))
@@ -770,7 +770,7 @@ summary.transcan <- function(object, long=FALSE, ...)
                   print(z)
                 }
 
-              print(describe(as.vector(z), nn))
+              print(describe(signif(as.vector(z), digits), nn))
             }
         }	
     }
@@ -778,7 +778,7 @@ summary.transcan <- function(object, long=FALSE, ...)
     cat("\nImputed values set to these constants:\n\n")
   else cat("\nStarting estimates for imputed values:\n\n")
   
-  print(object$fillin)
+  print(signif(object$fillin, digits))
   
   invisible()
 }

@@ -18,12 +18,13 @@ if (.R.) {
         storage.mode(x) <- 'integer'
       } else if(charfactor && is.character(x)) {
         ## If x is a character and arg charfactor is TRUE then
-        ## convert x to a factor if there are more than 2 letters in
-        ## any element && the number of unique values of x is less then
-        ## half the total number of values in x
-        if(max(nchar(x)) >= 2 && (length(unique(x)) < length(x) / 2)) {
-          x <- factor(x)
-        }
+        ## convert x to a factor if the number of unique values of x is less
+        # than half the total number of values in x
+        if(length(unique(x)) < length(x) / 2)
+          {
+            x <- sub(' +$', '', x)  # remove trailing blanks
+            x <- factor(x, exclude='')
+          }
       } else if(is.numeric(x)) {
         
         if(all(is.na(x))) {

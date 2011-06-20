@@ -1325,9 +1325,10 @@ cleanup.import <-
 
     if(charfactor && is.character(x))
       {
-        if(max(nchar(x)) >= 2 && (length(unique(x)) < .5*length(x)))
+        if(length(unique(x)) < .5*length(x)))
           {
-            x <- factor(x)
+            x <- sub(' +$', '', x)  # remove trailing blanks
+            x <- factor(x, exclude='')
             modif <- TRUE
           }
       }
@@ -1551,13 +1552,16 @@ upData <- function(object, ...,
 
   if(charfactor) {
     g <- function(z) {
-      if(!is.character(z) || max(nchar(z)) < 2) return(FALSE)
+      if(!is.character(z)) return(FALSE)
       length(unique(z)) < .5*length(z)
     }
     mfact <- sapply(object, g)
     if(any(mfact))
-      for(i in (1:length(mfact))[mfact]) object[[i]] <- factor(object[[i]])
-  }
+      for(i in (1:length(mfact))[mfact])
+        {
+          x <- sub(' +$', '', object[[i]])  # remove trailing blanks
+          object[[i]] <- factor(x, exclude='')
+        }
   
   if(length(drop)) {
     if(length(drop)==1)
@@ -1759,15 +1763,16 @@ if(.R.) {
             changed <- TRUE
           }
         } else if(charfactor && is.character(x)) {
-          if(max(nchar(x)) >= 2 && (length(unique(x)) < .5*length(x))) {
-            x <- factor(x)
-            changed <- TRUE
-          }
+          if(length(unique(x)) < .5*length(x))
+            {
+              x <- sub(' +$', '', x)  # remove trailing blanks
+              x <- factor(x, exclude='')
+              changed <- TRUE
+            }
         }
-
         if(changed) w[[v]] <- x
       }
-
+    
     w
   }
 

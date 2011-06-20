@@ -54,8 +54,8 @@ csv.get(file, lowernames=FALSE, datevars=NULL, datetimevars=NULL,
     variable names are converted to periods as with \R before version
     1.9.}
   \item{charfactor}{set to \code{TRUE} to change character variables to
-	factors if they have at least two characters in an observation but
-	have fewer than n/2 unique values}
+	factors if they have fewer than n/2 unique values.  Blanks and null
+	strings are converted to \code{NA}s.}
   \item{sep}{field separator, defaults to comma}
   \item{skip}{number of records to skip before data start.  Required if
 	\code{vnames} or \code{labels} is given.}

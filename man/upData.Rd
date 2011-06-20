@@ -151,8 +151,8 @@ dataframeReduce(data, fracmiss=1, maxlevels=NULL,  minprev=0, pr=TRUE)
     exceptional format.
   }
   \item{charfactor}{set to \code{TRUE} to change character variables to
-    factors if they have at least two characters in an observation but
-    have fewer than n/2 unique values}
+	factors if they have fewer than n/2 unique values.  Null strings and
+	blanks are converted to \code{NA}s.}
   \item{\dots}{
     for \code{upData}, one or more expressions of the form
     \code{variable=expression}, to derive new variables or change old ones.

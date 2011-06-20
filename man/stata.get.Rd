@@ -2,7 +2,7 @@
 \alias{stata.get}
 \title{Enhanced Importing of STATA Files}
 \description{
-  Reads a file in Stata version 5-8 or 7/SE binary format into a
+  Reads a file in Stata version 5-11 binary format format into a
   data frame.
 }
 \usage{
@@ -28,8 +28,8 @@ stata.get(file, lowernames = FALSE, convert.dates = TRUE,
 	converted to periods in variable names.  By default, underscores in
 	variable names are converted to periods as with \R before version 1.9.}
   \item{charfactor}{set to \code{TRUE} to change character variables to
-	factors if they have at least two characters in an observation but
-	have fewer than n/2 unique values}
+	factors if they have fewer than n/2 unique values.  Blanks and null
+	strings are converted to \code{NA}s.}
   \item{\dots}{arguments passed to \code{\link[foreign]{read.dta}}.}
 }
 \details{

@@ -1300,7 +1300,7 @@ dotchart2 <-
   tmai <- par("mai")
   oldplt <- par("plt")
   if(reset.par)
-    on.exit(par(mai = tmai, cex = tcex, usr = tusr))
+    on.exit(par(mai = tmai, cex = tcex)) #, usr = tusr))
 
   par(cex = cex)
   mxlab <- .1+max(strwidth(labels, units='inches',cex=cex.labels),

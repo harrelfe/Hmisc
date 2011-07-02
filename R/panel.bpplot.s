@@ -180,8 +180,6 @@ bpplt <- function(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
   qref.x <- as.vector(stats[,match(qref,qq)])
   qref.y <- rep.int(y, times=length(size.qref))
   qref.mod <- rep(w*size.qref/k, each=length(groups))
-  print(qref.x)
-  print(qref.y + qref.mod)
   segments(x0=qref.x, y0=qref.y-qref.mod,
            x1=qref.x, y1=qref.y+qref.mod)
 

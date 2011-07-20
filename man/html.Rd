@@ -28,7 +28,7 @@ html(object, \dots)
 \method{html}{default}(object,
      file=paste(first.word(deparse(substitute(object))),'html',sep='.'),
      append=FALSE, link=NULL, linkCol=1, linkType=c('href','name'), \dots)
-\method{print}{html}(x, ...)
+\method{print}{html}(x, \dots)
 \method{show}{html}(object)
 }
 \arguments{
@@ -50,7 +50,7 @@ the name of the argument for \code{object}.
 \item{linkCol}{column number of \code{object} to which hyperlinks are
   attached.  Defaults to first column.}
 \item{linkType}{defaults to \code{"href"}}
-\item{...}{arguments passed to \code{format.df}}
+\item{\dots}{ignored}
 \item{x}{an object created by \code{html}}
 }
 \section{Side Effects}{

@@ -1364,15 +1364,15 @@ html.data.frame <-
 {
   linkType <- match.arg(linkType)
   
-  x   <- format.df(object, ...)
-  adj <- attr(x,'col.just')
-
-  if(any(adj=='r'))
-    for(i in seq(along=adj)[adj=='r'])
-      x[,i] <- paste('<div align=right>',x[,i],'</div>',sep='')
-
+  x   <- as.matrix(object)
+  for(i in 1:ncol(x))
+    {
+      xi <- x[,i]
+      if(is.numeric(object[,i]))
+        x[,i] <- paste('<div align=right>',xi,'</div>',sep='')
+    }
   if(length(r <- dimnames(x)[[1]]))
-    x <- cbind('Name'=r, x)
+    x <- cbind(Name=as.character(r), x)
   
   cat('<TABLE BORDER>\n', file=file, append=append)
   cat('<tr>', paste('<td><h3>', dimnames(x)[[2]], '</h3></td>',sep=''), '</tr>\n',
@@ -1386,7 +1386,7 @@ html.data.frame <-
                           paste('<a ',linkType,'="',link,'">',
                                 x[,linkCol],'</a>',sep=''))
   }
-  
+
   for(i in 1:nrow(x))
     cat('<tr>',paste('<td>',x[i,],'</td>',sep=''),'</tr>\n',
         sep='', file=file, append=file!='')

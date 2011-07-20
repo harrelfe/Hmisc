@@ -1436,16 +1436,18 @@ if(.R.) {
     fn <- as.character(substitute(file))
     ads <-
       scan(paste(where,'Rcontents.txt',sep='/'),list(''),quiet=TRUE)[[1]]
-    a <- unlist(strsplit(ads,'.sav'))
+    a <- unlist(strsplit(ads,'.sav|.rda'))
     if(missing(file))
       return(a)
 
-    wds <- paste(substitute(file),'sav',sep='.')
-    if(wds %nin% ads)
-      stop(paste(wds,'is not on the web site.\nAvailable datasets:\n',
+    wds <- paste(substitute(file),c('rda','sav'),sep='.')
+    if(!any(wds %in% ads))
+      stop(paste(paste(wds, collapse=','),
+                 'are not on the web site.\nAvailable datasets:\n',
                  paste(a, collapse=' ')))
+    wds <- wds[wds %in% ads]
     if(what %in% c('contents','all')) {
-      w <- paste('C',fn,'.html',sep='')
+      w <- paste(if(fn=='nhgh')'' else 'C',fn,'.html',sep='')
       browseURL(paste(where,w,sep='/'))
     }
     

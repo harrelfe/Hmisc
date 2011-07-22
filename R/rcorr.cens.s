@@ -7,8 +7,11 @@
 
 rcorr.cens <- function(x, S, outx=FALSE)
 {
-  if(!length(dim(S)))
-    S <- cbind(S, rep(1, length(S)))
+  if(is.Surv(S))
+    {
+      if(attr(S, 'type') != 'right')
+        stop('only handles right censored times')
+    } else S <- cbind(S, rep(1, length(S)))
   
   y <- S[,1]
   event <- S[,2]

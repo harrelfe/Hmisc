@@ -40,7 +40,7 @@ summary.formula <-
                   plotmathstat='chi[df]^2')
            },
            ordTest=function(group, x) {
-             require(Design)
+             require(rms)
 
              f <- lrm(x ~ group)$stats
              list(P=f['P'], stat=f['Model L.R.'], df=f['d.f.'],

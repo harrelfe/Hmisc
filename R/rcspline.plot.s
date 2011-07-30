@@ -78,7 +78,7 @@ rcspline.plot <- function(x, y, model=c("logistic","cox","ols"), xrange,
 
   df1 <- nk-2
   if(model=="logistic") {
-    requirePackage('Design')
+    requirePackage('lrm')
     
     b <- lrm.fit(cbind(x,xx,adj),y)
     ##b <- glim(cbind(x,xx,adj),y,rep(1,n),error="binomial",

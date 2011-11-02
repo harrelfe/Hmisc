@@ -204,7 +204,7 @@ nc <- sample(1:10, N, TRUE)
 id <- rep(1:N, nc)
 x <- y <- id
 for(i in 1:N) {
-  x[id==i] <- if(i %% 2) runif(nc[i]) else runif(nc[i], c(.25, .75))
+  x[id==i] <- if(i \%\% 2) runif(nc[i]) else runif(nc[i], c(.25, .75))
   y[id==i] <- i + 10*(x[id==i] - .5) + runif(nc[i], -10, 10)
 }
 

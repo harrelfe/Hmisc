@@ -34,6 +34,8 @@ label.data.frame <- function(x, default=NULL, self=FALSE, ...) {
   } else {
     if(length(default) > 0 && length(default) != length(x)) {
       stop('length of default must same as x')
+    } else if(length(default) == 0) {
+      default <- list(default)
     }
     
     labels <- mapply(FUN=label, x=x, default=default, MoreArgs=list(self=TRUE), USE.NAMES=FALSE)

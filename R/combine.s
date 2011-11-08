@@ -1,12 +1,15 @@
-combine <- function(x, value, protect, ...) {
-  UseMethod("combine")
+combine <- function(x, value, protect, ...) stop("combine() depricated due to naming conflict renamed consolidate()")
+'combine<-' <- function(x, protect, ..., value) stop("combine<-() depricated due to naming conflict renamed consolidate<-()")
+
+consolidate <- function(x, value, protect, ...) {
+  UseMethod("consolidate")
 }
 
-'combine<-' <- function(x, protect, ..., value)
+'consolidate<-' <- function(x, protect, ..., value)
   eval.parent(replace(match.call(expand.dots=FALSE), list=1,
-                      values=list(as.name("combine"))))
+                      values=list(as.name("consolidate"))))
 
-combine.default <- function(x, value, protect=FALSE, ...) {
+consolidate.default <- function(x, value, protect=FALSE, ...) {
   if(missing(x) || is.null(x))
     x <- vector()
 

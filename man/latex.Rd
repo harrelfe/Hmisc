@@ -543,6 +543,11 @@ dvigv(object, \dots)
   \code{options(xdvicmd='MacdviX')} or if TeXShop is installed,
   \code{options(xdvicmd='open')}.
   
+  To use \samp{pdflatex} rather than \samp{latex}, set
+  \code{options(latexcmd='pdflatex')},
+  \code{options(dviExtension='pdf')}, and set
+  \code{options('xdvicmd')} to your chosen PDF previewer.
+
   If running S-Plus and your directory for temporary files is not
   \file{/tmp} (Unix/Linux) or \file{\\windows\\temp} (Windows), add your
   own \code{tempdir} function such as \code{
@@ -561,7 +566,7 @@ dvigv(object, \dots)
   Richard M. Heiberger,\cr
   Department of Statistics,\cr
   Temple University, Philadelphia, PA.\cr
-  \email{rmh@astro.ocis.temple.edu}
+  \email{rmh@temple.edu}
 
   David R. Whiting,\cr
   School of Clinical Medical Sciences (Diabetes),\cr

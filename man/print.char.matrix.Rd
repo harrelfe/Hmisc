@@ -8,7 +8,7 @@
    characters are not supported.
 }
 \usage{
-print.char.matrix(x, file = "", col.name.align = "cen", col.txt.align = "right", 
+\method{print}{char.matrix}(x, file = "", col.name.align = "cen", col.txt.align = "right", 
     cell.align = "cen", hsep = "|", vsep = "-", csep = "+", row.names = TRUE, 
     col.names = FALSE, append = FALSE,
     top.border = TRUE, left.border = TRUE, \dots)

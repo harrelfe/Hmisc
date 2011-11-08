@@ -1204,11 +1204,6 @@ inverseFunction <- function(x, y) {
   h
 }
 
-
-if(!existsFunction('reorder.factor'))
-  reorder.factor <- function(x, v, FUN = mean, ...)
-    ordered(x, levels(x)[order(tapply(v, x, FUN, ...))])
-
 Names2names <- function(x)
 {
   if(is.list(x)) {

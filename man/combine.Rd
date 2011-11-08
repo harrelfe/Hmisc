@@ -1,7 +1,7 @@
-\name{combine}
-\alias{combine}
-\alias{combine<-}
-%- Also NEED an '\alias' for EACH other topic documented here.
+\name{consolidate}
+\alias{consolidate}
+\alias{consolidate<-}
+\alias{consolidate.default}
 \title{ Element Merging }
 \description{
   Merges an object by the names of its elements.  Inserting elements in
@@ -10,9 +10,10 @@
   \code{value} elements if \code{protect} is false.
 }
 \usage{
-combine(x, value, protect = FALSE, ...)
+consolidate(x, value, protect, \dots)
+\method{consolidate}{default}(x, value, protect=FALSE, \dots)
 
-combine(x, protect = FALSE, ...) <- value
+consolidate(x, protect, \dots) <- value
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -36,8 +37,8 @@ names(y) <- LETTERS[y-2]
 x                  # c(A=1,B=2,C=3,D=4,E=5)
 y                  # c(D=6,E=7,F=8,G=9,H=10)
 
-combine(x, y)      # c(A=1,B=2,C=3,D=6,E=7,F=8,G=9,H=10)
-combine(x, y, protect=TRUE)      # c(A=1,B=2,C=3,D=4,E=5,F=8,G=9,H=10)
+consolidate(x, y)      # c(A=1,B=2,C=3,D=6,E=7,F=8,G=9,H=10)
+consolidate(x, y, protect=TRUE)      # c(A=1,B=2,C=3,D=4,E=5,F=8,G=9,H=10)
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

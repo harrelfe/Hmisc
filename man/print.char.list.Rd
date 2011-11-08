@@ -6,7 +6,7 @@
   \code{print.char.list} Takes a list that is composed of other lists and matrixs and prints it in a visually readable format.
 }
 \usage{
-print.char.list(x, ..., hsep = c("|"), vsep = c("-"), csep = c("+"), print.it = TRUE, rowname.halign = c("left", "centre", "right"), rowname.valign = c("top", "centre", "bottom"), colname.halign = c("centre", "left", "right"), colname.valign = c("centre", "top", "bottom"), text.halign = c("right", "centre", "left"), text.valign = c("top", "centre", "bottom"), rowname.width, rowname.height, min.colwidth = .Options$digits, max.rowheight = NULL, abbreviate.dimnames = TRUE, page.width = .Options$width, colname.width, colname.height, prefix.width, superprefix.width = prefix.width)
+\method{print}{char.list}(x, ..., hsep = c("|"), vsep = c("-"), csep = c("+"), print.it = TRUE, rowname.halign = c("left", "centre", "right"), rowname.valign = c("top", "centre", "bottom"), colname.halign = c("centre", "left", "right"), colname.valign = c("centre", "top", "bottom"), text.halign = c("right", "centre", "left"), text.valign = c("top", "centre", "bottom"), rowname.width, rowname.height, min.colwidth = .Options$digits, max.rowheight = NULL, abbreviate.dimnames = TRUE, page.width = .Options$width, colname.width, colname.height, prefix.width, superprefix.width = prefix.width)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

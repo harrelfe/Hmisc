@@ -5,12 +5,12 @@ named.equal <- function(x,y) {
   y.names <- sort(names(y))
 
   if(!identical(x.names, y.names)) {
-    cat("x names: ", paste(x.names, combine=', '), "\ny names: ", paste(y.names, combine=', '), sep='')
+    cat("x names: ", paste(x.names, consolidate=', '), "\ny names: ", paste(y.names, consolidate=', '), sep='')
     stop("x and y do not have the same element names")
   }
 
   if(any(x.names == "") || any(y.names == "")) {
-    cat("x names: ", paste(x.names, combine=', '), "\ny names: ", paste(y.names, combine=', '), sep='')
+    cat("x names: ", paste(x.names, consolidate=', '), "\ny names: ", paste(y.names, consolidate=', '), sep='')
     stop("x or y has unnamed elements")
   }
 
@@ -44,10 +44,10 @@ a7 <- structure(list(q = 5, h = 2, b = 14, a = 5, c = 4),
 a8 <- structure(list(q = 5, h = 2, b = 14, w = 2, e = 21),
                 .Names = c("q", "h", "b", "w", "e"))
 
-r1 <- combine(a, b, protect=FALSE)
-r2 <- combine(a, c, protect=FALSE)
-r3 <- combine(c, a, protect=FALSE)
-r4 <- combine(c, d, protect=FALSE)
+r1 <- consolidate(a, b, protect=FALSE)
+r2 <- consolidate(a, c, protect=FALSE)
+r3 <- consolidate(c, a, protect=FALSE)
+r4 <- consolidate(c, d, protect=FALSE)
 
 is.vector(r1)
 is.list(r2)
@@ -59,10 +59,10 @@ named.equal(r2, a2)
 named.equal(r3, a3)
 named.equal(r4, a4)
 
-r5 <- combine(a, b, protect=TRUE)
-r6 <- combine(a, c, protect=TRUE)
-r7 <- combine(c, a, protect=TRUE)
-r8 <- combine(c, d, protect=TRUE)
+r5 <- consolidate(a, b, protect=TRUE)
+r6 <- consolidate(a, c, protect=TRUE)
+r7 <- consolidate(c, a, protect=TRUE)
+r8 <- consolidate(c, d, protect=TRUE)
 
 named.equal(r5, a5)
 named.equal(r6, a6)
@@ -73,16 +73,16 @@ named.equal(r3, r6)
 named.equal(r2, r7)
 
 e <- a
-combine(e) <- b
+consolidate(e) <- b
 named.equal(e, r1)
 
 e <- a
-combine(e, protect = TRUE) <- b
+consolidate(e, protect = TRUE) <- b
 named.equal(e, r5)
 
 f <- c(1,2,3,5)
-combine(attributes(f)) <- c
+consolidate(attributes(f)) <- c
 named.equal(attributes(f), c)
 
-combine(attributes(f)) <- NULL
+consolidate(attributes(f)) <- NULL
 named.equal(attributes(f), c)

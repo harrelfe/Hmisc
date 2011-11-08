@@ -98,8 +98,8 @@ format.df <- function(x,
     
     if(!any(k)) return(string)
 
-    string[k] <- gsub('<', paste(sl, sl, 'textless', sep=''), string[k])
-    string[k] <- gsub('>', paste(sl, sl, 'textgreater', sep=''), string[k])
+    string[k] <- gsub('<', paste(sl, sl, 'textless ', sep=''), string[k])
+    string[k] <- gsub('>', paste(sl, sl, 'textgreater ', sep=''), string[k])
     string
   }
 
@@ -758,12 +758,13 @@ latex.default <-
                                      sep=""),
                                sep="\n"),
                          if(caption.loc=='top' && !missing(caption))
-                           caption,
-                         '\n',
+                           paste(caption, eog)
+                         else 
+                           '\n',
                          toprule, sep="")    #11Jun95
     
     latex.end <- paste(if(caption.loc=='bottom' && !missing(caption))
-                         paste(caption,sep=""),  ## 3oct03
+                         paste(caption, eog),  ## 3oct03
                        paste(sl,"end{longtable}\n", sep=""),
                        if(length(size))
                          '}\n',
@@ -1221,7 +1222,7 @@ dvi.latex <- function(object, prlog=FALSE,
     cat(scan(paste(tmp,'log',sep='.'),list(''),sep='\n')[[1]],
         sep='\n')
   
-  fi <- paste(tmp,'dvi',sep='.')
+  fi <- paste(tmp, getOption("dviExtension", "dvi"), sep='.')
   structure(list(file=fi), class='dvi')
 }
 

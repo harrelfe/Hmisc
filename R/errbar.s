@@ -13,6 +13,7 @@ errbar <-
            else
            as.character(substitute(y)),
            add=FALSE, lty=1, type='p', ylim=NULL, lwd=1, pch=16,
+           errbar.col=par("fg"),
            Type=rep(1,length(y)), ...)
 {
   if(is.null(ylim)) 
@@ -49,7 +50,7 @@ errbar <-
            las=1, adj=1)
       points(y[t1], seq.int(length.out=n1), pch=pch, type=type, ...)
       segments(yplus[t1], seq.int(length.out=n1), yminus[t1],
-               seq.int(length.out=n1), lwd=lwd, lty=lty)
+               seq.int(length.out=n1), lwd=lwd, lty=lty, col=errbar.col)
 
       if(any(Type==2))
         {
@@ -62,7 +63,7 @@ errbar <-
           
           points(y[t2] + offset, w, pch=pch, type=type, ...)
           segments(yminus[t2] + offset, w, yplus[t2] + offset, w,
-                   lwd=lwd, lty=lty)
+                   lwd=lwd, lty=lty, col=errbar.col)
           
           at <- pretty(range(y[t2], yplus[t2], yminus[t2]))      
           axis(side=3, at=at + offset, labels=format(round(at, 6)))      
@@ -79,7 +80,7 @@ errbar <-
   xcoord <- par()$usr[1:2]
   smidge <- cap * ( xcoord[2] - xcoord[1] ) / 2
   
-  segments(x, yminus, x, yplus , lty=lty, lwd=lwd)
+  segments(x, yminus, x, yplus , lty=lty, lwd=lwd, col=errbar.col)
   
   if(par()$xlog)
     {
@@ -91,8 +92,8 @@ errbar <-
       xstart <- x - smidge
       xend <- x + smidge
     }
-  segments( xstart, yminus, xend, yminus, lwd=lwd, lty=lty)
-  segments( xstart, yplus, xend, yplus, lwd=lwd, lty=lty)
+  segments( xstart, yminus, xend, yminus, lwd=lwd, lty=lty, col=errbar.col)
+  segments( xstart, yplus, xend, yplus, lwd=lwd, lty=lty, col=errbar.col)
   
   return(invisible())
 }

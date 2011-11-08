@@ -135,7 +135,7 @@ if (.R.) {
       }
 
       ## combine the new attribs with the current attributes
-      combine(attributes(w[[i]])) <- attribs[[i]]
+      consolidate(attributes(w[[i]])) <- attribs[[i]]
     }
 
     ## add the names, rownames, class variables, and some extra stata

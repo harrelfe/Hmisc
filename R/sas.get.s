@@ -58,7 +58,7 @@ sas.get <- if(under.unix || .R.)
     ## *****  Next line begins mod from Mike Kattan edits 11 Sep 97
     ## Redone FEH 22Oct00
     no.format <- all(!fexists(file.path(format.library,
-                                    c('formats.sc2','formats.sct','formats.sct01','formats.sas7bcat'))))
+                                        c('formats.sc2','formats.sct','formats.sct01','formats.sas7bcat'))))
     if(no.format) {
       if((!missing(formats) && formats) || (!missing(recode) && recode))
         warning(paste(paste(format.library, 
@@ -250,7 +250,7 @@ sas.get <- if(under.unix || .R.)
                     "\n\t(use sas.contents())"))
     }
   }
-
+  
   format <- vars$format
   format[format=='$'] <- ' '    # 1Mar00
   label <- vars$label
@@ -295,7 +295,7 @@ sas.get <- if(under.unix || .R.)
   
   timeform4 <- c("%02H:%02M","%02H","%02M:%02S","%02H:%02M:%02S")
   datetimeform4 <- c("%02d%b%Y %02h:%02m:%02s","%02m/%02d/%Y")
-
+  
   if(.R.) {   ## Don MacQueen
     days.to.adj <- as.numeric(difftime(ISOdate(1970,1,1,0,0,0) , 
                                        ISOdate(1960,1,1,0,0,0), 'days'))
@@ -396,8 +396,7 @@ sas.get <- if(under.unix || .R.)
     idname <- id 
     jj <- match(idname, names(ds), 0)
     if(any(jj==0))
-      stop(paste(
-                 "id variable(s) not in dataset:",
+      stop(paste("id variable(s) not in dataset:",
                  paste(idname[jj==0],collapse=" ")))
     
     if(length(idname)==1) {
@@ -443,7 +442,7 @@ sas.get <- if(under.unix || .R.)
     formats <- TRUE
 
   sasran <- !missing(sasout)
-
+  
   if(sasran) {
     if(missing(libraryName)+missing(member)+missing(variables)+
        missing(ifs)+missing(format.library)+missing(keep.log)+
@@ -464,7 +463,7 @@ sas.get <- if(under.unix || .R.)
 
       on.exit(unlink(sasout[sasout!='']))
     }
-
+    
     if(any(sasout[1:2]==''))
       stop('sasout[1] and sasout[2] must not be ""')
 
@@ -510,10 +509,10 @@ sas.get <- if(under.unix || .R.)
       stop('library is not a valid directory name')
 
     nvariables <- length(variables)
-    if(nvariables>0)	{
+    if(nvariables>0) {
       if(any(jdup <- duplicated(variables)))
         stop(paste("duplicate variables requested: ", variables[jdup]))
-				}
+    }
     varstring <- paste(variables, collapse = "\n ")
     ifs <- paste("'",paste(ifs, collapse = ";\n "),"'",sep="")
 
@@ -647,10 +646,10 @@ sas.get <- if(under.unix || .R.)
     smiss <- scan(sasout[4], 
                   list(name="", code="", obs=integer(1)),
                   multi.line=FALSE, flush=TRUE, sep="\022")
-
+  
   sasdateform <- c("date","mmddyy","yymmdd","ddmmyy","yyq","monyy",
                    "julian","qtr","weekdate","weekdatx","weekday","month")
-  dateform <- 	
+  dateform <-
     list(as.name("ddmmmyy"),"m/d/y","y/m/d","d/m/y",as.name("ddmmmyy"),
          "mon year",as.name("ddmmmyy"),"mon",as.name("ddmmmyy"),
          as.name("ddmmmyy"), as.name("ddmmmyy"),"m")
@@ -802,8 +801,8 @@ importConvertDateTime <-
 		
  if(.R.) {
     adjdays <- c(sas=3653, spss=141428, dataload=135080)[input]
-   ## 1970-1-1 minus 1960-1-1, 1582-10-14, or 1600-3-1
-   if(input=='spss') x <- x/86400
+    ## 1970-1-1 minus 1960-1-1, 1582-10-14, or 1600-3-1
+    if(input=='spss') x <- x/86400
 
     switch(type,
            date = structure(x - adjdays, class='Date'),
@@ -856,7 +855,6 @@ ddmmmyy <- function(x)
   ifelse(yr<1900 | yr>=2000, paste(y$day,m,yr,sep=""),
          paste(y$day,m,yr-1900,sep=""))
 }
-#}
 
 
 ## Functions to handle special.miss class
@@ -1509,7 +1507,7 @@ upData <- function(object, ...,
           f <- find(v)
           if(length(f))cat('Variable',v,'found in',
                            paste(f,collapse=' '),'\n')
-
+          
           stop(paste('length of ',v,' (',lx, ')\n',
                      'does not match number of rows in object (',
                      n,')',sep=''))
@@ -1557,11 +1555,11 @@ upData <- function(object, ...,
     }
     mfact <- sapply(object, g)
     if(any(mfact))
-      for(i in (1:length(mfact))[mfact])
-        {
-          x <- sub(' +$', '', object[[i]])  # remove trailing blanks
-          object[[i]] <- factor(x, exclude='')
-        }
+      for(i in (1:length(mfact))[mfact]) {
+        x <- sub(' +$', '', object[[i]])  # remove trailing blanks
+        object[[i]] <- factor(x, exclude='')
+      }
+  }
   
   if(length(drop)) {
     if(length(drop)==1)
@@ -1633,8 +1631,8 @@ upData <- function(object, ...,
   cat('New object size:\t',object.size(object),'bytes;\t',
       length(no),'variables\n')
   ## if(.R.) object <- structure(object, class='data.frame', row.names=rnames)
-  object
-}
+    object
+  }
 
 dataframeReduce <- function(data, fracmiss=1, maxlevels=NULL,
                             minprev=0, pr=TRUE)
@@ -2085,8 +2083,7 @@ csv.get <- function(file, lowernames=FALSE, datevars=NULL, datetimevars=NULL,
                     dateformat='%F', fixdates=c('none','year'),
                     comment.char = "", autodates=TRUE, allow=NULL,
                     charfactor=FALSE,
-                    sep=',', skip=0, vnames=NULL, labels=NULL, ...)
-{
+                    sep=',', skip=0, vnames=NULL, labels=NULL, ...){
   fixdates <- match.arg(fixdates)
   if(length(vnames))
     vnames <- scan(file, what=character(0), skip=vnames-1, nlines=1,

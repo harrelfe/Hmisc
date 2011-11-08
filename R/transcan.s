@@ -770,7 +770,11 @@ summary.transcan <- function(object, long=FALSE, digits=6, ...)
                   print(z)
                 }
 
-              print(describe(signif(as.vector(z), digits), nn))
+              if(nn %in% object$categorical) {
+                print(describe(as.vector(z), nn))
+              } else {
+                print(describe(signif(as.vector(z), digits), nn))
+              }
             }
         }	
     }

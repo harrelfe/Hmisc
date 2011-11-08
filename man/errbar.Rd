@@ -11,7 +11,7 @@ errbar(x, y, yplus, yminus, cap=0.015, main = NULL,
        ylab=if(is.factor(x) || is.character(x)) ""
            else as.character(substitute(y)),
        add=FALSE, lty=1, type='p', ylim=NULL,
-       lwd=1, pch=16, Type=rep(1, length(y)), 
+       lwd=1, pch=16, errbar.col, Type=rep(1, length(y)), 
        \dots)
 }
 \arguments{
@@ -65,6 +65,9 @@ errbar(x, y, yplus, yminus, cap=0.015, main = NULL,
   }
   \item{pch}{
     character to use as the point.
+  }
+  \item{errbar.col}{
+    color to use for drawing error bars.
   }
   \item{Type}{
     used for horizontal bars only.  Is an integer vector with values \code{1}

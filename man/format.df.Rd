@@ -18,7 +18,8 @@ format.df(x, digits, dec=NULL, rdec=NULL, cdec=NULL,
           blank.dot=FALSE, col.just=NULL, cdot=FALSE,
           dcolumn=FALSE, matrix.sep=' ', scientific=c(-4,4),
           math.row.names=FALSE, math.col.names=FALSE,
-          double.slash=FALSE, \dots)
+          double.slash=FALSE, format.Date="\%m/\%d/\%Y",
+          format.POSIXt="\%m/\%d/\%Y \%H:\%M:\%OS", \dots)
 }
 \arguments{
   \item{x}{
@@ -125,6 +126,12 @@ format.df(x, digits, dec=NULL, rdec=NULL, cdec=NULL,
   }
   \item{double.slash}{
     should escaping backslashes be themselves escaped.
+  }
+  \item{format.Date}{
+    String used to format objects of the Date class.
+  }
+  \item{format.POSIXt}{
+    String used to format objects of the POSIXt class.
   }
   \item{\dots}{
     other arguments are accepted and ignored.  For \code{latexVerbatim} these

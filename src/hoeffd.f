@@ -49,7 +49,7 @@ C Output from Public domain Ratfor, version 1.01
       return
       end
       subroutine hoeff(x, y, n, d, rx, ry, rj, work, iwork)
-      double precision x(1), y(1), rx(1), ry(1), rj(1)
+      double precision x(1), y(1), rx(1), ry(1), rj(1), work(1)
       integer iwork(1)
       call rank(n, x, work, iwork, rx)
       call rank(n, y, work, iwork, ry)

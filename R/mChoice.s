@@ -93,7 +93,7 @@ format.mChoice <- function(x, minlength=NULL, sep=";", ...)
   atr <- attributes(x)
   atr$names <- NULL
   x <- NextMethod('[')
-  combine(attributes(x)) <- atr
+  consolidate(attributes(x)) <- atr
   x
 }
 

@@ -1,33 +1,39 @@
 ## $Id$
+.valueTagAttrs <- c(label="label", units="units", name="shortlabel")
 
-valueTags <- function(x) {
-  list(unit = valueUnit(x), label = valueLabel(x),
-       name = valueName(x))
-}
+
+valueTags <- function(x)
+  attributes(x)[names(attributes(x)) %in% .valueTagAttrs]
+
 
 "valueTags<-" <- function(x, value) {
-  tagged <- FALSE
-
-  if(!is.list(value))
+  if(is.null(value) || length(value) == 0) {
+    attributes(x)[names(attributes(x)) %in% .valueTagAttrs] <- NULL
+    class(x) <- class(x)[class(x) != 'labelled']
+    return(x)
+  }
+  
+  if(!is.list(value)) {
     stop("list must be a named list of valueTags")
-
-  if(!is.null(value$unit)) {
-    tagged <- TRUE
-    valueUnit(x) <- value$unit
   }
 
-  if(!is.null(value$label)) {
-    tagged <- TRUE
-    valueLabel(x) <- value$label
-  }
+  value[(!names(value) %in% .valueTagAttrs) |
+        unlist(lapply(value, is.null))] <- NULL
 
-  if(!is.null(value$name)) {
-    tagged <- TRUE
-    valueName(x) <- value$name
+  if(length(value) == 0) {
+    attributes(x)[names(attributes(x)) %in% .valueTagAttrs] <- NULL
+    class(x) <- class(x)[class(x) != 'labelled']
+    return(x)
   }
+  
+  attributes(x)[setdiff(names(attributes(x))[names(attributes(x)) %in%
+                                             .valueTagAttrs],
+                        names(value))] <- NULL
 
-  if(tagged)
-    oldClass(x) <- c('labelled', oldClass(x)[oldClass(x) != 'labelled'])
+  consolidate(attributes(x)) <- value
+
+  if(all(class(x) != 'labelled'))
+    oldClass(x) <- c('labelled', oldClass(x))
 
   return(x)
 }

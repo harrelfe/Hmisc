@@ -87,7 +87,6 @@ rcorrp.cens             Rank Correlation for Paired Predictors with a
 rcspline.eval           Restricted Cubic Spline Design Matrix
 rcspline.plot           Plot Restricted Cubic Spline Function
 rcspline.restate        Re-state Restricted Cubic Spline Function
-reorder.factor          Reorder Factor Levels
 reShape                 Reshape Matrices and Serial Data
 rlegend                 Special Version of legend for R
 rm.boot                 Bootstrap Repeated Measurements Model

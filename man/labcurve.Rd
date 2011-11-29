@@ -451,7 +451,8 @@ is used to label points or curves.  Set to \code{TRUE} to use
 
 
 \code{largest.empty} returns a list with elements \code{x} and \code{y} specifying the
-coordinates of the center of the rectangle which was found.
+coordinates of the center of the rectangle which was found.  An
+attribute \code{"rect"} contains the corners of the found empty rectangle.
 }
 \details{
   The internal functions \code{Points}, \code{Curve}, \code{Abline} have

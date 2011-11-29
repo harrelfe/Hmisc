@@ -1074,7 +1074,7 @@ largest.empty <- function(x, y,
   if(pl)
     ordGridFun(grid)$polygon(x[c(1,2,2,1)],y[c(1,1,2,2)], col=1+itype)
   
-  list(x=mean(x), y=mean(y))
+  structure(list(x=mean(x), y=mean(y)), rect=list(x=x, y=y))
 }
 
 

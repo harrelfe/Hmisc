@@ -55,7 +55,7 @@ RETURN
 END  
 
 	SUBROUTINE docorr(x, y, n, d, rx, ry, work, iwork)
-	DOUBLE PRECISION x(1), y(1), rx(1), ry(1)
+	DOUBLE PRECISION x(1), y(1), rx(1), ry(1), work(1)
 	INTEGER iwork(1)
 	DOUBLE PRECISION sumx,sumx2,sumy,sumy2,sumxy,a,b,z
 	CALL rank(n, x, work, iwork, rx)
@@ -74,11 +74,3 @@ END
 	d=(sumxy-sumx*sumy/z)/dsqrt((sumx2-sumx*sumx/z)*(sumy2-sumy*sumy/z))	
 	RETURN
 	END	
-
-
-
-
-
-
-
-

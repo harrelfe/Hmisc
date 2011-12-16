@@ -40,7 +40,7 @@ RETURN
 END  
 
 	SUBROUTINE hoeff(x, y, n, d, rx, ry, rj, work, iwork)
-	DOUBLE PRECISION x(1), y(1), rx(1), ry(1), rj(1)
+	DOUBLE PRECISION x(1), y(1), rx(1), ry(1), rj(1), work(1)
 	INTEGER iwork(1)
 	CALL rank(n, x, work, iwork, rx)
 	CALL rank(n, y, work, iwork, ry)

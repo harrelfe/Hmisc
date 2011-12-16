@@ -70,23 +70,6 @@ C Output from Public domain Ratfor, version 1.01
       d=(q-2.*(z-2.)*r+(z-2.)*(z-3.)*s)/z/(z-1.)/(z-2.)/(z-3.)/(z-4.)
       return
       end
-C	Use C version of this which is much faster (since uses a sort)
-C	SUBROUTINE rank(x, n, r)   # simple rank with midranks for ties
-C	REAL*4 x(1), r(1)
-C	DO i=1,n {
-C	  xi=x(i)
-C	  ir=2   # will be 2*rank(x(i))
-C	  DO j=1,n {
-C	    if(i.ne.j) {
-C	      if(x(j)<xi) ir=ir+2
-C	      if(x(j)==xi) ir=ir+1
-C	    }
-C	  }
-C	  r(i)=float(ir)/2.0
-C	}
-C	RETURN
-C	END
-C joint rank with midranks for ties
       subroutine jrank(x, y, n, r)
       double precision x(1), y(1), r(1)
       do23020 i=1,n 

@@ -74,7 +74,7 @@ C Output from Public domain Ratfor, version 1.01
       end
       subroutine docorr(x, y, n, d, rx, ry, work, iwork)
       double precision x(1), y(1), rx(1), ry(1), work(1)
-      integer*4 iwork(1)
+      integer iwork(1)
       double precision sumx,sumx2,sumy,sumy2,sumxy,a,b,z
       call rank(n, x, work, iwork, rx)
       call rank(n, y, work, iwork, ry)

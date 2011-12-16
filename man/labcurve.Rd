@@ -10,54 +10,54 @@
 Label Curves, Make Keys, and Interactively Draw Points and Curves
 }
 \description{
-\code{labcurve} Optionally draws a set of curves then labels the curves.
-A variety of methods for drawing labels are implemented, ranging
-from positioning using the mouse to automatic labeling to automatic
-placement of key symbols with manual placement of key legends to
-automatic placement of legends.  For automatic positioning of labels
-or keys, a curve
-is labeled at a point that is maximally separated from all of the
+\code{labcurve} optionally draws a set of curves then labels the curves.
+A variety of methods for drawing labels are implemented, ranging from
+positioning using the mouse to automatic labeling to automatic placement
+of key symbols with manual placement of key legends to automatic
+placement of legends.  For automatic positioning of labels or keys, a
+curve is labeled at a point that is maximally separated from all of the
 other curves.  Gaps occurring when curves do not start or end at the
-same x-coordinates are given preference for positioning labels. If 
+same x-coordinates are given preference for positioning labels. If
 labels are offset from the curves (the default behaviour), if the
-closest curve to curve i is above curve i, curve i is labeled below
-its line.  If the closest curve is below curve i, curve i is labeled
-above its line.  These directions are reversed if the resulting labels
-would appear outside the plot region.
+closest curve to curve i is above curve i, curve i is labeled below its
+line.  If the closest curve is below curve i, curve i is labeled above
+its line.  These directions are reversed if the resulting labels would
+appear outside the plot region.
 
 Both ordinary lines and step functions are handled, and there is an
 option to draw the labels at the same angle as the curve within a
 local window.
 
-Unless the mouse is used to position labels or plotting symbols are placed
-along the curves to distinguish them, curves are examined at 100
-(by default) equally spaced points over the range of x-coordinates in the current
-plot area.  Linear interpolation is used to get y-coordinates to line
-up (step function or constant interpolation is used for step
-functions).  There is an option to instead examine all curves at the
-set of unique x-coordinates found by unioning the x-coordinates of all
-the curves.  This option is especially useful when plotting step
-functions.  By setting \code{adj="auto"} you can have \code{labcurve} try to
-optimally left- or right-justify labels depending on the slope of the
-curves at the points at which labels would be centered (plus a vertical
-offset).  This is especially useful when labels must be placed on steep
-curve sections.
+Unless the mouse is used to position labels or plotting symbols are
+placed along the curves to distinguish them, curves are examined at 100
+(by default) equally spaced points over the range of x-coordinates in
+the current plot area.  Linear interpolation is used to get
+y-coordinates to line up (step function or constant interpolation is
+used for step functions).  There is an option to instead examine all
+curves at the set of unique x-coordinates found by unioning the
+x-coordinates of all the curves.  This option is especially useful when
+plotting step functions.  By setting \code{adj="auto"} you can have
+\code{labcurve} try to optimally left- or right-justify labels depending
+on the slope of the curves at the points at which labels would be
+centered (plus a vertical offset).  This is especially useful when
+labels must be placed on steep curve sections.
 
-You can use the \code{on top} method to write (short) curve names directly
-on the curves (centered on the y-coordinate).  This is especially
-useful when there are many curves whose full labels would run into
-each other.  You can plot letters or numbers on the curves, for
-example (using the \code{keys} option), and have \code{labcurve} use the \code{key} function to
-provide long labels for these short ones (see the end of the example).
-There is another option for connecting labels to curves using arrows.
-When \code{keys} is a vector of integers, it is taken to represent plotting
-symbols (\code{pch}s), and these symbols are plotted at equally-spaced
-x-coordinates on each curve (by default, using 5 points per curve).
-The points are offset in the x-direction between curves so as to minimize the chance of collisions.
+You can use the \code{on top} method to write (short) curve names
+directly on the curves (centered on the y-coordinate).  This is
+especially useful when there are many curves whose full labels would run
+into each other.  You can plot letters or numbers on the curves, for
+example (using the \code{keys} option), and have \code{labcurve} use the
+\code{key} function to provide long labels for these short ones (see the
+end of the example).  There is another option for connecting labels to
+curves using arrows.  When \code{keys} is a vector of integers, it is
+taken to represent plotting symbols (\code{pch}s), and these symbols are
+plotted at equally-spaced x-coordinates on each curve (by default, using
+5 points per curve).  The points are offset in the x-direction between
+curves so as to minimize the chance of collisions.
 
-To add a legend defining line types, colors, or line widths with no symbols, 
-specify \code{keys="lines"},
-e.g., \code{labcurve(curves, keys="lines", lty=1:2)}.
+To add a legend defining line types, colors, or line widths with no
+symbols, specify \code{keys="lines"}, e.g., \code{labcurve(curves,
+keys="lines", lty=1:2)}.
 
 \code{putKey} provides a different way to use \code{key()} by allowing
 the user to specify vectors for labels, line types, plotting characters,
@@ -95,7 +95,8 @@ The \code{largest.empty} function finds the largest rectangle that is large
 enough to hold a rectangle of a given height and width, such that the
 rectangle does not contain any of a given set of points.  This is
 used by \code{labcurve} and \code{putKeyEmpty} to position keys at the most
-empty part of an existing plot.
+empty part of an existing plot.  The default method was created by Hans
+Borchers.
 }
 \usage{
 labcurve(curves, labels=names(curves),
@@ -144,18 +145,18 @@ drawPlot(\dots, xlim=c(0,1), ylim=c(0,1), xlab='', ylab='',
      key=x$key, keyloc=x$keyloc, \dots)
 
 largest.empty(x, y, width, height, 
-              numbins=25, method=c('area','maxdim'),
+              numbins=25, method=c('exhaustive','rexhaustive','area','maxdim'),
               xlim=pr$usr[1:2], ylim=pr$usr[3:4],
               pl=FALSE, grid=FALSE)
 }
 \arguments{
 \item{curves}{
-a list of lists, each of which have at least two components: a vector of \code{x}
-values and a vector of corresponding \code{y} values.  \code{curves} is
+a list of lists, each of which have at least two components: a vector of
+\code{x} values and a vector of corresponding \code{y} values.  \code{curves} is
 mandatory except when \code{method="mouse"} or \code{"locator"}, in which 
 case \code{labels} is mandatory.  Each list in \code{curves} may optionally have
-any of the parameters \code{type}, \code{lty}, \code{lwd}, or \code{col} for that curve,
-as defined below (see one of the last examples).
+any of the parameters \code{type}, \code{lty}, \code{lwd}, or \code{col}
+for that curve, as defined below (see one of the last examples).
 }
 \item{z}{
 a two-element list specifying the coordinate of the center of the key,
@@ -173,9 +174,9 @@ specifying group labels
 \item{x}{
 }
 \item{y}{
-for \code{putKeyEmpty} and \code{largest.empty}, \code{x} and \code{y} are same-length
-vectors specifying points that have been plotted.  \code{x} can also be
-an object created by \code{drawPlot}.
+for \code{putKeyEmpty} and \code{largest.empty}, \code{x} and \code{y}
+are same-length vectors specifying points that have been plotted.
+\code{x} can also be an object created by \code{drawPlot}.
 }
 \item{\dots}{
 For \code{drawPlot} is a series of invocations of \code{Points} and
@@ -205,10 +206,19 @@ suppress all curve labeling and key drawing, which is useful when
 \code{pl=TRUE} and you only need \code{labcurve} to draw the curves and the
 rest of the basic graph.
 
-For \code{largest.empty} specifies the method determining the best rectangle
-among all those that qualify with respect to \code{width} and \code{height}.
-Use \code{method="area"} (the default) to find the one having the largest area,
-or \code{method="maxdim"} to use the last rectangle searched that had both
+For \code{largest.empty} specifies the method a rectangle that does not
+collide with any of the (\code{x}, \code{y}) points.  The default
+method, \code{'exhaustive'}, uses a Fortran translation of an R function
+and algorithm developed by Hans Borchers.  The same result, more slowly,
+may be obtained by using pure R code by specifying
+\code{method='rexhaustive'}.  The original algorithms using binning (and
+the only methods supported for S-Plus) are
+still available, and for these, pre-screening of candidate rectangles
+having at least a given width in \code{x}-units of \code{width} or
+having at least a given height in \code{y}-units of \code{height} is possible.
+Use \code{method="area"} to use the binning method to find the rectangle
+having the largest area, or \code{method="maxdim"} to use the binning
+method to return with last rectangle searched that had both
 the largest width and largest height over all previous rectangles.
 }
 \item{keys}{
@@ -450,9 +460,11 @@ is used to label points or curves.  Set to \code{TRUE} to use
 \code{adj} is a vector containing the values 0, .5, 1.
 
 
-\code{largest.empty} returns a list with elements \code{x} and \code{y} specifying the
-coordinates of the center of the rectangle which was found.  An
-attribute \code{"rect"} contains the corners of the found empty rectangle.
+\code{largest.empty} returns a list with elements \code{x} and \code{y}
+specifying the coordinates of the center of the rectangle which was
+found, and element \code{rect} containing the 4 \code{x} and \code{y}
+coordinates of the corners of the found empty rectangle.  The
+\code{area} of the rectangle is also returned.
 }
 \details{
   The internal functions \code{Points}, \code{Curve}, \code{Abline} have
@@ -593,6 +605,7 @@ plot(x, y)
 z <- largest.empty(x, y, .1, .1)
 z
 points(z,pch=3)  # mark center of rectangle, or
+polygon(z$rect, col='blue')  # to draw the rectangle, or
 #key(z$x, z$y, \dots stuff for legend)
 
 

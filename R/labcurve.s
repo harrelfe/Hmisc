@@ -1038,43 +1038,140 @@ putKeyEmpty <- function(x, y, labels, type=NULL,
 largest.empty <- function(x, y, 
                           width, height, 
                           numbins=25,
-                          method=c('area','maxdim'),
+                          method=c('exhaustive','rexhaustive','area','maxdim'),
                           xlim=pr$usr[1:2], ylim=pr$usr[3:4],
                           pl=FALSE, grid=FALSE)
 {
   method <- match.arg(method)
+  if(!.R.) {
+    if(missing(method)) method <- 'area'
+    if(method %nin% c('area', 'maxdim'))
+      stop('method not implemented for S-Plus')
+  }
   pr <- parGrid(grid)
+  isna <- is.na(x + y)
+  if(any(isna)) {
+    x <- x[!isna]
+    y <- y[!isna]
+  }
+  n <- length(x)
+  o <- order(y)
+  x <- x[o]
+  y <- y[o]
   
-  itype  <- 1 * (method=='area') + 2 * (method=='maxdim')
+  itype  <- 3 * (method=='exhaustive') + 4 * (method=='rexhaustive') +
+    1 * (method=='area') + 2 * (method=='maxdim')
   storage.mode(x) <- storage.mode(y) <- storage.mode(xlim) <-
-    storage.mode(ylim) <- storage.mode(width) <-
-      storage.mode(height) <- 'double'
-  storage.mode(numbins) <- storage.mode(itype) <- 'integer'
+    storage.mode(ylim) <- 'double'
+  storage.mode(numbins) <- storage.mode(itype) <- storage.mode(n) <- 'integer'
+  if(method %in% c('area','maxdim')) {
+    storage.mode(width) <- storage.mode(height) <- 'double' }
 
-  a <-
-    if(.R.)
-      .Fortran('largrec', x, y, as.integer(length(x)), 
+  if(method %in% c('area','maxdim')) {
+    a <- if(.R.)
+      .Fortran('largrec', x, y, n,
                xlim, ylim, 
-               width, height, as.integer(numbins), as.integer(itype),
+               width, height, numbins, itype,
                rx=double(2), ry=double(2), PACKAGE="Hmisc")
-    else
-      .Fortran('largrec', x, y, as.integer(length(x)), 
-               xlim, ylim, 
-               width, height, as.integer(numbins), as.integer(itype),
-               rx=double(2), ry=double(2))
-  
-  x <- a$rx
-  if(any(x > 1e29))
-    {
-      warning('no empty rectangle was large enough')
-      return(list(x=NA, y=NA))
+    else .Fortran('largrec', x, y, as.integer(length(x)), 
+                  xlim, ylim, 
+                  width, height, as.integer(numbins), as.integer(itype),
+                  rx=double(2), ry=double(2))
+    x <- a$rx
+    if(any(x > 1e29))
+      {
+        warning('no empty rectangle was large enough')
+        return(list(x=NA, y=NA, rect=list(x=rep(NA,4),y=rep(NA,4)), area=NA))
+      }
+    y <- a$ry
+  } else if(method=='rexhaustive') {
+    ## Author: Hans Borchers <hwborchers@googlemail.com>
+    maxEmptyRect <- function(ax, ay, x, y) {
+      n <- length(x)
+      d <- sort(c(ax, x))
+      D <- diff(d)
+      m <- which.max(D)
+      ## check vertical slices
+      mgap <- D[m]
+      maxr <- mgap * (ay[2] - ay[1])
+      maxR <- c(d[m], ay[1], d[m+1], ay[2])
+      ## o <- order(y)
+      ## X <- x[o]; Y <- y[o]
+      for (i in 1:n) {
+        tl <- ax[1]; tr <- ax[2]
+        if (i < n) {
+          for (j in (i+1):n) {
+            if (x[j] > tl && x[j] < tr) {
+              ## check horizontal slices (j == i+1)
+              ## and (all) rectangles above (x[i], y[i])
+              area <- (tr-tl)*(y[j]-y[i])
+              if (area > maxr) {
+                maxr <- area
+                maxR <- c(tl, y[i], tr, y[j])
+              }
+              if (x[j] > x[i]) tr <- x[j]
+              else             tl <- x[j]
+            }
+          }
+        }
+        ## check open rectangles above (x[i], y[i])
+        area <- (tr-tl)*(ay[2]-y[i])
+        if (area > maxr) {
+          maxr <- area
+          maxR <- c(tl, y[i], tr, ay[2])
+        }
+      }
+      for (i in 1:n) {
+        ## check open rectangles above (x[i], y[i])
+        ri <- min(ax[2], x[y > y[i] & x > x[i]])
+        li <- max(ax[1], x[y > y[i] & x < x[i]])
+        area <- (ri-li)*(ay[2]-y[i])
+        if (area > maxr) {
+          maxr <- area
+          maxR <- c(li, y[i], ri, ay[2])
+        }
+        ## check open rectangles below (x[i], y[i])
+        ri <- min(ax[2], x[y < y[i] & x > x[i]])
+        li <- max(ax[1], x[y < y[i] & x < x[i]])
+        area <- (ri-li)*(y[i]-ay[1])
+        if (area > maxr) {
+          maxr <- area
+          maxR <- c(li, ay[1], ri, y[i])
+        }
+      }
+      return(list(x=maxR[c(1,3)], y=maxR[c(2,4)]))
     }
-  
-  y <- a$ry
+    a <- maxEmptyRect(xlim, ylim, x, y)
+    x <- a$x
+    y <- a$y
+    if((!missing(width)  && diff(x) < width) ||
+       (!missing(height) && diff(y) < height)) {
+      warning('no empty rectangle was large enough')
+      return(list(x=NA, y=NA, rect=list(x=rep(NA,4),y=rep(NA,4)), area=NA))
+    }
+  } else {
+    d <- sort(c(xlim, x))
+    D <- diff(d)
+    m <- which.max(D)
+    a <- .Fortran('maxempr', xlim, ylim, x, y, n,
+                  as.double(c(D[m], d[m], d[m+1])),
+                  area=double(1), rect=double(4), PACKAGE='Hmisc')
+    x <- a$rect[c(1,3)]
+    y <- a$rect[c(2,4)]
+    if((!missing(width)  && diff(x) < width) ||
+       (!missing(height) && diff(y) < height)) {
+      warning('no empty rectangle was large enough')
+      return(list(x=NA, y=NA, rect=list(x=rep(NA,4),y=rep(NA,4)), area=NA))
+    }
+  }
+
+  rectx <- x[c(1,2,2,1)]
+  recty <- y[c(1,1,2,2)]
   if(pl)
-    ordGridFun(grid)$polygon(x[c(1,2,2,1)],y[c(1,1,2,2)], col=1+itype)
+    ordGridFun(grid)$polygon(rectx, recty, col=1+itype)
   
-  structure(list(x=mean(x), y=mean(y)), rect=list(x=x, y=y))
+  structure(list(x=mean(x), y=mean(y), rect=list(x=rectx, y=recty),
+                 area=diff(x)*diff(y)))
 }
 
 

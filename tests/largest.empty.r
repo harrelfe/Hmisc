@@ -4,7 +4,6 @@ w <- 2
 for(i in 1:4) {
   if(w==1) {
     y <- exp(rnorm(20))
-    z <- Ecdf(y)
   } else {
     x <- rnorm(20)
     y <- rnorm(20)
@@ -17,7 +16,7 @@ for(i in 1:4) {
         {
           u <- largest.empty(z$x, z$y, pl=TRUE,
                              height=.05*diff(range(z$x)),
-                             width=.25*diff(range(z$y)),
+                             width =.05*diff(range(z$y)),
                              method=m, numbins=numbins)
           text(u, labels=m, adj=.5)
           if(w==2) points(z)
@@ -25,6 +24,50 @@ for(i in 1:4) {
     }
 }
 
+set.seed(1)
+x <- rnorm(1000); y <- rnorm(1000)
+plot(x,y)
+for(m in c('area', 'rexhaustive', 'exhaustive')) {
+  cat('Method:', m, '\n')
+  print(system.time(largest.empty(x, y, xlim=range(x), ylim=range(y),
+                                  height=.05, width=.05,
+                                  method=m, pl=TRUE)))
+}
+comp <- function(a, b) {
+  i <- identical(a,b)
+  if(!i) print(cbind(a,b))
+  i
+}
+
+for(i in 1:200) {
+  cat(i,'\n')
+  set.seed(i)
+  n <- sample(8:800, 1)
+  x <- runif(n); y <- runif(n)
+  plot(x, y)
+  xl <- range(pretty(x)); yl <- range(pretty(y))
+  ## prn(cbind(range(x), xl, range(y), yl))
+  a <- largest.empty(x, y, xlim=xl, ylim=yl, method='rexhaustive', pl=TRUE)
+  b <- largest.empty(x, y, xlim=xl, ylim=yl, method='exhaustive')
+  ## if(i==9) {xless(a); xless(b)}
+  comp(a[Cs(x,y,area)], b[Cs(x,y,area)])
+  comp(a$rect$x, b$rect$x)
+  comp(a$rect$y, b$rect$y)
+}
+
+
+par(mfrow=c(2,2))
+N <- 100; set.seed(8237)
+for(i in 1:4) {
+  x <- runif(N); y <- runif(100)
+  plot(x, y, pch="+", xlim=c(0,1), ylim=c(0,1), col="darkgray")
+  for(m in c('area', 'rexhaustive', 'exhaustive')) {
+    z <- largest.empty(x, y, 0.075, 0.075, pl=TRUE, numbins=100,
+                       xlim=c(0,1), ylim=c(0,1), method=m)
+    cat(m, 'largest.empty Area:', z$area, '\n')
+    print(cbind(z$rect$x, z$rect$y))
+  }
+}
 
 if(FALSE) {
 z <- Ecdf(y)

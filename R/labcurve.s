@@ -1036,7 +1036,7 @@ putKeyEmpty <- function(x, y, labels, type=NULL,
 
 
 largest.empty <- function(x, y, 
-                          width, height, 
+                          width=0, height=0, 
                           numbins=25,
                           method=c('exhaustive','rexhaustive','area','maxdim'),
                           xlim=pr$usr[1:2], ylim=pr$usr[3:4],
@@ -1086,7 +1086,7 @@ largest.empty <- function(x, y,
     y <- a$ry
   } else if(method=='rexhaustive') {
     ## Author: Hans Borchers <hwborchers@googlemail.com>
-    maxEmptyRect <- function(ax, ay, x, y) {
+    maxEmptyRect <- function(ax, ay, x, y, width=0, height=0) {
       n <- length(x)
       d <- sort(c(ax, x))
       D <- diff(d)
@@ -1105,7 +1105,8 @@ largest.empty <- function(x, y,
               ## check horizontal slices (j == i+1)
               ## and (all) rectangles above (x[i], y[i])
               area <- (tr-tl)*(y[j]-y[i])
-              if (area > maxr) {
+              if (area > maxr && ((tr - tl) > width) &&
+                  ((y[j] - y[i]) > height)) {
                 maxr <- area
                 maxR <- c(tl, y[i], tr, y[j])
               }
@@ -1116,36 +1117,27 @@ largest.empty <- function(x, y,
         }
         ## check open rectangles above (x[i], y[i])
         area <- (tr-tl)*(ay[2]-y[i])
-        if (area > maxr) {
+        if (area > maxr && ((tr - tl) > width) &&
+            ((ay[2] - y[i]) > height )){
           maxr <- area
           maxR <- c(tl, y[i], tr, ay[2])
-        }
-      }
-      for (i in 1:n) {
-        ## check open rectangles above (x[i], y[i])
-        ri <- min(ax[2], x[y > y[i] & x > x[i]])
-        li <- max(ax[1], x[y > y[i] & x < x[i]])
-        area <- (ri-li)*(ay[2]-y[i])
-        if (area > maxr) {
-          maxr <- area
-          maxR <- c(li, y[i], ri, ay[2])
         }
         ## check open rectangles below (x[i], y[i])
         ri <- min(ax[2], x[y < y[i] & x > x[i]])
         li <- max(ax[1], x[y < y[i] & x < x[i]])
-        area <- (ri-li)*(y[i]-ay[1])
-        if (area > maxr) {
+        area <- (ri - li)*(ay[2] - y[i])
+        if (area > maxr && ((ri - li) > width) &&
+            ((y[i] - ay[1]) > height)) {
           maxr <- area
           maxR <- c(li, ay[1], ri, y[i])
         }
       }
       return(list(x=maxR[c(1,3)], y=maxR[c(2,4)]))
     }
-    a <- maxEmptyRect(xlim, ylim, x, y)
+    a <- maxEmptyRect(xlim, ylim, x, y, width, height)
     x <- a$x
     y <- a$y
-    if((!missing(width)  && diff(x) < width) ||
-       (!missing(height) && diff(y) < height)) {
+    if(diff(x) < width || diff(y) < height) {
       warning('no empty rectangle was large enough')
       return(list(x=NA, y=NA, rect=list(x=rep(NA,4),y=rep(NA,4)), area=NA))
     }
@@ -1154,12 +1146,12 @@ largest.empty <- function(x, y,
     D <- diff(d)
     m <- which.max(D)
     a <- .Fortran('maxempr', xlim, ylim, x, y, n,
+                  as.double(width), as.double(height),
                   as.double(c(D[m], d[m], d[m+1])),
                   area=double(1), rect=double(4), PACKAGE='Hmisc')
     x <- a$rect[c(1,3)]
     y <- a$rect[c(2,4)]
-    if((!missing(width)  && diff(x) < width) ||
-       (!missing(height) && diff(y) < height)) {
+    if(diff(x) < width || diff(y) < height) {
       warning('no empty rectangle was large enough')
       return(list(x=NA, y=NA, rect=list(x=rep(NA,4),y=rep(NA,4)), area=NA))
     }

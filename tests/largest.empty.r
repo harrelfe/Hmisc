@@ -24,13 +24,14 @@ for(i in 1:4) {
     }
 }
 
+par(mfrow=c(1,1))
 set.seed(1)
 x <- rnorm(1000); y <- rnorm(1000)
 plot(x,y)
 for(m in c('area', 'rexhaustive', 'exhaustive')) {
   cat('Method:', m, '\n')
-  print(system.time(largest.empty(x, y, xlim=range(x), ylim=range(y),
-                                  height=.05, width=.05,
+  print(system.time(largest.empty(x, y, 
+                                  width=1.5, height=.5,
                                   method=m, pl=TRUE)))
 }
 comp <- function(a, b) {
@@ -39,17 +40,17 @@ comp <- function(a, b) {
   i
 }
 
-for(i in 1:200) {
+for(i in 1:70) {
   cat(i,'\n')
   set.seed(i)
   n <- sample(8:800, 1)
   x <- runif(n); y <- runif(n)
   plot(x, y)
   xl <- range(pretty(x)); yl <- range(pretty(y))
-  ## prn(cbind(range(x), xl, range(y), yl))
-  a <- largest.empty(x, y, xlim=xl, ylim=yl, method='rexhaustive', pl=TRUE)
-  b <- largest.empty(x, y, xlim=xl, ylim=yl, method='exhaustive')
-  ## if(i==9) {xless(a); xless(b)}
+  a <- largest.empty(x, y, xlim=xl, ylim=yl, width=.03, height=.03,
+                     method='rexhaustive', pl=TRUE)
+  b <- largest.empty(x, y, xlim=xl, ylim=yl, width=.03, height=.03,
+                     method='exhaustive',  pl=TRUE)
   comp(a[Cs(x,y,area)], b[Cs(x,y,area)])
   comp(a$rect$x, b$rect$x)
   comp(a$rect$y, b$rect$y)

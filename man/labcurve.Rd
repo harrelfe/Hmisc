@@ -144,7 +144,7 @@ drawPlot(\dots, xlim=c(0,1), ylim=c(0,1), xlab='', ylab='',
 \method{plot}{drawPlot}(x, file, xlab, ylab, ticks,
      key=x$key, keyloc=x$keyloc, \dots)
 
-largest.empty(x, y, width, height, 
+largest.empty(x, y, width=0, height=0, 
               numbins=25, method=c('exhaustive','rexhaustive','area','maxdim'),
               xlim=pr$usr[1:2], ylim=pr$usr[3:4],
               pl=FALSE, grid=FALSE)
@@ -189,8 +189,8 @@ For \code{labcurve}, other parameters to pass to \code{text}.  For
 \item{width}{
 }
 \item{height}{
-for \code{largest.empty}, specifies the minimum allowable width in \code{x} units and
-the minimum allowable height in \code{y} units
+for \code{largest.empty}, specifies the minimum allowable width in
+\code{x} units and the minimum allowable height in \code{y} units
 }
 \item{method}{
 \code{"offset"} (the default) offsets labels at largest gaps between
@@ -213,7 +213,7 @@ and algorithm developed by Hans Borchers.  The same result, more slowly,
 may be obtained by using pure R code by specifying
 \code{method='rexhaustive'}.  The original algorithms using binning (and
 the only methods supported for S-Plus) are
-still available, and for these, pre-screening of candidate rectangles
+still available.  For all methods, screening of candidate rectangles
 having at least a given width in \code{x}-units of \code{width} or
 having at least a given height in \code{y}-units of \code{height} is possible.
 Use \code{method="area"} to use the binning method to find the rectangle

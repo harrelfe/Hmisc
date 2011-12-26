@@ -5,19 +5,22 @@
 Matrix of Hoeffding's D Statistics
 }
 \description{
-Computes a matrix of Hoeffding's (1948) \code{D} statistics for all possible
-pairs of columns of a matrix.  \code{D}
-is a measure of the distance
-between \code{F(x,y)} and \code{G(x)H(y)}, where \code{F(x,y)} is the joint CDF of \code{X} and \code{Y},
-and \code{G} and \code{H} are marginal CDFs. Missing values are deleted in pairs rather than deleting all rows
-of \code{x} having any missing variables.
-The \code{D} statistic is robust against a wide
-variety of alternatives to independence, such as non-monotonic relationships.
-The larger the value of \code{D}, the more dependent are \code{X} and \code{Y} (for many types
-of dependencies).  \code{D} used here is 30 times Hoeffding's original \code{D}, and
-ranges from -0.5 to 1.0 if there are no ties in the data.
-\code{print.hoeffd} prints the information derived by \code{hoeffd}.  The higher
-the value of \code{D}, the more dependent are \code{x} and \code{y}.
+Computes a matrix of Hoeffding's (1948) \code{D} statistics for all
+possible pairs of columns of a matrix.  \code{D} is a measure of the
+distance between \code{F(x,y)} and \code{G(x)H(y)}, where \code{F(x,y)}
+is the joint CDF of \code{X} and \code{Y}, and \code{G} and \code{H} are
+marginal CDFs. Missing values are deleted in pairs rather than deleting
+all rows of \code{x} having any missing variables.  The \code{D}
+statistic is robust against a wide variety of alternatives to
+independence, such as non-monotonic relationships.  The larger the value
+of \code{D}, the more dependent are \code{X} and \code{Y} (for many
+types of dependencies).  \code{D} used here is 30 times Hoeffding's
+original \code{D}, and ranges from -0.5 to 1.0 if there are no ties in
+the data.  \code{print.hoeffd} prints the information derived by
+\code{hoeffd}.  The higher the value of \code{D}, the more dependent are
+\code{x} and \code{y}.  \code{hoeffd} also computes the mean and maximum
+absolute values of the difference between the joint empirical CDF and
+the product of the marginal empirical CDFs.
 }
 \synopsis{hoeffd(x, y)}
 \usage{
@@ -95,4 +98,3 @@ hoeffd(x,y)
 }
 \keyword{nonparametric}
 \keyword{htest}
-% Converted by Sd2Rd version 1.21.

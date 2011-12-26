@@ -53,23 +53,30 @@ hoeffd <- function(x, y)
 
   h <-
     if(.R.)
-      .Fortran("hoeffd", x, n, p, hmatrix=double(p*p), npair=integer(p*p),
+      .Fortran("hoeffd", x, n, p, hmatrix=double(p*p), aad=double(p*p),
+               maxad=double(p*p), npair=integer(p*p),
                double(n), double(n),  double(n), double(n), double(n), 
-               double(n), integer(n), PACKAGE="Hmisc")
+               PACKAGE="Hmisc")
     else
       .Fortran("hoeffd", x, n, p, hmatrix=single(p*p), npair=integer(p*p),
                single(n), single(n),  single(n), single(n), single(n), 
                single(n), integer(n))
   
+  nam <- dimnames(x)[[2]]
   npair <- matrix(h$npair, ncol=p)
+  aad <- maxad <- NULL
+  if(.R.) {
+    aad <- matrix(h$aad, ncol=p)
+    maxad <- matrix(h$maxad, ncol=p)
+    dimnames(aad) <- dimnames(maxad) <- list(nam, nam)
+  }
   h <- matrix(h$hmatrix, ncol=p)
   h[h>1e29] <- NA
-  nam <- dimnames(x)[[2]]
   dimnames(h) <- list(nam, nam)
   dimnames(npair) <- list(nam, nam)
   P <- phoeffd(h, npair)
   diag(P) <- NA
-  structure(list(D=30*h, n=npair, P=P), class="hoeffd")
+  structure(list(D=30*h, n=npair, P=P, aad=aad, maxad=maxad), class="hoeffd")
 }
 
 
@@ -77,6 +84,14 @@ print.hoeffd <- function(x, ...)
 {
   cat("D\n")
   print(round(x$D,2))
+  if(length(aad <- x$aad)) {
+    cat('\navg|F(x,y)-G(x)H(y)|\n')
+    print(round(aad,4))
+  }
+  if(length(mad <- x$maxad)) {
+    cat('\nmax|F(x,y)-G(x)H(y)|\n')
+    print(round(mad,4))
+  }
   n <- x$n
   if(all(n==n[1,1]))
     cat("\nn=",n[1,1],"\n")

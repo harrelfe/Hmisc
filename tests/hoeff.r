@@ -20,3 +20,27 @@ for(n in c(50,100,200,400,1000)) {
 #[1] 0.05657654
 #[1] 0.07048487
 #[1] 0.06323746
+
+
+# From http://www.sciencemag.org/content/suppl/2011/12/14/334.6062.1518.DC1/Reshef.SOM.pdf
+# Table S2: Definitions of functions used for Figure 2A in the Science article
+
+w <- function(y) {
+  ylab <- deparse(substitute(y))
+  plot(x, y, ylab=substitute(y), type='l')
+  h <- hoeffd(x, y)
+  cat(ylab, '\n')
+  print(c(D=h$D[1,2],P=h$P[1,2],aDif=h$aad[1,2],mDif=h$maxad[1,2]))
+}
+
+x <- seq(0, 1, length=320)
+par(mfrow=c(3,3))
+w(x)
+w(4*(x-.5)^2)
+w(128*(x-1/3)^3 -48*(x-1/3)^2 - 12*(x-1/3) + 2)
+w(10^(10*x) - 1)
+w(sin(10*pi*x) + x)
+w(sin(16*pi*x))
+w(sin(13*pi*x))
+w(sin(7*pi*x*(1+x)))
+w(runif(320))

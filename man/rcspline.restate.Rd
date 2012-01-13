@@ -7,7 +7,7 @@
 \description{
   This function re-states a restricted cubic spline function in
   the un-linearly-restricted form. Coefficients for that form are
-  returned, along with an S functional representation of this function
+  returned, along with an \R functional representation of this function
   and a LaTeX character representation of the function.
   \code{rcsplineFunction} is a fast function that creates a function to
   compute a restricted cubic spline function with given coefficients and
@@ -29,26 +29,27 @@ rcsplineFunction(knots, coef, norm=2)
   }
   \item{coef}{
     vector of coefficients from the fit. If the length of \code{coef} is
-    \code{k-1}, where \code{k = length(knots)}, the first coefficient must be
-    for the linear term and remaining \code{k-2} coefficients
-    must be for the constructed terms (e.g., from \code{rcspline.eval}).
-    If the length of \code{coef} is \code{k}, an intercept is assumed to be in
-    the first element (or a zero is prepended to \code{coef} for
-    \code{rcsplineFunction}).
+    \eqn{\var{k}-1}, where \var{k} is equal to the \code{length(knots)}, the
+    first coefficient must be for the linear term and remaining
+    \eqn{k-2} coefficients must be for the constructed terms (e.g., from
+    \code{rcspline.eval}). If the length of \code{coef} is \var{k}, an
+    intercept is assumed to be in the first element (or a zero is
+    prepended to \code{coef} for \code{rcsplineFunction}).
   }
   \item{type}{
     The default is to represent the cubic spline function corresponding
-    to the coefficients and knots.  Set \code{type = "integral"} to instead represent
-    its anti-derivative.
+    to the coefficients and knots.  Set \code{type = "integral"} to
+    instead represent its anti-derivative.
   }
   \item{x}{
     a character string to use as the variable name in the LaTeX expression
     for the formula.
   }
   \item{lx}{
-    length of \code{x} to count with respect to \code{columns}. Default is length
-    of character string contained by \code{x}. You may want to set \code{lx}
-    smaller than this if it includes non-printable LaTeX commands.
+    length of \code{x} to count with respect to \code{columns}. Default
+    is length of character string contained by \code{x}. You may want to
+    set \code{lx} smaller than this if it includes non-printable LaTeX
+    commands.
   }
   \item{norm}{
     normalization that was used in deriving the original nonlinear terms
@@ -56,20 +57,21 @@ rcsplineFunction(knots, coef, norm=2)
   }
   \item{columns}{
     maximum number of symbols in the LaTeX expression to allow before
-    inserting a newline (\samp{\\\\}) command. Set to a very large number to
-    keep text all on one line.
+    inserting a newline (\samp{\\\\}) command. Set to a very large
+    number to keep text all on one line.
   }
   \item{before}{
-    text to place before each line of LaTeX output. Use \samp{"& &"} for an equation
-    array environment in LaTeX where you want to have a left-hand prefix
-    e.g. \samp{f(X) & = &} or using \samp{\\lefteqn}.
+    text to place before each line of LaTeX output. Use \samp{"& &"}
+    for an equation array environment in LaTeX where you want to have a
+    left-hand prefix e.g. \samp{"f(X) & = &"} or using
+    \samp{"\\lefteqn"}.
   }
   \item{after}{
     text to place at the end of each line of output.
   }
   \item{begin}{
-    text with which to start the first line of output. Useful when adding
-    LaTeX output to part of an existing formula
+    text with which to start the first line of output. Useful when
+    adding LaTeX output to part of an existing formula
   }
   \item{nbegin}{
     number of columns of printable text in \code{begin}
@@ -83,13 +85,14 @@ rcsplineFunction(knots, coef, norm=2)
   coefficients are un-normalized and two coefficients are added that are
   linearly dependent on the other coefficients and knots. The vector of
   coefficients has four attributes. \code{knots} is a vector of knots,
-  \code{latex} is a vector of text strings with the LaTeX representation
-  of the formula. \code{columns.used} is the number of columns used in the
-  output string since the last newline command.  \code{function} is an S
-  function, which is also return in character string format as the
-  \code{text} attribute.  \code{rcsplineFunction} returns an S function
-  with arguments \code{x} (a user-supplied numeric vector at which to
-  evaluate the function), and some automatically-supplied other arguments.
+  \code{latex} is a vector of text strings with the LaTeX
+  representation of the formula. \code{columns.used} is the number of
+  columns used in the output string since the last newline command.
+  \code{function} is an \R function, which is also return in character
+  string format as the \code{text} attribute.  \code{rcsplineFunction}
+  returns an \R function with arguments \code{x} (a user-supplied
+  numeric vector at which to evaluate the function), and some
+  automatically-supplied other arguments. 
 }
 \author{
   Frank Harrell
@@ -99,7 +102,8 @@ rcsplineFunction(knots, coef, norm=2)
   \email{f.harrell@vanderbilt.edu}
 }
 \seealso{
-  \code{\link{rcspline.eval}}, \code{\link[splines]{ns}}, \code{\link[Design:Design.trans]{rcs}}, \code{\link{latex}}, \code{\link{Function.transcan}}
+  \code{\link{rcspline.eval}}, \code{\link{ns}}, \code{\link[rms]{rcs}},
+  \code{\link{latex}}, \code{\link{Function.transcan}} 
 }
 \examples{
 set.seed(1)

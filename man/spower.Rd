@@ -9,53 +9,57 @@
 \alias{Lognorm2}
 \alias{Weibull2}
 \title{
-Simulate Power of 2-Sample Test for Survival under Complex Conditions
+  Simulate Power of 2-Sample Test for Survival under Complex Conditions
 }
 \description{
-Given functions to generate random variables for survival times and censoring
-times, \code{spower} simulates the power of a user-given 2-sample test for
-censored data.  By default, the logrank (Cox 2-sample) test is used,
-and a \code{logrank} function for comparing 2 groups is provided.
-Optionally a Cox model is fitted for each each simulated dataset and the
-log hazard ratios are saved (this requires the \code{survival} package).
-A \code{print} method prints various measures from these.  For
-composing S functions to generate random survival times under
-complex conditions, the \code{Quantile2} function allows the user to
-specify the intervention:control hazard ratio as a function of time,
-the probability of a control subject actually receiving the
-intervention (dropin) as a function of time, and the probability that
-an intervention subject receives only the control agent as a function of time
-(non-compliance, dropout).  \code{Quantile2} returns a function that
-generates either control or intervention uncensored survival times subject to
-non-constant treatment effect, dropin, and dropout.  There is a \code{plot}
-method for plotting the results of \code{Quantile2}, which will aid in
-understanding the effects of the two types of non-compliance and
-non-constant treatment effects.  \code{Quantile2} assumes that the hazard
-function for either treatment group is a mixture of the control and
-intervention hazard functions, with mixing proportions defined by the
-dropin and dropout probabilities.  It computes hazards and survival
-distributions by numerical differentiation and integration using a
-grid of (by default) 7500 equally-spaced time points.
+  Given functions to generate random variables for survival times and
+  censoring times, \code{spower} simulates the power of a user-given
+  2-sample test for censored data.  By default, the logrank (Cox
+  2-sample) test is used, and a \code{logrank} function for comparing 2
+  groups is provided. Optionally a Cox model is fitted for each each
+  simulated dataset and the log hazard ratios are saved (this requires
+  the \code{survival} package). A \code{print} method prints various
+  measures from these.  For composing \R functions to generate random
+  survival times under complex conditions, the \code{Quantile2} function
+  allows the user to specify the intervention:control hazard ratio as a
+  function of time, the probability of a control subject actually
+  receiving the intervention (dropin) as a function of time, and the
+  probability that an intervention subject receives only the control
+  agent as a function of time (non-compliance, dropout).
+  \code{Quantile2} returns a function that generates either control or
+  intervention uncensored survival times subject to non-constant
+  treatment effect, dropin, and dropout.  There is a \code{plot} method
+  for plotting the results of \code{Quantile2}, which will aid in
+  understanding the effects of the two types of non-compliance and
+  non-constant treatment effects.  \code{Quantile2} assumes that the
+  hazard function for either treatment group is a mixture of the control
+  and intervention hazard functions, with mixing proportions defined by
+  the dropin and dropout probabilities.  It computes hazards and
+  survival distributions by numerical differentiation and integration
+  using a grid of (by default) 7500 equally-spaced time points.
+  
+  The \code{logrank} function is intended to be used with \code{spower}
+  but it can be used by itself.  It returns the 1 degree of freedom
+  chi-square statistic, with the hazard ratio estimate as an attribute.
 
-The \code{logrank} function is intended to be used with \code{spower}
-but it can be used by itself.  It returns the 1 degree of freedom
-chi-square statistic, with the hazard ratio estimate as an attribute.
+  The \code{Weibull2} function accepts as input two vectors, one
+  containing two times and one containing two survival probabilities, and
+  it solves for the scale and shape parameters of the Weibull distribution
+  (\eqn{S(t) = e^{-\alpha {t}^{\gamma}}}{S(t) = exp(-\alpha*t^\gamma)})
+  which will yield
+  those estimates.  It creates an \R function to evaluate survival
+  probabilities from this Weibull distribution.  \code{Weibull2} is
+  useful in creating functions to pass as the first argument to
+  \code{Quantile2}.
 
-The \code{Weibull2} function accepts as input two vectors, one
-containing two times and one containing two survival probabilities, and
-it solves for the scale and shape parameters of the Weibull distribution
-(\code{S(t)=exp(-alpha*t^ gamma)}) which will yield those estimates.  It
-creates an S function to evaluate survival probabilities from this
-Weibull distribution.  \code{Weibull2} is useful in creating functions
-to pass as the first argument to \code{Quantile2}.
+  The \code{Lognorm2} and \code{Gompertz2} functions are similar to
+  \code{Weibull2} except that they produce survival functions for the
+  log-normal and Gompertz distributions.
 
-The \code{Lognorm2} and \code{Gompertz2} functions are similar to
-\code{Weibull2} except that they produce survival functions for the
-log-normal and Gompertz distributions.
-
-When \code{cox=TRUE} is specified to \code{spower}, the analyst may wish
-to extract the two margins of error using \code{spower}'s \code{print}
-method (see example below) and take the maximum of the two.
+  When \code{cox=TRUE} is specified to \code{spower}, the analyst may wish
+  to extract the two margins of error by using the \code{print} method
+  for \code{spower} objects (see example below) and take the maximum of
+  the two.
 }
 \usage{
 spower(rcontrol, rinterv, rcens, nc, ni, 
@@ -70,7 +74,7 @@ Quantile2(scontrol, hratio,
 \method{print}{Quantile2}(x, \dots)
 
 \method{plot}{Quantile2}(x, 
-     what=c('survival','hazard','both','drop','hratio','all'),
+     what=c("survival", "hazard", "both", "drop", "hratio", "all"),
      dropsep=FALSE, lty=1:4, col=1, xlim, ylim=NULL,
      label.curves=NULL, \dots)
 
@@ -79,180 +83,199 @@ logrank(S, group)
 Gompertz2(times, surv)
 Lognorm2(times, surv)
 Weibull2(times, surv)
-
-
 }
 \arguments{
-\item{rcontrol}{
-a function of \code{n} which returns \code{n} random uncensored failure times for
-the control group.  \code{spower} assumes that non-compliance (dropin) has
-been taken into account by this function.
+  \item{rcontrol}{
+    a function of \var{n} which returns \var{n} random uncensored
+    failure times for the control group.  \code{spower} assumes that
+    non-compliance (dropin) has been taken into account by this
+    function.
+  }
+  \item{rinterv}{
+    similar to \code{rcontrol} but for the intervention group
+  }
+  \item{rcens}{
+    a function of \var{n} which returns \var{n} random censoring times.
+    It is assumed that both treatment groups have the same censoring
+    distribution.
+  }
+  \item{nc}{
+    number of subjects in the control group
+  }
+  \item{ni}{
+    number in the intervention group
+  }
+  \item{scontrol}{
+    a function of a time vector which returns the survival probabilities
+    for the control group at those times assuming that all patients are
+    compliant.
+  }
+  \item{hratio}{
+    a function of time which specifies the intervention:control hazard
+    ratio (treatment effect)
+  }
+  \item{x}{
+    an object of class \dQuote{Quantile2} created by \code{Quantile2},
+    or of class \dQuote{spower} created by \code{spower}
+  }
+  \item{conf.int}{
+    confidence level for determining fold-change margins of error in
+    estimating the hazard ratio
+  }
+  \item{S}{
+    a \code{Surv} object or other two-column matrix for right-censored
+    survival times 
+  }
+  \item{group}{
+    group indicators have length equal to the number of rows in \code{S}
+    argument.
+  }
+  \item{times}{
+    a vector of two times
+  }
+  \item{surv}{
+    a vector of two survival probabilities
+  }
+  \item{test}{
+    any function of a \code{Surv} object and a grouping variable which
+    computes a chi-square for a two-sample censored data test.  The
+    default is \code{logrank}.
+  }
+  \item{cox}{
+    If true \code{TRUE} the two margins of error are available by using
+    the \code{print} method for \code{spower} objects (see example
+    below) and taking the maximum of the two.
+  }
+  \item{nsim}{
+    number of simulations to perform (default=500)
+  }
+  \item{alpha}{
+    type I error (default=.05)
+  }
+  \item{pr}{
+    If \code{FALSE} prevents \code{spower} from printing progress notes for
+    simulations. 
+    If \code{FALSE} prevents \code{Quantile2} from printing \code{tmax}
+    when it calculates \code{tmax}.
+  }
+  \item{dropin}{
+    a function of time specifying the probability that a control subject
+    actually is treated with the new intervention at the corresponding
+    time
+  }
+  \item{dropout}{
+    a function of time specifying the probability of an intervention
+    subject dropping out to control conditions.  As a function of time,
+    \code{dropout} specifies the probability that a patient is treated
+    with the control therapy at time \var{t}.  \code{dropin} and
+    \code{dropout} form mixing proportions for control and intervention
+    hazard functions.
+  }
+  \item{m}{
+    number of time points used for approximating functions (default is
+    7500)
+  }
+  \item{tmax}{
+    maximum time point to use in the grid of \code{m} times.  Default is
+    the time such that \code{scontrol(time)} is \code{qtmax}.
+  }
+  \item{qtmax}{
+    survival probability corresponding to the last time point used for
+    approximating survival and hazard functions.  Default is 0.001.  For
+    \code{qtmax} of the time for which a simulated time is needed which
+    corresponds to a survival probability of less than \code{qtmax}, the
+    simulated value will be \code{tmax}.
+  }
+  \item{mplot}{
+    number of points used for approximating functions for use in
+    plotting (default is 200 equally spaced points)
+  }
+  \item{\dots}{
+    optional arguments passed to the \code{scontrol} function when it's
+    evaluated by \code{Quantile2}.  Unused for \code{print.spower}.
+  }
+  \item{what}{
+    a single character constant (may be abbreviated) specifying which
+    functions to plot.  The default is \samp{"both"} meaning both
+    survival and hazard functions.  Specify \code{what="drop"} to just
+    plot the dropin and dropout functions, \code{what="hratio"} to plot
+    the hazard ratio functions, or \samp{"all"} to make 4 separate plots
+    showing all functions (6 plots if \code{dropsep=TRUE}).
+  }
+  \item{dropsep}{
+    If \code{TRUE} makes \code{plot.Quantile2} separate pure and
+    contaminated functions onto separate plots
+  }
+  \item{lty}{
+    vector of line types
+  }
+  \item{col}{
+    vector of colors
+  }
+  \item{xlim}{
+    optional x-axis limits
+  }
+  \item{ylim}{
+    optional y-axis limits
+  }
+  \item{label.curves}{
+    optional list which is passed as the \code{opts} argument to
+    \code{\link{labcurve}}.
+  }
 }
-\item{rinterv}{
-similar to \code{rcontrol} but for the intervention group
-}
-\item{rcens}{
-a function of \code{n} which returns \code{n} random censoring times.  It is
-assumed that both treatment groups have the same censoring distribution.
-}
-\item{nc}{
-number of subjects in the control group
-}
-\item{ni}{
-number in the intervention group
-}
-\item{scontrol}{
-a function of a time vector which returns the survival probabilities
-for the control group at those times assuming that all patients are compliant
-}
-\item{hratio}{
-a function of time which specifies the intervention:control hazard
-ratio (treatment effect)
-}
-\item{x}{
-an object of class \code{"Quantile2"} created by \code{Quantile2}, or of
-class \code{"spower"} created by \code{spower}
-}
-\item{conf.int}{confidence level for determining fold-change margins of
-  error in estimating the hazard ratio}
-\item{S}{
-a \code{Surv} object or other two-column matrix for right-censored survival
-times
-}
-\item{group}{
-group indicators have length equal to the number of rows in \code{S}.
-}
-\item{times}{
-a vector of two times
-}
-\item{surv}{
-a vector of two survival probabilities
-}
-\item{test}{
-any function of a \code{Surv} object and a grouping variable which computes
-a chi-square for a two-sample censored data test.  The default is \code{logrank}.
-}
-\item{cox}{see above}
-\item{nsim}{
-number of simulations to perform (default=500)
-}
-\item{alpha}{
-type I error (default=.05)
-}
-\item{pr}{
-set to \code{FALSE} to cause \code{spower} to suppress progress notes for
-simulations.
-Set to \code{FALSE} to prevent \code{Quantile2} from printing \code{tmax} when it
-calculates \code{tmax}.
-}
-\item{dropin}{
-a function of time specifying the probability that a control subject
-actually is treated with the new intervention at the corresponding time
-}
-\item{dropout}{
-a function of time specifying the probability of an intervention
-subject dropping out to control conditions.  As a function of time,
-\code{dropout} specifies the probability that a patient is treated with
-the control therapy at time t.  \code{dropin} and \code{dropout} form
-mixing proportions for control and intervention hazard functions.
-}
-\item{m}{
-number of time points used for approximating functions (default is 7500)
-}
-\item{tmax}{
-maximum time point to use in the grid of \code{m} times.  Default is the
-time such that \code{scontrol(time)} is \code{qtmax}.
-}
-\item{qtmax}{
-survival probability corresponding to the last time point used for
-approximating survival and hazard functions.  Default is \code{.001}.  For
-\code{qtmax} of the time for which a simulated time is needed which
-corresponds to a survival probability of less than \code{qtmax}, the
-simulated value will be \code{tmax}.
-}
-\item{mplot}{
-number of points used for approximating functions for use in plotting
-(default is 200 equally spaced points)
-}
-\item{\dots}{
-optional arguments passed to the \code{scontrol} function when it's
-evaluated by \code{Quantile2}.  Unused for \code{print.spower}.
-}
-\item{what}{
-a single character constant (may be abbreviated) specifying which
-functions to plot.  The default is \code{"both"} meaning both survival and
-hazard functions.  Specify \code{what="drop"} to just plot the dropin and
-dropout functions, \code{what="hratio"} to plot the hazard ratio functions,
-or \code{"all"} to make 4 separate plots showing all functions (6 plots if
-\code{dropsep=TRUE}).
-}
-\item{dropsep}{
-set \code{dropsep=TRUE} to make \code{plot.Quantile2} separate pure and
-contaminated functions onto separate plots
-}
-\item{lty}{
-vector of line types
-}
-\item{col}{
-vector of colors
-}
-\item{xlim}{
-optional x-axis limits
-}
-\item{ylim}{
-optional y-axis limits
-}
-\item{label.curves}{
-optional list which is passed as the \code{opts} argument to \code{labcurve}.
-}}
 \value{
-\code{spower} returns the power estimate (fraction of simulated chi-squares
-greater than the alpha-critical value).  If \code{cox=TRUE},
-\code{spower} returns an object of class \code{"spower"} containing the
-power and various other quantities.  \code{Quantile2} returns an S
-function of class \code{"Quantile2"} with attributes that drive the \code{plot} method.  The major
-attribute is a list containing several lists.  Each of these
-sub-lists contains a \code{Time} vector along with one of the following:
-survival probabilities for either treatment group and with or without
-contamination caused by non-compliance, hazard rates in a similar way,
-intervention:control hazard ratio function with and without
-contamination, and dropin and dropout functions.  \code{logrank} returns a
-single chi-square statistic, and \code{Weibull2}, \code{Lognorm2} and \code{Gompertz2}
-return an S function with
-three arguments, only the first of which (the vector of \code{times}) is
-intended to be specified by the user.
+  \code{spower} returns the power estimate (fraction of simulated
+  chi-squares greater than the alpha-critical value).  If
+  \code{cox=TRUE}, \code{spower} returns an object of class
+  \dQuote{spower} containing the power and various other quantities.
+
+  \code{Quantile2} returns an \R function of class \dQuote{Quantile2}
+  with attributes that drive the \code{plot} method.  The major
+  attribute is a list containing several lists.  Each of these sub-lists
+  contains a \code{Time} vector along with one of the following:
+  survival probabilities for either treatment group and with or without
+  contamination caused by non-compliance, hazard rates in a similar way,
+  intervention:control hazard ratio function with and without
+  contamination, and dropin and dropout functions.
+
+  \code{logrank} returns a single chi-square statistic.
+
+  \code{Weibull2}, \code{Lognorm2} and \code{Gompertz2} return an \R
+  function with three arguments, only the first of which (the vector of
+  \code{times}) is intended to be specified by the user.
 }
 \section{Side Effects}{
-\code{spower} prints the interation number every 10 iterations if \code{pr=TRUE}.
+  \code{spower} prints the interation number every 10 iterations if
+  \code{pr=TRUE}.
 }
 \author{
-Frank Harrell
-\cr
-Department of Biostatistics
-\cr
-Vanderbilt University School of Medicine
-\cr
-\email{f.harrell@vanderbilt.edu}
+  Frank Harrell
+  \cr
+  Department of Biostatistics
+  \cr
+  Vanderbilt University School of Medicine
+  \cr
+  \email{f.harrell@vanderbilt.edu}
 }
 \references{
-Lakatos E (1988): Sample sizes based on the log-rank statistic in complex
-clinical trials.  Biometrics 44:229--241 (Correction 44:923).
+  Lakatos E (1988): Sample sizes based on the log-rank statistic in complex
+  clinical trials.  Biometrics 44:229--241 (Correction 44:923).
 
-Cuzick J, Edwards R, Segnan N (1997): Adjusting for non-compliance and 
-contamination in randomized clinical trials. Stat in Med 16:1017--1029.
+  Cuzick J, Edwards R, Segnan N (1997): Adjusting for non-compliance and 
+  contamination in randomized clinical trials. Stat in Med 16:1017--1029.
 
-Cook, T (2003): Methods for mid-course corrections in clinical trials
-with survival outcomes.  Stat in Med 22:3431--3447.
+  Cook, T (2003): Methods for mid-course corrections in clinical trials
+  with survival outcomes.  Stat in Med 22:3431--3447.
 
-Barthel FMS, Babiker A et al (2006): Evaluation of sample size and power
-for multi-arm survival trials allowing for non-uniform accrual,
-non-proportional hazards, loss to follow-up and cross-over.  Stat in Med
-25:2521--2542.
+  Barthel FMS, Babiker A et al (2006): Evaluation of sample size and power
+  for multi-arm survival trials allowing for non-uniform accrual,
+  non-proportional hazards, loss to follow-up and cross-over.  Stat in Med
+  25:2521--2542.
 }
 \seealso{
-\code{\link{cpower}}, \code{\link{ciapower}}, \code{\link{bpower}},
-\code{\link[Design]{cph}}, \code{\link[survival]{coxph}},
-\code{\link{labcurve}}
+  \code{\link{cpower}}, \code{\link{ciapower}}, \code{\link{bpower}},
+  \code{\link[rms]{cph}}, \code{\link[survival]{coxph}},
+  \code{\link{labcurve}}
 }
 \examples{
 # Simulate a simple 2-arm clinical trial with exponential survival so
@@ -348,8 +371,8 @@ spower(rcontrol, rinterv, rcens, nc=350, ni=350,
 par(mfrow=c(1,1))
 
 # Compose a censoring time generator function such that at 1 year
-# 5% of subjects are accrued, at 3 years 70% are accured, and at 10
-# years 100% are accrued.  The trial proceeds two years past the last
+# 5\% of subjects are accrued, at 3 years 70\% are accured, and at 10
+# years 100\% are accrued.  The trial proceeds two years past the last
 # accrual for a total of 12 years of follow-up for the first subject.
 # Use linear interporation between these 3 points
 

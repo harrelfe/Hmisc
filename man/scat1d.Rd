@@ -7,83 +7,79 @@
 \alias{datadensity.data.frame}
 \alias{histSpike}
 \title{
-One-Dimensional Scatter Diagram, Spike Histogram, or Density
+  One-Dimensional Scatter Diagram, Spike Histogram, or Density
 }
 \description{
-\code{scat1d} adds tick marks (bar codes. rug plot) on any of the four
-sides of an existing plot, corresponding with non-missing values of a
-vector \code{x}.  This is used to show the data density.  Can also place
-the tick marks along a curve by specifying y-coordinates to go along
-with the \code{x} values. 
-
-
-If any two values of \code{x} are within \code{eps*w} of each other, where \code{eps}
-defaults to .001 and \code{w} is the span of the intended axis, values of
-\code{x} are jittered by adding a value uniformly distributed in
-\code{[-jitfrac*w, jitfrac*w]}, where \code{jitfrac} defaults to .008.
-Specifying \code{preserve=TRUE} invokes \code{jitter2} with a different logic of
-jittering. Allows plotting random sub-segments to handle very large
-\code{x} vectors (see \code{tfrac}).
-
-
-\code{jitter2} is a generic method for jittering, which does not add
-random noise. It retains unique values and ranks, and randomly
-spreads duplicate values at equidistant positions within limits of
-enclosing values. \code{jitter2} is especially useful for numeric
-variables with discrete values, like rating scales. Missing values
-are allowed and are returned. Currently implemented methods are
-\code{jitter2.default} for vectors and \code{jitter2.data.frame} which returns
-a data.frame with each numeric column jittered.
-
-
-\code{datadensity} is a generic method used to show data densities in more
-complex situations.  In the Design library there is a \code{datadensity}
-method for use with \code{plot.Design}.  Here, another \code{datadensity} method
-is defined for data frames.  Depending on the \code{which} argument, some
-or all of the variables in a data frame will be displayed, with
-\code{scat1d} used to display continuous variables and, by default, bars
-used to display frequencies of categorical, character, or discrete
-numeric variables.  For such variables, when the total length of value
-labels exceeds 200, only the first few characters from each level are used.
-By default, \code{datadensity.data.frame} will construct
-one axis (i.e., one strip) per variable in the data frame.  Variable
-names appear to the left of the axes, and the number of missing values
-(if greater than zero) appear to the right of the axes.  An optional
-\code{group} variable can be used for stratification, where the different
-strata are depicted using different colors.  If the \code{q} vector is
-specified, the desired quantiles (over all \code{group}s) are displayed
-with solid triangles below each axis.
-
-
-When the sample size exceeds 2000 (this value may be modified using
-the \code{nhistSpike} argument, \code{datadensity} calls \code{histSpike} instead of
-\code{scat1d} to show the data density for numeric variables.  This results
-in a histogram-like display that makes the resulting graphics file
-much smaller.  In this case, \code{datadensity} uses the \code{minf} argument
-(see below) so that very infrequent data values will not be lost on
-the variable's axis, although this will slightly distort the histogram.
-
-
-\code{histSpike} is another method for showing a high-resolution data
-distribution that is particularly good for very large datasets (say
-\code{n} > 1000).  By
-default, \code{histSpike} bins the continuous \code{x} variable into 100
-equal-width bins and then computes the frequency counts within bins
-(if \code{n} does not exceed 10, no binning is done).
-If \code{add=FALSE} (the default), the function displays either proportions or
-frequencies as in a vertical histogram.  Instead of bars, spikes are
-used to depict the frequencies.  If \code{add=FALSE}, the function assumes you
-are adding small density displays that are intended to take up a small
-amount of space in the margins of the overall plot.  The \code{frac}
-argument is used as with \code{scat1d} to determine the relative length of
-the whole plot that is used to represent the maximum frequency.  No
-jittering is done by \code{histSpike}.
-
-
-\code{histSpike} can also graph a kernel density estimate for \code{x}, or add a
-small density curve to any of 4 sides of an existing plot.  When \code{y}
-or \code{curve} is specified, the density or spikes are drawn with respect
-to the curve rather than the x-axis.
+  \code{scat1d} adds tick marks (bar codes. rug plot) on any of the four
+  sides of an existing plot, corresponding with non-missing values of a
+  vector \code{x}.  This is used to show the data density.  Can also
+  place the tick marks along a curve by specifying y-coordinates to go
+  along with the \code{x} values.
+  
+  If any two values of \code{x} are within \eqn{\code{eps}*\var{w}} of
+  each other, where \code{eps} defaults to .001 and \var{w} is the span
+  of the intended axis, values of \code{x} are jittered by adding a
+  value uniformly distributed in \eqn{[-\code{jitfrac}*\var{w},
+  \code{jitfrac}*\var{w}]}, where \code{jitfrac} defaults to
+  .008. Specifying \code{preserve=TRUE} invokes \code{jitter2} with a
+  different logic of jittering. Allows plotting random sub-segments to
+  handle very large \code{x} vectors (see\code{tfrac}).
+  
+  \code{jitter2} is a generic method for jittering, which does not add
+  random noise. It retains unique values and ranks, and randomly spreads
+  duplicate values at equidistant positions within limits of enclosing
+  values. \code{jitter2} is especially useful for numeric variables with
+  discrete values, like rating scales. Missing values are allowed and
+  are returned. Currently implemented methods are \code{jitter2.default}
+  for vectors and \code{jitter2.data.frame} which returns a data.frame
+  with each numeric column jittered.
+  
+  \code{datadensity} is a generic method used to show data densities in
+  more complex situations.  Here, another \code{datadensity} method is
+  defined for data frames. Depending on the \code{which} argument, some
+  or all of the variables in a data frame will be displayed, with
+  \code{scat1d} used to display continuous variables and, by default,
+  bars used to display frequencies of categorical, character, or
+  discrete numeric variables.  For such variables, when the total length
+  of value labels exceeds 200, only the first few characters from each
+  level are used. By default, \code{datadensity.data.frame} will
+  construct one axis (i.e., one strip) per variable in the data frame.
+  Variable names appear to the left of the axes, and the number of
+  missing values (if greater than zero) appear to the right of the axes.
+  An optional \code{group} variable can be used for stratification,
+  where the different strata are depicted using different colors.  If
+  the \code{q} vector is specified, the desired quantiles (over all
+  \code{group}s) are displayed with solid triangles below each axis.
+  
+  When the sample size exceeds 2000 (this value may be modified using
+  the \code{nhistSpike} argument, \code{datadensity} calls
+  \code{histSpike} instead of \code{scat1d} to show the data density for
+  numeric variables.  This results in a histogram-like display that
+  makes the resulting graphics file much smaller.  In this case,
+  \code{datadensity} uses the \code{minf} argument (see below) so that
+  very infrequent data values will not be lost on the variable's axis,
+  although this will slightly distortthe histogram.
+  
+  \code{histSpike} is another method for showing a high-resolution data
+  distribution that is particularly good for very large datasets (say
+  \eqn{\code{n} > 1000}).  By default, \code{histSpike} bins the
+  continuous \code{x} variable into 100 equal-width bins and then
+  computes the frequency counts within bins (if \code{n} does not exceed
+  10, no binning is done). If \code{add=FALSE} (the default), the
+  function displays either proportions or frequencies as in a vertical
+  histogram.  Instead of bars, spikes are used to depict the
+  frequencies.  If \code{add=FALSE}, the function assumes you are adding
+  small density displays that are intended to take up a small amount of
+  space in the margins of the overall plot.  The \code{frac} argument is
+  used as with \code{scat1d} to determine the relative length of the
+  whole plot that is used to represent the maximum frequency.  No
+  jittering is done by \code{histSpike}.
+  
+  \code{histSpike} can also graph a kernel density estimate for
+  \code{x}, or add a small density curve to any of 4 sides of an
+  existing plot.  When \code{y} or \code{curve} is specified, the
+  density or spikes are drawn with respect to the curve rather than the
+  x-axis.
 }
 \usage{
 scat1d(x, side=3, frac=0.02, jitfrac=0.008, tfrac,
@@ -94,13 +90,14 @@ scat1d(x, side=3, frac=0.02, jitfrac=0.008, tfrac,
        preserve=FALSE, fill=1/3, limit=TRUE, nhistSpike=2000, nint=100,
        type=c('proportion','count','density'), grid=FALSE, \dots)
 
-jitter2(x, ...)
+jitter2(x, \dots)
 
-\method{jitter2}{default}(x, fill=1/3, limit=TRUE, eps=0, presorted=FALSE, ...)
+\method{jitter2}{default}(x, fill=1/3, limit=TRUE, eps=0,
+        presorted=FALSE, \dots)
 
-\method{jitter2}{data.frame}(x, ...)
+\method{jitter2}{data.frame}(x, \dots)
 
-datadensity(object, ...)
+datadensity(object, \dots)
 
 \method{datadensity}{data.frame}(object, group,
             which=c("all","continuous","categorical"),
@@ -125,255 +122,270 @@ histSpike(x, side=1, nint=100, frac=.05, minf=NULL, mult.width=1,
           grid=FALSE, ...)
 }
 \arguments{
-\item{x}{
-a vector of numeric data, or a data frame (for \code{jitter2})
-}
-\item{object}{
-a data frame or list (even with unequal number of observations per
-variable, as long as \code{group} is not specified)
-}
-\item{side}{
-axis side to use (1=bottom (default for \code{histSpike}), 2=left, 
-3=top (default for \code{scat1d}), 4=right)
-}
-\item{frac}{
-fraction of smaller of vertical and horizontal axes for tick mark lengths.
-Can be negative to move tick marks outside of plot.  For \code{histSpike},
-this is the relative length to be used for the largest frequency.
-When \code{scat1d} calls \code{histSpike}, it multiplies its \code{frac} argument by 2.5.
-}
-\item{jitfrac}{
-fraction of axis for jittering.  If <=0, no jittering is done. If
-\code{preserve=TRUE}, the amount of jittering is independent of jitfrac.
-}
-\item{tfrac}{
-fraction of tick mark to actually draw.  If \code{tfrac<1},
-will draw a random fraction \code{tfrac} of the line segment at each point.
-This is useful for very large samples or ones with some very dense points.
-The default value is 1 if the number of non-missing observations \code{n}
-is less than 125, and \code{max(.1, 125/n)} otherwise.
-}
-\item{eps}{
-fraction of axis for determining overlapping points in \code{x}. For
-\code{preserve=TRUE} the default is 0 and original unique values are
-retained, bigger values of eps tends to bias observations from dense
-to sparse regions, but ranks are still preserved.
-}
-\item{lwd}{
-line width for tick marks, passed to \code{segments}
-}
-\item{col}{
-color for tick marks, passed to \code{segments}
-}
-\item{y}{
-specify a vector the same length as \code{x} to draw tick marks along
-a curve instead of by one of the axes.  The \code{y} values are often
-predicted values from a model.  The \code{side} argument is ignored
-when \code{y} is given.  If the curve is already represented as a table
-look-up, you may specify it using the \code{curve} argument instead.  \code{y}
-may be a scalar to use a constant vertical placement.
-}
-\item{curve}{
-a list containing elements \code{x} and \code{y} for which linear interpolation
-is used to derive \code{y} values corresponding to values of \code{x}.  This
-results in tick marks being drawn along the curve.  For \code{histSpike},
-interpolated \code{y} values are derived for bin midpoints.
-}
-\item{bottom.align}{
-set to \code{TRUE} to have the bottoms of tick marks (for \code{side=1} or
-\code{side=3}) aligned at the y-coordinate.  The default behavior is to
-center the tick marks.  For \code{datadensity.data.frame}, \code{bottom.align}
-defaults to \code{TRUE} if \code{nint>1}.  In other words, if you are only labeling
-the first and last axis tick mark, the \code{scat1d} tick marks are
-centered on the variable's axis.
-}
-\item{preserve}{
-set to \code{TRUE} to invoke \code{jitter2}
-}
-\item{fill}{
-maximum fraction of the axis filled by jittered values. If \code{d} are
-duplicated values between a lower value \code{l} and upper value \code{u}, then
-\code{d} will be spread within \code{+/- fill*min(u-d,d-l)/2}.
-}
-\item{limit}{
-specifies a limit for maximum shift in jittered values. Duplicate
-values will be spread within \code{+/- fill*min(limit,min(u-d,d-l)/2)}. The
-default \code{TRUE} restricts jittering to the smallest min(u-d,d-l)/2 observed and
-results in equal amount of jittering for all d. Setting to \code{FALSE}
-allows for locally different amount of jittering, using maximum
-space available.
-}
-\item{nhistSpike}{
-If the number of observations exceeds or equals \code{nhistSpike}, \code{scat1d}
-will automatically call \code{histSpike} to draw the data density, to
-prevent the graphics file from being too large.
-}
-\item{type}{
-used by or passed to \code{histSpike}.  Set to \code{"count"} to display
-frequency counts rather than relative frequencies, or \code{"density"} to
-display a kernel density estimate computed using the \code{density} function.
-}
-\item{grid}{
-  set to \code{TRUE} if the \R \code{grid} package is in effect for the
-  current plot
-}
-\item{nint}{
-number of intervals to divide each continuous variable's axis for
-\code{datadensity}. 
-For \code{histSpike}, is the number of equal-width intervals for which to
-bin \code{x}, and if instead \code{nint} is a character string (e.g.,
-\code{nint="all"}), the frequency tabulation is done with no binning.  In
-other words, frequencies for all unique values of \code{x} are derived and
-plotted.
-}
-\item{...}{
-optional arguments passed to \code{scat1d} from \code{datadensity} or to
-\code{histSpike} from \code{scat1d}
-}
-\item{presorted}{
-set to \code{TRUE} to prevent from sorting for determining the order l<d<u.
-This is usefull if an existing meaningfull local order would be
-destroyed by sorting, as in sin(pi*sort(round(runif(1000,0,10),1))).
-}
-\item{group}{
-an optional stratification variable, which is converted to a \code{factor}
-vector if it is not one already
-}
-\item{which}{
-set \code{which="continuous"} to only plot continuous variables, or
-\code{which="categorical"} to only plot categorical, character, or discrete
-numeric ones.  By default, all types of variables are depicted.
-}
-\item{method.cat}{
-set \code{method.cat="freq"} to depict frequencies of categorical variables
-with digits representing the cell frequencies, with size proportional
-to the square root of the frequency.  By default, vertical bars are used.
-}
-\item{col.group}{
-colors representing the \code{group} strata.  The vector of colors is
-recycled to be the same length as the levels of \code{group}.
-}
-\item{n.unique}{
-number of unique values a numeric variable must have before it is
-considered to be a continuous variable
-}
-\item{show.na}{
-set to \code{FALSE} to suppress drawing the number of \code{NA}s to the right of
-each axis
-}
-\item{naxes}{
-number of axes to draw on each page before starting a new plot.  You
-can set \code{naxes} larger than the number of variables in the data frame
-if you want to compress the plot vertically.
-}
-\item{q}{
-a vector of quantiles to display.  By default, quantiles are not shown.
-}
-\item{cex.axis}{
-character size for draw labels for axis tick marks
-}
-\item{cex.var}{
-character size for variable names and frequence of \code{NA}s
-}
-\item{lmgp}{
-spacing between numeric axis labels and axis (see \code{par} for \code{mgp})
-}
-\item{tck}{
-see \code{tck} under \code{par}
-}
-\item{ranges}{
-a list containing ranges for some or all of the numeric variables.  If
-\code{ranges} is not given or if a certain variable is not found in the
-list, the empirical range, modified by \code{pretty}, is used.  Example:
-\code{ranges=list(age=c(10,100), pressure=c(50,150))}.
-}
-\item{labels}{
-a vector of labels to use in labeling the axes for
-\code{datadensity.data.frame}.  Default is to use the names of the
-variables in the input data frame.  Note: margin widths computed for
-setting aside names of variables use the names, and not these labels.
-}
-\item{minf}{
-For \code{histSpike}, if \code{minf} is specified low bin frequencies are set to
-a minimum value of \code{minf} times the maximum bin frequency, so that
-rare data points will remain visible.  A good choice of \code{minf} is
-0.075.  \code{datadensity.data.frame} passes \code{minf=0.075} to \code{scat1d} to
-pass to \code{histSpike}.  Note that specifying \code{minf} will cause the shape
-of the histogram to be distorted somewhat.
-}
-\item{mult.width}{
-multiplier for the smoothing window width computed by \code{histSpike} when
-\code{type="density"}
-}
-\item{xlim}{
-a 2-vector specifying the outer limits of \code{x} for binning (and
-plotting, if \code{add=FALSE} and \code{nint} is a number)
-}
-\item{ylim}{
-\code{y}-axis range for plotting (if \code{add=FALSE})
-}
-\item{xlab}{
-\code{x}-axis label (\code{add=FALSE}); default is name of input argument \code{x}
-}
-\item{ylab}{
-\code{y}-axis label (\code{add=FALSE})
-}
-\item{add}{
-set to \code{TRUE} to add the spike-histogram to an existing plot, to show
-marginal data densities
-}
+  \item{x}{
+    a vector of numeric data, or a data frame (for \code{jitter2})
+  }
+  \item{object}{
+    a data frame or list (even with unequal number of observations per
+    variable, as long as \code{group} is notspecified)
+  }
+  \item{side}{
+    axis side to use (1=bottom (default for \code{histSpike}), 2=left,
+    3=top (default for \code{scat1d}), 4=right)
+  }
+  \item{frac}{
+    fraction of smaller of vertical and horizontal axes for tick mark
+    lengths. Can be negative to move tick marks outside of plot. For
+    \code{histSpike}, this is the relative length to be used for the
+    largest frequency. When \code{scat1d} calls \code{histSpike}, it
+    multiplies its \code{frac} argument by 2.5.
+  }
+  \item{jitfrac}{
+    fraction of axis for jittering.  If
+    \eqn{\code{jitfrac} \le 0}{\code{jitfrac} <= 0}, no
+    jittering is done. If \code{preserve=TRUE}, the amount of
+    jittering is independent of jitfrac.
+  }
+  \item{tfrac}{
+    Fraction of tick mark to actually draw.  If \eqn{\code{tfrac}<1},
+    will draw a random fraction \code{tfrac}  of the line segment at
+    each point. This is useful for very large samples or ones with some
+    very dense points. The default value is 1 if the number of
+    non-missing observations \code{n}  is less than 125, and
+    \eqn{\max{(.1, 125/\var{n})}} otherwise.
+  }
+  \item{eps}{
+    fraction of axis for determining overlapping points in \code{x}. For
+    \code{preserve=TRUE} the default is 0 and original unique values are
+    retained, bigger values of eps tends to bias observations from dense
+    to sparse regions, but ranks are still preserved.
+  }
+  \item{lwd}{
+    line width for tick marks, passed to \code{segments}
+  }
+  \item{col}{
+    color for tick marks, passed to \code{segments}
+  }
+  \item{y}{
+    specify a vector the same length as \code{x} to draw tick marks
+    along a curve instead of by one of the axes.  The \code{y} values
+    are often predicted values from a model.  The \code{side} argument
+    is ignored when \code{y} is given.  If the curve is already
+    represented as a table look-up, you may specify it using the
+    \code{curve} argument instead.  \code{y} may be a scalar to use a
+    constant verticalplacement.
+  }
+  \item{curve}{
+    a list containing elements \code{x} and \code{y} for which linear
+    interpolation is used to derive \code{y} values corresponding to
+    values of \code{x}.  This results in tick marks being drawn along
+    the curve.  For \code{histSpike}, interpolated \code{y} values are
+    derived for binmidpoints.
+  }
+  \item{bottom.align}{
+    set to \code{TRUE} to have the bottoms of tick marks (for
+    \code{side=1} or \code{side=3}) aligned at the y-coordinate.  The
+    default behavior is to center the tick marks.  For
+    \code{datadensity.data.frame}, \code{bottom.align} defaults to
+    \code{TRUE} if \code{nint>1}.  In other words, if you are only
+    labeling the first and last axis tick mark, the \code{scat1d} tick
+    marks are centered on the variable's axis.
+  }
+  \item{preserve}{
+    set to \code{TRUE} to invoke \code{jitter2}
+  }
+  \item{fill}{
+    maximum fraction of the axis filled by jittered values. If \code{d}
+    are duplicated values between a lower value \var{l} and upper value
+    \var{u}, then \var{d} will be spread within
+    \eqn{\pm \code{fill}*\min{(\var{u}-\var{d},\var{d}-\var{l})}/2}{
+      +/- \code{fill}*min(\var{u}-\var{d},\var{d}-\var{l})/2}.
+  }
+  \item{limit}{
+    specifies a limit for maximum shift in jittered values. Duplicate
+    values will be spread within
+    \eqn{\pm\code{fill}*\min{(\var{u}-\var{d},\var{d}-\var{l})}/2}{
+      +/- \code{fill}*min(\var{u}-\var{d},\var{d}-\var{l})/2}. The
+    default \code{TRUE} restricts jittering to the smallest
+    \eqn{\min{(\var{u}-\var{d},\var{d}-\var{l})}/2} observed and results
+    in equal amount of jittering for all \var{d}. Setting to
+    \code{FALSE} allows for locally different amount of jittering, using
+    maximum space available.
+  }
+  \item{nhistSpike}{
+    If the number of observations exceeds or equals \code{nhistSpike},
+    \code{scat1d} will automatically call \code{histSpike} to draw the
+    data density, to prevent the graphics file from being too large.
+  }
+  \item{type}{
+    used by or passed to \code{histSpike}.  Set to \code{"count"} to
+    display frequency counts rather than relative frequencies, or
+    \code{"density"} to display a kernel density estimate computed using
+    the \code{density} function.
+  }
+  \item{grid}{
+    set to \code{TRUE} if the \R \code{grid} package is in effect for
+    the current plot
+  }
+  \item{nint}{
+    number of intervals to divide each continuous variable's axis for
+    \code{datadensity}. For \code{histSpike}, is the number of
+    equal-width intervals for which to bin \code{x}, and if instead
+    \code{nint} is a character string (e.g.,\code{nint="all"}), the
+    frequency tabulation is done with no binning.  In other words,
+    frequencies for all unique values of \code{x} are derived and
+    plotted.
+  }
+  \item{\dots}{
+    optional arguments passed to \code{scat1d} from \code{datadensity}
+    or to \code{histSpike} from \code{scat1d}
+  }
+  \item{presorted}{
+    set to \code{TRUE} to prevent from sorting for determining the order
+    \eqn{\var{l}<\var{d}<\var{u}}. This is usefull if an existing
+    meaningfull local order would be destroyed by sorting, as in
+    \eqn{\sin{(\pi*\code{sort}(\code{round}(\code{runif}(1000,0,10),1)))}}.
+  }
+  \item{group}{
+    an optional stratification variable, which is converted to a
+    \code{factor} vector if it is not one already
+  }
+  \item{which}{
+    set \code{which="continuous"} to only plot continuous variables, or
+    \code{which="categorical"} to only plot categorical, character, or
+    discrete numeric ones.  By default, all types of variables are
+    depicted.
+  }
+  \item{method.cat}{
+    set \code{method.cat="freq"} to depict frequencies of categorical
+    variables with digits representing the cell frequencies, with size
+    proportional to the square root of the frequency.  By default,
+    vertical bars are used.
+  }
+  \item{col.group}{
+    colors representing the \code{group} strata.  The vector of colors
+    is recycled to be the same length as the levels of \code{group}.
+  }
+  \item{n.unique}{
+    number of unique values a numeric variable must have before it is
+    considered to be a continuous variable
+  }
+  \item{show.na}{
+    set to \code{FALSE} to suppress drawing the number of \code{NA}s to
+    the right of each axis
+  }
+  \item{naxes}{
+    number of axes to draw on each page before starting a new plot.  You
+    can set \code{naxes} larger than the number of variables in the data
+    frame if you want to compress the plot vertically.
+  }
+  \item{q}{
+    a vector of quantiles to display.  By default, quantiles are not
+    shown.
+  }
+  \item{cex.axis}{
+    character size for draw labels for axis tick marks
+  }
+  \item{cex.var}{
+    character size for variable names and frequence of \code{NA}s
+  }
+  \item{lmgp}{
+    spacing between numeric axis labels and axis (see \code{par} for
+    \code{mgp})
+  }
+  \item{tck}{
+    see \code{tck} under \code{\link{par}}
+  }
+  \item{ranges}{
+    a list containing ranges for some or all of the numeric variables.
+    If \code{ranges} is not given or if a certain variable is not found
+    in the list, the empirical range, modified by \code{pretty}, is
+    used.  Example:
+    \code{ranges=list(age=c(10,100), pressure=c(50,150))}.
+  }
+  \item{labels}{
+    a vector of labels to use in labeling the axes for
+    \code{datadensity.data.frame}.  Default is to use the names of the
+    variable in the input data frame.  Note: margin widths computed for
+    setting aside names of variables use the names, and not these
+    labels.
+  }
+  \item{minf}{
+    For \code{histSpike}, if \code{minf} is specified low bin
+    frequencies are set to a minimum value of \code{minf} times the
+    maximum bin frequency, so that rare data points will remain visible.
+    A good choice of \code{minf} is 0.075.
+    \code{datadensity.data.frame} passes \code{minf=0.075} to
+    \code{scat1d} to pass to \code{histSpike}.  Note that specifying
+    \code{minf} will cause the shape of the histogram to be distorted
+    somewhat.
+  }
+  \item{mult.width}{
+    multiplier for the smoothing window width computed by
+    \code{histSpike} when \code{type="density"}
+  }
+  \item{xlim}{
+    a 2-vector specifying the outer limits of \code{x} for binning (and
+    plotting, if \code{add=FALSE} and \code{nint} is a number)
+  }
+  \item{ylim}{
+    y-axis range for plotting (if \code{add=FALSE})
+  }
+  \item{xlab}{
+    x-axis label (\code{add=FALSE}); default is name of input argument
+    \code{x}
+  }
+  \item{ylab}{
+    y-axis label (\code{add=FALSE})
+  }
+  \item{add}{
+    set to \code{TRUE} to add the spike-histogram to an existing plot,
+    to show marginal data densities
+  }
 }
 \value{
-\code{histSpike} returns the actual range of \code{x} used in its binning
+  \code{histSpike} returns the actual range of \code{x} used in its binning
 }
 \section{Side Effects}{
-\code{scat1d} adds line segments to plot.  \code{datadensity.data.frame} draws a
-complete plot.  \code{histSpike} draws a complete plot or adds to an
-existing plot.
+  \code{scat1d} adds line segments to plot.
+  \code{datadensity.data.frame} draws a complete plot.  \code{histSpike}
+  draws a complete plot or adds to an existing plot.
 }
 \details{
-For \code{scat1d} the length of line segments used is \code{frac*min(par()$pin)
-/ par()$uin[opp]} data units, where \code{opp} is the index of the opposite
-axis and \code{frac} defaults to .02.  Assumes that \code{plot} has already been
-called.  Current \code{par("usr")} is used to determine the range of data
-for the axis of the current plot.  This range is used in jittering and
-in constructing line segments.
+  For \code{scat1d} the length of line segments used is
+  \code{frac*min(par()$pin)/par()$uin[\var{opp}]} data units, where
+  \var{opp} is the index of the opposite axis and \code{frac} defaults
+  to .02.  Assumes that \code{plot} has already been called.  Current
+  \code{par("usr")} is used to determine the range of data for the axis
+  of the current plot.  This range is used in jittering and in
+  constructing line segments.
 }
 \author{
-Frank Harrell
-\cr
-Department of Biostatistics
-\cr
-Vanderbilt University
-\cr
-Charlottesville VA, USA
-\cr
+Frank Harrell\cr
+Department of Biostatistics\cr
+Vanderbilt University\cr
+Nashville TN, USA\cr
 \email{f.harrell@vanderbilt.edu}
 
 
-Martin Maechler (improved \code{scat1d})
-\cr
-Seminar fuer Statistik
-\cr
-ETH Zurich SWITZERLAND
-\cr
+Martin Maechler (improved \code{scat1d})\cr
+Seminar fuer Statistik\cr
+ETH Zurich SWITZERLAND\cr
 \email{maechler@stat.math.ethz.ch}
 
 
-Jens Oehlschlaegel-Akiyoshi (wrote \code{jitter2})
-\cr
-Center for Psychotherapy Research
-\cr
-Christian-Belser-Strasse 79a
-\cr
-D-70597 Stuttgart Germany
-\cr
+Jens Oehlschlaegel-Akiyoshi (wrote \code{jitter2})\cr
+Center for Psychotherapy Research\cr
+Christian-Belser-Strasse 79a\cr
+D-70597 Stuttgart Germany\cr
 \email{oehl@psyres-stuttgart.de}
 }
 \seealso{
-\code{\link{segments}}, \code{\link{jitter}}, \code{\link{rug}}, \code{\link{plsmo}}, \code{\link{stripplot}}, 
-\code{\link{hist.data.frame}},\code{\link{Ecdf}},
-\code{\link{hist}}, \code{\link[lattice]{histogram}}, \code{\link{table}}, \code{\link{density}}
+  \code{\link{segments}}, \code{\link{jitter}}, \code{\link{rug}},
+  \code{\link{plsmo}}, \code{\link{stripplot}},
+  \code{\link{hist.data.frame}},\code{\link{Ecdf}}, \code{\link{hist}},
+  \code{\link[lattice]{histogram}}, \code{\link{table}},
+  \code{\link{density}}
 }
 \examples{
 plot(x <- rnorm(50), y <- 3*x + rnorm(50)/2 )

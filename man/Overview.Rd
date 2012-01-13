@@ -2,32 +2,25 @@
 \alias{HmiscOverview}
 \alias{Hmisc.Overview}
 \title{
-	Overview of Hmisc Library
+  Overview of Hmisc Library
 }
 \description{
-The Hmisc library contains many functions
-useful for data analysis, high-level
-graphics, utility operations, functions for
-computing sample size and power, translating
-SAS datasets into S, imputing missing
-values, advanced table making, variable
-clustering, character string manipulation,
-conversion of S objects to LaTeX code,
-recoding variables, and bootstrap repeated
-measures analysis.  Most of these functions
-were written by F Harrell, but a few were
-collected from statlib and from s-news;
-other authors are indicated below.  This
-collection of functions includes all of 
-Harrell's submissions to statlib other than 
-the functions in the Design and display 
-libraries.  A few of the functions do not 
-have "Help" documentation.
-
-To make Hmisc load silently, issue \code{options(Hverbose=FALSE)} before
-\code{library(Hmisc)}.
+  The Hmisc library contains many functions useful for data analysis,
+  high-level graphics, utility operations, functions for computing
+  sample size and power, translating SAS datasets into \R, imputing
+  missing values, advanced table making, variable clustering, character
+  string manipulation, conversion of \R objects to LaTeX code, recoding
+  variables, and bootstrap repeated measures analysis.  Most of these
+  functions were written by F Harrell, but a few were collected from
+  statlib and from s-news; other authors are indicated below.  This
+  collection of functions includes all of  Harrell's submissions to
+  statlib other than  the functions in the \pkg{rms} and display
+  libraries.  A few of the functions do not  have \dQuote{Help}
+  documentation.
+  
+  To make \pkg{Hmisc} load silently, issue
+  \code{options(Hverbose=FALSE)} before \code{library(Hmisc)}.
 }
-
 \section{Functions}{
 \tabular{ll}{
 \bold{Function Name} \tab  \bold{Purpose} \cr
@@ -76,7 +69,7 @@ cut2            \tab Like cut with better endpoint label construction and allows
 datadensity     \tab Snapshot graph of distributions of all variables in\cr
                 \tab     a data frame.  For continuous variables uses scat1d.\cr
 dataRep         \tab Quantify representation of new observations in a database\cr
-ddmmmyy         \tab SAS "date7" output format for a chron object\cr
+ddmmmyy         \tab SAS \dQuote{date7} output format for a chron object\cr
 deff            \tab Kish design effect and intra-cluster correlation\cr
 describe        \tab Function to describe different classes of objects.\cr
                 \tab     Invoke by saying describe(object). It calls one of the\cr
@@ -93,7 +86,7 @@ Dotplot         \tab Enhancement of Trellis dotplot allowing for matrix\cr
 drawPlot        \tab Simple mouse-driven drawing program, including a function\cr
                 \tab     for fitting Bezier curves\cr
 Ecdf            \tab Empirical cumulative distribution function plot\cr
-eip             \tab Edit an object "in-place" (may be dangerous!), e.g.\cr
+eip             \tab Edit an object \dQuote{in-place} (may be dangerous!), e.g.\cr
                 \tab     eip(sqrt) will replace the builtin sqrt function\cr
 errbar          \tab Plot with error bars (Charles Geyer, U. Chi., mod FEH)\cr
 event.chart     \tab Plot general event charts (Jack Lee, \email{jjlee@mdanderson.org}, \cr
@@ -101,7 +94,7 @@ event.chart     \tab Plot general event charts (Jack Lee, \email{jjlee@mdanderso
 event.history	\tab Event history chart with time-dependent cov. status\cr
                 \tab     (Joel Dubin, \email{jdubin@uwaterloo.ca})\cr
 find.matches    \tab Find matches (with tolerances) between columns of 2 matrices\cr
-first.word      \tab Find the first word in an S expression (R Heiberger)\cr
+first.word      \tab Find the first word in an \R expression (R Heiberger)\cr
 fit.mult.impute \tab Fit most regression models over multiple transcan imputations,\cr
                 \tab     compute imputation-adjusted variances and avg. betas\cr
 format.df       \tab Format a matrix or data frame with much user control\cr
@@ -129,9 +122,9 @@ james.stein     \tab James-Stein shrinkage estimates of cell means from raw data
 labcurve        \tab Optimally label a set of curves that have been drawn on\cr
                 \tab     an existing plot, on the basis of gaps between curves.\cr
                 \tab     Also position legends automatically at emptiest rectangle.\cr
-label           \tab Set or fetch a label for an S-object\cr
+label           \tab Set or fetch a label for an \R-object\cr
 Lag             \tab Lag a vector, padding on the left with NA or ''\cr
-latex           \tab Convert an S object to LaTeX (R Heiberger & FE Harrell)\cr
+latex           \tab Convert an \R object to LaTeX (R Heiberger & FE Harrell)\cr
 ldBands         \tab Lan-DeMets bands for group sequential tests\cr
 list.tree       \tab Pretty-print the structure of any data object\cr
                 \tab     (Alan Zaslavsky, \email{zaslavsk@hcp.med.harvard.edu})\cr
@@ -145,7 +138,7 @@ mgp.axis        \tab Version of axis() that uses appropriate mgp from \cr
                 \tab     mgp.axis.labels and gets around bug in axis(2, ...)\cr
                 \tab     that causes it to assume las=1\cr
 mgp.axis.labels
-                \tab Used by survplot and plot in Design library (and other\cr
+                \tab Used by survplot and plot in \pkg{rms} library (and other\cr
                 \tab     functions in the future) so that different spacing\cr
                 \tab     between tick marks and axis tick mark labels may be\cr
                 \tab     specified for x- and y-axes.  ps.slide, win.slide,\cr
@@ -158,7 +151,7 @@ mgp.axis.labels
                 \tab     to get 3 mgp values (first 3 types) or 2 mgp.axis.labels.\cr
 minor.tick      \tab Add minor tick marks to an existing plot\cr
 mtitle          \tab Add outer titles and subtitles to a multiple plot layout\cr
-%nin%           \tab Opposite of %in%\cr
+\%nin\%           \tab Opposite of \%in\%\cr
 nomiss          \tab Return a matrix after excluding any row with an NA\cr
 panel.bpplot    \tab Panel function for trellis bwplot - box-percentile plots\cr
 panel.plsmo     \tab Panel function for trellis xyplot - uses plsmo\cr
@@ -170,7 +163,7 @@ popower         \tab Power and sample size calculations for ordinal responses\cr
                 \tab     (two treatments, proportional odds model)\cr
 prn             \tab prn(expression) does print(expression) but titles the\cr
                 \tab     output with 'expression'.  Do prn(expression,txt) to add\cr
-                \tab     a heading ('txt') before the 'expression' title\cr
+                \tab     a heading (\sQuote{txt}) before the \sQuote{expression} title\cr
 p.sunflowers    \tab Sunflower plots (Andreas Ruckstuhl, Werner Stahel,\cr
                 \tab     Martin Maechler, Tim Hesterberg)\cr
 ps.slide        \tab Set up postcript() using nice defaults for different types\cr
@@ -209,7 +202,7 @@ scat1d          \tab Add 1-dimensional scatterplot to an axis of an existing plo
 score.binary    \tab Construct a score from a series of binary variables or\cr
                 \tab     expressions\cr
 sedit           \tab A set of character handling functions written entirely\cr
-                \tab     in S.  sedit() does much of what the UNIX sed\cr
+                \tab     in \R.  sedit() does much of what the UNIX sed\cr
                 \tab     program does.  Other functions included are\cr
                 \tab     substring.location, substring<-, replace.string.wild,\cr
                 \tab     and functions to check if a string is numeric or\cr
@@ -315,14 +308,15 @@ reference it using for example:\cr
  Harrell FE (2004): Hmisc S function library.
   Programs available from \url{http://biostat.mc.vanderbilt.edu/s/Hmisc}.\cr
   Be sure to reference S-Plus or \R itself and other libraries used.
-  }
+}
 
 
-\section{Acknowledgements}{This work was supported by grants
+\section{Acknowledgements}{
+  This work was supported by grants
   from the Agency for Health Care Policy and Research
   (US Public Health Service) and the Robert Wood
-  Johnson Foundation.}
-
+  Johnson Foundation.
+}
 \author{
 Frank E Harrell Jr\cr
 Professor of Biostatistics\cr

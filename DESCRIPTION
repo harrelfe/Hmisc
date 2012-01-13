@@ -8,7 +8,7 @@ Maintainer: Charles Dupont <charles.dupont@vanderbilt.edu>
 Depends: R (>= 2.4.0), methods, survival
 Imports: lattice, cluster, survival
 Suggests: lattice, grid, nnet, foreign, chron, acepack,
-  TeachingDemos, rms, cluster, mice, subselect
+  TeachingDemos, rms, cluster, mice, subselect, tree
 Description: The Hmisc library contains many functions useful for data
 	analysis, high-level graphics, utility operations, functions for
 	computing sample size and power, importing datasets,

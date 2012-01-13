@@ -1,76 +1,89 @@
 \name{data.frame.create.modify.check}
 \alias{data.frame.create.modify.check}
 \title{
-Tips for Creating, Modifying, and Checking Data Frames
+  Tips for Creating, Modifying, and Checking Data Frames
 }
 \description{
-This help file contains a template for importing data to create an
-S data frame, correcting some problems resulting from the import
-and making the data frame be stored more efficiently, modifying the
-data frame (including better annotating it and changing the names of
-some of its variables), and checking and inspecting the data frame for
-reasonableness of the values of its variables and to describe patterns
-of missing data.  Various built-in functions and functions in the
-Hmisc library are used.  At the end some methods for creating data
-frames "from scratch" within S are presented.
+  This help file contains a template for importing data to create an R
+  data frame, correcting some problems resulting from the import and
+  making the data frame be stored more efficiently, modifying the data
+  frame (including better annotating it and changing the names of some
+  of its variables), and checking and inspecting the data frame for
+  reasonableness of the values of its variables and to describe patterns
+  of missing data.  Various built-in functions and functions in the
+  Hmisc library are used.  At the end some methods for creating data
+  frames \dQuote{from scratch} within \R are presented.
+  
 
+  The examples below attempt to clarify the separation of operations
+  that are done on a data frame as a whole, operations that are done on
+  a small subset of its variables without attaching the whole data
+  frame, and operations that are done on many variables after attaching
+  the data frame in search position one.  It also tries to clarify that
+  for analyzing several separate variables using \R commands that do not
+  support a \code{data} argument, it is helpful to attach the data frame
+  in a search position later than position one.
 
-The examples below attempt to clarify the separation of operations
-that are done on a data frame as a whole, operations that are done on
-a small subset of its variables without attaching the whole data
-frame, and operations that are done on many variables after attaching
-the data frame in search position one.  It also tries to clarify that
-for analyzing several separate variables using S commands that do
-not support a \code{data=} argument, it is helpful to attach the data frame
-in a search position later than position one.
-
-
-It is often useful to create, modify, and process datasets in the
-following order.
-\cr
-- Import external data into a data frame (if the raw data do not
-contain column names, provide these during the import if possible)
-\cr
-- Make global changes to a data frame (e.g., changing variable names)
-\cr
-- Change attributes or values of variables within a data frame
-\cr
-- Do analyses involving the whole data frame (without attaching it)
-\cr
-  (Data frame still in .Data)
-\cr
-- Do analyses of individual variables (after attaching the data frame
-in search position two or later)
+  It is often useful to create, modify, and process datasets in the
+  following order.
+  \enumerate{
+    \item{
+      Import external data into a data frame (if the raw data do not
+      contain column names, provide these during the import if possible)
+    }
+    \item{
+      Make global changes to a data frame (e.g., changing variable
+      names)
+    }
+    \item{
+      Change attributes or values of variables within a data frame
+    }
+    \item{
+      Do analyses involving the whole data frame (without attaching it)\cr
+      (Data frame still in .Data)
+    }
+    \item{
+      Do analyses of individual variables (after attaching the data
+      frame in search position two or later)
+    }
+  }
 }
 \details{
-The examples below use the \code{FEV} dataset from Rosner B (1995):
-\emph{Fundamentals of Biostatistics, 4th Edition.  }
-New York: Duxbury Press.
-Almost any dataset would do.  The jcetable data are taken from
-Galobardes, et al. (1998), 
-\emph{J Clin Epi}
-51:875-881.
-
-
-Presently, giving a variable the \code{"units"} attribute (using the Hmisc
-\code{units} function) only benefits the Hmisc \code{describe} function and the Design
-library's version of the \code{Surv} function.  Variables labels defined
-with the Hmisc \code{label} function are used by \code{describe},
-\code{summary.formula},  and many of the plotting functions in Hmisc and Design.
+  The examples below use the \code{FEV} dataset from
+  \cite{Rosner 1995}. Almost any dataset would do.  The jcetable data
+  are taken from \cite{Galobardes, etal.}
+  
+  Presently, giving a variable the \code{"units"} attribute (using the
+  \pkg{Hmisc} \code{\link{units}} function) only benefits the
+  \pkg{Hmisc} \code{\link{describe}} function and the \pkg{rms}
+  library's version of the \code{link[rms]{Surv}} function.  Variables
+  labels defined with the Hmisc \code{\link{label}} function are used by
+  \code{\link{describe}}, \code{\link{summary.formula}},  and many of
+  the plotting functions in \pkg{Hmisc} and \pkg{rms}.
 }
 \references{
-Alzola CF, Harrell FE (2001):
-\emph{An Introduction to S and the Hmisc and Design Libraries.}
-Chapters 3 and 4,
-\url{http://biostat.mc.vanderbilt.edu/twiki/pub/Main/RS/sintro.pdf}.
+  Alzola CF, Harrell FE (2001):
+  \emph{An Introduction to S and the Hmisc and Design Libraries.}
+  Chapters 3 and 4,
+  \url{http://biostat.mc.vanderbilt.edu/twiki/pub/Main/RS/sintro.pdf}.
+
+  Galobardes, et al. (1998), \emph{J Clin Epi} 51:875-881.
+
+  Rosner B (1995): \emph{Fundamentals of Biostatistics, 4th Edition.  }
+  New York: Duxbury Press.
 }
 \seealso{
-\code{\link{scan}}, \code{\link{read.table}}, \code{\link{cleanup.import}}, \code{\link{sas.get}}, \code{\link{data.frame}},
-\code{\link{attach}}, \code{\link{detach}},
-\code{\link{describe}}, \code{\link{datadensity}}, \code{\link{plot.data.frame}}, \code{\link{hist.data.frame}},
-\code{\link{naclus}}, \code{\link{factor}}, \code{\link{label}}, \code{\link{units}}, \code{\link{names}}, \code{\link{expand.grid}},
-\code{\link{summary.formula}}, \code{\link{summary.data.frame}}, \code{\link{casefold}}, \code{\link{edit}}, \code{\link{page}},
-\code{\link{plot.data.frame}}, \code{\link{Cs}}, \code{\link{combine.levels}}, \code{\link{upData}}
+  \code{\link{scan}}, \code{\link{read.table}},
+  \code{\link{cleanup.import}}, \code{\link{sas.get}},
+  \code{\link{data.frame}}, \code{\link{attach}}, \code{\link{detach}},
+  \code{\link{describe}}, \code{\link{datadensity}},
+  \code{\link{plot.data.frame}}, \code{\link{hist.data.frame}},
+  \code{\link{naclus}}, \code{\link{factor}}, \code{\link{label}},
+  \code{\link{units}}, \code{\link{names}}, \code{\link{expand.grid}},
+  \code{\link{summary.formula}}, \code{\link{summary.data.frame}},
+  \code{\link{casefold}}, \code{\link{edit}}, \code{\link{page}},
+  \code{\link{plot.data.frame}}, \code{\link{Cs}},
+  \code{\link{combine.levels}},\code{\link{upData}}
 }
 \examples{
 \dontrun{

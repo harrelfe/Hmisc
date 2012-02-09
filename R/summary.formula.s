@@ -2658,22 +2658,25 @@ smean.sdl <- function(x, mult=2, na.rm=TRUE)
 
 #S-Plus gives a parse error for R's .Internal()
 #Might try not using an else to see if S still parses
-smean.cl.boot <- if(.R.) {
-  eval(parse(text=paste(c('function(x, conf.int=.95, B=1000, na.rm=TRUE, reps=FALSE) {',
-                          'if(na.rm) x <- x[!is.na(x)]',
-                          'n <- length(x)',
-                          'xbar <- mean(x)',
-                          'if(n < 2) return(c(Mean=xbar, Lower=NA, Upper=NA))',
-                          'z <- unlist(lapply(1:B, function(i,x,N)',
-                          'sum(x[.Internal(sample(N, N, TRUE, NULL))]),',
-                          'x=x, N=n)) / n',
-                          'quant <- quantile(z, c((1-conf.int)/2,(1+conf.int)/2))',
-                          'names(quant) <- NULL',
-                          'res <- c(Mean=xbar, Lower=quant[1], Upper=quant[2])',
-                          'if(reps) attr(res,"reps") <- z',
-                          'res}'),
-                        collapse='\n')))
+smean.cl.boot <- if(.R.) function(x, conf.int=0.95, B=1000, na.rm=TRUE, reps=FALSE) {
+  if(na.rm)
+    x <- x[!is.na(x)]
 
+  n <- length(x)
+  xbar <- mean(x)
+
+  if(n < 2L)
+    return(c(Mean=xbar, Lower=NA, Upper=NA))
+  
+  z <- unlist(lapply(seq_len(B), function(i, x, N) sum(x[sample.int(N, N, TRUE, NULL)]),
+                     x=x, N=n)) / n
+  quant <- quantile(z, c((1 - conf.int)/2, (1 + conf.int)/2))
+  names(quant) <- NULL
+  res <- c(Mean=xbar, Lower=quant[1L], Upper=quant[2L])
+  if(reps)
+    attr(res, "reps") <- z
+  
+  res
 } else function(x, conf.int=.95, B=1000, na.rm=TRUE, reps=FALSE)
 {
   if(na.rm)
@@ -2695,7 +2698,6 @@ smean.cl.boot <- if(.R.) {
 
   res
 }
-
 
 smedian.hilow <- function(x, conf.int=.95, na.rm=TRUE)
 {

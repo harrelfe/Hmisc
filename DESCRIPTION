@@ -16,6 +16,6 @@ Description: The Hmisc library contains many functions useful for data
 	character string manipulation, conversion of S objects to LaTeX code,
 	and recoding variables.  Please submit bug reports to
         'http://biostat.mc.vanderbilt.edu/trac/Hmisc'.
-License: GPL version 2 or newer
+License: GPL (>= 2)
 LazyLoad: Yes
 URL: http://biostat.mc.vanderbilt.edu/wiki/Main/Hmisc, http://biostat.mc.vanderbilt.edu/trac/Hmisc

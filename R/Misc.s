@@ -317,7 +317,7 @@ Lag <- function(x, shift=1)
   attrib <- attributes(x)
 
   if(length(attrib$label))
-    atr$label <- paste(attrib$label, 'lagged', shift, 'observations')
+    attrib$label <- paste(attrib$label, 'lagged', shift, 'observations')
 
   if(abs(shift) < xLen)
     {

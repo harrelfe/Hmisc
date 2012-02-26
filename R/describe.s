@@ -638,7 +638,7 @@ latex.describe.single <-
           low <- paste('lowest :', paste(val[1:5],collapse=' '))
           hi  <- paste('highest:', paste(val[6:10],collapse=' '))
           if(!verb) {cat('\\begin{verbatim}\n'); verb <- 1}
-          cat('\n',low,sep='')
+          cat(low,sep='')
           if(nchar(low)+nchar(hi)+2 > wide) cat('\n') else cat(', ')
           cat(hi,'\n')
         } else {

@@ -397,15 +397,13 @@ rowsumFast <- if(.R.) rowsum else function(x, group, reorder=TRUE)
   ifelse(x == na.indicator, NA, x)
 }
 
-outerText <- function(string, y, setAside=string[1], side=4, space=1,
-                      adj=0, cex=par('cex'))
-{
-  space <- substring('                    ',1,space)
-  string <- paste(space, string, sep='')
-  mtext(string, side=side, las=1, at=y, adj=adj, cex=cex)
-}
-  
-  ## Old method [dropped because does not scale upon resizing device]
+outerText <-
+  function(string, y, side=4, space, adj=1, cex=par('cex'), ...) {
+    if(missing(space)) space <- max(nchar(string))*.5
+    mtext(string, side=side, las=1, at=y, adj=adj, cex=cex, line=space)
+  }
+
+## Old method [dropped because does not scale upon resizing device]
   ## Use text() to put test strings in left or right margins
   ## Temporarily sets par(xpd=NA) if using R
   ## For adj=1 side=4, setAside is a character string used to determine

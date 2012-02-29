@@ -76,8 +76,8 @@
   corresponding to \code{NA}s removed, or it returns a matrix with rows
   with any element missing removed.
 
-  \code{outerText} uses \code{text()} to put test strings in left or
-  right margins. It temporarily sets \code{par(xpd=NA)} if using \R.
+  \code{outerText} uses \code{text()} to put text strings in left or
+  right margins.
 
   \code{sepUnitsTrans} converts character vectors containing values such
   as \code{c("3 days","3day","4month","2 years","2weeks","7")} to
@@ -141,8 +141,7 @@ km.quick(S, times, q)
 lm.fit.qr.bare(x, y, tolerance, intercept=TRUE, xpxi=FALSE)
 matxv(a, b, kint=1)
 nomiss(x)
-outerText(string, y, setAside=string[1], side=4, space=1,
-          adj=1, cex=par('cex'))
+outerText(string, y, side=4, space, adj=1, cex=par('cex'), \dots)
 sepUnitsTrans(x, conversion=c(day=1, month=365.25/12, year=365.25, week=7),
               round=FALSE, digits=0)
 strgraphwrap(x, width = 0.9 * getOption("width"),
@@ -195,8 +194,8 @@ xless(x, \dots, title)
   \item{side}{for \code{confbar} is \code{"b","l","t","r"} for bottom,
 	left, top, right.  For \code{outText} is the using integers 1-4
 	corresponding to these.}
-  \item{space}{the number of extra characters to leave to the left of
-	the string(s) (\code{adj=0}) or to the right (\code{adj=1})}
+  \item{space}{the number of margin lines at which to place the end of
+	the text in the margin}
   \item{str}{a character string vector}
   \item{string}{a character string vector}
   \item{ticks}{set to \code{TRUE} to draw lines between rectangles}

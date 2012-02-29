@@ -440,7 +440,7 @@ latex.describe <-
              first.word(expr=attr(object, 'descript')),
              'tex', sep='.'),
            append=FALSE, size='small',
-           tabular=TRUE, greek=TRUE, ...)
+           tabular=TRUE, greek=TRUE, lspace=c(0,0), ...)
 {
   at <- attributes(object)
   ct <- function(..., file, append=FALSE)
@@ -479,7 +479,8 @@ latex.describe <-
 
       latex.describe.single(z, condense=condense, vname=vnames[i],
                             file=file, append=TRUE,
-                            tabular=tabular, greek=greek)
+                            tabular=tabular, greek=greek,
+                            lspace=lspace)
       ct('\\vspace{-.5ex}\\hrule\\smallskip\n', file=file, append=TRUE)
       if(!potentiallyLong) cat('}\n', file=file, append=TRUE)
     }
@@ -506,7 +507,7 @@ latex.describe <-
                             vname=first.word(expr=at$descript),
                             condense=condense,
                             file=file, append=TRUE, size=size,
-                            tabular=tabular)
+                            tabular=tabular, lspace=lspace)
       if(!potentiallyLong) cat('}\n', file=file, append=TRUE)
       ct('\\end{spacing}\n', file=file, append=TRUE)
     }
@@ -519,7 +520,7 @@ latex.describe <-
 latex.describe.single <-
   function(object, title=NULL, condense=TRUE, vname,
            file, append=FALSE, size='small',
-           tabular=TRUE, greek=TRUE, ...)
+           tabular=TRUE, greek=TRUE, lspace=c(0,0), ...)
 {
   ct <- function(..., file, append=FALSE)
     {
@@ -600,6 +601,8 @@ latex.describe.single <-
   
   ct('\n{\\smaller', sz, '\n', sep='', file=file, append=TRUE)
   if(tabular) {
+    if(lspace[1] != 0)
+      ct('\\vspace{', -lspace[1], 'ex}\n', sep='', file=file, append=TRUE)
     ct('\\begin{tabular}{',
        paste(rep('r',length(object$counts)),collapse=''),'}\n',
        file=file, append=TRUE)
@@ -608,12 +611,15 @@ latex.describe.single <-
     ct(paste(latexTranslate(object$counts), collapse='&'), '\\end{tabular}\n',
        file=file, append=TRUE)
   }
-  
+
+  vs <- if(lspace[2] != 0) function() ct('\\vspace{', -lspace[2], 'ex}\n',
+                   sep='', file=file, append=TRUE) else function() {}
   if(file!='')
     sink(file, append=TRUE)
 
   verb <- 0
   if(!tabular) {
+    vs()
     cat('\\begin{verbatim}\n'); verb <- 1
     print(object$counts, quote=FALSE)
   }
@@ -637,7 +643,7 @@ latex.describe.single <-
         if(condense) {
           low <- paste('lowest :', paste(val[1:5],collapse=' '))
           hi  <- paste('highest:', paste(val[6:10],collapse=' '))
-          if(!verb) {cat('\\begin{verbatim}\n'); verb <- 1}
+          if(!verb) {vs(); cat('\\begin{verbatim}\n'); verb <- 1}
           cat(low,sep='')
           if(nchar(low)+nchar(hi)+2 > wide) cat('\n') else cat(', ')
           cat(hi,'\n')
@@ -648,7 +654,7 @@ latex.describe.single <-
     } else {
       lev <- dimnames(val)[[2]]
       if(condense && (mean(nchar(lev))>10 | length(lev) < 5)) {
-        if(!verb) {cat('\\begin{verbatim}\n'); verb <- 1}
+        if(!verb) {vs(); cat('\\begin{verbatim}\n'); verb <- 1}
         z <- ''; len <- 0; cat('\n')
         for(i in 1:length(lev)) {
           w <- paste(lev[i], ' (', val[1,i], ', ', val[2,i], '%)', sep='')
@@ -667,13 +673,13 @@ latex.describe.single <-
         cat(z, '\n')
       } else {
         cat('\n');
-        if(!verb) {cat('\\begin{verbatim}\n'); verb <- 1}
+        if(!verb) {vs(); cat('\\begin{verbatim}\n'); verb <- 1}
         print(val, quote=FALSE)
       }
     }
   }
   if(length(object$mChoice)) {
-    if(!verb) {cat('\\begin{verbatim}\n'); verb <- 1}
+    if(!verb) {vs(); cat('\\begin{verbatim}\n'); verb <- 1}
     print(object$mChoice, prlabel=FALSE)
   }
   
@@ -682,7 +688,7 @@ latex.describe.single <-
   if(file!='')
     sink()
   
-  invisible()
+  invisible(verb)
 }
 
 

@@ -71,9 +71,11 @@ in weighted means, quantiles, and frequency tables.
 \method{print}{describe}(x, condense=TRUE, \dots)
 \method{latex}{describe}(object, title=NULL, condense=TRUE, 
       file=paste('describe',first.word(expr=attr(object,'descript')),'tex',sep='.'),
-      append=FALSE, size='small', tabular=TRUE, greek=TRUE, \dots)
+      append=FALSE, size='small', tabular=TRUE, greek=TRUE,
+      lspace=c(0,0), \dots)
 \method{latex}{describe.single}(object, title=NULL, condense=TRUE, vname,
-      file, append=FALSE, size='small', tabular=TRUE, greek=TRUE, \dots)
+      file, append=FALSE, size='small', tabular=TRUE, greek=TRUE,
+      lspace=c(0,0), \dots)
 }
 \arguments{
 \item{x}{
@@ -175,6 +177,12 @@ LaTeX text size (\code{"small"}, the default, or \code{"normalsize"}, \code{"tin
   labels to appropriate LaTeX symbols in math mode unless
   \code{greek=FALSE}.  \code{greek=TRUE} is not implemented in S-Plus
   versions older than 6.2.}
+\item{lspace}{extra vertical scape, in character size units (i.e., "ex"
+  as appended to the space).  When using certain font sizes, there is
+  too much space left around LaTeX verbatim environments.  This
+  two-vector specifies space to remove (i.e., the values are negated in
+  forming the \code{vspace} command) before (first element) and after
+  (second element of \code{lspace}) verbatims}
 \item{vname}{unused argument in \code{latex.describe.single}}
 }
 \value{

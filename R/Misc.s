@@ -398,8 +398,14 @@ rowsumFast <- if(.R.) rowsum else function(x, group, reorder=TRUE)
 }
 
 outerText <- function(string, y, setAside=string[1], side=4, space=1,
-                      adj=1, cex=par('cex'))
+                      adj=0, cex=par('cex'))
 {
+  space <- substring('                    ',1,space)
+  string <- paste(space, string, sep='')
+  mtext(string, side=side, las=1, at=y, adj=adj, cex=cex)
+}
+  
+  ## Old method [dropped because does not scale upon resizing device]
   ## Use text() to put test strings in left or right margins
   ## Temporarily sets par(xpd=NA) if using R
   ## For adj=1 side=4, setAside is a character string used to determine
@@ -407,6 +413,9 @@ outerText <- function(string, y, setAside=string[1], side=4, space=1,
   ## space is the number of extra characters to leave to the left of
   ## the string(s) (adj=0) or to the right (adj=1)
   
+if(FALSE) outerText <- function(string, y, setAside=string[1], side=4, space=1,
+                      adj=1, cex=par('cex'))
+{
   usr <- par('usr')
   xpd <- par('xpd')
   if(.R. && !is.na(xpd)) {
@@ -420,7 +429,6 @@ outerText <- function(string, y, setAside=string[1], side=4, space=1,
   
   if(side!=4)
     stop('only side=4 implemented')
-  space <- substring('                    ',1,space)
   if(adj==0)
     text(usr[2], y,
          if(ie)

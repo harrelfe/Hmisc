@@ -1385,16 +1385,19 @@ dotchart2 <-
           faux <- if(ieaux) auxdata else paste(' ', format(auxdata), sep='')
 
           upedge <- par('usr')[4]
-          outerText(faux, ypos[nongrp], adj=1, cex=cex.labels)
+          outerText(faux, ypos[nongrp], adj=0, cex=cex.labels)
           if(!missing(auxtitle))
             {
-              auxtitle <- paste(' ', auxtitle, sep='')
+              d <- max(nchar(faux)) - nchar(auxtitle)
+              if(d > 0) auxtitle <-
+                paste(substring('                              ',
+                                1, d), auxtitle, sep='')
               outerText(auxtitle,
                         upedge+strheight(auxtitle,cex=cex.labels)/2,
-                        adj=1, cex=cex.labels, setAside=faux[1])
+                        adj=0, cex=cex.labels) #, setAside=faux[1])
             }
         }
-
+      
       if(!add)
         {
           labng <- alllab[nongrp]

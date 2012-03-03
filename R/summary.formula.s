@@ -1241,6 +1241,7 @@ dotchart2 <-
            add=FALSE, dotfont=par('font'),
            groupfont=2, reset.par=add, xaxis=TRUE,
            width.factor=1.1, lcolor=if(.R.) 'gray' else par('col'),
+           leavepar=FALSE,
            ...)
 {
   if(.R. && !add)
@@ -1299,7 +1300,7 @@ dotchart2 <-
   tcex <- par('cex')
   tmai <- par("mai")
   oldplt <- par("plt")
-  if(reset.par)
+  if(reset.par && !leavepar)
     on.exit(par(mai = tmai, cex = tcex)) #, usr = tusr))
 
   par(cex = cex)
@@ -1315,7 +1316,7 @@ dotchart2 <-
           max(strwidth(if(ieaux) auxdata else format(auxdata),
                        units='inches',cex=cex.labels))
       
-      par(mai = c(tmai[1], mxlab, tmai2))
+      if(!leavepar) par(mai = c(tmai[1], mxlab, tmai2))
       if(!add)
         plot(alldat, seq(along = alldat), type = "n",
              ylab = '', axes = FALSE, xlab = '', ...)
@@ -1324,7 +1325,7 @@ dotchart2 <-
     }
   else
     {
-      par(mai = c(mxlab, tmai[2:4]))
+      if(!leavepar) par(mai = c(mxlab, tmai[2:4]))
       if(!add)
         plot(seq(along = alldat), alldat, type = "n",
              xlab = "", axes = FALSE, ylab = '', ...)
@@ -1385,12 +1386,11 @@ dotchart2 <-
           faux <- if(ieaux) auxdata else format(auxdata)
 
           upedge <- par('usr')[4]
-          outerText(faux, ypos[nongrp], adj=1, cex=cex.labels)
+          outerText(faux, ypos[nongrp], cex=cex.labels)
           if(!missing(auxtitle))
             outerText(auxtitle,
                       upedge+strheight(auxtitle,cex=cex.labels)/2,
-                      adj=1, cex=cex.labels,
-                      space=max(nchar(c(auxdata,auxtitle)))*.5)
+                      cex=cex.labels)
         }
       
       if(!add)

@@ -381,7 +381,7 @@ datadensity.data.frame <-
     ## las=1 for R (also 3 lines down)
 
     if(show.na && nna > 0)
-      outerText(fnumna[i], y, setAside='Missing', cex=cex.var)
+      outerText(fnumna[i], y, cex=cex.var)
     }
   
   invisible()

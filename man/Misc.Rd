@@ -76,8 +76,8 @@
   corresponding to \code{NA}s removed, or it returns a matrix with rows
   with any element missing removed.
 
-  \code{outerText} uses \code{text()} to put text strings in left or
-  right margins.
+  \code{outerText} uses \code{axis()} to put right-justified text
+  strings in the right margin.  Placement depends on \code{par('mar')[4]}
 
   \code{sepUnitsTrans} converts character vectors containing values such
   as \code{c("3 days","3day","4month","2 years","2weeks","7")} to
@@ -141,7 +141,7 @@ km.quick(S, times, q)
 lm.fit.qr.bare(x, y, tolerance, intercept=TRUE, xpxi=FALSE)
 matxv(a, b, kint=1)
 nomiss(x)
-outerText(string, y, side=4, space, adj=1, cex=par('cex'), \dots)
+outerText(string, y, cex=par('cex'), \dots)
 sepUnitsTrans(x, conversion=c(day=1, month=365.25/12, year=365.25, week=7),
               round=FALSE, digits=0)
 strgraphwrap(x, width = 0.9 * getOption("width"),
@@ -156,7 +156,6 @@ xless(x, \dots, title)
 }
 \arguments{
   \item{a}{a numeric matrix or vector}
-  \item{adj}{0 for left justification, 0.5 for centered, 1 for right}
   \item{at}{x-coordinate for vertical confidence intervals, y-coordinate
 	for horizontal}
   \item{avail}{set to \code{TRUE} to have \code{getLatestSource} return
@@ -189,13 +188,8 @@ xless(x, \dots, title)
   \item{S}{a \code{\link[survival]{Surv}} object}
   \item{se}{vector of standard errors}
   \item{sep}{a single character string specifying the delimiter}
-  \item{setAside}{for \code{adj=1 side=4}, is a character string used to
-	determine the space to set aside for all strings.}
   \item{side}{for \code{confbar} is \code{"b","l","t","r"} for bottom,
-	left, top, right.  For \code{outText} is the using integers 1-4
-	corresponding to these.}
-  \item{space}{the number of margin lines at which to place the end of
-	the text in the margin}
+	left, top, right.}
   \item{str}{a character string vector}
   \item{string}{a character string vector}
   \item{ticks}{set to \code{TRUE} to draw lines between rectangles}

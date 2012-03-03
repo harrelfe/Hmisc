@@ -15,7 +15,7 @@ dotchart2(data, labels, groups=NULL, gdata=NA, horizontal=TRUE, pch=16,
           cex.group.labels = cex.labels*1.25, sort.=TRUE, 
 	      add=FALSE, dotfont=par('font'), groupfont=2, 
 	      reset.par=add, xaxis=TRUE, width.factor=1.1,
-          lcolor=if(.R.)'gray' else par('col'), ...)
+          lcolor=if(.R.)'gray' else par('col'), leavepar=FALSE, ...)
 }
 \arguments{
   \item{data}{a numeric vector whose values are shown on the x-axis}
@@ -91,6 +91,9 @@ dotchart2(data, labels, groups=NULL, gdata=NA, horizontal=TRUE, pch=16,
   \item{lcolor}{
 	color for horizontal reference lines.  Default is \code{"gray"} for R,
 	\code{par("col")} for S-Plus.}
+  \item{leavepar}{set to \code{TRUE} to leave \code{par()} unchanged.
+	This assumes the user has allocated sufficient left and right
+	margins for a horizontal dot chart.}
   \item{...}{arguments passed to \code{plot.default}}
 }
 \section{Side Effects}{

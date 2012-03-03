@@ -398,10 +398,14 @@ rowsumFast <- if(.R.) rowsum else function(x, group, reorder=TRUE)
 }
 
 outerText <-
-  function(string, y, side=4, space, adj=1, cex=par('cex'), ...) {
-    if(missing(space)) space <- max(nchar(string))*.5
-    mtext(string, side=side, las=1, at=y, adj=adj, cex=cex, line=space)
+  function(string, y, cex=par('cex'), ...) {
+    usr <- par('usr'); plt <- par('plt')
+    pos <- usr[2] + (usr[2] - usr[1])/(plt[2] - plt[1]) * (1 - plt[2])
+    axis(2, at=y, labels=string, tick=FALSE, las=1,
+         pos=pos, cex.axis=cex, xpd=NA)
   }
+##    if(missing(space)) space <- max(nchar(string))*.5
+##    mtext(string, side=side, las=1, at=y, adj=adj, cex=cex, line=space)
 
 ## Old method [dropped because does not scale upon resizing device]
   ## Use text() to put test strings in left or right margins

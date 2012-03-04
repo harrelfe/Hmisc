@@ -404,8 +404,21 @@ outerText <-
     axis(2, at=y, labels=string, tick=FALSE, las=1,
          pos=pos, cex.axis=cex, xpd=NA)
   }
+
 ##    if(missing(space)) space <- max(nchar(string))*.5
 ##    mtext(string, side=side, las=1, at=y, adj=adj, cex=cex, line=space)
+
+
+# This method does not survive shrinking the graphics window
+# Right justifies (if adj=1) a vector of strings against the right margin
+# (side=4) or against the y-axis (side=2)
+#outerText <-
+#  function(string, y, side=4, cex=par('cex'), adj=1, ...) {
+#    if(side %nin% c(2,4)) stop('only works for side=2 or 4')
+#    x <- if(side==4) grconvertX(1, from='nfc', to='user') else
+#     par('usr')[1]
+#    text(x, y, paste(string,''), cex=cex, adj=adj, xpd=NA)
+#}    
 
 ## Old method [dropped because does not scale upon resizing device]
   ## Use text() to put test strings in left or right margins

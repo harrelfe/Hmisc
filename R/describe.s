@@ -461,7 +461,7 @@ latex.describe <-
     if(length(at$naprint))
       ct(at$naprint,'\\\\\n', file=file, append=TRUE)
     
-    ct('\\vspace{-.5ex}\\hrule\\smallskip{\\',size,'\n',
+    ct('\\hrule\\smallskip{\\',size,'\n',
        sep='', file=file, append=TRUE)
     vnames <- at$names
     i <- 0
@@ -481,7 +481,7 @@ latex.describe <-
                             file=file, append=TRUE,
                             tabular=tabular, greek=greek,
                             lspace=lspace)
-      ct('\\vspace{-.5ex}\\hrule\\smallskip\n', file=file, append=TRUE)
+      ct('\\hrule\\smallskip\n', file=file, append=TRUE)
       if(!potentiallyLong) cat('}\n', file=file, append=TRUE)
     }
     

@@ -208,6 +208,14 @@ When the response is a \code{Surv} object and the mean is used, this will
 result in the crude proportion of events being used to summarize
 the response.  The actual summary function can be designated through
 \code{options(na.fun.response = "function name")}.
+
+If you are modifying LaTex \code{parskip} or certain other parameters,
+you may need to shrink the area around \code{tabular} and
+\code{verbatim} environments produced by \code{latex.describe}.  You can
+do this using for example
+\code{\\usepackage{etoolbox}\\makeatletter\\preto{\\@verbatim}{\\topsep=-1.4pt
+	\\partopsep=0pt}\\preto{\\@tabular}{\\parskip=2pt
+	\\parsep=0pt}\\makeatother} in the LaTeX preamble.
 }
 \author{
 Frank Harrell

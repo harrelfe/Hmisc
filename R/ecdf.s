@@ -125,7 +125,7 @@ Ecdf.default <- function(x, what=c('F','1-F','f'),
     }
 
   if(nlev > 1 && (is.list(label.curves) || label.curves))
-    labcurve(curves, type='s', lty=lty, col=col, opts=label.curves)
+    labcurve(curves, type='s', lty=lty, col.=col, opts=label.curves)
 
   invisible(structure(if(nlev==1) list(x = x, y = y) else curves, 
                       N=list(n=n, m=m)))
@@ -363,7 +363,7 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
         else
           c(list(lwd=lwd, cex=cex[1]), label.curves)
 
-        labcurve(curves, lty=lty[levnum], lwd=lwd[levnum], col=col[levnum], 
+        labcurve(curves, lty=lty[levnum], lwd=lwd[levnum], col.=col[levnum], 
                  opts=lc, grid=.R., ...)
       }
     }

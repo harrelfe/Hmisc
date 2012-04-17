@@ -661,7 +661,7 @@ if(.R.)
             cex) * pr$cex
     
     if (!length(text.width))
-      text.width <- max(strwidth(legend, u = "user", cex = cex))
+      text.width <- max(strwidth(legend, units = "user", cex = cex))
     else if (!is.numeric(text.width) || text.width < 0) 
       stop("text.width must be numeric, >= 0")
     
@@ -669,7 +669,7 @@ if(.R.)
     yc <- Cex * yInch(cin[2], warn.log = FALSE, grid=grid)
     xchar <- xc
     yextra <- yc * (y.intersp - 1)
-    ymax <- max(yc, strheight(legend, u = "user", cex = cex))
+    ymax <- max(yc, strheight(legend, units = "user", cex = cex))
     ychar <- yextra + ymax
     if (trace) 
       catn("  xchar=", xchar, "; (yextra,ychar)=", c(yextra, ychar))

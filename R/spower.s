@@ -224,23 +224,23 @@ plot.Quantile2 <- function(x,
 
   if(what %in% c('survival','both','all')) {
     if(dropsep && (dropin|dropout)) {
-      labcurve(pi[1:2], pl=TRUE, lty=lty, col=col, xlim=xlim, ylim=ylim,
+      labcurve(pi[1:2], pl=TRUE, lty=lty, col.=col, xlim=xlim, ylim=ylim,
                opts=label.curves)
-      labcurve(pi[i[-(1:2)]], pl=TRUE, lty=lty, col=col, xlim=xlim, ylim=ylim,
+      labcurve(pi[i[-(1:2)]], pl=TRUE, lty=lty, col.=col, xlim=xlim, ylim=ylim,
                opts=label.curves)
     } else
-      labcurve(pi[i], pl=TRUE, lty=lty, col=col, xlim=xlim, ylim=ylim,
+      labcurve(pi[i], pl=TRUE, lty=lty, col.=col, xlim=xlim, ylim=ylim,
                opts=label.curves)
   }
 
   if(what %in% c('hazard','both','all')) {
     if(dropsep && (dropin|dropout)) {
-      labcurve(pi[5:6], pl=TRUE, lty=lty, col=col, xlim=xlim, ylim=ylim,
+      labcurve(pi[5:6], pl=TRUE, lty=lty, col.=col, xlim=xlim, ylim=ylim,
                opts=label.curves)
-      labcurve(pi[4+i[-(1:2)]], pl=TRUE, lty=lty, col=col, xlim=xlim, ylim=ylim,
-               opts=label.curves)
+      labcurve(pi[4+i[-(1:2)]], pl=TRUE, lty=lty, col.=col, xlim=xlim,
+               ylim=ylim, opts=label.curves)
     } else
-      labcurve(pi[4+i], pl=TRUE, lty=lty, col=col, xlim=xlim, ylim=ylim,
+      labcurve(pi[4+i], pl=TRUE, lty=lty, col.=col, xlim=xlim, ylim=ylim,
                opts=label.curves)
   }
   
@@ -251,7 +251,7 @@ plot.Quantile2 <- function(x,
     if(length(i)==0)
       i <- 10
 
-    labcurve(pi[i], pl=TRUE, lty=lty, col=col, xlim=xlim, ylim=ylim,
+    labcurve(pi[i], pl=TRUE, lty=lty, col.=col, xlim=xlim, ylim=ylim,
              opts=label.curves)
   }
 
@@ -259,7 +259,7 @@ plot.Quantile2 <- function(x,
     i <- c(11,
            if(dropin|dropout) 12)
 
-    labcurve(pi[i], pl=TRUE, lty=lty, col=col, xlim=xlim, ylim=ylim,
+    labcurve(pi[i], pl=TRUE, lty=lty, col.=col, xlim=xlim, ylim=ylim,
              opts=label.curves)
   }
 

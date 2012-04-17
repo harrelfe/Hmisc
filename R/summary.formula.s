@@ -54,7 +54,7 @@ summary.formula <-
   missmethod <- missing(method)   ## needed for R  9jul02
   method <- match.arg(method)
     
-  X <- match.call(expand=FALSE)
+  X <- match.call(expand.dots=FALSE)
   X$fun <- X$method <- X$na.rm <- X$na.include <- X$g <-
     X$overall <- X$continuous <- X$quant <- X$nmin <- X$test <-
       X$conTest <- X$catTest <- X$... <- NULL
@@ -883,7 +883,7 @@ plot.summary.formula.response <-
       dotchart2(z, groups=vnd, xlab=xlab, xlim=xlim,
                 auxdata=if(superposeStrata) Ns
                         else stats[,js-which[w]],
-                auxtitle='N', sort=FALSE,
+                auxtitle='N', sort.=FALSE,
                 pch=pch[if(superposeStrata)is
                         else w], 
                 dotfont=dotfont[w], 
@@ -1065,12 +1065,12 @@ plot.summary.formula.reverse <-
       zi <- z[,i]
       if(any(prtest == 'none') || i > 1)
         dotchart2(zi, groups=vnd, xlab=xlab, xlim=xlim, 
-                  sort=FALSE, pch=pch[i],
+                  sort.=FALSE, pch=pch[i],
                   dotfont=dotfont[i],
                   add=i>1, ...)
       else
         dotchart2(zi, groups=vnd, auxdata=ftstats,
-                  xlab=xlab, xlim=xlim, sort=FALSE,
+                  xlab=xlab, xlim=xlim, sort.=FALSE,
                   pch=pch[i], dotfont=dotfont[i],
                   add=i>1, ...)
     }
@@ -1171,7 +1171,7 @@ plot.summary.formula.reverse <-
           if(nw==1)
             names(stj) <- ''
 
-          dotchart2(stj, xlab=nam, xlim=xlim, sort=FALSE,
+          dotchart2(stj, xlab=nam, xlim=xlim, sort.=FALSE,
                     pch=c(91,
                           if(FALSE)183
                           else 16,

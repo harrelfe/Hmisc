@@ -95,15 +95,24 @@
         catTest = function(tab) {
           st <- if (!is.matrix(tab) || nrow(tab) < 2 | ncol(tab) < 2)
                   list(p.value = NA, statistic = NA, parameter = NA)
-                else chisq.test(tab, correct = FALSE)
+                else {
+                   rowcounts <- tab \%*\% rep(1, ncol(tab))
+                   tab <- tab[rowcounts > 0,]
+                   if(!is.matrix(tab)) 
+                     list(p.value=NA, statistic=NA, parameter=NA)
+                   else chisq.test(tab, correct=FALSE)
+                 }
+
           list(P = st$p.value, stat = st$statistic, df = st$parameter,
                testname = "Pearson", statname = "Chi-square",
                latexstat = "\\\\chi^{2}_{df}", plotmathstat = "chi[df]^2")
         },
         ordTest = function(group, x) {
+          require(rms)
+
           f <- lrm(x ~ group)$stats
-          list(P = stats["P"], stat = stats["Model L.R."],
-               df = stats["d.f."],
+          list(P = f["P"], stat = f["Model L.R."],
+               df = f["d.f."],
                testname = "Proportional odds likelihood ratio",
                statname = "Chi-square", latexstat = "\\\\chi^{2}_{df}",
                plotmathstat = "chi[df]^2")

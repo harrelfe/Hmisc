@@ -302,7 +302,7 @@ panel.xYplot <-
           }
 
         labcurve(curves, lty = lty[levnum], lwd = lwd[levnum],
-                 col = col[levnum], opts = lc, grid=TRUE, ...)
+                 col. = col[levnum], opts = lc, grid=TRUE, ...)
       }
   }
 

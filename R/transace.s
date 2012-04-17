@@ -63,7 +63,7 @@ areg.boot <- function(x, data, weights, subset, na.action=na.delete,
 
   if(!inherits(x,'formula')) stop('first argument must be a formula')
 
-  m <- match.call(expand = FALSE)
+  m <- match.call(expand.dots = FALSE)
   Terms <- terms(x, specials=c('I','monotone'))
   m$formula <- x
   m$x <- m$B <- m$method <- m$evaluation <- m$valrsq <- m$probs <- 
@@ -195,7 +195,7 @@ areg.boot <- function(x, data, weights, subset, na.action=na.delete,
   nfail <- 0
   for(b in 1:B) {
     cat(b,'\r')
-    s <- sample(n, n, rep = TRUE)
+    s <- sample(n, n, replace = TRUE)
     g <- if(method=='areg')
       areg(x[s,,drop=FALSE], y[s], xtype=xtype, ytype=ytype, nk=nk,
            na.rm=FALSE, tolerance=tolerance) else

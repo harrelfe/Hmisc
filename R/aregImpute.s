@@ -20,7 +20,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
   
   nam <- var.inner(formula)
 
-  m <- match.call(expand = FALSE)
+  m <- match.call(expand.dots = FALSE)
   Terms <- terms(formula, specials='I')
   m$formula <- formula
   m$match <- m$fweighted <- m$curtail <- m$x <- m$n.impute <- m$nk <-

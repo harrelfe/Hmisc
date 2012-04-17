@@ -83,18 +83,18 @@ symbol.freq <- function(x, y, symbol=c("thermometer","circle"),
     title(sub=paste("n=",sum(s),sep=""),adj=0)
     if(marginals) {
       axis(1, at = 1:xp1, 
-           label = c(dx, "All/2"), srt=srtx,
+           labels = c(dx, "All/2"), srt=srtx,
            adj=if(srtx>0)1
            else .5)
       
       axis(2, at = 1:yp1, 
-           label = c(dy, "All/2"),adj=1)
+           labels = c(dy, "All/2"),adj=1)
     } else { #	if(!orig.scale) {
-      axis(1, at=xp, label=dx, srt=srtx,
+      axis(1, at=xp, labels=dx, srt=srtx,
            adj=if(srtx>0)1
            else .5)
       
-      axis(2, at=yp, label=dy)
+      axis(2, at=yp, labels=dy)
     }
 
     return(invisible())
@@ -107,20 +107,20 @@ symbol.freq <- function(x, y, symbol=c("thermometer","circle"),
   if(marginals)	{
     text(xp1-width, yp1, n, adj=1, cex=.5)
     axis(1, at = 1:xp1, 
-         label = c(dx, "All/2"), srt=srtx,
+         labels = c(dx, "All/2"), srt=srtx,
          adj=if(srtx>0)1
          else .5)
     
     axis(2, at = 1:yp1, 
-         label = c(dy, "All/2"),adj=1)
+         labels = c(dy, "All/2"),adj=1)
     abline(h=yp1-.5, lty=2)
     abline(v=xp1-.5, lty=2)
   } else {
-    axis(1, at=xp, label=dx, srt=srtx,
+    axis(1, at=xp, labels=dx, srt=srtx,
          adj=if(srtx>0)1
          else .5)
     
-    axis(2, at=yp, label=dy)
+    axis(2, at=yp, labels=dy)
     cat("click left mouse button to position legend\n")
     xy <- locator(1)
     symbols(xy$x, xy$y, thermometers=cbind(width,inches*n/maxn,0), 

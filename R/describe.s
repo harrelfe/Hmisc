@@ -305,7 +305,7 @@ describe.data.frame <- function(x, descript, exclude.missing=TRUE,
 describe.formula <- function(x, descript, data, subset, na.action, 
                              digits=4, weights, ...)
 {
-  mf <- match.call(expand=FALSE)
+  mf <- match.call(expand.dots=FALSE)
   mf$formula <- x
   mf$x <- mf$descript <- mf$file <- mf$append <- mf$... <- mf$digits <- NULL
   if(missing(na.action))

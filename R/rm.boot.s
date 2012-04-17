@@ -209,7 +209,7 @@ rm.boot <- function(time, y, id=seq(along=time), subset=TRUE,
         }
         
         ## Following code taken from dmvnorm()
-        eS <- eigen(cov, sym = TRUE)
+        eS <- eigen(cov, symmetric = TRUE)
 	##  y <- y %*% (eS$vectors * rep(1/sqrt(eS$values), each = p)) 24Feb02
         y <- y %*% (eS$vectors * rep(1/sqrt(eS$values),
                                      rep(p,length(eS$values))))
@@ -229,7 +229,7 @@ rm.boot <- function(time, y, id=seq(along=time), subset=TRUE,
     if(i %% 10 ==0)
       cat(i,'')
     
-    pts <- sample(clusters, rep=TRUE)
+    pts <- sample(clusters, replace=TRUE)
 
     if(bootstrap.type=='x random') {
       obsn <- unlist(orig.obsno[pts])
@@ -251,7 +251,7 @@ rm.boot <- function(time, y, id=seq(along=time), subset=TRUE,
       if(lrr > n)
         rr <- rr[1:n]
       else if(lrr < n)
-        rr <- c(rr, sample(rr, n-lrr, rep=TRUE))
+        rr <- c(rr, sample(rr, n-lrr, replace=TRUE))
       
       yb.e <- yhat + rr
       f.b <- if(absorb.subject.effects) 

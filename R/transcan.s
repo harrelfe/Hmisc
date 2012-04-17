@@ -106,7 +106,7 @@ transcan <-
 
   if(inherits(x,"formula")) {
     formula <- x
-    y <- match.call(expand=FALSE)
+    y <- match.call(expand.dots=FALSE)
     y$x <- y$method <- y$categorical <- y$asis <- y$nk <- y$imputed <- 
       y$trantab <- y$impcat <- y$mincut <- y$pr <- y$pl <- y$allpl <- y$show.na <-
         y$iter.max <- y$eps <- y$curtail <- y$imp.con <- y$shrink <-
@@ -933,7 +933,7 @@ impute.transcan <-
           else
             {
               if(.R.)
-                assign(nam, v, env=.GlobalEnv)
+                assign(nam, v, envir=.GlobalEnv)
               else
                 {
                   if(missing(frame.out))

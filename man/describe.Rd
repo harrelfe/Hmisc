@@ -52,7 +52,7 @@ evenly spaced bins running from minimum observed value to the maximum.
 \code{latex} inserts a spike histogram displaying these frequency counts
 in the tabular material using the LaTeX picture environment.  For
 example output see
-\url{http://biostat.mc.vanderbilt.edu/twiki/pub/Main/Hmisc/counties.pdf}.
+\url{http://biostat.mc.vanderbilt.edu/wiki/pub/Main/Hmisc/counties.pdf}.
 Note that the latex method assumes you have the following styles
 installed in your latex installation: setspace and relsize.
 
@@ -72,7 +72,7 @@ in weighted means, quantiles, and frequency tables.
 \method{latex}{describe}(object, title=NULL, condense=TRUE, 
       file=paste('describe',first.word(expr=attr(object,'descript')),'tex',sep='.'),
       append=FALSE, size='small', tabular=TRUE, greek=TRUE,
-      lspace=c(0,0), \dots)
+      spacing=0.7, lspace=c(0,0), \dots)
 \method{latex}{describe.single}(object, title=NULL, condense=TRUE, vname,
       file, append=FALSE, size='small', tabular=TRUE, greek=TRUE,
       lspace=c(0,0), \dots)
@@ -177,6 +177,12 @@ LaTeX text size (\code{"small"}, the default, or \code{"normalsize"}, \code{"tin
   labels to appropriate LaTeX symbols in math mode unless
   \code{greek=FALSE}.  \code{greek=TRUE} is not implemented in S-Plus
   versions older than 6.2.}
+\item{spacing}{By default, the \code{latex} method for \code{describe} run
+  on a matrix or data frame uses the \code{setspace} LaTeX package with a
+  line spacing of 0.7 so as to no waste space.  Specify \code{spacing=0}
+  to suppress the use of the \code{setspace}'s \co{spacing} environment,
+  or specify another positive value to use this environment with a
+  different spacing.}
 \item{lspace}{extra vertical scape, in character size units (i.e., "ex"
   as appended to the space).  When using certain font sizes, there is
   too much space left around LaTeX verbatim environments.  This

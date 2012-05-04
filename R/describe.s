@@ -440,7 +440,7 @@ latex.describe <-
              first.word(expr=attr(object, 'descript')),
              'tex', sep='.'),
            append=FALSE, size='small',
-           tabular=TRUE, greek=TRUE, lspace=c(0,0), ...)
+           tabular=TRUE, greek=TRUE, spacing=0.7, lspace=c(0,0), ...)
 {
   at <- attributes(object)
   ct <- function(..., file, append=FALSE)
@@ -452,8 +452,10 @@ latex.describe <-
     
     invisible()
   }
-  
-  ct('\\begin{spacing}{0.7}\n', file=file, append=append)
+
+  spc <- if(spacing == 0) '' else
+   paste('\\begin{spacing}{', spacing, '}\n', sep='')
+  ct(spc, file=file, append=append)
   if(length(at$dimensions)) {
     ct('\\begin{center}\\textbf{', latexTranslate(at$descript), '\\\\',
        at$dimensions[2],'Variables~~~~~',at$dimensions[1],
@@ -493,7 +495,8 @@ latex.describe <-
       mv <- paste(mv, collapse=', ')
       ct(mv, file=file, append=TRUE)
     }
-    ct('}\\end{spacing}\n', file=file, append=TRUE)
+    spc <- if(spacing == 0) '}\n' else '}\\end{spacing}\n'
+    ct(spc, file=file, append=TRUE)
   }
   else
     {
@@ -509,7 +512,8 @@ latex.describe <-
                             file=file, append=TRUE, size=size,
                             tabular=tabular, lspace=lspace)
       if(!potentiallyLong) cat('}\n', file=file, append=TRUE)
-      ct('\\end{spacing}\n', file=file, append=TRUE)
+      spc <- if(spacing == 0) '\n' else '\\end{spacing}\n'
+      ct(spc, file=file, append=TRUE)
     }
 
   structure(list(file=file,  style=c('setspace','relsize')),

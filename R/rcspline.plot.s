@@ -135,15 +135,15 @@ rcspline.plot <- function(x, y, model=c("logistic","cox","ols"), xrange,
     v <- solve(cov[(2+offset):(nk+offset-1),(2+offset):(nk+offset-1)])
     linear.chi <- beta[(2+offset):(nk+offset-1)] %*% v %*%
       beta[(2+offset):(nk+offset-1)]
-    linear.df <- nk-2   #attr(v,"rank")
-    linear.p <- 1.-pchisq(linear.chi,linear.df)
-    if(nadj>0) {
-      ntot <- offset+nk-1+nadj
-      v <- solve(cov[(nk+offset):ntot,(nk+offset):ntot])
+    linear.df <- nk - 2   #attr(v,"rank")
+    linear.p <- 1. - pchisq(linear.chi, linear.df)
+    if(nadj > 0) {
+      ntot <- offset + nk - 1 + nadj
+      v <- solve(cov[(nk+offset):ntot, (nk+offset):ntot])
       adj.chi <- beta[(nk+offset):ntot] %*% v %*%
         beta[(nk+offset):ntot]
-      adj.df <- attr(v,"rank")
-      adj.p <- 1.-pchisq(adj.chi,adj.df)
+      adj.df <- ncol(v)   #attr(v,"rank")
+      adj.p <- 1. - pchisq(adj.chi, adj.df)
     } else {
       adj.chi <- 0
       adj.p <- 0

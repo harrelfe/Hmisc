@@ -28,10 +28,19 @@ latexDotchart <-
     y2 <- rep(y2, length.out=n)
     z <- character(n)
     for(i in 1:n)
-      z[i] <- sprintf('\\drawline(%g,%g)(%g,%g)',
+      z[i] <- if(x1[i]==x2[i])
+        sprintf('\\put(%g,%g){\\line(0,%g){%g}}', x1[i], y1[i],
+                1*(y2[i] >= y1[i]) - 1*(y2[i] < y1[i]), abs(y2[i]-y1[i]))
+    else if(y1[i]==y2[i])
+      sprintf('\\put(%g,%g){\\line(%g,0){%g}}', x1[i], y1[i],
+              1*(x2[i] >= x1[i]) - 1*(x2[i] < x1[i]), abs(x2[i]-x1[i]))
+    else
+        sprintf('\\drawline(%g,%g)(%g,%g)',
                       x1[i], y1[i], x2[i], y2[i])
     if(color != 'black')
-      z <- c(sprintf('\\color[%s]{0.8}', color), z, '\\color{black}')
+      z <- c(if(color=='gray') '\\color[gray]{0.8}' else
+             sprintf('\\color{%s}', color),
+             z, '\\color{black}')
     z
   }
   ## Approximate length in inches of longest char. string
@@ -54,24 +63,28 @@ latexDotchart <-
     }
   else labels <- rep(as.character(labels), length = ndata)
 
-  if(missing(groups))
-    {
-      glabels <- NULL
-      gdata <- NULL
-    } else
-  {
-    if(!sort.)
-      {
-        ##assume data sorted in groups, but re-number groups
-        ##to be as if groups given in order 1,2,3,...
-        ug <- unique(as.character(groups))
-        groups <- factor(as.character(groups), levels=ug)
-      }
-
+  if(missing(groups)) {
+    glabels <- NULL
+    gdata <- NULL
+    if(sort.) {
+      ord <- order(-data)
+      data <- data[ord]
+      labels  <- labels[ord]
+      if(!missing(auxdata)) auxdata <- auxdata[ord]
+    }
+  } else {
+    if(!sort.) {
+      ##assume data sorted in groups, but re-number groups
+      ##to be as if groups given in order 1,2,3,...
+      ug <- unique(as.character(groups))
+      groups <- factor(as.character(groups), levels=ug)
+    }
+    
     groups  <- unclass(groups)
     glabels <- levels(groups)
     gdata   <- rep(gdata, length = length(glabels))	
-    ord     <- order(groups, seq(along = groups))
+    ord     <- if(sort.) order(groups, -data) else
+                         order(groups, seq(along = groups))
     groups  <- groups[ord]
     data    <- data[ord]
     labels  <- labels[ord]
@@ -100,18 +113,21 @@ latexDotchart <-
   yt <- function(y) round((h - sum(margin[c(2,4)]))*(y - yl[1])/diff(yl) +
                           margin[2], 5)
 
+  ## \color screws up line and circle placement if first multiputlist
+  ## and put occur after \color
+  if(xaxis) {
+    z <- c(z, paste(f('\\multiputlist(%g,%g)(%g,%g){',
+                      xt(xl[1]), yt(yl[1]) - .15, diff(xt(p[1:2])), 0),
+                    paste(p, collapse=','), '}', sep=''))
+    z <- c(z, ln(xt(p), yt(yl[1]) - 0.05, xt(p), yt(yl[1])))
+    if(xlab != '')
+      z <- c(z, txt(xt(xl[1] + diff(xl)/2), .1, xlab))
+  }
+
   z <- c(z, ln(xt(xl), yt(yl[1]), xt(xl), yt(yl[2])),
             ln(xt(xl[1]), yt(yl), xt(xl[2]), yt(yl)))
  
   den <- ndata + 2 * length(glabels) + 1
-  if(xaxis) {
-    z <- c(z, ln(xt(p), yt(yl[1]) - 0.05, xt(p), yt(yl[1])))
-    z <- c(z, paste(f('\\multiputlist(%g,%g)(%g,%g){',
-                      xt(xl[1]), yt(yl[1]) - .15, diff(xt(p[1:2])), 0),
-                    paste(p, collapse=','), '}', sep=''))
-    if(xlab != '')
-      z <- c(z, txt(xt(xl[1] + diff(xl)/2), .1, xlab))
-  }
 
   delt <- ( - (yl[2] - yl[1]))/den
   ypos <- seq(yl[2], by = delt, length = ndata)
@@ -134,7 +150,7 @@ latexDotchart <-
   if(lines)
     z <- c(z, ln(xt(xl[1]), yt(ypos[nongrp]), xt(xl[2]), yt(ypos[nongrp]),
            color=lcolor))
-
+  
   for(i in seq(along = alldat))
     if(!is.na(alldat[i] + ypos[i]))
       z <- c(z, f('\\put(%g,%g){\\circle*{%g}}',

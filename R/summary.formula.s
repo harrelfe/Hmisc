@@ -1234,7 +1234,7 @@ plot.summary.formula.reverse <-
 dotchart2 <- 
   function(data, labels, groups = NULL, gdata = NA, horizontal = TRUE, 
            pch = 16, 
-           xlab = "", ylab="", auxdata, auxgdata=NULL, auxtitle,
+           xlab = "", ylab="", xlim=NULL, auxdata, auxgdata=NULL, auxtitle,
            lty = if(.R.)1 else 2,
            lines = TRUE, dotsize = .8, cex = par("cex"), 
            cex.labels = cex, cex.group.labels = cex.labels*1.25, sort.=TRUE, 
@@ -1319,7 +1319,7 @@ dotchart2 <-
       if(!leavepar) par(mai = c(tmai[1], mxlab, tmai2))
       if(!add)
         plot(alldat, seq(along = alldat), type = "n",
-             ylab = '', axes = FALSE, xlab = '', ...)
+             ylab = '', axes = FALSE, xlab = '', xlim=xlim,  ...)
       
       logax <- par("xaxt") == "l"
     }

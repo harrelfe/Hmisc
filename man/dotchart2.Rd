@@ -9,7 +9,7 @@ with several new options.
 }
 \usage{
 dotchart2(data, labels, groups=NULL, gdata=NA, horizontal=TRUE, pch=16,
-          xlab='', ylab='', auxdata, auxgdata=NULL, auxtitle,
+          xlab='', ylab='', xlim=NULL, auxdata, auxgdata=NULL, auxtitle,
           lty=if(.R.) 1 else 2, lines=TRUE, dotsize = .8,
           cex = par("cex"), cex.labels = cex,
           cex.group.labels = cex.labels*1.25, sort.=TRUE, 
@@ -33,6 +33,7 @@ dotchart2(data, labels, groups=NULL, gdata=NA, horizontal=TRUE, pch=16,
 	The default is 16.}
   \item{xlab}{x-axis title}
   \item{ylab}{y-axis title}
+  \item{xlim}{x-axis limits.  Applies only to \code{horizontal=TRUE}.}
   \item{auxdata}{
 	a vector of auxiliary data given to \code{dotchart2}, of the same length
 	as the first (\code{data}) argument.  If present, this

@@ -88,6 +88,12 @@ cat('\\documentclass{article}\n\\usepackage{epic,color}\n\\begin{document}\n', f
 cat(z, sep='\n', file=f, append=TRUE)
 cat('\\end{document}\n', file=f, append=TRUE)
 
+set.seed(135)
+maj <- factor(c(rep('North',13),rep('South',13)))
+g <- paste('Category',rep(letters[1:13],2))
+n <- sample(1:15000, 26, replace=TRUE)
+y1 <- runif(26)
+y2 <- pmax(0, y1 - runif(26, 0, .1))
 z <- latexDotchart(y1, g, groups=maj, auxdata=n, auxtitle='n', xlab='Y',
                    size.group.labels='large', ttlabels=TRUE)
 f <- '/tmp/t2.tex'

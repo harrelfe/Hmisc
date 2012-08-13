@@ -286,7 +286,7 @@ logrank <- function(S, group)
   x     <- cbind(group==1, group==2, (group==1)*event, (group==2)*event)
   if(TRUE)
     {
-      s     <- rowsumFast(x, y, FALSE)
+      s     <- rowsum(x, y, FALSE)
       nr1 <- cumsum(s[,1])
       nr2 <- cumsum(s[,2])
       d1  <- s[,3]
@@ -305,7 +305,7 @@ logrank <- function(S, group)
       for(strat in unique(strata))
         {
           j <- strata==strat
-          s <- rowsumFast(x[j,], y[j], FALSE)
+          s <- rowsum(x[j,], y[j], FALSE)
           nr1 <- cumsum(s[,1])
           nr2 <- cumsum(s[,2])
           d1  <- s[,3]

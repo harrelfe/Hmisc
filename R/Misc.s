@@ -95,11 +95,7 @@ uncbind <- function(x, prefix="", suffix="")
   nn <- dimnames(x)[[2]]
   warning("You are using uncbind.  This is a really bad idea. It will if you had any variables in the global environment named ", paste(prefix, nn, suffix, sep=""), " they are now over writen.\n\nYou have been warned.", immediate. = TRUE, )
   for(i in 1:ncol(x))
-    if(.R.) {
-      assign(paste(prefix,nn[i],suffix,sep=""), x[,i], pos=1)
-    } else {
-      assign(paste(prefix,nn[i],suffix,sep=""), x[,i], where=1)
-    }
+    assign(paste(prefix,nn[i],suffix,sep=""), x[,i], pos=1)
   invisible()
 }
 
@@ -178,26 +174,24 @@ mgp.axis <-
 {
   ## Version of axis() that uses appropriate mgp from mgp.axis.labels and
   ## gets around bug in axis(2, ...) that causes it to assume las=1
-  mfrow <- par('mfrow')          ## mfrow, tcl logic 28jan03
+  mfrow <- par('mfrow')
   nr <- mfrow[1]; nc <- mfrow[2]
   w <- list(side=side)
-  w <- c(w, list(...))   ## 21apr03
+  w <- c(w, list(...))
   if(length(at))
     w$at <- at
   if(side==1 || side==3) {
     w$mgp <- mgp/nr
-    if(.R.)
-      w$tcl <- -0.4/nr
+    w$tcl <- -0.4/nr
     if(side==1 && length(axistitle))
-      title(xlab=axistitle, mgp=mgp/min(2.25,nr))
+      title(xlab=axistitle, mgp = mgp / min(2.25, nr))
   } else {
     w$mgp <- mgp/nc
-    if(.R.)
-      w$tcl <- -0.4/nc
+    w$tcl <- -0.4/nc
     las <- par('las')
     w$srt <- 90*(las==0)
     w$adj <- if(las==0)0.5
-             else 1
+    else 1
     if(side==2 && length(axistitle))
       title(ylab=axistitle, mgp=mgp/min(2.25,nc))
   }
@@ -220,7 +214,7 @@ lm.fit.qr.bare <- function(x, y,
                            tolerance = NULL,
                            intercept=TRUE, xpxi=FALSE)
 {
-  if(!length(tolerance)) tolerance <- if(.R.)1e-7 else .Machine$single.eps
+  if(!length(tolerance)) tolerance <- 1e-7
 
   if(intercept)
     x <- cbind(1,x)
@@ -237,27 +231,12 @@ lm.fit.qr.bare <- function(x, y,
   p <- dx[2]
   p1 <- 1:p
   dy <- c(n, 1)
-  z <- if(!.R.)
-         .Fortran("dqrls",
-                  qr = x,
-                  as.integer(dx),
-                  pivot = as.integer(p1),
-                  qraux = double(p),
-                  y,
-                  as.integer(dy),
-                  coef = double(p),
-                  residuals = y,
-                  qt = qty,
-                  tol = as.double(tolerance),
-                  double(2 * p),
-                  rank = as.integer(p))
-       else
-         .Fortran("dqrls", qr = x, n = as.integer(n), p = as.integer(p),
-                  y = y, ny = as.integer(1),
-                  tol = as.double(tolerance), coef = double(p),
-                  residuals = y, effects = y, rank = integer(1),
-                  pivot = as.integer(p1),
-                  qraux = double(p), work = double(2 * p), PACKAGE = "base")
+  z <- .Fortran("dqrls", qr = x, n = as.integer(n), p = as.integer(p),
+                y = y, ny = as.integer(1),
+                tol = as.double(tolerance), coef = double(p),
+                residuals = y, effects = y, rank = integer(1),
+                pivot = as.integer(p1),
+                qraux = double(p), work = double(2 * p), PACKAGE = "base")
 
   coef <- z$coef
   if(length(dn[[2]]))
@@ -270,14 +249,7 @@ lm.fit.qr.bare <- function(x, y,
   res <- list(coefficients=coef, residuals=res, 
               rsquared=1-sse/sst, fitted.values=as.vector(y-res))
   if(xpxi) {
-    if(.R.)
-      xpxi <- chol2inv(z$qr)
-    else {
-      R <- (z$qr)[p1, , drop = FALSE]
-      R[lower.tri(R)] <- 0
-      rinv <- solve(R, diag(length(coef)))
-      xpxi <- rinv %*% t(rinv)
-    }
+    xpxi <- chol2inv(z$qr)
     res$xpxi <- xpxi
   }
   res
@@ -347,56 +319,6 @@ xySortNoDupNoNA <- function(x, y)
   list(x=x[i], y=y[i])
 }
 
-## Lifted from rowsum in 4.5
-rowsumFast <- if(.R.) rowsum else function(x, group, reorder=TRUE)
-{
-  ## assumes x is a matrix
-  ## by default, results are not in order that unique group values
-  ## encountered but by sorted group values
-  ## is fast and solves error that reorder= omitted from S+ 2000
-  
-  if(!is.numeric(x))
-    stop("x must be numeric")
-  
-  dd <- dim(x)
-  n <- dd[1]
-  if(length(group) != n)
-    stop("Incorrect length for 'group'")
-  
-  if(any(is.na(group)))
-    stop("Missing values for 'group'")
-  
-  na.indicator <- max(1, x[!is.na(x)]) * n	#larger than any possible sum
-  x[is.na(x)] <- na.indicator
-  if(!is.numeric(group))
-    group <- as.factor(group)
-  
-  storage.mode(x) <- "double"
-  rowsumFun <- if(.R.) {
-    'R_rowsum'
-  } else {
-    if(under.unix || version$major < 4 ||
-       (version$major == 4 && version$minor < 7)) {
-      "rowsum"
-    } else {
-      "S_rowsum"
-    }
-  }
-  
-  temp <- .C(rowsumFun, dd=as.integer(dd),
-             as.double(na.indicator),
-             x=x, as.double(group))
-
-  new.n <- temp$dd[1]
-  x <- temp$x[1:new.n,]
-  if(reorder) {
-    ugroup <- unique(group)
-    dimnames(x) <- list(ugroup, dimnames(x)[[2]])
-    x <- x[order(ugroup),  ]
-  }
-  ifelse(x == na.indicator, NA, x)
-}
-
 outerText <-
   function(string, y, cex=par('cex'), ...) {
     usr <- par('usr'); plt <- par('plt')
@@ -433,7 +355,7 @@ if(FALSE) outerText <- function(string, y, setAside=string[1], side=4, space=1,
 {
   usr <- par('usr')
   xpd <- par('xpd')
-  if(.R. && !is.na(xpd)) {
+  if(!is.na(xpd)) {
     on.exit(par(xpd=xpd))
     par(xpd=NA)
   }
@@ -472,41 +394,13 @@ if(FALSE) {
   }
 }
 
-if(!.R.)
-  strwidth <- function(string, units=c('user','figure','inches'),
-                       cex=pr$cex)
-{
-  ## Computes width of a character string in user units or inches
-  ## Approximates R strwidth function for S-Plus
-  units <- match.arg(units)
-  if(units=='figure') stop('units="figure" not yet implemented')
-  n <- nchar(string)
-  pr <- par()
-  usr <- pr$usr
-  cin <- pr$cin[1]
-  n * cin * cex / ifelse(units=='inches',1,pr$uin[1])
-}
-
-if(!.R.)
-  strheight <- function(string, units=c('user','figure','inches'),
-                        cex=pr$cex)
-{
-  ## Computes height of a character string in user units or inches
-  ## Approximates R strheight function for S-Plus
-  units <- match.arg(units)
-  if(units=='figure') stop('units="figure" not yet implemented')
-  pr <- par()
-  usr <- pr$usr
-  cin <- pr$cin[2]
-  cin * cex / ifelse(units=='inches',1,pr$uin[2])
-}
 
 ## Author: Patrick Connolly <P.Connolly@hortresearch.co.nz>
 ## HortResearch
 ## Mt Albert
 ## Auckland, New Zealand
 
-if(.R.) print.char.matrix <-
+print.char.matrix <-
   function (x, file = "",
             col.name.align = "cen", col.txt.align = "right", 
             cell.align = "cen", hsep = "|", vsep = "-", csep = "+",
@@ -741,7 +635,7 @@ if(.R.) print.char.matrix <-
   }
 }
 
-unPaste <- if(.R.) function(str, sep='/')
+unPaste <- function(str, sep='/')
 {
   w <- strsplit(str, sep)
   w <- matrix(unlist(w), ncol=length(str))
@@ -750,74 +644,19 @@ unPaste <- if(.R.) function(str, sep='/')
   for(j in 1:nr)
     ans[[j]] <- w[j,]
   ans
-} else function(...) unpaste(...)
+}
 
-get2rowHeads <- if(.R.) function(str)
-{
+get2rowHeads <- function(str) {
   w <- strsplit(str, '\n')
   ## strsplit returns character(0) when element=""  23may03
   list(sapply(w, function(x)if(length(x))    x[[1]] else ''),
        sapply(w, function(x)if(length(x) > 1)x[[2]] else ''))
-} else function(str)
-{
-  ## make unpaste work when field does not contain \n by adding \n at end
-  backn.loc <- regexpr('\n',str)
-  if(all(backn.loc < 0)) return(list(str, rep('',length(str))))
-  str <- ifelse(backn.loc > 0, str, paste(str,'\n',sep=''))
-  unpaste(str, '\n')
 }
 
-if(!.R.) {
-  subset <- function (x, ...) UseMethod("subset")
-  subset.default <- function (x, subset, ...) 
-    x[subset & !is.na(subset)]
-
-  subset.data.frame <- function (x, subset, select, ...) 
-  {
-    if (missing(subset)) 
-      r <- TRUE
-    else {
-      e <- substitute(subset)
-      r <- eval(e, x, if(.R.)parent.frame() else sys.parent())
-      r <- r & !is.na(r)
-    }
-    
-    if (missing(select)) 
-      vars <- TRUE
-    else {
-      nl <- as.list(1:ncol(x))
-      names(nl) <- names(x)
-      vars <- eval(substitute(select), nl,
-                   if(.R.)parent.frame()
-                   else sys.parent())
-    }
-    x[r, vars, drop = FALSE]
-  }
-  NULL
-}
 
 ## Note: can't say f[vector of names] <- list(...) to update args
 ## In R you have to put ALL arguments in list(...) so sometimes we set
 ## unneeded ones to NULL.  Ignore this assignment in S
-if(!.R.) {
-  'formals<-' <- function(f, value)
-  {
-    nv <- names(value)
-    if(any(nv %nin% names(f)))
-      stop(paste('function does not have arguments',
-                 paste(nv[nv %nin% names(f)],collapse=' '),
-                 'to update'))
-    
-    for(a in nv) {
-      v <- value[[a]]
-      if(length(v))
-        f[[a]] <- v
-    }
-    
-    f
-  }
-  NULL
-}
 
 ## Two lists of functions, one for primitives for S+ or R (either Trellis
 ## or low-level), one for R grid
@@ -834,11 +673,7 @@ ordGridFun <- function(grid)
                     },
          text     = function(...) text(...),
          segments = function(...) segments(...),
-         arrows   = if(.R.)
-                      function(..., open, size)
-                        arrows(..., length=size*.8)
-                    else
-                      function(...) arrows(...),
+         arrows   = function(..., open, size) arrows(..., length=size*.8),
          rect     = function(...) rect(...),
          polygon  = function(x, y=NULL, ..., type=c('l','s'))
          {
@@ -1003,9 +838,7 @@ yInch <- function (y = 1, warn.log=!grid, grid=FALSE)
   y * diff(pr$usr[3:4])/pr$pin[2]
 }
 
-if(.R.) {
-  na.include <- function(obj)
-  {
+  na.include <- function(obj) {
     if(inherits(obj,'data.frame'))
       for(i in seq(along=obj))
         obj[[i]] <- na.include(obj[[i]])
@@ -1015,8 +848,7 @@ if(.R.) {
     }
     obj
   }
-  NULL
-}
+
 
 if(FALSE) {
   whichClosest <- function(x, w)
@@ -1029,18 +861,10 @@ if(FALSE) {
     n <- length(x)
     br <- c(-1e30, x[-n]+diff(x)/2,1e30)
     m <- length(w)
-    if(.R.)
-      i[.C("bincode", as.double(w), m, as.double(br),
-           length(br), code = integer(m), right = TRUE, 
-           include = FALSE, NAOK = TRUE, DUP = FALSE, 
-           PACKAGE = "base")$code]
-    else
-      if(.SV4.)
-        i[.C("S_binning3", x=as.double(w), m, as.double(br),
-             length(br), 0, 0, TRUE, TRUE)$x]
-      else
-        i[.C("S_binning2", x=as.double(w), m, as.double(br),
-             length(br), 0, TRUE, TRUE)$x]
+    i[.C("bincode", as.double(w), m, as.double(br),
+         length(br), code = integer(m), right = TRUE, 
+         include = FALSE, NAOK = TRUE, DUP = FALSE, 
+         PACKAGE = "base")$code]
   }
   NULL
 }
@@ -1062,27 +886,18 @@ whichClosest <- function(x, w)
   ## w: vector of values for which to lookup closest matches in x
   ## Returns: subscripts in x corresponding to w
   ## Assumes no NAs in x or w
-  if(.R.)
-    .Fortran("wclosest",as.double(w),as.double(x),
-             length(w),length(x),
-             j=integer(length(w)),PACKAGE="Hmisc")$j
-  else
-    .Fortran("wclosest",as.double(w),as.double(x),length(w),length(x),
-             j=integer(length(w)))$j
+  .Fortran("wclosest",as.double(w),as.double(x),
+           length(w),length(x),
+           j=integer(length(w)),PACKAGE="Hmisc")$j
 }
 
 whichClosePW <- function(x, w, f=0.2) {
   lx <- length(x)
   lw <- length(w)
-  if(.R.)
-    .Fortran("wclosepw",as.double(w),as.double(x),
-             as.double(runif(lw)),as.double(f),
-             lw, lx, double(lx), j=integer(lw),
-             PACKAGE="Hmisc")$j
-  else
-    .Fortran("wclosepw",as.double(w),as.double(x),
-             as.double(runif(lw)),as.double(f),
-             lw, lx, double(lx), j=integer(lw))$j
+  .Fortran("wclosepw",as.double(w),as.double(x),
+           as.double(runif(lw)),as.double(f),
+           lw, lx, double(lx), j=integer(lw),
+           PACKAGE="Hmisc")$j
 }              
 
 if(FALSE) {
@@ -1137,11 +952,8 @@ approxExtrap <- function(x, y, xout, method='linear', n=50, rule=2,
   x <- x[d]
   y <- y[d]
   
-  w <- if(.R.)
-         approx(x, y, xout=xout, method=method, n=n,
-                rule=2, f=f, ties=ties)$y
-       else
-         approx(x, y, xout=xout, method=method, n=n, rule=2, f=f)$y
+  w <- approx(x, y, xout=xout, method=method, n=n,
+              rule=2, f=f, ties=ties)$y
   
   r <- range(x)
   d <- xout < r[1]
@@ -1239,30 +1051,6 @@ Names2names <- function(x)
   x
 }
 
-if(!existsFunction('tempdir')) {
-  tempdir <- function()
-  {
-    if(.R.) {
-      if(under.unix)
-        tmp <- sub("/[^/]*$","", tempfile())
-      else
-        tmp <- sub("\\[^\\]*$","", tempfile())
-    }
-    else {
-      if(under.unix) {
-        tmp <- getenv("S_TMPDIR")
-        if(identical(tmp, "")) {
-          warning("S_TMPDIR not set, using old Splus startup script?  Will use unsafe S_TMPDIR=/tmp.")
-          tmp <- "/tmp"
-        }
-      }
-      else
-        tmp <- "/windows/temp" 
-    }
-    tmp
-  }
-}
-
 ##xedit <- function(file, header, title, delete.file=FALSE) {
 ## In R, use e.g. options(pager=xedit); page(x,'p')
 ##  sys(paste('xedit -title "', title, '" ', file, ' &',
@@ -1303,10 +1091,7 @@ xless <-
   	sink()
   	cmd <- paste('xless -title "',title,'" -geometry "90x40" "',
                file,'" &',sep='')
-  	if(.R.)
-    	system(cmd)
-  	else
-  		sys(cmd)
+    system(cmd)
   } else page(x, method='print', title=title, ...)
 invisible()
 }
@@ -1372,29 +1157,20 @@ testDateTime <- function(x, what=c('either','both','timeVaries'))
   if(!length(cl))
     return(FALSE)
 
-  dc <- if(.R.)
-          c('Date', 'POSIXt','POSIXct','dates','times','chron')
-        else
-          c('timeDate','date','dates','times','chron')
+  dc <- c('Date', 'POSIXt','POSIXct','dates','times','chron')
   
-  dtc <- if(.R.)
-           c('POSIXt','POSIXct','chron')
-         else
-           c('timeDate','chron')
+  dtc <- c('POSIXt','POSIXct','chron')
   
   switch(what,
          either = any(cl %in% dc),
          both   = any(cl %in% dtc),
          timeVaries = {
-           if('chron' %in% cl || 'Date' %in% cl || !.R.) { 
+           if('chron' %in% cl || 'Date' %in% cl) { 
              ## chron or S+ timeDate
              y <- as.numeric(x)
              length(unique(round(y - floor(y),13))) > 1
            }
-           else if(.R.)
-             length(unique(format(x,'%H%M%S'))) > 1
-           else
-             FALSE
+           else length(unique(format(x,'%H%M%S'))) > 1
          })
 }
 
@@ -1414,41 +1190,19 @@ formatDateTime <- function(x, at, roundDay=FALSE)
              format(dates(x))
          }
          else x
-       } else if(.R.) {
+       } else {
          attributes(x) <- at
          if(roundDay && 'Date' %nin% at$class) 
            as.POSIXct(round(x, 'days'))
          else x
-       } else
-         timeDate(julian=if(roundDay)round(x)
-                         else x)
+       }
   format(w)
 }
 
-## Note that expr may contain multiple expressions in { } but you
-## cannot do assignments to objects this way
-if(!.R.)
-  evalq <- function(expr, envir, enclos)
-             eval(substitute(expr), envir)
 
-if(!.R.) {
-  download.file <- function(url, destfile, quiet=FALSE, cacheOK=TRUE,
-                            ...)
-  {
-    extra <- if (quiet) " --quiet"
-             else ""
-    if (!cacheOK)
-      extra <- paste(extra, "--cache=off")
-    sys(paste("wget", extra, url, "-O", destfile))
-    invisible()
-  }
-  NULL
-}
-
-if(.R.) {
-  getHdata <-
-    function(file, what=c('data','contents','description','all'),
-             where='http://biostat.mc.vanderbilt.edu/twiki/pub/Main/DataSets')
+getHdata <-
+  function(file, what=c('data','contents','description','all'),
+           where='http://biostat.mc.vanderbilt.edu/twiki/pub/Main/DataSets')
   {
     what <- match.arg(what)
     fn <- as.character(substitute(file))
@@ -1457,7 +1211,7 @@ if(.R.) {
     a <- unlist(strsplit(ads,'.sav|.rda'))
     if(missing(file))
       return(a)
-
+    
     wds <- paste(substitute(file),c('rda','sav'),sep='.')
     if(!any(wds %in% ads))
       stop(paste(paste(wds, collapse=','),
@@ -1490,34 +1244,6 @@ if(.R.) {
     load(tf, .GlobalEnv)
     invisible()
   }
-} else {
-  getHdata <-
-    function(file,
-             where='http://biostat.mc.vanderbilt.edu/twiki/pub/Main/DataSets')
-  {
-    tf <- tempfile()
-    download.file(paste(where,'Scontents.txt',sep='/'), tf, quiet=TRUE)
-    ads <- scan(tf,list(''))[[1]]
-    a <- sedit(ads,'.sdd','')
-    if(missing(file))
-      return(a)
-    
-    file <- as.character(substitute(file))
-    wds <- paste(file,'sdd',sep='.')
-    if(wds %nin% ads)
-      stop(paste(wds,'is not on the web site.\nAvailable datasets:\n',
-                 paste(a, collapse=' ')))
-
-    f <- paste(where,wds,sep='/')
-    tf <- tempfile()
-    download.file(f, tf, quiet=TRUE)
-    data.restore(tf)  # puts in search position 1
-    if(.SV4.)
-      assign(file, cleanup.import(get(file,where=1)), where=1)
-    unlink(tf)
-    invisible()
-  }
-}
 
 hdquantile <- function(x, probs=seq(0, 1, 0.25), se=FALSE,
                        na.rm=FALSE, names=TRUE, weights=FALSE)
@@ -1631,20 +1357,11 @@ sepUnitsTrans <- function(x,
   x
 }
 
-if(!.R.) dQuote <- function (x)
-{
-  if (length(x) == 0) 
-    return(character())
-  paste("\"", x, "\"", sep = "")
-}
-
 makeNames <- function(names, unique=FALSE, allow=NULL)
 {
   ## Runs make.names with exceptions in vector allow
   ## By default, R 1.9 make.names is overridden to convert _ to . as
   ## with S-Plus and previous versions of R.  Specify allow='_' otherwise.
-  if(!.R. & length(allow))
-    stop('does not apply for S-Plus')
   n <- make.names(names, unique)
   if(!length(allow))
     n <- gsub('_', '.', n)

@@ -1241,7 +1241,7 @@ dotchart2 <-
            add=FALSE, dotfont=par('font'),
            groupfont=2, reset.par=add, xaxis=TRUE,
            width.factor=1.1, lcolor=if(.R.) 'gray' else par('col'),
-           leavepar=FALSE,
+           leavepar=FALSE, axisat=NULL, axislabels=NULL,
            ...)
 {
   if(.R. && !add)
@@ -1346,7 +1346,7 @@ dotchart2 <-
   if(horizontal)
     {
       if(!add && xaxis)
-        mgp.axis(1, axistitle=xlab)
+        mgp.axis(1, axistitle=xlab, at=axisat, labels=axislabels)
 
       delt <- ( - (tusr[4] - tusr[3]))/den
       ypos <- seq(tusr[4], by = delt, length = ndata)
@@ -1354,7 +1354,7 @@ dotchart2 <-
   else
     {
       if(!add)
-        mgp.axis(2, axistitle=xlab)
+        mgp.axis(2, axistitle=xlab, at=axisat, labels=axislabels)
 
       delt <- (tusr[2] - tusr[1])/den
       ypos <- seq(tusr[1], by = delt, length = ndata)

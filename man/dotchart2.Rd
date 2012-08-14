@@ -15,7 +15,8 @@ dotchart2(data, labels, groups=NULL, gdata=NA, horizontal=TRUE, pch=16,
           cex.group.labels = cex.labels*1.25, sort.=TRUE, 
 	      add=FALSE, dotfont=par('font'), groupfont=2, 
 	      reset.par=add, xaxis=TRUE, width.factor=1.1,
-          lcolor=if(.R.)'gray' else par('col'), leavepar=FALSE, ...)
+          lcolor=if(.R.)'gray' else par('col'), leavepar=FALSE,
+          axisat=NULL, axislabels=NULL, ...)
 }
 \arguments{
   \item{data}{a numeric vector whose values are shown on the x-axis}
@@ -95,6 +96,10 @@ dotchart2(data, labels, groups=NULL, gdata=NA, horizontal=TRUE, pch=16,
   \item{leavepar}{set to \code{TRUE} to leave \code{par()} unchanged.
 	This assumes the user has allocated sufficient left and right
 	margins for a horizontal dot chart.}
+  \item{axisat}{a vector of tick mark locations to pass to \code{axis}.
+	Useful if transforming the data axis}
+  \item{axislabels}{a vector of strings specifying axis tick mark
+	labels.  Useful if transforming the data axis}
   \item{...}{arguments passed to \code{plot.default}}
 }
 \section{Side Effects}{
@@ -123,5 +128,8 @@ dotchart2(y1, g, groups=maj, auxdata=n, auxtitle='n', xlab='Y')
 dotchart2(y2, g, groups=maj, pch=17, add=TRUE)
 ## Compare with dotchart function (no superpositioning or auxdata allowed):
 ## dotchart(y1, g, groups=maj, xlab='Y')
+
+## To plot using a transformed scale add for example
+## axisat=sqrt(pretty(y)), axislabels=pretty(y)
 }
 \keyword{hplot}

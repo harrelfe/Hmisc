@@ -180,7 +180,7 @@ LaTeX text size (\code{"small"}, the default, or \code{"normalsize"}, \code{"tin
 \item{spacing}{By default, the \code{latex} method for \code{describe} run
   on a matrix or data frame uses the \code{setspace} LaTeX package with a
   line spacing of 0.7 so as to no waste space.  Specify \code{spacing=0}
-  to suppress the use of the \code{setspace}'s \co{spacing} environment,
+  to suppress the use of the \code{setspace}'s \code{spacing} environment,
   or specify another positive value to use this environment with a
   different spacing.}
 \item{lspace}{extra vertical scape, in character size units (i.e., "ex"

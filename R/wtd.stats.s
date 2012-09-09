@@ -196,72 +196,20 @@ wtd.rank <- function(x, weights=NULL, normwt=FALSE, na.rm=TRUE)
 }
 
 
-wtd.loess.noiter <- function(x, y, weights=rep(1,n), robust=rep(1,n), 
+wtd.loess.noiter <- function(x, y, weights=rep(1,n),
                              span=2/3, degree=1, cell=.13333, 
                              type=c('all','ordered all','evaluate'), 
-                             evaluation=100, na.rm=TRUE)
-{
+                             evaluation=100, na.rm=TRUE) {
   type <- match.arg(type)
   n <- length(y)
   if(na.rm) {
     s <- !is.na(x+y+weights)
     x <- x[s]; y <- y[s]; weights <- weights[s]; n <- length(y)
   }
-
-  robust <- weights * robust
+  
   max.kd <- max(200, n)
-  y <-
-    if(.R.) .C("loess_raw",
-               as.double(y),
-               as.double(x),
-               as.double(weights),
-               as.double(robust),
-               as.integer(1),
-               as.integer(n),
-               as.double(span),
-               as.integer(degree),
-               as.integer(1),
-               as.integer(2),
-               as.integer(0),
-               as.double(cell),
-               as.character('interpolate/none'),
-               fitted.values = double(n),
-               parameter = integer(7),
-               a = integer(max.kd),
-               xi = double(max.kd),
-               vert = double(2),
-               vval = double(2 * max.kd),
-               diagonal = double(n),
-               trace.hat = double(1),
-               one.delta = double(1),
-               two.delta = double(1),
-               as.integer(FALSE))$fitted.values
-    else .C("loess_raw",
-            specialsok = TRUE,
-            as.double(y),
-            as.double(x),
-            as.double(weights),
-            as.double(robust),
-            as.integer(1),
-            as.integer(n),
-            as.double(span),
-            as.integer(degree),
-            as.integer(1),
-            as.integer(2),
-            as.integer(0),
-            as.double(cell),
-            as.character('interpolate/none'),
-            fitted.values = double(n),
-            parameter = integer(7),
-            a = integer(max.kd),
-            xi = double(max.kd),
-            vert = double(2),
-            vval = double(2 * max.kd),
-            diagonal = double(n),
-            trace.hat = double(1),
-            one.delta = double(1),
-            two.delta = double(1),
-            as.integer(FALSE))$fitted.values
+  y <- stats:::simpleLoess(y, x, weights=weights, span=span,
+                           degree=degree, cell=cell)$fitted 
 
   switch(type,
          all=list(x=x, y=y),
@@ -274,7 +222,6 @@ wtd.loess.noiter <- function(x, y, weights=rep(1,n), robust=rep(1,n),
            approx(x, y, xout=seq(r[1], r[2], length=evaluation))
          })
 }
-
 
 num.denom.setup <- function(num, denom)
 {

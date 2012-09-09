@@ -59,7 +59,7 @@ wtd.Ecdf(x, weights=NULL,
 wtd.table(x, weights=NULL, type=c('list','table'), 
           normwt=FALSE, na.rm=TRUE)
 wtd.rank(x, weights=NULL, normwt=FALSE, na.rm=TRUE)
-wtd.loess.noiter(x, y, weights=rep(1,n), robust=rep(1,n), 
+wtd.loess.noiter(x, y, weights=rep(1,n),
                  span=2/3, degree=1, cell=.13333, 
                  type=c('all','ordered all','evaluate'), 
                  evaluation=100, na.rm=TRUE)
@@ -114,7 +114,7 @@ only at \code{evaluation} equally spaced points between the observed limits
 of \code{x}.
 }
 \item{y}{a numeric vector the same length as \code{x}}
-\item{robust, span, degree, cell, evaluation}{
+\item{span, degree, cell, evaluation}{
 see \code{loess.smooth}.  The default is linear (\code{degree}=1) and 100 points
 to evaluation (if \code{type="evaluate"}).
 }}

@@ -60,7 +60,7 @@
 
   \code{lm.fit.qr.bare} is a fast stripped-down function for computing
   regression coefficients, residuals, \eqn{R^2}, and fitted values.  It
-  uses the Fortran routines \code{dqrls}. 
+  uses \code{lm.fit}. 
 
   \code{matxv} multiplies a matrix by a vector, handling automatic
   addition of intercepts if the matrix does not have a column of ones.

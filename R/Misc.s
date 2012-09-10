@@ -215,41 +215,19 @@ lm.fit.qr.bare <- function(x, y,
                            intercept=TRUE, xpxi=FALSE)
 {
   if(!length(tolerance)) tolerance <- 1e-7
-
   if(intercept)
-    x <- cbind(1,x)
-  if(storage.mode(x) != "double")
-    storage.mode(x) <- "double"
-  if(storage.mode(y) != "double")
-    storage.mode(y) <- "double"
-  
-  dx <- dim(x)
-  dn <- dimnames(x)
-  qty <- y
-  n <- dx[1]
-  n1 <- 1:n
-  p <- dx[2]
-  p1 <- 1:p
-  dy <- c(n, 1)
-  z <- .Fortran("dqrls", qr = x, n = as.integer(n), p = as.integer(p),
-                y = y, ny = as.integer(1),
-                tol = as.double(tolerance), coef = double(p),
-                residuals = y, effects = y, rank = integer(1),
-                pivot = as.integer(p1),
-                qraux = double(p), work = double(2 * p), PACKAGE = "base")
-
-  coef <- z$coef
-  if(length(dn[[2]]))
-    names(coef) <- dn[[2]]
-  
-  res <- as.vector(z$residuals)
+    x <- cbind(Intercept=1, x)
+  else x <- as.matrix(x)
+  z <- lm.fit(x, y, tol=tolerance)
+  coef <- z$coefficients
+  res <- z$residuals
   sse <- sum(res^2)
-  sst <- sum((y-mean(y))^2)
+  sst <- sum((y - mean(y))^2)
 
-  res <- list(coefficients=coef, residuals=res, 
-              rsquared=1-sse/sst, fitted.values=as.vector(y-res))
+  res <- list(coefficients=coef,    residuals=res, 
+              rsquared=1 - sse/sst, fitted.values=z$fitted.values)
   if(xpxi) {
-    xpxi <- chol2inv(z$qr)
+    xpxi <- chol2inv(z$qr$qr)
     res$xpxi <- xpxi
   }
   res

@@ -1,21 +1,17 @@
 \name{upData}
 \alias{cleanup.import}
 \alias{upData}
-\alias{exportDataStripped}
 \alias{dataframeReduce}
 \title{
   Update a Data Frame or Cleanup a Data Frame after Importing
 }
 \description{
   \code{cleanup.import} will correct errors and shrink
-  the size of data frames created by the S-Plus \code{File \dots Import}
-  dialog or by other methods such as \code{scan} and \code{read.table}.  By
-  default, double precision numeric variables are changed to single
-  precision (S-Plus only) or to integer when they contain no fractional
-  components. 
+  the size of data frames.  By default, double precision numeric
+  variables are changed to integer when they contain no fractional components. 
   Infinite values or values greater than 1e20 in absolute value are set
   to NA.  This solves problems of importing Excel spreadsheets that
-  contain occasional character values for numeric columns, as S-Plus
+  contain occasional character values for numeric columns, as S
   converts these to \code{Inf} without warning.  There is also an option to
   convert variable names to lower case and to add labels to variables.
   The latter can be made easier by importing a CNTLOUT dataset created
@@ -28,28 +24,16 @@
   added, old variables can be modified, variables can be removed or renamed, and
   \code{"labels"} and \code{"units"} attributes can be provided.  Various checks
   are made for errors and inconsistencies, with warnings issued to help
-  the user.  Levels of factor variables
-  can be replaced, especially using the \code{list} notation of the standard
-  \code{merge.levels} function.  Unless \code{force.single} is set to \code{FALSE},
+  the user.  Levels of factor variables can be replaced, especially
+  using the \code{list} notation of the standard \code{merge.levels}
+  function.  Unless \code{force.single} is set to \code{FALSE}, 
   \code{upData} also converts double precision vectors to single precision
   (if not under R), or to integer if no fractional values are present in
-  a vector.
-
-  Both \code{cleanup.import} and \code{upData} will fix a problem with
-  data frames created under S-Plus before version 5 that are used in S-Plus 5 or
-  later.  The problem was caused by use of the \code{label} function
-  to set a variable's class to \code{"labelled"}.  These classes are
-  removed as the S version 4 language does not support multiple
-  inheritance.  Failure to run data frames through one of the two
-  functions when these conditions apply will result in simple numeric
-  variables being set to \code{factor} in some cases.  Extraneous \code{"AsIs"}
-  classes are also removed.
-
-  For S-Plus, a function \code{exportDataStripped} is provided that allows
-  exporting of data to other systems by removing attributes \code{label,
-    imputed, format, units}, and \code{comment}.  It calls
-  \code{exportData} after stripping these attributes.  Otherwise
-  \code{exportData} will fail.
+  a vector.  \code{upData} is also used to process R workspace objects
+  created by StatTransfer, which puts variable labels as an attribute on
+  the data frame rather than on each variable. If such an attribute is
+  present, it is used to define all the labels before any label changes
+  take place, and \code{force.single} is set to a default of \code{FALSE}.
 
   The \code{dataframeReduce} function removes variables from a data frame
   that are problematic for certain analyses.  Variables can be removed
@@ -69,8 +53,6 @@ cleanup.import(obj, labels, lowernames=FALSE,
 upData(object, \dots, 
        rename, drop, labels, units, levels,
        force.single=TRUE, lowernames=FALSE, moveUnits=FALSE, charfactor=FALSE)
-
-exportDataStripped(data, \dots)
 
 dataframeReduce(data, fracmiss=1, maxlevels=NULL,  minprev=0, pr=TRUE)
 }
@@ -156,8 +138,6 @@ dataframeReduce(data, fracmiss=1, maxlevels=NULL,  minprev=0, pr=TRUE)
   \item{\dots}{
     for \code{upData}, one or more expressions of the form
     \code{variable=expression}, to derive new variables or change old ones.
-    For \code{exportDataStripped}, optional arguments that are passed to
-    \code{exportData}.
   }
   \item{rename}{
     list or named vector specifying old and new names for variables.  Variables are

@@ -27,13 +27,14 @@
   the user.  Levels of factor variables can be replaced, especially
   using the \code{list} notation of the standard \code{merge.levels}
   function.  Unless \code{force.single} is set to \code{FALSE}, 
-  \code{upData} also converts double precision vectors to single precision
-  (if not under R), or to integer if no fractional values are present in
+  \code{upData} also converts double precision vectors to integer if no
+  fractional values are present in 
   a vector.  \code{upData} is also used to process R workspace objects
   created by StatTransfer, which puts variable labels as an attribute on
   the data frame rather than on each variable. If such an attribute is
   present, it is used to define all the labels before any label changes
-  take place, and \code{force.single} is set to a default of \code{FALSE}.
+  take place, and \code{force.single} is set to a default of
+  \code{FALSE}, as StatTransfer already does conversion to integer.
 
   The \code{dataframeReduce} function removes variables from a data frame
   that are problematic for certain analyses.  Variables can be removed
@@ -51,8 +52,8 @@ cleanup.import(obj, labels, lowernames=FALSE,
                fixdates=c('none','year'), charfactor=FALSE)
 
 upData(object, \dots, 
-       rename, drop, labels, units, levels,
-       force.single=TRUE, lowernames=FALSE, moveUnits=FALSE, charfactor=FALSE)
+       rename, drop, labels, units, levels, force.single=TRUE,
+       lowernames=FALSE, caplabels=FALSE, moveUnits=FALSE, charfactor=FALSE)
 
 dataframeReduce(data, fracmiss=1, maxlevels=NULL,  minprev=0, pr=TRUE)
 }
@@ -159,6 +160,10 @@ dataframeReduce(data, fracmiss=1, maxlevels=NULL,  minprev=0, pr=TRUE)
     redefining \code{levels} (in order) or another list (see
     \code{merge.levels} if using S-Plus).
   }
+  \item{caplabels}{
+	set to \code{TRUE} to capitalize the first letter of each word in
+	each variable label
+	}
   \item{moveUnits}{
     set to \code{TRUE} to look for units of measurements in variable
     labels and move them to a \code{"units"} attribute.  If an expression

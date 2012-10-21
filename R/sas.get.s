@@ -895,8 +895,11 @@ cleanup.import <-
 upData <- function(object, ...,
                    rename=NULL, drop=NULL,
                    labels=NULL, units=NULL, levels=NULL,
-                   force.single=TRUE, lowernames=FALSE,
+                   force.single=TRUE, lowernames=FALSE, caplabels=FALSE,
                    moveUnits=FALSE, charfactor=FALSE) {
+
+  upfirst <- function(txt) gsub("(\\w)(\\w*)", "\\U\\1\\L\\2", txt, perl=TRUE)
+
   n  <- nrow(object)
   if(!length(n)) {
     x <- object[[1]]
@@ -917,10 +920,15 @@ upData <- function(object, ...,
   ## The following is targeted at R workspaces exported from StatTransfer
   al <- attr(object, 'var.labels')
   if(length(al)) {
+    if(caplabels) al <- upfirst(al)
     for(i in 1:length(no))
       if(al[i] != '') label(object[[i]]) <- al[i]
     attr(object, 'var.labels') <- NULL
     if(missing(force.single)) force.single <- FALSE
+  } else if(caplabels) {
+    for(i in 1:length(no))
+      if(length(la <- attr(object[[i]], 'label')))
+        attr(object[[i]], 'label') <- upfirst(la)
   }
   
   if(moveUnits)

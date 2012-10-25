@@ -88,7 +88,9 @@ substring.location <- function(text, string, restrict)
 
 
 ## if(version$major < 5)  14Sep00
-substring2 <- substring
+substring2 <- function(text, first, last=100000L)
+  base::substring(text, first, last)
+
 'substring2<-' <- function(text, first, last=100000, value)
 {
   if(is.character(first)) {

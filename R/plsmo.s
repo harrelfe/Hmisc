@@ -104,7 +104,7 @@ plsmo <- function(x,y,method=c("lowess","supsmu","raw"),
 
   if((is.list(label.curves) || label.curves) && 
      nlev>1 && (!missing(prefix) | !add | !missing(label.curves))) 
-    labcurve(curves, lty=lty, col=col, opts=label.curves, grid=grid)
+    labcurve(curves, lty=lty, col.=col, opts=label.curves, grid=grid)
   
   invisible(curves)
 }

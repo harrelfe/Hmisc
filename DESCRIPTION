@@ -1,6 +1,6 @@
 Package: Hmisc
 Version: 3.10-1
-Date: 2011-12-26
+Date: 2012-10-24
 Title: Harrell Miscellaneous
 Author: Frank E Harrell Jr <f.harrell@vanderbilt.edu>, with
   contributions from Charles Dupont and many others.
@@ -8,7 +8,7 @@ Maintainer: Charles Dupont <charles.dupont@vanderbilt.edu>
 Depends: R (>= 2.4.0), methods, survival
 Imports: lattice, cluster, survival
 Suggests: lattice, grid, nnet, foreign, chron, acepack,
-  TeachingDemos, rms, cluster, mice, subselect
+  TeachingDemos, rms, cluster, mice, subselect, tree
 Description: The Hmisc library contains many functions useful for data
 	analysis, high-level graphics, utility operations, functions for
 	computing sample size and power, importing datasets,
@@ -16,6 +16,6 @@ Description: The Hmisc library contains many functions useful for data
 	character string manipulation, conversion of S objects to LaTeX code,
 	and recoding variables.  Please submit bug reports to
         'http://biostat.mc.vanderbilt.edu/trac/Hmisc'.
-License: GPL version 2 or newer
+License: GPL (>= 2)
 LazyLoad: Yes
 URL: http://biostat.mc.vanderbilt.edu/Hmisc, http://biostat.mc.vanderbilt.edu/trac/Hmisc

@@ -3,23 +3,25 @@
 \alias{improveProb}
 \alias{print.improveProb}
 \title{
-Rank Correlation for Paired Predictors with a Possibly Censored
-Response, and Integrated Discrimination Index
+  Rank Correlation for Paired Predictors with a Possibly Censored
+  Response, and Integrated Discrimination Index
 }
 \description{
-  Computes U-statistics to test for whether predictor X1 is more concordant
-  than predictor X2, extending rcorr.cens.  For method=1, estimates the fraction of
-  pairs for which the x1 difference is more impressive than the x2 difference.
-  For method=2, estimates the fraction of pairs for which x1 is concordant with
-  S but x2 is not.
+  Computes U-statistics to test for whether predictor \var{X1} is more
+  concordant than predictor \var{X2}, extending \code{rcorr.cens}.  For
+  \code{method=1}, estimates the fraction of pairs for which the
+  \code{x1} difference is more impressive than the \code{x2}
+  difference. For \code{method=2}, estimates the fraction of pairs for
+  which \code{x1} is concordant with \code{S} but \code{x2} is not.
 
   For binary responses the function \code{improveProb} provides several
   assessments of whether one set of predicted probabilities is better
-  than another, using the methods describe in Pencina et al (2007).
-  This involves NRI and IDI to test for whether predictions from model
-  x1 are significantly different from those obtained from predictions
-  from model x2. This is a distinct improvement over comparing ROC
-  areas, sensitivity, or specificity.
+  than another, using the methods describe in 
+  \cite{Pencina et al (2007)}. This involves NRI and IDI to test for
+  whether predictions from model \code{x1} are significantly different
+  from those obtained from predictions from model \code{x2}. This is a
+  distinct improvement over comparing ROC areas, sensitivity, or
+  specificity.
 }
 \usage{
 rcorrp.cens(x1, x2, S, outx=FALSE, method=1)
@@ -36,38 +38,50 @@ improveProb(x1, x2, y)
     second predictor (a probability, for \code{improveProb})
   }
   \item{S}{
-    a possibly right-censored \code{\link[survival]{Surv}} object.  If \code{S} is a vector instead,
-    it is converted to a \code{\link[survival]{Surv}} object and it is assumed that no observations
-    are censored.
+    a possibly right-censored \code{\link[survival]{Surv}} object.  If
+    \code{S} is a vector instead, it is converted to a
+    \code{\link[survival]{Surv}} object and it is assumed that no
+    observations are censored.
   }
   \item{outx}{
-    set to T to exclude pairs tied on x1 or x2 from consideration
+    set to \code{TRUE} to exclude pairs tied on \code{x1} or \code{x2}
+    from consideration
   }
   \item{method}{
     see above
   }
-  \item{y}{a binary 0/1 outcome variable}
-  \item{x}{the result from \code{improveProb}}
- \item{digits}{number of significant digits for use in printing the
-   result of \code{improveProb}} 
- \item{conf.int}{level for confidence limits}
- \item{\dots}{unused}
+  \item{y}{
+    a binary 0/1 outcome variable
+  }
+  \item{x}{
+    the result from \code{improveProb}
+  }
+  \item{digits}{
+    number of significant digits for use in printing the result of
+    \code{improveProb}
+  } 
+  \item{conf.int}{
+    level for confidence limits
+  }
+  \item{\dots}{
+    unused
+  }
 }
 \details{
-  If \code{x1,x2} represent predictions from models, these functions
-  assume either that you are using a separate sample from the one used
-  to build the model, or that the amount of overfitting in \code{x1}
-  equals the amount of overfitting in \code{x2}.  An example of the
-  latter is giving both models equal opportunity to be complex so that
-  both models have the same number of effective degrees of freedom,
+  If \code{x1},\code{x2} represent predictions from models, these
+  functions assume either that you are using a separate sample from the
+  one used to build the model, or that the amount of overfitting in
+  \code{x1} equals the amount of overfitting in \code{x2}.  An example
+  of the latter is giving both models equal opportunity to be complex so
+  that both models have the same number of effective degrees of freedom,
   whether a predictor was included in the model or was screened out by a
   variable selection scheme.
-  \cr
-  Note that in the first part of their paper, Pencina et al presented
-  measures that required binning the predicted probabilities.  Those
-  measures were then replaced with better continuous measures that are
-  implemented here.
-  }
+  
+  Note that in the first part of their paper, \cite{Pencina et al.}
+  presented measures that required binning the predicted probabilities.
+  Those measures were then replaced with better continuous measures that
+  are implementedhere.
+}
 \value{
   a vector of statistics for \code{rcorrp.cens}, or a list with class
   \code{improveProb} of statistics for \code{improveProb}:
@@ -75,21 +89,32 @@ improveProb(x1, x2, y)
   \item{n}{number of cases}
   \item{na}{number of events}
   \item{nb}{number of non-events}
-  \item{pup.ev}{mean of pairwise differences in probabilities for those
-	with events and a pairwise difference of probabilities>0} 
-  \item{pup.ne}{mean of pairwise differences in probabilities for those
-	without events and a pairwise difference of probabilities>0} 
-  \item{pdown.ev}{mean of pairwise differences in probabilities for
-	those with events and a pairwise difference of probabilities<0} 
-  \item{pdown.ne}{mean of pairwise differences in probabilities for
-	those without events and a pairwise difference of probabilities<0} 
-  \item{nri}{Net Reclassification Index = (pup.ev-pdown.ev)-(pup.ne-pdown.ne)}
+  \item{pup.ev}{
+    mean of pairwise differences in probabilities for those with events
+    and a pairwise difference of \eqn{\mbox{probabilities}>0}
+  }
+  \item{pup.ne}{
+    mean of pairwise differences in probabilities for those without
+    events and a pairwise difference of \eqn{\mbox{probabilities}>0}
+  } 
+  \item{pdown.ev}{
+    mean of pairwise differences in probabilities for those with events
+    and a pairwise difference of \eqn{\mbox{probabilities}>0}
+  } 
+  \item{pdown.ne}{
+    mean of pairwise differences in probabilities for those without
+    events and a pairwise difference of \eqn{\mbox{probabilities}>0}
+  }
+  \item{nri}{
+    Net Reclassification Index =
+    \eqn{(pup.ev-pdown.ev)-(pup.ne-pdown.ne)}
+  }
   \item{se.nri}{standard error of NRI}
   \item{z.nri}{Z score for NRI}
-  \item{nri.ev}{Net Reclassification Index = pup.ev-pdown.ev}
+  \item{nri.ev}{Net Reclassification Index = \eqn{pup.ev-pdown.ev}}
   \item{se.nri.ev}{SE of NRI of events}
   \item{z.nri.ev}{Z score for NRI of events}
-  \item{nri.ne}{Net Reclassification Index = pup.ne-pdown.ne}
+  \item{nri.ne}{Net Reclassification Index = \eqn{pup.ne-pdown.ne}}
   \item{se.nri.ne}{SE of NRI of non-events}
   \item{z.nri.ne}{Z score for NRI of non-events}
   \item{improveSens}{improvement in sensitivity}
@@ -99,18 +124,13 @@ improveProb(x1, x2, y)
   \item{z.idi}{Z score of IDI}
 }
 \author{
-  Frank Harrell
-  \cr
-  Department of Biostatistics, Vanderbilt University
-  \cr
+  Frank Harrell  \cr
+  Department of Biostatistics, Vanderbilt University  \cr
   \email{f.harrell@vanderbilt.edu}
-  \cr
-  Scott Williams
-  \cr
-  Division of Radiation Oncology
-  \cr
-  Peter MacCallum Cancer Centre, Melbourne, Australia
-  \cr
+
+  Scott Williams  \cr
+  Division of Radiation Oncology  \cr
+  Peter MacCallum Cancer Centre, Melbourne, Australia  \cr
   \email{scott.williams@petermac.org}
 }
 \references{
@@ -128,8 +148,8 @@ improveProb(x1, x2, y)
   biomarkers.  Stat in Med 30:11-21; DOI: 10.1002/sim.4085
 }
 \seealso{
-\code{\link[Hmisc]{rcorr.cens}}, \code{\link[Hmisc]{somers2}},
-\code{\link[survival]{Surv}}, \code{\link[Design]{val.prob}}
+  \code{\link{rcorr.cens}}, \code{\link{somers2}},
+  \code{\link[survival]{Surv}}, \code{\link[rms]{val.prob}}
 }
 \examples{
 set.seed(1)

@@ -49,7 +49,7 @@ coef(fit.mult.impute(Y~X+Zna, lm, w, data=data.frame(X,Zna,Y),pr=F))
 ## From Ewout Steyerberg
 # Missing values: illustrate MCAR, MAR, MNAR mechanism
 # linear models
-library(Design)
+library(rms)
 
 ## 1. x1 and x2 with y1 outcome
 ## A) X only

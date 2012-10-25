@@ -2,7 +2,7 @@ dataRep <- function(formula, data, subset, na.action)
 {
   call <- match.call()
   nact <- NULL
-  y <- match.call(expand=FALSE)
+  y <- match.call(expand.dots=FALSE)
   if(missing(na.action))
     y$na.action <- na.delete
   

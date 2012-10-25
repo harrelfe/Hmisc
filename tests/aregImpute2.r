@@ -1,4 +1,4 @@
-library(Design)
+library(rms)
 source('/tmp/hmisc.s')
 set.seed(4)
 n <- c(20000,2000,200)[1]

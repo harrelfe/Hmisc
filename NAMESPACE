@@ -5,3 +5,7 @@ import(methods)
 
 importFrom(lattice, llines, lpoints, lsegments)
 importFrom(cluster, clara)
+
+S3method(print, spower)
+S3method(print, Quantile2)
+S3method(plot, Quantile2)

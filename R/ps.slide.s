@@ -68,27 +68,27 @@ ps.slide <- function(file,
   
       if(length(height) && length(width)) 
 	postscript(paste(file,'.ps',sep=''),
-                   hor=hor, height=height, width=width,
+                   horizontal=hor, height=height, width=width,
                    pointsize=.6*pointsize*max(width/(30*12/72.27),
                                               height/(30*12/72.27/((1+sqrt(5))/2))),
                    print.it=FALSE, onefile=!eps)
       else
-        postscript(paste(file,".ps",sep=""), hor=hor, print.it=FALSE, onefile=!eps)
+        postscript(paste(file,".ps",sep=""), horizontal=hor, print.it=FALSE, onefile=!eps)
     } else {
       if(length(height) && length(width)) 
 	postscript(paste(file,'.ps',sep=''),
-                   hor=hor, height=height, width=width,
+                   horizontal=hor, height=height, width=width,
                    pointsize=.6*pointsize*max(width/(30*12/72.27),
                                               height/(30*12/72.27/((1+sqrt(5))/2))),
                    colors=cols, fonts=fonts, ...)
       else
 	postscript(paste(file,'.ps',sep=''),
-                   hor=hor, colors=cols, fonts=fonts, ...)
+                   horizontal=hor, colors=cols, fonts=fonts, ...)
     }
   } else { # 10Apr01
     if(length(height) && length(width)) 
       postscript(paste(file,'.ps',sep=''),
-                 hor=hor, height=height, width=width,
+                 horizontal=hor, height=height, width=width,
                  pointsize=.6*pointsize*max(width/(30*12/72.27),
                                             height/(30*12/72.27/((1+sqrt(5))/2))),
                  fg=foreground, bg=background, family=font, ...)

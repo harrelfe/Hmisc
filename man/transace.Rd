@@ -14,103 +14,111 @@
 \alias{monotone}
 \alias{smearingEst}
 \title{
-Additive Regression and Transformations using ace or avas
+  Additive Regression and Transformations using ace or avas
 }
 \description{
-\code{transace} is \code{ace} packaged for easily automatically
-transforming all variables in a matrix.  \code{transace} is a fast
-one-iteration version of \code{transcan} without imputation of NAs.  
+  \code{transace} is \code{\link[acepack]{ace}} packaged for easily automatically
+  transforming all variables in a matrix.  \code{transace} is a fast
+  one-iteration version of \code{\link{transcan}} without imputation of
+  \code{NA}s.
 
-\code{areg.boot} uses \code{\link{areg}} or \code{\link[acepack]{avas}}
-to fit additive regression models allowing all variables in the model
-(including the left-hand-side) to be transformed, with transformations
-chosen so as to optimize certain criteria.  The default method uses
-\code{\link{areg}} whose goal it is to maximize \eqn{R^2}.
-\code{method='avas'} explicity tries to transform the response variable
-so as to stabilize the variance of the residuals.
-All-variables-transformed models tend to inflate \code{R^2} and it can
-be difficult to get confidence limits for each transformation.
-\code{areg.boot} solves both of these problems using the bootstrap.  As
-with the \code{validate} function in the Design library, the Efron
-bootstrap is used to estimate the optimism in the apparent \eqn{R^2},
-and this optimism is subtracted from the apparent \eqn{R^2} to optain a
-bias-corrected \eqn{R^2}.  This is done however on the transformed
-response variable scale.
+  \code{areg.boot} uses \code{\link{areg}} or
+  \code{\link[acepack]{avas}} to fit additive regression models allowing
+  all variables in the model (including the left-hand-side) to be
+  transformed, with transformations chosen so as to optimize certain
+  criteria.  The default method uses \code{\link{areg}} whose goal it is
+  to maximize \eqn{R^2}. \code{method="avas"} explicity tries to
+  transform the response variable so as to stabilize the variance of the
+  residuals. All-variables-transformed models tend to inflate \code{R^2}
+  and it can be difficult to get confidence limits for each
+  transformation. \code{areg.boot} solves both of these problems using
+  the bootstrap.  As with the \code{\link[rms]{validate}} function in the
+  \pkg{rms} library, the Efron bootstrap is used to estimate the
+  optimism in the apparent \eqn{R^2}, and this optimism is subtracted
+  from the apparent \eqn{R^2} to optain a bias-corrected \eqn{R^2}.
+  This is done however on the transformed response variable scale.
 
-Tests with 3 predictors show that the \code{avas} and \code{ace} estimates are unstable unless the sample size exceeds 350.  Apparent
-\eqn{R^2} with low sample sizes can be very inflated, and bootstrap
-estimates of \eqn{R^2} can be even more unstable in such cases,
-resulting in optimism-corrected \eqn{R^2} that are much lower even than the
-actual \eqn{R^2}.  The situation can be improved a little by restricting
-predictor transformations to be monotonic.  On the other hand, the
-\code{areg} approach allows one to control overfitting by specifying the
-number of knots to use for each continuous variable in a restricted
-cubic spline function.
+  Tests with 3 predictors show that the \code{\link[acepack]{avas}} and
+  \code{\link[acepack]{ace}} estimates are unstable unless the sample size
+  exceeds 350.  Apparent \eqn{R^2} with low sample sizes can be very
+  inflated, and bootstrap estimates of \eqn{R^2} can be even more
+  unstable in such cases, resulting in optimism-corrected \eqn{R^2} that
+  are much lower even than the actual \eqn{R^2}.  The situation can be
+  improved a little by restricting predictor transformations to be
+  monotonic.  On the other hand, the \code{areg} approach allows one to
+  control overfitting by specifying the number of knots to use for each
+  continuous variable in a restricted cubic spline function.
 
-For \code{method="avas"} the response transformation is restricted to be
-monotonic.  You can specify restrictions for transformations of
-predictors (and linearity for the response).  When the first argument is a formula, the function
-automatically determines which variables are categorical (i.e., \code{factor},
-\code{category}, or character vectors).  Specify linear transformations by
-enclosing variables by the identify function (\code{I()}), and specify
-monotonicity by using \code{monotone(variable)}.  Monotonicity
-restrictions are not allowed with \code{method='areg'}.
+  For \code{method="avas"} the response transformation is restricted to
+  be monotonic.  You can specify restrictions for transformations of
+  predictors (and linearity for the response).  When the first argument
+  is a formula, the function automatically determines which variables
+  are categorical (i.e., \code{factor}, \code{category}, or character
+  vectors).  Specify linear transformations by enclosing variables by
+  the identify function (\code{I()}), and specify monotonicity by using
+  \code{monotone(\var{variable})}.  Monotonicity restrictions are not
+  allowed with \code{method="areg"}.
+  
+  The \code{\link{summary}} method for \code{areg.boot} computes
+  bootstrap estimates of standard errors of differences in predicted
+  responses (usually on the original scale) for selected levels of each
+  predictor against the lowest level of the predictor.  The smearing
+  estimator (see below) can be used here to estimate differences in
+  predicted means, medians, or many other statistics.  By default,
+  quartiles are used for continuous predictors and all levels are used
+  for categorical ones.  See \cite{Details} below.  There is also a
+  \code{\link{plot}} method for plotting transformation estimates,
+  transformations for individual bootstrap re-samples, and pointwise
+  confidence limits for transformations. Unless you already have a
+  \code{par(mfrow=)} in effect with more than one row or column,
+  \code{plot} will try to fit the plots on one page.  A
+  \code{\link{predict}} method computes predicted values on the original
+  or transformed response scale, or a matrix of transformed
+  predictors. There is a \code{\link{Function}} method for producing a
+  list of \R functions that perform the final fitted transformations.
+  There is also a \code{\link{print}} method for \code{areg.boot}
+  objects.
 
+  When estimated means (or medians or other statistical parameters) are
+  requested for models fitted with \code{areg.boot} (by
+  \code{summary.areg.boot} or \code{predict.areg.boot}), the
+  \dQuote{smearing} estimator of \cite{Duan (1983)} is used.  Here we
+  estimate the mean of the untransformed response by computing the
+  arithmetic mean of \eqn{\var{ginverse}(\var{lp} + \var{residuals})},
+  where \var{ginverse} is the inverse of the nonparametric
+  transformation of the response (obtained by reverse linear
+  interpolation), \var{lp} is the linear predictor for an individual
+  observation on the transformed scale, and \var{residuals} is the
+  entire vector of residuals estimated from the fitted model, on the
+  transformed scales (\var{n} residuals for \var{n} original observations).  The
+  \code{smearingEst} function computes the general smearing estimate.
+  For efficiency \code{smearingEst} recognizes that quantiles are
+  transformation-preserving, i.e., when one wishes to estimate a
+  quantile of the untransformed distribution one just needs to compute
+  the inverse transformation of the transformed estimate after the
+  chosen quantile of the vector of residuals is added to it. When the
+  median is desired, the estimate is
+  \eqn{\var{ginverse}(\var{lp} + \mbox{median}(\var{residuals}))}{
+    \var{ginverse}(\var{lp} + median(\var{residuals}))}.
+  See the last example for how \code{smearingEst} can be used outside of
+  \code{areg.boot}.
 
-The \code{summary} method for \code{areg.boot} computes bootstrap
-estimates of standard errors of differences in predicted responses
-(usually on the original scale) for selected levels of each predictor
-against the lowest level of the predictor.  The smearing estimator (see
-below) can be used here to estimate differences in predicted means,
-medians, or many other statistics.  By default, quartiles are used for
-continuous predictors and all levels are used for categorical ones.  See
-DETAILS below.  There is also a \code{plot} method for plotting
-transformation estimates, transformations for individual bootstrap
-re--samples, and pointwise confidence limits for transformations.
-Unless you already have a \code{par(mfrow=)} in effect with more than
-one row or column, \code{plot} will try to fit the plots on one page.  A
-\code{predict} method computes predicted values on the original or
-transformed response scale, or a matrix of transformed predictors.
-There is a \code{Function} method for producing a list of S
-functions that perform the final fitted transformations.  There is also
-a \code{print} method for \code{areg.boot} objects.
-
-When estimated means (or medians or other statistical parameters) are
-requested for models fitted with \code{areg.boot} (by \code{summary.areg.boot}
-or \code{predict.areg.boot}), the "smearing" estimator of Duan (1983) is
-used.  Here we estimate the mean of the untransformed response by
-computing the arithmetic mean of ginverse(lp + residuals), where
-ginverse is the inverse of the nonparametric transformation of the
-response (obtained by reverse linear interpolation), \code{lp} is the
-linear predictor for an individual observation on the transformed
-scale, and \code{residuals} is the entire vector of residuals estimated
-from the fitted model, on the transformed scales (n residuals for n
-original observations).  The \code{smearingEst} function computes the
-general smearing estimate.  For efficiency \code{smearingEst} recognizes
-that quantiles are transformation-preserving, i.e., when one wishes to
-estimate a quantile of the untransformed distribution one just needs
-to compute the inverse transformation of the transformed estimate
-after the chosen quantile of the vector of residuals is added to it.
-When the median is desired, the estimate is ginverse(lp +
-median(residuals)).  See the last example for how \code{smearingEst} can be
-used outside of \code{areg.boot}.
-
-\code{Mean} is a generic function that returns an S function to compute
-the estimate of the mean of a variable.  Its input is typically some
-kind of model fit object.  Likewise, \code{Quantile} is a generic
-quantile function-producing function.  \code{Mean.areg.boot} and
-\code{Quantile.areg.boot} create functions of a vector of linear
-predictors that transform them into the smearing estimates of the mean
-or quantile of the response variable, respectively.
-\code{Quantile.areg.boot} produces exactly the same value as
-\code{predict.areg.boot} or \code{smearingEst}.  \code{Mean}
-approximates the mapping of linear predictors to means over an evenly
-spaced grid of by default 200 points.  Linear interpolation is used
-between these points.  This approximate method is much faster than the
-full smearing estimator once \code{Mean} creates the function.  These
-functions are especially useful in \code{nomogram.Design} (see the
-example on hypothetical data).  }
-
+  \code{Mean} is a generic function that returns an \R function to
+  compute the estimate of the mean of a variable.  Its input is
+  typically some kind of model fit object.  Likewise, \code{Quantile} is
+  a generic quantile function-producing function.  \code{Mean.areg.boot}
+  and \code{Quantile.areg.boot} create functions of a vector of linear
+  predictors that transform them into the smearing estimates of the mean
+  or quantile of the response variable,
+  respectively. \code{Quantile.areg.boot} produces exactly the same
+  value as \code{predict.areg.boot} or \code{smearingEst}.  \code{Mean}
+  approximates the mapping of linear predictors to means over an evenly
+  spaced grid of by default 200 points.  Linear interpolation is used
+  between these points.  This approximate method is much faster than the
+  full smearing estimator once \code{Mean} creates the function.  These
+  functions are especially useful in \code{\link[rms]{nomogram}} (see the
+  example on hypothetical data).
+}
 \usage{
 transace(x, monotonic=NULL, categorical=NULL, binary=NULL, pl=TRUE)
 
@@ -121,7 +129,7 @@ areg.boot(x, data, weights, subset, na.action=na.delete,
 \method{print}{areg.boot}(x, \dots)
 
 \method{plot}{areg.boot}(x, ylim, boot=TRUE, col.boot=2, lwd.boot=.15,
-conf.int=.95, \dots)
+     conf.int=.95, \dots)
 
 smearingEst(transEst, inverseTrans, res,
             statistic=c('median','quantile','mean','fitted','lp'),
@@ -133,9 +141,9 @@ smearingEst(transEst, inverseTrans, res,
 \method{print}{summary.areg.boot}(x, \dots)
 
 \method{predict}{areg.boot}(object, newdata,
-         statistic=c("lp", "median",
-                     "quantile", "mean", "fitted", "terms"),
-         q=NULL, \dots) 
+        statistic=c("lp", "median",
+                    "quantile", "mean", "fitted", "terms"),
+        q=NULL, \dots) 
 
 \method{Function}{areg.boot}(object, type=c('list','individual'),
          ytype=c('transformed','inverse'),
@@ -151,100 +159,106 @@ Quantile(object, \dots)
 }
 \arguments{
   \item{x}{
-    for \code{transace} a numeric matrix.  For \code{areg.boot} \code{x} is
-    a formula.  For \code{print} or \code{plot}, an object created by
+    for \code{transace} a numeric matrix.  For \code{areg.boot} \code{x}
+    is a formula.  For \code{print} or \code{plot}, an object created by
     \code{areg.boot}.  For \code{print.summary.areg.boot}, and object
     created by \code{summary.areg.boot}.
   }
   \item{object}{
-    an object created by \code{areg.boot}, or a model fit object suitable
-    for \code{Mean} or \code{Quantile}.
+    an object created by \code{areg.boot}, or a model fit object
+    suitable for \code{Mean} or \code{Quantile}.
   }
   \item{transEst}{
-    a vector of transformed values.  In log-normal regression these could
-    be predicted log(Y) for example.
+    a vector of transformed values.  In log-normal regression these
+    could be predicted log(Y) for example.
   }
   \item{inverseTrans}{
     a function specifying the inverse transformation needed to change
-    \code{transEst} to the original untransformed scale.  \code{inverseTrans} may
-    also be a 2-element list defining a mapping from the transformed
-    values to untransformed values.  Linear interpolation is used in
-    this case to obtain untransform values.
+    \code{transEst} to the original untransformed scale.
+    \code{inverseTrans} may also be a 2-element list defining a mapping
+    from the transformed values to untransformed values.  Linear
+    interpolation is used in this case to obtain untransform values.
   }
-  \item{monotonic}{
-  }
-  \item{categorical}{
-  }
-  \item{binary}{
+  \item{binary, categorical, monotonic}{
     These are vectors of variable names specifying what to assume about
     each column of \code{x} for \code{transace}.  Binary variables are not
     transformed, of course.
   }
   \item{pl}{
-    set \code{pl=FALSE} to prevent \code{transace} from plotting each fitted transformation
+    set \code{pl=FALSE} to prevent \code{transace} from plotting each
+    fitted transformation
   }
   \item{data}{
-    data frame to use if \code{x} is a formula and variables are not already in
-    the search list
+    data frame to use if \code{x} is a formula and variables are not
+    already in the search list
   }
   \item{weights}{
-    a numeric vector of observation weights.  By default, all observations
-    are weighted equally.
+    a numeric vector of observation weights.  By default, all
+    observations are weighted equally.
   }
   \item{subset}{
     an expression to subset data if \code{x} is a formula
   }
   \item{na.action}{
-    a function specifying how to handle NAs.  Default is \code{na.delete} (in Hmisc).
+    a function specifying how to handle \code{NA}s.  Default is \code{\link{na.delete}}.
   }
   \item{B}{
     number of bootstrap samples (default=100)
   }
   \item{method}{
-    \code{"areg"} (the default) or \code{avas}
+    \code{"areg"} (the default) or \code{"avas"}
   }
-  \item{nk}{number of knots for continuous variables not restricted to be
-    linear.  Default is 4.  One or two is not allowed.  \code{nk=0} forces
-    linearity for all continuous variables.}
+  \item{nk}{
+    number of knots for continuous variables not restricted to be
+    linear.  Default is 4.  One or two is not allowed.  \code{nk=0}
+    forces linearity for all continuous variables.
+  }
   \item{evaluation}{
     number of equally-spaced points at which to evaluate (and save) the
-    nonparametric transformations derived by \code{avas} or \code{ace}.  Default is
-    100.  For \code{Mean.areg.boot}, \code{evaluation} is the number of points at
-    which to evaluate exact smearing estimates, to approximate them using
-    linear interpolation (default is 200).
+    nonparametric transformations derived by \code{\link[acepack]{avas}} or
+    \code{\link[acepack]{ace}}.  Default is 100.  For \code{Mean.areg.boot},
+    \code{evaluation} is the number of points at which to evaluate exact
+    smearing estimates, to approximate them using linear interpolation
+    (default is 200).
   }
   \item{valrsq}{
-    set to \code{TRUE} to more quickly do bootstrapping without validating \eqn{R^2}
+    set to \code{TRUE} to more quickly do bootstrapping without
+    validating \eqn{R^2}
   }
   \item{probs}{
     vector probabilities denoting the quantiles of continuous predictors
     to use in estimating effects of those predictors
   }
-  \item{tolerance}{singularity criterion; list source code for the
-    \code{lm.fit.qr.bare} function.}
+  \item{tolerance}{
+    singularity criterion; list source code for the
+    \code{\link{lm.fit.qr.bare}} function.
+  }
   \item{res}{
     a vector of residuals from the transformed model.  Not required when
     \code{statistic="lp"} or \code{statistic="fitted"}.
   }
   \item{statistic}{
-    statistic to estimate with the smearing estimator.  For \code{smearingEst},
-    the default results in computation of the sample median of the model
-    residuals, then \code{smearingEst} adds the median residual and
-    back-transforms to get estimated median responses on the original
-    scale.  \code{statistic="lp"} causes predicted transformed responses to be
-    computed.  For \code{smearingEst}, the result (for \code{statistic="lp"}) is the
-    input argument \code{transEst}.  \code{statistic="fitted"} gives predicted
-    untransformed responses, i.e., ginverse(lp), where ginverse is the
-    inverse of the estimated response transformation, estimated by reverse
+    statistic to estimate with the smearing estimator.  For
+    \code{smearingEst}, the default results in computation of the sample
+    median of the model residuals, then \code{smearingEst} adds the
+    median residual and back-transforms to get estimated median
+    responses on the original scale.  \code{statistic="lp"} causes
+    predicted transformed responses to be computed.  For
+    \code{smearingEst}, the result (for \code{statistic="lp"}) is the
+    input argument \code{transEst}.  \code{statistic="fitted"} gives
+    predicted untransformed responses, i.e.,
+    \eqn{\var{ginverse}(\var{lp})}, where \var{ginverse} is the inverse
+    of the estimated response transformation, estimated by reverse
     linear interpolation on the tabulated nonparametric response
-    transformation or by using an explicit analytic function.
-    \code{statistic="quantile"} generalizes \code{"median"} to any single quantile
-    \code{q} which must be specified.  "mean"' causes the population mean
-    response to be estimated.  For \code{predict.areg.boot},
-    \code{statistic="terms"} returns a matrix of transformed predictors.
-    \code{statistic} can also be any S function that computes a single
-    value on a vector of values, such as \code{statistic=var}.  Note that in
-    this case the function name is not quoted.
+    transformation or by using an explicit analytic
+    function. \code{statistic="quantile"} generalizes \code{"median"} to
+    any single quantile \code{q} which must be specified.  \code{"mean"}
+    causes the population mean response to be estimated.  For
+    \code{predict.areg.boot}, \code{statistic="terms"} returns a matrix
+    of transformed predictors. \code{statistic} can also be any \R
+    function that computes a single value on a vector of values, such as
+    \code{statistic=var}.  Note that in this case the function name is
+    not quoted.
   }
   \item{q}{
     a single quantile of the original response scale to estimate, when
@@ -254,8 +268,9 @@ Quantile(object, \dots)
     2-vector of y-axis limits
   }
   \item{boot}{
-    set to \code{FALSE} to not plot any bootstrapped transformations.  Set it to an
-    integer \code{k} to plot the first \code{k} bootstrap estimates.
+    set to \code{FALSE} to not plot any bootstrapped transformations.
+    Set it to an integer \var{k} to plot the first \var{k} bootstrap
+    estimates.
   }
   \item{col.boot}{
     color for bootstrapped transformations
@@ -265,54 +280,58 @@ Quantile(object, \dots)
   }
   \item{conf.int}{
     confidence level (0-1) for pointwise bootstrap confidence limits and
-    for estimated effects of predictors in \code{summary.areg.boot}.  The
+    for estimated effects of predictors in \code{summary.areg.boot}. The
     latter assumes normality of the estimated effects.
   }
   \item{values}{
     a list of vectors of settings of the predictors, for predictors for
-    which you want to overide settings determined from \code{probs}.  The list
-    must have named components, with names corresponding to the
-    predictors.  Example: \code{values=list(x1=c(2,4,6,8), x2=c(-1,0,1))}
-    specifies that \code{summary} is to estimate the effect on \code{y} of changing
-    \code{x1} from 2 to 4, 2 to 6, 2 to 8, and separately, of changing \code{x2}
-    from -1 to 0 and -1 to 1.
+    which you want to overide settings determined from \code{probs}.
+    The list must have named components, with names corresponding to the
+    predictors.  Example:
+    \code{values=list(x1=c(2,4,6,8), x2=c(-1,0,1))} specifies that
+    \code{summary} is to estimate the effect on \code{y} of changing
+    \code{x1} from 2 to 4, 2 to 6, 2 to 8, and separately, of changing
+    \code{x2} from -1 to 0 and -1 to 1.  
   }
   \item{adj.to}{
     a named vector of adjustment constants, for setting all other
     predictors when examining the effect of a single predictor in
-    \code{summary}.  The more nonlinear is the transformation of \code{y} the more
-    the adjustment settings will matter.  Default values are the medians
-    of the values defined by \code{values} or \code{probs}.  You only need to name
-    the predictors for which you are overriding the default settings.
-    Example: \code{adj.to=c(x2=0,x5=10)} will set \code{x2} to 0 and \code{x5} to 10 when
-    assessing the impact of variation in the other predictors.
+    \code{summary}.  The more nonlinear is the transformation of
+    \code{y} the more the adjustment settings will matter.  Default
+    values are the medians of the values defined by \code{values} or
+    \code{probs}.  You only need to name the predictors for which you
+    are overriding the default settings. Example:
+    \code{adj.to=c(x2=0,x5=10)} will set \code{x2} to 0 and \code{x5} to
+    10 when assessing the impact of variation in the other predictors.
   }
   \item{newdata}{
     a data frame or list containing the same number of values of all of
-    the predictors used in the fit.  For \code{factor} predictors the \code{levels}
-    attribute do not need to be in the same order as those used in the
-    original fit, and not all levels need to be represented.  If \code{newdata}
-    is omitted, you can still obtain linear predictors (on the transformed
-    response scale) and fitted values (on the original response scale),
-    but not \code{"terms"}. 
+    the predictors used in the fit.  For \code{\link{factor}} predictors
+    the \samp{levels} attribute do not need to be in the same order as
+    those used in the original fit, and not all levels need to be
+    represented.  If \code{newdata} is omitted, you can still obtain
+    linear predictors (on the transformed response scale) and fitted
+    values (on the original response scale), but not \code{"terms"}.
   }
   \item{type}{
-    specifies how \code{Function} is to return the series of functions that
-    define the transformations of all variables.  By default a list is
-    created, with the names of the list elements being the names of the
-    variables.  Specify \code{type="individual"} to have separate functions
-    created in the session frame (\code{frame=0}, the default) or in location
-    defined by \code{where} if \code{where} is specified.  For the latter method,
-    the names of the objects created are the names of the corresponding
-    variables, prefixed by \code{prefix} and with \code{suffix} appended to the end.
-    If any of \code{frame}, \code{where}, \code{prefix}, or \code{suffix} is specified, \code{type}
-    is automatically set to \code{"individual"}.
+    specifies how \code{\link{Function}} is to return the series of
+    functions that define the transformations of all variables.  By
+    default a list is created, with the names of the list elements being
+    the names of the variables.  Specify \code{type="individual"} to
+    have separate functions created in the session frame
+    (\code{frame=0}, the default) or in location defined by \code{where}
+    if \code{where} is specified.  For the latter method, the names of
+    the objects created are the names of the corresponding variables,
+    prefixed by \code{prefix} and with \code{suffix} appended to the
+    end. If any of \code{frame}, \code{where}, \code{prefix}, or
+    \code{suffix} is specified, \code{type} is automatically set to
+    \code{"individual"}.
   }
   \item{ytype}{
     By default the first function created by \code{Function} is the
-    y-transformation.  Specify \code{ytype="inverse"} to instead create the
-    inverse of the transformation, to be able to obtain originally scaled
-    y-values.
+    y-transformation.  Specify \code{ytype="inverse"} to instead create
+    the inverse of the transformation, to be able to obtain originally
+    scaled y-values.
   }
   \item{prefix}{
     character string defining the prefix for function names created when
@@ -323,103 +342,109 @@ Quantile(object, \dots)
     character string defining the suffix for the function names
   }
   \item{frame}{
-    frame number in which to store functions (see \code{assign}).  The default
-    is frame 0, the session database, which disappears at the end of the
-    session.
+    frame number in which to store functions (see \code{assign}).  The
+    default  is frame 0, the session database, which disappears at the
+    end of thesession.
   }
   \item{where}{
-    location in which to store functions (see \code{assign}).  If \code{where} is
-    specified (e.g., \code{where=1} to store functions in search position one),
-    \code{frame} is ignored.  For R, the value of \code{where} is passed to \code{assign}
-    as the \code{pos} argument.
+    location in which to store functions (see \code{\link{assign}}).  If
+    \code{where} is specified (e.g., \code{where=1} to store functions
+    in search position one), \code{frame} is ignored.  For R, the value
+    of \code{where} is passed to \code{assign} as the \code{pos}
+    argument.
   }
-  \item{\dots}{arguments passed to other functions}
+  \item{\dots}{
+    arguments passed to other functions
+  }
 }
 \value{
-  \code{transace} returns a matrix like \code{x} but containing transformed
-  values.  This matrix has attributes \code{rsq} (vector of \eqn{R^2} with which
-  each variable can be predicted from the others) and \code{omitted} (row
-  numbers of \code{x} that were deleted due to NAs).
-
-
-  \code{areg.boot} returns a list of class \code{"areg.boot"} containing many
-  elements, including (if \code{valrsq} is \code{TRUE}) \code{rsquare.app} and
-  \code{rsquare.val}.  \code{summary.areg.boot} returns a list of class
-  \code{"summary.areg.boot"} containing a matrix of results for each
-  predictor and a vector of adjust-to settings.  It also contains the
-  call and a \code{label} for the statistic that was computed.  A \code{print} method for
-  these objects handles the printing.  \code{predict.areg.boot} returns a
-  vector unless \code{statistic="terms"}, in which case it returns a matrix. 
-  \code{Function.areg.boot} returns by default a list of functions whose
-  argument is one of the variables (on the original scale) and whose
-  returned values are the corresponding transformed values.  The names
-  of the list of functions correspond to the names of the original
-  variables.  When \code{type="individual"}, \code{Function.areg.boot} invisibly
-  returns the vector of names of the created function objects.
-  \code{Mean.areg.boot} and \code{Quantile.areg.boot} also return functions.
-
-
-  \code{smearingEst} returns a vector of estimates of distribution parameters
-  of class \code{"labelled"} so that \code{print.labelled} wil print a label
-  documenting the estimate that was used (see \code{label}).  This label can
-  be retrieved for other purposes by using e.g. \code{label(obj)}, where
-  \code{obj} was the vector returned by \code{smearingEst}.
+  \code{transace} returns a matrix like \code{x} but containing
+  transformed values.  This matrix has attributes \code{rsq} (vector of
+  \eqn{R^2} with which each variable can be predicted from the others)
+  and \code{omitted} (row numbers of \code{x} that were deleted due to
+  \code{NA}s).
+  
+  \code{areg.boot} returns a list of class \samp{areg.boot} containing
+  many elements, including (if \code{valrsq} is \code{TRUE})
+  \code{rsquare.app} and \code{rsquare.val}.  \code{summary.areg.boot}
+  returns a list of class \samp{summary.areg.boot} containing a matrix
+  of results for each predictor and a vector of adjust-to settings.  It
+  also contains the call and a \samp{label} for the statistic that was
+  computed.  A \code{print} method for these objects handles the
+  printing.  \code{predict.areg.boot} returns a vector unless
+  \code{statistic="terms"}, in which case it returns a
+  matrix. \code{Function.areg.boot} returns by default a list of
+  functions whose argument is one of the variables (on the original
+  scale) and whose returned values are the corresponding transformed
+  values.  The names of the list of functions correspond to the names of
+  the original variables.  When \code{type="individual"},
+  \code{Function.areg.boot} invisibly returns the vector of names of the
+  created function objects. \code{Mean.areg.boot} and
+  \code{Quantile.areg.boot} also return functions.
+  
+  \code{smearingEst} returns a vector of estimates of distribution
+  parameters of class \samp{labelled} so that \code{print.labelled} wil
+  print a label documenting the estimate that was used (see
+  \code{\link{label}}).  This label can be retrieved for other purposes
+  by using e.g. \code{label(\var{obj})}, where \var{obj} was the vector
+  returned by \code{smearingEst}.
 }
 \details{
-As \code{transace} only does one iteration over the predictors, it may not
-find optimal transformations and it will be dependent on the order of
-the predictors in \code{x}.
+  As \code{transace} only does one iteration over the predictors, it may
+  not find optimal transformations and it will be dependent on the order
+  of the predictors in \code{x}.
 
-
-\code{ace} and \code{avas} standardize transformed variables to have mean zero
-and variance one for each bootstrap sample, so if a predictor is not
-important it will still consistently have a positive regression
-coefficient.  Therefore using the bootstrap to estimate standard
-errors of the additive least squares regression coefficients would not
-help in drawing inferences about the importance of the predictors.  To
-do this, \code{summary.areg.boot} computes estimates of, e.g., the
-inter-quartile range effects of predictors in predicting the
-response variable (after untransforming it).  As an example, at each
-bootstrap repetition the estimated transformed value of one of the
-predictors is computed at the lower quartile, median, and upper
-quartile of the raw value of the predictor.  These transformed x
-values are then multipled by the least squares estimate of the
-partial regression coefficient for that transformed predictor in
-predicting transformed y.  Then these weighted transformed x values have the
-weighted transformed x value corresponding to the lower quartile
-subtracted from them, to estimate an x effect accounting for
-nonlinearity.  The last difference computed is then the standardized
-effect of raising x from its lowest to its highest quartile.  Before
-computing differences, predicted values are back-transformed to be on
-the original y scale in a way depending on \code{statistic} and \code{q}.
-The sample standard deviation of these effects
-(differences) is taken over the bootstrap samples, and this is used to
-compute approximate confidence intervals for effects and approximate
-P-values, both assuming normality.
-
-
-\code{predict} does not re-insert NAs corresponding to observations that
-were dropped before the fit, when \code{newdata} is omitted.
-
-
-\code{statistic="fitted"} estimates the same quantity as \code{statistic="median"} if the
-residuals on the transformed response have a symmetric distribution.
-The two provide identical estimates when the sample median of the
-residuals is exactly zero. The sample mean of the residuals is
-constrained to be exactly zero although this does not simplify anything.
+  \code{\link[acepack]{ace}} and \code{\link[acepack]{avas}} standardize transformed variables to have
+  mean zero and variance one for each bootstrap sample, so if a
+  predictor is not important it will still consistently have a positive
+  regression coefficient.  Therefore using the bootstrap to estimate
+  standard errors of the additive least squares regression coefficients
+  would not help in drawing inferences about the importance of the
+  predictors.  To do this, \code{summary.areg.boot} computes estimates
+  of, e.g., the inter-quartile range effects of predictors in predicting
+  the response variable (after untransforming it).  As an example, at
+  each bootstrap repetition the estimated transformed value of one of
+  the predictors is computed at the lower quartile, median, and upper
+  quartile of the raw value of the predictor.  These transformed x
+  values are then multipled by the least squares estimate of the partial
+  regression coefficient for that transformed predictor in predicting
+  transformed y.  Then these weighted transformed x values have the
+  weighted transformed x value corresponding to the lower quartile
+  subtracted from them, to estimate an x effect accounting for
+  nonlinearity.  The last difference computed is then the standardized
+  effect of raising x from its lowest to its highest quartile.  Before
+  computing differences, predicted values are back-transformed to be on
+  the original y scale in a way depending on \code{statistic} and
+  \code{q}. The sample standard deviation of these effects (differences)
+  is taken over the bootstrap samples, and this is used to compute
+  approximate confidence intervals for effects andapproximate P-values,
+  both assuming normality.
+  
+  \code{predict} does not re-insert \code{NA}s corresponding to
+  observations that were dropped before the fit, when \code{newdata} is
+  omitted.
+  
+  \code{statistic="fitted"} estimates the same quantity as
+  \code{statistic="median"} if the residuals on the transformed response
+  have a symmetric distribution. The two provide identical estimates
+  when the sample median of the residuals is exactly zero. The sample
+  mean of the residuals is constrained to be exactly zero although this
+  does not simplify anything.
 }
 \author{
-Frank Harrell
-\cr
-Department of Biostatistics
-\cr
-Vanderbilt University School of Medicine
-\cr
-\email{f.harrell@vanderbilt.edu}
+  Frank Harrell
+  \cr
+  Department of Biostatistics
+  \cr
+  Vanderbilt University School of Medicine
+  \cr
+  \email{f.harrell@vanderbilt.edu}
 }
 \seealso{
-\code{\link[acepack]{avas}}, \code{\link[acepack]{ace}}, \code{\link[Design]{ols}}, \code{\link[Design]{validate}}, \code{\link[Design]{predab.resample}}, \code{\link{label}},
-\code{\link[Design]{nomogram}}
+  \code{\link[acepack]{avas}}, \code{\link[acepack]{ace}},
+  \code{\link[rms]{ols}}, \code{\link[rms]{validate}},
+  \code{\link[rms]{predab.resample}}, \code{\link{label}},
+  \code{\link[rms]{nomogram}}
 }
 \references{
 Harrell FE, Lee KL, Mark DB (1996): Stat in Med 15:361--387.
@@ -434,7 +459,7 @@ transformation in the transform-both-sides regression model.  JASA
 90:522--534. 
 
 
-See \code{avas}, \code{ace} for primary references.
+See \code{\link[acepack]{avas}}, \code{\link[acepack]{ace}} for primary references.
 }
 \examples{
 # xtrans <- transace(cbind(age,sex,blood.pressure,race.code),

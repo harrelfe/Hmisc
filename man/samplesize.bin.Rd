@@ -1,45 +1,40 @@
 \name{samplesize.bin}
 \alias{samplesize.bin}
 \title{
-Sample Size for 2-sample Binomial
+  Sample Size for 2-sample Binomial
 }
 \description{
-Computes sample size(s) for 2-sample binomial problem given vector
-or scalar probabilities in the two groups.
+  Computes sample size(s) for 2-sample binomial problem given vector or
+  scalar probabilities in the two groups.
 }
 \usage{
 samplesize.bin(alpha, beta, pit, pic, rho=0.5)
 }
 \arguments{
-\item{alpha}{
-scalar ONE-SIDED test size, or two-sided size/2
+  \item{alpha}{
+    scalar ONE-SIDED test size, or two-sided size/2
+  }
+  \item{beta}{
+    scalar or vector of powers
+  }
+  \item{pit}{
+    hypothesized treatment probability of success
+  }
+  \item{pic}{
+    hypothesized control probability of success
+  }
+  \item{rho}{
+    proportion of the sample devoted to treated group (\eqn{0 <\code{rho} < 1})
+  }
 }
-\item{beta}{
-scalar or vector of powers
-}
-\item{pit}{
-hypothesized treatment probability of success
-}
-\item{pic}{
-hypothesized control probability of success
-}
-\item{rho}{
-proportion of the sample devoted to treated group (0 <rho < 1)
-}}
 \value{
-TOTAL sample size(s)
+  TOTAL sample size(s)
 }
 \section{AUTHOR}{
-Rick Chappell
-
-
-Dept. of Statistics and Human Oncology
-
-
-University of Wisconsin at Madison
-
-
-\email{chappell@stat.wisc.edu}
+  Rick Chappell\cr
+  Dept. of Statistics and Human Oncology\cr
+  University of Wisconsin at Madison\cr
+  \email{chappell@stat.wisc.edu}
 }
 \examples{
 alpha <- .05

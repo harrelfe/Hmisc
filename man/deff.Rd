@@ -1,27 +1,29 @@
 \name{deff}
 \alias{deff}
 \title{
-Design Effect and Intra-cluster Correlation
+  Design Effect and Intra-cluster Correlation
 }
 \description{
-Computes the Kish design effect and corresponding intra-cluster correlation
-for a single cluster-sampled variable
+  Computes the Kish design effect and corresponding intra-cluster correlation
+  for a single cluster-sampled variable
 }
 \usage{
 deff(y, cluster)
 }
 \arguments{
-\item{y}{
-variable to analyze
+  \item{y}{
+    variable to analyze
+  }
+  \item{cluster}{
+    a variable whose unique values indicate cluster membership.  Any
+    type of variable is allowed.
+  }
 }
-\item{cluster}{
-a variable whose unique values indicate cluster membership.  Any
-type of variable is allowed.
-}}
 \value{
-a vector with named elements \code{n} (total number of non-missing observations),
- \code{clusters} (number of clusters after deleting missing data), \code{rho}
-(intra-cluster correlation), and \code{deff} (design effect).
+  a vector with named elements \code{n} (total number of non-missing
+  observations), \code{clusters} (number of clusters after deleting
+  missing data), \code{rho}(intra-cluster correlation), and \code{deff}
+  (design effect).
 }
 \author{
 Frank Harrell
@@ -33,7 +35,7 @@ Vanderbilt University
 \email{f.harrell@vanderbilt.edu}
 }
 \seealso{
-\code{\link[Design]{bootcov}}, \code{\link[Design]{robcov}}
+\code{\link[rms]{bootcov}}, \code{\link[rms]{robcov}}
 }
 \examples{
 set.seed(1)

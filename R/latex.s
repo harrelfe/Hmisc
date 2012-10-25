@@ -775,6 +775,7 @@ latex.default <-
   
   cat(latex.begin, file=file, append=file!='')
 
+  cgroupheader <- NULL
   if(length(cgroup)) {  # was !missing 5Oct00
     cvbar <- paste(cgroup.just, vbar, sep="")
     cvbar[1] <- paste(vbar, cvbar[1], sep="")
@@ -783,19 +784,22 @@ latex.default <-
     ##labs <- paste(sl, "bf ", cgroup, sep="") 
     if (!is.null(cgroupTexCmd))
       labs <- paste(sl, cgroupTexCmd, " ", cgroup, sep="")
+    else
+      labs <- cgroup
                                         # DRW 12apr05.
     
     if(multicol) ## SSJ 17nov03
       labs <- paste(slmc, n.cgroup, "}{", cvbar, "}{", labs, "}", sep="")
 
-    cat(labs, file=file, sep="&\n", append=file!='')
+    cgroupheader <- paste(labs, collapse="&")
     
     if (!length(cline)) {   # was is.length 2Apr02
       inr <- as.numeric(length(rowname))
       cline <- paste(sl,"cline{",1+inr,"-",nc,"}",sep="")
     }
-    
-    cat(eol, cline,"\n", sep="",file=file, append=file!='')
+
+    cgroupheader <- paste(cgroupheader, eol, cline, "\n", sep="")
+    cat(cgroupheader, file=file, append=file!='')
     ## eol was sl, sl  13dec02
   }
 
@@ -865,6 +869,8 @@ latex.default <-
       cat(sl,"caption[]{\\em (continued)} ", eol,
           sep="",file=file, append=file!='')
       cat(midrule, sep="",file=file, append=file!='')
+      if(!is.null(cgroupheader))
+        cat(cgroupheader, file=file, append=file!='')
       cat(header, file=file, sep="&", append=file!='')
       cat(eog, midrule, sl, "endhead", '\n', midrule,
           sep="", file=file, append=file!='')

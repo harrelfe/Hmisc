@@ -20,6 +20,7 @@
 \alias{unPaste}
 \alias{whichClosest}
 \alias{whichClosePW}
+\alias{whichClosek}
 \alias{xless}
 \title{Miscellaneous Functions}
 \description{
@@ -116,6 +117,10 @@
   element of another vector.  \code{whichClosest} quickly finds the closest
   element without any randomness.
 
+  \code{whichClosek} is a slow function that finds, after jittering the
+  lookup table, the \code{k} closest matchest to each element of the
+  other vector, and chooses from among these one at random.
+
   \code{xless} is a function for Linux/Unix users to invoke the system
   \code{xless} command to pop up a window to display the result of
   \code{print}ing an object.  For Windows, \code{xless} uses the builtin
@@ -173,6 +178,7 @@ xless(x, \dots, title)
   \item{group}{a categorical grouping variable}
   \item{intercept}{set to \code{FALSE} to not automatically add a column
 	of ones to the \code{x} matrix}
+  \item{k}{get the \code{k} closest matches}
   \item{kint}{which element of \code{b} to add to the result if \code{a}
 	does not contain a column for intercepts}
   \item{labels}{set to \code{FALSE} to omit drawing confidence

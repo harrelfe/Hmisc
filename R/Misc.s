@@ -878,6 +878,22 @@ whichClosePW <- function(x, w, f=0.2) {
            PACKAGE="Hmisc")$j
 }              
 
+whichClosek <- function(x, w, k) {
+  ## x: vector of reference values
+  ## w: vector of values for which to lookup close matches in x
+  ## Returns: subscripts in x corresponding to w
+  ## Assumes no NAs in x or w
+  ## First jitters x so there are no ties
+  ## Finds the k closest matches and takes a single random pick of these k
+  y <- diff(sort(x))
+  mindif <- if(all(y == 0)) 1 else min(y[y > 0])
+  x <- x + runif(length(x), -mindif/100, mindif/100)
+  z <- abs(outer(w, x, "-"))
+  s <- apply(z, 1, function(u) order(u)[1:k])
+  if(k == 1) return(s)
+  apply(s, 2, function(u) sample(u, 1))
+}
+                        
 if(FALSE) {
   sampWtdDist <- function(x, w)
   {

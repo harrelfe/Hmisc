@@ -715,7 +715,9 @@ invertTabulated(x, y, freq=rep(1,length(x)),
   \cite{Rubin's rate of missing information} and \code{dfmi} is
   \cite{Rubin's degrees of freedom for a t-statistic}
   for testing a single parameter.  The last two objects are vectors
-  corresponding to the diagonal of the variance matrix.
+  corresponding to the diagonal of the variance matrix.  The class
+  \code{"fit.mult.impute"} is prepended to the other classes produced by
+  the fitting function.
 }
 \section{Side Effects}{
   prints, plots, and \code{impute.transcan} creates new variables.

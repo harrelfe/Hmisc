@@ -1466,7 +1466,7 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
   f$fits <- fits
   f$formula <- formula
   if(using.Design) options(Design.attr=NULL)
-  
+  class(f) <- c('fit.mult.impute', class(f))
   f
 }
 

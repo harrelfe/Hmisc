@@ -40,7 +40,7 @@ areg(x, y, xtype = NULL, ytype = NULL, nk = 4,
 
 \method{plot}{areg}(x, whichx = 1:ncol(x$x), \dots)
 
-\method{predict}{areg}(object, x, type=c('lp','fitted'),
+\method{predict}{areg}(object, x, type=c('lp','fitted','x'),
                        what=c('all','sample'), \dots)
 }
 \arguments{
@@ -84,7 +84,8 @@ areg(x, y, xtype = NULL, ytype = NULL, nk = 4,
 	\code{y} transformation is always plotted.}
   \item{type}{tells \code{predict} whether to obtain predicted
 	untransformed \code{y} (\code{type='lp'}, the default) or predicted
-	\code{y} on the original scale (\code{type='fitted'})}
+	\code{y} on the original scale (\code{type='fitted'}), or the design
+    matrix for the right-hand side (\code{type='x'}).}
   \item{what}{When the \code{y}-transform is non-monotonic you may
 	specify \code{what='sample'} to \code{predict} to obtain a random
 	sample of \code{y} values on the original scale instead of a matrix

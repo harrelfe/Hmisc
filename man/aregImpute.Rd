@@ -66,8 +66,9 @@ of possible inverse values is made.
 }
 \usage{
 aregImpute(formula, data, subset, n.impute=5, group=NULL,
-           nk=3, tlinear=TRUE, type=c('pmm','regression'),
-           match=c('weighted','closest'), fweighted=0.2,
+           nk=3, tlinear=TRUE, type=c('pmm','regression','normpmm'),
+           pmmtype=1, match=c('weighted','closest','kclosest'),
+           kclosest=3, fweighted=0.2,
            curtail=TRUE, boot.method=c('simple', 'approximate bayesian'),
            burnin=3, x=FALSE, pr=TRUE, plotTrans=FALSE, tolerance=NULL, B=75)
 \method{print}{aregImpute}(x, digits=3, \dots)
@@ -139,11 +140,39 @@ recommended but 10 or more doesn't hurt.
   \code{"regression"} when all variables that are sometimes missing are
   continuous and the missingness mechanism is such that entire intervals
   of population values are unobserved.  See the Details section for more
-  information.  For the \code{plot} method, specify \code{type="hist"}
+  information.  Another method, \code{type="normpmm"}, only works
+  when variables containing \code{NA}s are continuous and \code{tlinear}
+  is \code{TRUE} (the default), meaning that the variable being imputed
+  is not transformed when it is on the left hand model side.
+  \code{normpmm} assumes that the imputation regression parameter
+  estimates are multivariately normally distributed and that the
+  residual variance has a scaled chi-squared distribution.  For each
+  imputation a random draw of the estimates is taken and a random draw
+  from sigma is combined with those to get a random draw from the
+  posterior predicted value distribution.  Predictive mean matching is
+  then done matching these predicted values from incomplete observations
+  with predicted values from complete potential donor observations,
+  where the latter predictions are based on the imputation model least
+  squares parameter estimates and not on random draws from the posterior.
+  For the \code{plot} method, specify \code{type="hist"}
   to draw histograms of imputed values with rug plots at the top, or
   \code{type="ecdf"} (the default) to draw empirical CDFs with spike
   histograms at the bottom.
 }
+\item{pmmtype}{type of matching to be used for predictive mean
+  matching when \code{type="pmm"}.  \code{pmmtype=2} means that predicted 
+  values for both target incomplete and complete observations come from
+  a fit from the same bootstrap sample.  \code{pmmtype=1}, the default,
+  means that predicted values for complete observations are based
+  on additive regression fits on original complete observations (using last
+  imputations for non-target variables as with the other methds), and using
+  fits on a bootstrap sample to get predicted values for missing target variables.
+  See van Buuren (2012) section 3.4.2 where \code{pmmtype=1} is said to
+  work much better when the number of variables is small.
+  \code{pmmtype=3} means that complete observation predicted values come
+  from a bootstrap sample fit whereas target incomplete observation
+  predicted values come from a sample with replacement from the bootstrap
+  fit (approximate Bayesian bootstrap).}
 \item{match}{
   Defaults to \code{match="weighted"} to do weighted multinomial
   probability sampling using the tricube function (similar to lowess)
@@ -154,7 +183,12 @@ recommended but 10 or more doesn't hurt.
   the mean absolute difference between the target predicted value and
   all the possible donor predicted values.  Set \code{match="closest"}
   to find as the donor the observation having the closest predicted
-  transformed value, even if that same donor is found repeatedly.}
+  transformed value, even if that same donor is found repeatedly.  Set
+  \code{match="kclosest"} to use a slower implementation that finds,
+  after jittering the complete case predicted values, the
+  \code{kclosest} complete cases on the target variable being imputed,
+  then takes a random sample of one of these \code{kclosest} cases.}
+\item{kclosest}{see \code{match}}
 \item{fweighted}{
   Smoothing parameter (multiple of mean absolute difference) used when
   \code{match="weighted"}, with a default value of 0.2.  Set
@@ -180,7 +214,9 @@ recommended but 10 or more doesn't hurt.
   \code{aregImpute} does \code{burnin + n.impute} iterations of the
   entire modeling process.  The first \code{burnin} imputations are
   discarded.  More burn-in iteractions may be requied when multiple
-  variables are missing on the same observations.}
+  variables are missing on the same observations.  When only one
+  variable is missing, no burn-ins are needed and \code{burnin} is set
+  to zero if unspecified.}
 \item{pr}{
 set to \code{FALSE} to suppress printing of iteration messages
 }
@@ -342,6 +378,9 @@ Vanderbilt University
 \email{f.harrell@vanderbilt.edu}
 }
 \references{
+  van Buuren, Stef.  Flexible Imputation of Missing Data.  Chapman &
+  Hall/CRC, Boca Raton FL, 2012.
+  
   Little R, An H.  Robust likelihood-based analysis of multivariate data
   with missing values. Statistica Sinica 14:949-968, 2004.
 

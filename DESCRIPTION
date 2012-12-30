@@ -1,6 +1,6 @@
 Package: Hmisc
-Version: 3.10-1
-Date: 2012-10-24
+Version: 3.11-0
+Date: 2012-12-30
 Title: Harrell Miscellaneous
 Author: Frank E Harrell Jr <f.harrell@vanderbilt.edu>, with
   contributions from Charles Dupont and many others.
@@ -14,8 +14,7 @@ Description: The Hmisc library contains many functions useful for data
 	computing sample size and power, importing datasets,
 	imputing missing values, advanced table making, variable clustering,
 	character string manipulation, conversion of S objects to LaTeX code,
-	and recoding variables.  Please submit bug reports to
-        'http://biostat.mc.vanderbilt.edu/trac/Hmisc'.
+	and recoding variables.
 License: GPL (>= 2)
 LazyLoad: Yes
 URL: http://biostat.mc.vanderbilt.edu/Hmisc, http://biostat.mc.vanderbilt.edu/trac/Hmisc

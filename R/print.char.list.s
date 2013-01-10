@@ -419,8 +419,8 @@ print.char.list <- function(x, ..., hsep = c("|"), vsep = c("-"), csep = c("+"),
 
   ## Calculate the max column width
   if(!missing(colname.width)) {
-    colwidth <- pmin(colDims$width, colnames.width)
-    supercolwidth <- pmin(supercolDims$width, colnames.width*colsets)
+    colwidth <- pmin(colDims$width, colname.width)
+    supercolwidth <- pmin(supercolDims$width, colname.width*colsets)
   } else {
     colwidth <- colDims$width
     supercolwidth <- supercolDims$width
@@ -428,8 +428,8 @@ print.char.list <- function(x, ..., hsep = c("|"), vsep = c("-"), csep = c("+"),
 
   ## Calculate the max row hight
   if(!missing(rowname.height)) {
-    rowheight <- pmin(rowDims$height, rownames.height)
-    superrowheight <- pmin(superrowDims$height, rownames.height*rowsets)
+    rowheight <- pmin(rowDims$height, rowname.height)
+    superrowheight <- pmin(superrowDims$height, rowname.height*rowsets)
   } else {
     rowheight <- rowDims$height
     superrowheight <- superrowDims$height

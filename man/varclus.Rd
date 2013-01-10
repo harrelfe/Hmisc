@@ -46,7 +46,7 @@ the third variable was not missing.
 \usage{
 varclus(x, similarity=c("spearman","pearson","hoeffding","bothpos","ccbothpos"),
         type=c("data.matrix","similarity.matrix"), 
-        method=if(.R.)"complete" else "compact",
+        method="complete",
         data=NULL, subset=NULL, na.action=na.retain, ...)
 \method{print}{varclus}(x, abbrev=FALSE, ...)
 \method{plot}{varclus}(x, ylab, abbrev=FALSE, legend.=FALSE, loc, maxlen, labels, \dots)
@@ -220,8 +220,8 @@ for \code{varclus} or \code{naclus}, a list of class \code{varclus} with element
 \code{call} (containing the calling statement), \code{sim} (similarity matrix),
 \code{n} (sample size used if \code{x} was not a correlation matrix already -
 \code{n} is a matrix), \code{hclust}, the object created by \code{hclust},
-\code{similarity}, and \code{method}.  For \code{plot}, returns the object created by
-\code{plclust}.  \code{naclus} also returns the two vectors listed under
+\code{similarity}, and \code{method}.  \code{naclus} also returns the
+two vectors listed under 
 description, and \code{naplot} returns an invisible vector that is the
 frequency table of the number of missing variables per observation.
 \code{plotMultSim} invisibly returns the limits of similarities used in
@@ -284,8 +284,7 @@ plot(v)
 df <- data.frame(a=c(1,2,3),b=c(1,2,3),c=c(1,2,NA),d=c(1,NA,3),
                  e=c(1,NA,3),f=c(NA,NA,NA),g=c(NA,2,3),h=c(NA,NA,3))
 par(mfrow=c(2,2))
-for(m in if(.R.)c("ward","complete","median") else 
-                c("compact","connected","average")) {
+for(m in c("ward","complete","median")) {
   plot(naclus(df, method=m))
   title(m)
 }

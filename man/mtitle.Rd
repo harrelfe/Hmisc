@@ -10,8 +10,7 @@ titles or subtitles that are inside the plotting region for a single plot.
 }
 \usage{
 mtitle(main, ll, lc,  
-       lr=if(.R.) format(Sys.time(),'\%d\%b\%y') else
-        if(under.unix)unix("date '+\%d\%h\%y'") else date(), 
+       lr=format(Sys.time(),'\%d\%b\%y'),
        cex.m=1.75, cex.l=.5, \dots)
 none
 }

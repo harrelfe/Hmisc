@@ -10,12 +10,12 @@ with several new options.
 \usage{
 dotchart2(data, labels, groups=NULL, gdata=NA, horizontal=TRUE, pch=16,
           xlab='', ylab='', xlim=NULL, auxdata, auxgdata=NULL, auxtitle,
-          lty=if(.R.) 1 else 2, lines=TRUE, dotsize = .8,
+          lty=1, lines=TRUE, dotsize = .8,
           cex = par("cex"), cex.labels = cex,
           cex.group.labels = cex.labels*1.25, sort.=TRUE, 
 	      add=FALSE, dotfont=par('font'), groupfont=2, 
 	      reset.par=add, xaxis=TRUE, width.factor=1.1,
-          lcolor=if(.R.)'gray' else par('col'), leavepar=FALSE,
+          lcolor='gray', leavepar=FALSE,
           axisat=NULL, axislabels=NULL, ...)
 }
 \arguments{

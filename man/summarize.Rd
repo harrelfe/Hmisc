@@ -130,7 +130,7 @@ mApply(temperature, month, g)
 
 mApply(temperature, month, mean, na.rm=TRUE)
 w <- summarize(temperature, month, mean, na.rm=TRUE)
-if(.R.) library(lattice)
+library(lattice)
 xyplot(temperature ~ month, data=w) # plot mean temperature by month
 
 w <- summarize(temperature, llist(year,month), 

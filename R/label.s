@@ -44,14 +44,14 @@ label.data.frame <- function(x, default=NULL, self=FALSE, ...) {
   }
 }
 
-labelPlotmath <- function(label, units=NULL, plotmath=.R., grid=FALSE)
+labelPlotmath <- function(label, units=NULL, plotmath=TRUE, grid=FALSE)
 {
   if(!length(label)) label <- ''
   
   if(!length(units) || (length(units)==1 && is.na(units))) units <- ''
   
   g <-
-    if(plotmath && .R.) function(x, y=NULL, xstyle=NULL, ystyle=NULL)
+    if(plotmath) function(x, y=NULL, xstyle=NULL, ystyle=NULL)
       {
         h <- function(w, style=NULL)
           if(length(style))
@@ -74,7 +74,7 @@ labelPlotmath <- function(label, units=NULL, plotmath=.R., grid=FALSE)
 
   if(units=='') g(label)
   else if(label=='') g(units)
-  else if(plotmath && .R.)
+  else if(plotmath)
     g(label, units, ystyle='scriptstyle')
   else paste(label,' [',units,']',sep='')
 }
@@ -188,35 +188,7 @@ if(!.SV4.) "print.labelled"<- function(x, ...)
 }
 
 
-if(.R.) as.data.frame.labelled <- as.data.frame.vector
-
-if(!.R. && version$major < 5) as.data.frame.labelled <- function(x, ...)
-{
-  y <- x
-  cy <- attr(y,'class')
-  cy <-
-    if(length(cy)>1)
-      cy[cy!='labelled']
-    else
-      NULL
-  
-  if(length(cy)==0)
-    cy <- NULL  # handles wierd case e.g. class=rep('lab..',2)
-  
-  attr(y,'class') <- cy
-  
-  ## data.class(character(0) class) returns ''
-  d <- data.class(y)
-  methodname <- paste("as.data.frame", d, sep = '.')
-  if(exists(methodname, mode = "function"))
-    (get(methodname, mode = "function"))(x, ...)
-  else {
-    if(options()$check)
-      warning(paste("no method for coercing",d,"to data.frame"))
-    
-    as.data.frame.AsIs(y, ...)
-  }
-}
+as.data.frame.labelled <- as.data.frame.vector
 
 Label <- function(object, ...) UseMethod("Label")
 

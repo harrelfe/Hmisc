@@ -113,8 +113,8 @@ setps(filename, w=0, h=3, pointsize=10, sublines=0, toplines=0,
       seqno=NULL, color=FALSE)
 
 setpdf(filename, w=0, h=4, pointsize=10, sublines=0, toplines=0,
-       type="symbol", lwd=1.5, font=if(.R.)"Helvetica" else 1,
-       ratio= if(.R.) 4/3 else (1 + sqrt(5))/2,
+       type="symbol", lwd=1.5, font="Helvetica",
+       ratio= 4/3,
        leftlines=0, las=1, bty='l', hor=FALSE, 
        trellis=!(missing(setTrellis.) & missing(strip.blank) &
                  missing(lty.dot.line) & missing(lwd.dot.line)), 

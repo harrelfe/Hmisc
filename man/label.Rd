@@ -87,7 +87,7 @@ label(x, ...) <- value
 
 \method{label}{data.frame}(x, self=TRUE, ...) <- value
 
-labelPlotmath(label, units=NULL, plotmath=.R., grid=FALSE)
+labelPlotmath(label, units=NULL, plotmath=TRUE, grid=FALSE)
 
 \method{print}{labelled}(x, \dots)   ## or x - calls print.labelled
 

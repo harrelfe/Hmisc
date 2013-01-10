@@ -3,8 +3,7 @@ varclus <-
            similarity=c("spearman","pearson","hoeffding",
                         "bothpos","ccbothpos"), 
            type=c("data.matrix","similarity.matrix"),
-           method=if(.R.)"complete"
-                  else "compact",
+           method="complete",
            data=NULL, subset=NULL, na.action=na.retain, ...)
 {
   call <- match.call()
@@ -77,8 +76,7 @@ varclus <-
   if(similarity=='ccbothpos') w <- NULL
   else
     w <-
-      if(.R.) hclust(as.dist(1-x), method=method)
-      else hclust(sim=x, method=method)
+      hclust(as.dist(1-x), method=method)
   
   structure(list(call=call, sim=x, n=n, hclust=w, similarity=similarity,
                  method=method, na.action=nact),class="varclus")
@@ -124,16 +122,14 @@ plot.varclus <- function(x, ylab, abbrev=FALSE, legend.=FALSE, loc, maxlen=20,
   if(missing(ylab))
     {
       s <- c(hoeffding="30 * Hoeffding D",
-             spearman=if(.R.)expression(paste(Spearman,~rho^2))
-             else "Spearman rho^2",
-             pearson=if(.R.)expression(paste(Pearson,~r^2))
-             else "Pearson r^2",
+             spearman=expression(paste(Spearman,~rho^2)),
+             pearson=expression(paste(Pearson,~r^2)),
              bothpos="Proportion",
              ccbothpos="Chance-Corrected Proportion")[x$similarity]
       if((is.expression(s) && as.character(s)=='NULL') ||
          (!is.expression(s) && (is.na(s) || s=='')))
         s <- x$similarity
-      ylab <- if(.R.) s else paste("Similarity (",s,")",sep="")
+      ylab <- s
     }
   
   if(legend.) abbrev <- TRUE
@@ -146,14 +142,10 @@ plot.varclus <- function(x, ylab, abbrev=FALSE, legend.=FALSE, loc, maxlen=20,
   if(!length(x$hclust))
     stop('clustering was not done on similarity="ccbothpos"')
 
-  p <- if(.R.)
-    {
-      plot(x$hclust, labels=labels, ann=FALSE, axes=FALSE, ...)
-      ya <- pretty(range(1-x$hclust$height))
-      axis(2, at=1-ya, labels=format(ya))
-      title(ylab=ylab)
-  }
-  else plclust(x$hclust, labels=labels, ylab=ylab, ...)
+  plot(x$hclust, labels=labels, ann=FALSE, axes=FALSE, ...)
+  ya <- pretty(range(1-x$hclust$height))
+  axis(2, at=1-ya, labels=format(ya))
+  title(ylab=ylab)
 
   s <- labels != olabels
   if(legend. && any(s))
@@ -170,14 +162,14 @@ plot.varclus <- function(x, ylab, abbrev=FALSE, legend.=FALSE, loc, maxlen=20,
                       collapse=""), adj=0)
     }
 
-  invisible(p)
+  invisible()
 }
 
 
 na.retain <- function(mf) mf
 
 
-naclus <- function(df, method=if(.R.)"complete" else "compact")
+naclus <- function(df, method="complete")
 {
   ismiss <- function(x) if(is.character(x))x=='' else is.na(x) 
 
@@ -231,12 +223,9 @@ naplot <- function(obj, which=c('all','na per var','na per obs','mean na',
 
   if(which %in% c('all','na per var vs mean na'))
     {
-      if(.R.)
-        {
-          xpd <- par('xpd')
-          par(xpd=NA)
-          on.exit(par(xpd=xpd))
-        }
+      xpd <- par('xpd')
+      par(xpd=NA)
+      on.exit(par(xpd=xpd))
 
       plot(na.per.var, mean.na, xlab='Fraction of NAs for Single Variable',
            ylab='Mean # Other Variables Missing', type='p')
@@ -276,19 +265,13 @@ combine.levels <- function(x, minlev=.05)
   si <- sum(i)
   if(si==0) return(x)
 
-  if(.R.)
-    {
-      comb <- if(si==1) names(sort(f))[1:2]
-      else names(f)[i]
-    
-      keepsep <- setdiff(names(f), comb)
-      names(keepsep) <- keepsep
-      w <- c(list(OTHER=comb), keepsep)
-      levels(x) <- w
-    }
-  else levels(x) <-
-    if(si==1) list(OTHER=names(sort(f))[1:2])
-    else list(OTHER=names(f)[i])
+  comb <- if(si==1) names(sort(f))[1:2]
+  else names(f)[i]
+  
+  keepsep <- setdiff(names(f), comb)
+  names(keepsep) <- keepsep
+  w <- c(list(OTHER=comb), keepsep)
+  levels(x) <- w
   x
 }
 
@@ -358,7 +341,7 @@ plotMultSim <- function(s, x=1:dim(s)[3],
               lines(c(i-w/2,i+w/2,i+w/2,
                       i-w/2,i-w/2),
                     c(j-h/2,j-h/2,j+h/2,
-                      j+h/2,j-h/2), col=if(.R.)gray(.5) else .5, lwd=.65)
+                      j+h/2,j-h/2), col=gray(.5), lwd=.65)
               xc <- rep(i-w/2-u/3,2)
               yc <- scaleit(sl, sle, c(j-h/2,j+h/2))
               if(i==1 && j<=2)
@@ -375,7 +358,7 @@ plotMultSim <- function(s, x=1:dim(s)[3],
           if(!add && slimds && (i!=j))
             lines(c(i-w/2,i+w/2),
                   rep(scaleit(0, sle, c(j-h/2,j+h/2)),2),
-                  col=if(.R.)gray(.5) else .5)
+                  col=gray(.5))
         }
     }
   

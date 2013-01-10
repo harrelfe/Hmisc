@@ -397,7 +397,7 @@ label(dfr$y) <- 'Quality of Life Score'
 # can also specify Cbind('Quality of Life Score'=y,lower,upper) 
 xYplot(Cbind(y,lower,upper) ~ month, groups=sex,
        subset=continent=='Europe', method='alt bars',
-        offset=if(.R.)unit(.1,'inches') else .4, type='b', data=dfr)   
+        offset=unit(.1,'inches'), type='b', data=dfr)   
 # offset passed to labcurve to label .4 y units away from curve
 # for R (using grid/lattice), offset is specified using the grid
 # unit function, e.g., offset=unit(.4,'native') or

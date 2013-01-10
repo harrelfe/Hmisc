@@ -1,11 +1,6 @@
 confbar <- function(at, est, se, width,
                     q=c(.7,.8,.9,.95,.99), 
-                    col=if(.R.)
-                          gray(c(0,.25,.5,.75,1))
-                        else if(under.unix)
-                          c(1,.8,.5,.2,.065)
-                        else
-                          c(1,4,3,2,5),
+                    col=gray(c(0,.25,.5,.75,1)),
                     type=c("v","h"), labels=TRUE, ticks=FALSE,
                     cex=.5, side="l", lwd=5, clip=c(-1e30, 1e30),
                     fun=function(x)x, 

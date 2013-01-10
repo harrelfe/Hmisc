@@ -138,21 +138,6 @@ tab
 reShape(tab)
 # attach(tab)  # do further processing
 
-
-#if(!.R.) {
-# g <- crosstabs( ~ Solder + Opening, data = solder, subset = skips > 10)
-# rowpct <- 100*attr(g,'marginals')$"N/RowTotal"   # compute row pcts
-# rowpct
-#
-#
-# r <- reShape(rowpct)
-# # note names "Solder" and "Opening" came originally from formula
-# # given to crosstabs
-# r    
-# dotplot(Solder ~ rowpct, groups=Opening, panel=panel.superpose, data=r)
-#}
-
-
 # An example where a matrix is created from irregular vectors
 follow <- data.frame(id=c('a','a','b','b','b','d'),
                      month=c(1, 2,  1,  2,  3,  2),

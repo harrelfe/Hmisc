@@ -128,9 +128,7 @@
 }
 \usage{
 confbar(at, est, se, width, q = c(0.7, 0.8, 0.9, 0.95, 0.99), 
-        col = if (.R.) gray(c(0, 0.25, 0.5, 0.75, 1)) else
-              if (under.unix) c(1, 0.8, 0.5, 0.2, 0.065) else
-              c(1, 4, 3, 2, 5),
+        col = gray(c(0, 0.25, 0.5, 0.75, 1)),
         type = c("v", "h"), labels = TRUE, ticks = FALSE,
         cex = 0.5, side = "l", lwd = 5, clip = c(-1e+30, 1e+30),
         fun = function(x) x,

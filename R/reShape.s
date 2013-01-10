@@ -36,13 +36,9 @@ reShape <- function(x, ..., id, colvar, base, reps,
       if(ln) {
         ## R calls data.frame even if specify structure, and R does
         ## not have dup.row.names argument to data.frame as does S+
-        if(.R.)
-          return(data.frame(res,
-                            row.names=paste(rep(rn,rep(reps,ln)),
-                                            rep(1:reps,n))))
-        else
-          return(structure(res, class='data.frame',
-                           row.names=rep(rn,rep(reps,ln))))
+        return(data.frame(res,
+                          row.names=paste(rep(rn,rep(reps,ln)),
+                            rep(1:reps,n))))
       }
     }
     

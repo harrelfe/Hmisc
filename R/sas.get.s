@@ -21,7 +21,7 @@ sas.get <-
            as.is=.5,
            check.unique.id=TRUE,
            force.single=FALSE,
-           where,
+           pos,
            uncompress=FALSE)
 {
   if(force.single) stop('force.single does not work under R')
@@ -354,14 +354,14 @@ sas.get <-
     if(!is.null(atr))
       attributes(dsi) <- c(attributes(dsi),atr)
 
-    if(missing(where))
+    if(missing(pos))
       ds[[i]] <- dsi
     else
-      assign(name[i], dsi, where=where)				
+      assign(name[i], dsi, pos=pos)				
   }
 
-  if(!missing(where))
-    return(structure(where, class="where"))
+  if(!missing(pos))
+    return(structure(pos, class="pos"))
 
   atr <- list()
   

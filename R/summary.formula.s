@@ -96,8 +96,7 @@ summary.formula <-
       stop('stratify only allowed for method="response"')
 
     temp <- untangle.specials(Terms,'stratify')
-    strat.name <- if(.R.) var.inner(Terms)[temp$terms]
-                  else attr(terms.inner(Terms),'term.labels')[temp$terms]
+    strat.name <- all.vars(Terms)[temp$terms]  ## TODO make sure not off by 1 10jan13
     strat <- if(length(temp$vars)==1) as.factor(X[[temp$vars]])
              else stratify(X[,temp$vars])
 
@@ -113,9 +112,7 @@ summary.formula <-
     
   if(resp>0) {
     Y <- X[[resp]]
-    yname <- if(.R.) as.character(attr(Terms,'variables'))[2]
-             else as.character(attr(Terms, "variables"))[1]  ## 25May01
-
+    yname <- as.character(attr(Terms,'variables'))[2]
     ylabel <- getlab(Y, yname)
 
     if(!is.matrix(Y))
@@ -244,8 +241,7 @@ summary.formula <-
 
         if(na.include && any(s)) {
           x <- na.include(x)
-          if(.R.)
-            levels(x)[is.na(levels(x))] <- 'NA'
+          levels(x)[is.na(levels(x))] <- 'NA'
 
           ## R 1.5 and later has NA as level not 'NA', satisfies is.na
         }
@@ -370,9 +366,7 @@ summary.formula <-
 
           if(na.include && !all(s) && length(levels(w))) {
             w <- na.include(w)
-            if(.R.)
-              levels(w)[is.na(levels(w))] <- 'NA'
-
+            levels(w)[is.na(levels(w))] <- 'NA'
             s <- rep(TRUE,length(s))
           }
 
@@ -515,8 +509,7 @@ summary.formula <-
       if(!is.factor(xi) && length(unique(xi[!is.na(xi)]))>=continuous)
         xi <- cut2(xi, g=g, ...)
       X[[i]] <- na.include(as.factor(xi))
-      if(.R.)
-        levels(X[[i]])[is.na(levels(X[[i]]))] <- 'NA'
+      levels(X[[i]])[is.na(levels(X[[i]]))] <- 'NA'
         
       Levels[[i]] <- c(levels(X[[i]]),if(overall)"ALL")
     }
@@ -676,12 +669,7 @@ print.summary.formula.response <- function(x,
         max(min(nchar(cstats)[nchar(cstats)>0]), min(nchar(dimnames(stats)[[2]])))
 
     z <- rbind(c('',dimnames(stats)[[2]]), z)
-    if(.R.)
-      print.char.matrix(z, col.names=FALSE, ...)
-    else
-      print.char.matrix(z,abbreviate.dimnames=abbreviate.dimnames,
-                        prefix.width=prefix.width, 
-                        min.colwidth=min.colwidth, ...)  
+    print.char.matrix(z, col.names=FALSE, ...)
 
     return(invisible())
   } 
@@ -748,8 +736,8 @@ latex.summary.formula.response <-
                      sep='')
 
   dm <- dimnames(stats)
-  dm[[1]] <- latexTranslate(dm[[1]], greek=.R.)
-  dm[[2]] <- latexTranslate(dm[[2]], greek=.R.)
+  dm[[1]] <- latexTranslate(dm[[1]], greek=TRUE)
+  dm[[2]] <- latexTranslate(dm[[2]], greek=TRUE)
   dimnames(stats) <- dm
   caption <- sedit(caption, "cbind", "")
   vn <- if(ul)at$vlabel
@@ -761,7 +749,7 @@ latex.summary.formula.response <-
                  paste(vn,'~\\hfill\\tiny{', atvu, '}',sep=''))
   }
 
-  vn <- latexTranslate(vn, greek=.R.)
+  vn <- latexTranslate(vn, greek=TRUE)
   if(missing(trios)) {
     cdec <- rep(cdec, length = nstat)
   } else {
@@ -864,8 +852,7 @@ plot.summary.formula.response <-
   nw      <- length(which)
   pch     <- rep(pch, length=if(superposeStrata)ns else nw)
   dotfont <- rep(dotfont, length=nw)
-  opar <- if(.R.) par(no.readonly=TRUE)
-          else par()
+  opar <- par(no.readonly=TRUE)
 
   if(reset.par)
     on.exit(par(opar))
@@ -903,45 +890,25 @@ plot.summary.formula.response <-
   }
 
   if(superposeStrata) { ##set up for Key()
-    Key <- if(.R.) function(x=NULL, y=NULL, lev, pch)
-    {
+    Key <- function(x=NULL, y=NULL, lev, pch) {
       oldpar <- par(usr=c(0,1,0,1),xpd=NA)
       on.exit(par(oldpar))
       if(is.list(x)) {
         y <- x$y;
         x <- x$x
       }
-
-      if(!length(x))
-        x <- 0
-
-      if(!length(y))
-        y <- 1  ## because of formals()
+      
+      if(!length(x)) x <- 0
+      if(!length(y)) y <- 1  ## because of formals()
 
       rlegend(x, y, legend=lev, pch=pch, ...)
       invisible()
     }
-    else function(x=NULL, y=NULL, lev, pch, ...) {
-      if(length(x)) {
-        if(is.list(x)) {
-          y <- x$y;
-          x <- x$x
-        }
-
-        key(x=x, y=y, text=list(lev), 
-            points=list(pch=pch),
-            transparent=TRUE, ...)
-      } else key(text=list(lev), 
-                 points=list(pch=pch),transparent=TRUE, ...)
-      
-      invisible()
-    }
-
     formals(Key) <- list(x=NULL,y=NULL,lev=at$strat.levels,
                          pch=pch)
     storeTemp(Key)
   }
-
+  
   invisible()
 }
 
@@ -1049,13 +1016,12 @@ plot.summary.formula.reverse <-
                                if(type[i]==1)1
                                else 1:nr,
                                prtest=prtest,
-                               plotmath=.R.,
+                               plotmath=TRUE,
                                pdig=pdig, eps=eps)
 
         ftstats <- c(ftstats, fts, 
                      if(type[i]==1 && nr-exc-1 > 0)
-                       rep(if(.R.) expression('')
-                           else '',
+                       rep(expression(''),
                            nr-exc-1))
       }
     }
@@ -1086,8 +1052,7 @@ plot.summary.formula.reverse <-
       Key <- function(...)invisible(NULL)
       storeTemp(Key)
     } else { ##set up for key() if > 1 column
-      Key <- if(.R.) function(x=NULL, y=NULL, lev, pch)
-      {
+      Key <- function(x=NULL, y=NULL, lev, pch) {
         oldpar <- par(usr=c(0,1,0,1),xpd=NA)
         on.exit(par(oldpar))
         if(is.list(x)) {
@@ -1105,24 +1070,7 @@ plot.summary.formula.reverse <-
 
         rlegend(x, y, legend=lev, pch=pch, ...)
         invisible()
-      } else function(x=NULL, y=NULL, lev, pch, ...)
-      {
-        if(length(x)) {
-          if(is.list(x)) {
-            y <- x$y;
-            x <- x$x
-          }
-
-          key(x=x, y=y, text=list(lev), 
-              points=list(pch=pch),
-              transparent=TRUE, ...)
-        } else
-          key(text=list(lev), 
-              points=list(pch=pch),transparent=TRUE, ...)
-
-        invisible()
       }
-
       formals(Key) <- list(x=NULL,y=NULL,lev=names(obj$group.freq),
                            pch=pch)
       storeTemp(Key)
@@ -1209,7 +1157,7 @@ plot.summary.formula.reverse <-
 
       if(all(prtest != 'none')) {
         fts <- formatTestStats(test[[varNames[i]]], prtest=prtest,
-                               plotmath=.R.,
+                               plotmath=TRUE,
                                pdig=pdig, eps=eps)
         title(fts, line=.5)  ## .5 ignored in S-Plus
       }
@@ -1235,16 +1183,16 @@ dotchart2 <-
   function(data, labels, groups = NULL, gdata = NA, horizontal = TRUE, 
            pch = 16, 
            xlab = "", ylab="", xlim=NULL, auxdata, auxgdata=NULL, auxtitle,
-           lty = if(.R.)1 else 2,
+           lty = 1,
            lines = TRUE, dotsize = .8, cex = par("cex"), 
            cex.labels = cex, cex.group.labels = cex.labels*1.25, sort.=TRUE, 
            add=FALSE, dotfont=par('font'),
            groupfont=2, reset.par=add, xaxis=TRUE,
-           width.factor=1.1, lcolor=if(.R.) 'gray' else par('col'),
+           width.factor=1.1, lcolor='gray',
            leavepar=FALSE, axisat=NULL, axislabels=NULL,
            ...)
 {
-  if(.R. && !add)
+  if(!add)
     {
       plot.new()   ## needed for strwidth
       par(new=TRUE)
@@ -1252,8 +1200,7 @@ dotchart2 <-
 
   ieaux <- if(missing(auxdata)) FALSE else is.expression(auxdata)
   
-  mtextsrt <- function(..., srt=0)
-    if(.R.) mtext(..., las=1) else mtext(..., srt=srt)
+  mtextsrt <- function(..., srt=0) mtext(..., las=1)
 
   ndata <- length(data)
   if(missing(labels))
@@ -1408,23 +1355,9 @@ dotchart2 <-
 
           s <- bracket
           if(!is.na(any(s)) && any(s))
-            {
-              if(.R.)
-                text(rep(par('usr')[1],sum(s)),
-                     yposng[s], labng[s], adj=1,
-                     cex=cex.labels, srt=0,xpd=NA)
-              else if(.SV4. && under.unix)
-                text(rep(par('usr')[1],sum(s)),
-                     yposng[s], labng[s], adj=1,
-                     cex=cex.labels, srt=0)
-              else
-                {
-                  xmin <- par('usr')[1] -
-                    max(nchar(labng[s]))*0.5*cex.labels*par('1em')[1]
-                  text(rep(xmin,sum(s)), yposng[s], labng[s], adj=0,
-                       cex=cex.labels, srt=0)
-                }
-            }
+            text(rep(par('usr')[1],sum(s)),
+                 yposng[s], labng[s], adj=1,
+                 cex=cex.labels, srt=0,xpd=NA)
           
           if(!missing(groups))
             mtextsrt(paste(alllab[ - nongrp],''), 2, 0, at = ypos[ - nongrp], 
@@ -1566,13 +1499,8 @@ print.summary.formula.reverse <-
     if(missing(min.colwidth))
       min.colwidth <- max(min(nchar(gl)),min(nc[nc>0]))
 
-    if(.R.)
-      print.char.matrix(cstats, col.names=FALSE,
-                        col.txt.align='left', ...)
-    else
-      print.char.matrix(cstats, abbreviate.dimnames=abbreviate.dimnames,
-                        prefix.width=prefix.width,
-                        min.colwidth=min.colwidth, ...)
+    print.char.matrix(cstats, col.names=FALSE,
+                      col.txt.align='left', ...)
   } else
 
   print(cstats, quote=FALSE)
@@ -2002,8 +1930,8 @@ latex.summary.formula.reverse <-
     gl <- " "
 
   lab <- sedit(lab,c(" ","&"),c("~","\\&"))  #was format(lab) 21Jan99
-  lab <- latexTranslate(lab, greek=.R.)
-  gl  <- latexTranslate(gl, greek=.R.)
+  lab <- latexTranslate(lab, greek=TRUE)
+  gl  <- latexTranslate(gl, greek=TRUE)
   ## if(any(gl != " ")) gl <- paste(gl, " $(N=",x$group.freq,")$",sep="") # 3Aug01
   ## Added any( ) 26Mar02  21jan03
   extracolheads <-
@@ -2130,10 +2058,7 @@ print.summary.formula.cross <- function(x, twoway=nvar==2,
            z)  # 5Oct00
     
     header <- matrix(paste(z,collapse="\n"),1,1)
-    if(.R.)
-      print.char.matrix(header, col.names=FALSE)
-    else
-      print.char.matrix(header)
+    print.char.matrix(header, col.names=FALSE)
 
     d <- c(length(v),length(h),length(z))
     st <- array(NA, dim=d, dimnames=list(v,h,z))
@@ -2164,15 +2089,7 @@ print.summary.formula.cross <- function(x, twoway=nvar==2,
         max(min(nchar(dimnames(cstats2)[[2]])), 
             min(nchar(cstats)[nchar(cstats)>0]))
 
-    return(invisible(if(.R.)
-                       print.char.matrix(cstats2,
-                                         col.names=TRUE, ...)
-                     else
-                       print.char.matrix(cstats2,  prefix.width=prefix.width,
-                                         abbreviate.dimnames=abbreviate.dimnames,
-                                         min.colwidth=min.colwidth, ...)))
-
-    ## was col.names=FALSE 26Mar02
+    return(invisible(print.char.matrix(cstats2, col.names=TRUE, ...)))
   }
 
   ##print.char.matrix not present (old version of S-Plus)
@@ -2219,12 +2136,12 @@ latex.summary.formula.cross <-
   ars <- length(dim(S))
   inn <- c('cbind','c(','ALL',  'NA')
   out <- c('',     '(' ,'Total','Missing')
-  caption <- latexTranslate(caption, inn, out, pb=TRUE, greek=.R.)
+  caption <- latexTranslate(caption, inn, out, pb=TRUE, greek=TRUE)
 
   if(twoway)
     rowlab <-
       if(ul)
-        latexTranslate(a$labels[1],inn,out,pb=TRUE,greek=.R.)
+        latexTranslate(a$labels[1],inn,out,pb=TRUE,greek=TRUE)
       else 
         names(stats)[1]
 
@@ -2235,13 +2152,13 @@ latex.summary.formula.cross <-
   if(!twoway) {
     for(i in 1:nvar)
       stats[[i]] <- latexTranslate(as.character(stats[[i]]),inn,
-                                   out,pb=TRUE,greek=.R.)
+                                   out,pb=TRUE,greek=TRUE)
 
     ##Used to do this translating unconditionally   6Jun96
 
     if(ars) {
       stats$S <- NULL
-      snam <- latexTranslate(dimnames(S)[[2]],inn,out,pb=TRUE,greek=.R.)
+      snam <- latexTranslate(dimnames(S)[[2]],inn,out,pb=TRUE,greek=TRUE)
       for(i in 1:ncol(S))
         stats[[snam[i]]] <- S[,i]
     } else names(stats)[length(stats)] <- ylab
@@ -2263,12 +2180,12 @@ latex.summary.formula.cross <-
   nc <- length(lev2)
   ns <- ncol(S)
   snam <- dimnames(S)[[2]]
-  snam <- latexTranslate(snam, inn, out, pb=TRUE,greek=.R.)
+  snam <- latexTranslate(snam, inn, out, pb=TRUE,greek=TRUE)
   dn <-
     if(ns > 1)
       rep(snam, nc)
     else
-      latexTranslate(lev2,inn,out,pb=TRUE,greek=.R.) # 5Oct00
+      latexTranslate(lev2,inn,out,pb=TRUE,greek=TRUE) # 5Oct00
 
   st <- matrix(NA, nrow=nr, ncol=nc*ns, dimnames=list(NULL,dn))
   for(i in 1:nr) {
@@ -2287,9 +2204,9 @@ latex.summary.formula.cross <-
         rowlabel=if(rowlabel=='') rowlab else rowlabel,
         n.rgroup=c(nrow(st)-1,1),
         n.cgroup=if(ns>1) rep(ns,nc),  # ns>1 5Oct00
-        cgroup  =if(ns>1) latexTranslate(lev2,inn,out,pb=TRUE,greek=.R.),
+        cgroup  =if(ns>1) latexTranslate(lev2,inn,out,pb=TRUE,greek=TRUE),
         check.names=FALSE,
-        rowname=latexTranslate(lev1,inn,out,pb=TRUE,greek=.R.), ...)
+        rowname=latexTranslate(lev1,inn,out,pb=TRUE,greek=TRUE), ...)
 }
 
 
@@ -2472,11 +2389,6 @@ summarize <- function(X, by, FUN, ...,
     X <- if(is.matrix(X)) X[subset,,drop=FALSE]
          else X[subset]
 
-  if(!.R.)  # 21Mar01: S-Plus converts factor to integer during paste
-    for(i in 1:nby)
-      if(is.category(by[[i]]))
-        by[[i]] <- as.character(by[[i]])
-  
   byc <- do.call('paste',c(by,sep='|'))
 
   ## split does not handle matrices
@@ -2500,23 +2412,14 @@ summarize <- function(X, by, FUN, ...,
 
   r <- mApply(X, byc, FUN, ..., keepmatrix=nc>1)
   rdimn <- dimnames(r)[[1]]
-  if(.R.) {   # someday can use unpaste defined in Misc.s
-    ans <- strsplit(if(nc==1) names(r) else rdimn,'\\|')
-    ans <- sapply(ans, function(x)if(length(x))x else '')
-
-    ## strsplit returns list "transpose" of unpaste
-    bb <- matrix(unlist(ans), nrow=nby)
-    ans <- vector('list', nby)
-    for(jj in 1:nby)
-      ans[[jj]] <- bb[jj,]
-  } else {
-    ans <- if(nc==1)names(r) else rdimn
-    
-    if(nby==1)
-      ans <- list(ans)
-    else
-      ans <- unPaste(ans, sep='|')
-  }
+  ## someday can use unpaste defined in Misc.s
+  ans <- strsplit(if(nc==1) names(r) else rdimn,'\\|')
+  ans <- sapply(ans, function(x)if(length(x))x else '')
+  
+  ## strsplit returns list "transpose" of unpaste
+  bb <- matrix(unlist(ans), nrow=nby)
+  ans <- vector('list', nby)
+  for(jj in 1:nby) ans[[jj]] <- bb[jj,]
 
   names(ans) <- names(by)
   if(nc>1 && (nc != ncol(r)))
@@ -2656,7 +2559,7 @@ smean.sdl <- function(x, mult=2, na.rm=TRUE)
 
 #S-Plus gives a parse error for R's .Internal()
 #Might try not using an else to see if S still parses
-smean.cl.boot <- if(.R.) function(x, conf.int=0.95, B=1000, na.rm=TRUE, reps=FALSE) {
+smean.cl.boot <- function(x, conf.int=0.95, B=1000, na.rm=TRUE, reps=FALSE) {
   if(na.rm)
     x <- x[!is.na(x)]
 
@@ -2674,26 +2577,6 @@ smean.cl.boot <- if(.R.) function(x, conf.int=0.95, B=1000, na.rm=TRUE, reps=FAL
   if(reps)
     attr(res, "reps") <- z
   
-  res
-} else function(x, conf.int=.95, B=1000, na.rm=TRUE, reps=FALSE)
-{
-  if(na.rm)
-    x <- x[!is.na(x)]
-
-  n <- length(x)
-  xbar <- mean(x)
-  if(n < 2)
-    return(c(Mean=xbar, Lower=NA, Upper=NA))
-
-  z <- unlist(lapply(1:B, function(i,x,N)
-                     sum(x[.Internal(sample.index(N, N, TRUE),
-                                     "S_sample",TRUE,0)]), x=x, N=n)) / n
-  quant <- quantile(z, c((1-conf.int)/2,(1+conf.int)/2))
-  names(quant) <- NULL
-  res <- c(Mean=xbar, Lower=quant[1], Upper=quant[2])
-  if(reps)
-    attr(res, 'reps') <- z
-
   res
 }
 
@@ -2724,7 +2607,7 @@ asNumericMatrix <- function(x)
     A$ischar <- ischar
     at[[i]] <- A
   }
-  assign('origAttributes', at, pos=if(.R.)'.GlobalEnv' else 1)
+  assign('origAttributes', at, pos='.GlobalEnv')
   matrix(unlist(x), ncol=k,
          dimnames=list(a$row.names, a$names))
 }
@@ -2780,7 +2663,7 @@ matrix2dataFrame <- function(x, at=origAttributes, restoreAll=TRUE)
 
 stripChart <- function(x, xlim, xlab='', pch=1,
                        cex.labels=par('cex'), cex.points=.5,
-                       lcolor=if(.R.)'gray' else par('col'),
+                       lcolor='gray',
                        grid=FALSE)
 {
   groups <- names(x)
@@ -2795,8 +2678,7 @@ stripChart <- function(x, xlim, xlab='', pch=1,
     segments <- lsegments
   }
 
-  if(.R.)
-    plot.new()
+  plot.new()
   
   mai <- omai <- par('mai')
   on.exit(par(mai=omai))
@@ -2809,12 +2691,8 @@ stripChart <- function(x, xlim, xlab='', pch=1,
   box()
   mgp.axis(1, axistitle=xlab)
 
-  if(.R.)
-    mtext(paste(groups,''), 2, 0, at=length(groups):1,
-          adj=1, las=1, cex=cex.labels)
-  else
-    mtext(paste(groups,''), 2, 0, at=length(groups):1,
-          adj=1, srt=0, cex=cex.labels)
+  mtext(paste(groups,''), 2, 0, at=length(groups):1,
+        adj=1, las=1, cex=cex.labels)
 
   y <- 0
   abline(h = 1:length(groups), lty = 1, lwd=1, col=lcolor)

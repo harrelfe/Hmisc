@@ -24,7 +24,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
   if(!inherits(formula,'formula'))
     stop('formula must be a formula')
   
-  nam <- var.inner(formula)
+  nam <- all.vars(formula)
   
   m <- match.call(expand.dots = FALSE)
   Terms <- terms(formula, specials='I')

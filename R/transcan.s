@@ -21,55 +21,8 @@ transcan <-
   ##This is a non-.Internal version of the approx function.  The
   ##S-Plus version of approx sometimes bombs with a bus error.
 
-  asing <- if(.R.) function(x)x else as.single
+  asing <- function(x)x
   
-  if(version$major < 4 && !.R.)
-    approx <- function(x, y, xout, method = "linear", n = 50, rule =
-                       1, f = 0){
-      nx <- length(x)
-      if(any(is.na(x)) || any(is.na(y)))
-        stop("Missing values not allowed")
-      
-      if(nx != length(y))
-        stop("Lengths of x and y must match")
-      
-      if(nx < 2)
-        stop("need at least 2 points")
-      
-      i <- order(x)
-      x <- x[i]
-      y <- y[i]
-      if(missing(xout))
-        xout <- seq(x[1], x[nx], length = n)
-      else n <- length(xout)
-
-      methods <- c("linear", "constant")
-      if(!(imeth <- pmatch(method, methods, nomatch = 0)))
-        stop("method must be \"linear\" or \"constant\"")
-      
-      method <- methods[imeth]
-      if(method == "linear") {
-        f <- -1
-      }
-      else if(method == "constant") {
-        if(f < 0 || f > 1)
-          stop("f must be in [0,1]")
-      }
-
-      val <-  .Fortran("approx",
-                       x = as.single(x),
-                       y = as.single(y),
-                       nx = as.integer(nx),
-                       xout = as.single(xout),
-                       m = as.integer(n),
-                       rule = as.integer(rule),
-                       f = as.single(f),
-                       yout = single(n),
-                       iscr = single(n))[c("xout", "yout")]
-      names(val) <- c("x", "y")
-      val
-    }
-
   call        <- match.call()
   method      <- match.arg(method)
   impcat      <- match.arg(impcat)
@@ -92,14 +45,9 @@ transcan <-
   if(imputed.actual!='none')
     imputed <- TRUE
 
-  if(impcat=='multinom') {
-    if(.R.)
-      require('nnet')
-    else if(!existsFunction('multinom'))
-      require(nnet)
-  }
+  if(impcat=='multinom') require('nnet')
 
-  if(.R. & missing(data))
+  if(missing(data))
     stop('Must specify data= when using R')
 
   formula <- nact <- NULL
@@ -129,8 +77,7 @@ transcan <-
       stop('transcan does not support a left hand side variable in the formula')
 
 
-    nam <- if(.R.)var.inner(attr(y, "terms"))
-           else attr(terms.inner(terms(y)),'term.labels')
+    nam <- all.vars(attr(y, "terms"))
 
     # Error if user has passed an invalid formula
     if(length(nam) != d[2])
@@ -140,7 +87,7 @@ transcan <-
     if(!length(asis)) {
       Terms <- terms(formula, specials='I')
       asis <- nam[attr(Terms,'specials')$I]
-      ## terms.inner will cause I() wrapper to be ignored
+      ## all.vars will cause I() wrapper to be ignored
     }
 
     x <- matrix(NA,nrow=d[1],ncol=d[2],
@@ -227,8 +174,7 @@ transcan <-
     na <- is.na(y)
     w <- y[!na]
     if(imputed && n.impute==0)
-      Imputed[[i]] <- if(.R.)double(sum(na))
-                      else single(sum(na))
+      Imputed[[i]] <- double(sum(na))
 
     if(lab %in% asis) {
       fillin[i] <- if(usefill==2) imp.con[i]
@@ -288,8 +234,7 @@ transcan <-
       } else runif(n)
 
   p1 <- p-1
-  R2 <- R2.adj <- if(.R.)double(p)
-                  else single(p);
+  R2 <- R2.adj <- double(p)
 
   r2 <- r2.adj <- NA
   Details.impcat <- NULL
@@ -930,18 +875,7 @@ impute.transcan <-
           nimp[nam] <- length(i)
           if(list.out)
             outlist[[nam]] <- v
-          else
-            {
-              if(.R.)
-                assign(nam, v, envir=.GlobalEnv)
-              else
-                {
-                  if(missing(frame.out))
-                    assign(nam, v, where=where.out)
-                  else
-                    assign(nam, v, frame=frame.out)
-                }
-            }
+          else assign(nam, v, envir=.GlobalEnv)
         }
 
     if(pr)
@@ -1501,16 +1435,8 @@ vcov.default <- function(object, regcoef.only=FALSE, ...)
 if(FALSE) Varcov.lm <- function(object, ...)
 {
   cof <- object$coefficients
-  if(.R.)
-    {
-      Qr <- object$qr
-      cov <- chol2inv(Qr$qr)
-    }
-  else
-    {
-      rinv <- solve(object$R, diag(length(cof)))
-      cov <- rinv %*% t(rinv)
-    }
+  Qr <- object$qr
+  cov <- chol2inv(Qr$qr)
   
   cov <- sum(object$residuals^2)*cov/object$df.residual
   nm  <- names(cof)
@@ -1549,11 +1475,9 @@ invertTabulated <- function(x, y, freq=rep(1,length(x)),
 
   del <- diff(range(y, na.rm=TRUE))
   m <- length(aty)
-  yinv <- if(.R.)double(m)
-          else single(m)
+  yinv <- double(m)
   
-  cant <- if(.R.)double(0)
-          else single(0)
+  cant <- double(0)
 
   for(i in 1:m)
     {

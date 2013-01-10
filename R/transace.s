@@ -2,8 +2,7 @@
 transace <- function(x, monotonic=NULL, categorical=NULL, binary=NULL,
                      pl=TRUE)
 {
-  if(.R.)
-    require('acepack')  # provides ace, avas
+  require('acepack')  # provides ace, avas
 
   nam <- dimnames(x)[[2]]
   omit <- is.na(x %*% rep(1,ncol(x)))
@@ -59,7 +58,7 @@ areg.boot <- function(x, data, weights, subset, na.action=na.delete,
 {
   acall   <- match.call()
   method  <- match.arg(method)
-  if(.R. && method=='avas') require('acepack')
+  if(method=='avas') require('acepack')
 
   if(!inherits(x,'formula')) stop('first argument must be a formula')
 
@@ -249,10 +248,9 @@ areg.boot <- function(x, data, weights, subset, na.action=na.delete,
 
   structure(list(call=acall, method=method, 
                  coefficients=coef.orig,
-                 linear.predictors=if(.R.)lp else as.single(lp),
+                 linear.predictors=lp,
                  fitted.values=approxExtrap(fit[[1]],xout=lp)$y,
-                 residuals=if(.R.)f.orig$residuals
-                           else as.single(f.orig$residuals),
+                 residuals=f.orig$residuals,
                  na.action=nact, fit=fit, n=n, nk=nk,
                  xtype=xtype, ytype=ytype,
                  xdf=f$xdf, ydf=f$ydf,
@@ -549,7 +547,7 @@ plot.areg.boot <- function(x, ylim, boot=TRUE,
 Function.areg.boot <-
   function(object, type=c('list','individual'),
            ytype=c('transformed','inverse'),
-           prefix='.', suffix='', frame=if(.R.)1 else 0,
+           prefix='.', suffix='', frame=1,
            where=1, ...)
 {
   type <- match.arg(type)
@@ -607,12 +605,7 @@ Function.areg.boot <-
   fun.name <- paste(prefix, nam, suffix, sep='')
   for(i in 1:k)
     if(missing(where))
-      {
-        if(.R.) assign(fun.name[i], g[[i]], pos=frame)
-        else assign(fun.name[i], g[[i]], frame=frame)
-      }
-    else if(.R.)
-      assign(fun.name[i], g[[i]], pos=where)
+        assign(fun.name[i], g[[i]], pos=frame)
     else
       assign(fun.name[i], g[[i]], where=where)
 
@@ -677,13 +670,12 @@ Mean.areg.boot <- function(object, evaluation=200, ...)
   lp <- seq(r[1], r[2], length=evaluation)
   res <- object$residuals
   ytrans <- object$fit[[1]]
-  asing <- if(.R.) function(x)x else as.single
+  asing <- function(x)x
 
   if(length(lp)*length(res) < 100000)
     means <- asing(smearingEst(lp, ytrans, res, statistic='mean'))
   else {
-    means <- if(.R.)double(evaluation)
-             else single(evaluation)
+    means <- double(evaluation)
     for(i in 1:evaluation)
       means[i] <- mean(approxExtrap(ytrans, xout=lp[i]+res)$y)
   }
@@ -691,8 +683,7 @@ Mean.areg.boot <- function(object, evaluation=200, ...)
   g <- function(lp, trantab) approxExtrap(trantab, xout=lp)$y
 
   formals(g) <- list(lp=numeric(0),
-                     trantab=list(x=if(.R.)lp
-                                    else asing(lp),
+                     trantab=list(x=lp,
                                   y=means))
   g
 }

@@ -230,9 +230,7 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
   method <- match.arg(method)
   if(length(groups)) groups <- as.factor(groups)
 
-  if(!.R.) llines <- lines
-  if(.R.)
-    type <- 's'   # lattice histogram sets to 'percent'
+  type <- 's'   # lattice histogram sets to 'percent'
 
   g <- oldUnclass(groups)[subscripts]
   ng <- if(length(groups)) max(g, na.rm=TRUE) else 1
@@ -279,7 +277,7 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
       do.call('llines', list(z$x, fun(z$ecdf), lwd = lwd, lty = lty, col = col,
                              type = type, ...))
       if(length(q))
-        qrefs(x, q, col, fun=fun, llines=llines, grid=.R.)
+        qrefs(x, q, col, fun=fun, llines=llines, grid=TRUE)
     
       datadensity <- match.arg(datadensity)
       if(datadensity != 'none')
@@ -303,7 +301,7 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
                          rug    ='scat1d',
                          hist='histSpike',
                          density='histSpike'),
-                  c(list(x=x,add=TRUE,grid=.R.),
+                  c(list(x=x,add=TRUE,grid=TRUE),
                     if(datadensity=='density')
                     list(type='density'),
                     dens.opts))
@@ -332,7 +330,7 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
                                     col = col[i], lwd = lwd[i], lty = lty[i], 
                                     type = type, ...))
               if(length(q)) qrefs(x[j], q, col[i], fun=fun, llines=llines,
-                                  grid=.R.)
+                                  grid=TRUE)
               curves[[lev[i]]] <- list(x=z$x, y=fun(z$ecdf))
             }
         }
@@ -364,7 +362,7 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
           c(list(lwd=lwd, cex=cex[1]), label.curves)
 
         labcurve(curves, lty=lty[levnum], lwd=lwd[levnum], col.=col[levnum], 
-                 opts=lc, grid=.R., ...)
+                 opts=lc, grid=TRUE, ...)
       }
     }
   else ppanel(x,
@@ -374,49 +372,24 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
 
   if(ng>1)
     { ##set up for key() if points plotted
-      if(.R.)
+      Key <- function(x=0, y=1, lev, col, lty, lwd, ...)
         {
-          Key <- function(x=0, y=1, lev, col, lty, lwd, ...)
+          oldpar <- par(usr=c(0,1,0,1),xpd=NA)
+          
+          ## Even though par('usr') shows 0,1,0,1 after lattice draws
+          ## its plot, it still needs resetting
+          on.exit(par(oldpar))
+          if(is.list(x))
             {
-              oldpar <- par(usr=c(0,1,0,1),xpd=NA)
-        
-              ## Even though par('usr') shows 0,1,0,1 after lattice draws
-              ## its plot, it still needs resetting
-              on.exit(par(oldpar))
-              if(is.list(x))
-                {
-                  y <- x[[2]]; x <- x[[1]]
-                }
-
-              if(!length(x)) x <- 0
-
-              if(!length(y)) y <- 1  ## because of formals()
-
-              rlegend(x, y, legend=lev, lty=lty, lwd=lwd, col=col)
-              invisible()
+              y <- x[[2]]; x <- x[[1]]
             }
+          
+          if(!length(x)) x <- 0
+          if(!length(y)) y <- 1  ## because of formals()
+          rlegend(x, y, legend=lev, lty=lty, lwd=lwd, col=col)
+          invisible()
         }
-      else
-        {
-          Key <- function(x=NULL, y=NULL, lev, col, lty, lwd, ...)
-            {
-              if(length(x))
-                {
-                  if(is.list(x))
-                    {
-                      y <- x$y; x <- x$x
-                    }
 
-                  key(x=x, y=y, text=list(lev, col=col), 
-                      lines=list(col=col,lty=lty,lwd=lwd),
-                      transparent=TRUE, ...)
-                }
-              else key(text=list(lev, col=col), 
-                       lines=list(col=col,lty=lty,lwd=lwd),
-                       transparent=TRUE, ...)
-              invisible()
-            }
-        }
     
       formals(Key) <- list(x=NULL, y=NULL, lev=levels(groups), col=col,
                            lty=lty, lwd=lwd,...=NULL)
@@ -434,18 +407,18 @@ Ecdf.formula <- function(x, data = sys.frame(sys.parent()),
     {
       require('grid')
       require('lattice')
-      vars <- var.inner(x)
+      vars <- all.vars(x)
       xname <- vars[1]
       if(missing(xlab))
-        xlab <- label(eval(parse(text=vars[1]), data),
+        xlab <- label(eval(parse(text=xname), data),
                       units=TRUE, plot=TRUE, default=xname, grid=TRUE)
     }
   else
     {
-      vars <- attr(terms.inner(x),'variables')
-      xname <- as.character(vars[1])
+      vars <- all.vars(x)
+      xname <- vars[1]
       if(missing(xlab))
-        xlab <- label(eval(vars[1], data), units=TRUE, plot=TRUE,
+        xlab <- label(eval(xname, data), units=TRUE, plot=TRUE,
                       default=xname)
     }
   

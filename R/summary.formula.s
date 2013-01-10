@@ -96,7 +96,7 @@ summary.formula <-
       stop('stratify only allowed for method="response"')
 
     temp <- untangle.specials(Terms,'stratify')
-    strat.name <- all.vars(Terms)[temp$terms]  ## TODO make sure not off by 1 10jan13
+    strat.name <- var.inner(Terms)[temp$terms]
     strat <- if(length(temp$vars)==1) as.factor(X[[temp$vars]])
              else stratify(X[,temp$vars])
 

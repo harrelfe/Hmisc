@@ -1,6 +1,6 @@
 ## Function to use the mouse to zoom in on plots.
 ## Author: Bill Dunlap <bill@STAT.WASHINGTON.EDU>
-zoom<-function(fun=usa,...)
+zoom <- function(fun, ...)
 {
   on.exit(par(oldpar))
   oldpar<-par(err=-1)

@@ -108,21 +108,12 @@ default, it sets panel strips to blank and reference dot lines to thickness
 1 instead of the Trellis default of 2.
 
 
-\code{numericScale} is a utility function that facilitates using \code{xYplot} to
+\code{numericScale} is a utility function that facilitates using
+\code{xYplot} to 
 plot variables that are not considered to be numeric but which can readily
-be converted to numeric using \code{as.numeric()}.  A good example of this is
-\code{timeDate} variables in S-Plus 5 and 6. \code{numericScale} converts the
-variable into an ordinary numeric variable.  If it is a \code{timeDate}
-variable, two attributes are added to the resulting variable:
-\code{scales.major} and \code{scales.minor}. These are each lists with elements \code{at}
-to specify a vector of numeric values for tick marks, and a corresponding
-character vector \code{labels} with formatted values (e.g., using time or date
-formats).  When you use such a variable with \code{xYplot} and do not specify a
-corresponding \code{scales} element, tick marks and scale labeling are taken
-from \code{scales.major}.  The \code{at} element for \code{scales.minor} is used by
-\code{panel.xYplot} to add minor tick marks. \code{numericScale} by default will keep
-the name of the input variable as a \code{label} attribute for the new numeric
-variable.
+be converted to numeric using \code{as.numeric()}.  \code{numericScale}
+by default will keep the name of the input variable as a \code{label}
+attribute for the new numeric variable.
 }
 \usage{
 Cbind(\dots)
@@ -162,7 +153,7 @@ panel.Dotplot(x, y, groups = NULL,
 
 setTrellis(strip.blank=TRUE, lty.dot.line=2, lwd.dot.line=1)
 
-numericScale(x, label=NULL, skip.weekends=FALSE, \dots)
+numericScale(x, label=NULL, \dots)
 }
 \arguments{
 \item{\dots}{
@@ -177,7 +168,6 @@ arguments after the second are ignored.  For bubble plots, name an
 argument \code{cex}.
 
 Also can be other arguments to pass to \code{labcurve}.
-or extra arguments sent from \code{numericScale} to \code{axis.time}
 }
 \item{formula}{
 a \code{trellis} formula consistent with \code{xyplot} or \code{dotplot} 
@@ -260,7 +250,7 @@ over the \code{groups} use e.g. \code{lwd.bands=list(rep(1,4), rep(2,4))} or
 \item{minor.ticks}{
 a list with elements \code{at} and \code{labels} specifying positions
 and labels for minor tick marks to be used on the x-axis of each panel,
-if any. This is intended for \code{timeDate} variables.
+if any.
 }
 \item{sub}{an optional subtitle}
 \item{col.fill}{
@@ -298,9 +288,6 @@ line thickness for reference lines for dot plots (default = 1)
 a scalar character string to be used as a variable label after
 \code{numericScale} converts the 
 variable to numeric form 
-}
-\item{skip.weekends}{
-see \code{axis.time}
 }
 }
 \value{
@@ -348,8 +335,7 @@ xYplot(sin(x+shift)^p ~ x | shift, groups=p, data=d, type='l')
 xYplot(sin(x+shift)^p ~ x | shift, groups=p, data=d, 
        type='l', keys='lines', lwd=1:3, col=1) 
 # Instead of implicitly using labcurve(), put a 
-# single key outside of panels (for S-Plus) or at
-# lower left corner (for R)
+# single key outside of panels at lower left corner
 xYplot(sin(x+shift)^p ~ x | shift, groups=p, data=d, 
        type='l', label.curves=FALSE, lwd=1:3, col=1, lty=1:3) 
 Key()
@@ -481,7 +467,7 @@ Key(.5,.8,col = 2:3) #use fill colors in key
 # smean.sdl is defined with summary.formula in Hmisc
 
 
-# Plot y vs. a timeDate variable x
+# Plot y vs. a special variable x
 # xYplot(y ~ numericScale(x, label='Label for X') | country) 
 # For this example could omit label= and specify 
 #    y ~ numericScale(x) | country, xlab='Label for X'

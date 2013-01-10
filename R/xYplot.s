@@ -32,7 +32,7 @@ Cbind <- function(...)
   structure(y, class='Cbind', label=lab, other=other)
 }
 
-if(.R.) as.numeric.Cbind <- as.double.Cbind <- function(x, ...) x
+as.numeric.Cbind <- as.double.Cbind <- function(x, ...) x
 ## Keeps xyplot from stripping off "other" attribute in as.numeric
 
 
@@ -221,7 +221,7 @@ panel.xYplot <-
   ## The following is a fix of panel.xyplot to work for type='b'
   ppanel <- function(x, y, type, cex, pch, font, lwd, lty, col, ...)
     {
-      gfun <- ordGridFun(.R.)
+      gfun <- ordGridFun(TRUE)
       if(type != 'p')
         gfun$lines(x, y, lwd = lwd, lty = lty, col = col, ...)
     
@@ -236,7 +236,7 @@ panel.xYplot <-
   pspanel <- function(x, y, subscripts, groups, type, lwd, lty, 
                       pch, cex, font, col, sizeVaries, pchVaries, ...)
     {
-      gfun <- ordGridFun(.R.)
+      gfun <- ordGridFun(TRUE)
     
       groups <- as.numeric(groups)[subscripts]
       N <- seq(along = groups)
@@ -272,7 +272,7 @@ panel.xYplot <-
     ## would be hidden by the filled band
     if(method == "filled bands")
       {
-        gfun <- ordGridFun(.R.)
+        gfun <- ordGridFun(TRUE)
         for(gg in levnum)
           {
             s <- g == gg
@@ -312,15 +312,10 @@ panel.xYplot <-
   else
     {
       if(method == "filled bands")
-        {
-          if(.R.)
             grid.polygon(x = c(x, rev(x)), y = c(lower, rev(upper)),
                          gp=gpar(fill = col.fill, col='transparent'),
                          default.units='native')
-          else
-            polygon(x = c(x, rev(x)), y = c(lower, rev(upper)),
-                    col = col.fill, border=NA)
-        } ## end MB
+      ## end MB
 
       ppanel(x, y, lwd = lwd, lty = lty, pch = pch, cex = cex,
              font = font, col = col, type = type)
@@ -367,12 +362,11 @@ panel.xYplot <-
           errbr <- function(x, y, lower, upper, cap, 
                             lty, lwd, col, connect)
             {
-              gfun    <- ordGridFun(.R.) ## see Misc.s
+              gfun    <- ordGridFun(TRUE) ## see Misc.s
               segmnts <- gfun$segments
               gun     <- gfun$unit
               
-              smidge <- 0.5 * cap *
-                (if(.R.)unit(1,'npc') else diff(par("usr" )[1:2]))
+              smidge <- 0.5 * cap * unit(1,'npc')
 
               switch(connect,
                      all = {
@@ -455,42 +449,14 @@ panel.xYplot <-
   if(ng > 1)
     {
       ##set up for key() if points plotted
-      if(.R.)
+      Key <- function(x=0, y=1, lev, cex, col, font, pch, other)
         {
-          Key <- function(x=0, y=1, lev, cex, col, font, pch, other)
-            {
-              ## Even though par('usr') shows 0,1,0,1 after lattice draws
-              ## its plot, it still needs resetting
-              if(!length(x)) x <- 0.05
-              if(!length(y)) y <- 0.95  ## because of formals()
-              rlegendg(x, y, legend=lev, cex=cex, col=col, pch=pch, other=other)
-              invisible()
-            }
-        }
-      else
-        {
-          Key <- function(x=NULL, y=NULL, lev, cex, col, font, pch, other)
-            {
-              ## other currently ignored for S-Plus
-              if(length(x))
-                {
-                  if(is.list(x))
-                    {
-                      y <- x$y
-                      x <- x$x
-                    }
-                  
-                  key(x = x, y = y, text = list(lev, col = col),
-                      points = list(cex = cex, col = col, font = font,
-                        pch = pch), transparent = TRUE)
-                }
-              else key(text = list(lev, col = col),
-                       points  = list(cex = cex, col = col,
-                         font = font, pch = pch),
-                       transparent = TRUE)
-              
-              invisible()
-            }
+          ## Even though par('usr') shows 0,1,0,1 after lattice draws
+          ## its plot, it still needs resetting
+          if(!length(x)) x <- 0.05
+          if(!length(y)) y <- 0.95  ## because of formals()
+          rlegendg(x, y, legend=lev, cex=cex, col=col, pch=pch, other=other)
+          invisible()
         }
       
       formals(Key) <- list(x=NULL,y=NULL,lev=levels(groups),
@@ -509,44 +475,17 @@ panel.xYplot <-
   if(type == "l" && ng > 1)
     {
       ## Set up for legend (key() or rlegendg()) if lines drawn
-      if(.R.)
+      Key <- function(x=0, y=1, lev, cex, col, lty, lwd, other)
         {
-          Key <- function(x=0, y=1, lev, cex, col, lty, lwd, other)
-            {
-              ## Even though par('usr') shows 0,1,0,1 after lattice draws
-              ## its plot, it still needs resetting
-              if(!length(x)) x <- 0.05
-              
-              if(!length(y)) y <- 0.95  ## because of formals()
-
-              rlegendg(x, y, legend=lev, cex=cex, col=col, lty=lty, lwd=lwd,
-                       other=other)
-              invisible()
-            }
-        }
-      else
-        {
-          Key <- function(x=NULL, y=NULL, lev, col, lty, lwd, other)
-            {
-              ## other currently ignored for S-Plus
-              if(length(x))
-                {
-                  if(is.list(x))
-                    {
-                      y <- x$y
-                      x <- x$x
-                    }
-                  
-                  key(x = x, y = y,
-                      text = list(lev, col = col),
-                      lines = list(col = col, lty = lty, lwd = lwd),
-                      transparent  = TRUE)
-                }
-              else key(text = list(lev, col = col),
-                       lines = list(col = col, lty = lty, lwd = lwd),
-                       transparent = TRUE)
-              invisible()
-            }
+          ## Even though par('usr') shows 0,1,0,1 after lattice draws
+          ## its plot, it still needs resetting
+          if(!length(x)) x <- 0.05
+          
+          if(!length(y)) y <- 0.95  ## because of formals()
+          
+          rlegendg(x, y, legend=lev, cex=cex, col=col, lty=lty, lwd=lwd,
+                   other=other)
+          invisible()
         }
       
       formals(Key) <- list(x=NULL,y=NULL,lev=levels(groups), col=col,
@@ -556,7 +495,7 @@ panel.xYplot <-
 }
 
 
-xYplot <- if(.R.)
+xYplot <- 
   function (formula, data=sys.frame(sys.parent()),
             groups, subset,
             xlab=NULL, ylab=NULL, ylim=NULL,
@@ -616,58 +555,8 @@ xYplot <- if(.R.)
                       if(!missing(subset))list(subset=subset),
                       if(!missing(sub))   list(sub=sub),
                       list(...)))
-} else function(formula, data = sys.parent(1), 
-                groups = NULL, 
-                prepanel=prepanel.xYplot, panel='panel.xYplot',
-                scales=NULL, ...,
-                xlab=NULL, ylab=NULL,
-                subset=TRUE, minor.ticks=NULL)
-{
-  subset <- eval(substitute(subset), data)
-  yvname <- deparse(formula[[2]])
-  if(!length(ylab))
-    ylab <- label(eval(formula[[2]],data),
-                  units=TRUE, plot=TRUE, default=yvname)
-                
-  xv <- formula[[3]]
-  if(length(xv)>1 && as.character(xv[[1]])=='|') 
-    xv <- xv[[2]]  # ignore conditioning var
-
-  xvname <- deparse(xv)
-  xv <- eval(xv, data)
-  if(!length(xlab))
-    xlab <- label(xv, units=TRUE, plot=TRUE, default=xvname)
-
-  if(!length(scales$x))
-    {
-      if(length(maj <- attr(xv,'scales.major')))
-        scales$x <- maj
-    }
-  if(!length(minor.ticks))
-    {
-      if(length(minor <- attr(xv,'scales.minor')))
-        minor.ticks <- minor
-    }
-  
-  setup.2d.trellis(formula, data = data,
-                   prepanel=prepanel, panel=panel,
-                   groups = eval(substitute(groups),  data), ...,
-                   xlab=xlab, ylab=ylab,
-                   subset = subset, scales=scales, minor.ticks=minor.ticks)
 }
 
-
-## Only change from default is replacement of x with oldUnclass(x)
-if(!.R.)
-  shingle <- function(x, intervals = sort(unique(oldUnclass(x))))
-{
-  if(is.vector(intervals)) intervals <- cbind(intervals, intervals)
-  
-  dimnames(intervals) <- NULL
-  attr(x, 'intervals') <- intervals
-  class(x) <- 'shingle'
-  x
-}
 
 prepanel.Dotplot <- function(x, y, ...)
 {
@@ -681,7 +570,7 @@ panel.Dotplot <- function(x, y, groups = NULL,
                           col  = dot.symbol$col, cex = dot.symbol$cex, 
                           font = dot.symbol$font, abline, ...)
 {
-  gfun <- ordGridFun(.R.) ## see Misc.s
+  gfun <- ordGridFun(TRUE) ## see Misc.s
   segmnts <- gfun$segments
   y <- as.numeric(y)
 
@@ -733,37 +622,13 @@ panel.Dotplot <- function(x, y, groups = NULL,
     }
   if(gp)
     {
-      if(.R.) Key <- function(x=0, y=1, lev, cex, col, font, pch, other)
+      Key <- function(x=0, y=1, lev, cex, col, font, pch, other)
         {
           if(!length(x)) x <- 0.05
           if(!length(y)) y <- 0.95  ## because of formals()
           rlegendg(x, y, legend=lev, cex=cex, col=col, pch=pch, other=other)
           invisible()
         }
-      else
-        Key <- function(x=NULL, y=NULL, lev, cex, col, font, pch,
-                        other)
-          { 
-            ## other currently ignored for S-Plus
-            if(length(x))
-              {
-                if(is.list(x))
-                  {
-                    y <- x$y;
-                    x <- x$x
-                  }
-                
-                key(x=x, y=y, text=list(lev, col=col), 
-                    points=list(cex=cex,col=col,font=font,pch=pch),
-                    transparent=TRUE)
-              }
-            else
-              key(text=list(lev, col=col), 
-                  points=list(cex=cex,col=col,font=font,pch=pch),
-                  transparent=TRUE)
-            
-            invisible()
-          }
       
       lev <- levels(as.factor(groups))
       ng <- length(lev)
@@ -776,11 +641,11 @@ panel.Dotplot <- function(x, y, groups = NULL,
 
 
 Dotplot <-
-  if(.R.) function (formula, data=sys.frame(sys.parent()),
-                    groups, subset,
-                    xlab=NULL, ylab=NULL, ylim=NULL,
-                    panel=panel.Dotplot, prepanel=prepanel.Dotplot,
-                    scales=NULL, xscale=NULL, ...)
+  function (formula, data=sys.frame(sys.parent()),
+            groups, subset,
+            xlab=NULL, ylab=NULL, ylim=NULL,
+            panel=panel.Dotplot, prepanel=prepanel.Dotplot,
+            scales=NULL, xscale=NULL, ...)
 {
   require(grid)
   require(lattice)
@@ -824,40 +689,6 @@ Dotplot <-
                       if(!missing(subset))list(subset=subset),
                       if(length(scales))list(scales=scales),
                       list(...)))
-} else function(formula, data = sys.parent(1), 
-                prepanel=prepanel.Dotplot, panel = 'panel.Dotplot', 
-                xlab = NULL, scales = NULL, ylim = NULL, groups = NULL, 
-                ..., subset = TRUE)
-{
-  sub.formula <- substitute(formula)
-  formula <- eval(sub.formula, data)
-  if(missing(xlab)) {
-    xv <- formula[[3]]
-    if(length(xv)>1 && as.character(xv[[1]])=='|') 
-      xv <- xv[[2]]  # ignore conditioning var
-
-    xlab <- label(eval(xv,data), units=TRUE, plot=TRUE,
-                  default=if(is.numeric(formula))
-                  deparse(sub.formula) else '') 
-  }
-
-  subset <- eval(substitute(subset), data)
-  groups <- eval(substitute(groups), data)
-  
-  dul <- options(drop.unused.levels=FALSE)   ## for empty cells
-  on.exit(options(dul))
-  
-  data <- setup.1d.trellis(formula, data = data, panel=panel,
-                           prepanel = prepanel, 
-                           xlab = xlab, 
-                           groups = groups, ..., subset = subset)
-  if(!is.null(scales))
-    data$scales <- add.scale.trellis(scales, data$scales)
-  
-  if(is.null(scale$y$limits) && is.null(ylim))
-    data$scales$y$limits <- data$ylim + c(-0.75, 0.75)
-  
-  data
 }
 
 
@@ -873,30 +704,12 @@ setTrellis <- function(strip.blank=TRUE, lty.dot.line=2,
 }
 
 
-numericScale <- function(x, label=NULL, skip.weekends= FALSE, ...)
+numericScale <- function(x, label=NULL, ...)
 {
-  td <- inherits(x,'timeDate')
-  if(td) {
-    u <- axis.time(range(x,na.rm=TRUE),
-                   skip.weekends=skip.weekends, ...)$grid
-    major  <- list(at=as.numeric(u$major.grid$x),
-                   labels=format(u$major.grid$x))
-    minor  <- list(at=as.numeric(u$minor$x),
-                   labels=format(u$minor$x))
-  }
-  
   xn <- as.numeric(x)
-  
   attr(xn,'label') <- if(length(label)) label
   else
     deparse(substitute(x))
-  
-  if(td)
-    {
-      attr(xn,'scales.major') <- major
-      attr(xn,'scales.minor') <- minor
-    }
-  
   xn
 }
 

@@ -760,8 +760,7 @@ print.transcan <- function(x, long=FALSE, ...)
 impute.transcan <-
   function(x, var, imputation,
            name=as.character(substitute(var)),
-           where.in, data, where.out=1, frame.out,
-           list.out=FALSE,
+           pos.in, data, list.out=FALSE,
            pr=TRUE, check=TRUE, ...)
 {
   if(!missing(imputation) && length(imputation)>1)
@@ -790,10 +789,10 @@ impute.transcan <-
         }
       if(missing(data))
         {
-          if(missing(where.in))
-            where.in <- find(nams[1])[1]
+          if(missing(pos.in))
+            pos.in <- find(nams[1])[1]
 
-          var1   <- get(nams[1],where.in)
+          var1   <- get(nams[1], pos=pos.in)
         }
       else
         {
@@ -820,7 +819,7 @@ impute.transcan <-
           if(!length(i))
             {
               if(list.out) outlist[[nam]] <-
-                if(missing(data)) get(nam, where.in) else data[[nam]]
+                if(missing(data)) get(nam, pos=pos.in) else data[[nam]]
               
               next
             }
@@ -841,7 +840,7 @@ impute.transcan <-
           else if(length(d)) 
             stop('imputation must be specified when transcan used n.impute')
 
-          v <- if(missing(data)) get(nam, where.in)
+          v <- if(missing(data)) get(nam, pos=pos.in)
           else data[[nam]]
 
       ## Below was names(i) instead of match(...)
@@ -1186,7 +1185,7 @@ predict.transcan <- function(object, newdata=NULL, iter.max=50, eps=.01,
 Function <- function(object, ...) UseMethod("Function")
 
 
-Function.transcan <- function(object, prefix=".", suffix="", where=1, ...)
+Function.transcan <- function(object, prefix=".", suffix="", pos=-1, ...)
 {
   at <- if(is.list(object)) object
         else attributes(object)
@@ -1225,7 +1224,7 @@ Function.transcan <- function(object, prefix=".", suffix="", where=1, ...)
  
       fun.name <- paste(prefix,nam,suffix,sep="")
       cat("Function for transforming",nam,"stored as",fun.name,"\n")
-      assign(fun.name, f, where=where)
+      assign(fun.name, f, pos=pos)
       fnames[i] <- fun.name
     }
   

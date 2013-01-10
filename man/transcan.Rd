@@ -115,7 +115,9 @@
   they have been attached) and that you want the imputed variables to
   have the same names are the original variables. If \code{n.impute} was
   specified to \code{transcan} you must tell \code{\link{impute}} which
-  \code{imputation} to use.
+  \code{imputation} to use.   Results are stored in \code{.GlobalEnv}
+  when \code{list.out} is not specified  (it is recommended to use
+  \code{list.out=TRUE}).   
   
   The \code{\link{predict}} method for \code{transcan} computes
   predicted variables and imputed values from a matrix of new data.
@@ -170,8 +172,8 @@ transcan(x, method=c("canonical","pc"),
 
 \method{plot}{transcan}(x, \dots)
 
-\method{impute}{transcan}(x, var, imputation, name, where.in, data, 
-       where.out=1, frame.out, list.out=FALSE, pr=TRUE, check=TRUE, \dots)
+\method{impute}{transcan}(x, var, imputation, name, pos.in, data, 
+       list.out=FALSE, pr=TRUE, check=TRUE, \dots)
 
 fit.mult.impute(formula, fitter, xtrans, data, n.impute, fit.reps=FALSE,
                 dtrans, derived, pr=TRUE, subset, \dots)
@@ -182,7 +184,7 @@ fit.mult.impute(formula, fitter, xtrans, data, n.impute, fit.reps=FALSE,
 
 Function(object, \dots)
 
-\method{Function}{transcan}(object, prefix=".", suffix="", where=1, \dots)
+\method{Function}{transcan}(object, prefix=".", suffix="", pos=-1, \dots)
 
 invertTabulated(x, y, freq=rep(1,length(x)), 
                 aty, name='value',
@@ -447,7 +449,7 @@ invertTabulated(x, y, freq=rep(1,length(x)),
     which keeps all observations with any \code{NA} values. For
     \code{impute.transcan}, \code{data} is a data frame to use as the
     source of variables to be imputed, rather than using
-    \code{where.in}.  For \code{fit.mult.impute}, \code{data} is
+    \code{pos.in}.  For \code{fit.mult.impute}, \code{data} is
     mandatory and is a data frame containing the data to be used in
     fitting the model but before imputations are applied.  Variables
     omitted from \code{data} are assumed to be available from frame1
@@ -491,7 +493,7 @@ invertTabulated(x, y, freq=rep(1,length(x)),
     in \code{x}, for which imputated values are to be filled
     in. \code{imputed=TRUE} must have been used in \code{transcan}.
     Omit \code{var} to impute all variables, creating new variables in
-    \code{search} position \code{where}. 
+    position \code{pos} (see \code{\link{assign}}).
   }
   \item{imputation}{
     specifies which of the multiple imputations to use for filling in
@@ -504,29 +506,13 @@ invertTabulated(x, y, freq=rep(1,length(x)),
     \code{invertTabulated}, is the name of variable being transformed
     (used only for warning messages).
   }
-  \item{where.in}{
-    location in \code{search} list to find variables that need to be
+  \item{pos.in}{
+    location as defined by \code{\link{assign}} to find variables that
+	need to be 
     imputed, when all variables are to be imputed automatically by
     \code{impute.transcan} (i.e., when no input variable name is
-    specified). Default is first \code{search} position that contains
+    specified).  Default is position that contains
     the first variable to be imputed.
-  }
-  \item{where.out}{
-    location in the \code{search} list for storing variables with
-    missing values set to imputed values, for \code{impute.transcan}
-    when all variables with missing values are being imputed
-    automatically.
-  }
-  \item{frame.out}{
-    Instead of specifying \code{where.out} you can specify an \R frame
-    number into which individual new imputed variables will be
-    written. For example, \code{frame.out=1} is useful for putting new
-    variables into a temporary local frame when \code{impute} is called
-    within another function (see \code{fit.mult.impute}).  See
-    \code{\link{assign}} for details about frames.  For \R,
-    \code{where.out} and \code{frame.out} are ignored and results are
-    stored in \code{.GlobalEnv} when \code{list.out} is not specified
-    (it is recommended to use \code{list.out=TRUE}).  
   }
   \item{list.out}{
     If \code{var} is not specified, you can set \code{list.out=TRUE} to
@@ -613,11 +599,9 @@ invertTabulated(x, y, freq=rep(1,length(x)),
    default is to use names of the form \samp{.varname}, where
    \var{varname} is the variable name.
  }
- \item{where}{
-   position in \code{\link{search}} list at which to store new functions
-   (for \code{\link{Function}}). Default is position 1 in the search
-   list.  See the \code{\link{assign}} function for more documention on
-   the \code{where}argument.
+ \item{pos}{
+   position as in \code{\link{assign}} at which to store new functions
+   (for \code{\link{Function}}). Default is \code{pos=-1}.
  }
  \item{y}{
    a vector corresponding to \code{x} for \code{invertTabulated}, if its
@@ -1006,13 +990,13 @@ g <- fit.mult.impute(y ~ product + ratio, ols, w,
 # that had at least one NA, and also containing all the variables
 # in an original data frame.  The following is based on the fact
 # that the default output location for impute.transcan is
-# given by where.out=1 (search position 1)
+# given by the global environment
 
 
 \dontrun{
 xt <- transcan(~. , data=mine,
                imputed=TRUE, shrink=TRUE, n.impute=10, trantab=TRUE)
-attach(mine, pos=1, use.names=FALSE)
+attach(mine, use.names=FALSE)
 impute(xt, imputation=1) # use first imputation
 # omit imputation= if using single imputation
 detach(1, 'mine2')

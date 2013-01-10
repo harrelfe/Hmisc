@@ -18,8 +18,7 @@ na.detail.response <- function(mf)
       x <- x[!is.na(x)]
       c(N=length(x),Mean=mean(x))
     }
-  else GFUN <- if(.R.) eval.parent(as.name(GFUN))
-                  else eval(as.name(GFUN), local=FALSE)
+  else GFUN <- eval.parent(as.name(GFUN))
   
   w <- NULL; nam <- names(mf); wnam <- NULL
   N <- nrow(mf)

@@ -403,25 +403,13 @@ Ecdf.formula <- function(x, data = sys.frame(sys.parent()),
                          prepanel=prepanel.Ecdf, panel=panel.Ecdf, ..., 
                          xlab, ylab, fun=function(x)x, subset=TRUE)
 {
-  if(.R.)
-    {
-      require('grid')
-      require('lattice')
-      vars <- all.vars(x)
-      xname <- vars[1]
-      if(missing(xlab))
-        xlab <- label(eval(parse(text=xname), data),
-                      units=TRUE, plot=TRUE, default=xname, grid=TRUE)
-    }
-  else
-    {
-      vars <- all.vars(x)
-      xname <- vars[1]
-      if(missing(xlab))
-        xlab <- label(eval(xname, data), units=TRUE, plot=TRUE,
-                      default=xname)
-    }
-  
+  require('grid')
+  require('lattice')
+  vars <- all.vars(x)
+  xname <- vars[1]
+  if(missing(xlab))
+    xlab <- label(eval(parse(text=xname), data),
+                  units=TRUE, plot=TRUE, default=xname, grid=TRUE)
   if(missing(ylab)) 
     ylab <-
       if(missing(fun))
@@ -431,23 +419,12 @@ Ecdf.formula <- function(x, data = sys.frame(sys.parent()),
   
   subset <- eval(substitute(subset), data)
 
-  if(.R.)
-    do.call("histogram",
-            c(list(x, data=data, prepanel=prepanel, panel=panel,
-                   ylab=ylab, xlab=xlab, fun=fun),
-              if(!missing(groups))
-                list(groups=eval(substitute(groups),data)),
-              if(!missing(subset))
-                list(subset=subset),
-              list(...)))
-  else
-    {
-      prepanel$fun <- fun
-      ## argument not transmitted for some reason
-      setup.2d.trellis(x, data = data,
-                       prepanel=prepanel, panel=panel,
-                       xlab=xlab, ylab=ylab, fun=fun,
-                       groups = eval(substitute(groups),  data),
-                       ..., subset = subset)
-    }
+  do.call("histogram",
+          c(list(x, data=data, prepanel=prepanel, panel=panel,
+                 ylab=ylab, xlab=xlab, fun=fun),
+            if(!missing(groups))
+            list(groups=eval(substitute(groups),data)),
+            if(!missing(subset))
+            list(subset=subset),
+            list(...)))
 }

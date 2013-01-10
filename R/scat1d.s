@@ -219,23 +219,15 @@ datadensity.data.frame <-
   max.length.name <- max(nchar(nams))
 
   if(!length(lmgp))
-    lmgp <-
-      if(.R.)
-        if(version$minor=='5.1')
-          sc(-.2,-.625)
-        else
-          sc(0,0)
-      else
-        sc(.3,0)
+    lmgp <- sc(0,0)
 
   oldpar <- oPar()  # in Hmisc Misc.s
   mgp  <- c(0,lmgp,0)
 
   mai  <- oldpar$mai
-  if(.R.) {
-    plot.new();
-    par(new=TRUE)
-  } # enables strwidth
+  plot.new();
+  par(new=TRUE)
+  ## enables strwidth
 
   mxlb <-  .1 + max(strwidth(nams, units='inches', cex=cex.var))
   mai[2] <- mxlb
@@ -302,14 +294,13 @@ datadensity.data.frame <-
 
           xmin <- p[1]
           xmax <- p[length(p)]
-          if(.R.)
-            cex <- par(cex=cex.axis)  # Bug in R: cex= ignored in
+          cex <- par(cex=cex.axis)  # Bug in R: cex= ignored in
                                         # axis( )
 
           axis(side=1, at=(p-xmin)/(xmax-xmin), labels=format(p),
                pos=y, cex=cex.axis)
 
-          if(.R.) par(cex=cex)
+          par(cex=cex)
           if(mgroup)
             scat1d((x-xmin)/(xmax-xmin), y=y, bottom.align=bottom.align, 
                    minf=.075, frac=sc(.02,.005), ...)
@@ -354,12 +345,9 @@ datadensity.data.frame <-
           xx <- (0:(nl-1))/(nl-1)
         }
 
-          if(.R.)
-            {
-              cex <- par(cex=cex.axis)
-              axis(side=1, at=xx, labels=lev, pos=y, cex=cex.axis, tick=FALSE)
-              par(cex=cex)
-            } else axis(side=1, at=xx, labels=lev, pos=y, cex=cex.axis, ticks=FALSE)
+          cex <- par(cex=cex.axis)
+          axis(side=1, at=xx, labels=lev, pos=y, cex=cex.axis, tick=FALSE)
+          par(cex=cex)
           
           lines(c(0,1),c(y,y))
           maxfreq <- max(tab)
@@ -436,11 +424,7 @@ histSpike <- function(x, side=1, nint=100, frac=.05, minf=NULL,
           ncut <- nint+1
           bins <- seq(xlim[1], xlim[2], length = ncut)
           delta <- (bins[2]-bins[1]) / 2
-          f <-
-            if(.SV4.)
-              table(oldCut(x, c(bins[1]-delta,bins)))
-            else
-              table(cut(x, c(bins[1]-delta,bins)))
+          f <- table(cut(x, c(bins[1]-delta,bins)))
           
           x <- bins
           j <- f > 0

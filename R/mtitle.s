@@ -1,9 +1,7 @@
 ## Thanks for Rick Becker for suggestions
 mtitle <-
   function(main,ll,lc,
-           lr=if(.R.) format(Sys.time(),'%d%b%y')
-              else if(under.unix)unix("date '+%d%h%y'")
-              else date(), 
+           lr=format(Sys.time(),'%d%b%y'),
            cex.m=1.75, cex.l=.5, ...)
 {
   out <- any(par()$oma!=0)

@@ -147,7 +147,7 @@ smearingEst(transEst, inverseTrans, res,
 
 \method{Function}{areg.boot}(object, type=c('list','individual'),
          ytype=c('transformed','inverse'),
-         prefix='.', suffix='', frame=if(.R.)1 else 0, where=1, \dots)
+         prefix='.', suffix='', pos=-1, \dots)
 
 Mean(object, \dots)
 
@@ -318,12 +318,12 @@ Quantile(object, \dots)
     functions that define the transformations of all variables.  By
     default a list is created, with the names of the list elements being
     the names of the variables.  Specify \code{type="individual"} to
-    have separate functions created in the session frame
-    (\code{frame=0}, the default) or in location defined by \code{where}
+    have separate functions created in the current environment
+    (\code{pos=-1}, the default) or in location defined by \code{pos}
     if \code{where} is specified.  For the latter method, the names of
     the objects created are the names of the corresponding variables,
     prefixed by \code{prefix} and with \code{suffix} appended to the
-    end. If any of \code{frame}, \code{where}, \code{prefix}, or
+    end. If any of \code{pos}, \code{prefix}, or
     \code{suffix} is specified, \code{type} is automatically set to
     \code{"individual"}.
   }
@@ -341,17 +341,8 @@ Quantile(object, \dots)
   \item{suffix}{
     character string defining the suffix for the function names
   }
-  \item{frame}{
-    frame number in which to store functions (see \code{assign}).  The
-    default  is frame 0, the session database, which disappears at the
-    end of thesession.
-  }
-  \item{where}{
-    location in which to store functions (see \code{\link{assign}}).  If
-    \code{where} is specified (e.g., \code{where=1} to store functions
-    in search position one), \code{frame} is ignored.  For R, the value
-    of \code{where} is passed to \code{assign} as the \code{pos}
-    argument.
+  \item{pos}{
+	See \code{\link{assign}}.
   }
   \item{\dots}{
     arguments passed to other functions

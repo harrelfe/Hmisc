@@ -547,13 +547,12 @@ plot.areg.boot <- function(x, ylim, boot=TRUE,
 Function.areg.boot <-
   function(object, type=c('list','individual'),
            ytype=c('transformed','inverse'),
-           prefix='.', suffix='', frame=1,
-           where=1, ...)
+           prefix='.', suffix='', pos=-1, ...)
 {
   type <- match.arg(type)
   ytype <- match.arg(ytype)
   if(missing(type) && !(missing(prefix) & missing(suffix) &
-                        missing(frame) & missing(where)))
+                        missing(pos)))
     type <- 'individual'
 
   fit <- object$fit
@@ -604,11 +603,7 @@ Function.areg.boot <-
 
   fun.name <- paste(prefix, nam, suffix, sep='')
   for(i in 1:k)
-    if(missing(where))
-        assign(fun.name[i], g[[i]], pos=frame)
-    else
-      assign(fun.name[i], g[[i]], where=where)
-
+        assign(fun.name[i], g[[i]], pos=pos)
   invisible(fun.name)
 }
 

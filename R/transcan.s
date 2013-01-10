@@ -970,7 +970,7 @@ impute.transcan <-
   var
 }
 
-"[.transcan" <- function(x, rows=1:d[1], cols=1:d[2], drop=TRUE)
+"[.transcan" <- function(x, rows=1:d[1], cols=1:d[2], ..., drop=TRUE)
 {
   ## Check for old style object
   if(is.list(x))

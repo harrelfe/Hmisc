@@ -2,7 +2,7 @@ eip <- function(name)
 {
   name <- as.character(substitute(name))
   f <- find(name)
-  if(length(f) ! = 1)
+  if(length(f) != 1)
     stop('object must exist in exactly one place')
   
   g <- edit(get(name))

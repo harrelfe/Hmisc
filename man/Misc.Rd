@@ -155,6 +155,7 @@ trellis.strip.blank()
 unPaste(str, sep="/")
 whichClosest(x, w)
 whichClosePW(x, w, f=0.2)
+whichClosek(x, w, k)
 xless(x, \dots, title)
 }
 \arguments{

@@ -297,7 +297,7 @@ print.responseSummary <- function(x,
     if(useLabel && !is.null(xattribs$stratified.Tags$label)) {
       strat.name <- xattribs$stratified.Tags$label
     } else {
-      strat.name <- attribs$stratifed.Tags$label
+      strat.name <- xattribs$stratifed.Tags$label
     }
 
     cat(' by', strat.name)

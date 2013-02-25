@@ -896,7 +896,7 @@ upData <- function(object, ...,
                    rename=NULL, drop=NULL,
                    labels=NULL, units=NULL, levels=NULL,
                    force.single=TRUE, lowernames=FALSE, caplabels=FALSE,
-                   moveUnits=FALSE, charfactor=FALSE) {
+                   moveUnits=FALSE, charfactor=FALSE, pr=TRUE) {
 
   upfirst <- function(txt) gsub("(\\w)(\\w*)", "\\U\\1\\L\\2", txt, perl=TRUE)
 
@@ -914,8 +914,8 @@ upData <- function(object, ...,
     names(object) <- casefold(names(object))
   no <- names(object)
 
-  cat('Input object size:\t',object.size(object),'bytes;\t',
-      length(no),'variables\n')
+  if(pr) cat('Input object size:\t',object.size(object),'bytes;\t',
+             length(no),'variables\n')
 
   ## The following is targeted at R workspaces exported from StatTransfer
   al <- attr(object, 'var.labels')
@@ -943,7 +943,7 @@ upData <- function(object, ...,
       if(paren+brack == 0)
         next
 
-      cat('Label for',no[i],'changed from',lab,'to ')
+      if(pr) cat('Label for',no[i],'changed from',lab,'to ')
       u <- if(paren)regexpr('\\(.*\\)',lab)
            else regexpr('\\[.*\\]',lab)
 
@@ -953,7 +953,7 @@ upData <- function(object, ...,
       if(substring(lab, nchar(lab), nchar(lab)) == ' ')
         lab <- substring(lab, 1, nchar(lab)-1) # added 2nd char above 8jun03
 
-      cat(lab,'\n\tunits set to ',un,'\n',sep='')
+      if(pr) cat(lab,'\n\tunits set to ',un,'\n',sep='')
       attr(z,'label') <- lab
       attr(z,'units') <- un
       object[[i]] <- z
@@ -968,7 +968,7 @@ upData <- function(object, ...,
       if(nr[i] %nin% no)
         stop(paste('unknown variable name:',nr[i]))
 
-      cat('Renamed variable\t', nr[i], '\tto', rename[[i]], '\n')
+      if(pr) cat('Renamed variable\t', nr[i], '\tto', rename[[i]], '\n')
     }
 
     no[match(nr, no)] <- unlist(rename)
@@ -985,10 +985,10 @@ upData <- function(object, ...,
 
     for(i in 1:length(z)) {
       v <- vn[i]
-      if(v %in% no)
+      if(v %in% no && pr)
         cat('Modified variable\t',v,'\n')
       else {
-        cat('Added variable\t\t', v,'\n')
+        if(pr) cat('Added variable\t\t', v,'\n')
         no <- c(no, v)
       }
 
@@ -1003,8 +1003,8 @@ upData <- function(object, ...,
                         ' is 1; will replicate this value.',sep=''))
         else {
           f <- find(v)
-          if(length(f))cat('Variable',v,'found in',
-                           paste(f,collapse=' '),'\n')
+          if(length(f) && pr) cat('Variable',v,'found in',
+                                  paste(f,collapse=' '),'\n')
           
           stop(paste('length of ',v,' (',lx, ')\n',
                      'does not match number of rows in object (',
@@ -1026,17 +1026,16 @@ upData <- function(object, ...,
   if(force.single) {
     sm <- sapply(object, storage.mode)
     if(any(sm=='double'))
-      for(i in 1:length(sm)) {   # 28Mar01
+      for(i in 1:length(sm)) {
         if(sm[i]=='double') {
           x <- object[[i]]
           if(testDateTime(x))
-            next   ## 31aug02
+            next
 
           if(all(is.na(x)))
             storage.mode(object[[i]]) <- 'integer'
           else {
-            notfractional <- !any(floor(x) != x, na.rm=TRUE)  ## 28Mar01
-            ## max(abs()) 22apr03
+            notfractional <- !any(floor(x) != x, na.rm=TRUE)
             if(notfractional && max(abs(x),na.rm=TRUE) <= (2^31-1))
               storage.mode(object[[i]]) <- 'integer'
           }
@@ -1058,10 +1057,12 @@ upData <- function(object, ...,
   }
   
   if(length(drop)) {
-    if(length(drop)==1)
-      cat('Dropped variable\t',drop,'\n')
-    else
-      cat('Dropped variables\t',paste(drop,collapse=','),'\n')
+    if(pr) {
+      if(length(drop)==1)
+        cat('Dropped variable\t',drop,'\n')
+      else
+        cat('Dropped variables\t',paste(drop,collapse=','),'\n')
+    }
 
     s <- drop %nin% no
     if(any(s))
@@ -1120,9 +1121,8 @@ upData <- function(object, ...,
       attr(object[[n]],'units') <- units[[n]]
   }
 
-  cat('New object size:\t',object.size(object),'bytes;\t',
-      length(no),'variables\n')
-  ## if(.R.) object <- structure(object, class='data.frame', row.names=rnames)
+  if(pr) cat('New object size:\t',object.size(object),'bytes;\t',
+             length(no),'variables\n')
     object
   }
 

@@ -53,7 +53,8 @@ cleanup.import(obj, labels, lowernames=FALSE,
 
 upData(object, \dots, 
        rename, drop, labels, units, levels, force.single=TRUE,
-       lowernames=FALSE, caplabels=FALSE, moveUnits=FALSE, charfactor=FALSE)
+       lowernames=FALSE, caplabels=FALSE, moveUnits=FALSE,
+       charfactor=FALSE, pr=TRUE)
 
 dataframeReduce(data, fracmiss=1, maxlevels=NULL,  minprev=0, pr=TRUE)
 }
@@ -107,7 +108,8 @@ dataframeReduce(data, fracmiss=1, maxlevels=NULL,  minprev=0, pr=TRUE)
     variable number being processed.  By default, such messages are printed if the
     product of the number of variables and number of observations in \code{obj}
     exceeds 500,000.  For \code{dataframeReduce} set \code{pr} to
-    \code{FALSE} to suppress printing information about dropped or modified variables.}
+    \code{FALSE} to suppress printing information about dropped or
+	modified variables.  Similar for \code{upData}.}
   \item{datevars}{character vector of names (after \code{lowernames} is
     applied) of variables to consider as a factor or character vector
     containing dates in a format matching \code{dateformat}.  The

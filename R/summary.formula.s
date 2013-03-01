@@ -11,76 +11,42 @@ summary.formula <-
            nmin=if(method=='reverse') 100
                 else 0,
            test=FALSE,
-           conTest=function(group,x) {
-             st <- spearman2(group,x)
-             list(P=st['P'], stat=st['F'],
-                  df=st[c('df1','df2')],
-                  testname=if(st['df1']==1)'Wilcoxon'
-                           else 'Kruskal-Wallis',
-                  statname='F', latexstat='F_{df}',
-                  plotmathstat='F[df]')
-           },
-           catTest=function(tab) {
-             st <-
-               if(!is.matrix(tab) || nrow(tab) < 2 | ncol(tab) < 2)
-                 list(p.value=NA, statistic=NA, parameter=NA)
-               else
-                 {
-                   rowcounts <- tab %*% rep(1, ncol(tab))
-                   tab <- tab[rowcounts > 0,]
-                   if(!is.matrix(tab)) 
-                     list(p.value=NA, statistic=NA, parameter=NA)
-                   else chisq.test(tab, correct=FALSE)
-                 }
-
-             list(P=st$p.value, stat=st$statistic,
-                  df=st$parameter,
-                  testname='Pearson', statname='Chi-square',
-                  latexstat='\\chi^{2}_{df}',
-                  plotmathstat='chi[df]^2')
-           },
-           ordTest=function(group, x) {
-             require(rms)
-
-             f <- lrm(x ~ group)$stats
-             list(P=f['P'], stat=f['Model L.R.'], df=f['d.f.'],
-                  testname='Proportional odds likelihood ratio',
-                  statname='Chi-square',latexstat='\\chi^{2}_{df}',
-                  plotmathstat='chi[df]^2')
-           },
+           conTest=conTestkw,
+           catTest=catTestchisq,
+           ordTest=ordTestpo,
            ...)
 {
   call <- match.call()
-  missmethod <- missing(method)   ## needed for R  9jul02
+  missmethod <- missing(method)
   method <- match.arg(method)
-    
+  
   X <- match.call(expand.dots=FALSE)
   X$fun <- X$method <- X$na.rm <- X$na.include <- X$g <-
     X$overall <- X$continuous <- X$quant <- X$nmin <- X$test <-
       X$conTest <- X$catTest <- X$... <- NULL
   if(missing(na.action))
     X$na.action <- na.retain
-
+  
   Terms <- if(missing(data)) terms(formula,'stratify')
   else terms(formula,'stratify',data=data)
-
+  
   X$formula <- Terms
   X[[1]] <- as.name("model.frame")
-
+  
   X <- eval(X, sys.parent())
-
+  
   Terms <- attr(X,"terms")
   resp <- attr(Terms,"response")
-    
+  
   if(resp==0 && missmethod)
     method <- 'reverse'
   
   if(test && method!='reverse')
     stop('test=TRUE only allowed for method="reverse"')
-
+  
   if(method!='reverse' && resp!=1) 
     stop("must have a variable on the left hand side of the formula")
-
+  
   nact <- attr(X, "na.action")
   nvar <- ncol(X)-1
   strat <- attr(Terms,'specials')$stratify
@@ -2704,3 +2670,40 @@ stripChart <- function(x, xlim, xlab='', pch=1,
       points(X, rep(Y, length(X)), pch=pch)
   }
 }
+
+conTestkw <- function(group,x) {
+  st <- spearman2(group,x)
+  list(P=st['P'], stat=st['F'],
+       df=st[c('df1','df2')],
+       testname=if(st['df1']==1)'Wilcoxon'
+       else 'Kruskal-Wallis',
+       statname='F', latexstat='F_{df}',
+       plotmathstat='F[df]')
+}
+catTestchisq=function(tab) {
+  st <-
+    if(!is.matrix(tab) || nrow(tab) < 2 | ncol(tab) < 2)
+      list(p.value=NA, statistic=NA, parameter=NA)
+    else {
+      rowcounts <- tab %*% rep(1, ncol(tab))
+      tab <- tab[rowcounts > 0,]
+      if(!is.matrix(tab)) 
+        list(p.value=NA, statistic=NA, parameter=NA)
+      else chisq.test(tab, correct=FALSE)
+    }
+  list(P=st$p.value, stat=st$statistic,
+       df=st$parameter,
+       testname='Pearson', statname='Chi-square',
+       latexstat='\\chi^{2}_{df}',
+       plotmathstat='chi[df]^2')
+}
+ordTestpo=function(group, x) {
+  require(rms)
+  f <- lrm(x ~ group)$stats
+  list(P=f['P'], stat=f['Model L.R.'], df=f['d.f.'],
+       testname='Proportional odds likelihood ratio',
+       statname='Chi-square',latexstat='\\chi^{2}_{df}',
+       plotmathstat='chi[df]^2')
+}
+
+ 

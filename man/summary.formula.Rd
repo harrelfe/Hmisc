@@ -13,9 +13,10 @@
 \alias{formula.summary.formula.cross}
 \alias{na.retain}
 \alias{cumcategory}
-\title{
-  Summarize Data for Making Tables and Plots
-}
+\alias{conTestkw}
+\alias{catTestchisq}
+\alias{ordTestpo}
+\title{Summarize Data for Making Tables and Plots}
 \description{
   \code{summary.formula} summarizes the variables listed in an S formula,
   computing descriptive statistics (including ones in a
@@ -74,6 +75,15 @@
   greater.  When the left hand side of \code{formula} is \code{cumcategory(y)},
   the default \code{fun} will summarize it by computing all of the relevant
   cumulative proportions.
+
+  Functions \code{conTestkw}, \code{catTestchisq}, \code{ordTestpo} are
+  the default statistical test functions for \code{summary.formula}.
+  These defaults are: Wilcoxon-Kruskal-Wallis test for continuous
+  variables, Pearson chi-square test for categorical variables, and the
+  likelihood ratio chi-square test from the proportional odds model for
+  ordinal variables.  These three functions serve also as templates for
+  the user to create her own testing functions that are self-defining in
+  terms of how the results are printed or rendered in LaTeX, or plotted.
 }
 \usage{
 \method{summary}{formula}(formula, data, subset, na.action, fun = NULL,
@@ -83,40 +93,10 @@
         g = 4, quant  = c(0.025, 0.05, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 0.95, 0.975),
         nmin = if (method == "reverse") 100
                else 0,
-         test = FALSE,
-        conTest = function(group, x) {
-          st <- spearman2(group, x)
-          list(P = st["P"], stat = st["F"], df = st[c("df1", "df2")],
-               testname = if (st["df1"] == 1) "Wilcoxon"
-                          else "Kruskal-Wallis",
-               statname = "F", latexstat = "F_{df}",
-               plotmathstat = "F[df]")
-        },
-        catTest = function(tab) {
-          st <- if (!is.matrix(tab) || nrow(tab) < 2 | ncol(tab) < 2)
-                  list(p.value = NA, statistic = NA, parameter = NA)
-                else {
-                   rowcounts <- tab \%*\% rep(1, ncol(tab))
-                   tab <- tab[rowcounts > 0,]
-                   if(!is.matrix(tab)) 
-                     list(p.value=NA, statistic=NA, parameter=NA)
-                   else chisq.test(tab, correct=FALSE)
-                 }
-
-          list(P = st$p.value, stat = st$statistic, df = st$parameter,
-               testname = "Pearson", statname = "Chi-square",
-               latexstat = "\\\\chi^{2}_{df}", plotmathstat = "chi[df]^2")
-        },
-        ordTest = function(group, x) {
-          require(rms)
-
-          f <- lrm(x ~ group)$stats
-          list(P = f["P"], stat = f["Model L.R."],
-               df = f["d.f."],
-               testname = "Proportional odds likelihood ratio",
-               statname = "Chi-square", latexstat = "\\\\chi^{2}_{df}",
-               plotmathstat = "chi[df]^2")
-        }, \dots)
+        test = FALSE,
+        conTest = conTestkw,
+        catTest = catTestkw,
+        ordTest = ordTestpo, \dots)
 
 % \method{summary}{formula}(formula, data, subset, na.action, fun, method='response',
 %               overall=TRUE, continuous=10, na.rm=FALSE, na.include=TRUE,
@@ -136,29 +116,6 @@
 \method{latex}{summary.formula.response}(object, title = first.word(deparse(substitute(object))), caption,
       trios, vnames = c('labels', 'names'), prn = TRUE, prUnits = TRUE,
       rowlabel = '', cdec = 2, ncaption = TRUE, \dots)
-
-
-% \method{summary}{formula}(formula, data, subset, na.action, method='reverse',
-%               overall=FALSE, continuous=10, na.rm=TRUE, na.include=FALSE,
-%               quant=c(0.025, 0.05, 0.125, 0.25, 0.375, 0.5,
-%                       0.625, 0.75, 0.875, 0.95, 0.975),
-%               nmin=15, test=FALSE,
-%               conTest=function(group,x) {
-%                  st <- spearman2(group,x)
-%                  list(P=st['P'], stat=st['F'], df=st[c('df1','df2')],
-%                       testname=if(st['df1']==1)'Wilcoxon' else
-%                                             'Kruskal-Wallis',
-%                       statname='F', latexstat='F_{df}', plotmathstat='F[df]')
-%                  },
-%               catTest=function(tab) {
-%                  st <- if(!is.matrix(tab) || nrow(tab) < 2)
-%                    list(p.value=NA, statistic=NA, parameter=NA) else
-%                    chisq.test(tab, correct=FALSE)
-%                  list(P=st$p.value, stat=st$statistic,
-%                       df=st$parameter,
-%                       testname='Pearson', statname='Chi-square',
-%                       latexstat='\\chi^{2}_{df}', plotmathstat='chi[df]^2')
-%               })
 
 \method{print}{summary.formula.reverse}(x, digits, prn = any(n != N), pctdig = 0,
       npct = c('numerator', 'both', 'denominator', 'none'),
@@ -190,10 +147,6 @@
       msdsize = NULL, long = dotchart, pdig = 3, eps = 0.001,
       auxCol = NULL, dotchart=FALSE, \dots)
 
-
-% \method{summary}{formula}(formula, data, subset, na.action, fun,
-%               na.rm=TRUE, na.include=TRUE, method='cross',
-%               overall=TRUE, continuous=10, g=4, \dots)
 \method{print}{summary.formula.cross}(x, twoway = nvar == 2, prnmiss = any(stats$Missing > 0), prn = TRUE,
       abbreviate.dimnames = FALSE, prefix.width = max(nchar(v)),
       min.colwidth, formatArgs = NULL, \dots)
@@ -208,6 +161,10 @@ stratify(\dots, na.group=FALSE, shortlabel=TRUE)
 \method{formula}{summary.formula.cross}(x, ...)
 
 cumcategory(y)
+
+conTestkw(group, x)
+catTestchisq(tab)
+ordTestpo(group, x)
 }
 \arguments{
   \item{formula}{
@@ -225,7 +182,9 @@ cumcategory(y)
     \code{method="reverse"} is the only legal value and so \code{method} defaults to
     \code{"reverse"} in this case.
   }
-  \item{x}{an object created by \code{summary.formula}}
+  \item{x}{an object created by \code{summary.formula}.  For
+    \code{conTestkw} a numeric vector, and for \code{ordTestpo}, a numeric
+    or factor variable that can be considered ordered}
   \item{y}{
     a numeric, character, category, or factor vector for \code{cumcategory}.
     Is converted to a categorical variable is needed.
@@ -646,6 +605,12 @@ cumcategory(y)
   \item{dotchart}{
     set to \code{TRUE} to output a dotchart in the latex table being
     generated.
+  }
+  \item{group}{for \code{conTest} and \code{ordTest}, a numeric or
+  factor variable with length the same as \code{x}
+  }
+  \item{tab}{for \code{catTest}, a frequency table such as that created
+  by \code{table()}
   }
 }
 \value{

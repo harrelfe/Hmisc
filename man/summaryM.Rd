@@ -1,4 +1,4 @@
-\name{summaryM}
+name{summaryM}
 \alias{summaryM}
 \alias{print.summaryM}
 \alias{plot.summaryM}
@@ -360,8 +360,6 @@ summaryM(formula, data, subset, na.action,
     bottom of LaTeX tables
   }
   \item{dcolumn}{see \code{latex}}
-  \item{\dots}{arguments passed to the \code{latex} and \code{plot}
-	methods from \code{latex.summaryM}
   }
 }
 \value{

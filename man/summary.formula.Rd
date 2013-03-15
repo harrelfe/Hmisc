@@ -82,7 +82,8 @@
   terms of how the results are printed or rendered in LaTeX, or plotted.
 }
 \usage{
-\method{summary}{formula}(formula, data, subset, na.action, fun = NULL,
+\method{summary}{formula}(formula, data=NULL, subset=NULL,
+        na.action=NULL, fun = NULL,
         method = c("response", "reverse", "cross"),
         overall = method == "response" | method == "cross",
         continuous = 10, na.rm = TRUE, na.include = method != "reverse",
@@ -637,7 +638,7 @@ ordTestpo(group, x)
   \code{\link{print.char.matrix}}, \code{\link{update}},
   \code{\link{formula}}, \code{\link{cut2}}, \code{\link{llist}},
   \code{\link{format.default}}, \code{\link{latex}},
-  \code{\link{latexTranslate}} \code{\link{bpplt}}
+  \code{\link{latexTranslate}} \code{\link{bpplt}}, \code{\link{summaryM}}
 }
 \examples{
 options(digits=3)

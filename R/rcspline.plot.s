@@ -78,8 +78,7 @@ rcspline.plot <- function(x, y, model=c("logistic","cox","ols"), xrange,
 
   df1 <- nk-2
   if(model=="logistic") {
-    requirePackage('rms')
-    
+    require(rms)
     b <- lrm.fit(cbind(x,xx,adj),y)
     ##b <- glim(cbind(x,xx,adj),y,rep(1,n),error="binomial",
     ##link="logit")
@@ -237,10 +236,7 @@ rcspline.plot <- function(x, y, model=c("logistic","cox","ols"), xrange,
     bot.arrow <- par("usr")[3]
     top.arrow <- bot.arrow+.05*(par("usr")[4]-par("usr")[3])
     for(i in 1:nk)
-      if(.R.)
         arrows(knots[i],top.arrow,knots[i],bot.arrow,length=.1)
-      else
-        arrows(knots[i],top.arrow,knots[i],bot.arrow,rel=TRUE,size=.5)
   }
   
   if(model=="logistic" & nadj==0) {

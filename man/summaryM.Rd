@@ -195,9 +195,6 @@ summaryM(formula, data, subset, na.action,
     vector of plotting characters to represent different groups, in order
     of group levels.
   }
-  \item{reset.par}{set to \code{FALSE} to suppress the restoring of the
-    old par values in \code{plot.summaryM}
-  }
   \item{abbreviate.dimnames}{see \code{print.char.matrix}}
   \item{prefix.width}{see \code{print.char.matrix}}
   \item{min.colwidth}{

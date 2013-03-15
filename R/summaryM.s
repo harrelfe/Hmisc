@@ -704,19 +704,3 @@ latex.summaryM <-
                         ...)
   resp
 }
-
-latexR <- function(object, ...) {
-  if(!length(class(object))) class(object) <- data.class(object)
-     UseMethod('latexR')
-}
-
-latexR.summaryM <-
-  function(object, gfile='', tfile='', caption=NULL,
-           appendg=FALSE, appendt=appendg, ...) {
-
-
-  }
-
-
-  
-     

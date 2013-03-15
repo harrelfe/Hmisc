@@ -16,7 +16,6 @@
 \alias{[.substi}
 \alias{bpx}
 \alias{ddmmmyy}
-\alias{do}
 \alias{dot.chart}
 \alias{existsFunction}
 \alias{expr.tree}

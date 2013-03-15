@@ -125,33 +125,25 @@ format.df <- function(x,
 
   ## For now nsmall and scientific are ignored in R  25May01
   formt <-
-    if(!.R.)
-      format.default
-    else function(x, decimal.mark='.', nsmall=0, scientific=c(-4,4), digits=NULL)
+    function(x, decimal.mark='.', nsmall=0, scientific=c(-4,4), digits=NULL)
       {
         x <- format(x, nsmall=nsmall, decimal.mark=decimal.mark, digits=digits)
         if(decimal.mark!='.')
           x <- gsub('\\.',decimal.mark,x)
-      
+        
         x
       }
   
   dot <-
     if(cdot==TRUE && numeric.dollar==TRUE) {
-      if(.R.)
-        paste(sl,sl,'cdotp',sl,sl,'!',sep='')
-      else
-        paste(sl,'cdotp',sl,'!',sep='')
+      paste(sl,sl,'cdotp',sl,sl,'!',sep='')
     }
     else {
       '.'
     }
   
   decimal.point <- if(cdot==TRUE && dcolumn==TRUE) {
-    if(.R.)
-      paste(sl,'cdot',sep='')
-    else
-      paste(sl,'cdot',sep='')
+    paste(sl,'cdot',sep='')
   } else {
     dot
   }
@@ -1152,10 +1144,11 @@ latexTranslate <- function(object, inn=NULL, out=NULL, pb=FALSE,
     }
     
     if(greek) {
-      gl <- Cs(alpha,beta,gamma,delta,epsilon,varepsilon,zeta,eta,theta,
-               vartheta,iota,kappa,lambda,mu,nu,xi,pi,varpi,rho,varrho,
-               sigma,varsigma,tau,upsilon,phi,carphi,chi,psi,omega,Gamma,
-               Delta,Theta,Lambda,Xi,Pi,Sigma,Upsilon,Phi,Psi,Omega)
+      gl <- c('alpha','beta','gamma','delta','epsilon','varepsilon','zeta',
+              'eta','theta','vartheta','iota','kappa','lambda','mu','nu',
+              'xi','pi','varpi','rho','varrho','sigma','varsigma','tau',
+              'upsilon','phi','carphi','chi','psi','omega','Gamma','Delta',
+              'Theta','Lambda','Xi','Pi','Sigma','Upsilon','Phi','Psi','Omega')
       for(w in gl)
         text[i] <- gsub(paste('\\b', w, '\\b', sep=''),
                         paste('$\\\\',w,'$',   sep=''),
@@ -1231,9 +1224,6 @@ dvi.latex <- function(object, prlog=FALSE,
   fi <- paste(tmp, getOption("dviExtension", "dvi"), sep='.')
   structure(list(file=fi), class='dvi')
 }
-
-
-if(.R. && FALSE) show <- function(object) UseMethod('show')
 
 
 show.dvi <- function(object, width=5.5, height=7)

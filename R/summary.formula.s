@@ -2,14 +2,14 @@
 ##note: ars may always be T
 
 summary.formula <-
-  function(formula, data, subset, na.action, 
+  function(formula, data=NULL, subset=NULL, na.action=NULL, 
            fun=NULL,
            method=c('response','reverse','cross'),
            overall=method=='response'|method=='cross', 
            continuous=10, na.rm=TRUE, na.include=method!='reverse',
-           g=4, quant = c(0.025, 0.05, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 0.95, 0.975),
-           nmin=if(method=='reverse') 100
-                else 0,
+           g=4, quant = c(0.025, 0.05, 0.125, 0.25, 0.375, 0.5, 0.625,
+                  0.75, 0.875, 0.95, 0.975),
+           nmin=if(method=='reverse') 100 else 0,
            test=FALSE,
            conTest=conTestkw,
            catTest=catTestchisq,
@@ -19,6 +19,14 @@ summary.formula <-
   call <- match.call()
   missmethod <- missing(method)
   method <- match.arg(method)
+
+  ## Multiple left hand side variables -> automatically call summaryM
+  if(length(grep('\\+', deparse(formula[[2]]))))
+    return(summaryM(formula, data=data, subset=subset,
+                     na.action=na.action, overall=overall,
+                     continuous=continuous, na.include=na.include,
+                     quant=quant, nmin=nmin, test=test,
+                     conTest=conTest, catTest=catTest, ordTest=ordTest))
   
   X <- match.call(expand.dots=FALSE)
   X$fun <- X$method <- X$na.rm <- X$na.include <- X$g <-
@@ -1232,8 +1240,7 @@ dotchart2 <-
       if(!leavepar) par(mai = c(tmai[1], mxlab, tmai2))
       if(!add)
         plot(alldat, seq(along = alldat), type = "n",
-             ylab = '', axes = FALSE, xlab = '', xlim=xlim,  ...)
-      
+             ylab = '', axes = FALSE, xlab = '', xlim=xlim, ...)
       logax <- par("xaxt") == "l"
     }
   else
@@ -1275,9 +1282,8 @@ dotchart2 <-
 
   if(!missing(groups))
     {
-      ypos1 <- ypos + 2 * delt * (if(length(groups)>1)
-                                  cumsum(c(1, diff(groups) > 0))
-      else 1)
+      ypos1 <- ypos + 2 * delt *
+        (if(length(groups)>1) cumsum(c(1, diff(groups) > 0)) else 1)
       diff2 <- c(3 * delt, diff(ypos1))
       ypos2 <- ypos1[abs(diff2 - 3 * delt) < abs(0.001 * delt)] - 
         delt
@@ -1617,11 +1623,10 @@ formatCons <- function(stats, nam, tr, group.freq, prmsd, sep='/',
                        middle.bold=FALSE, outer.size=NULL, msdsize=NULL,
                        pdig=3, eps=.001, footnoteTest=TRUE)
 {
-  nw <- if(lg <- length(group.freq)) lg
-        else 1
+  nw <- if(lg <- length(group.freq)) lg else 1
 
   ns <- dimnames(stats)[[2]]
-  ns <- ifelse(ns %in% c('Mean','SD'), '-1', ns)
+  ns <- ifelse(ns %in% c('Mean','SD','N'), '-1', ns)
   ns <- as.numeric(ns)
   l  <- 1:length(ns)
   q1  <- l[abs(ns-.25) < .001]
@@ -1662,11 +1667,9 @@ formatCons <- function(stats, nam, tr, group.freq, prmsd, sep='/',
     else
       apply(cqu, 1, paste, collapse=sep)
 
-  if(any(is.na(qu)))
-    st <- ""
+  if(any(is.na(qu))) st <- ""
 
-  if(nw==1)
-    yj <- st
+  if(nw==1) yj <- st
   else {
     yj <- rep('',nw)
     names(yj) <- names(group.freq)
@@ -1679,7 +1682,6 @@ formatCons <- function(stats, nam, tr, group.freq, prmsd, sep='/',
                           footnoteTest=footnoteTest)
     yj <- c(yj, ct)
   }
-
   matrix(yj, nrow=1, dimnames=list(nam,names(yj)))
 }
 
@@ -2705,5 +2707,3 @@ ordTestpo=function(group, x) {
        statname='Chi-square',latexstat='\\chi^{2}_{df}',
        plotmathstat='chi[df]^2')
 }
-
- 

@@ -37,8 +37,7 @@
   frames which contain summary statistics that are passed to \code{trellis}
   as raw data (to make multi-panel dot charts, for example).  The
   \code{print} methods use the \code{print.char.matrix} function to print boxed
-  tables, if it is available (it is included in S-Plus).
-
+  tables.
 
   The right hand side of \code{formula} may contain \code{mChoice}
   ("multiple choice") variables.  When \code{test=TRUE} each choice is
@@ -51,10 +50,7 @@
   e.g. \code{Key(locator(1))} to draw a legend where you click the left
   mouse button.  This key is for categorical variables, so to have the
   opportunity to put the key on the graph you will probably want to use
-  the command \code{plot(object, which="categorical")} [Note however that
-  in S-Plus you can switch back and forth between multiple pages
-  on a graph sheet, and issue a \code{Key()} or \code{Key2()} command
-  according to which graph sheet page is active.].  A second function
+  the command \code{plot(object, which="categorical")}.  A second function
   \code{Key2} is created if continuous variables are being plotted.  It is
   used the same as \code{Key}.  If the \code{which} argument is not
   specified to \code{plot}, two pages of plots will be produced.  If you

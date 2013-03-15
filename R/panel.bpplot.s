@@ -4,18 +4,16 @@ panel.bpplot <- function(x, y, box.ratio = 1, means=TRUE, qref=c(.5,.25,.75),
                          font = box.dot$font, pch = box.dot$pch, 
                          cex  = box.dot$cex, col = box.dot$col, ...)
 {
-  if(.R.) {
-    require(lattice)
-  }
+  require(lattice)
 
-  grid <- .R.
+  grid <- TRUE
   if(grid) {
     lines <- llines;
     points <- lpoints;
     segments <- lsegments
   }
 
-  y <- as.numeric(y)   ## 25nov02
+  y <- as.numeric(y)
   ok <- !is.na(x) & !is.na(y)
   x <- x[ok]
   y <- y[ok]
@@ -34,10 +32,7 @@ panel.bpplot <- function(x, y, box.ratio = 1, means=TRUE, qref=c(.5,.25,.75),
   z <- c(sort(rep(probs,2)),-sort(-rep(probs[1:(m-1)],2)))
   z <- c(z, -z, probs[1])
   k <- max(z)
-  k <-
-    if(k > .48)
-      .5
-    else k
+  k <- if(k > .48) .5 else k
   
   if(length(qref)) {
     size.qref <- pmin(qref, 1-qref)
@@ -47,7 +42,7 @@ panel.bpplot <- function(x, y, box.ratio = 1, means=TRUE, qref=c(.5,.25,.75),
   for(Y in y.unique) {
     X <- x[y == Y]
     if(!length(X))
-      next   ## 25nov02
+      next
     
     q <- quantile(X, c(probs2,qref))
     if(length(qref)) 
@@ -94,8 +89,7 @@ panel.bpplot <- function(x, y, box.ratio = 1, means=TRUE, qref=c(.5,.25,.75),
 bpplt <- function(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
                   qref=c(.5,.25,.75), qomit=c(.025,.975),
                   pch=16, cex.labels=par('cex'),
-                  cex.points=if(prototype)1
-                             else .5,
+                  cex.points=if(prototype) 1 else .5,
                   grid=FALSE)
 {
   prototype <- missing(stats)
@@ -105,7 +99,7 @@ bpplt <- function(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
     Means <- .56
   } else {
     Means <- stats[,'Mean']
-    stats <- stats[,dimnames(stats)[[2]] %nin% c('Mean','SD'),drop=FALSE]
+    stats <- stats[,dimnames(stats)[[2]] %nin% c('Mean','SD','N'),drop=FALSE]
   }
 
   stats <- stats[,order(as.numeric(dimnames(stats)[[2]])), drop=FALSE]
@@ -118,7 +112,7 @@ bpplt <- function(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
   
   i <- integer(0)
   for(a in c(.5,qomit))
-    i <- c(i, seq.int(along.with=probs2)[abs(probs2-a)<.001])
+    i <- c(i, seq.int(along.with=probs2)[abs(probs2-a) < .001])
   
   probs2 <- probs2[-i]
   probs  <- probs2[seq.int(length.out=floor(length(probs2)/2))]
@@ -134,7 +128,7 @@ bpplt <- function(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
 
   m  <- length(probs)
   m2 <- length(probs2)
-  j <- c(1,rep(seq.int(along.with=probs2[c(-1,-m2)])+1, each=2), m2)
+  j <- c(1, rep(seq.int(along.with = probs2[c(-1, -m2)]) + 1, each=2), m2)
   j <- c(j, rev(j), NA)
 
 
@@ -142,10 +136,7 @@ bpplt <- function(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
   z <- c(z, rev(z))
   z <- c(z, -z, NA)
   k <- max(z, na.rm=TRUE)
-  k <-
-    if(k > .48)
-      .5
-    else k
+  k <- if(k > .48) .5 else k
   
   if(length(qref)) {
     size.qref <- pmin(qref, 1-qref)
@@ -165,15 +156,11 @@ bpplt <- function(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
 
   if(!prototype) {
     box()
-    mgp.axis(1, axistitle=xlab)  ## 28jan03
+    mgp.axis(1, axistitle=xlab)
   }
   
-  if(.R.)
-    mtext(paste(groups,''), 2, 0, at=length(groups):1,
-          adj=1, las=1, cex=cex.labels)
-  else
-    mtext(paste(groups,''), 2, 0, at=length(groups):1,
-          adj=1, srt=0, cex=cex.labels)
+  mtext(paste(groups,''), 2, 0, at=length(groups):1,
+        adj=1, las=1, cex=cex.labels)
 
   y <- seq.int(from=length(groups), to=1, length.out=length(groups))
 
@@ -195,11 +182,7 @@ bpplt <- function(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
     par(mar=rep(.5,4))
     text(Means, 1.025+.02, 'Mean')
     for(a in c(.5,probs2)) {
-      if(.R.)
-        arrows(a, .6, a, .725, length=.1)
-      else
-        arrows(a, .6, a, .725, size=.1)
-      
+      arrows(a, .6, a, .725, length=.1)
       f <- format(a)
       text(a, .575, format(a))
     }
@@ -207,21 +190,15 @@ bpplt <- function(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
     text(.5, .52, 'Quantiles')
     xd <- .004
     text(.485-xd, 1,
-         if(.R.) expression(Median==Q[2])
-         else 'Median = Q2',
-         
+         expression(Median==Q[2]),
          srt=90)
     
     text(.235-xd, 1,
-         if(.R.) expression(Q[1])
-         else 'Q1',
-         
+         expression(Q[1]),
          srt=90)
     
     text(.735-xd, 1,
-         if(.R.) expression(Q[3])
-         else 'Q3',
-
+         expression(Q[3]),
          srt=90)
     
     lines(c(.375,.625), rep(1.3,2));

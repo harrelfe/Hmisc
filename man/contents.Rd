@@ -30,7 +30,7 @@
 }
 \usage{
 contents(object, \dots)
-\method{contents}{data.frame}(object, \dots)
+\method{contents}{data.frame}(object, sortlevels=FALSE, \dots)
 \method{print}{contents.data.frame}(x,
     sort=c('none','names','labels','NAs'), prlevels=TRUE, number=FALSE, \dots) 
 \method{html}{contents.data.frame}(object,
@@ -47,6 +47,11 @@ contents(object, \dots)
     a data frame.  For \code{html} is an object created by
     \code{contents}.  For \code{contents.list} is a list of data frames.
   }
+  \item{sortlevels}{set to \code{TRUE} to sort levels of all factor
+  variables into alphabetic order.  This is especially useful when two
+  variables use the same levels but in different orders.  They will
+  still be recognized by the \code{html} method as having identical
+  levels if sorted.}
   \item{x}{
     an object created by \code{contents}
   }

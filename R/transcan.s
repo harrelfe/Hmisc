@@ -6,7 +6,7 @@ transcan <-
            imputed=FALSE, n.impute, 
            boot.method=c('approximate bayesian', 'simple'),
            trantab=FALSE, transformed=FALSE,
-           impcat=c("score","multinom","rpart","tree"),
+           impcat=c("score","multinom","rpart"),
            mincut=40,
            inverse=c('linearInterp','sample'), tolInverse=.05,
            pr=TRUE, pl=TRUE, allpl=FALSE, show.na=TRUE,
@@ -36,8 +36,8 @@ transcan <-
   
   if(n.impute > 0) {
     imputed <- TRUE
-    if(impcat %in% c('rpart','tree'))
-      stop('n.impute not supported for impcat="tree" or "rpart"')
+    if(impcat == 'rpart')
+      stop('n.impute not supported for impcat="rpart"')
     
     warning('transcan provides only an approximation to true multiple imputation.\nA better approximation is provided by the aregImpute function.\nThe MICE and other S libraries provide imputations from Bayesian posterior distributions.')
   }
@@ -137,7 +137,7 @@ transcan <-
     ## R does not allow multiple options to be spec.
     oldopts <- options()
     ##  names(oldopts) <- c('na.action','contrasts') #windows can mess this up
-    if(impcat %nin% c('rpart','tree')) {
+    if(impcat == 'rpart')
       options(contrasts=c("contr.treatment","contr.poly"))
       on.exit(options(oldopts))
     }
@@ -410,17 +410,11 @@ transcan <-
               if(usefill>0)
                 pred <- rep(fillin[i], sum(j))
               else {
-                if(impcat %in% c('rpart','tree')) {
+                if(impcat == 'rpart') {
                   y <- as.factor(x[,i])
                   zdf <- list(xx=xx, y=y)
-                  f <-
-                    if(impcat=='tree')
-                      tree(y ~ xx,
-                           control=tree.control(nobs=sum(!is.na(y)),
-                                                mincut=mincut),
-                           data=zdf, subset=!is.na(y))
-                    else rpart(y ~ xx,
-                               control=rpart.control(minsplit=mincut), data=zdf)
+                  f <- rpart(y ~ xx,
+                             control=rpart.control(minsplit=mincut), data=zdf)
 
                   ## won't work because rpart will not allow matrix x
                   pred <-

@@ -9,7 +9,7 @@ hist.data.frame <- function(x, n.unique=3, nclass="compute", na.big=FALSE,
   if(length(mf)==0)
     mf <- c(1,1)
 
-  automf <- FALSE  ## 22sep02
+  automf <- FALSE
   if((la <- length(x))>1 & max(mf)==1) {
     mf <-
       if(la<=4)
@@ -40,8 +40,8 @@ hist.data.frame <- function(x, n.unique=3, nclass="compute", na.big=FALSE,
     type <-
       if(is.character(v) || is.factor(v))
         'cat'
-      else if(inherits(v,'dates'))
-        'date'
+      else if(inherits(v,'Date'))
+        'Date'
       else
         'none'
     
@@ -56,13 +56,9 @@ hist.data.frame <- function(x, n.unique=3, nclass="compute", na.big=FALSE,
       tab <- -sort(-table(v))
       dotchart2(tab, xlab=paste('Frequencies for', lab), reset.par=TRUE)
     } else {
-      type <-
-        if(inherits(v,'dates'))
-          'date'
-        else
-          'none'
+      type <- if(inherits(v,'Date')) 'Date' else 'none'
       
-      if(type!='none')
+      if(type %nin% c('none','Date'))
         v <- oldUnclass(v)
       
       w <- v[!is.na(v)]
@@ -75,26 +71,24 @@ hist.data.frame <- function(x, n.unique=3, nclass="compute", na.big=FALSE,
         if(nclass=="compute")
           nc <- max(2,trunc(min(n/10,25*logb(n,10))/2))
 
-        if(.R.) {
-          if(nclass!="default")
-            hist(v,nclass=nc, xlab=lab, axes=type!='date', main='')
-          else
-            hist(v,xlab=lab, axes=type!='date', main='')
+        if(nclass == 'default') {
+          if(type == 'Date')
+            hist(v, nc, xlab=lab, freq=TRUE, main='')
+          else hist(v, xlab=lab, main='')
         } else {
-          if(nclass!="default")
-            hist(v, nclass=nc, xlab=lab, style.bar='old',
-                 axes=type!='date')
+          if(type == 'Date')
+            hist(v, nc, xlab=lab, freq=TRUE, main='')
           else
-            hist(v,xlab=lab,style.bar='old', axes=type!='date')
+            hist(v, nclass=nc, xlab=lab, main='')
         }
-        
-        if(type=='date') {
-          axis(2)
-          r <- range(v, na.rm=TRUE)
-          by <- round((r[2]-r[1])/(par('lab')[2] - 1))
-          at <- seq(r[1], r[2], by=by)
-          axis(1, at=at, labels=format(chron(at)))
-        }
+       
+#        if(type=='date') {
+#          axis(2)
+#          r <- range(v, na.rm=TRUE)
+#          by <- round((r[2]-r[1])/(par('lab')[2] - 1))
+#          at <- seq(r[1], r[2], by=by)
+#          axis(1, at=at, labels=format(chron(at)))
+#        }
       
         m <- sum(is.na(v))
         pm <- paste("n:",n," m:",m,sep="")

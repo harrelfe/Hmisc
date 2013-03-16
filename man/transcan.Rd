@@ -60,7 +60,7 @@
   by adding the \dQuote{best guess} predicted mean score to random
   residuals off this score.  Then categories having scores closest to
   these predicted scores are taken as the random multiple imputations
-  (\code{impcat = "tree"} or \samp{"rpart"} are not currently allowed
+  (\code{impcat = "rpart"} is not currently allowed
   with \code{n.impute}).  The literature recommends using \code{n.impute
   = 5} or greater. \code{transcan} provides only an approximation to
   multiple imputation, especially since it \dQuote{freezes} the
@@ -155,7 +155,7 @@ transcan(x, method=c("canonical","pc"),
          categorical=NULL, asis=NULL, nk, imputed=FALSE, n.impute,
          boot.method=c('approximate bayesian', 'simple'),
          trantab=FALSE, transformed=FALSE, 
-         impcat=c("score", "multinom", "rpart", "tree"),
+         impcat=c("score", "multinom", "rpart"),
          mincut=40, 
          inverse=c('linearInterp','sample'), tolInverse=.05,
          pr=TRUE, pl=TRUE, allpl=FALSE, show.na=TRUE, 
@@ -308,10 +308,10 @@ invertTabulated(x, y, freq=rep(1,length(x)),
     This argument tells how to impute categorical variables on the
     original scale.  The default is \code{impcat="score"} to impute the
     category whose canonical variate score is closest to the predicted
-    score. Use \code{impcat="tree"} to impute categorical variables
-    using the \code{\link[tree]{tree}} function, using the values of all other
-    transformed predictors.  \code{impcat="rpart"} will use
-    \code{\link{rpart}}.  A better but somewhat slower approach is to
+    score. Use \code{impcat="rpart"} to impute categorical variables
+    using the values of all other transformed predictors in conjunction
+	with the \code{\link[rpart]{rpart}} function.  A better but somewhat
+	slower approach is to 
     use \code{impcat="multinom"} to fit a multinomial logistic model to
     the categorical variable, at the last iteraction of the
     \code{transcan} algorithm.  This uses the \code{\link{multinom}}
@@ -325,9 +325,8 @@ invertTabulated(x, y, freq=rep(1,length(x)),
   }
   \item{mincut}{
     If \code{imputed=TRUE}, there are categorical variables, and
-    \code{impcat = "tree"}, \code{mincut} specifies the lowest node size
-    that will be allowed to be split by \code{\link[tree]{tree}}.  The default
-    is 40.
+    \code{impcat = "rpart"}, \code{mincut} specifies the lowest node size
+    that will be allowed to be split.  The default is 40.
   }
   \item{inverse}{
     By default, imputed values are back-solved on the original scale
@@ -457,7 +456,7 @@ invertTabulated(x, y, freq=rep(1,length(x)),
   }
   \item{treeinfo}{
     Set to \code{TRUE} to get additional information printed when
-    \code{impcat="tree"}, such as the predicted probabilities of
+    \code{impcat="rpart"}, such as the predicted probabilities of
     category membership.
   }
   \item{rhsImp}{
@@ -583,8 +582,7 @@ invertTabulated(x, y, freq=rep(1,length(x)),
     categorical variables, the method used here is to select the
     category code having a corresponding scaled value closest to the
     predicted transformed value.  This corresponds to the default
-    \code{impcat}; a problem in getting predicted values for \code{tree}
-    objects prevented using \code{tree} for this.  Note: imputed values
+    \code{impcat}.  Note: imputed values
     thus returned when \code{type="original"} are single expected value
    imputations even in \code{n.impute} is given.
  }

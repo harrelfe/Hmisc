@@ -10,7 +10,6 @@ waits for a mouse click before drawing the next page.
 \usage{
 \method{hist}{data.frame}(x, n.unique = 3, nclass = "compute",
                 na.big = FALSE, rugs = FALSE, mtitl = FALSE, ...)
-# For S-Plus you must use hist.data.frame( ) as hist is not generic there
 }
 \arguments{
   \item{x}{a data frame}

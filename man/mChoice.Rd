@@ -50,7 +50,7 @@
   contains at least one of the codes or value labels in the second
   argument.
 
-  \code{match.mChoice} creats an integer vector of the indecies of all
+  \code{match.mChoice} creats an integer vector of the indexes of all
   elements in \code{table} which contain any of the speicified levels
 
   \code{is.mChoice} returns \code{TRUE} is the argument is a multiple

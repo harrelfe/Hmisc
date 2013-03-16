@@ -358,7 +358,6 @@ summaryM(formula, data, subset, na.action,
   }
   \item{dcolumn}{see \code{latex}}
   }
-}
 \value{
   a list.  \code{plot.summaryM} returns the number
   of pages of plots that were made.
@@ -406,16 +405,13 @@ symptom1 <- sample(symp, 500,TRUE)
 symptom2 <- sample(symp, 500,TRUE)
 symptom3 <- sample(symp, 500,TRUE)
 Symptoms <- mChoice(symptom1, symptom2, symptom3, label='Primary Symptoms')
-table(Symptoms)
+table(as.character(Symptoms))
 
 # Note: In this example, some subjects have the same symptom checked
 # multiple times; in practice these redundant selections would be NAs
 # mChoice will ignore these redundant selections
 
-# Something is wrong with mChoice.  For now use a regular variable
-symptom <- sample(symp, 500, TRUE)
-
-f <- summaryM(age + sex + sbp + symptom ~ treatment, test=TRUE)
+f <- summaryM(age + sex + sbp + Symptoms ~ treatment, test=TRUE)
 f
 # trio of numbers represent 25th, 50th, 75th percentile
 print(f, long=TRUE)

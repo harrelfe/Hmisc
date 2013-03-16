@@ -28,7 +28,9 @@ mChoice <- function(..., label='',
     paste(sort(unique(set)), collapse=';')
   }
   
-  Y <- do.call(mapply, c(list(FUN=g, SIMPLIFY=TRUE, USE.NAMES=FALSE, MoreArgs=NULL), dotlist))
+  Y <- do.call(mapply,
+               c(list(FUN=g, SIMPLIFY=TRUE, USE.NAMES=FALSE, MoreArgs=NULL),
+                 dotlist))
 
   if(add.none && any(Y=='') && 'none' %nin% lev) {
     lev <- c(lev, 'none')
@@ -133,8 +135,11 @@ print.mChoice <- function(x, quote=FALSE, max.levels=NULL, width = getOption("wi
   invisible(x)
 }
 
-as.character.mChoice <- function(x, ...) 
-  sapply(strsplit(x=x, split=';'), function(x) paste(levels(x)[as.integer(x)], collapse=';'))
+as.character.mChoice <- function(x, ...) {
+  lev <- levels(x)
+  sapply(strsplit(x=x, split=';'),
+         function(z) paste(lev[as.integer(z)], collapse=';'))
+}
 
 as.double.mChoice <- function(x, drop=FALSE, ...) {
   lev <- attr(x,'levels')
@@ -146,19 +151,21 @@ as.double.mChoice <- function(x, drop=FALSE, ...) {
     if(sum(xi)==0) unused <- c(unused, i)
     X[,i] <- xi
   }
-  if(drop && length(unused)) X <- X[,-unused,drop=FALSE]
+  if(drop && length(unused)) X <- X[, -unused, drop=FALSE]
   X
 }
 
-summary.mChoice <- function(object, ncombos=5, minlength=NULL, drop=TRUE, ...) {
+summary.mChoice <- function(object, ncombos=5, minlength=NULL,
+                            drop=TRUE, ...) {
   nunique <- length(unique(object))
   y <- gsub('[^;]', '', object)
-  nchoices <- nchar(y)+1
+  nchoices <- nchar(y) + 1
   nchoices[object == ''] <- 0
   nchoices <- table(nchoices)
   
   X <- as.numeric(object, drop=drop)
-  if(length(minlength)) dimnames(X)[[2]] <- abbreviate(dimnames(X)[[2]],minlength)
+  if(length(minlength))
+    dimnames(X)[[2]] <- abbreviate(dimnames(X)[[2]],minlength)
   crosstab <- crossprod(X)
 
   combos <- table(format(object, minlength))
@@ -196,13 +203,28 @@ match.mChoice <- function(x, table, nomatch = NA,
   if(is.factor(x) || is.character(x)) {
     x <- match(as.character(x), lev, nomatch=0)
   }
-
-
   return(.Call("do_mchoice_match", as.integer(x), table, as.integer(nomatch)))
 }
 
+# inmChoice <- function(x, values) {
+#  match.mChoice(values, x, nomatch=0) > 0
+# }
 inmChoice <- function(x, values) {
-  match.mChoice(values, x, nomatch=0) > 0
+  lev <- attr(x, 'levels')
+  if(is.character(values)) {
+    v <- match(values, lev)
+    if(any(is.na(v))) stop(paste('values not in levels:',
+                                 paste(values[is.na(v)],collapse=';')))
+    values <- v
+  }
+  x <- paste(';', unclass(x), ';', sep='')
+  values <- paste(';', values, ';', sep='')
+  res <- rep(FALSE, length(x))
+  for(j in 1:length(values)) {
+    i <- grep(values[j], x)
+    if(length(i)) res[i] <- TRUE
+  }
+  res
 }
 
 is.mChoice <- function(x) inherits(x, 'mChoice')

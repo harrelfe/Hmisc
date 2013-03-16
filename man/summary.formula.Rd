@@ -92,7 +92,7 @@
                else 0,
         test = FALSE,
         conTest = conTestkw,
-        catTest = catTestkw,
+        catTest = catTestchisq,
         ordTest = ordTestpo, \dots)
 
 % \method{summary}{formula}(formula, data, subset, na.action, fun, method='response',

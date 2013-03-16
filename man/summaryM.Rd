@@ -1,4 +1,4 @@
-name{summaryM}
+\name{summaryM}
 \alias{summaryM}
 \alias{print.summaryM}
 \alias{plot.summaryM}

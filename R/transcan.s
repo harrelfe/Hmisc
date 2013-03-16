@@ -45,7 +45,8 @@ transcan <-
   if(imputed.actual!='none')
     imputed <- TRUE
 
-  if(impcat=='multinom') require('nnet')
+  if(impcat=='multinom') require(nnet)
+  if(impcat=='rpart') require(rpart)
 
   if(missing(data))
     stop('Must specify data= when using R')
@@ -137,7 +138,7 @@ transcan <-
     ## R does not allow multiple options to be spec.
     oldopts <- options()
     ##  names(oldopts) <- c('na.action','contrasts') #windows can mess this up
-    if(impcat == 'rpart')
+    if(impcat == 'rpart') {
       options(contrasts=c("contr.treatment","contr.poly"))
       on.exit(options(oldopts))
     }

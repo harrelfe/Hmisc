@@ -885,17 +885,23 @@ html.contents.data.frame <-
   function(object, sort=c('none','names','labels','NAs'), prlevels=TRUE,
            file=paste('contents',object$dfname,'html',sep='.'),
            levelType=c('list','table'),
-           append=FALSE, number=FALSE, ...)
+           append=FALSE, number=FALSE, nshow=TRUE, ...)
 {
   sort <- match.arg(sort)
   levelType <- match.arg(levelType)
   d <- object$dim
   maxnas <- object$maxnas
-  cat('<hr><h2>Data frame:',object$dfname,
-      '</h2>',d[1],
-      ' observations and ',d[2],
-      ' variables, maximum # NAs:',maxnas,'<hr>\n',sep='',
-      file=file, append=append)
+  if(nshow)
+    cat('<hr><h2>Data frame:',object$dfname,
+        '</h2>',d[1],
+        ' observations and ',d[2],
+        ' variables, maximum # NAs:',maxnas,'<hr>\n',sep='',
+        file=file, append=append)
+  else
+    cat('<hr><h2>Data frame:',object$dfname,
+        '</h2>', ' Variables:', d[2], '<hr>\n', sep='',
+        file=file, append=append)
+  
   cont <- object$contents
   nam <- row.names(cont)
   if(number) {
@@ -936,6 +942,11 @@ html.contents.data.frame <-
   }
   adj <- rep('l', length(cont))
   adj[names(cont) %in% c('NAs','Levels')] <- 'r'
+  if(!nshow) {
+    cont$NAs <- NULL
+    link <- link[, colnames(link) != 'NAs', drop=FALSE]
+    adj <- adj[names(adj) != 'NAs']
+  }
   out <- html(cont, file=file, append=TRUE,
               link=link,
               col.just=adj, ...)

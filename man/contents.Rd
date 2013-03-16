@@ -37,7 +37,7 @@ contents(object, \dots)
            sort=c('none','names','labels','NAs'), prlevels=TRUE,
            file=paste('contents',object$dfname,'html',sep='.'),
            levelType=c('list','table'),
-           append=FALSE, number=FALSE, \dots)
+           append=FALSE, number=FALSE, nshow=TRUE, \dots)
 \method{contents}{list}(object, dslabels, \dots)
 \method{print}{contents.list}(x,
     sort=c('none','names','labels','NAs','vars'), \dots)
@@ -70,7 +70,10 @@ contents(object, \dots)
   \item{number}{
 	set to \code{TRUE} to have the \code{print} and \code{latex} methods
 	number the variables by their order in the data frame
-	}
+  }
+  \item{nshow}{set to \code{FALSE} to suppress outputting number of
+   observations and number of \code{NA}s; useful when these counts
+   would unblind information to blinded reviewers}
   \item{file}{
     file to which to write the html code.  Default is
     \code{"conents.dfname.html"} where \code{dfname} is the name of the data

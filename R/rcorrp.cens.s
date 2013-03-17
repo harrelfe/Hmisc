@@ -101,23 +101,30 @@ improveProb <- function(x1, x2, y)
     na <- sum(a)
     nb <- sum(b)
     d  <- x2 - x1
-    
-    pup.ev   <- mean(d[a] > 0)
-    pup.ne   <- mean(d[b] > 0)
-    pdown.ev <- mean(d[a] < 0)
-    pdown.ne <- mean(d[b] < 0)
-    
-    nri <- pup.ev - pdown.ev - (pup.ne - pdown.ne)
-    se.nri <- sqrt((pup.ev + pdown.ev)/na + (pup.ne + pdown.ne)/nb)
-    z.nri  <- nri/se.nri
+   
+    nup.ev   <- sum(d[a] > 0); pup.ev   <- nup.ev/na
+    nup.ne   <- sum(d[b] > 0); pup.ne   <- nup.ne/nb
+    ndown.ev <- sum(d[a] < 0); pdown.ev <- ndown.ev/na
+    ndown.ne <- sum(d[b] < 0); pdown.ne <- ndown.ne/nb
     
     nri.ev <- pup.ev - pdown.ev
-    se.nri.ev <- sqrt((pup.ev + pdown.ev)/na)
+    # se.nri.ev <- sqrt((pup.ev + pdown.ev)/na)  # old est under H0
+    v.nri.ev <- (nup.ev + ndown.ev)/(na^2) - ((nup.ev - ndown.ev)^2)/(na^3)
+    se.nri.ev <- sqrt(v.nri.ev)
     z.nri.ev <- nri.ev/se.nri.ev
     
     nri.ne   <- pdown.ne - pup.ne
-    se.nri.ne <- sqrt((pdown.ne + pup.ne)/nb)
+    # se.nri.ne <- sqrt((pdown.ne + pup.ne)/nb)  # old est under H0
+    v.nri.ne <- (ndown.ne + nup.ne)/(nb^2) - ((ndown.ne - nup.ne)^2)/(nb^3)
+    se.nri.ne <- sqrt(v.nri.ne)
     z.nri.ne <- nri.ne/se.nri.ne
+
+    nri <- pup.ev - pdown.ev - (pup.ne - pdown.ne)
+    # old estimate under H0:
+    # se.nri <- sqrt((pup.ev + pdown.ev)/na + (pup.ne + pdown.ne)/nb)
+    se.nri <- sqrt(v.nri.ev + v.nri.ne)
+    z.nri  <- nri/se.nri
+    
 
     improveSens <-  sum(d[a])/na
     improveSpec <- -sum(d[b])/nb

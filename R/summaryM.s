@@ -578,7 +578,7 @@ latex.summaryM <-
     if(length(auxCol))
       auxc <- c(auxc, auxCol[[1]][i])
 
-    nn <- c(nn, n[i])   ## 12aug02
+    nn <- c(nn, n[i])
     nam <- if(vnames=="names") nams[i]
            else labels[i]
 

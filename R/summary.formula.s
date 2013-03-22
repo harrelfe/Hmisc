@@ -125,7 +125,6 @@ summary.formula <-
           else is.na(Y)) %*%
          rep(1,ncol(Y))) > 0
     
-    ## Was is.na.Surv, is.Surv 30May01
     stats <- if(length(dim(Y))) fun(Y[!s,,drop=FALSE])
              else fun(Y[!s])
 
@@ -167,7 +166,6 @@ summary.formula <-
           else is.na(Y)) %*% 
          rep(1,ncol(Y))) > 0
 
-    ## was is.Surv(Y) ... is.na.Surv(Y)   25May01
     nmissy <- sum(s)
     if(nmissy) {
       X <- X[!s,,drop=FALSE]
@@ -184,7 +182,7 @@ summary.formula <-
     n  <- dm[1]
     nlevels <- integer(nx)
     labels <- character(nx)
-    units  <- labels  ## 28jan03
+    units  <- labels
 
     i <- 0
     nams <- c(names(X), if(overall)'Overall')
@@ -383,13 +381,12 @@ summary.formula <-
             sfn <- function(x, quant)
             {
               o <- options(digits=10)
-              ## 2sep02 so won't lose precision in quantile names
+              ## so won't lose precision in quantile names
               on.exit(options(o))
               c(quantile(x,quant), Mean=mean(x), SD=sqrt(var(x)))
             }
 
             qu <- tapply(w, g, sfn, simplify=TRUE, quants)
-            ## Added simplify=TRUE to work with R 7Jun01
             if(test)
               testresults[[i]] <- conTest(g, w)
 
@@ -497,7 +494,6 @@ summary.formula <-
     na <- is.na(Y %*% rep(1,ncol(Y)))
     S  <- matrix(NA, nrow=nl, ncol=nstats, dimnames=list(NULL,name.stats))
 
-    ## 23apr03
     chk <- function(z, nstats)
     {
       if(length(z) != nstats)
@@ -559,7 +555,6 @@ summary.formula <-
             else lab
 
     heading <- paste(funlab,"by",lab2)
-    ##if(length(name.stats)) yname <- funlab <- name.stats
 
     S <- S[,,drop=TRUE]
     attr(S,"label") <- yname    #funlab
@@ -582,11 +577,12 @@ formula.summary.formula.cross <- function(x, ...) attr(x,'formula')
 
 na.retain <- function(d) d
 
-print.summary.formula.response <- function(x, 
-                                           vnames=c('labels','names'), prUnits=TRUE,
-                                           abbreviate.dimnames=FALSE,
-                                           prefix.width, min.colwidth,
-                                           formatArgs=NULL, ...)
+print.summary.formula.response <-
+  function(x, 
+           vnames=c('labels','names'), prUnits=TRUE,
+           abbreviate.dimnames=FALSE,
+           prefix.width, min.colwidth,
+           formatArgs=NULL, ...)
 {
   stats <- x
   stats <- oldUnclass(stats)
@@ -598,8 +594,8 @@ print.summary.formula.response <- function(x,
 
   vlabels <- at$labels
   if(prUnits) {
-    atu <- translate(at$units, '*',' ') ## 31jan03
-    vlabels <- ifelse(atu=='',vlabels,   ## 28jan03
+    atu <- translate(at$units, '*',' ')
+    vlabels <- ifelse(atu=='',vlabels,
                       paste(vlabels,' [',atu,']',sep=''))
   }
 
@@ -614,59 +610,35 @@ print.summary.formula.response <- function(x,
 
   d <- dim(stats)
   
-  if(exists('print.char.matrix')) {
-    nr <- length(at$nlevels)
-    vlab <- if(ul) vlabels[vlabels!='']
-            else at$vname[at$vname!='']
-
-    z <- matrix('',nrow=nr,ncol=1+d[2],dimnames=list(vlab,NULL))
-    dz <- dimnames(stats)[[1]]
-    cstats <- matrix('',nrow=d[1],ncol=d[2])
-    for(j in 1:d[2]) {
-      ww <- c(list(stats[,j]), formatArgs)
-      cstats[,j] <- do.call('format', ww)  # 10Feb00
-      cstats[is.na(stats[,j]),j] <- ''
-    }
-
-    is <- 1
-    for(i in 1:nr) {
-      ie <- is+at$nlevels[i]-1
-      z[i,1] <- paste(dz[is:ie],collapse='\n')
-      for(j in 1:d[2]) z[i,j+1] <- paste(cstats[is:ie,j],collapse='\n')
-      is <- ie+1
-    }
-    if(missing(prefix.width))
-      prefix.width <- max(nchar(dimnames(z)[[1]]))
-    
-    if(missing(min.colwidth))
-      min.colwidth <- 
-        max(min(nchar(cstats)[nchar(cstats)>0]), min(nchar(dimnames(stats)[[2]])))
-
-    z <- rbind(c('',dimnames(stats)[[2]]), z)
-    print.char.matrix(z, col.names=FALSE, ...)
-
-    return(invisible())
-  } 
-
-  dz <-
-    if(length(at$strat.levels)==1)
-      dimnames(stats)[[2]]
-    else
-      paste(rep(at$strat.levels,length=d[2]),dimnames(stats)[[2]],sep=":")
+  nr <- length(at$nlevels)
+  vlab <- if(ul) vlabels[vlabels!='']
+  else at$vname[at$vname!='']
   
-  z <- matrix('', ncol=d[2]+2, nrow=d[1],
-              dimnames=list(rep('',d[1]),c('','',dz)))
-
-  z[,1] <- if(ul) vlabels
-           else at$vname
-
-  z[,2] <- dimnames(stats)[[1]]
-  for(i in 1:d[2]) {
-    ww <- c(list(stats[,i]), formatArgs)  # 10Feb00
-    z[,i+2] <- do.call('format', ww)
+  z <- matrix('',nrow=nr,ncol=1+d[2],dimnames=list(vlab,NULL))
+  dz <- dimnames(stats)[[1]]
+  cstats <- matrix('',nrow=d[1],ncol=d[2])
+  for(j in 1:d[2]) {
+    ww <- c(list(stats[,j]), formatArgs)
+    cstats[,j] <- do.call('format', ww)
+    cstats[is.na(stats[,j]),j] <- ''
   }
+  
+  is <- 1
+  for(i in 1:nr) {
+    ie <- is+at$nlevels[i]-1
+    z[i,1] <- paste(dz[is:ie],collapse='\n')
+    for(j in 1:d[2]) z[i,j+1] <- paste(cstats[is:ie,j],collapse='\n')
+    is <- ie+1
+  }
+  if(missing(prefix.width))
+    prefix.width <- max(nchar(dimnames(z)[[1]]))
+  
+  if(missing(min.colwidth))
+    min.colwidth <- 
+      max(min(nchar(cstats)[nchar(cstats)>0]), min(nchar(dimnames(stats)[[2]])))
 
-  print(z, quote=FALSE)
+  z <- rbind(c('',dimnames(stats)[[2]]), z)
+  print.char.matrix(z, col.names=FALSE, ...)
   invisible()
 }
 
@@ -1133,7 +1105,7 @@ plot.summary.formula.reverse <-
         fts <- formatTestStats(test[[varNames[i]]], prtest=prtest,
                                plotmath=TRUE,
                                pdig=pdig, eps=eps)
-        title(fts, line=.5)  ## .5 ignored in S-Plus
+        title(fts, line=.5)
       }
     }
   }
@@ -1396,22 +1368,18 @@ print.summary.formula.reverse <-
   if(!length(test))
     prtest <- 'none'
 
-  nw     <- if(lg <- length(x$group.freq)) lg
-            else 1  #23Nov98
-
+  nw     <- if(lg <- length(x$group.freq)) lg else 1
   gnames <- names(x$group.freq)
 
-  if(!missing(digits)) {    #.Options$digits <- digits 6Aug00
+  if(!missing(digits)) {
     oldopt <- options(digits=digits)
     on.exit(options(oldopt))
   }
 
-
   cstats <- NULL
   for(i in 1:nv) {
     nn <- c(nn, n[i])
-    nam <- if(vnames=="names") nams[i]
-           else labels[i]
+    nam <- if(vnames=="names") nams[i] else labels[i]
 
     if(prUnits && nchar(Units[i]))
       nam <- paste(nam,' [',translate(Units[i],'*',' '),']',sep='')
@@ -1444,7 +1412,6 @@ print.summary.formula.reverse <-
               else prtest
             else '  Test\nStatistic')
 
-  ##lab <- format(lab)   21Jan99
   nc <- nchar(cstats)
   spaces <- substring("                                                        ",
                       1, (max(nc)-nc+1)/2)   # center strings
@@ -1467,15 +1434,11 @@ print.summary.formula.reverse <-
       else
         paste("  (N=",x$N,")",sep=""),"\n\n", sep="")
 
-  if(exists("print.char.matrix")) {
-    if(missing(min.colwidth))
-      min.colwidth <- max(min(nchar(gl)),min(nc[nc>0]))
+  if(missing(min.colwidth))
+    min.colwidth <- max(min(nchar(gl)),min(nc[nc>0]))
 
-    print.char.matrix(cstats, col.names=FALSE,
-                      col.txt.align='left', ...)
-  } else
-
-  print(cstats, quote=FALSE)
+  print.char.matrix(cstats, col.names=FALSE,
+                    col.txt.align='left', ...)
   invisible(cstats)
 }
 
@@ -1532,7 +1495,7 @@ formatCats <- function(tab, nam, tr, type, group.freq,
   lev <- dimnames(pct)[[1]]
   exc <- exclude1 && (nr==2) && (type==1) # type==1 10jul02
   rl <- casefold(dimnames(pct)[[1]])
-  binary <- type==1 && exc &&    ## 17Jan99
+  binary <- type==1 && exc &&
   (all(rl %in% c("0","1"))|all(rl %in% c("false","true"))|
    all(rl %in% c("absent","present")))
   if(binary) long <- FALSE
@@ -1641,7 +1604,7 @@ formatCons <- function(stats, nam, tr, group.freq, prmsd, sep='/',
   cqu[is.na(qu)] <- ''
   if(latex) {
     st <- character(nrow(cqu))
-    names(st) <- dimnames(qu)[[1]]   ## 31jul02
+    names(st) <- dimnames(qu)[[1]]
     bld <- if(middle.bold) '\\bf '
            else ''
 
@@ -1667,7 +1630,7 @@ formatCons <- function(stats, nam, tr, group.freq, prmsd, sep='/',
     else
       apply(cqu, 1, paste, collapse=sep)
 
-  if(any(is.na(qu))) st <- ""
+  ### if(any(is.na(qu))) st <- ""   # Why was this here?
 
   if(nw==1) yj <- st
   else {
@@ -1750,8 +1713,6 @@ formatTestStats <- function(tr, multchoice=FALSE,
                if('stat' %in% prtest)
                  paste(statname,'=',format(round(teststat,2)),sep=''),
                if(all(c('stat','P') %in% prtest)) ',~',
-### 21dec03        if('P' %in% prtest)paste('P',if(plt)'' else '=', pval,
-###                                        sep=''),
                if('P' %in% prtest)paste('P',ifelse(plt,'','='), pval,
                                         sep=''),
                if(footnoteTest && length(testUsed))
@@ -1761,8 +1722,6 @@ formatTestStats <- function(tr, multchoice=FALSE,
   } else if(plotmath) {
     if(length(prtest)==1)
       parse(text=switch(prtest,
-### 21dec03             P=if(plt)paste('~P',pval,sep='') else
-###                      paste('~P==',pval,sep=''),
                         P=ifelse(plt,paste('~P',pval,sep=''),
                                  paste('~P==',pval,sep='')),
                         stat=format(round(teststat,2)),
@@ -1773,8 +1732,8 @@ formatTestStats <- function(tr, multchoice=FALSE,
                          paste('~list(',statname,'==',
                                format(round(teststat,2)),sep=''),
                        if(all(c('stat','P') %in% prtest)) ', ',
-### 21dec03   if('P' %in% prtest)paste(if(plt)'~P' else '~P==',pval,')',sep='')))
-                       if('P' %in% prtest)paste(ifelse(plt,'~P','~P=='),pval,')',sep='')))
+                       if('P' %in% prtest)paste(ifelse(plt,'~P','~P=='),
+                                                pval,')',sep='')))
   } else {
     if(length(prtest)==1)
       switch(prtest,
@@ -1785,8 +1744,6 @@ formatTestStats <- function(tr, multchoice=FALSE,
       paste(if('stat' %in% prtest)
               paste(statname,'=',format(round(teststat,2)),sep=''),
             if('df' %in% prtest) paste('d.f.=',dof,sep=''),
-### 21dec03      if('P' %in%  prtest)paste('P', if(plt)'' else '=', pval,
-###                                         sep=''))
             if('P' %in%  prtest)paste('P', ifelse(plt,'','='), pval,
                                       sep=''))
   }
@@ -1856,7 +1813,7 @@ latex.summary.formula.reverse <-
     if(length(auxCol))
       auxc <- c(auxc, auxCol[[1]][i])
 
-    nn <- c(nn, n[i])   ## 12aug02
+    nn <- c(nn, n[i])
     nam <- if(vnames=="names") nams[i]
            else labels[i]
 
@@ -1892,16 +1849,12 @@ latex.summary.formula.reverse <-
 
   lab <- dimnames(cstats)[[1]]
   gl <- names(x$group.freq)
-  ##gl <- if(length(gl)) paste(gl, " $(N=",x$group.freq,")$",sep="") else " "
-  ## Thanks: Eran Bellin <ebellin@montefiore.org>   3Aug01
   if(!length(gl))
     gl <- " "
 
-  lab <- sedit(lab,c(" ","&"),c("~","\\&"))  #was format(lab) 21Jan99
+  lab <- sedit(lab,c(" ","&"),c("~","\\&"))
   lab <- latexTranslate(lab, greek=TRUE)
   gl  <- latexTranslate(gl, greek=TRUE)
-  ## if(any(gl != " ")) gl <- paste(gl, " $(N=",x$group.freq,")$",sep="") # 3Aug01
-  ## Added any( ) 26Mar02  21jan03
   extracolheads <-
     if(any(gl != " "))
       c(if(prn)'', paste('$N=',x$group.freq,'$',sep=''))
@@ -1918,11 +1871,8 @@ latex.summary.formula.reverse <-
   }
 
   dimnames(cstats) <- list(NULL,gl) 
-  ## was dimnames(cstats) <- list(lab, gl) 12aug02
   cstats <- data.frame(cstats, check.names=FALSE, stringsAsFactors=FALSE)
   
-  ## Added row.names=lab below 10jul02 - S+ was dropping dimnames[[1]]
-  ##attr(cstats,'row.names') <- lab  12aug02
   col.just <- rep("c",length(gl))
   if(dcolumn && all(prtest!='none') &&
      gl[length(gl)] %in% c('P-value','Test Statistic'))
@@ -1963,7 +1913,6 @@ latex.summary.formula.reverse <-
                  else paste(paste('\\textsuperscript{\\normalfont ',1:length(testUsed),'}',testUsed,
                                   ' test',sep=''),collapse='; '))
 
-    ## added rowname=lab 12aug02  added '\n\n' 4mar03 for ctable=T
   }
 
   if(length(auxc)) {
@@ -2012,7 +1961,7 @@ print.summary.formula.cross <- function(x, twoway=nvar==2,
   S <- stats$S
   ars <- length(dim(S))
   attr(stats,"row.names") <- rep("",length(a$row.names))
-  if(twoway && nvar==2 && exists("print.char.matrix")) {
+  if(twoway && nvar==2) {
     V <- stats[[vnames[1]]]
     H <- stats[[vnames[2]]]
     v <- levels(V)
@@ -2060,7 +2009,6 @@ print.summary.formula.cross <- function(x, twoway=nvar==2,
     return(invisible(print.char.matrix(cstats2, col.names=TRUE, ...)))
   }
 
-  ##print.char.matrix not present (old version of S-Plus)
   ##print.data.frame messes up matrix names (here prefixing by S)
   if(ars) {
     stats$S <- NULL
@@ -2069,7 +2017,7 @@ print.summary.formula.cross <- function(x, twoway=nvar==2,
       stats[[snam[i]]] <- S[,i]
     
   } else names(stats)[length(stats)] <- ylab
-
+  
   stats <- as.data.frame(stats, stringsAsFactors=FALSE)
   invisible(print(stats, ...))
 }
@@ -2121,8 +2069,6 @@ latex.summary.formula.cross <-
     for(i in 1:nvar)
       stats[[i]] <- latexTranslate(as.character(stats[[i]]),inn,
                                    out,pb=TRUE,greek=TRUE)
-
-    ##Used to do this translating unconditionally   6Jun96
 
     if(ars) {
       stats$S <- NULL
@@ -2306,7 +2252,7 @@ stratify <- function(..., na.group = FALSE, shortlabel = TRUE)
 cumcategory <- function(y)
 {
   if(!is.category(y))
-    y <- factor(y)  ## was as.category 26Mar02
+    y <- factor(y)
 
   lev <- levels(y)
   y <- oldUnclass(y)

@@ -509,15 +509,11 @@ print.summaryM <-
       else
         paste("  (N=",x$N,")",sep=""),"\n\n", sep="")
 
-  if(exists("print.char.matrix")) {
-    if(missing(min.colwidth))
-      min.colwidth <- max(min(nchar(gl)),min(nc[nc>0]))
-
-    print.char.matrix(cstats, col.names=FALSE,
-                      col.txt.align='left', ...)
-  } else
-
-  print(cstats, quote=FALSE)
+  if(missing(min.colwidth))
+    min.colwidth <- max(min(nchar(gl)),min(nc[nc>0]))
+  
+  print.char.matrix(cstats, col.names=FALSE,
+                    col.txt.align='left', ...)
   invisible(cstats)
 }
 

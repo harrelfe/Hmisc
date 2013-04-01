@@ -1,17 +1,14 @@
 ## $Id$
-describe <- function(x, ...) UseMethod("describe")  #13Mar99
-
-
-describe.default <- function(x, descript, ...)  #13Mar99
-{
+describe <- function(x, ...) UseMethod("describe")
+describe.default <- function(x, descript, ...) {
   if(missing(descript)) {
-    descript <- deparse(substitute(x)) #13Mar99
+    descript <- deparse(substitute(x))
   }
-
+  
   if(is.matrix(x)) {
     describe.matrix(x, descript, ...)
   } else {
-    describe.vector(x, descript, ...)  #13Mar99
+    describe.vector(x, descript, ...)
   }
 }
 
@@ -39,21 +36,15 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
   }
 
   un <- attr(x,"units")
-  if(length(un) && un=='') {
-    un <- NULL
-  }
+  if(length(un) && un=='') un <- NULL
 
   fmt <- attr(x,'format')
-  if(length(fmt) && (is.function(fmt) || fmt=='')) {
-    fmt <- NULL
-  }
+  if(length(fmt) && (is.function(fmt) || fmt=='')) fmt <- NULL
   
-  if(length(fmt) > 1) {
+  if(length(fmt) > 1)
     fmt <- paste(as.character(fmt[[1]]),as.character(fmt[[2]]))
-  }
   
-  present <- if(all(is.na(x)))
-    rep(FALSE,length(x))
+  present <- if(all(is.na(x))) rep(FALSE,length(x))
   else if(is.character(x)) x!="" & x!=" " & !is.na(x)
   else !is.na(x)
   
@@ -65,13 +56,10 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
   if(normwt) {
     weights <- sum(present)*weights/sum(weights[present])
     n <- sum(present)
-  } else {
-    n <- sum(weights[present])
-  }
+  } else n <- sum(weights[present])
   
-  if(exclude.missing && n==0) {
+  if(exclude.missing && n==0)
     return(structure(NULL, class="describe"))
-  }
   
   missing <- sum(weights[!present], na.rm=TRUE)
   atx <- attributes(x)
@@ -114,12 +102,12 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
       lab <- c(lab,"missing month")
     }
     
-    if((nn <- length(pd$day))>0) {
+    if((nn <- length(pd$day)) > 0) {
       counts <- c(counts, nn)
       lab <- c(lab,"missing day")
     }
     
-    if((nn <- length(pd$both))>0) {
+    if((nn <- length(pd$both)) > 0) {
       counts <- c(counts, nn)
       lab <- c(lab,"missing month,day")
     }
@@ -140,15 +128,13 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
   }
   
   if(isnum) {
-    xnum <- if(.SV4.) as.numeric(x) else oldUnclass(x)
+    xnum <- unclass(x)
     
     if(isdot) {
       dd <- sum(weights*xnum)/sum(weights)
       fval <- formatDateTime(dd, atx, !timeUsed)
       counts <- c(counts, fval)
-    } else {
-      counts <- c(counts,format(sum(weights*x)/sum(weights),...))
-    }
+    } else counts <- c(counts,format(sum(weights*x)/sum(weights),...))
     
     lab <- c(lab,"Mean")
   } else if(n.unique==1) {
@@ -156,21 +142,18 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
     lab <- c(lab, "value")
   }
 
-  if(n.unique>=10 & isnum) {
+  if(n.unique >= 10 & isnum) {
     q <-
       if(any(weights != 1)) {
-        wtd.quantile(xnum,weights,normwt=FALSE,na.rm=FALSE,  # 3Dec00
+        wtd.quantile(xnum,weights,normwt=FALSE,na.rm=FALSE,
                      probs=c(.05,.1,.25,.5,.75,.90,.95))
-      } else {
-        quantile(xnum,c(.05,.1,.25,.5,.75,.90,.95),na.rm=FALSE)
-      }
+      } else quantile(xnum,c(.05,.1,.25,.5,.75,.90,.95),na.rm=FALSE)
+
     ## Only reason to call quantile is that the two functions can give
     ## different results if there are ties, and users are used to quantile()
     fval <-
-      if(isdot)
-        formatDateTime(q, atx, !timeUsed)
-      else
-        format(q,...)
+      if(isdot) formatDateTime(q, atx, !timeUsed)
+      else format(q,...)
     
     counts <- c(counts, fval)
     lab <- c(lab,".05",".10",".25",".50",".75",".90",".95")
@@ -190,38 +173,40 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
     f
   }
 
-  if(inherits(x,'mChoice')) z$mChoice <- summary(x, minlength=minlength) else {
-    if(n.unique <= listunique && !isnum && !is.category(x) &&
-       max(nchar(x)) > listnchar) counts <- tableIgnoreCaseWhiteSpace(x) else {
-      if(n.unique>=20) {
-        if(isnum) {
-          r <- range(xnum)
-          xg <- pmin(1 + floor((100 * (xnum - r[1]))/
-                               (r[2] - r[1])), 100)
-          z$intervalFreq <- list(range=as.single(r),
-                                 count = as.integer(tabulate(xg)))
+  if(inherits(x,'mChoice'))
+    z$mChoice <- summary(x, minlength=minlength) else {
+      if(n.unique <= listunique && !isnum && !is.category(x) &&
+         max(nchar(x)) > listnchar)
+        counts <- tableIgnoreCaseWhiteSpace(x) else {
+          if(n.unique >= 20) {
+            if(isnum) {
+              r <- range(xnum)
+              xg <- pmin(1 + floor((100 * (xnum - r[1]))/
+                                   (r[2] - r[1])), 100)
+              z$intervalFreq <- list(range=as.single(r),
+                                     count = as.integer(tabulate(xg)))
+            }
+            
+            loandhi <- x.unique[c(1:5,(n.unique-4):n.unique)]
+            fval <-
+              if(isdot && (class(loandhi) %nin% 'timeDate')) {
+                formatDateTime(oldUnclass(loandhi), at=atx, roundDay=!timeUsed)
+              } else format(format(loandhi), ...)
+            counts <- fval
+            names(counts) <- c("L1","L2","L3","L4","L5","H5","H4","H3","H2","H1")
+          }
+
+          if(n.unique > 1 && n.unique < 20 && !x.binary) {
+            tab <- wtd.table(if(isnum && isdat) format(x) else x,
+                             weights, normwt=FALSE, na.rm=FALSE, type='table')
+
+            pct <- round(100*tab/sum(tab))
+            counts <- t(as.matrix(tab))
+            counts <- rbind(counts, pct)
+            dimnames(counts)[[1]]<- c("Frequency","%")
+          }
         }
-        
-        loandhi <- x.unique[c(1:5,(n.unique-4):n.unique)]
-        fval <-
-          if(isdot && (class(loandhi) %nin% 'timeDate')) {
-            formatDateTime(oldUnclass(loandhi), at=atx, roundDay=!timeUsed)
-          } else format(format(loandhi), ...)
-        counts <- fval
-        names(counts) <- c("L1","L2","L3","L4","L5","H5","H4","H3","H2","H1")
-      }
-
-      if(n.unique>1 && n.unique<20 && !x.binary) {
-        tab <- wtd.table(if(isnum && isdat) format(x) else x,
-                         weights, normwt=FALSE, na.rm=FALSE, type='table')
-
-        pct <- round(100*tab/sum(tab))
-        counts <- t(as.matrix(tab))
-        counts <- rbind(counts, pct)
-        dimnames(counts)[[1]]<- c("Frequency","%")
-      }
     }
-  }
   z$values <- counts
   structure(z, class="describe")
 }
@@ -313,10 +298,8 @@ describe.formula <- function(x, descript, data, subset, na.action,
   if(missing(descript)) {
     ter <- attr(mf,"terms")
     d <- as.character(x)
-    if(attr(ter,"response")==1)
-      d <- c(d[2],d[1],d[-(1:2)])
-    else
-      d <- d[-1]
+    if(attr(ter,"response")==1) d <- c(d[2],d[1],d[-(1:2)])
+    else d <- d[-1]
     d <- paste(d, collapse=" ")
     descript <- d
   }
@@ -402,9 +385,7 @@ print.describe.single <- function(x, condense=TRUE, ...)
           
           if(len==0) {
             z <- w; len <- l
-          } else {
-            z <- paste(z, ', ', w, sep=''); len <- len + l + 2
-          }
+          } else z <- paste(z, ', ', w, sep=''); len <- len + l + 2
         }
         
         cat(z, '\n')
@@ -440,11 +421,8 @@ latex.describe <-
   at <- attributes(object)
   ct <- function(..., file, append=FALSE)
   {
-    if(file=='')
-      cat(...)
-    else
-      cat(..., file=file, append=append)
-    
+    if(file=='') cat(...)
+    else cat(..., file=file, append=append)
     invisible()
   }
 
@@ -493,24 +471,23 @@ latex.describe <-
     spc <- if(spacing == 0) '}\n' else '}\\end{spacing}\n'
     ct(spc, file=file, append=TRUE)
   }
-  else
-    {
-      val <- object$values
-      potentiallyLong <-
-        length(val) && !is.matrix(val) &&
+  else {
+    val <- object$values
+    potentiallyLong <-
+      length(val) && !is.matrix(val) &&
         length(val) != 10 || !all(names(val)==
                 c("L1","L2","L3","L4","L5","H5","H4","H3","H2","H1"))
-      if(!potentiallyLong) cat('\\vbox{', file=file, append=TRUE)
-      latex.describe.single(object,
-                            vname=first.word(expr=at$descript),
-                            condense=condense,
-                            file=file, append=TRUE, size=size,
-                            tabular=tabular, lspace=lspace)
-      if(!potentiallyLong) cat('}\n', file=file, append=TRUE)
-      spc <- if(spacing == 0) '\n' else '\\end{spacing}\n'
-      ct(spc, file=file, append=TRUE)
-    }
-
+    if(!potentiallyLong) cat('\\vbox{', file=file, append=TRUE)
+    latex.describe.single(object,
+                          vname=first.word(expr=at$descript),
+                          condense=condense,
+                          file=file, append=TRUE, size=size,
+                          tabular=tabular, lspace=lspace)
+    if(!potentiallyLong) cat('}\n', file=file, append=TRUE)
+    spc <- if(spacing == 0) '\n' else '\\end{spacing}\n'
+    ct(spc, file=file, append=TRUE)
+  }
+  
   structure(list(file=file,  style=c('setspace','relsize')),
             class='latex')
 }
@@ -521,15 +498,11 @@ latex.describe.single <-
            file, append=FALSE, size='small',
            tabular=TRUE, greek=TRUE, lspace=c(0,0), ...)
 {
-  ct <- function(..., file, append=FALSE)
-    {
-      if(file=='')
-        cat(...)
-      else
-        cat(..., file=file, append=append)
-      
-      invisible()
-    }
+  ct <- function(..., file, append=FALSE) {
+    if(file=='') cat(...)
+    else cat(..., file=file, append=append)
+    invisible()
+  }
   
   oldw <- options(width=85)
   on.exit(options(oldw))
@@ -691,12 +664,6 @@ latex.describe.single <-
 }
 
 
-if(FALSE && .SV4.) {
-  setMethod('latex', 'describe', latex.describe)
-  remove('latex.describe')
-}
-
-
 dataDensityString <- function(x, nint=30)
 {
   x <- as.numeric(x)
@@ -712,38 +679,8 @@ dataDensityString <- function(x, nint=30)
 }
 
 
-## Unused code from latex.describe.single
-if(FALSE && length(intFreq))
-{
-  psthere <- TRUE
-  psfile <- paste(psBase,vname,'.ps',sep='')
-  x <- seq(intFreq$range[1], intFreq$range[2], length=100)
-  counts <- intFreq$count
-  oldopt <- options(warn=-1)
-  if(under.unix)
-    postscript(file = psfile, horizontal = FALSE,
-               width = 1.5, height = .1, 
-               maximize = TRUE,
-               onefile = FALSE, print.it = FALSE)
-  else
-    postscript(file = psfile, horizontal = FALSE,
-               width=1.5, height=.1)
-  
-  oldpar <- par(mar=rep(0,4),oma=rep(0,4))  # add mex=.5 to prevent
-                                            # error msgs.  Need this
-  
-  ## in 2nd par call.
-  on.exit(par(oldpar))
-  options(oldopt)
-  plot(x, freqFun(counts), type='n', axes=FALSE, xlab='', ylab='')
-  j <- counts > 0
-  segments(x[j], 0, x[j], freqFun(counts[j]))
-  dev.off()
-}
-
 
 contents <- function(object, ...) UseMethod('contents')
-
 
 contents.data.frame <- function(object, sortlevels=FALSE, ...)
 {
@@ -793,7 +730,7 @@ contents.data.frame <- function(object, sortlevels=FALSE, ...)
             Storage=                        sm,
             NAs=if(any(nas>0))              nas )
   
-    w <- w[sapply(w, function(x)length(x)>0)]
+  w <- w[sapply(w, function(x)length(x)>0)]
   
   ## R does not remove NULL elements from a list
   structure(list(contents=data.frame(w, row.names=nam),
@@ -953,74 +890,72 @@ html.contents.data.frame <-
   
   cat('<hr>\n', file=file, append=TRUE)
   
-  if(prlevels && length(L))
-    {
-      if(levelType=='list')
-        {
-          cat('<h2 align="center">Category Levels</h2>\n', file=file, append=TRUE)
-          for(i in fullLevels) {
-            l <- L[[i]]
-            nami <- Lnames[i]
-            w <- nami
-            if(sum(reusingLevels))
-              for(k in which(reusingLevels))
-                if(L[[k]] == nami) w <- c(w, Lnames[k])
-            cat('<a name="levels.',nami,'"><h3>',
-                paste(w, collapse=', '), '</h3>\n', sep='', 
-                file=file, append=TRUE)
-            cat('<ul>\n', file=file, append=TRUE)
-            for(k in l) cat('<li>', k, '</li>\n', sep='',
-                            file=file, append=TRUE)
-            cat('</ul>\n', file=file, append=TRUE)
-          }
-        }
-      else {  
-        ## Function to split a character vector x as evenly as
-        ## possible into n elements, pasting multiple elements
-        ## together when needed
-        evenSplit <- function(x, n) {
-          indent <- function(z) if(length(z)==1)z else
-          c(z[1], paste('&nbsp&nbsp&nbsp',z[-1],sep=''))
-          m <- length(x)
-          if(m <= n) return(c(indent(x), rep('',n-m)))
-          totalLength <- sum(nchar(x)) + (m-1)*3.5
-          ## add indent, comma, space
-          lineLength  <- ceiling(totalLength/n)
-          y <- pasteFit(x, sep=', ', width=lineLength)
-          m <- length(y)
-          if(m > n) for(j in 1:10) {
-            lineLength <- round(lineLength*1.1)
-            y <- pasteFit(x, sep=', ', width=lineLength)
-            m <- length(y)
-            if(m <= n) break
-          }
-          ## Take evasive action if needed
-          if(m==n) indent(y) else if(m < n)
-            c(indent(y), rep('', n-m)) else 
-          c(paste(x, collapse=', '), rep('',n-1))
-        }
-        nam <- names(L)
-        v <- lab <- lev <- character(0)
-        j <- 0
-        for(i in fullLevels) {
-          j <- j + 1
-          l <- L[[i]]
-          nami <- nam[i]
-          v <- c(v, nami)
-          w <- nami
-          if(sum(reusingLevels))
-            for(k in which(reusingLevels)) if(L[[k]] == nam[i]) w <- c(w, nam[k])
-          lab <- c(lab, evenSplit(w, length(l)))
-          lev <- c(lev, l)
-        }
-        z <- cbind(Variable=lab, Levels=lev)
-        out <- html(z, file=file, append=TRUE,
-                    link=ifelse(lab=='','',paste('levels',v,sep='.')),
-                    linkCol='Variable', linkType='name', ...)
-        cat('<hr>\n',file=file,append=TRUE)
+  if(prlevels && length(L)) {
+    if(levelType=='list') {
+      cat('<h2 align="center">Category Levels</h2>\n', file=file, append=TRUE)
+      for(i in fullLevels) {
+        l <- L[[i]]
+        nami <- Lnames[i]
+        w <- nami
+        if(sum(reusingLevels))
+          for(k in which(reusingLevels))
+            if(L[[k]] == nami) w <- c(w, Lnames[k])
+        cat('<a name="levels.',nami,'"><h3>',
+            paste(w, collapse=', '), '</h3>\n', sep='', 
+            file=file, append=TRUE)
+        cat('<ul>\n', file=file, append=TRUE)
+        for(k in l) cat('<li>', k, '</li>\n', sep='',
+                        file=file, append=TRUE)
+        cat('</ul>\n', file=file, append=TRUE)
       }
     }
-
+    else {  
+      ## Function to split a character vector x as evenly as
+      ## possible into n elements, pasting multiple elements
+      ## together when needed
+      evenSplit <- function(x, n) {
+        indent <- function(z) if(length(z)==1)z else
+        c(z[1], paste('&nbsp&nbsp&nbsp',z[-1],sep=''))
+        m <- length(x)
+        if(m <= n) return(c(indent(x), rep('',n-m)))
+        totalLength <- sum(nchar(x)) + (m-1)*3.5
+        ## add indent, comma, space
+        lineLength  <- ceiling(totalLength/n)
+        y <- pasteFit(x, sep=', ', width=lineLength)
+        m <- length(y)
+        if(m > n) for(j in 1:10) {
+          lineLength <- round(lineLength*1.1)
+          y <- pasteFit(x, sep=', ', width=lineLength)
+          m <- length(y)
+          if(m <= n) break
+        }
+        ## Take evasive action if needed
+        if(m==n) indent(y) else if(m < n)
+          c(indent(y), rep('', n-m)) else 
+        c(paste(x, collapse=', '), rep('',n-1))
+      }
+      nam <- names(L)
+      v <- lab <- lev <- character(0)
+      j <- 0
+      for(i in fullLevels) {
+        j <- j + 1
+        l <- L[[i]]
+        nami <- nam[i]
+        v <- c(v, nami)
+        w <- nami
+        if(sum(reusingLevels))
+          for(k in which(reusingLevels)) if(L[[k]] == nam[i]) w <- c(w, nam[k])
+        lab <- c(lab, evenSplit(w, length(l)))
+        lev <- c(lev, l)
+      }
+      z <- cbind(Variable=lab, Levels=lev)
+      out <- html(z, file=file, append=TRUE,
+                  link=ifelse(lab=='','',paste('levels',v,sep='.')),
+                  linkCol='Variable', linkType='name', ...)
+      cat('<hr>\n',file=file,append=TRUE)
+    }
+  }
+  
   i <- longlab != ''
   if(any(i)) {
     nam <- names(longlab)[i]
@@ -1035,21 +970,19 @@ html.contents.data.frame <-
 }
 
 
-contents.list <- function(object, dslabels=NULL, ...)
-{
+contents.list <- function(object, dslabels=NULL, ...) {
   nam <- names(object)
   if(length(dslabels)) {
     dslabels <- dslabels[nam]
     names(dslabels) <- NULL
   }
   
-  g <- function(w)
-  {
+  g <- function(w) {
     if(length(w)==0 || is.null(w))
       c(Obs=0, Var=if(is.null(w))
-                     NA
-                   else
-                     length(w),
+        NA
+      else
+        length(w),
         Var.NA=NA)
     else
       c(Obs=length(w[[1]]), Var=length(w),
@@ -1058,12 +991,12 @@ contents.list <- function(object, dslabels=NULL, ...)
   
   v <- t(sapply(object, g))
   structure(list(contents=if(length(dslabels))
-                            data.frame(Label=dslabels,Obs=v[,'Obs'],
-                                       Var=v[,'Var'],Var.NA=v[,'Var.NA'],
-                                       row.names=nam)
-                          else
-                            data.frame(Obs=v[,'Obs'],Var=v[,'Var'],
-                                       Var.NA=v[,'Var.NA'], row.names=nam)),
+                 data.frame(Label=dslabels,Obs=v[,'Obs'],
+                            Var=v[,'Var'],Var.NA=v[,'Var.NA'],
+                            row.names=nam)
+  else
+                 data.frame(Obs=v[,'Obs'],Var=v[,'Var'],
+                            Var.NA=v[,'Var.NA'], row.names=nam)),
             class='contents.list')
 }
 
@@ -1082,7 +1015,7 @@ print.contents.list <-
                       vars=order(cont$Var),
                       labels=order(cont$Label, nam),
                       NAs=order(cont$Var.NA,nam)),]
-
+  
   print(cont)
   invisible()
 }

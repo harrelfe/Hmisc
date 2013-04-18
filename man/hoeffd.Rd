@@ -22,9 +22,7 @@ the data.  \code{print.hoeffd} prints the information derived by
 absolute values of the difference between the joint empirical CDF and
 the product of the marginal empirical CDFs.
 }
-\synopsis{hoeffd(x, y)}
 \usage{
-hoeffd(x)
 hoeffd(x, y)
 \method{print}{hoeffd}(x, \dots)
 }

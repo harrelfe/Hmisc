@@ -2,9 +2,9 @@ C Output from Public domain Ratfor, version 1.01
       subroutine hoeffd(xx, n, p, dmat, aadmat, madmat, npair, x, y, rx,
      * ry, rj)
       implicit double precision (a-h,o-z)
-      integer p, npair(p,p)
-      double precision xx(n,p), dmat(p,p), aadmat(p,p), madmat(p,p), x(1
-     *), y(1), rx(1), ry(1), rj(1), maxad
+      integer n, p, npair(p,p)
+      double precision xx(n,p), dmat(p,p), aadmat(p,p), madmat(p,p), 
+     *x(n), y(n), rx(n), ry(n), rj(n), maxad
       do23000 i=1, p 
       np=0
       do23002 k=1, n 
@@ -54,7 +54,7 @@ C Output from Public domain Ratfor, version 1.01
       end
       subroutine hoeff(x, y, n, d, aad, maxad, rx, ry, rj)
       implicit double precision (a-h,o-z)
-      double precision x(1), y(1), rx(1), ry(1), rj(1), maxad
+      double precision x(n), y(n), rx(n), ry(n), rj(n), maxad
       call jrank(x, y, n, rx, ry, rj)
       q = 0d0
       r = 0d0
@@ -80,7 +80,9 @@ C Output from Public domain Ratfor, version 1.01
       return
       end
       subroutine jrank(x, y, n, rx, ry, r)
-      double precision x(1), y(1), rx(1), ry(1), r(1), cx, cy
+      integer n
+      double precision x(n), y(n), rx(n), ry(n), r(n), cx, cy, ri, rix, 
+     *riy, xi, yi
       do23020 i=1,n 
       xi = x(i)
       yi = y(i)

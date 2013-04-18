@@ -1,7 +1,7 @@
 SUBROUTINE rcorr(xx, n, p, itype, dmat, npair, x, y, rx, ry, work, iwork)
 INTEGER p, npair(p,p)
-DOUBLE PRECISION xx(n,p), dmat(p,p), x(1), y(1), rx(1), ry(1), work(1)
-INTEGER iwork(1)
+DOUBLE PRECISION xx(n,p), dmat(p,p), x(n), y(n), rx(n), ry(n), work(n)
+INTEGER iwork(n)
 DOUBLE PRECISION sumx,sumx2,sumy,sumy2,sumxy,z,a,b
 
 DO i=1, p {
@@ -55,7 +55,7 @@ RETURN
 END  
 
 	SUBROUTINE docorr(x, y, n, d, rx, ry, work, iwork)
-	DOUBLE PRECISION x(1), y(1), rx(1), ry(1), work(1)
+	DOUBLE PRECISION x(1), y(1), rx(n), ry(n), work(1)
 	INTEGER iwork(1)
 	DOUBLE PRECISION sumx,sumx2,sumy,sumy2,sumxy,a,b,z
 	CALL rank(n, x, work, iwork, rx)

@@ -2,6 +2,8 @@ exportPattern("^([^.]|\\..+\\.)")
 useDynLib(Hmisc)
 
 import(methods)
+import(rpart)
+import(stats)
 
 importFrom(lattice, llines, lpoints, lsegments)
 importFrom(cluster, clara)

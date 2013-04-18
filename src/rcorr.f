@@ -2,9 +2,9 @@ C Output from Public domain Ratfor, version 1.01
       subroutine rcorr(xx, n, p, itype, dmat, npair, x, y, rx, ry, work,
      * iwork)
       integer p, npair(p,p)
-      double precision xx(n,p), dmat(p,p), x(1), y(1), rx(1), ry(1), wor
-     *k(1)
-      integer iwork(1)
+      double precision xx(n,p), dmat(p,p), x(n), y(n), rx(n), ry(n), wor
+     *k(n)
+      integer iwork(n)
       double precision sumx,sumx2,sumy,sumy2,sumxy,z,a,b
       do23000 i=1, p 
       np=0
@@ -73,7 +73,7 @@ C Output from Public domain Ratfor, version 1.01
       return
       end
       subroutine docorr(x, y, n, d, rx, ry, work, iwork)
-      double precision x(1), y(1), rx(1), ry(1), work(1)
+      double precision x(1), y(1), rx(n), ry(n), work(1)
       integer iwork(1)
       double precision sumx,sumx2,sumy,sumy2,sumxy,a,b,z
       call rank(n, x, work, iwork, rx)

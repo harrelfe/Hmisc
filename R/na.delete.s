@@ -96,5 +96,5 @@ nafitted.delete <- function(obj, x)
   if(exists('naresid.omit'))
     naresid.omit(omit, x)
   else
-    naresid.exclude(omit, x)
+    getFromNamespace('naresid.exclude','stats')(omit, x)
 }

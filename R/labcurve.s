@@ -1166,6 +1166,7 @@ largest.empty <- function(x, y,
                  area=diff(x)*diff(y)))
 }
 
+utils::globalVariables("pch.to.use")
 
 drawPlot <- function(..., xlim=c(0,1), ylim=c(0,1), xlab='', ylab='',
                      ticks=c('none','x','y','xy'),

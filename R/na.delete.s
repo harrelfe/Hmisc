@@ -77,7 +77,7 @@ naprint.delete <- function(x, ...)
   invisible()
 }
    
-
+globalVariables("naresid.omit")
 naresid.delete <- napredict.delete <- function(omit, x, ...)
 {
   omit <- omit$omit

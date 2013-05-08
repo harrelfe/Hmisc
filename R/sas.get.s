@@ -1499,6 +1499,7 @@ read.xportDataload <- function(file, dsnames) {
   w
 }
 
+utils::globalVariables(c("NOBS", "memname", "memlabel"))
 ## Read _contents_.csv and store it like lookup.xport output
 lookupSASContents <- function(sasdir) {
   w <- read.csv(paste(sasdir,'_contents_.csv',sep='/'), as.is=TRUE)

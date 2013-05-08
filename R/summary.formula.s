@@ -2079,7 +2079,7 @@ latex.summary.formula.cross <-
 
     stats <- structure(stats, row.names=rep("",length(stats$N)),
                        class="data.frame")
-    if(hasArg(col.just)) {
+    if(hasArg("col.just")) {
       return(latex(stats, title=title, caption=caption, rowlabel=rowlabel, ...))
     } else return(latex(stats, title=title, caption=caption, rowlabel=rowlabel, 
                         col.just=c("l","l",rep("r",length(stats)-2)), ...))
@@ -2526,7 +2526,7 @@ asNumericMatrix <- function(x)
          dimnames=list(a$row.names, a$names))
 }
 
-
+utils::globalVariables("origAttributes")
 matrix2dataFrame <- function(x, at=origAttributes, restoreAll=TRUE)
 {
   d <- dimnames(x)

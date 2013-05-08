@@ -79,15 +79,11 @@ describe.data.frame
                 \tab     of SAS UNIVARIATE)\cr
 describe.default
                 \tab Describe a variable (generalization of SAS UNIVARIATE)\cr
-do              \tab Assists with batch analyses\cr
-dot.chart       \tab Dot chart for one or two classification variables\cr
 Dotplot         \tab Enhancement of Trellis dotplot allowing for matrix\cr
                 \tab     x-var., auto generation of Key function, superposition\cr
 drawPlot        \tab Simple mouse-driven drawing program, including a function\cr
                 \tab     for fitting Bezier curves\cr
 Ecdf            \tab Empirical cumulative distribution function plot\cr
-eip             \tab Edit an object \dQuote{in-place} (may be dangerous!), e.g.\cr
-                \tab     eip(sqrt) will replace the builtin sqrt function\cr
 errbar          \tab Plot with error bars (Charles Geyer, U. Chi., mod FEH)\cr
 event.chart     \tab Plot general event charts (Jack Lee, \email{jjlee@mdanderson.org}, \cr
                 \tab     Ken Hess, Joel Dubin; Am Statistician 54:63-70,2000)\cr
@@ -166,8 +162,6 @@ prn             \tab prn(expression) does print(expression) but titles the\cr
                 \tab     a heading (\sQuote{txt}) before the \sQuote{expression} title\cr
 p.sunflowers    \tab Sunflower plots (Andreas Ruckstuhl, Werner Stahel,\cr
                 \tab     Martin Maechler, Tim Hesterberg)\cr
-ps.slide        \tab Set up postcript() using nice defaults for different types\cr
-                \tab     of graphics media\cr
 pstamp          \tab Stamp a plot with date in lower right corner (pstamp())\cr
                 \tab     Add ,pwd=T and/or ,time=T to add current directory \cr
                 \tab      name or time\cr
@@ -207,8 +201,6 @@ sedit           \tab A set of character handling functions written entirely\cr
                 \tab     substring.location, substring<-, replace.string.wild,\cr
                 \tab     and functions to check if a string is numeric or\cr
                 \tab     contains only the digits 0-9\cr
-setpdf          \tab Adobe PDF graphics setup for including graphics in books\cr
-                \tab     and reports with nice defaults, minimal wasted space\cr
 setps           \tab Postscript graphics setup for including graphics in books\cr
                 \tab     and reports with nice defaults, minimal wasted space\cr
                 \tab     Internally uses psfig function by\cr

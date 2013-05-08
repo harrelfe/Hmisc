@@ -1187,46 +1187,234 @@ spss.get <- function(file, lowernames=FALSE,
                      use.value.labels=TRUE,
                      to.data.frame=TRUE,
                      max.value.labels=Inf,
-                     force.single=TRUE, allow=NULL, charfactor=FALSE)
-  {
-    require('foreign')
-    if(length(grep('http://', file))) {
-      tf <- tempfile()
-      download.file(file, tf, mode='wb', quiet=TRUE)
-      file <- tf
+                     force.single=TRUE, allow=NULL, charfactor=FALSE) {
+  require('foreign')
+  if(length(grep('http://', file))) {
+    tf <- tempfile()
+    download.file(file, tf, mode='wb', quiet=TRUE)
+    file <- tf
+  }
+    
+  w <- read.spss(file, use.value.labels=use.value.labels,
+                 to.data.frame=to.data.frame,
+                 max.value.labels=max.value.labels)
+  
+  a   <- attributes(w)
+  vl  <- a$variable.labels
+  nam <- a$names
+  nam <- makeNames(a$names, unique=TRUE, allow=allow)
+  if(lowernames) nam <- casefold(nam)
+  names(w) <- nam
+  
+  lnam <- names(vl)
+  if(length(vl))
+    for(i in 1:length(vl)) {
+      n <- lnam[i]
+      lab <- vl[i]
+      if(lab != '' && lab != n) label(w[[i]]) <- lab
     }
-    
-    w <- read.spss(file, use.value.labels=use.value.labels,
-                   to.data.frame=to.data.frame,
-                   max.value.labels=max.value.labels)
-    
-    a   <- attributes(w)
-    vl  <- a$variable.labels
-    nam <- a$names
-    nam <- makeNames(a$names, unique=TRUE, allow=allow)
-    if(lowernames) nam <- casefold(nam)
-    names(w) <- nam
-    
-    lnam <- names(vl)
-    if(length(vl))
-      for(i in 1:length(vl)) {
-        n <- lnam[i]
-        lab <- vl[i]
-        if(lab != '' && lab != n) label(w[[i]]) <- lab
-      }
 
-    attr(w, 'variable.labels') <- NULL
-    if(force.single || length(datevars) || charfactor)
-      for(v in nam) {
-        x <- w[[v]]
-        changed <- FALSE
-        if(v %in% datevars) {
-          x <- importConvertDateTime(x, 'date', 'spss')
-          changed <- TRUE
-        } else if(all(is.na(x))) {
+  attr(w, 'variable.labels') <- NULL
+  if(force.single || length(datevars) || charfactor)
+    for(v in nam) {
+      x <- w[[v]]
+      changed <- FALSE
+      if(v %in% datevars) {
+        x <- importConvertDateTime(x, 'date', 'spss')
+        changed <- TRUE
+      } else if(all(is.na(x))) {
+        storage.mode(x) <- 'integer'
+        changed <- TRUE
+      } else if(!(is.factor(x) || is.character(x))) {
+        if(all(is.na(x))) {
           storage.mode(x) <- 'integer'
           changed <- TRUE
-        } else if(!(is.factor(x) || is.character(x))) {
+        } else if(max(abs(x),na.rm=TRUE) <= (2^31-1) &&
+                  all(floor(x) == x, na.rm=TRUE)) {
+          storage.mode(x) <- 'integer'
+          changed <- TRUE
+        }
+      } else if(charfactor && is.character(x)) {
+        if(length(unique(x)) < .5*length(x))
+          {
+            x <- sub(' +$', '', x)  # remove trailing blanks
+            x <- factor(x, exclude='')
+            changed <- TRUE
+          }
+      }
+      if(changed) w[[v]] <- x
+    }
+  
+  w
+}
+
+sasxport.get <- function(file, force.single=TRUE,
+                         method=c('read.xport','dataload','csv'),
+                         formats=NULL, allow=NULL, out=NULL,
+                         keep=NULL, drop=NULL, as.is=0.5, FUN=NULL) {
+  method <- match.arg(method)
+  if(length(out) && method!='csv')
+    stop('out only applies to method="csv"')
+  
+  if(method != 'csv')
+    require('foreign') || stop('foreign package is not installed')
+
+  rootsoftware <- if(method=='dataload')'dataload'
+  else 'sas'
+
+  sasdateform <-
+    toupper(c("date","mmddyy","yymmdd","ddmmyy","yyq","monyy",
+              "julian","qtr","weekdate","weekdatx","weekday","month"))
+  sastimeform     <- toupper(c("hhmm","hour","mmss","time"))
+  sasdatetimeform <- toupper(c("datetime","tod"))
+
+  if(length(grep('http://', file))) {
+    tf <- tempfile()
+    download.file(file, tf, mode='wb', quiet=TRUE)
+    file <- tf
+  }
+
+  dsinfo <-
+    if(method == 'csv') lookupSASContents(file)
+    else lookup.xport(file)
+
+  whichds <-
+    if(length(keep))
+      keep
+    else
+      setdiff(names(dsinfo), c(drop,'_CONTENTS_','_contents_'))
+  
+  ds <- switch(method,
+               read.xport= read.xport(file),
+               dataload  = read.xportDataload(file, whichds),
+               csv       = if(!length(out))
+               readSAScsv(file, dsinfo, whichds))
+
+  if(method=='read.xport' && (length(keep) | length(drop)))
+    ds <- ds[whichds]
+
+  ## PROC FORMAT CNTLOUT= dataset present?
+  fds <- NULL
+  if(!length(formats)) {
+    fds <- sapply(dsinfo, function(x)
+                  all(c('FMTNAME','START','END','MIN','MAX','FUZZ')
+                      %in% x$name))
+    fds <- names(fds)[fds]
+    if(length(fds) > 1) {
+      warning('transport file contains more than one PROC FORMAT CNTLOUT= dataset; using only the first')
+      fds <- fds[1]
+    }
+  }
+  
+  finfo <- NULL
+  if(length(formats) || length(fds)) {
+    finfo <-
+      if(length(formats))
+        formats
+      else if(length(out))
+        readSAScsv(file, dsinfo, fds)
+      else ds[[fds]]
+
+    ## Remove leading $ from char format names
+    ##  fmtname <- sub('^\\$','',as.character(finfo$FMTNAME))
+    fmtname <- as.character(finfo$FMTNAME)
+    finfo <- split(finfo[c('START','END','LABEL')], fmtname)
+    finfo <- lapply(finfo,
+                    function(f)
+                    {
+                      rb <- function(a)
+                        {  # remove leading + trailing blanks
+                          a <- sub('[[:space:]]+$', '', as.character(a))
+                          sub('^[[:space:]]+', '', a)
+                        }
+
+                      st <- rb(f$START)
+                      en <- rb(f$END)
+                      lab <- rb(f$LABEL)
+                      ##j <- is.na(st) | is.na(en)
+                      ##  st %in% c('','.','NA') | en %in% c('','.','NA')
+                      j <- is.na(st) | is.na(en) | st == '' | en == ''
+                      if(any(j)) {
+                        warning('NA in code in FORMAT definition; removed')
+                        st <- st[!j]; en <- en[!j]; lab <- lab[!j]
+                      }
+
+                      if(!all(st==en))
+                        return(NULL)
+
+                      list(value = all.is.numeric(st, 'vector'),
+                           label = lab)
+                    })
+  }
+
+  ## Number of non-format datasets
+  nods <- length(whichds)
+  nds  <- nods - (length(formats) == 0 && length(finfo) > 0)
+  which.regular <- setdiff(whichds, fds)
+  dsn <- tolower(which.regular)
+  
+  if((nds > 1) && !length(out)) {
+    res <- vector('list', nds)
+    names(res) <- gsub('_','.',dsn)
+  }
+
+  if(length(FUN)) {
+    funout <- vector('list', length(dsn))
+    names(funout) <- gsub('_','.',dsn)
+  }
+  possiblyConvertChar <- if(method=='read.xport')
+    (is.logical(as.is) && as.is)  ||
+      (is.numeric(as.is) && as.is < 1) else
+  (is.logical(as.is) && !as.is) ||
+    (is.numeric(as.is) && as.is > 0)
+  ## reverse logic because read.xport always converts characters to factors
+  j <- 0
+  for(k in which.regular) {
+    j   <- j + 1
+    cat('Processing SAS dataset', k, '\t ')
+    w   <-
+      if(length(out))
+        readSAScsv(file, dsinfo, k)
+      else if(nods==1)
+        ds
+      else ds[[k]]
+
+    cat('.')
+    if(!length(w)) {
+      cat('Empty dataset', k, 'ignored\n')
+      next
+    }
+
+    nam      <- tolower(makeNames(names(w), allow=allow))
+    names(w) <- nam
+    dinfo    <- dsinfo[[k]]
+    fmt      <- sub('^\\$','',dinfo$format)
+    lab      <- dinfo$label
+    ndinfo   <- tolower(makeNames(dinfo$name, allow=allow))
+    names(lab) <- names(fmt) <- ndinfo
+    for(i in 1:length(w)) {
+      changed <- FALSE
+      x  <- w[[i]]
+      fi <- fmt[nam[i]]; names(fi) <- NULL
+      if(fi != '' && length(finfo) && (fi %in% names(finfo))) {
+        f <- finfo[[fi]]
+        if(length(f)) {  ## may be NULL because had a range in format
+          x <- factor(x, f$value, f$label)
+          attr(x, 'format') <- fi
+          changed <- TRUE
+        }
+      }
+      if(is.numeric(x)) {
+        if(fi %in% sasdateform) {
+          x <- importConvertDateTime(x, 'date', rootsoftware)
+          changed <- TRUE
+        } else if(fi %in% sastimeform) {
+          x <- importConvertDateTime(x, 'time', rootsoftware)
+          changed <- TRUE
+        } else if(fi %in% sasdatetimeform) {
+          x <- importConvertDateTime(x, 'datetime', rootsoftware)
+          changed <- TRUE
+        } else if(force.single) {
           if(all(is.na(x))) {
             storage.mode(x) <- 'integer'
             changed <- TRUE
@@ -1235,316 +1423,125 @@ spss.get <- function(file, lowernames=FALSE,
             storage.mode(x) <- 'integer'
             changed <- TRUE
           }
-        } else if(charfactor && is.character(x)) {
-          if(length(unique(x)) < .5*length(x))
-            {
-              x <- sub(' +$', '', x)  # remove trailing blanks
-              x <- factor(x, exclude='')
-              changed <- TRUE
-            }
         }
-        if(changed) w[[v]] <- x
-      }
-    
-    w
-  }
-
-  sasxport.get <- function(file, force.single=TRUE,
-                           method=c('read.xport','dataload','csv'),
-                           formats=NULL, allow=NULL, out=NULL,
-                           keep=NULL, drop=NULL, as.is=0.5, FUN=NULL)
-  {
-    method <- match.arg(method)
-    if(length(out) && method!='csv')
-      stop('out only applies to method="csv"')
-
-    if(method != 'csv')
-      require('foreign') || stop('foreign package is not installed')
-
-    rootsoftware <- if(method=='dataload')'dataload'
-                    else 'sas'
-
-    sasdateform <-
-      toupper(c("date","mmddyy","yymmdd","ddmmyy","yyq","monyy",
-                "julian","qtr","weekdate","weekdatx","weekday","month"))
-    sastimeform     <- toupper(c("hhmm","hour","mmss","time"))
-    sasdatetimeform <- toupper(c("datetime","tod"))
-
-    if(length(grep('http://', file))) {
-      tf <- tempfile()
-      download.file(file, tf, mode='wb', quiet=TRUE)
-      file <- tf
-    }
-
-    dsinfo <-
-      if(method == 'csv') lookupSASContents(file)
-      else lookup.xport(file)
-
-    whichds <-
-      if(length(keep))
-        keep
-      else
-        setdiff(names(dsinfo), c(drop,'_CONTENTS_','_contents_'))
-    
-  ds <- switch(method,
-               read.xport= read.xport(file),
-               dataload  = read.xportDataload(file, whichds),
-               csv       = if(!length(out))
-                             readSAScsv(file, dsinfo, whichds))
-
-    if(method=='read.xport' && (length(keep) | length(drop)))
-      ds <- ds[whichds]
-
-    ## PROC FORMAT CNTLOUT= dataset present?
-    fds <- NULL
-    if(!length(formats)) {
-      fds <- sapply(dsinfo, function(x)
-                    all(c('FMTNAME','START','END','MIN','MAX','FUZZ')
-                        %in% x$name))
-      fds <- names(fds)[fds]
-      if(length(fds) > 1) {
-        warning('transport file contains more than one PROC FORMAT CNTLOUT= dataset; using only the first')
-        fds <- fds[1]
-      }
-    }
-  
-    finfo <- NULL
-    if(length(formats) || length(fds)) {
-      finfo <-
-        if(length(formats))
-          formats
-        else if(length(out))
-          readSAScsv(file, dsinfo, fds)
-        else ds[[fds]]
-
-      ## Remove leading $ from char format names
-      ##  fmtname <- sub('^\\$','',as.character(finfo$FMTNAME))
-      fmtname <- as.character(finfo$FMTNAME)
-      finfo <- split(finfo[c('START','END','LABEL')], fmtname)
-      finfo <- lapply(finfo,
-                      function(f)
-                      {
-                        rb <- function(a)
-                        {  # remove leading + trailing blanks
-                          a <- sub('[[:space:]]+$', '', as.character(a))
-                          sub('^[[:space:]]+', '', a)
-                        }
-
-                        st <- rb(f$START)
-                        en <- rb(f$END)
-                        lab <- rb(f$LABEL)
-                        ##j <- is.na(st) | is.na(en)
-                        ##  st %in% c('','.','NA') | en %in% c('','.','NA')
-                        j <- is.na(st) | is.na(en) | st == '' | en == ''
-                        if(any(j)) {
-                          warning('NA in code in FORMAT definition; removed')
-                          st <- st[!j]; en <- en[!j]; lab <- lab[!j]
-                        }
-
-                        if(!all(st==en))
-                          return(NULL)
-
-                        list(value = all.is.numeric(st, 'vector'),
-                             label = lab)
-                      })
-    }
-
-    ## Number of non-format datasets
-    nods <- length(whichds)
-    nds  <- nods - (length(formats) == 0 && length(finfo) > 0)
-    which.regular <- setdiff(whichds, fds)
-    dsn <- tolower(which.regular)
-  
-    if((nds > 1) && !length(out)) {
-      res <- vector('list', nds)
-      names(res) <- gsub('_','.',dsn)
-    }
-
-    if(length(FUN)) {
-      funout <- vector('list', length(dsn))
-      names(funout) <- gsub('_','.',dsn)
-    }
-    possiblyConvertChar <- if(method=='read.xport')
-      (is.logical(as.is) && as.is)  ||
-    (is.numeric(as.is) && as.is < 1) else
-      (is.logical(as.is) && !as.is) ||
-    (is.numeric(as.is) && as.is > 0)
-    ## reverse logic because read.xport always converts characters to factors
-    j <- 0
-    for(k in which.regular) {
-      j   <- j + 1
-      cat('Processing SAS dataset', k, '\t ')
-      w   <-
-        if(length(out))
-          readSAScsv(file, dsinfo, k)
-        else if(nods==1)
-          ds
-        else ds[[k]]
-
-      cat('.')
-      if(!length(w)) {
-        cat('Empty dataset', k, 'ignored\n')
-        next
+      } else if(method=='read.xport' && possiblyConvertChar && is.factor(x)) {
+        if((is.logical(as.is) && as.is) ||
+           (is.numeric(as.is) && length(unique(x)) >= as.is*length(x))) {
+          x <- as.character(x)
+          changed <- TRUE
+        }
+      } else if(possiblyConvertChar && is.character(x)) {
+        if((is.logical(as.is) && !as.is) || 
+           (is.numeric(as.is) && length(unique(x)) < as.is*length(x))) {
+          x <- factor(x, exclude='')
+          changed <- TRUE
+        }
       }
 
-      nam      <- tolower(makeNames(names(w), allow=allow))
-      names(w) <- nam
-      dinfo    <- dsinfo[[k]]
-      fmt      <- sub('^\\$','',dinfo$format)
-      lab      <- dinfo$label
-      ndinfo   <- tolower(makeNames(dinfo$name, allow=allow))
-      names(lab) <- names(fmt) <- ndinfo
-      for(i in 1:length(w)) {
-        changed <- FALSE
-        x  <- w[[i]]
-        fi <- fmt[nam[i]]; names(fi) <- NULL
-        if(fi != '' && length(finfo) && (fi %in% names(finfo))) {
-          f <- finfo[[fi]]
-          if(length(f)) {  ## may be NULL because had a range in format
-            x <- factor(x, f$value, f$label)
-            attr(x, 'format') <- fi
-            changed <- TRUE
-          }
-        }
-        if(is.numeric(x)) {
-          if(fi %in% sasdateform) {
-            x <- importConvertDateTime(x, 'date', rootsoftware)
-            changed <- TRUE
-          } else if(fi %in% sastimeform) {
-            x <- importConvertDateTime(x, 'time', rootsoftware)
-            changed <- TRUE
-          } else if(fi %in% sasdatetimeform) {
-            x <- importConvertDateTime(x, 'datetime', rootsoftware)
-            changed <- TRUE
-          } else if(force.single) {
-            if(all(is.na(x))) {
-              storage.mode(x) <- 'integer'
-              changed <- TRUE
-            } else if(max(abs(x),na.rm=TRUE) <= (2^31-1) &&
-                      all(floor(x) == x, na.rm=TRUE)) {
-              storage.mode(x) <- 'integer'
-              changed <- TRUE
-            }
-          }
-        } else if(method=='read.xport' && possiblyConvertChar && is.factor(x)) {
-          if((is.logical(as.is) && as.is) ||
-             (is.numeric(as.is) && length(unique(x)) >= as.is*length(x))) {
-            x <- as.character(x)
-            changed <- TRUE
-          }
-        } else if(possiblyConvertChar && is.character(x)) {
-          if((is.logical(as.is) && !as.is) || 
-             (is.numeric(as.is) && length(unique(x)) < as.is*length(x))) {
-            x <- factor(x, exclude='')
-            changed <- TRUE
-          }
-        }
-
-        lz <- lab[nam[i]]
-        if(lz != '') {
-          names(lz) <- NULL
-          label(x)  <- lz
-          changed   <- TRUE
-        }
+      lz <- lab[nam[i]]
+      if(lz != '') {
+        names(lz) <- NULL
+        label(x)  <- lz
+        changed   <- TRUE
+      }
       
-        if(changed)
-          w[[i]] <- x
-      }
-
-      cat('.\n')
-      if(length(out)) {
-        nam <- gsub('_','.',dsn[j])
-        assign(nam, w)
-        ## ugly, but a way to get actual data frame name into first
-        ## argument of save( )
-        eval(parse(text=paste('save(',nam,', file="',
-                              paste(out, '/', nam,'.rda',sep=''),
-                              '", compress=TRUE)',sep='')))
-        if(length(FUN) && length(w))
-          funout[[nam]] <- FUN(w)
-
-        remove(nam)
-      } else if(nds > 1)
-        res[[j]] <- w
+      if(changed)
+        w[[i]] <- x
     }
 
+    cat('.\n')
     if(length(out)) {
-      names(dsinfo) <- gsub('_','.',tolower(names(dsinfo)))
-      if(length(FUN))
-        attr(dsinfo, 'FUN') <- funout
+      nam <- gsub('_','.',dsn[j])
+      assign(nam, w)
+      ## ugly, but a way to get actual data frame name into first
+      ## argument of save( )
+      eval(parse(text=paste('save(',nam,', file="',
+                   paste(out, '/', nam,'.rda',sep=''),
+                   '", compress=TRUE)',sep='')))
+      if(length(FUN) && length(w))
+        funout[[nam]] <- FUN(w)
 
-      invisible(dsinfo)
+      remove(nam)
     } else if(nds > 1)
-      res
-    else w
+      res[[j]] <- w
   }
 
-  ## Use dataload program to create a structure like read.xport does
-  read.xportDataload <- function(file, dsnames) {
-    outf <- substring(tempfile(tmpdir=''),2)
-    file.copy(file, paste(tempdir(),outf,sep='/'))
-    curwd <- getwd()
-    on.exit(setwd(curwd))
-    setwd(tempdir())
-    n <- length(dsnames)
-    w <- vector('list', n); names(w) <- dsnames
-    for(a in dsnames) {
-      status <- system(paste('dataload', outf, 'zzzz.rda', a),
-                       intern=FALSE)
-      if(status==0) {
-        load('zzzz.rda')
-        names(zzzz) <- makeNames(names(zzzz))
-        w[[a]] <- zzzz
-      }
-    }
+  if(length(out)) {
+    names(dsinfo) <- gsub('_','.',tolower(names(dsinfo)))
+    if(length(FUN))
+      attr(dsinfo, 'FUN') <- funout
 
-    w
+    invisible(dsinfo)
+  } else if(nds > 1)
+    res
+  else w
+}
+
+## Use dataload program to create a structure like read.xport does
+read.xportDataload <- function(file, dsnames) {
+  outf <- substring(tempfile(tmpdir=''),2)
+  file.copy(file, paste(tempdir(),outf,sep='/'))
+  curwd <- getwd()
+  on.exit(setwd(curwd))
+  setwd(tempdir())
+  n <- length(dsnames)
+  w <- vector('list', n); names(w) <- dsnames
+  for(a in dsnames) {
+    status <- system(paste('dataload', outf, 'zzzz.rda', a),
+                     intern=FALSE)
+    if(status==0) {
+      load('zzzz.rda')
+      names(zzzz) <- makeNames(names(zzzz))
+      w[[a]] <- zzzz
+    }
   }
 
-  ## Read _contents_.csv and store it like lookup.xport output
-  lookupSASContents <- function(sasdir)
-  {
-    w <- read.csv(paste(sasdir,'_contents_.csv',sep='/'), as.is=TRUE)
-    z <- tapply(w$NOBS, w$MEMNAME, function(x)x[1])
-    if(any(z == 0)) {
-      cat('\nDatasets with 0 observations ignored:\n')
-      print(names(z)[z == 0], quote=FALSE)
-      w <- subset(w, NOBS > 0)
-    }
+  w
+}
 
-    w$TYPE <- ifelse(w$TYPE==1, 'numeric', 'character')
-    names(w) <- tolower(names(w))
-    unclass(split(subset(w,select=-c(memname,memlabel)), w$memname))
+## Read _contents_.csv and store it like lookup.xport output
+lookupSASContents <- function(sasdir) {
+  w <- read.csv(paste(sasdir,'_contents_.csv',sep='/'), as.is=TRUE)
+  z <- tapply(w$NOBS, w$MEMNAME, function(x)x[1])
+  if(any(z == 0)) {
+    cat('\nDatasets with 0 observations ignored:\n')
+    print(names(z)[z == 0], quote=FALSE)
+    w <- subset(w, NOBS > 0)
   }
 
-  ## Read all SAS csv export files and store in a list
-  readSAScsv <- function(sasdir, dsinfo, dsnames=names(dsinfo)) {
-    sasnobs <- sapply(dsinfo, function(x)x$nobs[1])
-    multi <- length(dsnames) > 1
-    if(multi) {
-      w <- vector('list', length(dsnames))
-      names(w) <- dsnames
-    }
+  w$TYPE <- ifelse(w$TYPE==1, 'numeric', 'character')
+  names(w) <- tolower(names(w))
+  unclass(split(subset(w,select=-c(memname,memlabel)), w$memname))
+}
 
-    for(a in dsnames) {
-      z <- read.csv(paste(sasdir,'/',a,'.csv', sep=''),
-                    as.is=TRUE, blank.lines.skip=FALSE,
-                    comment.char="")
+## Read all SAS csv export files and store in a list
+readSAScsv <- function(sasdir, dsinfo, dsnames=names(dsinfo)) {
+  sasnobs <- sapply(dsinfo, function(x)x$nobs[1])
+  multi <- length(dsnames) > 1
+  if(multi) {
+    w <- vector('list', length(dsnames))
+    names(w) <- dsnames
+  }
 
-      importedLength <- length(z[[1]])
-      if(importedLength != sasnobs[a])
-        cat('\nError: NOBS reported by SAS (',sasnobs[a],') for dataset ',
-            a,' is not the same as imported length (', importedLength,
-            ')\n', sep='')
+  for(a in dsnames) {
+    z <- read.csv(paste(sasdir,'/',a,'.csv', sep=''),
+                  as.is=TRUE, blank.lines.skip=FALSE,
+                  comment.char="")
 
-      if(multi)
-        w[[a]] <- z
-    }
+    importedLength <- length(z[[1]])
+    if(importedLength != sasnobs[a])
+      cat('\nError: NOBS reported by SAS (',sasnobs[a],') for dataset ',
+          a,' is not the same as imported length (', importedLength,
+          ')\n', sep='')
 
     if(multi)
-      w
-    else z
+      w[[a]] <- z
   }
+
+  if(multi)
+    w
+  else z
+}
 
 
 

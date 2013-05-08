@@ -170,24 +170,25 @@ panel.plsmo <- function(x, y, subscripts, groups=NULL, type='b',
                    font=font, col=col)
     
     if(ng > 1) {
-      Key <- function(x=NULL, y=NULL, lev, cex, col, font, pch)
-        {
-          oldpar <- par(usr=c(0,1,0,1),xpd=NA)
-          on.exit(par(oldpar))
-          if(is.list(x)) {
-            y <- x[[2]];
-            x <- x[[1]]
-          }
-            
-          ## Even though par('usr') shows 0,1,0,1 after lattice draws
-          ## its plot, it still needs resetting
-          if(!length(x)) x <- 0
-            
-          if(!length(y)) y <- 1  ## because of formals()
-            
-          rlegend(x, y, legend=lev, cex=cex, col=col, pch=pch)
-          invisible()
+      Key <- function(x=NULL, y=NULL, lev, cex, col, font, pch){
+        oldpar <- par(usr=c(0,1,0,1),xpd=NA)
+        on.exit(par(oldpar))
+        if(is.list(x)) {
+          y <- x[[2]];
+          x <- x[[1]]
         }
+            
+        ## Even though par('usr') shows 0,1,0,1 after lattice draws
+        ## its plot, it still needs resetting
+        if(!length(x))
+          x <- 0
+        
+        if(!length(y))
+          y <- 1  ## because of formals()
+        
+        rlegend(x, y, legend=lev, cex=cex, col=col, pch=pch)
+        invisible()
+      }
       
       formals(Key) <- list(x=NULL,y=NULL,lev=levels(groups), cex=cex,
                            col=col, font=font, pch=pch)

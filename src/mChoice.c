@@ -64,7 +64,7 @@ SEXP do_mchoice_match(SEXP x, SEXP table, SEXP nomatch)
                                    first match of each element in x *\/ */
      R_len_t len;               /* Number of elements in x */
      R_len_t t_len;             /* Number of elements in table */
-     R_len_t nfound;            /* count of number of elements of
+     R_len_t nfound = 0;        /* count of number of elements of
                                    x matched in table */
      char *str_ptr;             /* current location pointer */
      const char *str;
@@ -148,7 +148,7 @@ SEXP do_mchoice_equals(SEXP x, SEXP y)
      int x_len = LENGTH(x);     /* length of x vector */
      int y_len = LENGTH(y);     /* length of y vector */
      SEXP ans;                  /* Logical return vector */
-     int nfound;                /* number of matches found */
+     int nfound = 0;                /* number of matches found */
      int i,j, slen, comp;       /* iterators */
      char *str_ptr;             /* copy of the x string element */
      const char *str;

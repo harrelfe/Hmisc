@@ -1,58 +1,28 @@
-\name{ps.slide}
-\alias{ps.slide}
+\name{setpdf}
+\alias{setpdf}
 \title{
-  Postscript and Adobe PDF Setup for 35mm Slides and Other Formats
+  Makes small pdf plots with minimal surrounding white space
 }
 \description{
-  The \code{ps.slide} function has nice defaults to create postscript
-  images with larger font, thicker lines, and better axis labeling.
-  These images can be used to make nice slides.  There is an option to
-  view the constructed postscript file using \command{ghostview}, and an
-  option to initiate a background process to convert the postscript file
-  to a PC Paintbrush \file{.pcx} file for importing into various PC
-  presentation graphics packages although with a significant  loss in
-  resolution.  This option assumes you have installed various
-  public-domain unix image conversion programs. You can preview
-  \file{.pcx} files using e.g. \command{xli file.pcx &}. Specify
-  \code{type=1} to make nice fullsize graphs or \code{type=3} for making
-  5 x 7in landscape graphs using 14-point type (useful for submitting to
-  journals).  \code{type=2} (the default) is for color 35~mm slides. Use
-  \code{type=4} to make nice black and white overhead projection
-  transparancies (portrait mode).  This uses line thickness 4, pointsize
-  14, height 8, width 7.  For \code{type=3}, numbers on the y-axis are
-  written horizontally (\code{las} defaults to 1 for \code{type=3}).
-  
-  \code{ps.slide} calls \code{\link{mgp.axis.labels}} in \pkg{Hmisc} set
-  up axis-specific defaults for the 2nd \code{mgp} graphical parameter.
-  See \code{\link{HmiscOverview}} for \pkg{Hmisc} for help.  This is
-  only used automatically for select high-level graphics functions in
-  \pkg{Hmisc} and \pkg{rms}, as \R only supports a single
-  distance between tick marks and tick mark labels using
-  \code{\link{par}}, and when \code{las=1} a larger distance is needed
-  for the y-axis.
-  
-  See the body of the function for \code{type}-specific default values
-  for many of the parameters.  This function has not been tested for
-  color output on Windows systems.
+  \code{setpdf} is similar to \code{setps} but for making Adobe Acrobat
+  PDF graphics files directly.  There are a few problems with the S-Plus
+  \code{pdf.graph} function used by \code{setpdf}, though: (1) the
+  default for points (open circle) is too large, (2) graphs are not
+  centered properly, (3) gray scale does not work, and (4) there is some
+  wasted space at the bottom of the graph.  When drawing points, the
+  user may want to specify \code{cex=0.7}.  It may be better to use
+  \code{setps} followed by \code{topdf()}.
 }
 \usage{
-ps.slide(file, background = if (type != 2) "white" else "navy blue",
-         foreground = if (type == 2) "yellow" else
-                     (if(background == "white") "black" else "white"),
-         font = "Helvetica", pointsize = c(24, 28, 14, 14)[type],
-         hor = type != 4, lwd = c(2, 5, 2, 4)[type],
-         mgp = if(under.unix) list(c(1.8, 0.4, 0), c(1.5, 0.2, 0),
-                 c(2, 0.4, 0), c(1.5, 0.2, 0))[[type]] else
-                 list(c(1.8, 0.5, 0), c(1.5, 0.4, 0), c(2, 0.5, 0),
-                 c(1.5, 0.4, 0))[[type]],
-         mar = list(c(4, 3, 2, 1) + 0.1, c(5, 4, 2.25, 2) + 0.1,
-                 c(3, 3, 1, 1) + 0.1, c(5, 4, 2.25, 2) + 0.1)[[type]],
-         pch = 202, view = FALSE, pcx = FALSE, tiff = FALSE,
-         close = view | pcx | tiff, bty = "l",
-         type = 2, height = switch(type, NULL, NULL, 5, 8),
-         width = switch(type, NULL, NULL, 7, 7),
-         tck = if (type == 3 || !under.unix) -0.013 else par("tck"),
-         las = if (type == 3) 1 else 0, eps =  FALSE, ...)
+setpdf(filename, w=0, h=4, pointsize=10, sublines=0, toplines=0,
+       type="symbol", lwd=1.5, font="Helvetica",
+       ratio= 4/3,
+       leftlines=0, las=1, bty='l', hor=FALSE, 
+       trellis=!(missing(setTrellis.) & missing(strip.blank) &
+                 missing(lty.dot.line) & missing(lwd.dot.line)), 
+       setTrellis.=TRUE, 
+       strip.blank =TRUE, lty.dot.line = 1, lwd.dot.line =1,
+       region=c(0, 0, h, w), color=FALSE, seqno=NULL, \dots)
 }
 \arguments{
   \item{file,filename}{
@@ -229,13 +199,6 @@ ps.slide(file, background = if (type != 2) "white" else "navy blue",
     rotation for \code{string} in degrees (default is zero)
   }
 }
-\section{Side Effects}{
-  Starts a postscript file or a process to convert it to pcx format, or
-  starts a Trellis postscript device.
-  \code{ps.slide} Stores a system option \code{ps.slide.file}.  \code{pdf.graph} opens
-  a graphics file using \code{pdf.graph}.  \code{setps} creates a function \code{topdf}
-  in frame 0 (the session database).
-}
 \author{
   Frank Harrell\cr
   Department of Biostatistics\cr
@@ -253,20 +216,21 @@ ps.slide(file, background = if (type != 2) "white" else "navy blue",
 }
 \examples{
 \dontrun{
-ps.slide("myslide")   # myslide is file name prefix
-# use ps.slide("myslide",back="green") to use e.g. green background
-plot(x, y)
-title("My Title")
-
-
-ps.slide(view=TRUE)   # makes myslide.ps file
-                   # use ps.slide(close=TRUE) to close file without viewing with
-                   # ghostview.
-ps.slide(view=TRUE, pcx=TRUE)
-                   # converts myslide.ps into myslide.pcx (PC Paintbrush
-                   # format suitable for importing in PC graphics packages)
-mgp.axis.labels(c(.4,1.2))  # override 2nd mgp parameters for x- and y axes
-mgp.axis.labels(type='x')   # retrieve 3 mgp parameters for x-axis
+setpdf(myfile)
+x <- seq(0,15,length=100)
+plot(x, dchisq(x, 5), xlab=tex('$x$'),
+        ylab=tex('$f(x)$'), type='l')
+title(tex('Density Function of the $\\chi_{5}^{2}$ Distribution'))
+dev.off()
+# To process this file in LaTeX do something like
+#\documentclass{article}
+#\usepackage[scanall]{psfrag}
+#\begin{document}
+#\begin{figure}
+#\includegraphics{test.ps}
+#\caption{This is an example}
+#\end{figure}
+#\end{document}
 }
 }
 \keyword{hplot}

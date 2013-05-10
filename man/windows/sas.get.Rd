@@ -54,11 +54,11 @@ sas.get(libraryName, member, variables=character(0), ifs=character(0),
 
 is.special.miss(x, code)
 
-\method{[}{special.miss}(x, ..., drop=FALSE)
+\method{[}{special.miss}(x, \dots, drop=FALSE)
 
-\method{print}{special.miss}(x, ...)
+\method{print}{special.miss}(x, \dots)
 
-\method{format}{special.miss}(x, ...)
+\method{format}{special.miss}(x, \dots)
 
 sas.codes(object)
 
@@ -273,7 +273,7 @@ code.levels(object)
   same as the format names (with periods substituted for underscores and
   character formats prefixed by \samp{\$}).
   Each of these lists has a vector called \code{values} and one called
-  \code{labels} with the \preformatted{PROC FORMAT; VALUE} \ldots   definitions.
+  \code{labels} with the \preformatted{PROC FORMAT; VALUE} \code{\dots} definitions.
 }
 \section{Side Effects}{
   if a \acronym{SAS} error occurs the \acronym{SAS} log file will be

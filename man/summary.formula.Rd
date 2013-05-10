@@ -40,7 +40,7 @@
   tables.
 
   The right hand side of \code{formula} may contain \code{mChoice}
-  ("multiple choice") variables.  When \code{test=TRUE} each choice is
+  (\dQuote{multiple choice}) variables.  When \code{test=TRUE} each choice is
   tested separately as a binary categorical response.
 
   The \code{plot} method for \code{method="reverse"} creates a temporary
@@ -87,19 +87,14 @@
         method = c("response", "reverse", "cross"),
         overall = method == "response" | method == "cross",
         continuous = 10, na.rm = TRUE, na.include = method != "reverse",
-        g = 4, quant  = c(0.025, 0.05, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 0.95, 0.975),
+        g = 4, quant = c(0.025, 0.05, 0.125, 0.25, 0.375, 0.5, 0.625,
+                         0.75, 0.875, 0.95, 0.975),
         nmin = if (method == "reverse") 100
                else 0,
-        test = FALSE,
-        conTest = conTestkw,
-        catTest = catTestchisq,
+        test = FALSE, conTest = conTestkw, catTest = catTestchisq,
         ordTest = ordTestpo, \dots)
 
-% \method{summary}{formula}(formula, data, subset, na.action, fun, method='response',
-%               overall=TRUE, continuous=10, na.rm=FALSE, na.include=TRUE,
-% g=4, nmin=0, \dots)
-
-\method{[}{summary.formula.response}(x,i,j,drop=FALSE)
+\method{[}{summary.formula.response}(x, i, j, drop=FALSE)
 
 \method{print}{summary.formula.response}(x, vnames=c('labels','names'), prUnits=TRUE,
       abbreviate.dimnames=FALSE,
@@ -135,11 +130,11 @@
 
 \method{latex}{summary.formula.reverse}(object, title = first.word(deparse(substitute(object))), digits,
       prn = any(n != N), pctdig = 0,
-      npct = c('numerator', 'both', 'denominator', 'none'),
-      npct.size = 'scriptsize', Nsize = 'scriptsize', exclude1 = TRUE,
+      npct = c("numerator", "both", "denominator", "none"),
+      npct.size = 'scriptsize', Nsize = "scriptsize", exclude1 = TRUE,
       vnames=c("labels", "names"), prUnits = TRUE, middle.bold = FALSE,
       outer.size = "scriptsize", caption, rowlabel = "",
-      insert.bottom = TRUE, dcolumn = FALSE, formatArgs=NULL, round=NULL,
+      insert.bottom = TRUE, dcolumn = FALSE, formatArgs=NULL, round = NULL,
       prtest = c('P', 'stat', 'df', 'name'), prmsd = FALSE,
       msdsize = NULL, long = dotchart, pdig = 3, eps = 0.001,
       auxCol = NULL, dotchart=FALSE, \dots)
@@ -150,12 +145,12 @@
 
 \method{latex}{summary.formula.cross}(object, title = first.word(deparse(substitute(object))),
       twoway = nvar == 2, prnmiss = TRUE, prn = TRUE,
-      caption=attr(object,"heading"), vnames=c('labels','names'),
+      caption=attr(object, "heading"), vnames=c("labels", "names"),
       rowlabel="", \dots)
 
-stratify(\dots, na.group=FALSE, shortlabel=TRUE)
+stratify(\dots, na.group = FALSE, shortlabel = TRUE)
 
-\method{formula}{summary.formula.cross}(x, ...)
+\method{formula}{summary.formula.cross}(x, \dots)
 
 cumcategory(y)
 
@@ -165,7 +160,7 @@ ordTestpo(group, x)
 }
 \arguments{
   \item{formula}{
-    An S formula with additive effects.  For \code{method="response"} or
+    An \R formula with additive effects.  For \code{method="response"} or
     \code{"cross"}, the dependent variable has the usual connotation.  For
     \code{method="reverse"}, the dependent variable is what is usually thought
     of as an independent variable, and it is one that is used to stratify
@@ -450,7 +445,7 @@ ordTestpo(group, x)
     \code{plot} methods for \code{method='reverse'}.
   }
   \item{round}{
-	for \code{print.summary.formula.reverse} and
+        for \code{print.summary.formula.reverse} and
 	\code{latex.summary.formula.reverse} specify \code{round} to round
 	the quantiles and optional mean and standard deviation to
 	\code{round} digits after the decimal point
@@ -620,12 +615,9 @@ ordTestpo(group, x)
   \code{Key2} in frame 0 that will draw legends.
 }
 \author{
-  Frank Harrell
-  \cr
-  Department of Biostatistics
-  \cr
-  Vanderbilt University
-  \cr
+  Frank Harrell\cr
+  Department of Biostatistics\cr
+  Vanderbilt University\cr
   \email{f.harrell@vanderbilt.edu}
 }
 \references{

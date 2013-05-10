@@ -169,7 +169,7 @@ dvips(object, \dots)
 \method{show}{latex}(object)  # or show.dvi(object) or just object
 dvigv(object, \dots)
 \method{dvigv}{latex}(object, \dots)       # or gvdvi(dvi(object))
-\method{dvigv}{dvi}(object, \ldots)
+\method{dvigv}{dvi}(object, \dots)
 }
 \arguments{
   \item{object}{

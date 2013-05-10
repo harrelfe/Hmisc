@@ -194,7 +194,7 @@ transcan <-
         if(usefill==2) fillin[i] <- imp.con[i]
         else fillin[i] <- z[w==max(w)][1] #most freq. category
 
-        assign("Y", as.factor(y), 1)
+        assign("Y", as.factor(y))
         opold <- options(na.action="na.retain")
         w <- model.matrix(~Y) # uses contr.treatment (reference cell coding)
         options(na.action=opold[[1]]) #for some reason Windows needs opt name

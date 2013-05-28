@@ -149,7 +149,7 @@ directory of SAS datasets when more than one was imported.}
 # PROC COPY IN=work OUT=y;SELECT test format z;RUN; *Creates test2.xpt;
 w <- sasxport.get('test2.xpt')
 # To use an existing copy of test2.xpt available on the web:
-w <- sasxport.get('http://hesweb1.med.virginia.edu/biostat/s/data/sas/test2.xpt')
+w <- sasxport.get('http://biostat.mc.vanderbilt.edu/wiki/pub/Main/Hmisc/test2.xpt')
 
 describe(w$test)   # see labels, format names for dataset test
 # Note: if only one dataset (other than format) had been exported,

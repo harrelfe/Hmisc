@@ -416,6 +416,7 @@ importConvertDateTime <-
 		
   adjdays <- c(sas=3653, spss=141428, dataload=135080)[input]
   ## 1970-1-1 minus 1960-1-1, 1582-10-14, or 1600-3-1
+  origin <- c(sas='1960-01-01', spss='1582-10-14', dataload='1600-03-01')[input]
   if(input=='spss') x <- x/86400
   
   switch(type,
@@ -426,9 +427,9 @@ importConvertDateTime <-
            f <- format(z, tz='GMT')
            z <- as.POSIXct(format(z, tz='GMT'), tz='')
            structure(z, class=c('timePOSIXt','POSIXt','POSIXct'))},
-         datetime = {
-           chron((x - adjdays*86400)/86400,
-                 out.format=c(dates='day mon year', times='h:m:s'))})
+         datetime = as.POSIXct(x, origin=origin, tz='GMT'))
+#           chron((x - adjdays*86400)/86400,
+#                 out.format=c(dates='day mon year', times='h:m:s'))})
 }
 
 

@@ -1430,8 +1430,14 @@ vcov.fit.mult.impute <-
               return(v[-(1:ns),-(1:ns), drop=FALSE]))
     }
     p  <- ncol(v)
-    nx <- p - ns
-    i <- if(nx == 0) intercepts else c(intercepts, (ns+1):p)
+    vari <- attr(v, 'intercepts')
+    ## Compute number of actual intercept positions in v
+    nsa <- if(!length(vari)) ns
+     else if(length(vari) == 1 && vari == 0) 0
+     else length(vari)
+    nx <- p - nsa
+    if(nx == 0) return(v[intercepts, intercepts, drop=FALSE])
+    i <- c(intercepts, (nsa + 1) : p)
     v[i, i, drop=FALSE]
 }
 

@@ -99,7 +99,7 @@ transcan <-
         w <- factor(w)
 
       if(is.factor(w)) { 
-        x[,i] <- oldUnclass(w)
+        x[,i] <- unclass(w)
         categorical <- c(categorical, nam[i])
       } else {
         x[,i] <- w
@@ -745,7 +745,7 @@ print.transcan <- function(x, long=FALSE, ...)
   dput(cal); cat("\n")
   if(length(trans))
     {
-      if(long) print(oldUnclass(x))
+      if(long) print(unclass(x))
       else print.default(trans)
     }
 
@@ -1268,88 +1268,104 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
 {
   using.Design <- FALSE
   fits <- if(fit.reps) vector('list', n.impute)
-  used.mice <- any(oldClass(xtrans)=='mids')
+  used.mice <- any(class(xtrans)=='mids')
   if(used.mice && missing(n.impute)) n.impute <- xtrans$m
   stats.ok2average <- c('linear.predictors','fitted.values','stats', 'means',
                         'icoef', 'scale', 'center', 'y.imputed')
   
-  for(i in 1:n.impute)
-    {
-      if(used.mice) completed.data <- complete(xtrans, i)
-    else
-      {
-        completed.data <- data
-        imputed.data <-
-          impute.transcan(xtrans, imputation=i, data=data,
-                          list.out=TRUE, pr=FALSE, check=FALSE)
-        ## impute.transcan works for aregImpute
-        completed.data[names(imputed.data)] <- imputed.data
-      }
-
-      if(!missing(dtrans)) completed.data <- dtrans(completed.data)
-
-      if(!missing(derived))
-        {
-          stop('derived variables in fit.mult.imputed not yet implemented')
-          eval(derived, completed.data)
-        }
-
-      if(using.Design) options(Design.attr=da)
-      f <- if(missing(subset)) fitter(formula, data=completed.data, ...)
-      else fitter(formula, data=completed.data[subset,], ...)
-    
-      ## For some reason passing subset= causes model.frame bomb in R
-      if(fit.reps) fits[[i]] <- f
-
-      cof <- f$coef
-      v <- vcov(f, regcoef.only=FALSE)
-      ## From Rainer Dyckerhoff to work correctly with models that have
-      ## a scale parameter (e.g. psm).  Check whether length of the
-      ## coefficient vector is different from the the number of rows of
-      ## the covariance matrix. If so, the model contains scale
-      ## parameters that are not fixed at some value and we have to 
-      ## append the scale parameters to the coefficient vector.
-      nvar0 <- length(cof)
-      nvar <- nrow(v)
-      if(nvar > nvar0)
-        {
-          cof <- c(cof, log(f$scale))
-          names(cof) <- c(names(f$coef),
-                          if((nvar - nvar0) == 1) "Log(scale)"
-                          else names(f$scale))
-        }
-
-    if(i==1)
-      {
-        vavg <- 0*v
-        p <- length(cof)
-        bar <- rep(0, p)
-        vname <- names(cof)
-        cov <- matrix(0, nrow=p, ncol=p, dimnames=list(vname,vname))
-
-        astats <- NULL
-        fitcomp <- names(f)[names(f) %in% stats.ok2average]
-        if(length(fitcomp)) for(ncomp in fitcomp)
-          astats[[ncomp]] <- f[[ncomp]]
-        
-        if(inherits(f,'Design') | inherits(f, 'rms'))
-          {
-            using.Design <- TRUE
-            da <- f$Design
-          }
-        else warning('Not using a Design fitting function; summary(fit) will use\nstandard errors, t, P from last imputation only.  Use vcov(fit) to get the\ncorrect covariance matrix, sqrt(diag(vcov(fit))) to get s.e.\n\n')
-      }
-
-      vavg <- vavg + v
-      bar <- bar + cof
-      cof <- as.matrix(cof)
-      cov <- cov + cof %*% t(cof)
-
-      if(i > 1 && length(fitcomp))
-        for(ncomp in fitcomp)
-          astats[[ncomp]] <- astats[[ncomp]] + f[[ncomp]]
+  for(i in 1:n.impute) {
+    if(used.mice) completed.data <- complete(xtrans, i)
+    else {
+      completed.data <- data
+      imputed.data <-
+        impute.transcan(xtrans, imputation=i, data=data,
+                        list.out=TRUE, pr=FALSE, check=FALSE)
+      ## impute.transcan works for aregImpute
+      completed.data[names(imputed.data)] <- imputed.data
     }
 
+    if(!missing(dtrans)) completed.data <- dtrans(completed.data)
+
+    if(!missing(derived)) {
+      stop('derived variables in fit.mult.imputed not yet implemented')
+      eval(derived, completed.data)
+    }
+
+    if(using.Design) options(Design.attr=da)
+    f <- if(missing(subset)) fitter(formula, data=completed.data, ...)
+    else fitter(formula, data=completed.data[subset,], ...)
+    
+    ## For some reason passing subset= causes model.frame bomb in R
+    if(fit.reps) fits[[i]] <- f
+
+    cof <- f$coef
+    v <- vcov(f, regcoef.only=FALSE)
+
+    if(i == 1) {
+      assign <- f$assign
+      ns     <- num.intercepts(f)
+      ik <- coef.intercepts <- NULL
+      if(ns > 0) {
+        ik <- attr(v, 'intercepts')  # intercepts kept in f$var
+        if(length(ik)) {
+          if(ik == 'all') ik <- 1:ns else if(ik == 'none') ik <- 0
+          lenik <- length(ik); if(length(ik) == 1 && ik == 0) lenik <- 0
+          ## Shift parameter indexes to left b/c of omitted intercepts for orm
+          if(lenik != ns) {
+            for(j in 1:length(assign))
+              assign[[j]] <- assign[[j]] - (ns - lenik)
+            coef.intercepts <- ik
+          }
+        }
+      }
+    }
+    
+    if(length(ik)) cof <- c(cof[ik], cof[-(1:ns)])
+    
+    ## From Rainer Dyckerhoff to work correctly with models that have
+    ## a scale parameter (e.g. psm).  Check whether length of the
+    ## coefficient vector is different from the the number of rows of
+    ## the covariance matrix. If so, the model contains scale
+    ## parameters that are not fixed at some value and we have to 
+    ## append the scale parameters to the coefficient vector.
+    nvar0 <- length(cof)
+    nvar <- nrow(v)
+    if(nvar > nvar0) {
+      cof <- c(cof, log(f$scale))
+      names(cof) <- c(names(f$coef),
+                      if((nvar - nvar0) == 1) "Log(scale)"
+                      else names(f$scale))
+    }
+    
+    if(i==1) {
+      vavg <- 0*v
+      p <- length(cof)
+      bar <- rep(0, p)
+      vname <- names(cof)
+      cov <- matrix(0, nrow=p, ncol=p, dimnames=list(vname,vname))
+      
+      astats <- NULL
+      fitcomp <- names(f)[names(f) %in% stats.ok2average]
+      if(length(fitcomp)) for(ncomp in fitcomp)
+        astats[[ncomp]] <- f[[ncomp]]
+      
+      if(inherits(f,'Design') | inherits(f, 'rms')) {
+        using.Design <- TRUE
+        da <- f$Design
+      }
+      else warning('Not using a Design fitting function; summary(fit) will use\nstandard errors, t, P from last imputation only.  Use vcov(fit) to get the\ncorrect covariance matrix, sqrt(diag(vcov(fit))) to get s.e.\n\n')
+      }
+
+    vavg <- vavg + v
+    bar <- bar + cof
+    cof <- as.matrix(cof)
+    cov <- cov + cof %*% t(cof)
+    
+    if(i > 1 && length(fitcomp))
+      for(ncomp in fitcomp)
+        astats[[ncomp]] <- astats[[ncomp]] + f[[ncomp]]
+  }
+  
   vavg <- vavg / n.impute    ## matrix \bar{U} in Rubin's notation
   bar <- bar/n.impute
   bar <- as.matrix(bar)
@@ -1370,36 +1386,55 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
     for(ncomp in fitcomp)
       f[[ncomp]] <- astats[[ncomp]] / n.impute
 
-  if(pr)
-    {
-      cat('\nVariance Inflation Factors Due to Imputation:\n\n')
-      print(round(r,2))
-      cat('\nRate of Missing Information:\n\n')
-      print(round(missingInfo,2))
-      cat('\nd.f. for t-distribution for Tests of Single Coefficients:\n\n')
-      print(round(dfmi,2))
-      if(length(fitcomp))
-        {
-          cat('\nThe following fit components were averaged over the',
-              n.impute, 'model fits:\n\n')
-          cat(' ', fitcomp, '\n\n')
-        }
+  if(pr) {
+    cat('\nVariance Inflation Factors Due to Imputation:\n\n')
+    print(round(r,2))
+    cat('\nRate of Missing Information:\n\n')
+    print(round(missingInfo,2))
+    cat('\nd.f. for t-distribution for Tests of Single Coefficients:\n\n')
+    print(round(dfmi,2))
+    if(length(fitcomp)) {
+      cat('\nThe following fit components were averaged over the',
+          n.impute, 'model fits:\n\n')
+      cat(' ', fitcomp, '\n\n')
     }
+  }
   
   f$coefficients <- drop(bar)
+  if(length(coef.intercepts))
+    attr(f$coefficients, 'intercepts') <- coef.intercepts
+  attr(cov, 'intercepts') <- ik
   f$var <- cov
   f$variance.inflation.impute <- r
   f$missingInfo <- missingInfo
   f$dfmi <- dfmi
   f$fits <- fits
   f$formula <- formula
+  f$assign <- assign
   if(using.Design) options(Design.attr=NULL)
   class(f) <- c('fit.mult.impute', class(f))
   f
 }
 
 
-vcov.fit.mult.impute <- function(object, ...) object$var
+vcov.fit.mult.impute <-
+  function(object, regcoef.only=TRUE, intercepts='mid', ...) {
+    ns <- num.intercepts(object)
+    v <- object$var
+    if(is.character(intercepts)) {
+      switch(intercepts,
+             mid = return(v),
+             all = return(v),
+             none = if(inherits(object, 'orm'))
+              return(v[-1, -1, drop=FALSE]) else
+              return(v[-(1:ns),-(1:ns), drop=FALSE]))
+    }
+    p  <- ncol(v)
+    nx <- p - ns
+    i <- if(nx == 0) intercepts else c(intercepts, (ns+1):p)
+    v[i, i, drop=FALSE]
+}
+
 
 ##The following needed if Design is not in effect, to make anova work
 

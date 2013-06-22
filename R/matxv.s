@@ -12,31 +12,19 @@
 
 matxv <- function(a, b, kint=1)
 {
-  if(!is.matrix(a)) {
-    if(length(b)==1)
-      a <- matrix(a, ncol=1) 
-    else
-      a <- matrix(a, nrow=1)
-  }
+  if(!is.matrix(a))
+    a <- if(length(b) == 1L) matrix(a, ncol=1L) else matrix(a, nrow=1L)
 
   nc <- dim(a)[2]
   lb <- length(b)
-  if(lb<nc)
-    stop(paste("columns in a (",nc,") must be <= length of b (",
-               length(b),")",sep=""))
+  if(lb < nc)
+    stop(paste("columns in a (", nc, ") must be <= length of b (",
+               length(b), ")", sep=""))
 
-  if(nc==lb)
+  if(nc == lb)
     drop(a %*% b)
-  else
-    drop(b[kint] + (a %*% b[(lb-nc+1):lb]))
+  else {
+    bkint <- if(length(kint)) b[kint] else 0.
+    drop(bkint + (a %*% b[(lb - nc + 1L) : lb]))
+  }
 }
-
-##storage.mode(a) <- "single"
-##storage.mode(b) <- "double"
-##
-##library.dynam(section="local", file="matxv.o")
-##
-##.Fortran("matxv",a,b,d[1],d[2],length(b),c=single(d[1]), NAOK=T,
-##	specialsok=T)$c
-
-

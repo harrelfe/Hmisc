@@ -66,6 +66,9 @@
   \code{matxv} multiplies a matrix by a vector, handling automatic
   addition of intercepts if the matrix does not have a column of ones.
   If the first argument is not a matrix, it will be converted to one.
+  An optional argument allows the second argument to be treated as a
+  matrix, useful when its rows represent bootstrap reps of
+  coefficients.  The (ab')' is computed.
 
   \code{makeSteps} is a copy of the dostep function inside the
   \code{survival} package's \code{plot.survfit} function.  It expands a
@@ -142,7 +145,7 @@ inverseFunction(x, y)
 james.stein(y, group)
 km.quick(S, times, q)
 lm.fit.qr.bare(x, y, tolerance, intercept=TRUE, xpxi=FALSE)
-matxv(a, b, kint=1)
+matxv(a, b, kint=1, bmat=FALSE)
 nomiss(x)
 outerText(string, y, cex=par('cex'), \dots)
 sepUnitsTrans(x, conversion=c(day=1, month=365.25/12, year=365.25, week=7),
@@ -179,7 +182,10 @@ xless(x, \dots, title)
 	of ones to the \code{x} matrix}
   \item{k}{get the \code{k} closest matches}
   \item{kint}{which element of \code{b} to add to the result if \code{a}
-	does not contain a column for intercepts}
+		does not contain a column for intercepts}
+	\item{bmat}{set to \code{TRUE} to consider \code{b} a matrix of
+		repeated coefficients, usually resampled estimates with rows
+		corresponding to resamples}
   \item{labels}{set to \code{FALSE} to omit drawing confidence
 	coefficients}
   \item{lwd}{line widths}

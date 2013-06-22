@@ -17,10 +17,10 @@ matxv <- function(a, b, kint=1, bmat=FALSE)
     if(!is.matrix(a)) stop('a must be a matrix when b is a matrix')
     ca <- ncol(a); cb <- ncol(b)
     if(cb < ca) stop('number of columns in b must be >= number in a')
-    ab <- t(a %*% t(b[, (cb - ca + 1) : cb, drop=FALSE]))
-    if(ca == cb) return(ab)
-    bkint <- if(length(kint)) b[, kint] else 0.
-    return(bkint + ab)
+    if(cb == ca) return(a %*% t(b))
+    xx <- matrix(0, nrow=nrow(a), ncol=cb - ca)
+    if(length(kint)) xx[, kint] <- 1.
+    return(cbind(xx, a) %*% t(b))
   }
 
   if(!is.matrix(a))

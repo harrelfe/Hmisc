@@ -68,7 +68,7 @@
   If the first argument is not a matrix, it will be converted to one.
   An optional argument allows the second argument to be treated as a
   matrix, useful when its rows represent bootstrap reps of
-  coefficients.  The (ab')' is computed.
+  coefficients.  Then ab' is computed.
 
   \code{makeSteps} is a copy of the dostep function inside the
   \code{survival} package's \code{plot.survfit} function.  It expands a

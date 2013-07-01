@@ -449,7 +449,7 @@ panel.xYplot <-
   if(ng > 1)
     {
       ##set up for key() if points plotted
-      Key <- function(x=0, y=1, lev, cex, col, font, pch, other)
+      Key1 <- function(x=0, y=1, lev, cex, col, font, pch, other)
         {
           ## Even though par('usr') shows 0,1,0,1 after lattice draws
           ## its plot, it still needs resetting
@@ -459,10 +459,11 @@ panel.xYplot <-
           invisible()
         }
       
-      formals(Key) <- list(x=NULL,y=NULL,lev=levels(groups),
+      formals(Key1) <- list(x=NULL,y=NULL,lev=levels(groups),
                            cex=if(sizeVaries) 1 else cex,
                            col=col, font=font, pch=pch, other=NULL)
-      .setKey(Key)
+      .setKey(Key1)
+      rm(Key1)
     }
   
   if(!missing(abline))
@@ -475,7 +476,7 @@ panel.xYplot <-
   if(type == "l" && ng > 1)
     {
       ## Set up for legend (key() or rlegendg()) if lines drawn
-      Key <- function(x=0, y=1, lev, cex, col, lty, lwd, other)
+      Key2 <- function(x=0, y=1, lev, cex, col, lty, lwd, other)
         {
           ## Even though par('usr') shows 0,1,0,1 after lattice draws
           ## its plot, it still needs resetting
@@ -488,9 +489,10 @@ panel.xYplot <-
           invisible()
         }
       
-      formals(Key) <- list(x=NULL,y=NULL,lev=levels(groups), col=col,
+      formals(Key2) <- list(x=NULL,y=NULL,lev=levels(groups), col=col,
                            lty=lty, lwd=lwd, other=NULL)
-      .setKey(Key)
+      .setKey(Key2)
+      rm(Key2)
     }
 }
 

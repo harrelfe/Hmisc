@@ -300,10 +300,10 @@ plot.summaryM <-
     ## Dummy key if only one column, so won't use another Key from an
     ## earlier run
     if(nw < 2) {
-      Key <- function(...)invisible(NULL)
-      .setKey(Key)
+      Key1 <- function(...)invisible(NULL)
+      .setKey(Key1)
     } else { ##set up for key() if > 1 column
-      Key <- function(x=NULL, y=NULL, lev, pch) {
+      Key3 <- function(x=NULL, y=NULL, lev, pch) {
         oldpar <- par(usr=c(0,1,0,1),xpd=NA)
         on.exit(par(oldpar))
         if(is.list(x)) {
@@ -320,9 +320,9 @@ plot.summaryM <-
         rlegend(x, y, legend=lev, pch=pch, ...)
         invisible()
       }
-      formals(Key) <- list(x=NULL,y=NULL,lev=names(obj$group.freq),
+      formals(Key3) <- list(x=NULL,y=NULL,lev=names(obj$group.freq),
                            pch=pch)
-      .setKey(Key)
+      .setKey(Key3)
     }
   }
 

@@ -95,7 +95,7 @@ uncbind <- function(x, prefix="", suffix="")
   nn <- dimnames(x)[[2]]
   warning("You are using uncbind.  That was a really bad idea. If you had any variables in the global environment named ", paste(prefix, nn, suffix, sep="", collapse=", "), " they are now over writen.\n\nYou are now warned.", immediate. = TRUE, )
   for(i in 1:ncol(x))
-    assign(paste(prefix,nn[i],suffix,sep=""), x[,i], pos=1)
+    assign(paste(prefix,nn[i],suffix,sep=""), x[,i], pos=parent.env())
   invisible()
 }
 

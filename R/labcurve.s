@@ -1196,8 +1196,8 @@ drawPlot <- function(..., xlim=c(0,1), ylim=c(0,1), xlab='', ylab='',
       if(length(ymean))
         pts$y <- pts$y - mean(pts$y) + ymean
     
-      if(type=='p') 
-        storeTemp(pch.to.use[pch.to.use != pch],'pch.to.use')
+      if(type=='p')
+          assign("pch.to.use", pch.to.use[pch.to.use != pch], envir=environment(Points))
       else
         {
           scat1d(pts$x, side=1)
@@ -1213,6 +1213,7 @@ drawPlot <- function(..., xlim=c(0,1), ylim=c(0,1), xlab='', ylab='',
       structure(list(points=pts, label=label, type=type,
                      pch=pch, cex=cex, rug=rug), class='Points')
     }
+  environment(Points) <- new.env()
 
   Curve <- function(label=' ',
                     type=c('bezier','polygon','linear','pol','step','gauss'),
@@ -1317,11 +1318,11 @@ drawPlot <- function(..., xlim=c(0,1), ylim=c(0,1), xlab='', ylab='',
       structure(list(...), class='Abline')
     }
   
-  storeTemp(Points)
-  storeTemp(Curve)
-  storeTemp(Abline)
+  .setPoints(Points)
+  .setCurve(Curve)
+  .setAbline(Abline)
   
-  storeTemp(c(1,2,3,4,16,17,5,6,15,18,19),'pch.to.use')
+  environment(Points)$pch.to.use <- c(1,2,3,4,16,17,5,6,15,18,19)
 
   ticks <- match.arg(ticks)
   if(missing(ticks))

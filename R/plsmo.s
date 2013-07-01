@@ -192,7 +192,7 @@ panel.plsmo <- function(x, y, subscripts, groups=NULL, type='b',
       
       formals(Key) <- list(x=NULL,y=NULL,lev=levels(groups), cex=cex,
                            col=col, font=font, pch=pch)
-      storeTemp(Key)
+      .setKey(Key)
     }
   }
 }

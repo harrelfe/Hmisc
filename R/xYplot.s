@@ -134,7 +134,7 @@ panel.xYplot <-
           formals(sKey) <- list(x=NULL, y=NULL, cexObserved=srng,
                                 cexCurtailed=rangeCex,
                                 col=col[1], pch=pch, other=NULL)
-          storeTemp(sKey)
+          .setsKey(sKey)
         }
     }
 
@@ -462,7 +462,7 @@ panel.xYplot <-
       formals(Key) <- list(x=NULL,y=NULL,lev=levels(groups),
                            cex=if(sizeVaries) 1 else cex,
                            col=col, font=font, pch=pch, other=NULL)
-      storeTemp(Key)
+      .setKey(Key)
     }
   
   if(!missing(abline))
@@ -490,7 +490,7 @@ panel.xYplot <-
       
       formals(Key) <- list(x=NULL,y=NULL,lev=levels(groups), col=col,
                            lty=lty, lwd=lwd, other=NULL)
-      storeTemp(Key)
+      .setKey(Key)
     }
 }
 
@@ -635,7 +635,7 @@ panel.Dotplot <- function(x, y, groups = NULL,
       formals(Key) <- list(x=NULL,y=NULL,lev=lev,
                            cex=cex[1:ng], col=col[1:ng],
                            font=font[1:ng], pch=pch[1:ng], other=NULL)
-      storeTemp(Key)
+      .setKey(Key)
     }
 }
 

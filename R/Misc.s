@@ -93,7 +93,7 @@ trap.rule <- function(x,y) sum(diff(x)*(y[-1]+y[-length(y)]))/2
 uncbind <- function(x, prefix="", suffix="")
 {
   nn <- dimnames(x)[[2]]
-  warning("You are using uncbind.  This is a really bad idea. It will if you had any variables in the global environment named ", paste(prefix, nn, suffix, sep=""), " they are now over writen.\n\nYou have been warned.", immediate. = TRUE, )
+  warning("You are using uncbind.  That was a really bad idea. If you had any variables in the global environment named ", paste(prefix, nn, suffix, sep="", collapse=", "), " they are now over writen.\n\nYou are now warned.", immediate. = TRUE, )
   for(i in 1:ncol(x))
     assign(paste(prefix,nn[i],suffix,sep=""), x[,i], pos=1)
   invisible()

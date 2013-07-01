@@ -37,7 +37,7 @@ summarize(X, by, FUN, \dots,
 
 asNumericMatrix(x)
 
-matrix2dataFrame(x, at=origAttributes, restoreAll=TRUE)
+matrix2dataFrame(x, at=attr(x, 'origAttributes'), restoreAll=TRUE)
 }
 \arguments{
 \item{X}{
@@ -78,8 +78,8 @@ observations in the data frame.
   \code{matrix2dataFrame}).
 }
 \item{at}{List containing attributes of original data frame that survive
-  subsetting. Defaults to object \code{"origAttributes"} in the global
-  environment, created by the last call to \code{asNumericMatrix}}
+  subsetting. Defaults to attribute \code{"origAttributes"} of the
+  object \code{x}, created by the call to \code{asNumericMatrix}}
 \item{restoreAll}{
   set to \code{FALSE} to only restore attributes \code{label},
   \code{units}, and \code{levels} instead of all attributes
@@ -93,7 +93,7 @@ summaries are stored in a single variable in the data frame, and this
 variable is a matrix.
 
 \code{asNumericMatrix} returns a numeric matrix and stores an object
-\code{origAttributes} in the global environment, with original
+\code{origAttributes} as an attribute of the returned object, with original
 attributes of component variables, plus an indicator for whether a
 variable was converted from character to factor to allow it to be made
 numeric. 
@@ -233,7 +233,7 @@ Dotplot(dx ~ count | sex, data=d)
 d <- list(x=1:10, a=factor(rep(c('a','b'),5)),
           b=structure(letters[1:10], label='label for a'))
 x <- asNumericMatrix(d)
-origAttributes
+attr(x, 'origAttributes')
 matrix2dataFrame(x)
 
 detach('dfr')

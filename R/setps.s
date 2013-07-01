@@ -186,6 +186,6 @@ setps <- function(filename, w=0, h=3, pointsize=10, sublines=0, toplines=0,
   }
   
   formals(topdf) <- list(filebase=filebase)
-  storeTemp(topdf)
+  .settopdf(topdf)
   invisible()
 }

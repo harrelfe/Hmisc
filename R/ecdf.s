@@ -372,7 +372,7 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
 
   if(ng>1)
     { ##set up for key() if points plotted
-      Key <- function(x=0, y=1, lev, col, lty, lwd, ...)
+      .Key <- function(x=0, y=1, lev, col, lty, lwd, ...)
         {
           oldpar <- par(usr=c(0,1,0,1),xpd=NA)
           
@@ -391,9 +391,9 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
         }
 
     
-      formals(Key) <- list(x=NULL, y=NULL, lev=levels(groups), col=col,
+      formals(.Key) <- list(x=NULL, y=NULL, lev=levels(groups), col=col,
                            lty=lty, lwd=lwd,...=NULL)
-      storeTemp(Key)
+      .setKey(.Key)
     }
 }
 

@@ -29,8 +29,8 @@
   tested separately as a binary categorical response.
 
   The \code{plot} method for \code{method="reverse"} creates a temporary
-  function \code{Key} (see \code{\link{storeTemp}}) as is done by the
-  \code{xYplot} and \code{Ecdf.formula} functions.  After \code{plot}
+  function \code{Key} as is done by the \code{xYplot} and
+  \code{Ecdf.formula} functions.  After \code{plot}
   runs, you can type \code{Key()} to put a legend in a default location, or
   e.g. \code{Key(locator(1))} to draw a legend where you click the left
   mouse button.  This key is for categorical variables, so to have the

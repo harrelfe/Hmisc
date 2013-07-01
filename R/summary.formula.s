@@ -852,7 +852,7 @@ plot.summary.formula.response <-
     }
     formals(Key) <- list(x=NULL,y=NULL,lev=at$strat.levels,
                          pch=pch)
-    storeTemp(Key)
+    .setKey(Key)
   }
   
   invisible()
@@ -996,7 +996,7 @@ plot.summary.formula.reverse <-
     ## earlier run
     if(nw < 2) {
       Key <- function(...)invisible(NULL)
-      storeTemp(Key)
+      .setKey(Key)
     } else { ##set up for key() if > 1 column
       Key <- function(x=NULL, y=NULL, lev, pch) {
         oldpar <- par(usr=c(0,1,0,1),xpd=NA)
@@ -1019,7 +1019,7 @@ plot.summary.formula.reverse <-
       }
       formals(Key) <- list(x=NULL,y=NULL,lev=names(obj$group.freq),
                            pch=pch)
-      storeTemp(Key)
+      .setKey(Key)
     }
   }
 
@@ -1094,7 +1094,7 @@ plot.summary.formula.reverse <-
           }
 
         formals(Key2) <- list(x=NULL,y=NULL,quant=obj$quant)
-        storeTemp(Key2)
+        .setKey2(Key2)
         
       } else if(conType=='bp')
         bpplt(st, xlab=nam, cex.points=cex.means)
@@ -2521,13 +2521,14 @@ asNumericMatrix <- function(x)
     A$ischar <- ischar
     at[[i]] <- A
   }
-  assign('origAttributes', at, pos='.GlobalEnv')
-  matrix(unlist(x), ncol=k,
-         dimnames=list(a$row.names, a$names))
+#  assign('origAttributes', at, pos='.GlobalEnv')
+  resp <- matrix(unlist(x), ncol=k,
+                 dimnames=list(a$row.names, a$names))
+  attr(resp, 'origAttributes') <- at
+  resp
 }
 
-utils::globalVariables("origAttributes")
-matrix2dataFrame <- function(x, at=origAttributes, restoreAll=TRUE)
+matrix2dataFrame <- function(x, at=attr(x, 'origAttributes'), restoreAll=TRUE)
 {
   d <- dimnames(x)
   k <- length(d[[2]])

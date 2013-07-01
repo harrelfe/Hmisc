@@ -301,7 +301,7 @@ plot.summaryM <-
     ## earlier run
     if(nw < 2) {
       Key <- function(...)invisible(NULL)
-      storeTemp(Key)
+      .setKey(Key)
     } else { ##set up for key() if > 1 column
       Key <- function(x=NULL, y=NULL, lev, pch) {
         oldpar <- par(usr=c(0,1,0,1),xpd=NA)
@@ -322,7 +322,7 @@ plot.summaryM <-
       }
       formals(Key) <- list(x=NULL,y=NULL,lev=names(obj$group.freq),
                            pch=pch)
-      storeTemp(Key)
+      .setKey(Key)
     }
   }
 
@@ -380,7 +380,7 @@ plot.summaryM <-
           invisible()
         }
         formals(Key2) <- list(x=NULL, y=NULL, quant=obj$quant)
-        storeTemp(Key2)
+        .setKey2(Key2)
         
       } else if(conType=='bp') {
         st <- st[,colnames(st) != 'N', drop=FALSE]

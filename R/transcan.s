@@ -869,7 +869,6 @@ impute.transcan <-
           nimp[nam] <- length(i)
           if(list.out)
             outlist[[nam]] <- v
-          else assign(nam, v, envir=.GlobalEnv)
         }
 
     if(pr)

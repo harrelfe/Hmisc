@@ -1471,7 +1471,7 @@ bezier <- function(x, y, xlim, evaluation=100)
 }
 
 
-plot.drawPlot <- function(x, file, xlab, ylab, ticks,
+plot.drawPlot <- function(x, xlab, ylab, ticks,
                           key=x$key, keyloc=x$keyloc, ...)
 {
   if(missing(xlab))
@@ -1485,9 +1485,6 @@ plot.drawPlot <- function(x, file, xlab, ylab, ticks,
   if(missing(ticks))
     ticks <- x$ticks
   
-  if(!missing(file))
-    setps(file, type='char', ...)
-
   plot(xlim, ylim, xlim=xlim, ylim=ylim, xlab=xlab, ylab=ylab,
        type='n', axes=ticks=='xy')
   switch(ticks,
@@ -1590,11 +1587,6 @@ plot.drawPlot <- function(x, file, xlab, ylab, ticks,
                    lty=lty[j], lwd=lwd[j], labels=label[j], opts=x$opts)
       }
     }
-  
-  if(!missing(file)) {
-    dev.off()
-    cat('\nCreated file ',file,'.ps\n',sep='')
-  }
   
   invisible()
 }

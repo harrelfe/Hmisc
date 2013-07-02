@@ -183,8 +183,7 @@ For \code{drawPlot} is a series of invocations of \code{Points} and
 \code{Curve} (see example).  Any number of point groups can be defined
 in this way.  For \code{Abline} these may be any arguments to
 \code{abline}. 
-For \code{labcurve}, other parameters to pass to \code{text}.  For
-\code{plot.drawPlot} other parameters to pass to \code{setps}.
+For \code{labcurve}, other parameters to pass to \code{text}.
 }
 \item{width}{
 }
@@ -511,7 +510,8 @@ Vanderbilt University
 \email{f.harrell@vanderbilt.edu}
 }
 \seealso{
-\code{\link{approx}}, \code{\link{text}}, \code{\link{legend}}, \code{\link{setps}}, \code{\link{scat1d}}, \code{\link{xYplot}}, \code{\link{abline}}
+	\code{\link{approx}}, \code{\link{text}}, \code{\link{legend}},
+	\code{\link{scat1d}}, \code{\link{xYplot}}, \code{\link{abline}}
 }
 \examples{
 n <- 2:8

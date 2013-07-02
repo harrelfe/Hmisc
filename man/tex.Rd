@@ -55,7 +55,7 @@ tex(string, lref='c', psref='c', scale=1, srt=0)
 }
 \examples{
 \dontrun{
-setps(test)
+pdf('test.pdf')
 x <- seq(0,15,length=100)
 plot(x, dchisq(x, 5), xlab=tex('$x$'),
         ylab=tex('$f(x)$'), type='l')

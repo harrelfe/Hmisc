@@ -201,11 +201,6 @@ sedit           \tab A set of character handling functions written entirely\cr
                 \tab     substring.location, substring<-, replace.string.wild,\cr
                 \tab     and functions to check if a string is numeric or\cr
                 \tab     contains only the digits 0-9\cr
-setps           \tab Postscript graphics setup for including graphics in books\cr
-                \tab     and reports with nice defaults, minimal wasted space\cr
-                \tab     Internally uses psfig function by\cr
-                \tab     Antonio Possolo (\email{antonio@atc.boeing.com}).\cr
-                \tab     setps works with Ghostscript to convert .ps to .pdf\cr
 setTrellis      \tab Set Trellis graphics to use blank conditioning panel strips,\cr
                 \tab     line thickness 1 for dot plot reference lines: \cr
                 \tab     setTrellis(); 3 optional arguments\cr

@@ -24,13 +24,6 @@ environment(sKey) <- new.env()
 .setsKey <- function(x)
     environment(sKey)$.tmpfunction <- x
 
-topdf <- function(...)
-    .tmpfunction(...)
-environment(topdf) <- new.env()
-
-.settopdf <- function(x)
-    environment(Key)$.tmpfunction <- x
-
 Points <- function(...)
     .tmpfunction(...)
 environment(Points) <- new.env()

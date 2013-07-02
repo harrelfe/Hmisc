@@ -1111,7 +1111,6 @@ predict.transcan <- function(object, newdata=NULL, iter.max=50, eps=.01,
             }
           else
             {
-              browser()
               if(is.matrix(prm))
                 {
                   lev <- attr(prm, "codes")
@@ -1263,6 +1262,7 @@ plot.transcan <- function(x, ...)
 fit.mult.impute <- function(formula, fitter, xtrans, data,
                             n.impute=xtrans$n.impute, fit.reps=FALSE,
                             dtrans, derived,
+                            vcovOpts=NULL,
                             pr=TRUE, subset, ...)
 {
   using.Design <- FALSE
@@ -1298,7 +1298,7 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
     if(fit.reps) fits[[i]] <- f
 
     cof <- f$coef
-    v <- vcov(f, regcoef.only=FALSE)
+    v <- do.call('vcov', c(list(object=f), vcovOpts))
 
     if(i == 1) {
       assign <- f$assign
@@ -1307,7 +1307,7 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
       if(ns > 0) {
         ik <- attr(v, 'intercepts')  # intercepts kept in f$var
         if(length(ik)) {
-          if(ik == 'all') ik <- 1:ns else if(ik == 'none') ik <- 0
+          if(ik == 'all') ik <- 1 : ns else if(ik == 'none') ik <- 0
           lenik <- length(ik); if(length(ik) == 1 && ik == 0) lenik <- 0
           ## Shift parameter indexes to left b/c of omitted intercepts for orm
           if(lenik != ns) {
@@ -1318,7 +1318,6 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
         }
       }
     }
-    
     if(length(ik)) cof <- c(cof[ik], cof[-(1:ns)])
     
     ## From Rainer Dyckerhoff to work correctly with models that have
@@ -1406,10 +1405,10 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
   f$var <- cov
   f$variance.inflation.impute <- r
   f$missingInfo <- missingInfo
-  f$dfmi <- dfmi
-  f$fits <- fits
+  f$dfmi    <- dfmi
+  f$fits    <- fits
   f$formula <- formula
-  f$assign <- assign
+  f$assign  <- assign
   if(using.Design) options(Design.attr=NULL)
   class(f) <- c('fit.mult.impute', class(f))
   f
@@ -1418,25 +1417,30 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
 
 vcov.fit.mult.impute <-
   function(object, regcoef.only=TRUE, intercepts='mid', ...) {
-    ns <- num.intercepts(object)
-    v <- object$var
+    ns    <- num.intercepts(object)
+    v     <- object$var
+    if(ns == 0) return(v)
+    vari  <- attr(v, 'intercepts')
+    lvari <- length(vari)
     if(is.character(intercepts)) {
       switch(intercepts,
-             mid = return(v),
-             all = return(v),
+             mid = {
+               if(lvari > 0L && lvari != 1L)
+                 stop('requested middle intercept but more than one intercept stored in object$var')
+               return(v) },
+             all = {
+               if(lvari > 0 && lvari < ns)
+                 stop('requested all intercepts but not all stored in object$var')
+               return(v) },
              none = if(inherits(object, 'orm'))
               return(v[-1, -1, drop=FALSE]) else
               return(v[-(1:ns),-(1:ns), drop=FALSE]))
     }
-    p  <- ncol(v)
-    vari <- attr(v, 'intercepts')
-    ## Compute number of actual intercept positions in v
-    nsa <- if(!length(vari)) ns
-     else if(length(vari) == 1 && vari == 0) 0
-     else length(vari)
-    nx <- p - nsa
-    if(nx == 0) return(v[intercepts, intercepts, drop=FALSE])
-    i <- c(intercepts, (nsa + 1) : p)
+    ## intercepts is integer scalar or vector
+    if(lvari && isTRUE(all.equal(sort(vari), sort(intercepts)))) return(v)
+    if(length(intercepts) == ns) return(v)
+    if(length(intercepts) >  ns) stop('more intercepts requested than in model')
+    i  <- c(intercepts, (ns + 1) : ncol(v))
     v[i, i, drop=FALSE]
 }
 

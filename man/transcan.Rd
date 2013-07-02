@@ -176,7 +176,7 @@ transcan(x, method=c("canonical","pc"),
        list.out=FALSE, pr=TRUE, check=TRUE, \dots)
 
 fit.mult.impute(formula, fitter, xtrans, data, n.impute, fit.reps=FALSE,
-                dtrans, derived, pr=TRUE, subset, \dots)
+                dtrans, derived, vcovOpts=NULL, pr=TRUE, subset, \dots)
 
 \method{predict}{transcan}(object, newdata, iter.max=50, eps=0.01, curtail=TRUE,
         type=c("transformed","original"),
@@ -228,7 +228,8 @@ invertTabulated(x, y, freq=rep(1,length(x)),
     any \R, \code{rms}, modeling function (not in quotes) that computes
     a vector of \code{\link{coefficients}} and for which
     \code{\link{vcov}} will return a variance-covariance matrix.  E.g.,
-    \code{fitter = \link{lm}}, \code{\link{glm}}, \code{\link[rms]{ols}}. At present models
+    \code{fitter = \link{lm}}, \code{\link{glm}},
+		\code{\link[rms]{ols}}. At present models 
     involving non-regression parameters (e.g., scale parameters in
     parametric survival models) are not handled fully.
   }
@@ -573,6 +574,10 @@ invertTabulated(x, y, freq=rep(1,length(x)),
     See the example below.  Note that \code{derived} is not yet
     implemented.  
   }
+	\item{vcovOpts}{a list of named additional arguments to pass to the
+		\code{vcov} method for \code{fitter}.  Useful for \code{orm} models
+		for retaining all intercepts
+		(\code{vcovOpts=list(intercepts='all')}) instead of just the middle one.}
   \item{type}{
     By default, the matrix of transformed variables is returned, with
     imputed values on the transformed scale.  If you had specified

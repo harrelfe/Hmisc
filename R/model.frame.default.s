@@ -54,64 +54,22 @@ GetModelFrame <- function(formula, specials, default.na.action=NULL) {
   return(eval(new.call, env, parent.frame()))
 }
 
-dropUnusedLevels <- function()
-{
-  sf <- function(x, i, drop=TRUE)
-  {
-    ## Jens Oehlschlaegel generalized to handle drop 12Oct97
-    atx <- attributes(x)
-    nam <- atx$names
-    atx$levels <- atx$names <- NULL
-    if(missing(i))
-      i <- TRUE  ## 4nov02
-    
-    y <- as.integer(x)[i]     ## 4nov02
-    ln <- length(nam)
-    nam <-
-      if(ln) nam[i]
-      else NULL  ## 4nov02
-    
-    opt <- .Options$drop.factor.levels
-    if(!length(opt))
-      opt <- .Options$drop.unused.levels
-    
-    ## !missing(drop) added 31jul02
-    if(drop && (!missing(drop) || (length(opt)==0 || opt))) {
-      oldClass(y) <- NULL
-      j <- sort(unique(y))
-      y[] <- match(y,j)
-      levels(y) <- levels(x)[j]
-    } else if(length(y))
-      levels(y) <- levels(x)
-    
-    attributes(y) <- c(attributes(y), atx,
-                       if(ln) list(names=nam))
-    y
-  }
-  
-  assign('[.factor', sf, '.GlobalEnv')
-  cat("\nTo revert to the R standard [.factor use remove('[.factor',pos='.GlobalEnv'),\n",
-      "or to get the default R behavior type options(drop.unused.levels=FALSE).\n")
-  invisible()
-}
-
-
 ## Replaced with one more like default R  3nov02
 ## With R 1.6 was getting error with ... arguments
-if(FALSE) '[.factor' <- function (x, i, drop = TRUE)
-{
-  y <- NextMethod("[")
-  class(y) <- class(x)
-  attr(y, "contrasts") <- attr(x, "contrasts")
-  attr(y, "levels") <- attr(x, "levels")
-  opt <- .Options$drop.factor.levels
-  if(!length(opt))
-    opt <- .Options$drop.unused.levels
+## if(FALSE) '[.factor' <- function (x, i, drop = TRUE)
+## {
+##   y <- NextMethod("[")
+##   class(y) <- class(x)
+##   attr(y, "contrasts") <- attr(x, "contrasts")
+##   attr(y, "levels") <- attr(x, "levels")
+##   opt <- .Options$drop.factor.levels
+##   if(!length(opt))
+##     opt <- .Options$drop.unused.levels
   
-  if(drop && (!missing(drop) || (length(opt)==0 || opt)))
-    reFactor(y)
-  else y
-}
+##   if(drop && (!missing(drop) || (length(opt)==0 || opt)))
+##     reFactor(y)
+##   else y
+## }
 
 
 ##For compatibility with SV4

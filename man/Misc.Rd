@@ -68,7 +68,13 @@
   If the first argument is not a matrix, it will be converted to one.
   An optional argument allows the second argument to be treated as a
   matrix, useful when its rows represent bootstrap reps of
-  coefficients.  Then ab' is computed.
+  coefficients.  Then ab' is computed.  \code{matxv} respects the
+  \code{"intercepts"} attribute if it is stored on \code{b} by the
+  \code{rms} package.  This is used by \code{\link[rms]{orm}}
+  fits that are bootstrap-repeated by \code{\link[rms]{bootcov}} where
+  only the intercept corresponding to the median is retained.  If
+  \code{kint} has nonzero length, it is checked for consistency with the
+  attribute.
 
   \code{makeSteps} is a copy of the dostep function inside the
   \code{survival} package's \code{plot.survfit} function.  It expands a

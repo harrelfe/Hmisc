@@ -30,6 +30,8 @@ matxv <- function(a, b, kint=1, bmat=FALSE)
     if(lbi && lkint) {
       if(lbi != excess)
         stop('b intercepts attribute has different length from number of excess elements in b')
+      bi   <- as.integer(bi)
+      kint <- as.integer(kint)
       if(!isTRUE(all.equal(sort(bi), sort(kint))))
         stop('b intercepts attribute do not match kint')
       xx[] <- 1.
@@ -57,6 +59,8 @@ matxv <- function(a, b, kint=1, bmat=FALSE)
   if(lbi && lkint) {
     if(lbi != excess)
       stop('b intercepts attribute has different length from number of excess elements in b')
+    bi   <- as.integer(bi)
+    kint <- as.integer(kint)
     if(!isTRUE(all.equal(sort(bi), sort(kint))))
       stop('b intercepts attribute do not match kint')
     bkint <- b[1]

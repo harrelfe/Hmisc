@@ -6,49 +6,42 @@ rcorr <- function(x, y, type=c("pearson","spearman"))
     x <- cbind(x, y)
   
   x[is.na(x)] <- 1e30
-  storage.mode(x) <- if(.R.)"double"
-                     else "single"
+  storage.mode(x) <- "double"
   
   p <- as.integer(ncol(x))
-  if(p<1)
+  if(p < 1)
     stop("must have >1 column")
   
   n <- as.integer(nrow(x))
-  if(n<5)
+  if(n < 5)
     stop("must have >4 observations")
   
   h <-
-    if(.R.)
       .Fortran("rcorr", x, n, p, itype=as.integer(1+(type=="spearman")),
                hmatrix=double(p*p), npair=integer(p*p),
                double(n), double(n),  double(n), double(n),
                double(n), integer(n), PACKAGE="Hmisc")
-    else
-      .Fortran("rcorr", x, n, p, itype=as.integer(1+(type=="spearman")),
-               hmatrix=single(p*p), npair=integer(p*p),
-               single(n), single(n),  single(n), single(n),
-               single(n), integer(n))
   
   npair <- matrix(h$npair, ncol=p)
   h <- matrix(h$hmatrix, ncol=p)
-  h[h>1e29] <- NA
+  h[h > 1e29] <- NA
   nam <- dimnames(x)[[2]]
   dimnames(h) <- list(nam, nam)
   dimnames(npair) <- list(nam, nam)
-  P <- matrix(2*(1-pt(abs(h)*sqrt(npair-2)/sqrt(1-h*h), npair-2)),ncol=p)
-  P[abs(h)==1] <- 0
+  P <- matrix(2 * (1 - pt(abs(h)*sqrt(npair - 2) / sqrt(1 - h * h),
+                          npair - 2)), ncol=p)
+  P[abs(h) == 1] <- 0
   diag(P) <- NA
-  dimnames(P) <- list(nam,nam)
+  dimnames(P) <- list(nam, nam)
   structure(list(r=h, n=npair, P=P), class="rcorr")
 }
-
 
 print.rcorr <- function(x, ...)
 {
   print(round(x$r,2))
   n <- x$n
-  if(all(n==n[1,1]))
-    cat("\nn=",n[1,1],"\n\n")
+  if(all(n == n[1,1]))
+    cat("\nn=", n[1,1], "\n\n")
   else {
     cat("\nn\n")
     print(n)
@@ -56,8 +49,8 @@ print.rcorr <- function(x, ...)
   
   cat("\nP\n")
   P <- x$P
-  P <- ifelse(P<.0001,0,P)
-  p <- format(round(P,4))
+  P <- ifelse(P < .0001, 0, P)
+  p <- format(round(P, 4))
   p[is.na(P)] <- ""
   print(p, quote=FALSE)
   invisible()

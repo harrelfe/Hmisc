@@ -1298,7 +1298,7 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
     if(fit.reps) fits[[i]] <- f
 
     cof <- f$coef
-    v <- do.call('vcov', c(list(object=f), vcovOpts))
+    v <- do.call('vcov', c(list(object=f, intercepts='all'), vcovOpts))
 
     if(i == 1) {
       if(inherits(f, 'orm'))
@@ -1434,7 +1434,7 @@ vcov.fit.mult.impute <-
                if(lvari > 0 && lvari < ns)
                  stop('requested all intercepts but not all stored in object$var')
                return(v) },
-             none = if(inherits(object, 'orm'))
+             none = if(inherits(object, 'orm') && lvari == 1)
               return(v[-1, -1, drop=FALSE]) else
               return(v[-(1:ns),-(1:ns), drop=FALSE]))
     }

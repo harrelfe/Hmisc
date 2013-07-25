@@ -18,25 +18,15 @@ labcurve <- function(curves, labels=names(curves),
                      whichLabel=1:length(curves),
                      grid=FALSE, xrestrict=NULL, ...)
 {
-  if(grid && !.R.)
-    {
-      ##warning('specified grid=T under S-Plus, ignored')
-      grid <- FALSE
-    }
-
-  if(.R. && pl && !add)
-    {
-      plot.new(); par(new=TRUE)  # enables strwidth etc.
-    }
+  if(pl && !add) {
+    plot.new(); par(new=TRUE)  # enables strwidth etc.
+  }
   
-  if(.R.)
-    {
-      oxpd <- par('xpd')
-      par(xpd=NA)
-      on.exit(par(xpd=oxpd))
-    }
+  oxpd <- par('xpd')
+  par(xpd=NA)
+  on.exit(par(xpd=oxpd))
   
-  gfun <- ordGridFun(.R. && grid)    ## see Misc.s
+  gfun <- ordGridFun(grid)    ## see Misc.s
   gun  <- gfun$unit
 
   diffu <- function(v) diff(oldUnclass(v))  # mainly for POSIXt
@@ -148,13 +138,12 @@ labcurve <- function(curves, labels=names(curves),
   is.keys    <- length(keys) > 0
   lines.keys <- length(keys)==1 && is.character(keys) && keys=='lines'
 
-  if(!length(method))
-    {
-      if(is.keys)
-        method <- if(is.numeric(keys) || lines.keys) 'on top'
-        else 'offset'
+  if(!length(method)) {
+    if(is.keys)
+      method <- if(is.numeric(keys) || lines.keys) 'on top'
+      else 'offset'
     else method <- 'offset'
-    }
+  }
 
   ## Expand abbreviations for method - couldn't use match.arg
   possible.methods <- c('offset','on top','arrow','mouse','locator')
@@ -173,33 +162,28 @@ labcurve <- function(curves, labels=names(curves),
   if(!lines.keys && is.keys && length(keys) != nc) 
     stop('number of keys must = number of curves')
 
-  if(method %in% c('mouse','locator'))
-    {
-      if(adj=='auto')
-        adj <- .5
+  if(method %in% c('mouse','locator')) {
+    if(adj=='auto') adj <- .5
     
-      xt <- yt <- numeric(nc)
-      for(i in 1:nc)
-        {
-          if(i %in% whichLabel)
-            {
-              cat('\nPosition pointer to desired center of curve label and click for',
-                  labels[i],'\n')
-              lab.pos <- locator(1)
-              xt[i] <- lab.pos$x
-              yt[i] <- lab.pos$y
-              gfun$text(lab.pos, labels[i], cex=cex, adj=adj, col=col.[i],
-                        ...)
-            }
-        }
-      
-      return(invisible(list(x=xt, y=yt, offset=0,
-                            adj=adj, cex=cex, angle=0, col=col., lwd=lwd,
-                            key.opts=key.opts, ...)))
+    xt <- yt <- numeric(nc)
+    for(i in 1:nc) {
+      if(i %in% whichLabel) {
+        cat('\nPosition pointer to desired center of curve label and click for',
+            labels[i],'\n')
+        lab.pos <- locator(1)
+        xt[i] <- lab.pos$x
+        yt[i] <- lab.pos$y
+        gfun$text(lab.pos, labels[i], cex=cex, adj=adj, col=col.[i],
+                  ...)
+      }
     }
+    
+    return(invisible(list(x=xt, y=yt, offset=0,
+                          adj=adj, cex=cex, angle=0, col=col., lwd=lwd,
+                          key.opts=key.opts, ...)))
+  }
 
-  if(is.character(keyloc))
-    keyloc <- match.arg(keyloc)
+  if(is.character(keyloc)) keyloc <- match.arg(keyloc)
 
   empty.method <- match.arg(empty.method)
 
@@ -210,45 +194,41 @@ labcurve <- function(curves, labels=names(curves),
   if(!length(xlim)) xlim <- usr[1:2]
   if(!length(ylim)) ylim <- usr[3:4]
 
-  if(nc==1)
-    {
-      ci <- curves[[1]]
-      xx <- ci[[1]]; yy <- ci[[2]]
-      s <- is.finite(xx+yy)
-      xx <- xx[s];  yy <- yy[s]
-      imid <- trunc((length(xx)+1)/2)
-      adj <- if(is.character(adj))0.5 else adj
-      if(any(whichLabel==1))
-        gfun$text(xt <- gun(xx[imid]),
-                  yt <- gun(yy[imid])+offset,
-                  labels, 
-                  cex=cex, adj=adj, col=col., ...)
-      
-      return(invisible(list(x=xt, y=yt, offset=offset,
-                            adj=adj, cex=cex, col=col., lwd=lwd, angle=0, 
-                            key.opts=key.opts, ...)))
-    }
+  if(nc==1) {
+    ci <- curves[[1]]
+    xx <- ci[[1]]; yy <- ci[[2]]
+    s <- is.finite(xx+yy)
+    xx <- xx[s];  yy <- yy[s]
+    imid <- trunc((length(xx)+1)/2)
+    adj <- if(is.character(adj))0.5 else adj
+    if(any(whichLabel==1))
+      gfun$text(xt <- gun(xx[imid]),
+                yt <- gun(yy[imid])+offset,
+                labels, 
+                cex=cex, adj=adj, col=col., ...)
+    
+    return(invisible(list(x=xt, y=yt, offset=offset,
+                          adj=adj, cex=cex, col=col., lwd=lwd, angle=0, 
+                          key.opts=key.opts, ...)))
+  }
   
   if(xmethod %nin% c('grid','unique')) 
     stop('xmethod must be "grid" or "unique"')
   
   step.type <- match.arg(step.type)
   
-  if(is.character(adj))
-    {
-      adj.does.vary     <- TRUE
-      adj.needs.to.vary <- TRUE
-      adj <- rep(.5, nc)
-    }
-  else
-    {
-      adj.does.vary     <- length(adj) > 1
-      adj.needs.to.vary <- FALSE
-      adj <- rep(adj, length=nc)
-    }
+  if(is.character(adj)) {
+    adj.does.vary     <- TRUE
+    adj.needs.to.vary <- TRUE
+    adj <- rep(.5, nc)
+  }
+  else {
+    adj.does.vary     <- length(adj) > 1
+    adj.needs.to.vary <- FALSE
+    adj <- rep(adj, length=nc)
+  }
 
-  if(xmethod=='grid') xs <- seq(xlim[1],xlim[2],length=npts) else
-  {
+  if(xmethod=='grid') xs <- seq(xlim[1],xlim[2],length=npts) else {
     xs <- unlist(sapply(curves, function(z)z[[1]]))
     xs <- sort(unique(xs[!is.na(xs)]))
     xs <- xs[xs>=xlim[1] & xs<=xlim[2]]
@@ -257,268 +237,245 @@ labcurve <- function(curves, labels=names(curves),
   ys <- matrix(NA, nrow=length(xs), ncol=nc)
   rng <- matrix(NA, nrow=2, ncol=nc)
 
-  for(i in 1:nc)
-    {
-      ci <- curves[[i]]
-      xx <- ci[[1]]; yy <- ci[[2]]
-      s <- is.finite(xx+yy)
-      xx <- xx[s]
-      y <- approx(xx, yy[s], xout=xs,
-                  f=if(step.type=='left') 0 else 1,
-                  method=if(type[i]=='l') "linear" else "constant")$y
+  for(i in 1:nc) {
+    ci <- curves[[i]]
+    xx <- ci[[1]]; yy <- ci[[2]]
+    s <- is.finite(xx+yy)
+    xx <- xx[s]
+    y <- approx(xx, yy[s], xout=xs,
+                f=if(step.type=='left') 0 else 1,
+                method=if(type[i]=='l') "linear" else "constant")$y
     
-      y <- pmax(pmin(y,usr[4]),usr[3])
-      ## Where one curve is not defined, consider this gap to have an ordinate
-      ## that is far from the other curves so labels where be placed where
-      ## the other curves haven't started or after they've ended
-      y[is.na(y)] <- 1e10
-      ys[,i] <- y
-      rxx <- range(xx)
-      if(length(xrestrict))
-        {
-          rxx[1] <- max(rxx[1],xrestrict[1])
-          rxx[2] <- min(rxx[2],xrestrict[2])
-        }
-    
-      rng[,i] <- rxx
-      ## Save real range of each x-vector so candidates for labeling
-      ## will be where the curve really exists
+    y <- pmax(pmin(y,usr[4]),usr[3])
+    ## Where one curve is not defined, consider this gap to have an ordinate
+    ## that is far from the other curves so labels where be placed where
+    ## the other curves haven't started or after they've ended
+    y[is.na(y)] <- 1e10
+    ys[,i] <- y
+    rxx <- range(xx)
+    if(length(xrestrict)) {
+      rxx[1] <- max(rxx[1],xrestrict[1])
+      rxx[2] <- min(rxx[2],xrestrict[2])
     }
+    
+    rng[,i] <- rxx
+    ## Save real range of each x-vector so candidates for labeling
+    ## will be where the curve really exists
+  }
   
-  if(method=='on top' && is.keys && is.numeric(keys))
-    {
-      ## Draw periodic symbols
-      sym <- function(curve, pch, inc, offset, type, step.type, col.,
-                      grid, gfun)
-        {
-          x <- curve[[1]]; y <- curve[[2]]
-          s <- is.finite(x+y)
-          x <- x[s]; y <- y[s]
-          if(length(x) < 2)
-            stop("when specifying numeric keys (pch) you must have >=2 data points")
+  if(method=='on top' && is.keys && is.numeric(keys)) {
+    ## Draw periodic symbols
+    sym <- function(curve, pch, inc, offset, type, step.type, col.,
+                    grid, gfun) {
+      x <- curve[[1]]; y <- curve[[2]]
+      s <- is.finite(x+y)
+      x <- x[s]; y <- y[s]
+      if(length(x) < 2)
+        stop("when specifying numeric keys (pch) you must have >=2 data points")
       
-          lim <- range(x)
-          xx <-
-            if(grid)
-              convertX(gun(seq(lim[1],lim[2],by=inc) + offset),
-                       'native', valueOnly=TRUE)
-            else
-              seq(lim[1], lim[2], by=inc) + offset
+      lim <- range(x)
+      xx <-
+        if(grid)
+          convertX(gun(seq(lim[1],lim[2],by=inc) + offset),
+                   'native', valueOnly=TRUE)
+        else
+          seq(lim[1], lim[2], by=inc) + offset
       
-          if(length(xx)>1) xx <- xx[-1]
+      if(length(xx)>1) xx <- xx[-1]
       
-          xx <- xx[xx<=lim[2]]
-          if(length(xx)==0) 
-            warning('curve was too short to mark with a symbol.\nMay want to change point.inc or xmethod for labcurve')
-          else
-            {
-              yy <- approx(x, y, xout=xx,
-                           method=if(type=='l') 'linear' else 'constant', 
+      xx <- xx[xx<=lim[2]]
+      if(length(xx)==0) 
+        warning('curve was too short to mark with a symbol.\nMay want to change point.inc or xmethod for labcurve')
+      else {
+        yy <- approx(x, y, xout=xx,
+                     method=if(type=='l') 'linear' else 'constant', 
                      f=if(step.type=='left') 0 else 1)$y
         
-              gfun$points(xx, yy, pch=pch, col=col.)
-            }
-        }
-      
-      if(!length(point.inc)) point.inc <- diffu(xlim)/5
-    
-      for(i in 1:nc)
-        sym(curves[[i]], keys[i], point.inc, (i-1)*point.inc/nc,
-            type[i], step.type, col.=col.[i], grid, gfun)
-      
-      xt <- yt <- NULL
+        gfun$points(xx, yy, pch=pch, col=col.)
+      }
     }
-  else
-    {
-      xt <- yt <- direction <- numeric(nc)
-      angle <- rep(0,nc)
-
-      g <- function(x)
-        {
-          ## finds min(abs(x)) but keeps original sign
-          ax <- abs(x)
-          if(all(is.na(ax)))
-            return(NA)
+    
+    if(!length(point.inc)) point.inc <- diffu(xlim)/5
+    
+    for(i in 1:nc)
+      sym(curves[[i]], keys[i], point.inc, (i-1)*point.inc/nc,
+          type[i], step.type, col.=col.[i], grid, gfun)
+    
+    xt <- yt <- NULL
+  }
+  else {
+    xt <- yt <- direction <- numeric(nc)
+    angle <- rep(0,nc)
+    
+    g <- function(x) {
+      ## finds min(abs(x)) but keeps original sign
+      ax <- abs(x)
+      if(all(is.na(ax)))
+        return(NA)
       
-          w <- min(ax, na.rm=TRUE)
-          (x[ax==w])[1]   #use first occurrence
-        }
-
-      for(i in 1:nc)
-        {
-          yi <- ys[,i]
-          yi[xs<rng[1,i] | xs>rng[2,i]] <- NA
-          diffmat <- ys[,-i,drop=FALSE] - yi
-          mindiff <- apply(diffmat, 1, g)
-          z <- abs(mindiff)==max(abs(mindiff),na.rm=TRUE)
-          maxid   <- min(c(1:length(mindiff))[z], na.rm=TRUE)
-          xt[i] <- xs[maxid]
-          yt[i] <- ys[maxid,i]
-          if(!is.na(mindiff[maxid])) 
-            direction[i] <- 1-2*(mindiff[maxid]>0)
-
-          yto <- yt[i] + direction[i] *
-            (if(grid) convertY(offset,'native',valueOnly=TRUE)
-            else offset)
+      w <- min(ax, na.rm=TRUE)
+      (x[ax==w])[1]   #use first occurrence
+    }
+    
+    for(i in 1:nc) {
+      yi <- ys[,i]
+      yi[xs<rng[1,i] | xs>rng[2,i]] <- NA
+      diffmat <- ys[,-i,drop=FALSE] - yi
+      mindiff <- apply(diffmat, 1, g)
+      z <- abs(mindiff)==max(abs(mindiff),na.rm=TRUE)
+      maxid   <- min(c(1:length(mindiff))[z], na.rm=TRUE)
+      xt[i] <- xs[maxid]
+      yt[i] <- ys[maxid,i]
+      if(!is.na(mindiff[maxid])) 
+        direction[i] <- 1-2*(mindiff[maxid]>0)
       
-          if(!is.na(yto)) 
-            if(yto >= usr[4] || yto <= usr[3])
-              direction[i] <- -direction[i]
-          
-          ## Find slope of curve i at xt[i]
-          if(tilt || adj.needs.to.vary)
-            {
-              angle[i] <- if(type[i]=='s') 0
-              else
-            {
-              ci <- curves[[i]]
-              xx <- ci[[1]]; yy <- ci[[2]]
-              s <- is.finite(xx+yy)
-              w <-
-                if(length(window))
-                  window
+      yto <- yt[i] + direction[i] *
+        (if(grid) convertY(offset,'native',valueOnly=TRUE)
+        else offset)
+      
+      if(!is.na(yto)) 
+        if(yto >= usr[4] || yto <= usr[3])
+          direction[i] <- -direction[i]
+      
+      ## Find slope of curve i at xt[i]
+      if(tilt || adj.needs.to.vary) {
+        angle[i] <- if(type[i]=='s') 0
+        else {
+          ci <- curves[[i]]
+          xx <- ci[[1]]; yy <- ci[[2]]
+          s <- is.finite(xx+yy)
+          w <-
+            if(length(window))
+              window
+            else {
+              nch <-
+                if(lines.keys) nchar(labels[i])
+                else if(is.keys)
+                  1*is.numeric(keys) +
+                    nchar(keys[i])*is.character(keys)
                 else
-                  {
-                    nch <-
-                      if(lines.keys) nchar(labels[i])
-                      else if(is.keys)
-                        1*is.numeric(keys) +
-                          nchar(keys[i])*is.character(keys)
-                      else
-                        nchar(labels[i])
-                
-                    w <-
-                      if(grid)
-                        nch*convertX(unit(.75,"strwidth","m"),
-                                     'native',valueOnly=TRUE)
-                      else
-                        nch*strwidth('m','user',cex)
-                  }
+                  nchar(labels[i])
               
-              yy <- approx(xx[s], yy[s], xout=c(xt[i]-w/2,xt[i]+w/2),
-                           rule=2)$y
-              slope <- diff(yy)/w
-              180*atan(slope*uin[2]/uin[1])/pi
-            }
-            }
-          if(adj.needs.to.vary)
-            {
-              adj[i] <-
-                if(type[i]=='s')
-                  1*(direction[i]<0)
+              w <-
+                if(grid)
+                  nch*convertX(unit(.75,"strwidth","m"),
+                               'native',valueOnly=TRUE)
                 else
-                  {
-                    if(is.na(angle[i]) || abs(angle[i])<=angle.adj.auto)
-                      .5
-                    else if((direction[i]<0 && slope>0) || 
-                            (direction[i]>0 && slope<0)) 0 else 1
-                  }
+                  nch*strwidth('m','user',cex)
             }
+          
+          yy <- approx(xx[s], yy[s], xout=c(xt[i]-w/2,xt[i]+w/2),
+                       rule=2)$y
+          slope <- diff(yy)/w
+          180*atan(slope*uin[2]/uin[1])/pi
         }
-
-      if(!tilt) angle[] <- 0
-    
-      if(!lines.keys && method=='offset' && (!is.logical(labels) || labels))
-        {
-          if(is.keys)
-            {
-              if(is.numeric(keys))
-                for(i in 1:nc)
-                  gfun$points(xt[i], (gun(yt) + direction*offset)[i], 
-                              pch=keys[i], col=col.[i])
-              else if(i %in% whichLabel)
-                gfun$text(xt, gun(yt) + direction*offset,
-                          keys, cex=cex,  
-                          adj=adj[1], col=col., ...)
-            }
-          else
-            {
-              if(tilt || adj.does.vary)
-                for(i in whichLabel)
-                  gfun$text(xt[i], gun(yt[i])+direction[i]*offset, 
-                            labels[i], cex=cex, srt=angle[i], 
-                            adj=adj[i], col=col.[i],...)
-              else
-                gfun$text(xt, gun(yt)+direction*offset, labels, 
-                          cex=cex, adj=adj[1], col=col., ...)
-            }
-        }
-      retlist <- list(x=xt, y=yt, offset=direction*offset,
-                      adj=adj, cex=cex, col=col., lwd=lwd, angle=if(tilt) angle, 
-                      key.opts=key.opts, ...)
+      }
+      if(adj.needs.to.vary) {
+        adj[i] <-
+          if(type[i]=='s')
+            1*(direction[i]<0)
+          else {
+            if(is.na(angle[i]) || abs(angle[i])<=angle.adj.auto)
+              .5
+            else if((direction[i]<0 && slope>0) || 
+                    (direction[i]>0 && slope<0)) 0 else 1
+          }
+      }
     }
+    
+    if(!tilt) angle[] <- 0
+    
+    if(!lines.keys && method=='offset' && (!is.logical(labels) || labels)) {
+      if(is.keys) {
+        if(is.numeric(keys))
+          for(i in 1:nc)
+            gfun$points(xt[i], (gun(yt) + direction*offset)[i], 
+                        pch=keys[i], col=col.[i])
+        else if(i %in% whichLabel)
+          gfun$text(xt, gun(yt) + direction*offset,
+                    keys, cex=cex,  
+                    adj=adj[1], col=col., ...)
+      } else {
+        if(tilt || adj.does.vary)
+          for(i in whichLabel)
+            gfun$text(xt[i], gun(yt[i])+direction[i]*offset, 
+                      labels[i], cex=cex, srt=angle[i], 
+                      adj=adj[i], col=col.[i],...)
+        else
+          gfun$text(xt, gun(yt)+direction*offset, labels, 
+                    cex=cex, adj=adj[1], col=col., ...)
+      }
+    }
+    retlist <- list(x=xt, y=yt, offset=direction*offset,
+                    adj=adj, cex=cex, col=col., lwd=lwd, angle=if(tilt) angle, 
+                    key.opts=key.opts, ...)
+  }
   
-  if(method %in% c('on top','arrow') && (!is.logical(labels) || labels))
-    {
-      retlist <- list(x=xt, y=yt, offset=0, 
-                      adj=.5, cex=cex, col=col., lwd=lwd, angle=0, 
-                      key.opts=key.opts, ...)
-
-      if(method == 'on top' && !lines.keys)
-        {
-          if(is.keys)
-            {
-              if(is.character(keys))
-                gfun$text(xt, yt, keys, cex=cex, col=col., adj=.5, ...)
-              ## numeric keys (periodic plotting symbols) already handled above
-            }
-          else
-            gfun$text(xt, yt, labels, cex=cex, col=col., adj=.5, ...)
-        }
-      else if(method=='arrow')
-        {
-          ydelta <- if(grid) unit(1/17,'npc') else diffu(ylim)/17
+  if(method %in% c('on top','arrow') && (!is.logical(labels) || labels)) {
+    retlist <- list(x=xt, y=yt, offset=0, 
+                    adj=.5, cex=cex, col=col., lwd=lwd, angle=0, 
+                    key.opts=key.opts, ...)
+    
+    if(method == 'on top' && !lines.keys) {
+      if(is.keys) {
+        if(is.character(keys))
+          gfun$text(xt, yt, keys, cex=cex, col=col., adj=.5, ...)
+        ## numeric keys (periodic plotting symbols) already handled above
+      }
+      else
+        gfun$text(xt, yt, labels, cex=cex, col=col., adj=.5, ...)
+    }
+    else if(method=='arrow') {
+      ydelta <- if(grid) unit(1/17,'npc') else diffu(ylim)/17
       
       xdelta <- if(grid) unit(1/26,'npc') else diffu(xlim)/26
       
       lab.pos <- list(x=gun(xt) + xdelta*arrow.factor,
                       y=gun(yt) + ydelta*arrow.factor)
 
-          gfun$arrows(gun(xt)+xdelta*.6*arrow.factor,
-                      gun(yt)+ydelta*.6*arrow.factor,
-                      xt,yt,open=TRUE,size=.06,col=col.)
-          gfun$text(lab.pos, labels, cex=cex, col=col., ...)
-        }
+      gfun$arrows(gun(xt)+xdelta*.6*arrow.factor,
+                  gun(yt)+ydelta*.6*arrow.factor,
+                  xt,yt,open=TRUE,size=.06,col=col.)
+      gfun$text(lab.pos, labels, cex=cex, col=col., ...)
     }
-
-  if(is.keys && (!is.character(keyloc) || keyloc!='none'))
-    {
-      ## Make legend
-      s <- whichLabel
-      if(is.character(keyloc) && keyloc=='auto')
-        {
-          ## Find emptiest spot for drawing legend by finding
-          ## center of largest empty rectangle large enough to hold 
-          ## this rectangle
-          Xs <- rep(xs, nc)
-          Ys <- as.vector(ys)
-          putKeyEmpty(Xs, Ys,
-                      labels=if(lines.keys || is.numeric(keys))
-                      labels[s]
-                      else
-                      paste(keys,'    ',labels, sep='')[s],
+  }
+  
+  if(is.keys && (!is.character(keyloc) || keyloc!='none')) {
+    ## Make legend
+    s <- whichLabel
+    if(is.character(keyloc) && keyloc=='auto') {
+      ## Find emptiest spot for drawing legend by finding
+      ## center of largest empty rectangle large enough to hold 
+      ## this rectangle
+      Xs <- rep(xs, nc)
+      Ys <- as.vector(ys)
+      putKeyEmpty(Xs, Ys,
+                  labels=if(lines.keys || is.numeric(keys))
+                  labels[s]
+                  else
+                  paste(keys,'    ',labels, sep='')[s],
                   
-                      pch=if(is.numeric(keys))
-                      keys[s],
+                  pch=if(is.numeric(keys))
+                  keys[s],
                   
-                      lty=lty[s], lwd=lwd[s], cex=cex, col=col.[s],
-                      transparent=transparent, plot=TRUE,
-                      key.opts=key.opts, xlim=xlim, ylim=ylim, grid=grid)
-
-        } else putKey(keyloc,
-                      labels=if(lines.keys || is.numeric(keys))
-                      labels[s]
-                      else
-                      paste(keys,'    ',labels, sep='')[s],
+                  lty=lty[s], lwd=lwd[s], cex=cex, col=col.[s],
+                  transparent=transparent, plot=TRUE,
+                  key.opts=key.opts, xlim=xlim, ylim=ylim, grid=grid)
+      
+    } else putKey(keyloc,
+                  labels=if(lines.keys || is.numeric(keys))
+                  labels[s]
+                  else
+                  paste(keys,'    ',labels, sep='')[s],
                   
-                      pch=if(is.numeric(keys))
-                      keys[s],
+                  pch=if(is.numeric(keys))
+                  keys[s],
                   
-                      lty=lty[s], lwd=lwd[s], cex=cex, col=col.[s],
-                      transparent=transparent, plot=TRUE,
-                      key.opts=key.opts, grid=grid)
-    }
-
+                  lty=lty[s], lwd=lwd[s], cex=cex, col=col.[s],
+                  transparent=transparent, plot=TRUE,
+                  key.opts=key.opts, grid=grid)
+  }
+  
   invisible(retlist)
 }
 
@@ -529,61 +486,56 @@ labcurve <- function(curves, labels=names(curves),
 ##
 ## rlegendg is better to use when grid is in effect.  In R 2.0, you
 ## can't use strwidth etc. after a lattice drawing has been rendered	
-if(.R.)
-{
-  rlegendg <- function(x, y, legend, col=pr$col[1], lty=NULL,
-                       lwd=NULL, pch=NULL, cex=pr$cex[1], other=NULL)
-    {
-      pr <- par()
-      if(is.list(x))
-        {
-          y <- x[[2]]
-          x <- x[[1]]
-        }
+rlegendg <- function(x, y, legend, col=pr$col[1], lty=NULL,
+                     lwd=NULL, pch=NULL, cex=pr$cex[1], other=NULL)
+  {
+    pr <- par()
+    if(is.list(x)) {
+      y <- x[[2]]
+      x <- x[[1]]
+    }
     
-      do.lines  <- (length(lty) && any(lty > 0)) || length(lwd)
-      do.points <- length(pch)
-      cmd <- NULL
-      if(do.lines)
-        cmd$lines <- list(col=col, lty=lty, lwd=lwd)
+    do.lines  <- (length(lty) && any(lty > 0)) || length(lwd)
+    do.points <- length(pch)
+    cmd <- NULL
+    if(do.lines)
+      cmd$lines <- list(col=col, lty=lty, lwd=lwd)
     
-      if(do.points)
-        cmd$points<- list(col=col, pch=pch, cex=cex)
+    if(do.points)
+      cmd$points<- list(col=col, pch=pch, cex=cex)
     
-      cmd$text <- list(lab=legend)
-      if(length(other))
-        cmd <- c(cmd, other)
+    cmd$text <- list(lab=legend)
+    if(length(other))
+      cmd <- c(cmd, other)
     
-      draw.key(cmd, draw=TRUE,
-               vp=viewport(x=unit(x,'npc'),y=unit(y,'npc')))
-      invisible()
+    draw.key(cmd, draw=TRUE,
+             vp=viewport(x=unit(x,'npc'),y=unit(y,'npc')))
+    invisible()
   }
 
-  rlegend <- function (x, y, legend, fill, col = "black", lty=NULL, lwd=NULL,
-                       pch=NULL, angle = NULL,  
-                       density = NULL, bty = "o", bg = par("bg"),
-                       pt.bg = NA, cex = 1, 
-                       xjust = 0, yjust = 1, x.intersp = 1, y.intersp= 1,
-                       adj = 0, text.width = NULL,
-                       merge = do.lines && has.pch, trace = FALSE, 
-                       ncol = 1, horiz = FALSE, plot=TRUE, grid=FALSE,
-                       ...)
+rlegend <- function (x, y, legend, fill, col = "black", lty=NULL, lwd=NULL,
+                     pch=NULL, angle = NULL,  
+                     density = NULL, bty = "o", bg = par("bg"),
+                     pt.bg = NA, cex = 1, 
+                     xjust = 0, yjust = 1, x.intersp = 1, y.intersp= 1,
+                     adj = 0, text.width = NULL,
+                     merge = do.lines && has.pch, trace = FALSE, 
+                     ncol = 1, horiz = FALSE, plot=TRUE, grid=FALSE,
+                     ...)
   {
     gfun <- ordGridFun(grid)   ## see Misc.s
-
-    if (is.list(x))
-      {
-        if (!missing(y))
-          {
-            if (!missing(legend)) 
-              stop("`y' and `legend' when `x' is list (need no `y')")
-            
-            legend <- y
-          }
-      
-        y <- x$y
-        x <- x$x
+    
+    if (is.list(x)) {
+      if (!missing(y)) {
+        if (!missing(legend)) 
+          stop("`y' and `legend' when `x' is list (need no `y')")
+        
+        legend <- y
       }
+      
+      y <- x$y
+      x <- x$x
+    }
     else if (missing(y))  stop("missing y")
     
     if (!is.numeric(x) || !is.numeric(y)) stop("non-numeric coordinates")
@@ -593,56 +545,48 @@ if(.R.)
     
     xlog <- par("xlog")
     ylog <- par("ylog")
-    rect2 <- function(left, top, dx, dy, ...)
-      {
-        r <- left + dx
-        if (xlog)
-          {
-            left <- 10^left
-            r <- 10^r
-          }
-      
-        b <- top - dy
-        if (ylog)
-          {
-            top <- 10^top
-            b <- 10^b
-          }
-        
-        gfun$rect(left, top, r, b, angle = angle, density = density, 
-                  ...)
+    rect2 <- function(left, top, dx, dy, ...) {
+      r <- left + dx
+      if (xlog) {
+        left <- 10^left
+        r <- 10^r
       }
+      
+      b <- top - dy
+      if (ylog) {
+        top <- 10^top
+        b <- 10^b
+      }
+      
+      gfun$rect(left, top, r, b, angle = angle, density = density, 
+                ...)
+    }
     
-    segments2 <- function(x1, y1, dx, dy, ...)
-      {
+    segments2 <- function(x1, y1, dx, dy, ...) {
       x2 <- x1 + dx
-      if (xlog)
-        {
-          x1 <- 10^x1
-          x2 <- 10^x2
-        }
+      if (xlog) {
+        x1 <- 10^x1
+        x2 <- 10^x2
+      }
       
       y2 <- y1 + dy
-      if (ylog)
-        {
-          y1 <- 10^y1
-          y2 <- 10^y2
-        }
+      if (ylog) {
+        y1 <- 10^y1
+        y2 <- 10^y2
+      }
       
       gfun$segments(x1, y1, x2, y2, ...)
     }
     
-    points2 <- function(x, y, ...)
-      {
-        if (xlog) x <- 10^x
-        
-        if (ylog) y <- 10^y
+    points2 <- function(x, y, ...) {
+      if (xlog) x <- 10^x
       
-        gfun$points(x, y, ...)
-      }
+      if (ylog) y <- 10^y
+      
+      gfun$points(x, y, ...)
+    }
     
-    text2 <- function(x, y, ...)
-    {
+    text2 <- function(x, y, ...) {
       if (xlog) x <- 10^x
       
       if (ylog) y <- 10^y
@@ -684,31 +628,28 @@ if(.R.)
     do.lines <- (length(lty) && any(lty > 0)) || length(lwd)
     n.leg <- length(legend)
     n.legpercol <-
-      if (horiz)
-        {
-          if (ncol != 1) 
-            warning(paste("horizontal specification overrides: Number of columns :=", 
-                          n.leg))
+      if (horiz) {
+        if (ncol != 1) 
+          warning(paste("horizontal specification overrides: Number of columns :=", 
+                        n.leg))
         
-          ncol <- n.leg
-          1
-        }
+        ncol <- n.leg
+        1
+      }
       else  ceiling(n.leg/ncol)
     
-    if (has.pch <- length(pch))
-      {
-        if (is.character(pch) && nchar(pch[1]) > 1)
-          {
-            if (length(pch) > 1) 
-              warning("Not using pch[2..] since pch[1] has multiple chars")
+    if (has.pch <- length(pch)) {
+      if (is.character(pch) && nchar(pch[1]) > 1) {
+        if (length(pch) > 1) 
+          warning("Not using pch[2..] since pch[1] has multiple chars")
         
-            np <- nchar(pch[1])
-            pch <- substr(rep(pch[1], np), 1:np, 1:np)
-          }
-      
-        if (!merge) 
-          dx.pch <- x.intersp/2 * xchar
+        np <- nchar(pch[1])
+        pch <- substr(rep(pch[1], np), 1:np, 1:np)
       }
+      
+      if (!merge) 
+        dx.pch <- x.intersp/2 * xchar
+    }
     
     x.off <- if (merge) -0.7 else 0
     
@@ -716,111 +657,104 @@ if(.R.)
     
     if (ylog) y <- log10(y)
     
-    if (nx == 2)
-      {
-        x <- sort(x)
-        y <- sort(y)
-        left <- x[1]
-        top <- y[2]
-        w <- diff(x)
-        h <- diff(y)
-        w0 <- w/ncol
-        x <- mean(x)
-        y <- mean(y)
-        if (missing(xjust)) xjust <- 0.5
+    if (nx == 2) {
+      x <- sort(x)
+      y <- sort(y)
+      left <- x[1]
+      top <- y[2]
+      w <- diff(x)
+      h <- diff(y)
+      w0 <- w/ncol
+      x <- mean(x)
+      y <- mean(y)
+      if (missing(xjust)) xjust <- 0.5
       
       if (missing(yjust)) yjust <- 0.5
-      }
-    else
-      {
-        h <- n.legpercol * ychar + yc
-        w0 <- text.width + (x.intersp + 1) * xchar
-        if (!missing(fill)) 
-          w0 <- w0 + dx.fill
-        
-        if (has.pch && !merge) 
-          w0 <- w0 + dx.pch
-        
-        if (do.lines) 
-          w0 <- w0 + (2 + x.off) * xchar
-        
-        w <- ncol * w0 + 0.5 * xchar
-        left <- x - xjust * w
-        top <- y + (1 - yjust) * h
-      }
+    }
+    else {
+      h <- n.legpercol * ychar + yc
+      w0 <- text.width + (x.intersp + 1) * xchar
+      if (!missing(fill)) 
+        w0 <- w0 + dx.fill
+      
+      if (has.pch && !merge) 
+        w0 <- w0 + dx.pch
+      
+      if (do.lines) 
+        w0 <- w0 + (2 + x.off) * xchar
+      
+      w <- ncol * w0 + 0.5 * xchar
+      left <- x - xjust * w
+      top <- y + (1 - yjust) * h
+    }
     
-    if (bty != "n")
-      {
-        if (trace) 
-          catn("  rect2(", left, ",", top, ", w=", w, ", h=", 
-               h, "...)", sep = "")
-        
-        if(plot)
-          rect2(left, top, dx = w, dy = h, col = bg)  ## FEH
-      }
+    if (bty != "n") {
+      if (trace) 
+        catn("  rect2(", left, ",", top, ", w=", w, ", h=", 
+             h, "...)", sep = "")
+      
+      if(plot)
+        rect2(left, top, dx = w, dy = h, col = bg)  ## FEH
+    }
     
     xt <- left + xchar +
       (w0 * rep(0:(ncol - 1), rep(n.legpercol, ncol)))[1:n.leg]
     yt <- top - (rep(1:n.legpercol, ncol)[1:n.leg] - 1) * ychar - 
       0.5 * yextra - ymax
-    if (!missing(fill))
-      {
-        fill <- rep(fill, length.out = n.leg)
-        if(plot)
-          rect2(left = xt, top = yt + ybox/2, dx = xbox, dy = ybox, 
+    if (!missing(fill)) {
+      fill <- rep(fill, length.out = n.leg)
+      if(plot)
+        rect2(left = xt, top = yt + ybox/2, dx = xbox, dy = ybox, 
               col = fill)
       
-        xt <- xt + dx.fill
-      }
+      xt <- xt + dx.fill
+    }
     
     if (has.pch || do.lines) 
       col <- rep(col, length.out = n.leg)
     
-    if (do.lines)
-      {
-        seg.len <- 2
-        ok.l <-
-          if (!length(lty))
-            {
-              lty <- 1
-              TRUE
-            } else
-        lty > 0
+    if (do.lines) {
+      seg.len <- 2
+      ok.l <-
+        if (!length(lty)) {
+          lty <- 1
+          TRUE
+        } else
+          lty > 0
       
-        if (!length(lwd)) lwd <- pr$lwd
+      if (!length(lwd)) lwd <- pr$lwd
       
-        lty <- rep(lty, length.out = n.leg)
-        lwd <- rep(lwd, length.out = n.leg)
-        if (trace) 
-          catn("  segments2(", xt[ok.l] + x.off * xchar, ",", 
-               yt[ok.l], ", dx=", seg.len * xchar, ", dy=0, ...)", 
-               sep = "")
+      lty <- rep(lty, length.out = n.leg)
+      lwd <- rep(lwd, length.out = n.leg)
+      if (trace) 
+        catn("  segments2(", xt[ok.l] + x.off * xchar, ",", 
+             yt[ok.l], ", dx=", seg.len * xchar, ", dy=0, ...)", 
+             sep = "")
       
-        if(plot)
-          segments2(xt[ok.l] + x.off * xchar, yt[ok.l], dx = seg.len * 
-                    xchar, dy = 0, lty = lty[ok.l], lwd = lwd[ok.l], 
-                    col = col[ok.l])
+      if(plot)
+        segments2(xt[ok.l] + x.off * xchar, yt[ok.l], dx = seg.len * 
+                  xchar, dy = 0, lty = lty[ok.l], lwd = lwd[ok.l], 
+                  col = col[ok.l])
       
-        xt <- xt + (seg.len + x.off) * xchar
-      }
+      xt <- xt + (seg.len + x.off) * xchar
+    }
     
-    if (has.pch)
-      {
-        pch <- rep(pch, length.out = n.leg)
-        pt.bg <- rep(pt.bg, length.out = n.leg)
-        ok <- is.character(pch) | pch >= 0
-        x1 <- (if (merge) 
-               xt - (seg.len/2) * xchar
-        else
-               xt)[ok]
-        
-        y1 <- yt[ok]
-        if (trace) 
-          catn("  points2(", x1, ",", y1, ", pch=", pch[ok], 
-               "...)")
-        
-        if(plot)points2(x1, y1, pch = pch[ok], col = col[ok], cex = cex, 
-                        bg = pt.bg[ok])
+    if (has.pch) {
+      pch <- rep(pch, length.out = n.leg)
+      pt.bg <- rep(pt.bg, length.out = n.leg)
+      ok <- is.character(pch) | pch >= 0
+      x1 <- (if (merge) 
+             xt - (seg.len/2) * xchar
+      else
+             xt)[ok]
+      
+      y1 <- yt[ok]
+      if (trace) 
+        catn("  points2(", x1, ",", y1, ", pch=", pch[ok], 
+             "...)")
+      
+      if(plot) points2(x1, y1, pch = pch[ok], col = col[ok], cex = cex, 
+                       bg = pt.bg[ok])
       
       if (!merge) xt <- xt + dx.pch
       }
@@ -829,14 +763,11 @@ if(.R.)
     if(plot)
       text2(xt, yt, labels = legend,
             adj = adj,
-            cex = max(1,min(cex, na.rm=TRUE)))
+            cex = min(cex, na.rm=TRUE))
     
     invisible(list(rect = list(w = w, h = h, left = left, top = top), 
                    text = list(x = xt, y = yt)))
   }
-  NULL
-}
-
 
 putKey <- function(z, labels, type=NULL,
                    pch=NULL, lty=NULL, lwd=NULL,
@@ -844,15 +775,11 @@ putKey <- function(z, labels, type=NULL,
                    transparent=TRUE, plot=TRUE, key.opts=NULL,
                    grid=FALSE)
 {
-  if(grid)
-    {
-      require('grid')
-      require('lattice')  # use draw.key in lattice
-    }
+  if(grid) {
+    require('grid')
+    require('lattice')  # use draw.key in lattice
+  }
   
-  if(!.R. && !existsFunction('key')) 
-    stop('must do library(trellis) to access key() function')
-
   nc <- length(labels)
   if(!length(pch)) pch <- rep(NA, nc)
   
@@ -868,23 +795,13 @@ putKey <- function(z, labels, type=NULL,
                                    ifelse(pp & lp, 'b',
                                           ifelse(pp, 'p', 'l')))
   
-  pch <- ifelse(is.na(pch) & type!='p' & type!='b',
-                if(.R.) NA else 0,
-                pch)
+  pch <- ifelse(is.na(pch) & type!='p' & type!='b', NA, pch)
   
-  lty <- ifelse(is.na(lty) & type=='p',
-                if(.R.) NA else 1,
-                lty)
+  lty <- ifelse(is.na(lty) & type=='p', NA, lty)
   
   lwd <- ifelse(is.na(lwd) & type=='p', 1, lwd)
   cex <- ifelse(is.na(cex) & type!='p' & type!='b', 1, cex)
 
-  if(!.R. && any(is.na(pch)))
-    stop("pch can not be NA for type='p' or 'b'")
-  
-  if(!.R. && any(is.na(lty)))
-    stop("lty can not be NA for type='l' or 'b'")
-  
   if(any(is.na(lwd)))
     stop("lwd can not be NA for type='l' or 'b'")
   
@@ -892,71 +809,60 @@ putKey <- function(z, labels, type=NULL,
     stop("cex can not be NA for type='p' or 'b'")
   
   m <- list()
-  m[[1]] <- as.name(if(grid) 'draw.key'
-  else if(.R.) 'rlegend' else 'key')
+  m[[1]] <- as.name(if(grid) 'draw.key' else 'rlegend')
   
-  if(!grid)
-    {
-      m$x <- z[[1]]; m$y <- z[[2]]
-    }
+  if(!grid) {
+    m$x <- z[[1]]; m$y <- z[[2]]
+  }
 
-  if(.R.)
-    {
-      if(grid)
-        {
-          w <- list(text=list(labels, col=col))
-          if(!(all(is.na(lty)) & all(is.na(lwd))))
-            {
-              lns <- list()
-              if(!all(is.na(lty)))
-                lns$lty <- lty
-        
-              if(!all(is.na(lwd)))
-                lns$lwd <- lwd
-        
-              lns$col <- col
-              w$lines <- lns
-            }
+  if(grid) {
+    w <- list(text=list(labels, col=col))
+    if(!(all(is.na(lty)) & all(is.na(lwd)))) {
+      lns <- list()
+      if(!all(is.na(lty))) lns$lty <- lty
       
-          if(!all(is.na(pch)))
-            w$points <- list(pch=pch, col=col)
+      if(!all(is.na(lwd))) lns$lwd <- lwd
       
-          m$key <- c(w, key.opts)
-          m$draw <- plot
-          if(plot)
-            m$vp <- viewport(x=unit(z[[1]], 'native'),
-                             y=unit(z[[2]], 'native'))
-      
-          z <- eval(as.call(m))
-          size <-
-            if(plot) c(NA,NA)
-        else 
-          c(convertUnit(grobWidth(z), 'native', 'x', 'location', 'x',
-                        'dimension', valueOnly=TRUE)[1],
-            convertUnit(grobHeight(z), 'native', 'y', 'location', 'y',
-                        'dimension', valueOnly=TRUE)[1])
-          
-          return(invisible(size))
-        }
-      else
-        {
-          m$legend <- labels
-          m$xjust <- m$yjust <- .5
-          m$plot <- plot
-          m$col <- col
-          m$cex <- cex
-          if(!all(is.na(lty))) m$lty <- lty
-          
-          if(!all(is.na(lwd))) m$lwd <- lwd
-      
-          if(!all(is.na(pch))) m$pch <- pch
-      
-          if(length(key.opts)) m[names(key.opts)] <- key.opts
-      
-          w <- eval(as.call(m))$rect
-          return(invisible(c(w$w[1], w$h[1])))
-        }
+      lns$col <- col
+      w$lines <- lns
     }
+    
+    if(!all(is.na(pch))) w$points <- list(pch=pch, col=col)
+    
+    m$key <- c(w, key.opts)
+    m$draw <- plot
+    if(plot)
+      m$vp <- viewport(x=unit(z[[1]], 'native'),
+                       y=unit(z[[2]], 'native'))
+      
+    z <- eval(as.call(m))
+    size <-
+      if(plot) c(NA,NA)
+      else 
+        c(convertUnit(grobWidth(z), 'native', 'x', 'location', 'x',
+                      'dimension', valueOnly=TRUE)[1],
+          convertUnit(grobHeight(z), 'native', 'y', 'location', 'y',
+                      'dimension', valueOnly=TRUE)[1])
+    
+    return(invisible(size))
+  }
+  else {
+    m$legend <- labels
+    m$xjust <- m$yjust <- .5
+    m$plot <- plot
+    m$col <- col
+    m$cex <- cex
+    if(!all(is.na(lty))) m$lty <- lty
+    
+    if(!all(is.na(lwd))) m$lwd <- lwd
+    
+    if(!all(is.na(pch))) m$pch <- pch
+    
+    if(length(key.opts)) m[names(key.opts)] <- key.opts
+    
+    w <- eval(as.call(m))$rect
+    return(invisible(c(w$w[1], w$h[1])))
+  }
   
   m$transparent <- transparent
   m$corner <- c(.5,.5)
@@ -998,8 +904,7 @@ putKeyEmpty <- function(x, y, labels, type=NULL,
   pr <- parGrid(grid)
   uin <- pr$uin
 
-  if(.R.)
-    uin <- 1  ## already in x,y units
+  uin <- 1  ## already in x,y units
   
   z <- putKey(list(0, 0), labels, type, pch, lty, lwd, cex, col,
               transparent=transparent, plot=FALSE,
@@ -1043,11 +948,6 @@ largest.empty <- function(x, y,
                           pl=FALSE, grid=FALSE)
 {
   method <- match.arg(method)
-  if(!.R.) {
-    if(missing(method)) method <- 'area'
-    if(method %nin% c('area', 'maxdim'))
-      stop('method not implemented for S-Plus')
-  }
   pr <- parGrid(grid)
   isna <- is.na(x + y)
   if(any(isna)) {
@@ -1068,15 +968,11 @@ largest.empty <- function(x, y,
     storage.mode(width) <- storage.mode(height) <- 'double' }
 
   if(method %in% c('area','maxdim')) {
-    a <- if(.R.)
+    a <- 
       .Fortran('largrec', x, y, n,
                xlim, ylim, 
                width, height, numbins, itype,
                rx=double(2), ry=double(2), PACKAGE="Hmisc")
-    else .Fortran('largrec', x, y, as.integer(length(x)), 
-                  xlim, ylim, 
-                  width, height, as.integer(numbins), as.integer(itype),
-                  rx=double(2), ry=double(2))
     x <- a$rx
     if(any(x > 1e29))
       {
@@ -1224,23 +1120,19 @@ drawPlot <- function(..., xlim=c(0,1), ylim=c(0,1), xlab='', ylab='',
       if(!isfun)
         type <- match.arg(type)
     
-      if(!isfun && !length(n) && type=='linear')
-        n <- 2
+      if(!isfun && !length(n) && type=='linear') n <- 2
     
-      if(!isfun && type=='gauss')
-        n <- 3
+      if(!isfun && type=='gauss') n <- 3
     
       xlim <- par('usr')[1:2]
       redraw <- TRUE
     
-      if(isfun)
-        {
-          x <- seq(xlim[1], xlim[2], length=evaluation)
-          pts <- list(x=as.single(x), y=as.single(type(x)))
-          lines(pts, lty=lty, lwd=lwd)
-        }
-      else repeat
-      {
+      if(isfun) {
+        x <- seq(xlim[1], xlim[2], length=evaluation)
+        pts <- list(x=as.single(x), y=as.single(type(x)))
+        lines(pts, lty=lty, lwd=lwd)
+      }
+      else repeat {
         cat('\nClick mouse for each point',
             if(label!='')
             paste(' for group ',label),
@@ -1257,36 +1149,32 @@ drawPlot <- function(..., xlim=c(0,1), ylim=c(0,1), xlab='', ylab='',
         
         n <- length(pts$x)
         if(n < 2) stop('must click at least 2 points')
-      
+        
         if(n==2) type <- 'linear'
-
-      if(type=='pol')
-        {
-          x <- matrix(NA, nrow=n, ncol=degree)
-          for(i in 1:degree) x[,i] <- pts$x^i
-          f <- lm.fit.qr.bare(x, pts$y)
-          x <- matrix(NA, nrow=evaluation, ncol=degree)
-          x[,1] <- seq(min(pts$x),max(pts$x), length=evaluation)
-          if(degree > 1)
-            for(i in 1:degree)
-              x[,i] <- x[,1]^i
-          
-          cof <- f$coefficients
-          y <- cof[1] + x %*% cof[-1]
-          pts <- list(x=as.single(x[,1]), y=as.single(y))
-          if(redraw)
-            lines(pts, lty=lty, lwd=lwd)
-        }
-
-      if(type=='bezier')
-        {
+        
+      if(type=='pol') {
+        x <- matrix(NA, nrow=n, ncol=degree)
+        for(i in 1:degree) x[,i] <- pts$x^i
+        f <- lm.fit.qr.bare(x, pts$y)
+        x <- matrix(NA, nrow=evaluation, ncol=degree)
+        x[,1] <- seq(min(pts$x),max(pts$x), length=evaluation)
+        if(degree > 1)
+          for(i in 1:degree)
+            x[,i] <- x[,1]^i
+        
+        cof <- f$coefficients
+        y <- cof[1] + x %*% cof[-1]
+        pts <- list(x=as.single(x[,1]), y=as.single(y))
+        if(redraw) lines(pts, lty=lty, lwd=lwd)
+      }
+        
+        if(type=='bezier') {
           pts <- bezier(pts, xlim=range(pts$x), evaluation=evaluation)
           if(redraw)
             lines(pts, lty=lty, lwd=lwd)
         }
-      
-      if(type=='gauss')
-        {
+        
+        if(type=='gauss') {
           mu <- pts$x[2]
           delta <- diff(pts$x[-2])/2
           htavg <- sum(pts$y[-2])/2
@@ -1325,17 +1213,13 @@ drawPlot <- function(..., xlim=c(0,1), ylim=c(0,1), xlab='', ylab='',
   environment(Points)$pch.to.use <- c(1,2,3,4,16,17,5,6,15,18,19)
 
   ticks <- match.arg(ticks)
-  if(missing(ticks))
-    {
-      if(!missing(xlim))
-        ticks <- 'x'
+  if(missing(ticks)) {
+    if(!missing(xlim)) ticks <- 'x'
     
-      if(!missing(ylim))
-        ticks <- 'y'
+    if(!missing(ylim)) ticks <- 'y'
     
-      if(!missing(xlim) && !missing(ylim))
-        ticks <- 'xy'
-    }
+      if(!missing(xlim) && !missing(ylim)) ticks <- 'xy'
+  }
   
   plot(xlim, ylim, xlim=xlim, ylim=ylim, xlab=xlab, ylab=ylab,
        type='n', axes=ticks=='xy')
@@ -1361,75 +1245,65 @@ drawPlot <- function(..., xlim=c(0,1), ylim=c(0,1), xlab='', ylab='',
   lty <- lwd <- pch <- cex <- rep(NA, m)
   curves <- vector('list', m)
   i <- 0
-  for(j in 1:m)
-    {
-      w <- W[[j]]
-      if(attr(w,'class')=='Abline')
-        next
+  for(j in 1:m) {
+    w <- W[[j]]
+    if(attr(w,'class')=='Abline')
+      next
     
-      i <- i + 1
-      isfun <- is.function(w$type)
-      curves[[i]] <-
-        if(!key || isfun)
-          w$points
-        else switch(w$type,
-                    step = approx(w$points,
-                      xout=seq(min(w$points$x),max(w$points$x),length=50),
-                      method='constant', f=0),
-                    linear = approx(w$points,
-                      xout=seq(min(w$points$x),max(w$points$x),length=50)),
-                    w$points)
-      
-      label[i] <- w$label
-      type[i] <-
-        if(isfun)
-          'l'
-        else switch(w$type,
-                    p='p',
-                    r='r',
-                    step='s',
-                    'l')
-      
-      if(type[i]=='p')
-        {
-          pch[i] <- w$pch
-          cex[i] <- w$cex
-        }
-      else if(type[i] != 'r')
-        {
-          lty[i] <- w$lty
-          lwd[i] <- w$lwd
-        }
+    i <- i + 1
+    isfun <- is.function(w$type)
+    curves[[i]] <- if(!key || isfun) w$points
+    else switch(w$type,
+                step = approx(w$points,
+                  xout=seq(min(w$points$x),max(w$points$x),length=50),
+                  method='constant', f=0),
+                linear = approx(w$points,
+                  xout=seq(min(w$points$x),max(w$points$x),length=50)),
+                w$points)
+    
+    label[i] <- w$label
+    type[i] <- if(isfun) 'l'
+    else switch(w$type,
+                p='p',
+                r='r',
+                step='s',
+                'l')
+    
+    if(type[i]=='p') {
+      pch[i] <- w$pch
+      cex[i] <- w$cex
     }
+    else if(type[i] != 'r') {
+      lty[i] <- w$lty
+      lwd[i] <- w$lwd
+    }
+  }
   
-  if(i < m)
-    {
-      curves <- curves[1:i]
-      label  <- label[1:i]
-      type   <- type[1:i]
-      lty    <- lty[1:i]
-      lwd    <- lwd[1:i]
-      pch    <- pch[1:i]
-      cex    <- cex[1:i]
-    }
+  if(i < m) {
+    curves <- curves[1:i]
+    label  <- label[1:i]
+    type   <- type[1:i]
+    lty    <- lty[1:i]
+    lwd    <- lwd[1:i]
+    pch    <- pch[1:i]
+    cex    <- cex[1:i]
+  }
   
   keyloc <- NULL
-  j <- type!='r'
-  if(any(j))
-    {
-      if(!key)
-        labcurve(curves[j], labels=label[j], type=type[j],
-                 lty=lty[j], lwd=lwd[j], opts=opts)
-      else
-        {
-          x <- unlist(lapply(curves, function(z)z$x))
-          y <- unlist(lapply(curves, function(z)z$y))
-          keyloc <- putKeyEmpty(x, y, labels=label[j], type=type[j],
-                                pch=pch[j], lty=lty[j],
-                                lwd=lwd[j], cex=cex[j])
-        }
+  j <- type != 'r'
+  if(any(j)) {
+    if(!key)
+      labcurve(curves[j], labels=label[j], type=type[j],
+               lty=lty[j], lwd=lwd[j], opts=opts)
+    else {
+      x <- unlist(lapply(curves, function(z)z$x))
+      y <- unlist(lapply(curves, function(z)z$y))
+      keyloc <- putKeyEmpty(x, y, labels=label[j], type=type[j],
+                            pch=pch[j], lty=lty[j],
+                            lwd=lwd[j], cex=cex[j])
     }
-
+  }
+  
   structure(list(W, xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim,
                  ticks=ticks, key=key, keyloc=keyloc, opts=opts),
             class='drawPlot')
@@ -1438,11 +1312,10 @@ drawPlot <- function(..., xlim=c(0,1), ylim=c(0,1), xlab='', ylab='',
 
 bezier <- function(x, y, xlim, evaluation=100)
 {
-  if(missing(y))
-    {
-      y <- x[[2]]
-      x <- x[[1]]
-    }
+  if(missing(y)) {
+    y <- x[[2]]
+    x <- x[[1]]
+  }
   
   n <- length(x)
   X <- Y <- single(evaluation)
@@ -1451,21 +1324,19 @@ bezier <- function(x, y, xlim, evaluation=100)
   X[evaluation] <- x[n]
   Y[1] <- y[1];
   Y[evaluation] <- y[n]
-  for(i in 2:(evaluation-1))
-    {
-      z <- Z[i]
-      xz <- yz <- 0
-      const <- (1 - z)^(n-1)
-      for(j in 0:(n-1)) {
-        xz <- xz + const*x[j+1]
-        yz <- yz + const*y[j+1]
-        const <- const* (n-1-j)/(j+1) * z/(1-z)
-        if(is.na(const))
-          prn(c(i,j,z))
-      }
-    
-      X[i] <- xz; Y[i] <- yz
+  for(i in 2:(evaluation-1)) {
+    z <- Z[i]
+    xz <- yz <- 0
+    const <- (1 - z)^(n-1)
+    for(j in 0:(n-1)) {
+      xz <- xz + const*x[j+1]
+      yz <- yz + const*y[j+1]
+      const <- const* (n-1-j)/(j+1) * z/(1-z)
+      if(is.na(const)) prn(c(i,j,z))
     }
+    
+    X[i] <- xz; Y[i] <- yz
+  }
   
   list(x=as.single(X), y=as.single(Y))
 }
@@ -1474,16 +1345,13 @@ bezier <- function(x, y, xlim, evaluation=100)
 plot.drawPlot <- function(x, xlab, ylab, ticks,
                           key=x$key, keyloc=x$keyloc, ...)
 {
-  if(missing(xlab))
-    xlab <- x$xlab
+  if(missing(xlab)) xlab <- x$xlab
   
-  if(missing(ylab))
-    ylab <- x$ylab
+  if(missing(ylab)) ylab <- x$ylab
   
   xlim <- x$xlim
   ylim <- x$ylim
-  if(missing(ticks))
-    ticks <- x$ticks
+  if(missing(ticks)) ticks <- x$ticks
   
   plot(xlim, ylim, xlim=xlim, ylim=ylim, xlab=xlab, ylab=ylab,
        type='n', axes=ticks=='xy')
@@ -1524,10 +1392,12 @@ plot.drawPlot <- function(x, xlab, ylab, ticks,
         w$points
       else switch(w$type,
                   step = approx(w$points,
-                                xout=seq(min(w$points$x),max(w$points$x),length=50),
+                                xout=seq(min(w$points$x),max(w$points$x),
+                                  length=50),
                                 method='constant', f=0),
                   linear = approx(w$points,
-                                  xout=seq(min(w$points$x),max(w$points$x),length=50)),
+                                  xout=seq(min(w$points$x),max(w$points$x),
+                                    length=50)),
                   w$points)
     
     label[i] <- w$label
@@ -1549,11 +1419,7 @@ plot.drawPlot <- function(x, xlab, ylab, ticks,
                     none = )
            },
            Curve = {
-             type[i] <-
-               if(w$type=='step')
-                 's'
-               else
-                 'l'
+             type[i] <- if(w$type=='step') 's' else 'l'
              
              lty[i] <- w$lty
              lwd[i] <- w$lwd
@@ -1561,32 +1427,30 @@ plot.drawPlot <- function(x, xlab, ylab, ticks,
            })
   }
 
-  if(i < m)
-    {
-      curves <- curves[1:i]
-      label  <- label[1:i]
-      type   <- type[1:i]
-      pch    <- pch[1:i]
-      lty    <- lty[1:i]
-      lwd    <- lwd[1:i]
-      cex    <- cex[1:i]
-    }
-    
+  if(i < m) {
+    curves <- curves[1:i]
+    label  <- label[1:i]
+    type   <- type[1:i]
+    pch    <- pch[1:i]
+    lty    <- lty[1:i]
+    lwd    <- lwd[1:i]
+    cex    <- cex[1:i]
+  }
+  
   if(key && !length(keyloc))
     stop('you may not specify key=T unless key=T was specified to drawPlot or keyloc is specified to plot')
 
-  if(any(label!=''))
-    {
-      j <- type!='r'
-      if(any(j)) {
-        if(key) putKey(keyloc, labels=label[j],
-                       type=type[j], pch=pch[j],
-                       lty=lty[j], lwd=lwd[j], cex=cex[j])
-        else
-          labcurve(curves[j], type=type[j],
-                   lty=lty[j], lwd=lwd[j], labels=label[j], opts=x$opts)
-      }
+  if(any(label!='')) {
+    j <- type!='r'
+    if(any(j)) {
+      if(key) putKey(keyloc, labels=label[j],
+                     type=type[j], pch=pch[j],
+                     lty=lty[j], lwd=lwd[j], cex=cex[j])
+      else
+        labcurve(curves[j], type=type[j],
+                 lty=lty[j], lwd=lwd[j], labels=label[j], opts=x$opts)
     }
+  }
   
   invisible()
 }

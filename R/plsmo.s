@@ -5,7 +5,7 @@ plsmo <- function(x,y,method=c("lowess","supsmu","raw"),
                   bass=0, f=2/3, trim, fun, group=rep(1,length(x)),
                   prefix, xlim, ylim, 
                   label.curves=TRUE, datadensity=FALSE, lines.=TRUE,
-                  subset=TRUE, grid=FALSE, ...)
+                  subset=TRUE, grid=FALSE, evaluate=NULL, ...)
 {
   gfun <- ordGridFun(grid)
   nam <- as.character(sys.call())[2:3]
@@ -40,15 +40,18 @@ plsmo <- function(x,y,method=c("lowess","supsmu","raw"),
                 raw=approx(x[s],y[s],xout=sort(unique(x[s]))))
     
     if(missing(trim))
-      trim <-
-        if(sum(s)>200)
-          10/sum(s)
-        else 0
+      trim <- if(sum(s) > 200) 10 / sum(s) else 0
     
-    if(trim>0 && trim<1) {
-      xq <- quantile(x[s],c(trim,1-trim))
-      s <- z$x>=xq[1] & z$x<=xq[2]
-      z <- list(x=z$x[s],y=z$y[s])
+    if(trim > 0 && trim < 1) {
+      xq <- quantile(x[s], c(trim, 1 - trim))
+      s <- z$x >= xq[1] & z$x <= xq[2]
+      z <- list(x=z$x[s], y=z$y[s])
+    }
+
+    if(length(evaluate)) {
+      rx <- range(z$x)
+      xseq <- seq(rx[1], rx[2], length=evaluate)
+      z <- approx(z, xout=xseq)
     }
     
     if(!missing(fun)) {

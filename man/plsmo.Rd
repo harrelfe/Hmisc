@@ -46,7 +46,7 @@ plsmo(x, y, method=c("lowess","supsmu","raw"), xlab, ylab,
       iter=if(length(unique(y))>2) 3 else 0, bass=0, f=2/3, trim, 
       fun, group, prefix, xlim, ylim, 
       label.curves=TRUE, datadensity=FALSE, lines.=TRUE, subset=TRUE,
-      grid=FALSE, \dots)
+      grid=FALSE, evaluate=NULL, \dots)
 
 
 #To use panel function:
@@ -141,7 +141,13 @@ a logical or integer vector specifying a subset to use for processing,
 with respect too all variables being analyzed
 }
 \item{grid}{
-  set to \code{TRUE} if the \R \code{grid} package drew the current plot}
+  set to \code{TRUE} if the \R \code{grid} package drew the current	plot}
+\item{evaluate}{
+	number of points to keep from smoother.  If specified, an
+equally-spaced grid of \code{evaluate} \code{x} values will be obtained from the
+smoother using linear interpolation.  This will keep from plotting an
+enormous number of points if the dataset contains a very large number
+of unique \code{x} values.}
 \item{\dots}{
   optional arguments that are passed to \code{scat1d},
   or optional parameters to pass to \code{plsmo} from

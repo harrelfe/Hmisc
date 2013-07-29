@@ -1,5 +1,6 @@
 \name{panel.bpplot}
 \alias{panel.bpplot}
+\alias{bpplotM}
 \alias{bpplt}
 \title{
 Box-Percentile Panel Function for Trellis
@@ -11,7 +12,8 @@ found that the "outer values" are difficult to explain to
 non-statisticians and many feel that the notion of "outliers" is too
 dependent on (false) expectations that data distributions should be Gaussian.
 
-\code{panel.bpplot} is a \code{panel} function for use with \code{trellis}, especially for
+\code{panel.bpplot} is a \code{panel} function for use with
+\code{trellis}, especially for 
 \code{bwplot}.  It draws box plots (without the whiskers) with any number
 of user-specified "corners" (corresponding to different quantiles),
 but it also draws box-percentile plots similar to those drawn by
@@ -40,10 +42,16 @@ but when used with no arguments has a general purpose: to draw an
 annotated example box-percentile plot with the default quantiles used
 and with the mean drawn with a solid dot.  This schematic plot is
 rendered nicely in postscript with an image height of 3.5 inches.
+
+\code{bpplotM} uses the \code{lattice} \code{bwplot} function to depict
+multiple numeric continuous variables with varying scales in a single
+\code{lattice} graph, after reshaping the dataset into a tall and thin
+format.
 }
 \usage{
 panel.bpplot(x, y, box.ratio=1, means=TRUE, qref=c(.5,.25,.75),
              probs=c(.05,.125,.25,.375), nout=0,
+             shown=TRUE, cex.n=.7,
              datadensity=FALSE, scat1d.opts=NULL,
              font=box.dot$font, pch=box.dot$pch, 
              cex =box.dot$cex,  col=box.dot$col, \dots)
@@ -54,6 +62,9 @@ bpplt(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
       qref=c(.5,.25,.75), qomit=c(.025,.975),
       pch=16, cex.labels=par('cex'), cex.points=if(prototype)1 else 0.5,
       grid=FALSE)
+
+bpplotM(vars, group=NULL, data, qlim=0.01, shown=TRUE,
+        vnames=c('labels', 'names'), cex.n=.7)
 }
 \arguments{
 \item{x}{
@@ -89,6 +100,9 @@ show all values less than the \code{nout} quantile or greater than the
 only the first \code{n/2} observations are shown on either side of the
 median, where \code{n} is the total number of observations. 
 }
+\item{shown}{set to \code{FALSE} to suppress number of non-\code{NA}
+	observations next to each box}
+\item{cex.n}{character size for \code{shown}}
 \item{datadensity}{
 set to \code{TRUE} to invoke \code{scat1d} to draw a data density
 (one-dimensional scatter diagram or rug plot) inside each box plot.
@@ -102,6 +116,17 @@ a list containing named arguments (without abbreviations) to pass to
 \item{stats,xlim,xlab,qomit,cex.labels,cex.points,grid}{
   undocumented arguments to \code{bpplt}
 }
+\item{vars}{a character vector of names of variables to plot with
+  \code{bpplotM}}
+\item{group}{a single character string specifying the name in
+  \code{data} of a \code{y}-axis grouping variable, if any}
+\item{data}{a data frame containing at least the \code{vars} variables}
+\item{qlim}{the outer quantiles to use for scaling each panel in
+  \code{bpplotM}}
+\item{vnames}{default is to use variable \code{label} attributes when
+        they exist, or use variable names otherwise.  Specify
+        \code{vnames='names'} to always use variable names for panel
+        labels in \code{bpplotM}}
 }
 \author{
 Frank Harrell
@@ -178,9 +203,15 @@ bwplot(~x , panel=panel.bpplot, probs=seq(.00,.5,by=.001),
 # Draw a prototype showing how to interpret the plots
 bpplt()
 
-# make a local copy of bwplot that always uses panel.bpplot (S-Plus only)
-# bwplot$panel <- panel.bpplot
-# bwplot(g ~ x, nout=.05)
+# Example for bpplotM
+set.seed(1)
+n <- 800
+d <- data.frame(treatment=sample(c('a','b'), n, TRUE),
+                age=rnorm(n, 40, 10),
+                bp =rnorm(n, 120, 12),
+                wt =rnorm(n, 190, 30))
+label(d$bp) <- 'Systolic Blood Pressure'
+bpplotM(c('age', 'bp', 'wt'), group='treatment', data=d)
 }
 \keyword{nonparametric}
 \keyword{hplot}

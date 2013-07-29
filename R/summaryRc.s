@@ -3,15 +3,17 @@ summaryRc <-
            fun=function(x) x, na.rm=TRUE,
            ylab=NULL, ylim = NULL, nloc=NULL, datadensity=NULL,
            quant = c(0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95),
+           quantloc = c('top', 'bottom'), cex.quant=.6, srt.quant=0,
            trim=NULL, test=FALSE, vnames='labels',
            ...)
 {
-  call <- match.call()
+  call     <- match.call()
+  quantloc <- match.arg(quantloc)
   X <- match.call(expand.dots=FALSE)
   X$fun <- X$na.rm <- X$ylim <- X$ylab <- X$nloc <- X$datadensity <- X$quant <-
-    X$trim <- X$test <- X$vnames <- X$... <- NULL
-  if(missing(na.action))
-    X$na.action <- na.retain
+    X$quantloc <- X$cex.quant <- X$srt.quant <- X$trim <- X$test <-
+      X$vnames <- X$... <- NULL
+  if(missing(na.action)) X$na.action <- na.retain
   
   Terms <- if(missing(data)) terms(formula, 'stratify')
   else terms(formula, 'stratify', data=data)
@@ -83,16 +85,34 @@ summaryRc <-
       else {
         xs <- unlist(lapply(z, function(x)x$x))
         ys <- unlist(lapply(z, function(x)x$y))
-        w <- largest.empty(xs, ys, method='area')
+        w  <- largest.empty(xs, ys, method='area')
       }
       text(w, paste('n=', n, sep=''), cex=.75, font=3, adj=.5)
     }
     scat1d(x)
-    h    <- diff(yl) * .02
-    qu <- quantile(x, quant, na.rm=TRUE)
-    arrows(qu, yl[2] + h, qu, yl[2], col='blue', length=.05, xpd=NA)
+    # Compute user y-units per inch
+    u <- diff(yl) / par('fin')[2]
+    h    <- u * .2
+    if(length(quant)) {
+      qu <- quantile(x, quant, na.rm=TRUE)
+      names(qu) <- as.character(quant)
+      qu <- pooleq(qu)
+      yq <- if(quantloc == 'top') yl[2] else yl[1]
+      arrows(qu, yq + h, qu, yq, col='blue', length=.05, xpd=NA)
+      if(cex.quant > 0)
+        text(qu, yq + 1.6 * h, names(qu), adj=.5,
+             cex=cex.quant, srt=srt.quant, xpd=NA)
+    }
     ## text(xl[2], yl[2] + h/4, paste('n=', n, sep=''),
     ##      cex=.75, font=3, adj=c(1,0), xpd=NA)
+  }
+
+  ## Find all ties in quantiles and build combined labels
+  pooleq <- function(x) {
+    w <- tapply(names(x), x, paste, collapse=', ')
+    x <- as.numeric(names(w))
+    names(x) <- w
+    x
   }
 
   i <- 0

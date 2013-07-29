@@ -246,11 +246,11 @@ bpplotM <- function(vars, group=NULL, data, qlim=0.01, shown=TRUE,
   if(length(group)) {
     y <- w[[group]]
     bwplot(y ~ x | time, panel=panel.bpplot, scales=scales, data=w, xlab='',
-           shown=shown)
+           shown=shown, cex.n=cex.n)
   }
   else
     bwplot(~ x | time, panel=panel.bpplot, scales=scales, data=w, xlab='',
-           shown=shown)
+           shown=shown, cex.n=cex.n)
 }
 
     

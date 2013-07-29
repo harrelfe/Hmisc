@@ -51,7 +51,7 @@ format.
 \usage{
 panel.bpplot(x, y, box.ratio=1, means=TRUE, qref=c(.5,.25,.75),
              probs=c(.05,.125,.25,.375), nout=0,
-             shown=TRUE, cex.n=.7,
+             nloc=c('right', 'left', 'none'), cex.n=.7,
              datadensity=FALSE, scat1d.opts=NULL,
              font=box.dot$font, pch=box.dot$pch, 
              cex =box.dot$cex,  col=box.dot$col, \dots)
@@ -63,7 +63,7 @@ bpplt(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
       pch=16, cex.labels=par('cex'), cex.points=if(prototype)1 else 0.5,
       grid=FALSE)
 
-bpplotM(vars, group=NULL, data, qlim=0.01, shown=TRUE,
+bpplotM(vars, group=NULL, data, qlim=0.01, nloc=c('right','left','none'),
         vnames=c('labels', 'names'), cex.n=.7)
 }
 \arguments{
@@ -100,9 +100,9 @@ show all values less than the \code{nout} quantile or greater than the
 only the first \code{n/2} observations are shown on either side of the
 median, where \code{n} is the total number of observations. 
 }
-\item{shown}{set to \code{FALSE} to suppress number of non-\code{NA}
-	observations next to each box}
-\item{cex.n}{character size for \code{shown}}
+\item{nloc}{location to plot number of non-\code{NA}
+	observations next to each box.  Specify \code{nloc='none'} to suppress}
+\item{cex.n}{character size for \code{nloc}}
 \item{datadensity}{
 set to \code{TRUE} to invoke \code{scat1d} to draw a data density
 (one-dimensional scatter diagram or rug plot) inside each box plot.
@@ -211,6 +211,7 @@ d <- data.frame(treatment=sample(c('a','b'), n, TRUE),
                 bp =rnorm(n, 120, 12),
                 wt =rnorm(n, 190, 30))
 label(d$bp) <- 'Systolic Blood Pressure'
+units(d$bp) <- 'mmHg'
 bpplotM(c('age', 'bp', 'wt'), group='treatment', data=d)
 }
 \keyword{nonparametric}

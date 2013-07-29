@@ -1,13 +1,13 @@
 panel.bpplot <- function(x, y, box.ratio = 1, means=TRUE,
                          qref=c(.5, .25, .75),
                          probs= c(.05, .125, .25, .375), nout=0,
-                         shown= TRUE, cex.n=.7,
+                         nloc=c('right', 'left', 'none'), cex.n=.7,
                          datadensity=FALSE, scat1d.opts=NULL,
                          font = box.dot$font, pch = box.dot$pch, 
                          cex  = box.dot$cex,  col = box.dot$col, ...)
 {
   require(lattice)
-
+  nloc <- match.arg(nloc)
   grid <- TRUE
 
   if(grid) {
@@ -58,9 +58,13 @@ panel.bpplot <- function(x, y, box.ratio = 1, means=TRUE,
       do.call('points', c(mean.value, box.dot.par))
     }
     xlimits <- current.panel.limits()$xlim
-    if(shown) ltext(xlimits[2] - .01*diff(xlimits), Y,
-                    paste('n=', length(X), sep=''),
-                    adj=c(1, .5), cex=cex.n)
+    switch(nloc,
+           right= ltext(xlimits[2] - .01*diff(xlimits), Y,
+             paste('n=', length(X), sep=''),
+             adj=c(1, .5), cex=cex.n),
+           left= ltext(xlimits[1] + .01*diff(xlimits), Y,
+             paste('n-', length(X), sep=''),
+             adj=c(0, .5), cex=cex.n) )
 
     if(datadensity)
       do.call('scat1d',c(list(x=X, y=Y, grid=grid), scat1d.opts))
@@ -223,9 +227,11 @@ bpplt <- function(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
   }
 }
 
-bpplotM <- function(vars, group=NULL, data, qlim=0.01, shown=TRUE,
+bpplotM <- function(vars, group=NULL, data, qlim=0.01,
+                    nloc=c('right','left','none'),
                     vnames=c('labels', 'names'), cex.n=.7) {
   require(lattice)
+  nloc   <- match.arg(nloc)
   vnames <- match.arg(vnames)
   data <- data[, c(group, vars)]
   labels <- if(vnames == 'names') vars
@@ -238,19 +244,28 @@ bpplotM <- function(vars, group=NULL, data, qlim=0.01, shown=TRUE,
   if(any(!z))
     stop(paste('variable is not numeric or has <= 5 unique levels:',
                paste(names(z)[!z], collapse=', '), sep=''))
-  w <- reshape(data, direction='long', v.names='x', varying=vars, times=labels)
-  w$time <- factor(w$time, levels=labels)
+  w <- reshape(data, direction='long', v.names='x', varying=vars, times=vars)
+  w$time <- factor(w$time, levels=vars)
   lims <- lapply(data[, vars],
                  function(x) quantile(x, c(qlim, 1 - qlim), na.rm=TRUE))
   scales <-  list(x=list(relation='free', limits=lims))
+  nv <- length(vars)
+  lev <- NULL
+  for(i in 1:nv) {
+    un <- units(data[[vars[i]]])
+    l <- if(labels[i] == vars[i] && un == '') vars[i] else
+    labelPlotmath(labels[i], units(data[[vars[i]]]))
+    lev <- c(l, lev)
+  }
+  strip <- strip.custom(factor.levels=lev)
   if(length(group)) {
     y <- w[[group]]
     bwplot(y ~ x | time, panel=panel.bpplot, scales=scales, data=w, xlab='',
-           shown=shown, cex.n=cex.n)
+           nloc=nloc, cex.n=cex.n, strip=strip)
   }
   else
     bwplot(~ x | time, panel=panel.bpplot, scales=scales, data=w, xlab='',
-           shown=shown, cex.n=cex.n)
+           nloc=nloc, cex.n=cex.n, strip=strip)
 }
 
     

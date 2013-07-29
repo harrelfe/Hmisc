@@ -4,11 +4,12 @@ summaryRc <-
            ylab=NULL, ylim = NULL, nloc=NULL, datadensity=NULL,
            quant = c(0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95),
            quantloc = c('top', 'bottom'), cex.quant=.6, srt.quant=0,
-           trim=NULL, test=FALSE, vnames='labels',
+           trim=NULL, test=FALSE, vnames=c('labels','names'),
            ...)
 {
   call     <- match.call()
   quantloc <- match.arg(quantloc)
+  vnames   <- match.arg(vnames)
   X <- match.call(expand.dots=FALSE)
   X$fun <- X$na.rm <- X$ylim <- X$ylab <- X$nloc <- X$datadensity <- X$quant <-
     X$quantloc <- X$cex.quant <- X$srt.quant <- X$trim <- X$test <-
@@ -31,7 +32,7 @@ summaryRc <-
   strat <- attr(Terms, 'specials')$stratify
 
   getlab <- function(x, default) {
-    if(vnames == 'name') return(default)
+    if(vnames == 'names') return(default)
     lab <- attr(x, 'label')
     if(!length(lab) || lab=='') default else lab
   }

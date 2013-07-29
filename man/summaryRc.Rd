@@ -17,7 +17,7 @@ summaryRc(formula, data=NULL, subset=NULL,
           quant = c(0.05, 0.1, 0.25, 0.5, 0.75,
                     0.90, 0.95), quantloc=c('top','bottom'),
           cex.quant=.6, srt.quant=0,
-          trim, test = FALSE, \dots)
+          trim, test = FALSE, vnames = c('labels', 'names'), \dots)
 }
 \arguments{
   \item{formula}{
@@ -66,7 +66,7 @@ summaryRc(formula, data=NULL, subset=NULL,
 		bottom of each plot rather than the default}
 	\item{cex.quant}{character size for writing which quantiles are
 		represented.  Set to \code{0} to suppress quantile labels.}
-	\item{src.quant}{angle for text for quantile labels}
+	\item{srt.quant}{angle for text for quantile labels}
 	\item{trim}{The default is to plot from the 10th smallest to the 10th
 		largest \code{x} if the number of non-NAs exceeds 200, otherwise to
 		use the entire range of \code{x}.  Specify another quantile to use
@@ -78,7 +78,7 @@ summaryRc(formula, data=NULL, subset=NULL,
   \item{vnames}{
     By default, plots are usually labeled with variable labels
     (see the \code{label} and \code{sas.get} functions).  To use the shorter
-    variable names, specify \code{vnames="name"}.
+    variable names, specify \code{vnames="names"}.
   }
   \item{...}{arguments passed to \code{\link{plsmo}}}
 }

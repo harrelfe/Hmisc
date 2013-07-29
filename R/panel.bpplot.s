@@ -249,6 +249,7 @@ bpplotM <- function(vars, group=NULL, data, qlim=0.01,
     lab <- sapply(data, label)[vars]
     ifelse(lab == '', vars, lab)
   }
+  names(labels) <- vars
   g <- function(x) is.numeric(x) && length(unique(x)) > 5
   z <- sapply(data[, vars], g)
   if(any(!z))
@@ -261,11 +262,11 @@ bpplotM <- function(vars, group=NULL, data, qlim=0.01,
   scales <-  list(x=list(relation='free', limits=lims))
   nv <- length(vars)
   lev <- NULL
-  for(i in 1:nv) {
-    un <- units(data[[vars[i]]])
-    l <- if(labels[i] == vars[i] && un == '') vars[i] else
-    labelPlotmath(labels[i], units(data[[vars[i]]]))
-    lev <- c(l, lev)
+  for(v in levels(w$time)) {
+    un <- units(data[[v]])
+    l <- if(labels[v] == v && un == '') v else
+         labelPlotmath(labels[v], un)
+    lev <- c(lev, l)
   }
   strip <- strip.custom(factor.levels=lev)
   if(length(group)) {

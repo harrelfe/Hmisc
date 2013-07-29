@@ -117,7 +117,9 @@ a list containing named arguments (without abbreviations) to pass to
   undocumented arguments to \code{bpplt}
 }
 \item{vars}{a character vector of names of variables to plot with
-  \code{bpplotM}}
+  \code{bpplotM}.  \code{vars} may also be a formula.  If it has a left
+        hand side, that variable name is taken as the \code{group}
+        variable and the \code{group} argument is ignored.}
 \item{group}{a single character string specifying the name in
   \code{data} of a \code{y}-axis grouping variable, if any}
 \item{data}{a data frame containing at least the \code{vars} variables}
@@ -213,6 +215,9 @@ d <- data.frame(treatment=sample(c('a','b'), n, TRUE),
 label(d$bp) <- 'Systolic Blood Pressure'
 units(d$bp) <- 'mmHg'
 bpplotM(c('age', 'bp', 'wt'), group='treatment', data=d)
+# Can use Hmisc Cs function, e.g. Cs(age, bp, wt)
+bpplotM(treatment ~ age + bp + wt, data=d, nloc='left')
+# Without treatment: bpplotM(~ age + bp + wt, data=d)
 }
 \keyword{nonparametric}
 \keyword{hplot}

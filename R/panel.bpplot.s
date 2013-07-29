@@ -233,6 +233,16 @@ bpplotM <- function(vars, group=NULL, data, qlim=0.01,
   require(lattice)
   nloc   <- match.arg(nloc)
   vnames <- match.arg(vnames)
+  if(inherits(vars, 'formula')) {
+    v <- all.vars(vars)
+    resp <- attr(terms(vars), 'response')
+    if(resp == 1) {
+      group <- v[1]
+      vars  <- v[-1]
+    }
+    else
+      vars <- v
+  }
   data <- data[, c(group, vars)]
   labels <- if(vnames == 'names') vars
   else {

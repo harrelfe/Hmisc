@@ -4,7 +4,7 @@ panel.bpplot <- function(x, y, box.ratio = 1, means=TRUE,
                          nloc=c('right', 'left', 'none'), cex.n=.7,
                          datadensity=FALSE, scat1d.opts=NULL,
                          font = box.dot$font, pch = box.dot$pch, 
-                         cex  = box.dot$cex,  col = box.dot$col, ...)
+                         cex.means  = box.dot$cex,  col = box.dot$col, ...)
 {
   require(lattice)
   nloc <- match.arg(nloc)
@@ -27,7 +27,7 @@ panel.bpplot <- function(x, y, box.ratio = 1, means=TRUE,
 
   box.dot  <- trellis.par.get("box.dot")
   lineopts <- trellis.par.get("box.rectangle")
-  box.dot.par <- c(list(pch = pch, cex = cex, col = col, font = font), ...)
+  box.dot.par <- c(list(pch = pch, cex = cex.means, col = col, font = font), ...)
 
   m  <- length(probs)
   m2 <- length(probs2)
@@ -229,7 +229,7 @@ bpplt <- function(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
 
 bpplotM <- function(vars, group=NULL, data, qlim=0.01,
                     nloc=c('right','left','none'),
-                    vnames=c('labels', 'names'), cex.n=.7) {
+                    vnames=c('labels', 'names'), cex.n=.7, ...) {
   require(lattice)
   nloc   <- match.arg(nloc)
   vnames <- match.arg(vnames)
@@ -271,11 +271,11 @@ bpplotM <- function(vars, group=NULL, data, qlim=0.01,
   if(length(group)) {
     y <- w[[group]]
     bwplot(y ~ x | time, panel=panel.bpplot, scales=scales, data=w, xlab='',
-           nloc=nloc, cex.n=cex.n, strip=strip)
+           nloc=nloc, cex.n=cex.n, strip=strip, ...)
   }
   else
     bwplot(~ x | time, panel=panel.bpplot, scales=scales, data=w, xlab='',
-           nloc=nloc, cex.n=cex.n, strip=strip)
+           nloc=nloc, cex.n=cex.n, strip=strip, ...)
 }
 
     

@@ -54,7 +54,7 @@ panel.bpplot(x, y, box.ratio=1, means=TRUE, qref=c(.5,.25,.75),
              nloc=c('right', 'left', 'none'), cex.n=.7,
              datadensity=FALSE, scat1d.opts=NULL,
              font=box.dot$font, pch=box.dot$pch, 
-             cex =box.dot$cex,  col=box.dot$col, \dots)
+             cex.means =box.dot$cex,  col=box.dot$col, \dots)
 
 # E.g. bwplot(formula, panel=panel.bpplot, panel.bpplot.parameters)
 
@@ -64,7 +64,7 @@ bpplt(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
       grid=FALSE)
 
 bpplotM(vars, group=NULL, data, qlim=0.01, nloc=c('right','left','none'),
-        vnames=c('labels', 'names'), cex.n=.7)
+        vnames=c('labels', 'names'), cex.n=.7, \dots)
 }
 \arguments{
 \item{x}{
@@ -111,8 +111,9 @@ set to \code{TRUE} to invoke \code{scat1d} to draw a data density
 a list containing named arguments (without abbreviations) to pass to
 \code{scat1d} when \code{datadensity=TRUE} or \code{nout > 0}
 }
-\item{font,pch,cex,col}{see \code{\link[lattice]{panel.bwplot}}}
-\item{\dots}{arguments passed to \code{points}}
+\item{cex.means}{character size for dots representing means}
+\item{font,pch,col}{see \code{\link[lattice]{panel.bwplot}}}
+\item{\dots}{arguments passed to \code{points} or \code{panel.bpplot}}
 \item{stats,xlim,xlab,qomit,cex.labels,cex.points,grid}{
   undocumented arguments to \code{bpplt}
 }
@@ -218,6 +219,14 @@ bpplotM(c('age', 'bp', 'wt'), group='treatment', data=d)
 # Can use Hmisc Cs function, e.g. Cs(age, bp, wt)
 bpplotM(treatment ~ age + bp + wt, data=d, nloc='left')
 # Without treatment: bpplotM(~ age + bp + wt, data=d)
+
+\dontrun{
+# Example of finding all variables that appear to be continuous
+getHdata(support)
+s <- sapply(support, function(x) is.numeric(x) && length(unique(x)) > 5)
+bpplotM(names(support)[s], group='dzgroup', data=support,
+        par.strip.text=list(cex=.4), cex.means=.3, cex.n=.45)
+}
 }
 \keyword{nonparametric}
 \keyword{hplot}

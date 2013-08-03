@@ -100,9 +100,9 @@ labelLatex <- function(label, units=NULL, size='smaller[2]',
   lab <- attr(label, 'label')
   if(length(label) > 1 || length(lab)) {
     units <- units(label)
-    if(!length(lab)) return('')
+    if(default == '') default <- deparse(substitute(label))
+    if(!length(lab)) return(default)
     label <- lab
-    default <- deparse(substitute(label))
   }
   if(label == '') return(default)
   label <- latexTranslate(label)

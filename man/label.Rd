@@ -4,6 +4,7 @@
 \alias{label.default}
 \alias{label<-.default}
 \alias{labelPlotmath}
+\alias{labelLatex}
 \alias{[.labelled}
 \alias{print.labelled}
 \alias{Label}
@@ -41,7 +42,16 @@
   the \code{'label'} and \code{'units'} rather than a vector having those
   attributes.  When \code{plotmath} mode is used to construct labels, the
   \code{'label'} or \code{'units'} may contain math expressions but they
-  are typed verbatim if they contain percent signs, blanks, or underscores.
+  are typed verbatim if they contain percent signs, blanks, or
+  underscores.
+
+	\code{labelLatex} constructs suitable LaTeX labels from the
+	\code{label} and \code{units} arguments, optionally right-justifying
+	\code{units} if \code{hfill=TRUE}.  This is useful when making tables
+	when the variable in question is not a column heading.  If the first
+	argument is not a scalar character string but is instead a variable,
+	\code{label} and \code{units} values are extracted from its attributes
+	instead of from arguments to \code{labelLatex}.
 
   \code{Label} (actually \code{Label.data.frame}) is a function which generates
   S source code that makes the labels in all the variables in a data
@@ -89,6 +99,9 @@ label(x, ...) <- value
 
 labelPlotmath(label, units=NULL, plotmath=TRUE, grid=FALSE)
 
+labelLatex(label, units=NULL, size='smaller[2]',
+           hfill=FALSE, bold=FALSE, default='')
+
 \method{print}{labelled}(x, \dots)   ## or x - calls print.labelled
 
 Label(object, \dots)
@@ -113,8 +126,8 @@ combineLabels(\dots)
   \item{units}{
     set to \code{TRUE} to append the \code{'units'} attribute (if present)
     to the returned label.  The \code{'units'} are surrounded
-    by brackets.  For \code{labelPlotmath} is a character string
-    containing the units of measurement.
+    by brackets.  For \code{labelPlotmath} and \code{labelLatex} is a
+		character string containing the units of measurement.
   }
   \item{plot}{
     set to \code{TRUE} to return a label suitable for \R's \code{plotmath}
@@ -127,7 +140,8 @@ combineLabels(\dots)
   \item{default}{
     if \code{x} does not have a \code{'label'} attribute and
     \code{default} (a character string) is specified, the label will be
-    taken as \code{default}
+    taken as \code{default}.  For \code{labelLatex} the \code{default}
+		is the name of the first argument if it is a variable and not a label.
   }
   \item{grid}{
     Currently \R's \code{lattice} and \code{grid} functions do not support
@@ -142,6 +156,16 @@ combineLabels(\dots)
     for plotting using \R's \code{plotmath} facility.  If \R is not in
     effect, an ordinary character string is returned.
   }
+	\item{size}{LaTeX size for \code{units}.  Default is two sizes smaller
+		than \code{label}, which assumes that the LaTeX \code{relsize}
+		package is in use.}
+	\item{hfill}{set to \code{TRUE} to right-justify \code{units} in the
+		field.  This is useful when multiple labels are being put into rows
+		in a LaTeX \code{tabular} environment, and will cause a problem if
+		the label is used in an environment where \code{hfill} is not
+		appropriate.}
+	\item{bold}{set to \code{TRUE} to have \code{labelLatex} put the
+		\code{label} in bold face.}
   \item{value}{
     the label of the object, or "".
   }
@@ -194,6 +218,8 @@ x2[1:5]
 dframe <- data.frame(x1, x2)
 Label(dframe)
 
+labelLatex(x2, hfill=TRUE, bold=TRUE)
+labelLatex('Velocity', 'm/s')
 
 ##In these examples of llist, note that labels are printed after
 ##variable names, because of print.labelled

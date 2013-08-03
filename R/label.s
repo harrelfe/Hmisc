@@ -95,6 +95,30 @@ plotmathTranslate <- function(x)
   x
 }
 
+labelLatex <- function(label, units=NULL, size='smaller[2]',
+                       hfill=FALSE, bold=FALSE, default='') {
+  lab <- attr(label, 'label')
+  if(length(label) > 1 || length(lab)) {
+    units <- units(label)
+    if(!length(lab)) return('')
+    label <- lab
+    default <- deparse(substitute(label))
+  }
+  if(label == '') return(default)
+  label <- latexTranslate(label)
+  if(bold) label <- paste('{\\textbf ', label, '}', sep='')
+  if(length(units) && units != '' && units != ' ') {
+    units <- latexTranslate(units)
+    if(length(size) && size != '')
+      units <- paste('{\\', size, ' ', units, '}', sep='')
+    if(hfill) units <- paste('\\hfill', units)
+    else
+      units <- paste(' ', units, sep='')
+    label <- paste(label, units, sep='')
+  }
+  label
+}
+
 "label<-" <- function(x, ..., value) UseMethod("label<-")
 
 ##From Bill Dunlap, StatSci  15Mar95:

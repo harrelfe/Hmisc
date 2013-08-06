@@ -23,10 +23,10 @@ the margins to account for horizontal labels.
 dotchart3(x, labels = NULL, groups = NULL, gdata = NULL,
           cex = par("cex"), pch = 21, gpch = 21, bg = par("bg"),
           color = par("fg"), gcolor = par("fg"), lcolor = "gray",
-          xlim = range(x[is.finite(x)]), main = NULL, xlab = NULL,
-          ylab = NULL, auxdata = NULL, auxtitle = NULL,
+          xlim = range(c(x, gdata), na.rm=TRUE), main = NULL, xlab = NULL,
+          ylab = NULL, auxdata = NULL, auxtitle = NULL, auxgdata=NULL,
           cex.labels = cex, cex.group.labels = cex.labels * 1.25,
-          groupfont = 2, ...)
+          cex.auxdata=cex, groupfont = 2, ...)
 }
 \arguments{
   \item{x}{a numeric vector or matrix}
@@ -37,8 +37,12 @@ dotchart3(x, labels = NULL, groups = NULL, gdata = NULL,
 	in the same order as \code{x}.  May be numeric, character, or a
 	vector of expressions containing \code{\link{plotmath}} markup}
   \item{auxtitle}{a column heading for \code{auxdata}}
+  \item{auxgdata}{similar to \code{auxdata} but corresponding to the
+		\code{gdata} argument.  These usually represent overall sample sizes
+		for each group of lines.}
   \item{cex.labels}{\code{cex} for labels}
   \item{cex.group.labels}{\code{cex} for group labels}
+	\item{cex.auxdata}{\code{cex} for \code{auxdata}}
   \item{groupfont}{font number for group headings}
   \item{\dots}{other arguments passed to some of the graphics functions}
 }

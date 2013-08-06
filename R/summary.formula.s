@@ -1138,55 +1138,51 @@ dotchart2 <-
            leavepar=FALSE, axisat=NULL, axislabels=NULL,
            ...)
 {
-  if(!add)
-    {
-      plot.new()   ## needed for strwidth
-      par(new=TRUE)
-    }
+  if(!add) {
+    plot.new()   ## needed for strwidth
+    par(new=TRUE)
+  }
 
   ieaux <- if(missing(auxdata)) FALSE else is.expression(auxdata)
   
   mtextsrt <- function(..., srt=0) mtext(..., las=1)
 
   ndata <- length(data)
-  if(missing(labels))
-    {
-      if(!is.null(names(data)))
-        labels <- names(data)
-      else labels <- paste("#", seq(along = ndata))
-    }
-  else labels <- rep(as.character(labels), length = ndata)
-
-  if(missing(groups))
-    {
-      glabels <- NULL
-      gdata <- NULL
-    } else
-  {
-    if(!sort.)
-      {
-        ##assume data sorted in groups, but re-number groups
-        ##to be as if groups given in order 1,2,3,...
-        ug <- unique(as.character(groups))
-        groups <- factor(as.character(groups),levels=ug)
-      }
-
-    groups <- oldUnclass(groups)
-    glabels <- levels(groups)
-    gdata <- rep(gdata, length = length(glabels))	
-    ord <- order(groups, seq(along = groups))
-    groups <- groups[ord]
-    data <- data[ord]
-    labels <- labels[ord]
-    if(!missing(auxdata)) auxdata <- auxdata[ord]  #FEH
+  if(missing(labels)) {
+    if(!is.null(names(data)))
+      labels <- names(data)
+    else labels <- paste("#", seq(along = ndata))
   }
+  else
+    labels <- rep(as.character(labels), length = ndata)
 
-  alldat <- c(data, gdata)
-  if(!missing(auxdata))
-    {
-      auxdata <- c(auxdata, auxgdata)
-      if(!ieaux) auxdata <- format(auxdata)
+  if(missing(groups)) {
+    glabels <- NULL
+    gdata <- NULL
+  }
+  else {
+    if(!sort.) {
+      ##assume data sorted in groups, but re-number groups
+      ##to be as if groups given in order 1,2,3,...
+      ug <- unique(as.character(groups))
+      groups <- factor(as.character(groups),levels=ug)
     }
+    
+    groups  <- unclass(groups)
+    glabels <- levels(groups)
+    gdata   <- rep(gdata, length = length(glabels))	
+    ord     <- order(groups, seq(along = groups))
+    groups  <- groups[ord]
+    data    <- data[ord]
+    labels  <- labels[ord]
+    if(!missing(auxdata)) auxdata <- auxdata[ord]
+  }
+  
+  alldat <- c(data, gdata)
+  if(!missing(auxdata)) {
+    auxdata <- c(auxdata, auxgdata)
+    if(!ieaux) auxdata <- format(auxdata)
+  }
   
   alllab <- paste(c(labels, glabels),'')
   ## set up margins and user coordinates, draw box
@@ -1194,147 +1190,136 @@ dotchart2 <-
   tmai <- par("mai")
   oldplt <- par("plt")
   if(reset.par && !leavepar)
-    on.exit(par(mai = tmai, cex = tcex)) #, usr = tusr))
+    on.exit(par(mai = tmai, cex = tcex))
 
   par(cex = cex)
   mxlab <- .1+max(strwidth(labels, units='inches',cex=cex.labels),
                   if(length(glabels))
                   strwidth(glabels,units='inches',cex=cex.group.labels))*
                     width.factor
-  if(horizontal)
-    {
-      tmai2 <- tmai[3:4]
-      if(!missing(auxdata))
-        tmai2[2] <- .2+width.factor*
-          max(strwidth(if(ieaux) auxdata else format(auxdata),
-                       units='inches',cex=cex.labels))
-      
-      if(!leavepar) par(mai = c(tmai[1], mxlab, tmai2))
-      if(!add)
-        plot(alldat, seq(along = alldat), type = "n",
-             ylab = '', axes = FALSE, xlab = '', xlim=xlim, ...)
-      logax <- par("xaxt") == "l"
-    }
-  else
-    {
-      if(!leavepar) par(mai = c(mxlab, tmai[2:4]))
-      if(!add)
-        plot(seq(along = alldat), alldat, type = "n",
-             xlab = "", axes = FALSE, ylab = '', ...)
-      
-      logax <- par("yaxt") == "l"
-    }
-
-  tusr <- par("usr")
-  if(!add && logax)
-    {
-      if(horizontal)
-        abline(v = 10^tusr[1:2], h = tusr[3:4])
-      else abline(v = tusr[1:2], h = 10^tusr[3:4])
-    }
-  else if(!add) abline(v = tusr[1:2], h = tusr[3:4])
-
-  den <- ndata + 2 * length(glabels) + 1
-  if(horizontal)
-    {
-      if(!add && xaxis)
-        mgp.axis(1, axistitle=xlab, at=axisat, labels=axislabels)
-
-      delt <- ( - (tusr[4] - tusr[3]))/den
-      ypos <- seq(tusr[4], by = delt, length = ndata)
+  if(horizontal) {
+    tmai2 <- tmai[3:4]
+    if(!missing(auxdata))
+      tmai2[2] <- .2+width.factor*
+        max(strwidth(if(ieaux) auxdata else format(auxdata),
+                     units='inches',cex=cex.labels))
+    
+    if(!leavepar) par(mai = c(tmai[1], mxlab, tmai2))
+    if(!add)
+      plot(alldat, seq(along = alldat), type = "n",
+           ylab = '', axes = FALSE, xlab = '', xlim=xlim, ...)
+    logax <- par("xaxt") == "l"
   }
-  else
-    {
-      if(!add)
-        mgp.axis(2, axistitle=xlab, at=axisat, labels=axislabels)
-
-      delt <- (tusr[2] - tusr[1])/den
-      ypos <- seq(tusr[1], by = delt, length = ndata)
-    }
-
-  if(!missing(groups))
-    {
-      ypos1 <- ypos + 2 * delt *
-        (if(length(groups)>1) cumsum(c(1, diff(groups) > 0)) else 1)
-      diff2 <- c(3 * delt, diff(ypos1))
-      ypos2 <- ypos1[abs(diff2 - 3 * delt) < abs(0.001 * delt)] - 
-        delt
-      ypos <- c(ypos1, ypos2) - delt
-    }
-
+  else {
+    if(!leavepar) par(mai = c(mxlab, tmai[2:4]))
+    if(!add)
+      plot(seq(along = alldat), alldat, type = "n",
+           xlab = "", axes = FALSE, ylab = '', ...)
+    
+    logax <- par("yaxt") == "l"
+  }
+  
+  tusr <- par("usr")
+  if(!add && logax) {
+    if(horizontal)
+      abline(v = 10^tusr[1:2], h = tusr[3:4])
+    else abline(v = tusr[1:2], h = 10^tusr[3:4])
+  }
+  else if(!add) abline(v = tusr[1:2], h = tusr[3:4])
+  
+  den <- ndata + 2 * length(glabels) + 1
+  if(horizontal) {
+    if(!add && xaxis)
+      mgp.axis(1, axistitle=xlab, at=axisat, labels=axislabels)
+    
+    delt <- ( - (tusr[4] - tusr[3]))/den
+    ypos <- seq(tusr[4], by = delt, length = ndata)
+  }
+  else {
+    if(!add)
+      mgp.axis(2, axistitle=xlab, at=axisat, labels=axislabels)
+    
+    delt <- (tusr[2] - tusr[1])/den
+    ypos <- seq(tusr[1], by = delt, length = ndata)
+  }
+  
+  if(!missing(groups)) {
+    ypos1 <- ypos + 2 * delt *
+      (if(length(groups)>1) cumsum(c(1, diff(groups) > 0)) else 1)
+    diff2 <- c(3 * delt, diff(ypos1))
+    ypos2 <- ypos1[abs(diff2 - 3 * delt) < abs(0.001 * delt)] - 
+      delt
+    ypos <- c(ypos1, ypos2) - delt
+  }
+  
   ##put on labels and data
   ypos <- ypos + delt
   nongrp <- 1:ndata
-  if(horizontal)
-    {
-      xmin <- par('usr')[1]
-      if(!add && lines)
-        abline(h = ypos[nongrp], lty = lty, lwd=1, col=lcolor)
-
-      points(alldat, ypos, pch = pch, cex = dotsize * cex, font=dotfont, ...)
-      if(!add && !missing(auxdata))
-        {
-          faux <- if(ieaux) auxdata else format(auxdata)
-
-          upedge <- par('usr')[4]
-          outerText(faux, ypos[nongrp], cex=cex.labels)
-          if(!missing(auxtitle))
-            outerText(auxtitle,
-                      upedge+strheight(auxtitle,cex=cex.labels)/2,
-                      cex=cex.labels)
-        }
+  if(horizontal) {
+    xmin <- par('usr')[1]
+    if(!add && lines)
+      abline(h = ypos[nongrp], lty = lty, lwd=1, col=lcolor)
+    
+    points(alldat, ypos, pch = pch, cex = dotsize * cex, font=dotfont, ...)
+    if(!add && !missing(auxdata)) {
+      faux <- if(ieaux) auxdata else format(auxdata)
       
-      if(!add)
-        {
-          labng <- alllab[nongrp]
-          ## Bug in sending character strings to mtext or text containing
-          ## [ or ] - they don't right-justify in S+
-          bracket <- substring(labng,1,1)=='[' |
-          substring(labng,nchar(labng),nchar(labng))==']'
-          yposng <- ypos[nongrp]
-          s <- !bracket
-          if(!is.na(any(s)) && any(s))
-            mtextsrt(paste(labng[s],''), 2, 0, at=yposng[s],
-                     srt=0, adj=1, cex=cex.labels)
-
-          s <- bracket
-          if(!is.na(any(s)) && any(s))
-            text(rep(par('usr')[1],sum(s)),
-                 yposng[s], labng[s], adj=1,
-                 cex=cex.labels, srt=0,xpd=NA)
-          
-          if(!missing(groups))
-            mtextsrt(paste(alllab[ - nongrp],''), 2, 0, at = ypos[ - nongrp], 
-                     srt = 0, adj = 1, cex = cex.group.labels, font=groupfont)
-        }
+      upedge <- par('usr')[4]
+      outerText(faux, ypos[nongrp], cex=cex.labels)
+      if(!missing(auxtitle))
+        outerText(auxtitle,
+                  upedge+strheight(auxtitle,cex=cex.labels)/2,
+                  cex=cex.labels)
     }
-  else
-    {
-      if(!add && lines)
-        abline(v = ypos[nongrp], lty = lty, lwd=1, col=lcolor)
-
-      points(ypos, alldat, pch = pch, cex = dotsize * cex, font=dotfont, ...)
-      if(!add) mtextsrt(alllab[nongrp], 1, 0,
-                        at = ypos[nongrp], srt = 90, adj = 1,
-                        cex = cex.labels)
-      if(!add && !missing(groups))
-        mtextsrt(alllab[ - nongrp], 1, 0, at = ypos[ - nongrp], 
-                 srt = 90, adj = 1, cex = cex.group.labels, font=groupfont)
+    
+    if(!add) {
+      labng <- alllab[nongrp]
+      ## Bug in sending character strings to mtext or text containing
+      ## [ or ] - they don't right-justify in S+
+      bracket <- substring(labng,1,1)=='[' |
+        substring(labng,nchar(labng),nchar(labng))==']'
+      yposng <- ypos[nongrp]
+      s <- !bracket
+      if(!is.na(any(s)) && any(s))
+        mtextsrt(paste(labng[s],''), 2, 0, at=yposng[s],
+                 srt=0, adj=1, cex=cex.labels)
+      
+      s <- bracket
+      if(!is.na(any(s)) && any(s))
+        text(rep(par('usr')[1],sum(s)),
+             yposng[s], labng[s], adj=1,
+             cex=cex.labels, srt=0,xpd=NA)
+      
+      if(!missing(groups))
+        mtextsrt(paste(alllab[ - nongrp],''), 2, 0, at = ypos[ - nongrp], 
+                 srt = 0, adj = 1, cex = cex.group.labels, font=groupfont)
+    }
   }
-
+  else {
+    if(!add && lines)
+      abline(v = ypos[nongrp], lty = lty, lwd=1, col=lcolor)
+    
+    points(ypos, alldat, pch = pch, cex = dotsize * cex, font=dotfont, ...)
+    if(!add) mtextsrt(alllab[nongrp], 1, 0,
+                      at = ypos[nongrp], srt = 90, adj = 1,
+                      cex = cex.labels)
+    if(!add && !missing(groups))
+      mtextsrt(alllab[ - nongrp], 1, 0, at = ypos[ - nongrp], 
+               srt = 90, adj = 1, cex = cex.group.labels, font=groupfont)
+  }
+  
   plt <- par("plt")
   if(horizontal) {
     frac <- (oldplt[2] - oldplt[1])/(oldplt[2] - plt[1])
     umin <- tusr[2] - (tusr[2] - tusr[1]) * frac
     tusr <- c(umin, tusr[2:4])
   }
-  else
-    {
-      frac <- (oldplt[4] - oldplt[3])/(oldplt[4] - plt[3])
-      umin <- tusr[4] - (tusr[4] - tusr[3]) * frac
-      tusr <- c(tusr[1:2], umin, tusr[4])
-    }
-
+  else {
+    frac <- (oldplt[4] - oldplt[3])/(oldplt[4] - plt[3])
+    umin <- tusr[4] - (tusr[4] - tusr[3]) * frac
+    tusr <- c(tusr[1:2], umin, tusr[4])
+  }
+  
   invisible()
 }
 

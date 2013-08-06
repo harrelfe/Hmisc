@@ -25,7 +25,7 @@ dotchart3 <-
 
   plot.new()
   linch <- max(strwidth(labels, "inch"), na.rm = TRUE)
-  if (is.null(glabels)) {
+  if (!length(glabels)) {
     ginch <- 0
     goffset <- 0
   }
@@ -72,7 +72,7 @@ dotchart3 <-
     y      <- 1L:n + 2 * offset
     ylim <- range(0.5, y + 1.5)  # range(0, y + 2)
   }
-  auxdata <- c(auxdata, auxgdata)
+####  auxdata <- c(auxdata, auxgdata)
   
   plot.window(xlim = xlim, ylim = ylim, log = "")
   lheight <- par("csi")
@@ -92,10 +92,13 @@ dotchart3 <-
   }
   gpos <- if(length(groups)) 
     rev(cumsum(rev(tapply(groups, groups, length)) + 2) - 1)
-  if(length(auxdata)) outerText(auxdata, c(y, gpos), cex=cex.auxdata)
+  if(length(auxdata) + length(auxgdata) > 0)
+    outerText(c(auxdata, auxgdata), c(y, if(length(auxgdata)) gpos),
+              cex=cex.auxdata)
     
   for(i in 1:nc)
     points(x[,i], y, pch = pch[i], col = color, bg = bg)
+  
   if(length(groups)) {
     ginch <- max(strwidth(glabels, "inch", font=groupfont,
                           cex=cex.group.labels),
@@ -104,7 +107,7 @@ dotchart3 <-
     # was line=goffset
     mtext(glabels, side = 2, line = .2, at = gpos, adj = 1, # was adj=0
           col = gcolor, las = 2, cex = cex.group.labels, font=groupfont, ...)
-    if (!is.null(gdata)) {
+    if (length(gdata)) {
       abline(h = gpos, lty = "dotted")
       points(gdata, gpos, pch = gpch, col = gcolor, bg = bg, 
              ...)
@@ -116,31 +119,43 @@ dotchart3 <-
   invisible()
 }
 
-summaryD <- function(formula, data=NULL, fun=function(x) length(x),
-                     auxtitle='N', cex.auxdata=.7, xlab='N',
-                     gridevery=NULL,
+summaryD <- function(formula, data=NULL, fun=mean,
+                     groupsummary=TRUE, auxtitle='N',
+                     vals=FALSE, fmtvals=format,
+                     cex.auxdata=.7, xlab=v[1], gridevery=NULL,
                      sort=TRUE, ...) {
-  if(!length(data)) data <- parent.env()
-  v <- all.vars(formula)
-  m <- length(v) - 1
-  yn <- v[1]; xn <- v[-1]
-  s <- summarize(data[[yn]], data[xn], fun, stat.name='Y')
-  if(sort) s <- s[order(s$Y), ]
-  if(length(xn) == 2) {
-    s2 <- summarize(data[[yn]], data[xn[1]], fun, stat.name='Y')
-    dotchart3(s$Y, s[[xn[2]]], groups=s[[xn[1]]],
-                     auxdata=s$Y, auxtitle=auxtitle, cex.auxdata=cex.auxdata,
-                     gdata=s2$Y, auxgdata=s2$Y, xlab=xlab, ...)
-            }
+  if(!missing(fmtvals)) vals <- TRUE
+  if(!length(data)) data <- environment(formula)
+  else data <- list2env(data, parent=environment(formula))
+  v   <- all.vars(formula)
+  m   <- length(v) - 1
+  yn  <- v[1]; xn <- v[-1]
+  two <- length(xn) == 2
+  y   <-         get(yn,    envir=data)
+  x1  <-         get(xn[1], envir=data)
+  x2  <- if(two) get(xn[2], envir=data)
+  
+  s   <- summarize(y, if(two) llist(x1, x2) else llist(x1), fun)
+  if(sort) s <- s[order(s$y), ]
+  if(two) {
+    if(groupsummary) s2 <- summarize(y, llist(x1), fun)
+    dotchart3(s$y, s$x2, groups=s$x1,
+              auxdata=if(vals) fmtvals(s$y), auxtitle=if(vals) auxtitle,
+              cex.auxdata=cex.auxdata,
+              gdata   =if(groupsummary)         s2$y,
+              auxgdata=if(groupsummary && vals) fmtvals(s2$y),
+              xlab=xlab, ...)
+  }
   else
-    dotchart3(s$Y, s[[xn]], auxdata=s$Y, auxtitle=auxtitle,
+    dotchart3(s$y, s$x1, auxdata=if(vals) fmtvals(s$y),
+              auxtitle=if(vals) auxtitle,
               cex.auxdata=cex.auxdata, xlab=xlab, ...)
-
-    if(length(gridevery)) {
+  
+  if(length(gridevery)) {
     xmin <- par('usr')[1]
     xmin <- ceiling(xmin/gridevery)*gridevery
-    xmax <- if(length(xn) == 1) max(s$Y, na.rm=TRUE)
-    else max(c(s$Y, s2$Y), na.rm=TRUE)
+    xmax <- if(length(xn) == 1) max(s$y, na.rm=TRUE)
+    else max(c(s$y, s2$y), na.rm=TRUE)
     abline(v=seq(xmin, xmax, by=gridevery), col=gray(.95))
   }
 }

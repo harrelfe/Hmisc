@@ -1,5 +1,6 @@
 \name{dotchart3}
 \alias{dotchart3}
+\alias{summaryD}
 \title{Enhanced Version of dotchart Function}
 \description{
 This is an adaptation of the R dotchart function that sorts categories
@@ -18,6 +19,10 @@ put multiple points on a line (e.g., quartiles) and keeping track of
 \code{par()} parameters when \code{dotchart2} was called
 with \code{add=TRUE} was cumbersome.  All the dotchart functions change
 the margins to account for horizontal labels.
+
+\code{summaryD} creates aggregate data using \code{\link{summarize}} and
+calls \code{dotchart3} with suitable arguments to summarize data by
+major and minor categories.
 }
 \usage{
 dotchart3(x, labels = NULL, groups = NULL, gdata = NULL,
@@ -27,6 +32,12 @@ dotchart3(x, labels = NULL, groups = NULL, gdata = NULL,
           ylab = NULL, auxdata = NULL, auxtitle = NULL, auxgdata=NULL,
           cex.labels = cex, cex.group.labels = cex.labels * 1.25,
           cex.auxdata=cex, groupfont = 2, ...)
+
+summaryD(formula, data=NULL, fun=mean,
+         groupsummary=TRUE, auxtitle='N',
+         vals=FALSE, fmtvals=format,
+         cex.auxdata=.7, xlab=v[1],
+         gridevery=NULL, sort=TRUE, ...)
 }
 \arguments{
   \item{x}{a numeric vector or matrix}
@@ -44,11 +55,35 @@ dotchart3(x, labels = NULL, groups = NULL, gdata = NULL,
   \item{cex.group.labels}{\code{cex} for group labels}
 	\item{cex.auxdata}{\code{cex} for \code{auxdata}}
   \item{groupfont}{font number for group headings}
-  \item{\dots}{other arguments passed to some of the graphics functions}
+  \item{\dots}{other arguments passed to some of the graphics functions,
+    or to \code{dotchart3} from \code{summaryD}}
+	\item{formula}{a formula with one variable on the left hand side (the
+         variable to compute summary statistics on), and one or two
+         variables on the right hand side.  If there are two variables,
+         the first is taken as the major grouping variable.}
+  \item{data}{a data frame or list used to find the variables in
+    \code{formula}.  If omitted, the parent environment is used.}
+	\item{fun}{a summarization function creating a single number from a
+    vector.  Default is the mean.}
+	\item{groupsummary}{By default, when there are two right-hand
+         variables, \code{summarize(..., fun)} is called a second time
+         without the use of the second variable, to obtain marginal
+         summaries for the major grouping variable and display the
+         results as a dot (and optionally in the right margin).  Set
+         \code{groupsummary=FALSE} to suppress this information.}
+  \item{vals}{set to \code{FALSE} to not show data values (dot
+    locations) in the right margin}
+	\item{fmtvals}{an optional function to format values before putting
+         them in the right margin.  Default is the \code{format}
+         function.}
+	\item{gridevery}{specify a positive number to draw very faint vertical
+    grid lines every \code{gridevery} \code{x}-axis units}
+	\item{sort}{specify \code{sort=FALSE} to plot data in the original
+         order, from top to bottom on the dot chart}
 }
 \value{the function returns invisibly}
 \author{Frank Harrell}
-\seealso{\code{\link{dotchart}},\code{\link{dotchart2}}}
+\seealso{\code{\link{dotchart}},\code{\link{dotchart2}},\code{\link{summarize}}}
 \examples{
 set.seed(135)
 maj <- factor(c(rep('North',13),rep('South',13)))
@@ -60,5 +95,9 @@ dotchart3(cbind(y1,y2), g, groups=maj, auxdata=n, auxtitle='n',
           xlab='Y', pch=c(1,17))
 ## Compare with dotchart function (no superpositioning or auxdata allowed):
 ## dotchart(y1, g, groups=maj, xlab='Y')
+
+summaryD(y1 ~ maj + g, xlab='Mean')
+summaryD(y1 ~ maj + g, groupsummary=FALSE)
+summaryD(y1 ~ g, fmtvals=function(x) sprintf('\%4.2f', x), auxtitle='')
 }
 \keyword{hplot}

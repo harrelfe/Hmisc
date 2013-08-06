@@ -2271,14 +2271,13 @@ summarize <- function(X, by, FUN, ...,
                       type=c('variables','matrix'), subset=TRUE)
 {
   type <- match.arg(type)
-  if(missing(stat.name) && length(stat.name)>1)
-    stat.name <- 'X'
+  if(missing(stat.name) && length(stat.name) > 1) stat.name <- 'X'
 
   if(!is.list(by)) {
     nameby <- deparse(substitute(by))
     bylabel <- label(by)
     by <- list(by[subset])
-    names(by) <- if(length(nameby)==1) nameby
+    names(by) <- if(length(nameby) == 1) nameby
                  else 'by'
   } else {
     bylabel <- sapply(by, label)
@@ -2293,17 +2292,15 @@ summarize <- function(X, by, FUN, ...,
   typical.computation <- FUN(X, ...)
   nc <- length(typical.computation)
   xlabel <- deparse(substitute(X))
-  if(length(xlabel)!=1)
-    xlabel <- 'X'
+  if(length(xlabel) != 1) xlabel <- 'X'
   
-  if(length(xlab <- attr(X,'label')))
-    xlabel <- xlab
+  if(length(xlab <- attr(X,'label'))) xlabel <- xlab
 
   if(!missing(subset))
     X <- if(is.matrix(X)) X[subset,,drop=FALSE]
          else X[subset]
 
-  byc <- do.call('paste',c(by,sep='|'))
+  byc <- do.call('paste', c(by, sep='|'))
 
   ## split does not handle matrices
   ##  msplit <- function(x, group) {
@@ -2324,11 +2321,11 @@ summarize <- function(X, by, FUN, ...,
   ## lists in S+2000
   ##  }
 
-  r <- mApply(X, byc, FUN, ..., keepmatrix=nc>1)
+  r <- mApply(X, byc, FUN, ..., keepmatrix=nc > 1)
   rdimn <- dimnames(r)[[1]]
   ## someday can use unpaste defined in Misc.s
-  ans <- strsplit(if(nc==1) names(r) else rdimn,'\\|')
-  ans <- sapply(ans, function(x)if(length(x))x else '')
+  ans <- strsplit(if(nc==1) names(r) else rdimn, '\\|')
+  ans <- sapply(ans, function(x)if(length(x)) x else '')
   
   ## strsplit returns list "transpose" of unpaste
   bb <- matrix(unlist(ans), nrow=nby)
@@ -2336,23 +2333,19 @@ summarize <- function(X, by, FUN, ...,
   for(jj in 1:nby) ans[[jj]] <- bb[jj,]
 
   names(ans) <- names(by)
-  if(nc>1 && (nc != ncol(r)))
-    stop('program logic error')  # was nrow 10oct02
+  if(nc>1 && (nc != ncol(r))) stop('program logic error')
   
   snames <- names(typical.computation)
-  if(!length(snames))
-    snames <- paste(stat.name,1:nc,sep='')
+  if(!length(snames)) snames <- paste(stat.name,1:nc,sep='')
   
-  if(length(stat.name)==1)
-    snames[1] <- stat.name
-  else if(length(stat.name))
-    snames <- stat.name
+  if(length(stat.name) == 1) snames[1] <- stat.name
+  else if(length(stat.name))    snames <- stat.name
   
   oldopt <- options(warn=-1)
   on.exit(options(oldopt))
   notna <- rep(TRUE, length(ans[[1]]))
   for(i in 1:length(by)) {
-    byi <- by[[i]]
+    byi  <- by[[i]]
     ansi <- ans[[i]]
     if(is.category(byi)) {
       if(!is.character(ansi))
@@ -2365,14 +2358,14 @@ summarize <- function(X, by, FUN, ...,
     
     names(ansi) <- NULL
     label(ansi) <- bylabel[i]
-    ans[[i]] <- ansi
-    notna <- notna & !is.na(ansi)
+    ans[[i]]    <- ansi
+    notna       <- notna & !is.na(ansi)
   }
 
-  if(type=='matrix' || nc==1) {
+  if(type == 'matrix' || nc == 1) {
     ans[[stat.name]] <-
       if(nc==1)
-        structure(r,names=NULL)
+        structure(r, names=NULL)
       else 
         structure(r, dimnames=list(NULL, snames), names=NULL)
 
@@ -2380,18 +2373,18 @@ summarize <- function(X, by, FUN, ...,
   } else {
     snames <- make.names(snames)
     for(i in 1:length(snames)) {
-      ans[[snames[i]]] <- structure(r[,i], names=NULL)
+      ans[[snames[i]]] <- structure(r[, i], names=NULL)
       label(ans[[snames[i]]]) <- xlabel
     }
   }
 
-  notna <- notna & !is.na(if(nc==1) r
+  notna <- notna & !is.na(if(nc == 1) r
                           else (r %*% rep(1,nc)))
   
   ans <- structure(ans, class='data.frame', 
-                   row.names=1:length(ans[[1]]))
+                   row.names=1 : length(ans[[1]]))
   ## removed [notna,] from end of above line; not sure why this was needed
-  iorder <- do.call('order', structure(oldUnclass(ans)[1:nby],names=NULL))
+  iorder <- do.call('order', structure(oldUnclass(ans)[1 : nby], names=NULL))
   ## order can bomb if data frame given (preserves names)
   ans[iorder,]
 }
@@ -2415,11 +2408,11 @@ if(FALSE) {
   nc <- length(typical.computation)
   snames <- names(typical.computation)
   if(length(snames)) snames <- paste(stat.name, snames) else
-  snames <- if(nc==1) stat.name else paste(stat.name,1:nc)
-  for(i in 1:length(r)) if(!length(r[[i]]))r[[i]] <- rep(NA,nc)
+  snames <- if(nc == 1) stat.name else paste(stat.name, 1 : nc)
+  for(i in 1 : length(r)) if(!length(r[[i]])) r[[i]] <- rep(NA, nc)
   ## unlist will skip positions where calculations not done (NULLs)
   S <- matrix(unlist(r), ncol=length(snames), 
-              dimnames=list(NULL,snames), byrow=TRUE)
+              dimnames=list(NULL, snames), byrow=TRUE)
   if(type=='matrix') {
     ans$S <- S
     if(stat.name != 'S') names(ans)[length(ans)] <- stat.name

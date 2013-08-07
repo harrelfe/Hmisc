@@ -26,16 +26,16 @@ major and minor categories.
 }
 \usage{
 dotchart3(x, labels = NULL, groups = NULL, gdata = NULL,
-          cex = par("cex"), pch = 21, gpch = 21, bg = par("bg"),
+          cex = par("cex"), pch = 21, gpch = pch, bg = par("bg"),
           color = par("fg"), gcolor = par("fg"), lcolor = "gray",
           xlim = range(c(x, gdata), na.rm=TRUE), main = NULL, xlab = NULL,
           ylab = NULL, auxdata = NULL, auxtitle = NULL, auxgdata=NULL,
           cex.labels = cex, cex.group.labels = cex.labels * 1.25,
           cex.auxdata=cex, groupfont = 2, ...)
 
-summaryD(formula, data=NULL, fun=mean,
-         groupsummary=TRUE, auxtitle='N',
-         vals=FALSE, fmtvals=format,
+summaryD(formula, data=NULL, fun=mean, funm=fun,
+         groupsummary=TRUE, auxvar=NULL, auxtitle='N',
+         vals=length(auxvar) > 0, fmtvals=format,
          cex.auxdata=.7, xlab=v[1],
          gridevery=NULL, sort=TRUE, ...)
 }
@@ -65,14 +65,26 @@ summaryD(formula, data=NULL, fun=mean,
     \code{formula}.  If omitted, the parent environment is used.}
 	\item{fun}{a summarization function creating a single number from a
     vector.  Default is the mean.}
+	\item{funm}{applies if there are two right hand variables and
+         \code{groupsummary=TRUE} and the marginal summaries over just
+         the first \code{x} variable need to be computed differently
+         than the summaries that are cross-classified by both
+         variables.  \code{funm} defaults to \code{fun} and should
+         have the same structure as \code{fun}.}
 	\item{groupsummary}{By default, when there are two right-hand
          variables, \code{summarize(..., fun)} is called a second time
          without the use of the second variable, to obtain marginal
          summaries for the major grouping variable and display the
          results as a dot (and optionally in the right margin).  Set
          \code{groupsummary=FALSE} to suppress this information.}
-  \item{vals}{set to \code{FALSE} to not show data values (dot
-    locations) in the right margin}
+  \item{auxvar}{when \code{fun} returns more than one statistic and the
+         user names the elements in the returned vector, you can specify
+         \code{auxvar} as a single character string naming one of them.
+         This will cause the named element to be written in the right
+         margin, and that element to be deleted when plotting the statistics.}
+	\item{vals}{set to \code{TRUE} to show data values (dot
+    locations) in the right margin.  Defaults to \code{TRUE} if
+         \code{auxvar} is specified.}
 	\item{fmtvals}{an optional function to format values before putting
          them in the right margin.  Default is the \code{format}
          function.}
@@ -99,5 +111,11 @@ dotchart3(cbind(y1,y2), g, groups=maj, auxdata=n, auxtitle='n',
 summaryD(y1 ~ maj + g, xlab='Mean')
 summaryD(y1 ~ maj + g, groupsummary=FALSE)
 summaryD(y1 ~ g, fmtvals=function(x) sprintf('\%4.2f', x), auxtitle='')
+Y <- cbind(y1, y2)
+summaryD(Y  ~ maj + g, fun=function(y) y[1,], pch=c(1,17))
+rlegend(.1, 26, c('y1','y2'), pch=c(1,17))
+
+summaryD(y1 ~ maj, fun=function(y) c(mean(y), n=length(y)),
+         auxvar='n')
 }
 \keyword{hplot}

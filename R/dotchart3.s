@@ -1,6 +1,6 @@
 dotchart3 <-
   function (x, labels = NULL, groups = NULL, gdata = NULL, cex = par("cex"), 
-            pch = 21, gpch = 21, bg = par("bg"), color = par("fg"),
+            pch = 21, gpch = pch, bg = par("bg"), color = par("fg"),
             gcolor = par("fg"), lcolor = "gray",
             xlim = range(c(x, gdata), na.rm=TRUE), main = NULL, 
             xlab = NULL, ylab = NULL, auxdata=NULL, auxtitle=NULL,
@@ -109,8 +109,12 @@ dotchart3 <-
           col = gcolor, las = 2, cex = cex.group.labels, font=groupfont, ...)
     if (length(gdata)) {
       abline(h = gpos, lty = "dotted")
-      points(gdata, gpos, pch = gpch, col = gcolor, bg = bg, 
-             ...)
+      if(is.matrix(gdata))
+        for(j in 1:ncol(gdata))
+          points(gdata[, j], gpos, pch=gpch[j], col=gcolor, bg=bg, ...)
+      else
+        points(gdata, gpos, pch = gpch, col = gcolor, bg = bg, 
+               ...)
     }
   }
   axis(1)
@@ -119,14 +123,18 @@ dotchart3 <-
   invisible()
 }
 
-summaryD <- function(formula, data=NULL, fun=mean,
-                     groupsummary=TRUE, auxtitle='N',
-                     vals=FALSE, fmtvals=format,
+## If ever want summaryD to handle matrix Y, help file should state that this must a pre-formed single variable, and will need to cbind the Y Y2 etc. created as separate variables by summarize.  Also need fun to run on a matrix to create a vector
+
+summaryD <- function(formula, data=NULL, fun=mean, funm=fun,
+                     groupsummary=TRUE, auxvar=NULL, auxtitle='N',
+                     vals=length(auxvar) > 0, fmtvals=format,
                      cex.auxdata=.7, xlab=v[1], gridevery=NULL,
                      sort=TRUE, ...) {
   if(!missing(fmtvals)) vals <- TRUE
   if(!length(data)) data <- environment(formula)
   else data <- list2env(data, parent=environment(formula))
+  if(length(auxvar) && is.character(auxvar) && missing(auxtitle))
+    auxtitle <- auxvar
   v   <- all.vars(formula)
   m   <- length(v) - 1
   yn  <- v[1]; xn <- v[-1]
@@ -135,19 +143,40 @@ summaryD <- function(formula, data=NULL, fun=mean,
   x1  <-         get(xn[1], envir=data)
   x2  <- if(two) get(xn[2], envir=data)
   
-  s   <- summarize(y, if(two) llist(x1, x2) else llist(x1), fun)
-  if(sort) s <- s[order(s$y), ]
+  s   <- summarize(y, if(two) llist(x1, x2) else llist(x1), fun, type='matrix')
+  if(sort) s <- s[order(if(is.matrix(s$y)) s$y[, 1, drop=FALSE] else s$y), ]
+
+  auxd <- function(z) {
+    sy <- z$y
+    if(length(auxvar)) {
+      if(!is.matrix(sy))
+        stop('auxvar is only used when fun returns > 1 statistic')
+      f <- if(vals) fmtvals(sy[, auxvar])
+      sy <- if(is.numeric(auxvar)) sy[, -auxvar, drop=FALSE]
+      else
+        sy[, setdiff(colnames(sy), auxvar), drop=FALSE]
+    }
+    else
+      f <- if(vals) fmtvals(if(is.matrix(sy)) sy[, 1] else sy)
+    list(sy=sy, fval=f)
+  }
+
+  z <- auxd(s)
   if(two) {
-    if(groupsummary) s2 <- summarize(y, llist(x1), fun)
-    dotchart3(s$y, s$x2, groups=s$x1,
-              auxdata=if(vals) fmtvals(s$y), auxtitle=if(vals) auxtitle,
+    if(groupsummary) {
+      s2 <- summarize(y, llist(x1), funm, type='matrix')
+      z2 <- auxd(s2)
+    }
+    z  <- auxd(s)
+    dotchart3(z$sy, s$x2, groups=s$x1,
+              auxdata=z$fval, auxtitle=if(vals) auxtitle,
               cex.auxdata=cex.auxdata,
-              gdata   =if(groupsummary)         s2$y,
-              auxgdata=if(groupsummary && vals) fmtvals(s2$y),
+              gdata   =if(groupsummary) z2$sy,
+              auxgdata=if(groupsummary) z2$fval,
               xlab=xlab, ...)
   }
   else
-    dotchart3(s$y, s$x1, auxdata=if(vals) fmtvals(s$y),
+    dotchart3(z$sy, s$x1, auxdata=z$fval,
               auxtitle=if(vals) auxtitle,
               cex.auxdata=cex.auxdata, xlab=xlab, ...)
   

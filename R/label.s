@@ -95,23 +95,23 @@ plotmathTranslate <- function(x)
   x
 }
 
-labelLatex <- function(label, units=NULL, size='smaller[2]',
-                       hfill=FALSE, bold=FALSE, default='') {
-  lab <- attr(label, 'label')
-  if(length(label) > 1 || length(lab)) {
-    units <- units(label)
-    if(default == '') default <- deparse(substitute(label))
-    if(!length(lab)) return(default)
-    label <- lab
+labelLatex <- function(x=NULL, label='', units='', size='smaller[2]',
+                       hfill=FALSE, bold=FALSE, default='', double=FALSE) {
+  if(length(x)) {
+    if(label == '') label <- label(x)
+    if(units == '') units <- units(x)
   }
+  if(default == '' && length(x)) default <- deparse(substitute(x))
   if(label == '') return(default)
+
   label <- latexTranslate(label)
-  if(bold) label <- paste('{\\textbf ', label, '}', sep='')
-  if(length(units) && units != '' && units != ' ') {
+  bs <- if(double) '\\\\' else '\\'
+  if(bold) label <- paste('{', bs, 'textbf ', label, '}', sep='')
+  if(units != '') {
     units <- latexTranslate(units)
     if(length(size) && size != '')
-      units <- paste('{\\', size, ' ', units, '}', sep='')
-    if(hfill) units <- paste('\\hfill', units)
+      units <- paste('{', bs, size, ' ', units, '}', sep='')
+    if(hfill) units <- paste(bs, 'hfill ', units, sep='')
     else
       units <- paste(' ', units, sep='')
     label <- paste(label, units, sep='')

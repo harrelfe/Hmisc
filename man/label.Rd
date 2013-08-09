@@ -45,13 +45,12 @@
   are typed verbatim if they contain percent signs, blanks, or
   underscores.
 
-	\code{labelLatex} constructs suitable LaTeX labels from the
+	\code{labelLatex} constructs suitable LaTeX labels a variable or from the
 	\code{label} and \code{units} arguments, optionally right-justifying
 	\code{units} if \code{hfill=TRUE}.  This is useful when making tables
-	when the variable in question is not a column heading.  If the first
-	argument is not a scalar character string but is instead a variable,
-	\code{label} and \code{units} values are extracted from its attributes
-	instead of from arguments to \code{labelLatex}.
+	when the variable in question is not a column heading.  If \code{x}
+	is specified, \code{label} and \code{units} values are extracted from
+	its attributes instead of from the other arguments.
 
   \code{Label} (actually \code{Label.data.frame}) is a function which generates
   S source code that makes the labels in all the variables in a data
@@ -99,8 +98,8 @@ label(x, ...) <- value
 
 labelPlotmath(label, units=NULL, plotmath=TRUE, grid=FALSE)
 
-labelLatex(label, units=NULL, size='smaller[2]',
-           hfill=FALSE, bold=FALSE, default='')
+labelLatex(x=NULL, label='', units='', size='smaller[2]',
+           hfill=FALSE, bold=FALSE, default='', double=FALSE)
 
 \method{print}{labelled}(x, \dots)   ## or x - calls print.labelled
 
@@ -166,6 +165,9 @@ combineLabels(\dots)
 		appropriate.}
 	\item{bold}{set to \code{TRUE} to have \code{labelLatex} put the
 		\code{label} in bold face.}
+	\item{double}{set to \code{TRUE} to represent backslash in LaTeX as
+		four backslashes in place of two.  This is needed if, for example,
+		you need to convert the result using \code{as.formula}}
   \item{value}{
     the label of the object, or "".
   }
@@ -219,7 +221,7 @@ dframe <- data.frame(x1, x2)
 Label(dframe)
 
 labelLatex(x2, hfill=TRUE, bold=TRUE)
-labelLatex('Velocity', 'm/s')
+labelLatex(label='Velocity', units='m/s')
 
 ##In these examples of llist, note that labels are printed after
 ##variable names, because of print.labelled

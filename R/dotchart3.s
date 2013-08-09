@@ -72,7 +72,6 @@ dotchart3 <-
     y      <- 1L:n + 2 * offset
     ylim <- range(0.5, y + 1.5)  # range(0, y + 2)
   }
-####  auxdata <- c(auxdata, auxgdata)
   
   plot.window(xlim = xlim, ylim = ylim, log = "")
   lheight <- par("csi")
@@ -104,7 +103,6 @@ dotchart3 <-
                           cex=cex.group.labels),
                  na.rm = TRUE)
     goffset <- (max(linch + 0.2, ginch, na.rm = TRUE) + 0.1)/lheight
-    # was line=goffset
     mtext(glabels, side = 2, line = .2, at = gpos, adj = 1, # was adj=0
           col = gcolor, las = 2, cex = cex.group.labels, font=groupfont, ...)
     if (length(gdata)) {
@@ -123,13 +121,11 @@ dotchart3 <-
   invisible()
 }
 
-## If ever want summaryD to handle matrix Y, help file should state that this must a pre-formed single variable, and will need to cbind the Y Y2 etc. created as separate variables by summarize.  Also need fun to run on a matrix to create a vector
-
 summaryD <- function(formula, data=NULL, fun=mean, funm=fun,
                      groupsummary=TRUE, auxvar=NULL, auxtitle='N',
                      vals=length(auxvar) > 0, fmtvals=format,
                      cex.auxdata=.7, xlab=v[1], gridevery=NULL,
-                     sort=TRUE, ...) {
+                     gridcol=gray(.95), sort=TRUE, ...) {
   if(!missing(fmtvals)) vals <- TRUE
   if(!length(data)) data <- environment(formula)
   else data <- list2env(data, parent=environment(formula))
@@ -158,7 +154,7 @@ summaryD <- function(formula, data=NULL, fun=mean, funm=fun,
     }
     else
       f <- if(vals) fmtvals(if(is.matrix(sy)) sy[, 1] else sy)
-    list(sy=sy, fval=f)
+    list(sy=sy, fval=f)   # sy = remaining y, fval = formatted auxvar
   }
 
   z <- auxd(s)
@@ -184,7 +180,8 @@ summaryD <- function(formula, data=NULL, fun=mean, funm=fun,
     xmin <- par('usr')[1]
     xmin <- ceiling(xmin/gridevery)*gridevery
     xmax <- if(length(xn) == 1) max(s$y, na.rm=TRUE)
-    else max(c(s$y, s2$y), na.rm=TRUE)
-    abline(v=seq(xmin, xmax, by=gridevery), col=gray(.95))
+    else
+      max(c(s$y, s2$y), na.rm=TRUE)
+    abline(v=seq(xmin, xmax, by=gridevery), col=gridcol)
   }
 }

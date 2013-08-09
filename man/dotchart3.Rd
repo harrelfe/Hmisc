@@ -37,7 +37,7 @@ summaryD(formula, data=NULL, fun=mean, funm=fun,
          groupsummary=TRUE, auxvar=NULL, auxtitle='N',
          vals=length(auxvar) > 0, fmtvals=format,
          cex.auxdata=.7, xlab=v[1],
-         gridevery=NULL, sort=TRUE, ...)
+         gridevery=NULL, gridcol=gray(.95), sort=TRUE, ...)
 }
 \arguments{
   \item{x}{a numeric vector or matrix}
@@ -60,7 +60,10 @@ summaryD(formula, data=NULL, fun=mean, funm=fun,
 	\item{formula}{a formula with one variable on the left hand side (the
          variable to compute summary statistics on), and one or two
          variables on the right hand side.  If there are two variables,
-         the first is taken as the major grouping variable.}
+         the first is taken as the major grouping variable.  If the left
+         hand side variable is a matrix it has to be a legal R variable
+         name, not an expression, and \code{fun} needs to be able to
+         process a matrix.}
   \item{data}{a data frame or list used to find the variables in
     \code{formula}.  If omitted, the parent environment is used.}
 	\item{fun}{a summarization function creating a single number from a
@@ -90,12 +93,14 @@ summaryD(formula, data=NULL, fun=mean, funm=fun,
          function.}
 	\item{gridevery}{specify a positive number to draw very faint vertical
     grid lines every \code{gridevery} \code{x}-axis units}
+	\item{gridcol}{color for grid lines; default is very faint gray scale}
 	\item{sort}{specify \code{sort=FALSE} to plot data in the original
          order, from top to bottom on the dot chart}
 }
 \value{the function returns invisibly}
 \author{Frank Harrell}
-\seealso{\code{\link{dotchart}},\code{\link{dotchart2}},\code{\link{summarize}}}
+\seealso{\code{\link{dotchart}},\code{\link{dotchart2}},\code{\link{summarize}},
+         \code{\link{rlegend}}}
 \examples{
 set.seed(135)
 maj <- factor(c(rep('North',13),rep('South',13)))
@@ -111,7 +116,7 @@ dotchart3(cbind(y1,y2), g, groups=maj, auxdata=n, auxtitle='n',
 summaryD(y1 ~ maj + g, xlab='Mean')
 summaryD(y1 ~ maj + g, groupsummary=FALSE)
 summaryD(y1 ~ g, fmtvals=function(x) sprintf('\%4.2f', x), auxtitle='')
-Y <- cbind(y1, y2)
+Y <- cbind(y1, y2)   # summaryD cannot handle cbind(...) ~ ...
 summaryD(Y  ~ maj + g, fun=function(y) y[1,], pch=c(1,17))
 rlegend(.1, 26, c('y1','y2'), pch=c(1,17))
 

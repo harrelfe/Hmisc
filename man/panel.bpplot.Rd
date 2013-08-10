@@ -13,11 +13,11 @@ non-statisticians and many feel that the notion of "outliers" is too
 dependent on (false) expectations that data distributions should be Gaussian.
 
 \code{panel.bpplot} is a \code{panel} function for use with
-\code{trellis}, especially for 
-\code{bwplot}.  It draws box plots (without the whiskers) with any number
-of user-specified "corners" (corresponding to different quantiles),
-but it also draws box-percentile plots similar to those drawn by
-Jeffrey Banfield's (\email{umsfjban@bill.oscs.montana.edu}) \code{bpplot} function.
+\code{trellis}, especially for \code{bwplot}.  It draws box plots
+(without the whiskers) with any number of user-specified "corners"
+(corresponding to different quantiles), but it also draws box-percentile
+plots similar to those drawn by Jeffrey Banfield's
+(\email{umsfjban@bill.oscs.montana.edu}) \code{bpplot} function. 
 To quote from Banfield, "box-percentile plots supply more
 information about the univariate distributions.  At any height the
 width of the irregular 'box' is proportional to the percentile of that
@@ -26,6 +26,9 @@ width is proportional to 100 minus the percentile.  Thus, the width at
 any given height is proportional to the percent of observations that
 are more extreme in that direction.  As in boxplots, the median, 25th
 and 75th percentiles are marked with line segments across the box."
+
+\code{panel.bpplot} can also be used with base graphics to add extended
+box plots to an existing plot, by specifying \code{nogrid=TRUE, height=...}.
 
 \code{panel.bpplot} is a generalization of \code{bpplot} and
 \code{\link[lattice]{panel.bwplot}} in 
@@ -54,7 +57,8 @@ panel.bpplot(x, y, box.ratio=1, means=TRUE, qref=c(.5,.25,.75),
              nloc=c('right', 'left', 'none'), cex.n=.7,
              datadensity=FALSE, scat1d.opts=NULL,
              font=box.dot$font, pch=box.dot$pch, 
-             cex.means =box.dot$cex,  col=box.dot$col, \dots)
+             cex.means =box.dot$cex,  col=box.dot$col,
+             nogrid=NULL, height=NULL, \dots)
 
 # E.g. bwplot(formula, panel=panel.bpplot, panel.bpplot.parameters)
 
@@ -113,6 +117,9 @@ a list containing named arguments (without abbreviations) to pass to
 }
 \item{cex.means}{character size for dots representing means}
 \item{font,pch,col}{see \code{\link[lattice]{panel.bwplot}}}
+\item{nogrid}{set to \code{TRUE} to use in base graphics}
+\item{height}{if \code{nogrid=TRUE}, specifies the height of the box in
+        user \code{y} units}
 \item{\dots}{arguments passed to \code{points} or \code{panel.bpplot}}
 \item{stats,xlim,xlab,qomit,cex.labels,cex.points,grid}{
   undocumented arguments to \code{bpplt}
@@ -202,6 +209,10 @@ bwplot(g ~ x, panel=panel.bpplot, nout=5)
 # to the same position as the extreme scat1d
 bwplot(~x , panel=panel.bpplot, probs=seq(.00,.5,by=.001), 
        datadensity=TRUE, scat1d.opt=list(preserve=TRUE))
+
+# Add an extended box plot to an existing base graphics plot
+plot(x, 1:length(x))
+panel.bpplot(x, 1070, nogrid=TRUE, pch=19, height=15)
 
 # Draw a prototype showing how to interpret the plots
 bpplt()

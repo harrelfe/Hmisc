@@ -4,11 +4,13 @@ panel.bpplot <- function(x, y, box.ratio = 1, means=TRUE,
                          nloc=c('right', 'left', 'none'), cex.n=.7,
                          datadensity=FALSE, scat1d.opts=NULL,
                          font = box.dot$font, pch = box.dot$pch, 
-                         cex.means  = box.dot$cex,  col = box.dot$col, ...)
+                         cex.means  = box.dot$cex,  col = box.dot$col,
+                         nogrid=NULL, height=NULL, ...)
 {
   require(lattice)
   nloc <- match.arg(nloc)
   grid <- TRUE
+  if(length(nogrid) && nogrid) grid <- FALSE
 
   if(grid) {
     lines    <- llines
@@ -17,17 +19,28 @@ panel.bpplot <- function(x, y, box.ratio = 1, means=TRUE,
   }
 
   y <- as.numeric(y)
+  y <- rep(y, length.out=length(x))
   ok <- !is.na(x) & !is.na(y)
   x <- x[ok]
   y <- y[ok]
   y.unique <-  sort(unique(y))
   width <- box.ratio / (1 + box.ratio)
   w <- width / 2
+  if(length(height)) w <- height
   probs2 <- sort(c(probs, 1 - probs))
 
-  box.dot  <- trellis.par.get("box.dot")
-  lineopts <- trellis.par.get("box.rectangle")
-  box.dot.par <- c(list(pch = pch, cex = cex.means, col = col, font = font), ...)
+  if(grid) {
+    box.dot  <- trellis.par.get("box.dot")
+    lineopts <- trellis.par.get("box.rectangle")
+    box.dot.par <- c(list(pch = pch, cex = cex.means, col = col,
+                          font = font), ...)
+  }
+  else {
+    pr <- par()
+    box.dot     <- c(pr[c('cex', 'pch', 'col', 'font')], xpd=NA)
+    lineopts    <- c(pr[c('lty', 'col', 'lwd')], xpd=NA)
+    box.dot.par <- c(list(pch=pch, cex=cex.means, col=col, xpd=NA))
+  }
 
   m  <- length(probs)
   m2 <- length(probs2)
@@ -35,7 +48,7 @@ panel.bpplot <- function(x, y, box.ratio = 1, means=TRUE,
   z  <- c(sort(rep(probs, 2)),     - sort(- rep(probs[1 : (m - 1)], 2)))
   z  <- c(z, -z, probs[1])
   k  <- max(z)
-  k  <- if(k > .48) .5 else k
+  k  <- if(k > .48) .5 else kn
   
   if(length(qref)) {
     size.qref <- pmin(qref, 1 - qref)
@@ -57,7 +70,7 @@ panel.bpplot <- function(x, y, box.ratio = 1, means=TRUE,
       mean.value <- list(x=mean(X), y=Y)
       do.call('points', c(mean.value, box.dot.par))
     }
-    xlimits <- current.panel.limits()$xlim
+    xlimits <- if(grid) current.panel.limits()$xlim else par('usr')[1:2]
     switch(nloc,
            right= ltext(xlimits[2] - .01*diff(xlimits), Y,
              paste('n=', length(X), sep=''),

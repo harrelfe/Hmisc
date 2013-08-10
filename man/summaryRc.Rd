@@ -17,7 +17,9 @@ summaryRc(formula, data=NULL, subset=NULL,
           quant = c(0.05, 0.1, 0.25, 0.5, 0.75,
                     0.90, 0.95), quantloc=c('top','bottom'),
           cex.quant=.6, srt.quant=0,
-          trim, test = FALSE, vnames = c('labels', 'names'), \dots)
+          bpplot = c('none', 'top', 'top outside', 'top inside', 'bottom'),
+          height.bpplot=0.08,
+          trim=NULL, test = FALSE, vnames = c('labels', 'names'), \dots)
 }
 \arguments{
   \item{formula}{
@@ -67,6 +69,11 @@ summaryRc(formula, data=NULL, subset=NULL,
 	\item{cex.quant}{character size for writing which quantiles are
 		represented.  Set to \code{0} to suppress quantile labels.}
 	\item{srt.quant}{angle for text for quantile labels}
+	\item{bpplot}{if not \code{'none'} will draw extended box plot at
+		location given by \code{bpplot}, and quantiles discussed above will
+		be suppressed.  Specifying \code{bpplot='top'} is the same as
+		specifying \code{bpplot='top inside'}.}
+	\item{height.bpplot}{height in inches of the horizontal extended box plot}
 	\item{trim}{The default is to plot from the 10th smallest to the 10th
 		largest \code{x} if the number of non-NAs exceeds 200, otherwise to
 		use the entire range of \code{x}.  Specify another quantile to use
@@ -91,7 +98,7 @@ summaryRc(formula, data=NULL, subset=NULL,
 }
 \seealso{
   \code{\link{plsmo}}, \code{\link{stratify}},
-  \code{\link{label}}, \code{\link{formula}} 
+  \code{\link{label}}, \code{\link{formula}}, \code{\link{panel.bpplot}} 
 }
 \examples{
 options(digits=3)
@@ -105,6 +112,8 @@ L <- .5*(sex == 'm') + 0.1 * (age - 50)
 y <- rbinom(500, 1, plogis(L))
 par(mfrow=c(1,2))
 summaryRc(y ~ age + bp)
+# For x limits use 1st and 99th percentiles to frame extended box plots
+summaryRc(y ~ age + bp, bpplot='top', datadensity=FALSE, trim=.01)
 summaryRc(y ~ age + bp + stratify(sex),
           label.curves=list(keys='lines'), nloc=list(x=.1, y=.05))
 }

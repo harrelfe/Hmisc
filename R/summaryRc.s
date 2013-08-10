@@ -4,16 +4,20 @@ summaryRc <-
            ylab=NULL, ylim = NULL, nloc=NULL, datadensity=NULL,
            quant = c(0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95),
            quantloc = c('top', 'bottom'), cex.quant=.6, srt.quant=0,
+           bpplot = c('none', 'top', 'top outside', 'top inside', 'bottom'),
+           height.bpplot = 0.08,
            trim=NULL, test=FALSE, vnames=c('labels','names'),
            ...)
 {
   call     <- match.call()
   quantloc <- match.arg(quantloc)
   vnames   <- match.arg(vnames)
+  bpplot   <- match.arg(bpplot)
+  if(bpplot == 'top') bpplot <- 'top inside'
   X <- match.call(expand.dots=FALSE)
   X$fun <- X$na.rm <- X$ylim <- X$ylab <- X$nloc <- X$datadensity <- X$quant <-
     X$quantloc <- X$cex.quant <- X$srt.quant <- X$trim <- X$test <-
-      X$vnames <- X$... <- NULL
+      X$vnames <- X$bpplot <- X$height.bpplot <- X$... <- NULL
   if(missing(na.action)) X$na.action <- na.retain
   
   Terms <- if(missing(data)) terms(formula, 'stratify')
@@ -59,7 +63,8 @@ summaryRc <-
     strat <- strat[!s]
   }
 
-  pl <- function(x, y, strat=NULL, quant, xlab='', ylab='',
+  pl <- function(x, y, strat=NULL, quant, bpplot, width.bpplot,
+                 xlab='', ylab='',
                  ylim=NULL, fun=function(x) x, ...) {
     n   <- sum(!is.na(x))
     group <- if(length(strat)) strat else rep(1, length(x))
@@ -90,20 +95,28 @@ summaryRc <-
       }
       text(w, paste('n=', n, sep=''), cex=.75, font=3, adj=.5)
     }
-    scat1d(x)
     # Compute user y-units per inch
     u <- diff(yl) / par('fin')[2]
-    h    <- u * .2
-    if(length(quant)) {
-      qu <- quantile(x, quant, na.rm=TRUE)
-      names(qu) <- as.character(quant)
-      qu <- pooleq(qu)
-      yq <- if(quantloc == 'top') yl[2] else yl[1]
-      arrows(qu, yq + h, qu, yq, col='blue', length=.05, xpd=NA)
-      if(cex.quant > 0)
-        text(qu, yq + 1.6 * h, names(qu), adj=.5,
-             cex=cex.quant, srt=srt.quant, xpd=NA)
+    if(bpplot != 'none') {
+      h <- u * height.bpplot
+      yy <- switch(bpplot,
+                   'top outside' = yl[2] + h/2 + u*.11,
+                   'top inside'  = yl[2] - h/2 - u*.11,
+                   bottom        = yl[1] + h/2 + u*.11) 
+      panel.bpplot(x, yy, nogrid=TRUE, pch=19, cex.means=.6, height=h)
     }
+    else
+      if(length(quant)) {
+        h    <- u * .2
+        qu <- quantile(x, quant, na.rm=TRUE)
+        names(qu) <- as.character(quant)
+        qu <- pooleq(qu)
+        yq <- if(quantloc == 'top') yl[2] else yl[1]
+        arrows(qu, yq + h, qu, yq, col='blue', length=.05, xpd=NA)
+        if(cex.quant > 0)
+          text(qu, yq + 1.6 * h, names(qu), adj=.5,
+               cex=cex.quant, srt=srt.quant, xpd=NA)
+      }
     ## text(xl[2], yl[2] + h/4, paste('n=', n, sep=''),
     ##      cex=.75, font=3, adj=c(1,0), xpd=NA)
   }
@@ -124,6 +137,7 @@ summaryRc <-
     xlab <- getlab(x, nams[i])
     units  <- if(length(l <- attr(x,'units'))) l else ''
     xlab <- labelPlotmath(xlab, units)
-    pl(x, Y, strat=strat, quant=quant, xlab=xlab, ylab=ylabel, ylim=ylim, ...)
+    pl(x, Y, strat=strat, quant=quant, bpplot=bpplot, height.bpplot=height.bpplot,
+       xlab=xlab, ylab=ylabel, ylim=ylim, ...)
   }
 }

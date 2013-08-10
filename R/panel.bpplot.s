@@ -48,7 +48,7 @@ panel.bpplot <- function(x, y, box.ratio = 1, means=TRUE,
   z  <- c(sort(rep(probs, 2)),     - sort(- rep(probs[1 : (m - 1)], 2)))
   z  <- c(z, -z, probs[1])
   k  <- max(z)
-  k  <- if(k > .48) .5 else kn
+  k  <- if(k > .48) .5 else k
   
   if(length(qref)) {
     size.qref <- pmin(qref, 1 - qref)

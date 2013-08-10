@@ -173,7 +173,7 @@ bwplot(g ~ x, panel=panel.bpplot, probs=seq(.01,.49,by=.01), datadensity=TRUE)
 
 
 # small dot for means, show only .05,.125,.25,.375,.625,.75,.875,.95 quantiles
-bwplot(g ~ x, panel=panel.bpplot, cex=.3)
+bwplot(g ~ x, panel=panel.bpplot, cex.means=.3)
 
 
 # suppress means and reference lines for lower and upper quartiles
@@ -212,7 +212,7 @@ bwplot(~x , panel=panel.bpplot, probs=seq(.00,.5,by=.001),
 
 # Add an extended box plot to an existing base graphics plot
 plot(x, 1:length(x))
-panel.bpplot(x, 1070, nogrid=TRUE, pch=19, height=15)
+panel.bpplot(x, 1070, nogrid=TRUE, pch=19, height=15, cex.means=.5)
 
 # Draw a prototype showing how to interpret the plots
 bpplt()

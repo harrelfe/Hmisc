@@ -105,7 +105,9 @@ only the first \code{n/2} observations are shown on either side of the
 median, where \code{n} is the total number of observations. 
 }
 \item{nloc}{location to plot number of non-\code{NA}
-	observations next to each box.  Specify \code{nloc='none'} to suppress}
+	observations next to each box.  Specify \code{nloc='none'} to
+        suppress.  For \code{panel.bpplot}, the default \code{nloc} is
+        \code{'none'} if \code{nogrid=TRUE}.}
 \item{cex.n}{character size for \code{nloc}}
 \item{datadensity}{
 set to \code{TRUE} to invoke \code{scat1d} to draw a data density

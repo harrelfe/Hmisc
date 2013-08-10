@@ -8,10 +8,12 @@ panel.bpplot <- function(x, y, box.ratio = 1, means=TRUE,
                          nogrid=NULL, height=NULL, ...)
 {
   require(lattice)
-  nloc <- match.arg(nloc)
+  
   grid <- TRUE
   if(length(nogrid) && nogrid) grid <- FALSE
-
+  if(missing(nloc) && !grid) nloc <- 'none'
+  else nloc <- match.arg(nloc)
+  
   if(grid) {
     lines    <- llines
     points   <- lpoints

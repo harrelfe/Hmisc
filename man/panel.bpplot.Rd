@@ -239,6 +239,15 @@ getHdata(support)
 s <- sapply(support, function(x) is.numeric(x) && length(unique(x)) > 5)
 bpplotM(names(support)[s], group='dzgroup', data=support,
         par.strip.text=list(cex=.4), cex.means=.3, cex.n=.45)
+
+# Separate displays for categorical vs. continuous baseline variables
+getHdata(pbc)
+pbc <- upData(pbc, moveUnits=TRUE)
+
+s <- summaryM(stage + sex + spiders ~ drug, data=pbc)
+plot(s)
+Key(0, .5)
+bpplotM(drug ~ bili + albumin + protime + age ~ drug, data=pbc)
 }
 }
 \keyword{nonparametric}

@@ -1,8 +1,10 @@
 \name{tabulr}
 \alias{tabulr}
 \alias{table_trio}
+\alias{table_freq}
 \alias{table_pc}
 \alias{table_latexdefs}
+\alias{table_formatpct}
 \alias{nFm}
 \title{Interface to Tabular Function}
 \description{
@@ -11,17 +13,17 @@
 advantage of variable 
 annotations used by the \code{Hmisc} package, particular those created
 by the \code{\link{label}}, \code{\link{units}}, and
-\code{\link{upData}} functions.  When \code{label(x)} or
-\code{labeln(x)} appear in a \code{\link[tables]{tabular}} function, the
+\code{\link{upData}} functions.  When \code{.(x)} or
+\code{.n(x)} appear in a \code{\link[tables]{tabular}} function, the
 variable \code{x} is found in the \code{data} argument or in the parent
 environment, and the \code{\link{labelLatex}} function is used to create
 a LaTeX label.  By default any units of measurement are right justified
-in the current LaTeX tabular field using \code{hfill}; use \code{labeln}
-to not use the horizontal fill after the \code{label}.  Once the label
-is constructed, \code{label(x)} or \code{labeln(x)} are replaced with
-\code{Heading("LaTeX label")} in the formula before it is passed to
+in the current LaTeX tabular field using \code{hfill}; use \code{.n}
+to not use the horizontal fill after the variable \code{label}.  Once the label
+is constructed, \code{.(x)} or \code{.n(x)} are replaced with
+\code{Heading("LaTeX label")*x} in the formula before it is passed to
 \code{\link[tables]{tabular}}.  \code{tabulr} also replaces \code{trio}
-with \code{table_trio} in the formula.
+with \code{table_trio} and \code{freq} with \code{table_freq} in the formula.
 
 \code{table_trio} is a function that takes a numeric vector and computes
 the three quartiles and optionally the mean and standard deviation, and
@@ -31,8 +33,21 @@ and 1 digit to the right of the decimal point.  Running
 \code{\link[tables]{table_options}(left=l, right=r)} will use \code{l}
 and \code{r} digits instead.  Other options that can be given to
 \code{table_options} are \code{prmsd=TRUE} to add mean +/- standard
-deviation to the result, \code{pn=TRUE} to add the sample size, and
-\code{bold=TRUE} to set the median in bold face.
+deviation to the result, \code{pn=TRUE} to add the sample size,
+\code{bold=TRUE} to set the median in bold face, \code{showfreq='all',
+	'low', 'high'} used by the \code{table_freq} function, \code{pctdec},
+specifying the number of places to the right of the decimal point for
+percentages (default is zero), and
+\code{npct='both','numerator','denominator','none'} used by
+\code{table_formatpct} to control what appears after the percent.
+
+\code{table_freq} analyzes a character variable to compute, for a single
+output cell, the percents, numerator, and denominator for each category,
+or optimally just the maximum or minimum, as specified by
+\code{table_options(showfreq)}. 
+
+\code{table_formatpct} is a function that formats percents depending on
+settings of options in \code{table_options}.
 
 \code{nFm} is a function that calls \code{\link{sprintf}} to format
 numeric values to have a specific number of digits to the \code{left}
@@ -50,17 +65,21 @@ included, use \code{keytriomsd}.
 \usage{
 tabulr(formula, data = NULL, \dots)
 table_trio(x)
+table_freq(x)
+table_formatpct(num, den)
 nfm(x, left, right, neg=FALSE, pad=FALSE)
 table_latexdefs(file='')
 }
 \arguments{
   \item{formula}{a formula suitable for \code{\link[tables]{tabular}}
-		except for the addition of \code{label(variable name)},
-		\code{labeln()}, \code{trio}.}
+		except for the addition of \code{.(variable name)},
+		\code{.n()}, \code{trio}.}
   \item{data}{a data frame or list.  If omitted, the parent environment
 		is assumed to contain the variables.}
   \item{\dots}{other arguments to \code{tabular}}
   \item{x}{a numeric vector}
+	\item{num}{a single numerator or vector of numerators}
+	\item{den}{a single denominator}
 	\item{left, right}{number of places to the left and right of the
 		decimal point, respectively}
 	\item{pad}{set to \code{TRUE} to replace blanks with the LaTeX tilde
@@ -70,7 +89,7 @@ table_latexdefs(file='')
 \value{\code{tabulr} returns an object of class \code{"tabular"}}
 \author{Frank Harrell}
 \seealso{\code{\link[tables]{tabular}}, \code{\link{label}},
-	\code{\link{latex}}}
+	\code{\link{latex}}, \code{\link{summaryM}}}
 \examples{
 \dontrun{
 n <- 400
@@ -92,9 +111,8 @@ g <- function(x) {
   paste(latexNumeric(nFm(mean(x), 3, 1)),
         ' \\hfill{\\smaller[2](', length(x), ')}', sep='')
 }
-tab <- tabulr((label(age)*age +
-               Heading('Females')*(sex == 'Female')*
-               labeln(sbp)*sbp)*
+tab <- tabulr((.(age) +
+               Heading('Females')*(sex == 'Female')*.n(sbp))*
               Heading()*g + (age + sbp)*Heading()*trio ~ 
               Heading()*country*Heading()*sex, data=d)
 # Formula after interpretation by tabulr:
@@ -107,6 +125,19 @@ cat('\\begin{minipage}{\\textwidth}\n')
 cat('\\keytrio\n')
 latex(tab)
 cat('\\end{minipage}\\end{landscape}\n')
+
+getHdata(pbc)
+pbc <- upData(pbc, moveUnits=TRUE)
+# Convert to character to prevent tabular from stratifying
+for(x in c('sex', 'stage', 'spiders')) {
+  pbc[[x]] <- as.character(pbc[[x]])
+  label(pbc[[x]]) <- paste(toupper(substring(x, 1, 1)), substring(x, 2), sep='')
+}
+table_options(pn=TRUE, showfreq='all')
+tab <- tabulr((.(bili) + .(albumin) + .(protime) + .(age)) *
+              Heading()*trio +
+              (.(sex) + .(stage) + .(spiders))*Heading()*freq ~ drug, data=pbc)
+latex(tab)
 }
 }
 \keyword{utilities}

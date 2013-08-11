@@ -7,13 +7,13 @@ tabulr <- function(formula, data=NULL, ...) {
     x <- gsub('^ +', '', x)
     x <- gsub(' +$', '', x)
     l <- labelLatex(get(x, envir=data), default=x, double=TRUE, hfill=hfill)
-    paste("Heading('", l, "')", sep='')
+    paste("Heading('", l, "')*", x, sep='')
   }
-  f <-  gsubfn("label\\((.*?)\\)", ~ lab(x), f)
-  f <- gsubfn("labeln\\((.*?)\\)", ~ lab(x,  hfill=FALSE), f)
-  ## Translate trio to table_trio
+  f <-  gsubfn("\\.\\((.*?)\\)", ~ lab(x), f)
+  f <- gsubfn("\\.n\\((.*?)\\)", ~ lab(x,  hfill=FALSE), f)
+  ## Translate trio to table_trio etc.
   f <- gsub('trio', 'table_trio', f)
-  cat(f, file='/tmp/z')
+  f <- gsub('freq', 'table_freq', f)
   f <- as.formula(f)
   tabular(f, data=data, ...)
 }
@@ -51,6 +51,34 @@ nFm <- function(x, left, right, neg=FALSE, pad=FALSE) {
   x
 }
 
+table_freq <- function(x) {
+  if(!length(x) || all(is.na(x))) return('')
+  w   <- table(x)
+  den <- sum(w)
+  to <- table_options()
+  showfreq <- to$showfreq
+  if(!length(showfreq)) showfreq <- 'all'
+  pctdec <- to$pctdec
+  if(!length(pctdec)) pctdec <- 0
+  
+  i <- switch(showfreq,
+              all  = 1:length(w),
+              high = which(w == max(w)),
+              low  = which(w == min(w)))
+  m <- w[i]
+  fpct <- table_formatpct(m, den)
+  if(showfreq == 'all') {
+    z <- paste(names(m), '\\hfill', fpct, sep='')
+    z <- paste(z, collapse='\\\\', sep='')
+    len <- max(nchar(names(m))) + 9 + pctdec + 1 * (pctdec > 0)
+    z <- paste('\\parbox{', len, 'ex}{\\smaller ', z, '}', sep='')
+    return(z)
+  }
+  lab <- paste(names(m), collapse=', ')
+  num <- m[1]
+  paste(lab, ':', table_formatpct(num, den), sep='')
+}
+
 table_pc <- function(x, y) {
   maxn   <- max(length(x), length(y))
   maxdig <- 1L + floor(log10(maxn))
@@ -58,12 +86,28 @@ table_pc <- function(x, y) {
     if(is.logical(x)) sum(x) else sum(x %in% c('yes','Yes'))
   den <- if(all(is.na(y))) length(y) else sum(!is.na(y))
   prn(c(num,den)); prn(table(x, exclude=NULL)); prn(table(y, exclude=NULL))
-  paste(nFm(100 * num / den, 3, 1),
-        '\\% {\\scriptsize$\\frac{',
-        nFm(num, maxdig, 0, pad=TRUE), '}{', 
-        nFm(den, maxdig, 0, pad=TRUE), '}$}', sep='')
+  table_formatpct(num, den)
 }
 
+table_formatpct <- function(num, den) {
+  if(den == 0 | all(is.na(num + den))) return('')
+  to     <- table_options()
+  npct   <- to$npct
+  pctdec <- to$pctdec
+  if(!length(pctdec)) pctdec <- 0
+  if(!length(npct))   npct <- 'both'
+  poss <- c('numerator', 'denominator', 'both', 'none')
+  i <- charmatch(npct, poss)
+  if(is.na(i)) stop('in table_options(npct=) npct must be "numerator", "denominator", "both", or "none"')
+  npct <- poss[i]
+  z <- paste(nFm(100 * num / den, 3, pctdec), '\\%', sep='')
+  if(npct == 'none') return(z)
+  if(npct == 'both')
+    return(paste(z, '{\\smaller[2] $\\frac{', num, '}{', den, '}$}', sep=''))
+  paste(z, '{\\smaller (', if(npct == 'numerator') num else den, ')}', sep='')
+}
+  
+  
 table_latexdefs <- function(file='') {
   ct <- function(...) cat(..., file=file)
 

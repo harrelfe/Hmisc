@@ -17,10 +17,11 @@ rlegend(.1, 26, c('y1','y2'), pch=c(1,17))
 summaryD(y1 ~ maj, fun=function(y) c(mean(y), n=length(y)),
          auxvar='n')
 dev.off()
-#pdf('/tmp/z.pdf', width=3.5, height=1.25)
+
 png('/tmp/summaryD2.png', width=300, height=100)
+# Or: pdf('/tmp/z.pdf', width=3.5, height=1.25)
 spar()
-summaryD(y1 ~ maj, vals=TRUE, fmtvals=function(x) round(x,4),
+summaryD(y1 ~ maj, fmtvals=function(x) round(x,4),
          xlab=labelPlotmath('Velocity', 'm/s'))
 dev.off()
 

@@ -70,14 +70,10 @@ plot.biVar <- function(x,
   if(is.na(i)) stop(paste('what must be one of',
                           paste(info$names,collapse=' ')))
   if(missing(xlab))
-    xlab <- if(.R.) info$rxlab[i] else info$xlab[i]
+    xlab <- info$rxlab[i]
   if(missing(main)) main <-
-    if(.R.) parse(text=paste(as.character(info$rmain),'~~~~Response:',
-                    yname,sep='')) else
-            paste(info$main,'    Response:', yname, sep='')
-
-  if(.SV4.) x <- matrix(oldUnclass(x), nrow=nrow(x),
-                        dimnames=dimnames(x))
+    parse(text=paste(as.character(info$rmain),'~~~~Response:',
+            yname,sep=''))
   auxtitle <- 'N'; auxdata <- format(x[,'n'])
   if(length(aux)) {
     auxtitle <- paste('N', auxlabel, sep='  ')
@@ -91,7 +87,7 @@ plot.biVar <- function(x,
     stat <- stat[i]
     auxdata <- auxdata[i]
   }
-  dotchart2(stat, auxdata=auxdata, reset.par=TRUE,
+  dotchart3(stat, auxdata=auxdata,
             xlab=xlab, auxtitle=auxtitle,
             main=main, ...)
   invisible()

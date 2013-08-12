@@ -356,10 +356,8 @@ plot.aregImpute <- function(x, nclass=NULL, type=c('ecdf','hist'),
     lab <- paste('Imputed',n)
     if(n %in% catg) {
       tab <- table(ix)
-      mar <- par('mar')
-      dotchart2(tab, lev[[n]], auxdata=tab, xlab='Frequency',
+      dotchart3(tab, lev[[n]], auxdata=tab, xlab='Frequency',
                 ylab=lab)
-      par(mar=mar)
     }
     else {
       if(type=='ecdf')

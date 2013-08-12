@@ -207,19 +207,19 @@ naplot <- function(obj, which=c('all','na per var','na per obs','mean na',
   mean.na <- obj$mean.na
 
   if(which %in% c('all','na per var'))
-    dotchart(sort(na.per.var), xlab='Fraction of NAs', 
-             main='Fraction of NAs in each Variable', ...)
+    dotchart2(sort(na.per.var), xlab='Fraction of NAs', 
+              main='Fraction of NAs in each Variable', ...)
 
   if(which %in% c('all','na per obs'))
-    dotchart2(tab, auxdata=tab, reset.par=TRUE,
+    dotchart2(tab, auxdata=tab,
               xlab='Frequency', 
               main='Number of Missing Variables Per Observation', ...)
 
   if(which %in% c('all','mean na'))
-    dotchart(sort(mean.na), 
-             xlab='Mean Number of NAs',
-             main='Mean Number of Other Variables Missing for\nObservations where Indicated Variable is NA',
-             ...)
+    dotchart2(sort(mean.na), 
+              xlab='Mean Number of NAs',
+              main='Mean Number of Other Variables Missing for\nObservations where Indicated Variable is NA',
+              ...)
 
   if(which %in% c('all','na per var vs mean na'))
     {

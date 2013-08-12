@@ -54,7 +54,7 @@ hist.data.frame <- function(x, n.unique=3, nclass="compute", na.big=FALSE,
     
     if(type=='cat') {
       tab <- -sort(-table(v))
-      dotchart2(tab, xlab=paste('Frequencies for', lab), reset.par=TRUE)
+      dotchart3(tab, xlab=paste('Frequencies for', lab))
     } else {
       type <- if(inherits(v,'Date')) 'Date' else 'none'
       

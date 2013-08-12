@@ -2,9 +2,9 @@
 \alias{latexDotchart}
 \title{Enhanced Dot Chart for LaTeX Picture Environment with epic}
 \description{
-\code{latexDotchart}  is a translation of the \code{dotchart2} function
+\code{latexDotchart}  is a translation of the \code{dotchart3} function
 for producing a vector of character strings containing LaTeX picture
-environment markup that mimics \code{dotchart2} output.  The LaTeX
+environment markup that mimics \code{dotchart3} output.  The LaTeX
 \code{epic} and \code{color} packages are required.  The \code{add} and
 \code{horizontal=FALSE} options are not available for
 \code{latexDotchart}, however. 
@@ -77,7 +77,7 @@ Vanderbilt University
 \email{f.harrell@vanderbilt.edu}
 }
 \seealso{
-\code{\link[Hmisc]{dotchart2}}
+\code{\link[Hmisc]{dotchart3}}
 }
 \examples{
 \dontrun{

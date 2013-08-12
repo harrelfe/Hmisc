@@ -380,7 +380,7 @@ summaryM(formula, data, subset, na.action,
   Document available from \url{http://biostat.mc.vanderbilt.edu/twiki/pub/Main/StatReport/summary.pdf}.
 }
 \seealso{
-  \code{\link{mChoice}}, \code{\link{label}}, \code{\link{dotchart2}},
+  \code{\link{mChoice}}, \code{\link{label}}, \code{\link{dotchart3}},
   \code{\link{print.char.matrix}}, \code{\link{update}},
   \code{\link{formula}}, 
   \code{\link{format.default}}, \code{\link{latex}},

@@ -63,7 +63,7 @@ Recipes in C.  Cambridge: Cambridge University Press.
 }
 \seealso{
 \code{\link{hoeffd}}, \code{\link{cor}}, \code{\link{combine.levels}},
-\code{\link{varclus}}, \code{\link{dotchart2}}, \code{\link{impute}},
+\code{\link{varclus}}, \code{\link{dotchart3}}, \code{\link{impute}},
 \code{\link{chisq.test}}, \code{\link{cut2}}.
 }
 \examples{

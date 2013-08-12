@@ -84,7 +84,7 @@ chiSquare(formula, data=NULL, subset=NULL, na.action=na.retain,
     \code{impute}) in the calculations.
   }
   \item{...}{other arguments that are passed to the function used to
-    compute the bivariate statistics or to \code{dotchart2} for
+    compute the bivariate statistics or to \code{dotchart3} for
     \code{plot}.
   }
   \item{na.rm}{logical; delete NA values?}
@@ -176,7 +176,7 @@ Recipes in C.  Cambridge: Cambridge University Press.
 }
 \seealso{
 \code{\link{combine.levels}},
-\code{\link{varclus}}, \code{\link{dotchart2}}, \code{\link{impute}},
+\code{\link{varclus}}, \code{\link{dotchart3}}, \code{\link{impute}},
 \code{\link{chisq.test}}, \code{\link{cut2}}.
 }
 \examples{

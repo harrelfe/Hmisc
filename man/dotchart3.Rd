@@ -30,6 +30,7 @@ dotchart3(x, labels = NULL, groups = NULL, gdata = NULL,
           color = par("fg"), gcolor = par("fg"), lcolor = "gray",
           xlim = range(c(x, gdata), na.rm=TRUE), main = NULL, xlab = NULL,
           ylab = NULL, auxdata = NULL, auxtitle = NULL, auxgdata=NULL,
+          axisat=NULL, axislabels=NULL,
           cex.labels = cex, cex.group.labels = cex.labels * 1.25,
           cex.auxdata=cex, groupfont = 2, ...)
 
@@ -51,6 +52,10 @@ summaryD(formula, data=NULL, fun=mean, funm=fun,
   \item{auxgdata}{similar to \code{auxdata} but corresponding to the
 		\code{gdata} argument.  These usually represent overall sample sizes
 		for each group of lines.}
+ \item{axisat}{a vector of tick mark locations to pass to \code{axis}.
+	Useful if transforming the data axis}
+  \item{axislabels}{a vector of strings specifying axis tick mark
+	labels.  Useful if transforming the data axis}
   \item{cex.labels}{\code{cex} for labels}
   \item{cex.group.labels}{\code{cex} for group labels}
 	\item{cex.auxdata}{\code{cex} for \code{auxdata}}

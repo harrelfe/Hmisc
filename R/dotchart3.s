@@ -4,7 +4,7 @@ dotchart3 <-
             gcolor = par("fg"), lcolor = "gray",
             xlim = range(c(x, gdata), na.rm=TRUE), main = NULL, 
             xlab = NULL, ylab = NULL, auxdata=NULL, auxtitle=NULL,
-            auxgdata=NULL,
+            auxgdata=NULL, axisat=NULL, axislabels=NULL,
             cex.labels = cex, cex.group.labels = cex.labels*1.25,
             cex.auxdata = cex, groupfont=2, ...) 
 {
@@ -115,7 +115,9 @@ dotchart3 <-
                ...)
     }
   }
-  axis(1)
+  if(length(axisat)) axis(1, at=axisat, labels=axislabels)
+    else
+      axis(1)
   box()
   title(main = main, xlab = xlab, ylab = ylab, ...)
   invisible()

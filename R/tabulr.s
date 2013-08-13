@@ -9,8 +9,13 @@ tabulr <- function(formula, data=NULL, ...) {
     l <- labelLatex(get(x, envir=data), default=x, double=TRUE, hfill=hfill)
     paste("Heading('", l, "')*", x, sep='')
   }
-  f <-  gsubfn("\\.\\((.*?)\\)", ~ lab(x), f)
-  f <- gsubfn("\\.n\\((.*?)\\)", ~ lab(x,  hfill=FALSE), f)
+#  f <-  gsubfn("\\.\\((.*?)\\)", ~ lab(x), f)
+#  f <- gsubfn("\\.n\\((.*?)\\)", ~ lab(x,  hfill=FALSE), f)
+#  f <- gsubfn("\\.n\\((.*?)\\)", ~ lab(x,  hfill=FALSE), f)
+  f <- gsubfn('([ \\(]+)l \\* *([A-Za-z\\_\\.][A-Z0-9a-z\\_\\.]*?)',
+              ~ paste(x, lab(y), sep=''), f)
+  f <- gsubfn('([ \\(]+)l\\. +\\* *([A-Za-z\\_\\.][A-Z0-9a-z\\_\\.]*?)',
+              ~ paste(x, lab(y, hfill=FALSE), sep=''), f)
   ## Translate trio to table_trio etc.
   f <- gsub('trio', 'table_trio', f)
   f <- gsub('freq', 'table_freq', f)

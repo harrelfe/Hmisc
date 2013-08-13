@@ -13,14 +13,14 @@
 advantage of variable 
 annotations used by the \code{Hmisc} package, particular those created
 by the \code{\link{label}}, \code{\link{units}}, and
-\code{\link{upData}} functions.  When \code{.(x)} or
-\code{.n(x)} appear in a \code{\link[tables]{tabular}} function, the
+\code{\link{upData}} functions.  When \code{l*x} or
+\code{l.(x)} appear in a \code{\link[tables]{tabular}} function, the
 variable \code{x} is found in the \code{data} argument or in the parent
 environment, and the \code{\link{labelLatex}} function is used to create
 a LaTeX label.  By default any units of measurement are right justified
-in the current LaTeX tabular field using \code{hfill}; use \code{.n}
+in the current LaTeX tabular field using \code{hfill}; use \code{l.}
 to not use the horizontal fill after the variable \code{label}.  Once the label
-is constructed, \code{.(x)} or \code{.n(x)} are replaced with
+is constructed, \code{l*x} or \code{l.*x} are replaced with
 \code{Heading("LaTeX label")*x} in the formula before it is passed to
 \code{\link[tables]{tabular}}.  \code{tabulr} also replaces \code{trio}
 with \code{table_trio} and \code{freq} with \code{table_freq} in the formula.
@@ -67,7 +67,7 @@ tabulr(formula, data = NULL, \dots)
 table_trio(x)
 table_freq(x)
 table_formatpct(num, den)
-nfm(x, left, right, neg=FALSE, pad=FALSE)
+nFm(x, left, right, neg=FALSE, pad=FALSE)
 table_latexdefs(file='')
 }
 \arguments{
@@ -82,6 +82,8 @@ table_latexdefs(file='')
 	\item{den}{a single denominator}
 	\item{left, right}{number of places to the left and right of the
 		decimal point, respectively}
+	\item{neg}{set to \code{TRUE} if negative \code{x} values are allowed,
+		to add one more space to the left of the decimal place}
 	\item{pad}{set to \code{TRUE} to replace blanks with the LaTeX tilde
 		placeholder}
 	\item{file}{location of output of \code{table_latexdefs}}
@@ -111,8 +113,8 @@ g <- function(x) {
   paste(latexNumeric(nFm(mean(x), 3, 1)),
         ' \\hfill{\\smaller[2](', length(x), ')}', sep='')
 }
-tab <- tabulr((.(age) +
-               Heading('Females')*(sex == 'Female')*.n(sbp))*
+tab <- tabulr((l*age +
+               Heading('Females')*(sex == 'Female')*l*sbp)*
               Heading()*g + (age + sbp)*Heading()*trio ~ 
               Heading()*country*Heading()*sex, data=d)
 # Formula after interpretation by tabulr:
@@ -134,9 +136,9 @@ for(x in c('sex', 'stage', 'spiders')) {
   label(pbc[[x]]) <- paste(toupper(substring(x, 1, 1)), substring(x, 2), sep='')
 }
 table_options(pn=TRUE, showfreq='all')
-tab <- tabulr((.(bili) + .(albumin) + .(protime) + .(age)) *
+tab <- tabulr((l*bili + l*albumin + l*protime + l*age) *
               Heading()*trio +
-              (.(sex) + .(stage) + .(spiders))*Heading()*freq ~ drug, data=pbc)
+              (l*sex + l*stage + l*spiders)*Heading()*freq ~ drug, data=pbc)
 latex(tab)
 }
 }

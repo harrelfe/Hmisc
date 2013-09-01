@@ -47,18 +47,31 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
   }
 
   fcancor <- function(X, Y) {
+    ## colnames must exist for correct insertion of zeros for singular
+    ## elements
+    colnames(X) <- paste('x', 1:ncol(X), sep='')
+    colnames(Y) <- paste('y', 1:ncol(Y), sep='')
     ## If canonical variate transformation of Y is descending in Y,
     ## negate all parameters
     f <- cancor(X, Y)
     f$r2 <- f$cor[1]^2
     n <- nrow(Y); if(!length(n)) n <- length(y)
     varconst <- sqrt(n-1)
-    xcoef <- c(intercept = -sum(f$xcoef[, 1] * f$xcenter),
-               f$xcoef[, 1]) * varconst
-    ycoef <- c(intercept = -sum(f$ycoef[, 1] * f$ycenter),
-               f$ycoef[, 1]) * varconst
+    ## cancor returns rows only for non-singular variables
+    ## For first canonical variate insert zeros for singular variables
+    xcoef <- 0. * X[1, ]
+    b     <- f$xcoef[, 1]
+    xdf   <- length(b)
+    xcoef[names(b)] <- b
+    xcoef <- c(intercept = -sum(xcoef * f$xcenter), xcoef) * varconst
+    ycoef <- 0. * Y[1, ]
+    b     <- f$ycoef[, 1]
+    ydf   <- length(b)
+    ycoef[names(b)] <- b
+    ycoef <- c(intercept = -sum(ycoef * f$ycenter), ycoef) * varconst
     ty <- matxv(Y, ycoef)
-    g <- lm.fit.qr.bare(Y, ty)
+    g <- lm.fit.qr.bare(Y, ty, singzero=TRUE)
+    
     if(g$coefficients[2] < 0) {
       xcoef <- -xcoef
       ycoef <- -ycoef
@@ -67,6 +80,8 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
     f$xcoef <- xcoef
     f$ycoef <- ycoef
     f$ty    <- ty
+    f$xdf   <- xdf
+    f$ydf   <- ydf
     f
   }
 
@@ -79,8 +94,8 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
   yinv   <- at$inversefun  ## NULL if type='s'; need coef
   yparms <- at$parms
   
-  xdf <- ifelse(xtype=='l', 1, nk-1)
-  j <- xtype=='c'
+  xdf <- ifelse(xtype=='l', 1, nk - 1)
+  j <- xtype == 'c'
   if(any(j)) xdf[j] <- nux[j] - 1
   names(xdf) <- xnam
 
@@ -88,90 +103,91 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
   xparms <- list()
   j <- 0
   xn <- character(0)
-  for(i in 1:p) {
+  for(i in 1 : p) {
     w <- aregTran(x[,i], xtype[i], nk)
     xparms[[xnam[i]]] <- attr(w, 'parms')
     m <- ncol(w)
     xdf[i] <- m
-    X[,(j+1):(j+m)] <- w
+    X[, (j + 1) : (j + m)] <- w
     j <- j + m
-    xn <- c(xn, paste(xnam[i],1:m,sep=''))
+    xn <- c(xn, paste(xnam[i], 1:m, sep=''))
   }
-    ## See if rcpsline.eval could not get desired no. of knots due to ties
-  if(ncol(X) > sum(xdf)) X <- X[,1:sum(xdf),drop=FALSE]
+  ## See if rcpsline.eval could not get desired no. of knots due to ties
+  if(ncol(X) > sum(xdf)) X <- X[, 1 : sum(xdf), drop=FALSE]
   
   covx <- covy <- r2opt <- r2boot <-
     madopt <- madboot <- medopt <- medboot <- NULL
-  if(B > 0) {
-    r <- 1 + sum(xdf)
-    barx <- rep(0, r)
-    vname <- c('Intercept',xn)
+  if(B > 0L) {
+    r <- 1L + sum(xdf)
+    barx <- rep(0., r)
+    vname <- c('Intercept', xn)
     covx <- matrix(0, nrow=r, ncol=r, dimnames=list(vname,vname))
     if(ytype != 'l') {
-      r <- ncol(Y)+1
-      bary <- rep(0, r)
-      vname <- c('Intercept',paste(yname, 1:(r-1), sep=''))
-      covy <- matrix(0, nrow=r, ncol=r, dimnames=list(vname,vname))
+      r <- ncol(Y) + 1L
+      bary  <- rep(0., r)
+      vname <- c('Intercept', paste(yname, 1 : (r - 1), sep=''))
+      covy  <- matrix(0, nrow=r, ncol=r, dimnames=list(vname, vname))
     }
   }
-  if(ytype=='l') {
-    f <- lm.fit.qr.bare(X, Y, tolerance=tolerance, xpxi=TRUE)
+  if(ytype == 'l') {
+    f <- lm.fit.qr.bare(X, Y, tolerance=tolerance, xpxi=TRUE, singzero=TRUE)
     xcof <- f$coefficients
-    r2  <- f$rsquared
+    r2   <- f$rsquared
     xpxi <- f$xpxi
-    cof <- 1
-    ty  <- y
-    ydf <- 1
-    lp  <- f$fitted.values
-    res <- f$residuals
-    mad <- mean(abs(y-lp))
-    med <- median(abs(y-lp))
+    cof  <- 1
+    ty   <- y
+    ydf  <- 1
+    lp   <- f$fitted.values
+    res  <- f$residuals
+    mad  <- mean  (abs(y - lp))
+    med  <- median(abs(y - lp))
     if(B > 0) {
       r2opt <- madopt <- medopt <- 0
       for(j in 1:B) {
         s <- sample(1:n, replace=TRUE)
         if(ytype=='c' && length(unique(y[s])) < nuy)
           stop('a bootstrap resample had too few unique values of y')
-        xch <- which(xtype=='c')
+        xch <- which(xtype == 'c')
         if(length(xch)) {
           xtf <- apply(x[s, xch, drop=FALSE], 2,
                        function(z)length(unique(z))) < nux[xch]
           if(any(xtf))
-            stop(paste('a bootstrap resample had too few unique values of the following x variables:',paste(xnam[xch[xtf]],collapse=','),sep='\n'))
+            stop(paste('a bootstrap resample had too few unique values of the following x variables:',
+                       paste(xnam[xch[xtf]], collapse=','), sep='\n'))
                 }
-        g <- lm.fit.qr.bare(X[s,,drop=FALSE], Y[s])
+        g <- lm.fit.qr.bare(X[s,, drop=FALSE], Y[s], singzero=TRUE)
         b <- g$coefficients
         r2boot <- g$rsquared
-        yhat <- matxv(X,b)
+        yhat   <- matxv(X, b)
         r2orig <- cor(yhat, y)^2
         r2opt  <- r2opt + r2boot - r2orig
         er <- abs(Y[s] - g$fitted.values)
         madboot <- mean(er)
         medboot <- median(er)
-        er <- abs(y - yhat)
+        er      <- abs(y - yhat)
         madorig <- mean(er)
         medorig <- median(er)
-        madopt <- madopt + madboot - madorig
-        barx <- barx + b
-        b <- as.matrix(b)
-        covx <- covx + b %*% t(b)
+        madopt  <- madopt + madboot - madorig
+        barx    <- barx + b
+        b       <- as.matrix(b)
+        covx    <- covx + b %*% t(b)
       }
-      r2opt   <- r2opt/B
+      r2opt   <- r2opt / B
       r2boot  <- r2 - r2opt
-      madopt  <- madopt/B
+      madopt  <- madopt / B
       madboot <- mad - madopt
-      medopt  <- medopt/B
+      medopt  <- medopt / B
       medboot <- med - medopt
-      barx <- as.matrix(barx/B)
-      covx <- (covx - B * barx %*% t(barx))/(B-1)
+      barx <- as.matrix(barx / B)
+      covx <- (covx - B * barx %*% t(barx)) / (B - 1)
     }
   } else {
     f <- fcancor(X, Y)
-    r2 <- f$r2
+    r2   <- f$r2
     xcof <- f$xcoef
     cof  <- f$ycoef
     ty   <- f$ty
-    ydf  <- length(cof) - 1
+    ydf  <- f$ydf
     lp   <- as.vector(matxv(X, xcof))
     res  <- as.vector(ty - lp)
     
@@ -185,62 +201,65 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
     
     puy  <- yinv(lp, what='sample')
     if(length(y) != length(puy)) stop('program logic error')
-    mad  <- mean(abs(y-puy))
-    med  <- median(abs(y-puy))
+    mad  <- mean  (abs(y - puy))
+    med  <- median(abs(y - puy))
     
     if(B > 0) {
       r2opt <- madopt <- medopt <- 0
-      for(j in 1:B) {
-        s <- sample(1:n, replace=TRUE)
+      for(j in 1L : B) {
+        s <- sample(1L : n, replace=TRUE)
         if(ytype=='c' && length(unique(y[s])) < nuy)
           stop('a bootstrap resample had too few unique values of y')
-        xch <- which(xtype=='c')
+        xch <- which(xtype == 'c')
         if(length(xch)) {
           xtf <- apply(x[s, xch, drop=FALSE], 2,
                        function(z)length(unique(z))) < nux[xch]
           if(any(xtf))
-            stop(paste('a bootstrap resample had too few unique values of the following x variables:',paste(xnam[xch[xtf]],collapse=','),sep='\n'))
+            stop(paste('a bootstrap resample had too few unique values of the following x variables:',
+                       paste(xnam[xch[xtf]], collapse=','), sep='\n'))
         }
         
-        f <- fcancor(X[s,,drop=FALSE],Y[s,,drop=FALSE])
-        bx <- f$xcoef
-        by <- f$ycoef
+        f <- fcancor(X[s,, drop=FALSE], Y[s,, drop=FALSE])
+        bx     <- f$xcoef
+        by     <- f$ycoef
         r2boot <- f$r2
-        xbeta <- matxv(X,bx)
-        ybeta <- matxv(Y,by)
+        xbeta  <- matxv(X, bx)
+        ybeta  <- matxv(Y, by)
         r2orig <- cor(xbeta, ybeta)^2
         r2opt  <- r2opt + r2boot - r2orig
         puyall <- if(need2getinv) {
           tyyb  <- ytrans(yy, coef=by)  ## keeping constant knots
           yinvb <- inverseFunction(yy, tyyb)
           yinvb(xbeta, coef=by, what='sample')
-        } else yinv(xbeta, coef=by)
-        er <- abs(y[s] - puyall[s])
+        }
+        else
+          yinv(xbeta, coef=by)
+        er      <- abs(y[s] - puyall[s])
         madboot <- mean(er)
         medboot <- median(er)
-        er <- abs(y - puyall)
+        er      <- abs(y - puyall)
         madorig <- mean(er)
         medorig <- median(er)
-        madopt <- madopt + madboot - madorig
-        medopt <- medopt + medboot - medorig
-        barx <- barx + bx
-        bx <- as.matrix(bx)
-        covx <- covx + bx %*% t(bx)
-        bary <- bary + by
-        by <- as.matrix(by)
-        covy <- covy + by %*% t(by)
+        madopt  <- madopt + madboot - madorig
+        medopt  <- medopt + medboot - medorig
+        barx    <- barx + bx
+        bx      <- as.matrix(bx)
+        covx    <- covx + bx %*% t(bx)
+        bary    <- bary + by
+        by      <- as.matrix(by)
+        covy    <- covy + by %*% t(by)
       }
-      r2opt   <- r2opt/B
+      r2opt   <- r2opt / B
       r2boot  <- r2 - r2opt
-      madopt  <- madopt/B
+      madopt  <- madopt / B
       madboot <- mad - madopt
-      medopt  <- medopt/B
+      medopt  <- medopt / B
       medboot <- med - medopt
       
-      barx <- as.matrix(barx/B)
-      bary <- as.matrix(bary/B)
-      covx <- (covx - B * barx %*% t(barx))/(B-1)
-      covy <- (covy - B * bary %*% t(bary))/(B-1)
+      barx <- as.matrix(barx / B)
+      bary <- as.matrix(bary / B)
+      covx <- (covx - B * barx %*% t(barx)) / (B - 1)
+      covy <- (covy - B * bary %*% t(bary)) / (B - 1)
     }
   }
   j <- 0
@@ -249,7 +268,7 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
   xmeans <- list()
   for(i in 1:p) {
     m <- xdf[i]
-    z <- matxv(X[,(j+1):(j+m),drop=FALSE], beta[(j+1):(j+m)])
+    z <- matxv(X[, (j + 1) : (j + m), drop=FALSE], beta[(j + 1) : (j + m)])
     mz <- mean(z)
     xmeans[[xnam[i]]] <- mz
     tx[,i] <- z - mz
@@ -260,11 +279,11 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
     s <- sample(1:crossval, n, replace=TRUE)
     r2cv <- madcv <- medcv <- 0
     for(j in 1:crossval) {
-      g    <- fcancor(X[s!=j,,drop=FALSE], Y[s!=j,,drop=FALSE])
+      g    <- fcancor(X[s!=j,, drop=FALSE], Y[s!=j,, drop=FALSE])
       bx   <- g$xcoef
       by   <- g$ycoef
-      xbo  <- matxv(X[s==j,,drop=FALSE], bx)
-      ybo  <- matxv(Y[s==j,,drop=FALSE], by)
+      xbo  <- matxv(X[s==j,, drop=FALSE], bx)
+      ybo  <- matxv(Y[s==j,, drop=FALSE], by)
       r2cv <- r2cv + cor(xbo, ybo)^2
       puy <- if(need2getinv) {
         tyyb  <- ytrans(yy, coef=by)  ## keeping constant knots
@@ -276,9 +295,9 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
       madcv<- madcv + mean(er)
       medcv<- medcv + median(er)
     }
-    r2cv  <- r2cv/crossval
-    madcv <- madcv/crossval
-    medcv <- medcv/crossval
+    r2cv  <- r2cv / crossval
+    madcv <- madcv / crossval
+    medcv <- medcv / crossval
   }
   structure(list(y=y, x=x, ty=ty, tx=tx,
                  rsquared=r2, rsquaredcv=r2cv, nk=nk, xdf=xdf, ydf=ydf,
@@ -310,9 +329,9 @@ aregTran <- function(z, type, nk = length(parms), parms = NULL,
     ## Assume z is integer code if parms is given
     w <- if(lp) z else factor(z)
     x <- as.integer(w)
-    if(!lp) parms <- 1:max(x, na.rm=TRUE)
-    z <- matrix(0, nrow=n, ncol=length(parms)-1)
-    z[cbind(1:n, x-1)] <- 1
+    if(!lp) parms <- 1 : max(x, na.rm=TRUE)
+    z <- matrix(0, nrow=n, ncol=length(parms) - 1)
+    z[cbind(1 : n, x - 1)] <- 1
     attr(z, 'parms') <- if(lp)parms else levels(w)
     if(functions) {
       attr(z, 'fun') <- function(x, parms, coef) {
@@ -368,7 +387,7 @@ predict.areg <- function(object, x, type=c('lp','fitted','x'),
   for(i in 1:p) {
     w <- aregTran(x[,i], xtype[i], parms=xparms[[xnam[i]]])
     m <- ncol(w)
-    X[,(j+1):(j+m)] <- w
+    X[, (j + 1) : (j + m)] <- w
     j <- j + m
   }
   if(type == 'x') return(cbind(1, X))
@@ -377,22 +396,21 @@ predict.areg <- function(object, x, type=c('lp','fitted','x'),
 }
 
 print.areg <- function(x, digits=4, ...) {
-  xdata <- x[c('n','m','nk','rsquared','xtype','xdf','ytype','ydf')]
+  xdata <- x[c('n', 'm', 'nk', 'rsquared', 'xtype', 'xdf', 'ytype', 'ydf')]
   xinfo <- data.frame(type=xdata$xtype, d.f.=xdata$xdf,
                       row.names=names(xdata$xtype))
-  cat('\nN:',xdata$n,'\t',xdata$m,
+  cat('\nN:', xdata$n, '\t', xdata$m,
       ' observations with NAs deleted.\n')
-  cat('R^2: ', round(xdata$rsquared,3),'\tnk: ',xdata$nk,
-      '\tMean and Median |error|: ',format(x$mad, digits=digits),', ',
-      format(x$med, digits=digits),'\n\n', sep='')
+  cat('R^2: ', round(xdata$rsquared, 3), '\tnk: ', xdata$nk,
+      '\tMean and Median |error|: ', format(x$mad, digits=digits), ', ',
+      format(x$med, digits=digits), '\n\n', sep='')
   if(length(x$r2boot)) {
     x1 <- format(c(x$r2opt,  x$madopt,  x$medopt),  digits=digits)
     x2 <- format(c(x$r2boot, x$madboot, x$medboot), digits=digits)
     n  <- c('R^2', 'Mean |error|', 'Median |error|')
     d  <- cbind('Bootstrap Estimates'=n, Optimism=x1, 'Optimism-corrected'=x2)
     row.names(d) <- rep('', 3)
-    if(.R.) print(d, quote=FALSE, right=TRUE) else
-     print(d, quote=FALSE)
+    print(d, quote=FALSE, right=TRUE)
   }
   if(length(x$crossval)) {
     x1 <- format(c(x$rsquaredcv, x$madcv, x$medcv), digits=digits)
@@ -402,21 +420,19 @@ print.areg <- function(x, digits=4, ...) {
                         c(paste(x$crossval,'-fold Cross-validation',sep=''),
                           'Estimate'))
     cat('\n')
-    if(.R.) print(d, quote=FALSE, right=TRUE) else
-    print(d, quote=FALSE)
+    print(d, quote=FALSE, right=TRUE)
   }
   cat('\n')
   print(xinfo)
-  cat('\ny type:', xdata$ytype,'\td.f.:', xdata$ydf,'\n\n')
+  cat('\ny type:', xdata$ytype, '\td.f.:', xdata$ydf, '\n\n')
   invisible()
 }
 
-plot.areg <- function(x, whichx=1:ncol(x$x), ...) {
+plot.areg <- function(x, whichx=1 : ncol(x$x), ...) {
   plot(x$y, x$ty, xlab=x$yname,
        ylab=paste('Transformed',x$yname))
-  r2 <- round(x$rsquared,3)
-  if(.R.) title(sub=bquote(R^2==.(r2)), adj=0) else
-  title(sub=paste('R^2=',r2),adj=0)
+  r2 <- round(x$rsquared, 3)
+  title(sub=bquote(R^2==.(r2)), adj=0)
   xdata <- x$x
   cn <- colnames(xdata)
   for(i in whichx)

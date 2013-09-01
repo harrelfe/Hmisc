@@ -150,7 +150,7 @@ getLatestSource(x=NULL, package='Hmisc', recent=NULL, avail=FALSE,
 inverseFunction(x, y)
 james.stein(y, group)
 km.quick(S, times, q)
-lm.fit.qr.bare(x, y, tolerance, intercept=TRUE, xpxi=FALSE)
+lm.fit.qr.bare(x, y, tolerance, intercept=TRUE, xpxi=FALSE, singzero=FALSE)
 matxv(a, b, kint=1, bmat=FALSE)
 nomiss(x)
 outerText(string, y, cex=par('cex'), \dots)
@@ -233,7 +233,9 @@ xless(x, \dots, title)
 	\code{x} is typically an equally-spaced grid of 1000 points.  For
 	\code{strgraphwrap} is a character vector.}
   \item{xpxi}{set to \code{TRUE} to add an element to the result
-	containing the inverse of \eqn{X'X}}
+		containing the inverse of \eqn{X'X}}
+	\item{singzero}{set to \code{TRUE} to set coefficients corresponding
+		to singular variables to zero instead of \code{NA}}
   \item{y}{a numeric vector.  For \code{inverseFunction} \code{y} is the
 	evaluated function values at \code{x}.}
   \item{indent, exdent, prefix}{see \code{\link{strwrap}}}

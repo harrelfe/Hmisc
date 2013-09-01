@@ -5,4 +5,4 @@ cat('\\documentclass{article}\n\\usepackage{lscape,ctable,booktabs}\n\\begin{doc
 w <- latex(x, booktabs=TRUE, landscape=TRUE, file=f, append=TRUE)
 w <- latex(x, ctable=TRUE, landscape=TRUE, file=f, append=TRUE)
 cat('\\end{document}\n', file=f, append=TRUE)
-
+# Run pdflatex /tmp/z

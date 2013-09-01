@@ -1,6 +1,7 @@
 \name{tabulr}
 \alias{tabulr}
 \alias{table_trio}
+\alias{table_N}
 \alias{table_freq}
 \alias{table_pc}
 \alias{table_latexdefs}
@@ -23,7 +24,8 @@ to not use the horizontal fill after the variable \code{label}.  Once the label
 is constructed, \code{l*x} or \code{l.*x} are replaced with
 \code{Heading("LaTeX label")*x} in the formula before it is passed to
 \code{\link[tables]{tabular}}.  \code{tabulr} also replaces \code{trio}
-with \code{table_trio} and \code{freq} with \code{table_freq} in the formula.
+with \code{table_trio}, \code{N} with \code{table_N},  and \code{freq}
+with \code{table_freq} in the formula. 
 
 \code{table_trio} is a function that takes a numeric vector and computes
 the three quartiles and optionally the mean and standard deviation, and
@@ -40,6 +42,16 @@ specifying the number of places to the right of the decimal point for
 percentages (default is zero), and
 \code{npct='both','numerator','denominator','none'} used by
 \code{table_formatpct} to control what appears after the percent.
+Option \code{pnformat} may be specified to control the formatting for
+\code{pn}.  The default is \code{"(n=..)"}.  Specify
+\code{pnformat="non"} to suppress \code{"n="}.  \code{pnwhen} specifies
+when to print the number of observations.  The default is
+\code{"always"}.  Specify \code{pnwhen="ifna"} to include \code{n} only
+if there are missing values in the vector being processed.
+
+\code{tabulr} substitutes \code{table_N} for \code{N} in the formula.
+This is used to create column headings for the number of observations,
+without a row label.
 
 \code{table_freq} analyzes a character variable to compute, for a single
 output cell, the percents, numerator, and denominator for each category,
@@ -63,7 +75,7 @@ argument which will appear as a footnote without a number.
 included, use \code{keytriomsd}.
 }
 \usage{
-tabulr(formula, data = NULL, \dots)
+tabulr(formula, data = NULL, nolabel=NULL, nofill=NULL, \dots)
 table_trio(x)
 table_freq(x)
 table_formatpct(num, den)
@@ -76,6 +88,12 @@ table_latexdefs(file='')
 		\code{.n()}, \code{trio}.}
   \item{data}{a data frame or list.  If omitted, the parent environment
 		is assumed to contain the variables.}
+	\item{nolabel}{a formula such as \code{~ x1 + x2} containing the list
+		of variables for which labels are to be ignored, forcing use of the
+		variable name}
+	\item{nofill}{a formula such as \code{~ x1 + x2} contaning the list of
+		variables for which units of measurement are not to be
+		right-justified in the field using the LaTeX \code{hfill} directive}
   \item{\dots}{other arguments to \code{tabular}}
   \item{x}{a numeric vector}
 	\item{num}{a single numerator or vector of numerators}

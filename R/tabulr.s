@@ -1,52 +1,93 @@
-tabulr <- function(formula, data=NULL, ...) {
+tabulr <- function(formula, data=NULL, nolabel=NULL, nofill=NULL, ...) {
   require(gsubfn) || stop('package gsubfn not installed')
   if(!length(data)) data <- environment(formula)
   else if(is.list(data)) data <- list2env(data, parent=environment(formula))
-  f <- as.character(deparse(formula))
+
+  ##  f <- as.character(deparse(formula))
   lab <- function(x, hfill=TRUE) {
-    x <- gsub('^ +', '', x)
-    x <- gsub(' +$', '', x)
+    ## x <- gsub('^ +', '', x)
+    ## x <- gsub(' +$', '', x)
     l <- labelLatex(get(x, envir=data), default=x, double=TRUE, hfill=hfill)
     paste("Heading('", l, "')*", x, sep='')
   }
+  lab <- function(x) {
+    x <- deparse(x)
+    if(x == 'trio') return('table_trio')
+    if(x == 'freq') return('table_freq')
+    if(x == 'N')    return('Heading()*table_N')
+    if(! (exists(x, envir=data, mode='numeric') |
+          exists(x, envir=data, mode='character'))) return(x)
+    if(length(nolabel) && x %in% all.vars(nolabel)) return(x)
+    xval <- get(x, envir=data)
+    if(label(xval) == '') return(x)
+    l <- labelLatex(xval, double=FALSE,
+                    hfill=!length(nofill) || x %nin% all.vars(nofill))
+    paste("Heading('", l, "')*", x, sep='')
+  }
+       
 #  f <-  gsubfn("\\.\\((.*?)\\)", ~ lab(x), f)
 #  f <- gsubfn("\\.n\\((.*?)\\)", ~ lab(x,  hfill=FALSE), f)
 #  f <- gsubfn("\\.n\\((.*?)\\)", ~ lab(x,  hfill=FALSE), f)
-  f <- gsubfn('([ \\(]+)l \\* *([A-Za-z\\_\\.][A-Z0-9a-z\\_\\.]*?)',
-              ~ paste(x, lab(y), sep=''), f)
-  f <- gsubfn('([ \\(]+)l\\. +\\* *([A-Za-z\\_\\.][A-Z0-9a-z\\_\\.]*?)',
-              ~ paste(x, lab(y, hfill=FALSE), sep=''), f)
-  ## Translate trio to table_trio etc.
-  f <- gsub('trio', 'table_trio', f)
-  f <- gsub('freq', 'table_freq', f)
-  f <- as.formula(f)
-  tabular(f, data=data, ...)
+#  f <- gsubfn('([ \\(]+)l \\* *([A-Za-z\\_\\.][A-Z0-9a-z\\_\\.]*?)',
+#              ~ paste(x, lab(y), sep=''), f)
+#  f <- gsubfn('([ \\(]+)l\\. +\\* *([A-Za-z\\_\\.][A-Z0-9a-z\\_\\.]*?)',
+#              ~ paste(x, lab(y, hfill=FALSE), sep=''), f)
+  ## A variable is a string of characters, _, . not starting with 0-9
+  ## delimited by
+#  f <- gsubfn('[ \\(\\*\\+ ]*([A-Za-z\\_\\.]+[A-Za-z0-9\\_\\.]*)[ \\(\\*\\+]*', ~ paste('#',x,'#',sep=''), '1a+b')
+#  gsubfn('[ \\(\\*\\+ ]*([A-Za-z\\_\\.]+[A-Za-z0-9\\_\\.]*)[ \\(\\*\\+]*', ~ paste('#',x,'#',sep=''), '1a+b*dd + f==h' 
+#  f <- gsubfn( "([a-zA-Z_\\.][a-zA-Z0-9_\\.]*)((?=\\s*[-+~)*])|\\s*$)", 
+#              ~ paste0(toupper(x),'z'), f, perl=TRUE ) 
+# From Bill Dunlap
+
+  ff <- function(expr, convertName) { 
+    if (is.call(expr) && is.name(expr[[1]]) &&
+        is.element(as.character(expr[[1]]),
+                   c("~","+","-","*","/","%in%","%nin%","(", ":"))) { 
+      for(i in seq_along(expr)[-1])
+        expr[[i]] <- Recall(expr[[i]], convertName = convertName) 
+    } else if (is.name(expr)) expr <- as.name(convertName(expr)) 
+    expr 
+  } 
+
+  f <- ff(formula, lab)
+  f <- as.formula(gsub("`", "", as.character(deparse(f))))
+  result <- tabular(f, data=data, ...)
+  attr(result, 'originalformula') <- formula
+  result
 }
 
 table_trio <- function(x) {
   o <- table_options()
   s <- function(x, default) if(length(x)) x else default
-  left  <- s(o$left,  3)
-  right <- s(o$right, 1)
-  prmsd <- s(o$prmsd, FALSE)
-  pn    <- s(o$pn,    FALSE)
-  bold  <- s(o$bold,  FALSE)
-  
-  x <- x[!is.na(x)]
+  left     <- s(o$left,  3)
+  right    <- s(o$right, 1)
+  prmsd    <- s(o$prmsd, FALSE)
+  pn       <- s(o$pn,    FALSE)
+  pnformat <- s(o$pnformat, "n")
+  pnwhen   <- s(o$pnwhen,   "all")
+  bold     <- s(o$bold,  FALSE)
+
+  isna <- is.na(x)
+  x <- x[!isna]
   if(!length(x)) return('')
   qu <- quantile(x, (1:3)/4)
   w <- paste('{\\smaller ', nFm(qu[1], left, right), '} ',
              if(bold) '\\textbf{', nFm(qu[2], left, right), if(bold) '}',
              ' {\\smaller ', nFm(qu[3], left, right), '}', sep='')
+  if(pnwhen == 'ifna' && !any(isna)) pn <- FALSE
   if(prmsd || pn) {
     w <- paste(w, '~{\\smaller (', sep='')
     if(prmsd) w <- paste(w, nFm(mean(x), left, right), '$\\pm$',
                             nFm(sd(x),   left, right), sep='')
-    if(pn)    w <- paste(w, if(prmsd)' ', length(x), sep='')
+    if(pn)    w <- paste(w, if(prmsd)' ', '$',
+                         if(pnformat == 'n') 'n=', length(x), '$', sep='')
     w <- paste(w,  ')}', sep='')
   }
   w
 }
+
+table_N <- function(x) paste('{\\smaller $n=', length(x), '$}', sep='')
 
 nFm <- function(x, left, right, neg=FALSE, pad=FALSE) {
   tot <- if(right == 0) left + neg else left + right + neg + 1

@@ -11,21 +11,23 @@
 \description{
 \code{\link{tabulr}} is a front-end to the \code{tables} package's
 \code{\link[tables]{tabular}} function so that the user can take
-advantage of variable 
-annotations used by the \code{Hmisc} package, particular those created
-by the \code{\link{label}}, \code{\link{units}}, and
-\code{\link{upData}} functions.  When \code{l*x} or
-\code{l.(x)} appear in a \code{\link[tables]{tabular}} function, the
+advantage of variable annotations used by the \code{Hmisc} package,
+particular those created by the \code{\link{label}}, \code{\link{units}}, and
+\code{\link{upData}} functions.  When a variable appears in a
+\code{\link[tables]{tabular}} function, the 
 variable \code{x} is found in the \code{data} argument or in the parent
 environment, and the \code{\link{labelLatex}} function is used to create
 a LaTeX label.  By default any units of measurement are right justified
-in the current LaTeX tabular field using \code{hfill}; use \code{l.}
-to not use the horizontal fill after the variable \code{label}.  Once the label
-is constructed, \code{l*x} or \code{l.*x} are replaced with
-\code{Heading("LaTeX label")*x} in the formula before it is passed to
-\code{\link[tables]{tabular}}.  \code{tabulr} also replaces \code{trio}
-with \code{table_trio}, \code{N} with \code{table_N},  and \code{freq}
-with \code{table_freq} in the formula. 
+in the current LaTeX tabular field using \code{hfill}; use \code{nofill}
+to list variables for which \code{units} are not right-justified with
+\code{hfill}.  Once the label is constructed, the variable name is
+preceeded by \code{Heading("LaTeX label")*x} in the formula before it is
+passed to \code{\link[tables]{tabular}}.  \code{nolabel} can be used to
+specify variables for which labels are ignored.
+
+\code{tabulr} also replaces \code{trio} with \code{table_trio}, \code{N}
+with \code{table_N},  and \code{freq} with \code{table_freq} in the
+formula.  
 
 \code{table_trio} is a function that takes a numeric vector and computes
 the three quartiles and optionally the mean and standard deviation, and
@@ -131,8 +133,7 @@ g <- function(x) {
   paste(latexNumeric(nFm(mean(x), 3, 1)),
         ' \\hfill{\\smaller[2](', length(x), ')}', sep='')
 }
-tab <- tabulr((l*age +
-               Heading('Females')*(sex == 'Female')*l*sbp)*
+tab <- tabulr((age + Heading('Females')*(sex == 'Female')*sbp)*
               Heading()*g + (age + sbp)*Heading()*trio ~ 
               Heading()*country*Heading()*sex, data=d)
 # Formula after interpretation by tabulr:
@@ -154,9 +155,9 @@ for(x in c('sex', 'stage', 'spiders')) {
   label(pbc[[x]]) <- paste(toupper(substring(x, 1, 1)), substring(x, 2), sep='')
 }
 table_options(pn=TRUE, showfreq='all')
-tab <- tabulr((l*bili + l*albumin + l*protime + l*age) *
+tab <- tabulr((bili + albumin + protime + age) *
               Heading()*trio +
-              (l*sex + l*stage + l*spiders)*Heading()*freq ~ drug, data=pbc)
+              (sex + stage + spiders)*Heading()*freq ~ drug, data=pbc)
 latex(tab)
 }
 }

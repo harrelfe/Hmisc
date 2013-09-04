@@ -74,12 +74,10 @@ plsmo <- function(x,y,method=c("lowess","supsmu","raw"),
     
     if(missing(ylab))
       ylab <- label(y, units=TRUE, plot=TRUE, default=nam[2])
-    
-    plot(xmin,ymin,
-         xlim=if(missing(xlim)) c(xmin,xmax)
-              else xlim,
-         ylim=if(missing(ylim))c(ymin,ymax)
-              else ylim,
+
+    if(missing(xlim)) xlim <- c(xmin, xmax)
+    if(missing(ylim)) ylim <- c(ymin, ymax)
+    plot(xmin, ymin, xlim=xlim, ylim=ylim,
          type='n', xlab=xlab, ylab=ylab)
   }
   
@@ -92,6 +90,11 @@ plsmo <- function(x,y,method=c("lowess","supsmu","raw"),
   
   lwd <- rep(lwd, length=nlev)
 
+  for(i in 1:nlev) {
+    cu <- curves[[i]]
+    s <- cu$x >= xlim[1] & cu$x <= xlim[2]
+    curves[[i]] <- list(x=cu$x[s], y=cu$y[s])
+  }
   if(lines.)
     for(i in 1:nlev)
       gfun$lines(curves[[i]], lty=lty[i], col=col[i], lwd=lwd[i])

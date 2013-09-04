@@ -1,7 +1,7 @@
 summaryRc <-
   function(formula, data=NULL, subset=NULL, na.action=NULL, 
            fun=function(x) x, na.rm=TRUE,
-           ylab=NULL, ylim = NULL, nloc=NULL, datadensity=NULL,
+           ylab=NULL, ylim = NULL, xlim=NULL, nloc=NULL, datadensity=NULL,
            quant = c(0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95),
            quantloc = c('top', 'bottom'), cex.quant=.6, srt.quant=0,
            bpplot = c('none', 'top', 'top outside', 'top inside', 'bottom'),
@@ -15,8 +15,8 @@ summaryRc <-
   bpplot   <- match.arg(bpplot)
   if(bpplot == 'top') bpplot <- 'top inside'
   X <- match.call(expand.dots=FALSE)
-  X$fun <- X$na.rm <- X$ylim <- X$ylab <- X$nloc <- X$datadensity <- X$quant <-
-    X$quantloc <- X$cex.quant <- X$srt.quant <- X$trim <- X$test <-
+  X$fun <- X$na.rm <- X$ylim <- X$xlim <- X$ylab <- X$nloc <- X$datadensity <-
+    X$quant <- X$quantloc <- X$cex.quant <- X$srt.quant <- X$trim <- X$test <-
       X$vnames <- X$bpplot <- X$height.bpplot <- X$... <- NULL
   if(missing(na.action)) X$na.action <- na.retain
   
@@ -65,12 +65,14 @@ summaryRc <-
 
   pl <- function(x, y, strat=NULL, quant, bpplot, width.bpplot,
                  xlab='', ylab='',
-                 ylim=NULL, fun=function(x) x, ...) {
+                 ylim=NULL, xlim=NULL, fun=function(x) x, ...) {
     n   <- sum(!is.na(x))
     group <- if(length(strat)) strat else rep(1, length(x))
     if(!length(trim)) trim <- if(n > 200) 10 / n else 0
-    xlim <- if(trim == 0) range(x, na.rm=TRUE)
-    else quantile(x, c(trim, 1 - trim), na.rm=TRUE)
+    if(!length(xlim)) {
+      xlim <- if(trim == 0) range(x, na.rm=TRUE)
+      else quantile(x, c(trim, 1 - trim), na.rm=TRUE)
+    }
     a <- list(x=x, y=y, xlab=xlab, ylab=ylab, xlim=xlim, trim=0, group=group,
               datadensity=if(length(datadensity)) datadensity
               else length(strat) > 0, ...)
@@ -138,6 +140,6 @@ summaryRc <-
     units  <- if(length(l <- attr(x,'units'))) l else ''
     xlab <- labelPlotmath(xlab, units)
     pl(x, Y, strat=strat, quant=quant, bpplot=bpplot, height.bpplot=height.bpplot,
-       xlab=xlab, ylab=ylabel, ylim=ylim, ...)
+       xlab=xlab, ylab=ylabel, ylim=ylim, xlim=xlim[[v]], ...)
   }
 }

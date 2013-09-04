@@ -13,7 +13,8 @@
 \usage{
 summaryRc(formula, data=NULL, subset=NULL,
           na.action=NULL, fun = function(x) x,
-          na.rm = TRUE, ylab=NULL, ylim=NULL, nloc=NULL, datadensity=NULL,
+          na.rm = TRUE, ylab=NULL, ylim=NULL, xlim=NULL,
+          nloc=NULL, datadensity=NULL,
           quant = c(0.05, 0.1, 0.25, 0.5, 0.75,
                     0.90, 0.95), quantloc=c('top','bottom'),
           cex.quant=.6, srt.quant=0,
@@ -53,6 +54,10 @@ summaryRc(formula, data=NULL, subset=NULL,
 		\code{y} variable, or its name.}
 	\item{ylim}{\code{y}-axis limits.  By default each graph is scaled on
 		its own.}
+	\item{xlim}{a list with elements named as the variable names appearing
+		on the \code{x}-axis, with each element being a 2-vector specifying
+		lower and upper limits.  Any variable not appearing in the list will
+		have its limits computed and possibly \code{trim}med.}
 	\item{nloc}{location for sample size.  Specify \code{nloc=FALSE} to
 		suppress, or \code{nloc=list(x=,y=)} where \code{x,y} are relative
 		coordinates in the data window.  Default position is in the largest

@@ -289,7 +289,7 @@ plot.summaryM <-
     }
 
     dimnames(z) <- list(lab, dimnames(z)[[2]])
-    dotchart3(z, groups=factor(vnd), xlab=xlab, xlim=xlim,
+    dotchart3(z, groups=factor(vnd, levels=unique(vnd)), xlab=xlab, xlim=xlim,
               auxdata=if(!any(prtest == 'none')) ftstats,
               pch=pch, ...)
     

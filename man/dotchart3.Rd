@@ -126,6 +126,6 @@ summaryD(Y  ~ maj + g, fun=function(y) y[1,], pch=c(1,17))
 rlegend(.1, 26, c('y1','y2'), pch=c(1,17))
 
 summaryD(y1 ~ maj, fun=function(y) c(mean(y), n=length(y)),
-         auxvar='n')
+         auxvar='n', auxtitle='N')
 }
 \keyword{hplot}

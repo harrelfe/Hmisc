@@ -109,14 +109,14 @@ summaryRc <-
     }
     else
       if(length(quant)) {
-        h    <- u * .2
+        h    <- u * .15
         qu <- quantile(x, quant, na.rm=TRUE)
         names(qu) <- as.character(quant)
         qu <- pooleq(qu)
         yq <- if(quantloc == 'top') yl[2] else yl[1]
         arrows(qu, yq + h, qu, yq, col='blue', length=.05, xpd=NA)
         if(cex.quant > 0)
-          text(qu, yq + 1.6 * h, names(qu), adj=.5,
+          text(qu, yq + 1.4 * h, names(qu), adj=if(srt.quant == 0) .5 else 0,
                cex=cex.quant, srt=srt.quant, xpd=NA)
       }
     ## text(xl[2], yl[2] + h/4, paste('n=', n, sep=''),

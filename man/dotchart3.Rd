@@ -35,7 +35,7 @@ dotchart3(x, labels = NULL, groups = NULL, gdata = NULL,
           cex.auxdata=cex, groupfont = 2, ...)
 
 summaryD(formula, data=NULL, fun=mean, funm=fun,
-         groupsummary=TRUE, auxvar=NULL, auxtitle='N',
+         groupsummary=TRUE, auxvar=NULL, auxtitle='',
          vals=length(auxvar) > 0, fmtvals=format,
          cex.auxdata=.7, xlab=v[1],
          gridevery=NULL, gridcol=gray(.95), sort=TRUE, ...)
@@ -120,7 +120,7 @@ dotchart3(cbind(y1,y2), g, groups=maj, auxdata=n, auxtitle='n',
 
 summaryD(y1 ~ maj + g, xlab='Mean')
 summaryD(y1 ~ maj + g, groupsummary=FALSE)
-summaryD(y1 ~ g, fmtvals=function(x) sprintf('\%4.2f', x), auxtitle='')
+summaryD(y1 ~ g, fmtvals=function(x) sprintf('\%4.2f', x))
 Y <- cbind(y1, y2)   # summaryD cannot handle cbind(...) ~ ...
 summaryD(Y  ~ maj + g, fun=function(y) y[1,], pch=c(1,17))
 rlegend(.1, 26, c('y1','y2'), pch=c(1,17))

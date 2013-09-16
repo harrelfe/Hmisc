@@ -124,7 +124,7 @@ dotchart3 <-
 }
 
 summaryD <- function(formula, data=NULL, fun=mean, funm=fun,
-                     groupsummary=TRUE, auxvar=NULL, auxtitle='N',
+                     groupsummary=TRUE, auxvar=NULL, auxtitle='',
                      vals=length(auxvar) > 0, fmtvals=format,
                      cex.auxdata=.7, xlab=v[1], gridevery=NULL,
                      gridcol=gray(.95), sort=TRUE, ...) {

@@ -1,14 +1,14 @@
-plsmo <- function(x,y,method=c("lowess","supsmu","raw"),
-                  xlab,ylab,add=FALSE,lty=1:nlev,col=par('col'),lwd=par('lwd'),
-                  iter=if(length(unique(y))>2) 3
-                       else 0,
-                  bass=0, f=2/3, trim, fun, group=rep(1,length(x)),
-                  prefix, xlim, ylim, 
-                  label.curves=TRUE, datadensity=FALSE, lines.=TRUE,
-                  subset=TRUE, grid=FALSE, evaluate=NULL, ...)
+plsmo <-
+  function(x, y, method=c("lowess", "supsmu", "raw"),
+           xlab, ylab, add=FALSE, lty=1 : nlev, col=par('col'),
+           lwd=par('lwd'), iter=if(length(unique(y)) > 2) 3 else 0,
+           bass=0, f=2 / 3, trim, fun, group=rep(1, length(x)),
+           prefix, xlim, ylim, 
+           label.curves=TRUE, datadensity=FALSE, lines.=TRUE,
+           subset=TRUE, grid=FALSE, evaluate=NULL, ...)
 {
   gfun <- ordGridFun(grid)
-  nam <- as.character(sys.call())[2:3]
+  nam <- as.character(sys.call())[2 : 3]
   method <- match.arg(method)
   if(!missing(subset)) {
     x <- x[subset]
@@ -18,10 +18,10 @@ plsmo <- function(x,y,method=c("lowess","supsmu","raw"),
     
   group <- as.factor(group)
   if(!missing(prefix))
-    levels(group) <- paste(prefix,levels(group))
+    levels(group) <- paste(prefix, levels(group))
   
   group <- as.factor(group)
-  nna <- !(is.na(x+y)|is.na(group))
+  nna <- !(is.na(x + y) | is.na(group))
   x <- x[nna]
   y <- y[nna]
   group <- group[nna]
@@ -33,11 +33,11 @@ plsmo <- function(x,y,method=c("lowess","supsmu","raw"),
 
   xmin <- ymin <- 1e30; xmax <- ymax <- -1e30
   for(g in lev) {
-    s <- group==g
+    s <- group == g
     z <- switch(method, 
-                lowess=lowess(x[s],y[s],iter=iter,f=f),
-                supsmu=supsmu(x[s],y[s], bass=bass),
-                raw=approx(x[s],y[s],xout=sort(unique(x[s]))))
+                lowess=lowess(x[s], y[s], iter=iter, f=f),
+                supsmu=supsmu(x[s], y[s], bass=bass),
+                raw=approx(x[s], y[s], xout=sort(unique(x[s]))))
     
     if(missing(trim))
       trim <- if(sum(s) > 200) 10 / sum(s) else 0
@@ -49,7 +49,7 @@ plsmo <- function(x,y,method=c("lowess","supsmu","raw"),
     }
 
     if(length(evaluate)) {
-      rx <- range(z$x)
+      rx   <- range(z$x)
       xseq <- seq(rx[1], rx[2], length=evaluate)
       z <- approx(z, xout=xseq)
     }
@@ -57,7 +57,7 @@ plsmo <- function(x,y,method=c("lowess","supsmu","raw"),
     if(!missing(fun)) {
       yy <- fun(z$y)
       s <- !is.infinite(yy) & !is.na(yy)
-      z <- list(x=z$x[s],y=yy[s])
+      z <- list(x=z$x[s], y=yy[s])
     }
 
     curves[[g]] <- z
@@ -65,13 +65,13 @@ plsmo <- function(x,y,method=c("lowess","supsmu","raw"),
     ymin <- min(ymin, z$y); ymax <- max(ymax, z$y)
   }
 
-  if(!add) {
-    if(grid)
-      stop('add=T not implemented under grid/lattice in R')
-    
+  if(add) {
+    if(missing(xlim))
+      xlim <- if(grid) current.panel.limits()$xlim else par('usr')[1:2]
+  }
+  else {
     if(missing(xlab))
       xlab <- label(x, units=TRUE, plot=TRUE, default=nam[1])
-    
     if(missing(ylab))
       ylab <- label(y, units=TRUE, plot=TRUE, default=nam[2])
 
@@ -83,9 +83,7 @@ plsmo <- function(x,y,method=c("lowess","supsmu","raw"),
   
   lty <- rep(lty, length=nlev)
   col <- rep(col, length=nlev)
-  if(missing(lwd) &&
-     is.list(label.curves) &&
-     length(label.curves$lwd))
+  if(missing(lwd) && is.list(label.curves) && length(label.curves$lwd))
     lwd <- label.curves$lwd
   
   lwd <- rep(lwd, length=nlev)
@@ -96,12 +94,12 @@ plsmo <- function(x,y,method=c("lowess","supsmu","raw"),
     curves[[i]] <- list(x=cu$x[s], y=cu$y[s])
   }
   if(lines.)
-    for(i in 1:nlev)
+    for(i in 1 : nlev)
       gfun$lines(curves[[i]], lty=lty[i], col=col[i], lwd=lwd[i])
 
   if(datadensity) {
-    for(i in 1:nlev) {
-      s <- group==lev[i]
+    for(i in 1 : nlev) {
+      s <- group == lev[i]
       x1 <- x[s]
       y.x1 <- approx(curves[[i]], xout=x1)$y
       scat1d(x1, y=y.x1, col=col[i], grid=grid, ...)
@@ -109,7 +107,7 @@ plsmo <- function(x,y,method=c("lowess","supsmu","raw"),
   }
 
   if((is.list(label.curves) || label.curves) && 
-     nlev>1 && (!missing(prefix) | !add | !missing(label.curves))) 
+     nlev > 1 && (!missing(prefix) | !add | !missing(label.curves))) 
     labcurve(curves, lty=lty, col.=col, opts=label.curves, grid=grid)
   
   invisible(curves)
@@ -118,23 +116,19 @@ plsmo <- function(x,y,method=c("lowess","supsmu","raw"),
 
 panel.plsmo <- function(x, y, subscripts, groups=NULL, type='b', 
                         label.curves=TRUE,
-                        lwd = superpose.line$lwd, 
-                        lty = superpose.line$lty, 
-                        pch = superpose.symbol$pch, 
-                        cex = superpose.symbol$cex, 
+                        lwd  = superpose.line$lwd, 
+                        lty  = superpose.line$lty, 
+                        pch  = superpose.symbol$pch, 
+                        cex  = superpose.symbol$cex, 
                         font = superpose.symbol$font, 
-                        col = NULL,...)
+                        col  = NULL,...)
 {
   superpose.symbol <- trellis.par.get("superpose.symbol")
-  superpose.line <- trellis.par.get("superpose.line")
-  if(length(groups))
-    groups <- as.factor(groups)
+  superpose.line   <- trellis.par.get("superpose.line")
+  if(length(groups)) groups <- as.factor(groups)
   
-  g <- oldUnclass(groups)[subscripts]
-  ng <-
-    if(length(groups))
-      max(g)
-    else 1
+  g  <- unclass(groups)[subscripts]
+  ng <- if(length(groups)) max(g) else 1
   
   lty  <- rep(lty, length = ng)
   lwd  <- rep(lwd, length = ng)
@@ -142,11 +136,7 @@ panel.plsmo <- function(x, y, subscripts, groups=NULL, type='b',
   cex  <- rep(cex, length = ng)
   font <- rep(font, length = ng)
   if(!length(col))
-    col <-
-      if(type=='p')
-        superpose.symbol$col
-      else
-        superpose.line$col
+    col <- if(type == 'p') superpose.symbol$col else superpose.line$col
   
   col <- rep(col, length = ng)
   lc <-
@@ -156,18 +146,17 @@ panel.plsmo <- function(x, y, subscripts, groups=NULL, type='b',
       else FALSE
     } else c(list(lwd=lwd, cex=cex[1]), label.curves)
   
-  if(type!='p') if(ng > 1)
-    plsmo(x, y, group=groups[subscripts,drop=FALSE], 
-          add=TRUE, lty=lty, col=col, label.curves=lc, grid=.R., ...)
+  if(type != 'p') if(ng > 1)
+    plsmo(x, y, group=groups[subscripts, drop=FALSE], 
+          add=TRUE, lty=lty, col=col, label.curves=lc, grid=TRUE, ...)
   else
-    plsmo(x, y, add=TRUE, lty=lty, col=col, label.curves=lc, grid=.R.,
+    plsmo(x, y, add=TRUE, lty=lty, col=col, label.curves=lc, grid=TRUE,
           ...)
 
-  if(type!='l') {
+  if(type != 'l') {
     if(ng > 1)
       panel.superpose(x, y, subscripts,
-                      if(.R.)as.integer(groups)
-                      else groups, 
+                      as.integer(groups),
                       lwd=lwd, lty=lty, pch=pch, cex=cex, 
                       font=font, col=col)
     else
@@ -177,10 +166,10 @@ panel.plsmo <- function(x, y, subscripts, groups=NULL, type='b',
     
     if(ng > 1) {
       Key <- function(x=NULL, y=NULL, lev, cex, col, font, pch){
-        oldpar <- par(usr=c(0,1,0,1),xpd=NA)
+        oldpar <- par(usr=c(0, 1, 0, 1), xpd=NA)
         on.exit(par(oldpar))
         if(is.list(x)) {
-          y <- x[[2]];
+          y <- x[[2]]
           x <- x[[1]]
         }
             

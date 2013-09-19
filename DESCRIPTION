@@ -1,11 +1,11 @@
 Package: Hmisc
 Version: 3.12-3
-Date: 2013-09-17
+Date: 2013-09-18
 Title: Harrell Miscellaneous
 Author: Frank E Harrell Jr <f.harrell@vanderbilt.edu>, with
   contributions from Charles Dupont and many others.
 Maintainer: Charles Dupont <charles.dupont@vanderbilt.edu>
-Depends: R (>= 2.4.0), methods, survival, Formula, gsubfn
+Depends: R (>= 2.4.0), methods, survival, Formula
 Imports: lattice, cluster, survival, rpart
 Suggests: lattice, grid, nnet, foreign, chron, acepack,
   rms, cluster, rpart, mice, tables

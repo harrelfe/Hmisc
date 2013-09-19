@@ -1,5 +1,5 @@
 tabulr <- function(formula, data=NULL, nolabel=NULL, nofill=NULL, ...) {
-  require(gsubfn) || stop('package gsubfn not installed')
+  ## require(gsubfn) || stop('package gsubfn not installed')
   if(!length(data)) data <- environment(formula)
   else if(is.list(data)) data <- list2env(data, parent=environment(formula))
 

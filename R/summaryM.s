@@ -648,7 +648,7 @@ latex.summaryM <-
     col.just <- c("r",col.just)
   }
 
-  if(!insert.bottom)
+  if(is.logical(insert.bottom) && !insert.bottom)
     legend <- NULL
   else {
     legend <- character()

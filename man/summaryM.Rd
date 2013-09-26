@@ -354,7 +354,8 @@ summaryM(formula, data, subset, na.action,
   }
   \item{insert.bottom}{
     set to \code{FALSE} to suppress inclusion of definitions placed at the
-    bottom of LaTeX tables
+    bottom of LaTeX tables.  You can also specify a character string
+      containing other text that overrides the automatic text.
   }
   \item{dcolumn}{see \code{latex}}
   }

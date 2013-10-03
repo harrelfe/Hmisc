@@ -9,7 +9,7 @@ waits for a mouse click before drawing the next page.
 }
 \usage{
 \method{hist}{data.frame}(x, n.unique = 3, nclass = "compute",
-                na.big = FALSE, rugs = FALSE, mtitl = FALSE, ...)
+                na.big = FALSE, rugs = FALSE, freq=TRUE, mtitl = FALSE, ...)
 }
 \arguments{
   \item{x}{a data frame}
@@ -22,7 +22,9 @@ waits for a mouse click before drawing the next page.
 	on the top of the histogram in addition to in a subtitle.  In the
 	subtitle, n is the number of non-missing values and m is the number
 	of missing values}
-  \item{rugs}{set to \code{TRUE} to add rug plots at the top of each histogram}
+  \item{rugs}{set to \code{TRUE} to add rug plots at the top of each
+		histogram}
+	\item{freq}{see \code{\link{hist}}.  Default is to show frequencies.}
   \item{mtitl}{set to a character string to set aside extra outside top
 	margin and to use the string for an overall title}
   \item{\dots}{arguments passed to \code{scat1d}}

@@ -1,29 +1,22 @@
 hist.data.frame <- function(x, n.unique=3, nclass="compute", na.big=FALSE,
-                            rugs=FALSE, mtitl=FALSE, ...)
+                            rugs=FALSE, freq=TRUE, mtitl=FALSE, ...)
 {
   oldmf  <- par('mfrow')
   oldoma <- par('oma')
   oldmar <- par('mar')  # resetting mfrow causes a new mar
   on.exit(par(mfrow=oldmf, oma=oldoma, mar=oldmar))
   mf <- oldmf
-  if(length(mf)==0)
-    mf <- c(1,1)
+  if(length(mf)==0) mf <- c(1,1)
 
   automf <- FALSE
   if((la <- length(x))>1 & max(mf)==1) {
     mf <-
-      if(la<=4)
-        c(2,2)
-      else if(la<=6)
-        c(2,3)
-      else if(la<=9)
-        c(3,3)
-      else if(la<=12)
-        c(3,4)
-      else if(la<=16)
-        c(4,4)
-      else
-        c(4,5)
+      if(la<=4)       c(2,2)
+      else if(la<=6)  c(2,3)
+      else if(la<=9)  c(3,3)
+      else if(la<=12) c(3,4)
+      else if(la<=16) c(4,4)
+      else            c(4,5)
     
     automf <- TRUE
     par(mfrow=mf)
@@ -73,23 +66,15 @@ hist.data.frame <- function(x, n.unique=3, nclass="compute", na.big=FALSE,
 
         if(nclass == 'default') {
           if(type == 'Date')
-            hist(v, nc, xlab=lab, freq=TRUE, main='')
-          else hist(v, xlab=lab, main='')
+            hist(v, nc, xlab=lab, freq=freq, main='')
+          else hist(v, xlab=lab, main='', freq=freq)
         } else {
           if(type == 'Date')
-            hist(v, nc, xlab=lab, freq=TRUE, main='')
+            hist(v, nc, xlab=lab, freq=freq, main='')
           else
-            hist(v, nclass=nc, xlab=lab, main='')
+            hist(v, nclass=nc, xlab=lab, freq=freq, main='')
         }
        
-#        if(type=='date') {
-#          axis(2)
-#          r <- range(v, na.rm=TRUE)
-#          by <- round((r[2]-r[1])/(par('lab')[2] - 1))
-#          at <- seq(r[1], r[2], by=by)
-#          axis(1, at=at, labels=format(chron(at)))
-#        }
-      
         m <- sum(is.na(v))
         pm <- paste("n:",n," m:",m,sep="")
         title(sub=pm,adj=0,cex=.5)

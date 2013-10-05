@@ -7,8 +7,6 @@ panel.bpplot <- function(x, y, box.ratio = 1, means=TRUE,
                          cex.means  = box.dot$cex,  col = box.dot$col,
                          nogrid=NULL, height=NULL, ...)
 {
-  require(lattice)
-  
   grid <- TRUE
   if(length(nogrid) && nogrid) grid <- FALSE
   if(missing(nloc) && !grid) nloc <- 'none'
@@ -245,7 +243,6 @@ bpplt <- function(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
 bpplotM <- function(vars, group=NULL, data, qlim=0.01,
                     nloc=c('right','left','none'),
                     vnames=c('labels', 'names'), cex.n=.7, ...) {
-  require(lattice)
   nloc   <- match.arg(nloc)
   vnames <- match.arg(vnames)
   if(inherits(vars, 'formula')) {

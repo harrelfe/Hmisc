@@ -2,10 +2,12 @@ exportPattern("^([^.]|\\..+\\.)")
 useDynLib(Hmisc)
 
 import(methods)
-import(rpart)
 import(stats)
+import(survival)
+import(Formula)
+import(grid)
 
-importFrom(lattice, llines, lpoints, lsegments)
+importFrom(lattice, xyplot, panel.dotplot, llines, lpoints, lsegments)
 importFrom(cluster, clara)
 
 S3method(print, spower)

@@ -2,7 +2,6 @@
 curveRep <- function(x, y, id, kn=5, kxdist=5, k=5, p=5, force1=TRUE,
                      metric=c('euclidean','manhattan'),
                      smooth=FALSE, extrap=FALSE, pr=FALSE) {
-  require(cluster)
   metric <- match.arg(metric)
   
   id <- as.character(id)
@@ -161,8 +160,6 @@ plot.curveRep <- function(x, which=1:length(res),
   if(method=='lattice') {
     if(length(which) != 1)
       stop('must specify one n range to plot for method="lattice"')
-    require(grid)
-    require(lattice)
     nres <- names(res)
     nname <- if(length(nres)==1) NULL else
       if(nres[which]=='1' & nres[which+1]=='2') 'n=1' else {

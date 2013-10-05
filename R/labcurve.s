@@ -775,11 +775,6 @@ putKey <- function(z, labels, type=NULL,
                    transparent=TRUE, plot=TRUE, key.opts=NULL,
                    grid=FALSE)
 {
-  if(grid) {
-    require('grid')
-    require('lattice')  # use draw.key in lattice
-  }
-  
   nc <- length(labels)
   if(!length(pch)) pch <- rep(NA, nc)
   

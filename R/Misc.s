@@ -680,7 +680,6 @@ ordGridFun <- function(grid)
                     },
          axis     = function(...) axis(...))
   else {
-    require('grid') || stop('grid package not available')
     list(lines = function(x, y, ...)
          {
            if(is.list(x)) {
@@ -777,7 +776,6 @@ parGrid <- function(grid=FALSE)
   cex <- pr$cex
   lwd <- pr$lwd
   if(grid) {
-    require('grid') || stop('grid package not available')
     ## cvp <- current.viewport()
     ## usr <- c(cvp$xscale, cvp$yscale)
     usr <- c(convertX(unit(0:1, "npc"), "native", valueOnly=TRUE),

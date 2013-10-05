@@ -403,8 +403,6 @@ Ecdf.formula <- function(x, data = sys.frame(sys.parent()),
                          prepanel=prepanel.Ecdf, panel=panel.Ecdf, ..., 
                          xlab, ylab, fun=function(x)x, subset=TRUE)
 {
-  require('grid')
-  require('lattice')
   vars <- all.vars(x)
   xname <- vars[1]
   if(missing(xlab))

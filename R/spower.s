@@ -4,11 +4,7 @@ spower <- function(rcontrol, rinterv, rcens, nc, ni,
   crit <- qchisq(1-alpha, 1)
   group <- c(rep(1,nc), rep(2,ni))
   nexceed <- 0
-  if(cox)
-    {
-      require(survival)
-      beta <- numeric(nsim)
-    }
+  if(cox) beta <- numeric(nsim)
 
   maxfail <- 0; maxcens <- 0
   for(i in 1:nsim) {
@@ -139,8 +135,7 @@ Quantile2 <- function(scontrol, hratio,
 
   ## Store all functions evaluated at shorter times vector (tim), for
   ## plotting
-  asing <- if(.R.)function(x)x
-           else as.single
+  asing <- function(x) x
 
   sc.p  <- asing(approx(times, sc,  xout=tim)$y)
   hc.p  <- asing(approx(times, hc,  xout=tim)$y)
@@ -184,8 +179,7 @@ Quantile2 <- function(scontrol, hratio,
            times, xout=runif(n), rule=2)$y
   }
 
-  asing <- if(.R.)function(x)x
-           else as.single
+  asing <- function(x) x
 
   formals(r) <- list(n=integer(0),
                      what=c('control','intervention'),

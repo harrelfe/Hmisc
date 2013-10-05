@@ -504,8 +504,6 @@ xYplot <-
             panel=panel.xYplot, prepanel=prepanel.xYplot,
             scales=NULL, minor.ticks=NULL, sub=NULL, ...)
 {
-  require(grid)
-  require(lattice)
   yvname <- as.character(formula[2])  # tried deparse
   y <- eval(parse(text=yvname), data)
   if(!length(ylab)) ylab <- label(y, units=TRUE, plot=TRUE,
@@ -649,8 +647,6 @@ Dotplot <-
             panel=panel.Dotplot, prepanel=prepanel.Dotplot,
             scales=NULL, xscale=NULL, ...)
 {
-  require(grid)
-  require(lattice)
   yvname <- as.character(formula[2])  # tried deparse
   yv <- eval(parse(text=yvname), data)
   if(!length(ylab))

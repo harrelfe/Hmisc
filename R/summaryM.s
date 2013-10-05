@@ -10,7 +10,6 @@ summaryM <- function(formula, data, subset, na.action,
   m <- match(c('formula', 'data', 'subset', 'na.action'), names(mf), 0)
   mf <- mf[c(1, m)]
   if(missing(na.action)) mf$na.action <- na.retain
-  require(Formula)
   formula <- Formula(formula)
   mf[[1]] <- as.name('model.frame')
   mf$formula <- formula

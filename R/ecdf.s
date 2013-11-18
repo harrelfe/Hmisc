@@ -2,32 +2,31 @@ Ecdf <- function(x, ...) UseMethod('Ecdf')
 
 
 Ecdf.default <- function(x, what=c('F','1-F','f'), 
-                         weights=rep(1,length(x)), normwt=FALSE,
+                         weights=rep(1, length(x)), normwt=FALSE,
                          xlab, ylab, q, pl=TRUE, add=FALSE, lty=1,
-                         col=1, group=rep(1,length(x)), 
+                         col=1, group=rep(1, length(x)), 
                          label.curves=TRUE, xlim, subtitles=TRUE, 
                          datadensity=c('none','rug','hist','density'), 
                          side=1, 
                          frac=switch(datadensity,
                                      none=NA,rug=.03,hist=.1,density=.1),
-                         dens.opts=NULL, lwd=1, ...)
+                         dens.opts=NULL, lwd=1, log='', ...)
 {
   datadensity <- match.arg(datadensity)
   colspec <- FALSE
-  if(datadensity != 'none')
-    {
-      if(side %in% c(2,4))
-        stop('side must be 1 or 3 when datadensity is specified')
-      
-      if('frac' %nin% names(dens.opts))
-        dens.opts$frac <- frac
-      
-      if('side' %nin% names(dens.opts))
-        dens.opts$side <- side
-      
-      if('col' %in%   names(dens.opts))
-        colspec <- TRUE
-    }
+  if(datadensity != 'none') {
+    if(side %in% c(2,4))
+      stop('side must be 1 or 3 when datadensity is specified')
+    
+    if('frac' %nin% names(dens.opts))
+      dens.opts$frac <- frac
+    
+    if('side' %nin% names(dens.opts))
+      dens.opts$side <- side
+    
+    if('col' %in%   names(dens.opts))
+      colspec <- TRUE
+  }
   
   if(missing(xlab))
     xlab <- label(x, units=TRUE, plot=TRUE, default=deparse(substitute(x)))
@@ -65,68 +64,64 @@ Ecdf.default <- function(x, what=c('F','1-F','f'),
   
   weights <- weights[nna]
 
-  for(i in 1:nlev)
-    {
-      s <- group == lev[i]
-      x <- X[s]
-      wt <- weights[s]
-      xorig <- x
-
-      z <- wtd.Ecdf(x, wt, type='i/n', normwt=normwt, na.rm=FALSE)
-      x <- z$x; y <- z$ecdf
-      switch(what,
-             '1-F' = {y <- 1-y},
-             'f'   = {y <- y * sum(wt)})
-
-    if(pl)
-      {
-        if(i==1 && !add)
-          plot(x, y, xlab=xlab, ylab=ylab, xlim=xlim, type='n', ...)
+  for(i in 1:nlev) {
+    s <- group == lev[i]
+    x <- X[s]
+    wt <- weights[s]
+    xorig <- x
+    
+    z <- wtd.Ecdf(x, wt, type='i/n', normwt=normwt, na.rm=FALSE)
+    x <- z$x; y <- z$ecdf
+    switch(what,
+           '1-F' = {y <- 1-y},
+           'f'   = {y <- y * sum(wt)})
+    
+    if(pl) {
+      if(i==1 && !add)
+        plot(x, y, xlab=xlab, ylab=ylab, xlim=xlim, type='n', log=log, ...)
       
-        lines(x,y, type="s", lty=lty[i], col=col[i], lwd=lwd[i])
-        if(subtitles && i==1) {
-          pm <- paste("n:",n," m:",m,sep="")
-          title(sub=pm,adj=0,cex=.5)
-        }
-
-        if(!missing(q))
-          {
-            if(what=='f') q <- q*y[length(y)] else if(what=='1-F') q <- 1-q
-            q <- switch(what,
-                        'f'   = q*sum(wt),
-                        '1-F' = 1 - q,
-                        'F'   = q)
-        
-            a <- par("usr")
-            for(w in q)
-              {
-                quant <-
-                  if(what=='1-F') min(x[y<=w]) else min(x[y>=w])
-                
-                lines(c(a[1],quant),c(w,w),lty=2,col=1)
-                lines(c(quant,quant),c(w,a[3]),lty=2,col=col[i])
-              }
-          }
+      lines(x, y, type="s", lty=lty[i], col=col[i], lwd=lwd[i])
+      if(subtitles && i==1) {
+        pm <- paste("n:",n," m:",m,sep="")
+        title(sub=pm,adj=0,cex=.5)
       }
-
-      curves[[i]] <- list(x=x, y=y)
-      if(datadensity!='none')
-        {
-          if(!colspec)
-            dens.opts$col <- col[i]
-
-          do.call(switch(datadensity, 
-                         rug    ='scat1d', hist='histSpike',
-                         density='histSpike'),
-                  c(list(x=xorig,add=TRUE),
-                    if(datadensity=='density')list(type='density'),
-                    dens.opts))
+      
+      if(!missing(q)) {
+        if(what=='f') q <- q*y[length(y)] else if(what=='1-F') q <- 1-q
+        q <- switch(what,
+                    'f'   = q*sum(wt),
+                    '1-F' = 1 - q,
+                    'F'   = q)
+        
+        a <- par("usr")
+        for(w in q) {
+          quant <-
+            if(what=='1-F') min(x[y<=w]) else min(x[y>=w])
+          
+          lines(c(a[1],quant),c(w,w),lty=2,col=1)
+          lines(c(quant,quant),c(w,a[3]),lty=2,col=col[i])
         }
+      }
     }
+    
+    curves[[i]] <- list(x=x, y=y)
+    if(datadensity!='none') {
+      if(!colspec)
+        dens.opts$col <- col[i]
+      
+      do.call(switch(datadensity, 
+                     rug    = 'scat1d',
+                     hist   = 'histSpike',
+                     density= 'histSpike'),
+              c(list(x=xorig, add=TRUE),
+                if(datadensity=='density') list(type='density'),
+                dens.opts))
+    }
+  }
 
   if(nlev > 1 && (is.list(label.curves) || label.curves))
     labcurve(curves, type='s', lty=lty, col.=col, opts=label.curves)
-
+  
   invisible(structure(if(nlev==1) list(x = x, y = y) else curves, 
                       N=list(n=n, m=m)))
 }
@@ -143,8 +138,7 @@ Ecdf.data.frame <- function(x, group=rep(1,nrows),
   if(length(mf)==0)
     mf <- c(1,1)
   
-  g <- function(v, n.unique)
-  {
+  g <- function(v, n.unique) {
     if(is.character(v) || is.category(v))
       return(FALSE)
     
@@ -153,18 +147,17 @@ Ecdf.data.frame <- function(x, group=rep(1,nrows),
   
   use <- sapply(x, g, n.unique=n.unique)
   automf <- FALSE
-  if((la <- sum(use)) > 1 & max(mf)==1)
-    {
-      mf <-
-        if(la<=4) c(2,2)
-        else if(la<=6) c(2,3)
-        else if(la<=9) c(3,3)
-        else if(la<=12)c(3,4)
-        else if(la<=16)c(4,4)
-        else           c(4,5)
+  if((la <- sum(use)) > 1 & max(mf)==1) {
+    mf <-
+      if(la<=4) c(2,2)
+      else if(la<=6) c(2,3)
+      else if(la<=9) c(3,3)
+      else if(la<=12)c(3,4)
+      else if(la<=16)c(4,4)
+      else           c(4,5)
     
-      automf <- TRUE
-    }
+    automf <- TRUE
+  }
   
   oldmf <- par(mfrow=mf)
   on.exit(par(oldmf))
@@ -176,38 +169,34 @@ Ecdf.data.frame <- function(x, group=rep(1,nrows),
 
   group <- as.factor(group)
   
-  for(j in (1:length(x))[use])
-    {
-      v <- x[[j]]
-      i <- i+1
-      lab <- if(vnames=='names') nam[j] else
-       label(v, units=TRUE, plot=TRUE, default=nam[j])
+  for(j in (1:length(x))[use]) {
+    v <- x[[j]]
+    i <- i+1
+    lab <- if(vnames=='names') nam[j] else
+    label(v, units=TRUE, plot=TRUE, default=nam[j])
     
-      z <- Ecdf(v, group=group, weights=weights, normwt=normwt, 
-                xlab=lab, label.curves=label.curves, 
-                subtitles=subtitles, ...)
-      if(na.big)
-        {
-          m <- attr(z,'N')$m
-          if(m > 0)
-            mtext(paste(m,"NAs"),line=-2,cex=1)
-        }
-    
-      if(automf && interactive() && 
-         names(dev.list()) %nin% c('postscript','win.printer') &&
-         (i %% prod(mf)==0))
-        {
-          cat("click left mouse button to proceed\n")
-          locator(1)
-        }
+    z <- Ecdf(v, group=group, weights=weights, normwt=normwt, 
+              xlab=lab, label.curves=label.curves, 
+              subtitles=subtitles, ...)
+    if(na.big) {
+      m <- attr(z,'N')$m
+      if(m > 0)
+        mtext(paste(m,"NAs"),line=-2,cex=1)
     }
+    
+    if(automf && interactive() && 
+       names(dev.list()) %nin% c('postscript','win.printer') &&
+       (i %% prod(mf)==0)) {
+      cat("click left mouse button to proceed\n")
+      locator(1)
+    }
+  }
   
   invisible(ceiling(sum(use) / prod(mf)))
 }
 
 
-prepanel.Ecdf <- function(x, y, fun, ...)
-{
+prepanel.Ecdf <- function(x, y, fun, ...) {
   xlim <- range(x,na.rm=TRUE)
   ylim <- fun(c(0,1))
   if(any(is.infinite(ylim))) ylim <- fun(c(.001,.999))
@@ -245,17 +234,15 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
   else
                                  "plot.line")
 
-  qrefs <- function(x, q, col, fun, llines, grid)
-  {
+  qrefs <- function(x, q, col, fun, llines, grid) {
     quant <- quantile(x, probs=q, na.rm=TRUE)
     a <- parGrid(grid)$usr
-    for(i in 1:length(q))
-      {
-        llines(c(a[1],quant[i]),fun(c(q[i],q[i])),lty=2,col=1)
-        llines(c(quant[i],quant[i]),fun(c(q[i],a[3])),lty=2,col=col)
-      }
+    for(i in 1:length(q)) {
+      llines(c(a[1],quant[i]),fun(c(q[i],q[i])),lty=2,col=1)
+      llines(c(quant[i],quant[i]),fun(c(q[i],a[3])),lty=2,col=col)
+    }
   }
-
+  
   ppanel <- function(x, y, type, cex, pch, font, lwd, lty, col, q, 
                      qrefs, ecdf.type, fun=fun, 
                      datadensity=c('none','rug','hist','density'), 
@@ -280,34 +267,33 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
         qrefs(x, q, col, fun=fun, llines=llines, grid=TRUE)
     
       datadensity <- match.arg(datadensity)
-      if(datadensity != 'none')
-        {
-          if(side %in% c(2,4))
-            stop('side must be 1 or 3 when datadensity is specified')
-      
-          if('frac' %nin% names(dens.opts))
-            dens.opts$frac <- frac
-
-          if('side' %nin% names(dens.opts))
-            dens.opts$side <- side
-
-          if('col'  %nin% names(dens.opts))
-            dens.opts$col  <- col
-
-          if('lwd'  %nin% names(dens.opts))
-            dens.opts$lwd  <- lwd
-
-          do.call(switch(datadensity, 
-                         rug    ='scat1d',
-                         hist='histSpike',
-                         density='histSpike'),
-                  c(list(x=x,add=TRUE,grid=TRUE),
-                    if(datadensity=='density')
-                    list(type='density'),
-                    dens.opts))
-        }
+      if(datadensity != 'none') {
+        if(side %in% c(2,4))
+          stop('side must be 1 or 3 when datadensity is specified')
+        
+        if('frac' %nin% names(dens.opts))
+          dens.opts$frac <- frac
+        
+        if('side' %nin% names(dens.opts))
+          dens.opts$side <- side
+        
+        if('col'  %nin% names(dens.opts))
+          dens.opts$col  <- col
+        
+        if('lwd'  %nin% names(dens.opts))
+          dens.opts$lwd  <- lwd
+        
+        do.call(switch(datadensity, 
+                       rug    ='scat1d',
+                       hist='histSpike',
+                       density='histSpike'),
+                c(list(x=x,add=TRUE,grid=TRUE),
+                  if(datadensity=='density')
+                  list(type='density'),
+                  dens.opts))
+      }
     }
-
+  
   pspanel <- function(x, subscripts, groups, type, lwd, lty,
                       pch, cex, font, col, q, qrefs, 
                       ecdf.type, fun, llines, ...)
@@ -318,26 +304,24 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
       N <- seq(along = groups)
       curves <- list()
     
-      for(i in 1:length(lev))
-        {
-          which <- N[groups == i]
-          ## sort in x
-          j <- which # no sorting
-          if(any(j))
-            {
-              z <- wtd.Ecdf(x[j], type=ecdf.type, na.rm=FALSE)
-              do.call('llines',list(z$x, fun(z$ecdf),
-                                    col = col[i], lwd = lwd[i], lty = lty[i], 
-                                    type = type, ...))
-              if(length(q)) qrefs(x[j], q, col[i], fun=fun, llines=llines,
-                                  grid=TRUE)
-              curves[[lev[i]]] <- list(x=z$x, y=fun(z$ecdf))
-            }
+      for(i in 1:length(lev)) {
+        which <- N[groups == i]
+        ## sort in x
+        j <- which # no sorting
+        if(any(j)) {
+          z <- wtd.Ecdf(x[j], type=ecdf.type, na.rm=FALSE)
+          do.call('llines',list(z$x, fun(z$ecdf),
+                                col = col[i], lwd = lwd[i], lty = lty[i], 
+                                type = type, ...))
+          if(length(q)) qrefs(x[j], q, col[i], fun=fun, llines=llines,
+                              grid=TRUE)
+          curves[[lev[i]]] <- list(x=z$x, y=fun(z$ecdf))
         }
+      }
       
       curves
     }
-
+  
   lty  <- rep(lty, length = ng)
   lwd  <- rep(lwd, length = ng)
   pch  <- rep(pch, length = ng)
@@ -347,54 +331,52 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
 
   col <- rep(col, length = ng)
 
-  if(ng > 1)
-    {
-      levnum <- sort(unique(g))
-      curves <- pspanel(x, subscripts, groups,
-                        lwd=lwd, lty=lty, pch=pch, cex=cex, 
-                        font=font, col=col, type=type, q=q, qrefs=qrefs, 
-                        ecdf.type=method, fun=fun, llines=llines)
-      if(!(is.logical(label.curves) && !label.curves)) {
-        lc <-
-          if(is.logical(label.curves))
+  if(ng > 1) {
+    levnum <- sort(unique(g))
+    curves <- pspanel(x, subscripts, groups,
+                      lwd=lwd, lty=lty, pch=pch, cex=cex, 
+                      font=font, col=col, type=type, q=q, qrefs=qrefs, 
+                      ecdf.type=method, fun=fun, llines=llines)
+    if(!(is.logical(label.curves) && !label.curves)) {
+      lc <-
+        if(is.logical(label.curves))
           list(lwd=lwd, cex=cex[1])
         else
           c(list(lwd=lwd, cex=cex[1]), label.curves)
-
-        labcurve(curves, lty=lty[levnum], lwd=lwd[levnum], col.=col[levnum], 
-                 opts=lc, grid=TRUE, ...)
-      }
+      
+      labcurve(curves, lty=lty[levnum], lwd=lwd[levnum], col.=col[levnum], 
+               opts=lc, grid=TRUE, ...)
     }
+  }
   else ppanel(x,
               lwd=lwd, lty=lty, pch=pch, cex=cex, 
               font=font, col=col, type=type, q=q, qrefs=qrefs, 
               ecdf.type=method, fun=fun, llines=llines, ...)
 
-  if(ng>1)
-    { ##set up for key() if points plotted
-      .Key <- function(x=0, y=1, lev, col, lty, lwd, ...)
-        {
-          oldpar <- par(usr=c(0,1,0,1),xpd=NA)
-          
-          ## Even though par('usr') shows 0,1,0,1 after lattice draws
-          ## its plot, it still needs resetting
-          on.exit(par(oldpar))
-          if(is.list(x))
-            {
-              y <- x[[2]]; x <- x[[1]]
-            }
-          
-          if(!length(x)) x <- 0
-          if(!length(y)) y <- 1  ## because of formals()
-          rlegend(x, y, legend=lev, lty=lty, lwd=lwd, col=col)
-          invisible()
-        }
-
+  if(ng>1) { ##set up for key() if points plotted
+    .Key <- function(x=0, y=1, lev, col, lty, lwd, ...)
+      {
+        oldpar <- par(usr=c(0,1,0,1),xpd=NA)
+        
+        ## Even though par('usr') shows 0,1,0,1 after lattice draws
+        ## its plot, it still needs resetting
+        on.exit(par(oldpar))
+        if(is.list(x))
+          {
+            y <- x[[2]]; x <- x[[1]]
+          }
+        
+        if(!length(x)) x <- 0
+        if(!length(y)) y <- 1  ## because of formals()
+        rlegend(x, y, legend=lev, lty=lty, lwd=lwd, col=col)
+        invisible()
+      }
     
-      formals(.Key) <- list(x=NULL, y=NULL, lev=levels(groups), col=col,
-                           lty=lty, lwd=lwd,...=NULL)
-      .setKey(.Key)
-    }
+    
+    formals(.Key) <- list(x=NULL, y=NULL, lev=levels(groups), col=col,
+                          lty=lty, lwd=lwd,...=NULL)
+    .setKey(.Key)
+  }
 }
 
 

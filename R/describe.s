@@ -120,11 +120,11 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
   }
 
   counts <- c(counts,n.unique)
-  lab <- c(lab,"unique")
-  x.binary <- n.unique==2 && isnum && x.unique[1]==0 && x.unique[2]==1
+  lab <- c(lab, "unique")
+  x.binary <- n.unique == 2 && isnum && x.unique[1] == 0 && x.unique[2] == 1
   if(x.binary) {
-    counts <- c(counts,sum(weights[x==1]))
-    lab <- c(lab,"Sum")
+    counts <- c(counts, sum(weights[x == 1]))
+    lab <- c(lab, "Sum")
   }
   
   if(isnum) {
@@ -134,11 +134,11 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
       dd <- sum(weights*xnum)/sum(weights)
       fval <- formatDateTime(dd, atx, !timeUsed)
       counts <- c(counts, fval)
-    } else counts <- c(counts,format(sum(weights*x)/sum(weights),...))
+    } else counts <- c(counts, format(sum(weights * x) / sum(weights), ...))
     
-    lab <- c(lab,"Mean")
-  } else if(n.unique==1) {
-    counts <- c(counts, x.unique)
+    lab <- c(lab, "Mean")
+  } else if(n.unique == 1) {
+    counts <- c(counts, format(x.unique))
     lab <- c(lab, "value")
   }
 

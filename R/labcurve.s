@@ -653,9 +653,8 @@ rlegend <- function (x, y, legend, fill, col = "black", lty=NULL, lwd=NULL,
     
     x.off <- if (merge) -0.7 else 0
     
-    if (xlog) x <- log10(x)
-    
-    if (ylog) y <- log10(y)
+    ## if (xlog) x <- log10(x)    25Oct13
+    ## if (ylog) y <- log10(y)
     
     if (nx == 2) {
       x <- sort(x)

@@ -13,7 +13,12 @@ Plot smoothed estimates
   \code{group}.  When \code{group} is present, the \code{datadensity}
   option will draw tick marks showing the location of the raw
   \code{x}-values, separately for each curve.  \code{plsmo} has an
-  option to plot connected points for raw data, with no smoothing.
+  option to plot connected points for raw data, with no smoothing.  The
+  non-panel version of \code{plsmo} allows \code{y} to be a matrix, for
+  which smoothing is done separately over its columns.  If both
+  \code{group} and multi-column \code{y} are used, the number of curves
+  plotted is the product of the number of groups and the number of
+  \code{y} columns.
 
 \code{panel.plsmo} is a \code{panel} function for \code{trellis} for the
 \code{xyplot} function that uses \code{plsmo} and its options to draw
@@ -42,7 +47,7 @@ mouse click.
 }
 \usage{
 plsmo(x, y, method=c("lowess","supsmu","raw"), xlab, ylab, 
-      add=FALSE, lty=1:nlev, col=par("col"), lwd=par("lwd"),
+      add=FALSE, lty=1 : lc, col=par("col"), lwd=par("lwd"),
       iter=if(length(unique(y))>2) 3 else 0, bass=0, f=2/3, trim, 
       fun, group, prefix, xlim, ylim, 
       label.curves=TRUE, datadensity=FALSE, lines.=TRUE, subset=TRUE,
@@ -65,7 +70,7 @@ plsmo(x, y, method=c("lowess","supsmu","raw"), xlab, ylab,
 vector of x-values, NAs allowed
 }
 \item{y}{
-vector of y-values, NAs allowed
+vector or matrix of y-values, NAs allowed
 }
 \item{method}{
 "lowess" (the default), "supsmu", or "raw" to not smooth at all
@@ -80,7 +85,8 @@ y-axis label, like xlab.
 Set to T to call lines instead of plot.  Assumes axes already labeled.
 }
 \item{lty}{
-line type, default=1,2,3,\dots, corresponding to \code{group}
+line type, default=1,2,3,\dots, corresponding to columns of \code{y} and
+\code{group} combinations
 }
 \item{col}{
 color for each curve, corresponding to \code{group}.  Default is
@@ -177,11 +183,11 @@ plots, and \code{panel.plsmo} creates the \code{Key} function in the session fra
 set.seed(1)
 x <- 1:100
 y <- x + runif(100, -10, 10)
-plsmo(x,y,"supsmu",xlab="Time of Entry") 
+plsmo(x, y, "supsmu", xlab="Time of Entry") 
 #Use label(y) or "y" for ylab
 
 
-plsmo(x,y,add=TRUE,lty=2)
+plsmo(x, y, add=TRUE, lty=2)
 #Add lowess smooth to existing plot, with different line type
 
 
@@ -190,6 +196,13 @@ survival.time <- rexp(500)
 sex <- sample(c('female','male'), 500, TRUE)
 race <- sample(c('black','non-black'), 500, TRUE)
 plsmo(age, survival.time < 1, fun=qlogis, group=sex) # plot logit by sex
+
+#Bivariate Y
+sbp <- 120 + (age - 50)/10 + rnorm(500, 0, 8) + 5 * (sex == 'male')
+dbp <-  80 + (age - 50)/10 + rnorm(500, 0, 8) - 5 * (sex == 'male')
+Y <- cbind(sbp, dbp)
+plsmo(age, Y)
+plsmo(age, Y, group=sex)
 
 
 #Plot points and smooth trend line using trellis 

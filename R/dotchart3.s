@@ -39,9 +39,13 @@ dotchart3 <-
   if(length(labels) + length(glabels) > 0) {
     nmai     <- par("mai")
     nmai[2L] <- nmai[4L] + max(linch + goffset, ginch) + 0.1
+    ## Run strwidth separately because on of the 3 variables might
+    ## be an expression, in which case an overall c(...) would combine the
+    ## widths of character vectors
     if(length(auxdata) + length(auxgdata) > 0)
-      nmai[4L] <- .2 + 1.1 * max(strwidth(c(auxtitle, auxdata, auxgdata),
-                                          "inch", cex=cex.auxdata))
+      nmai[4L] <- .2 + 1.1 * max(strwidth(auxtitle, 'inch', cex=cex.auxdata),
+                                 strwidth(auxdata,  'inch', cex=cex.auxdata),
+                                 strwidth(auxgdata, 'inch', cex=cex.auxdata))
     par(mai = nmai)
   }
   if (!length(groups)) {

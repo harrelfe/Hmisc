@@ -1353,8 +1353,7 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
         using.Design <- TRUE
         da <- f$Design
       }
-      else warning('Not using a Design fitting function; summary(fit) will use\nstandard errors, t, P from last imputation only.  Use vcov(fit) to get the\ncorrect covariance matrix, sqrt(diag(vcov(fit))) to get s.e.\n\n')
-      }
+	}
 
     vavg <- vavg + v
     bar <- bar + cof

@@ -31,8 +31,8 @@ summaryRc <-
   Terms <- attr(X, "terms")
   resp <- attr(Terms, "response")
   
-  nact <- attr(X, "na.action")
-  nvar <- ncol(X) - 1
+  nact  <- attr(X, "na.action")
+  nvar  <- ncol(X) - 1
   strat <- attr(Terms, 'specials')$stratify
 
   getlab <- function(x, default) {
@@ -51,11 +51,12 @@ summaryRc <-
     X[[temp$vars]] <- NULL   # remove strata factors
   }
   Y <- X[[resp]]
-  yname <- as.character(attr(Terms,'variables'))[2]
+  yname <- as.character(attr(Terms, 'variables'))[2]
   ylabel <- if(length(ylab)) ylab else getlab(Y, yname)
 
   X[[resp]] <- NULL   # remove response var
-  s <- is.na(Y)
+  Y <- as.matrix(Y)
+  s <- rowSums(is.na(Y)) == ncol(Y)
   nmissy <- sum(s)
   if(nmissy) {
     X <- X[!s,, drop=FALSE]
@@ -139,7 +140,8 @@ summaryRc <-
     xlab <- getlab(x, nams[i])
     units  <- if(length(l <- attr(x,'units'))) l else ''
     xlab <- labelPlotmath(xlab, units)
-    pl(x, Y, strat=strat, quant=quant, bpplot=bpplot, height.bpplot=height.bpplot,
+    pl(x, Y, strat=strat, quant=quant, bpplot=bpplot,
+       height.bpplot=height.bpplot,
        xlab=xlab, ylab=ylabel, ylim=ylim, xlim=xlim[[v]], ...)
   }
 }

@@ -121,6 +121,10 @@ summaryRc(y ~ age + bp)
 summaryRc(y ~ age + bp, bpplot='top', datadensity=FALSE, trim=.01)
 summaryRc(y ~ age + bp + stratify(sex),
           label.curves=list(keys='lines'), nloc=list(x=.1, y=.05))
+y2 <- rbinom(500, 1, plogis(L + .5))
+Y <- cbind(y, y2)
+summaryRc(Y ~ age + bp + stratify(sex),
+          label.curves=list(keys='lines'), nloc=list(x=.1, y=.05))
 }
 \keyword{hplot}
 

@@ -1,8 +1,8 @@
 panel.bpplot <- function(x, y, box.ratio = 1, means=TRUE,
                          qref=c(.5, .25, .75),
                          probs= c(.05, .125, .25, .375), nout=0,
-                         nloc=c('right', 'left', 'none'), cex.n=.7,
-                         datadensity=FALSE, scat1d.opts=NULL,
+                         nloc=c('right lower', 'right', 'left', 'none'),
+                         cex.n=.7, datadensity=FALSE, scat1d.opts=NULL,
                          font = box.dot$font, pch = box.dot$pch, 
                          cex.means  = box.dot$cex,  col = box.dot$col,
                          nogrid=NULL, height=NULL, ...)
@@ -76,8 +76,12 @@ panel.bpplot <- function(x, y, box.ratio = 1, means=TRUE,
              paste('n=', length(X), sep=''),
              adj=c(1, .5), cex=cex.n),
            left= ltext(xlimits[1] + .01*diff(xlimits), Y,
-             paste('n-', length(X), sep=''),
-             adj=c(0, .5), cex=cex.n) )
+             paste('n=', length(X), sep=''),
+             adj=c(0, .5), cex=cex.n),
+           'right lower'= ltext(xlimits[2] - .01*diff(xlimits),
+             Y - w * min(size.qref) / k,
+             paste('n=', length(X), sep=''),
+             adj=c(1, 1), cex=cex.n))
 
     if(datadensity)
       do.call('scat1d',c(list(x=X, y=Y, grid=grid), scat1d.opts))
@@ -240,8 +244,8 @@ bpplt <- function(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
   }
 }
 
-bpplotM <- function(vars, group=NULL, data, qlim=0.01,
-                    nloc=c('right','left','none'),
+bpplotM <- function(vars, group=NULL, data, qlim=0.01, xlim=NULL,
+                    nloc=c('right lower','right','left','none'),
                     vnames=c('labels', 'names'), cex.n=.7, ...) {
   nloc   <- match.arg(nloc)
   vnames <- match.arg(vnames)
@@ -271,6 +275,7 @@ bpplotM <- function(vars, group=NULL, data, qlim=0.01,
   w$time <- factor(w$time, levels=vars)
   lims <- lapply(data[, vars],
                  function(x) quantile(x, c(qlim, 1 - qlim), na.rm=TRUE))
+  if(length(xlim)) lims[names(xlim)] <- xlim
   scales <-  list(x=list(relation='free', limits=lims))
   nv <- length(vars)
   lev <- NULL

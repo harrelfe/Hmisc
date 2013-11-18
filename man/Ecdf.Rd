@@ -45,16 +45,18 @@ user to define the keys for the groups.
 \usage{
 Ecdf(x, \dots)
 
-\method{Ecdf}{default}(x, what=c('F','1-F','f'), weights, normwt=FALSE,
+\method{Ecdf}{default}(x, what=c('F','1-F','f'),
+     weights=rep(1, length(x)), normwt=FALSE,
      xlab, ylab, q, pl=TRUE, add=FALSE, lty=1, 
      col=1, group=rep(1,length(x)), label.curves=TRUE, xlim, 
      subtitles=TRUE, datadensity=c('none','rug','hist','density'),
      side=1, 
      frac=switch(datadensity,none=NA,rug=.03,hist=.1,density=.1),
-     dens.opts=NULL, lwd, \dots)
+     dens.opts=NULL, lwd=1, log='', \dots)
 
 
-\method{Ecdf}{data.frame}(x, group=rep(1,nrows), weights, normwt,
+\method{Ecdf}{data.frame}(x, group=rep(1,nrows),
+     weights=rep(1, nrows), normwt=FALSE,
      label.curves=TRUE, n.unique=10, na.big=FALSE, subtitles=TRUE, 
      vnames=c('labels','names'),\dots)
 
@@ -101,7 +103,11 @@ integer line type for plot.  If \code{group} is specified, this can be a vector.
 }
 \item{lwd}{
   line width for plot.  Can be a vector corresponding to \code{group}s.
-  }
+}
+\item{log}{
+	see \code{\link{plot}}.  Set \code{log='x'} to use log scale for
+  \code{x}-axis.
+	}
 \item{col}{
 color for step function.  Can be a vector.
 }

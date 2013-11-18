@@ -54,7 +54,7 @@ format.
 \usage{
 panel.bpplot(x, y, box.ratio=1, means=TRUE, qref=c(.5,.25,.75),
              probs=c(.05,.125,.25,.375), nout=0,
-             nloc=c('right', 'left', 'none'), cex.n=.7,
+             nloc=c('right lower', 'right', 'left', 'none'), cex.n=.7,
              datadensity=FALSE, scat1d.opts=NULL,
              font=box.dot$font, pch=box.dot$pch, 
              cex.means =box.dot$cex,  col=box.dot$col,
@@ -67,7 +67,8 @@ bpplt(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
       pch=16, cex.labels=par('cex'), cex.points=if(prototype)1 else 0.5,
       grid=FALSE)
 
-bpplotM(vars, group=NULL, data, qlim=0.01, nloc=c('right','left','none'),
+bpplotM(vars, group=NULL, data, qlim=0.01, xlim=NULL,
+        nloc=c('right lower','right','left','none'),
         vnames=c('labels', 'names'), cex.n=.7, \dots)
 }
 \arguments{
@@ -124,8 +125,13 @@ a list containing named arguments (without abbreviations) to pass to
         user \code{y} units}
 \item{\dots}{arguments passed to \code{points} or \code{panel.bpplot}}
 \item{stats,xlim,xlab,qomit,cex.labels,cex.points,grid}{
-  undocumented arguments to \code{bpplt}
-}
+  undocumented arguments to \code{bpplt}.  For \code{bpplotM},
+        \code{xlim} is a list with elements named as the \code{x}-axis
+        variables, 
+        to override the \code{qlim} calculations with user-specified
+        \code{x}-axis limits for selected variables.  Example:
+        \code{xlim=list(age=c(20,60))}.
+				}
 \item{vars}{a character vector of names of variables to plot with
   \code{bpplotM}.  \code{vars} may also be a formula.  If it has a left
         hand side, that variable name is taken as the \code{group}

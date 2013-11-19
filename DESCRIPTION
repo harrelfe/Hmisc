@@ -1,10 +1,10 @@
 Package: Hmisc
-Version: 3.12-3
-Date: 2013-10-26
+Version: 3.13-0
+Date: 2013-11-18
 Title: Harrell Miscellaneous
 Author: Frank E Harrell Jr <f.harrell@vanderbilt.edu>, with
   contributions from Charles Dupont and many others.
-Maintainer: Charles Dupont <charles.dupont@vanderbilt.edu>
+Maintainer: Frank E Harrell Jr <f.harrell@vanderbilt.edu>
 Depends: methods, cluster, grid, lattice, survival, Formula
 Suggests: nnet, foreign, chron, acepack, rms, mice, tables, rpart
 Description: The Hmisc package contains many functions useful for data
@@ -15,4 +15,4 @@ Description: The Hmisc package contains many functions useful for data
 	and recoding variables.
 License: GPL (>= 2)
 LazyLoad: Yes
-URL: http://biostat.mc.vanderbilt.edu/Hmisc
+URL: http://biostat.mc.vanderbilt.edu/Hmisc, https://github.com/harrelfe/Hmisc

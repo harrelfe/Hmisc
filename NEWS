@@ -11,3 +11,5 @@ Changes in version 3.12-3 (2013-10-24)
    * New test aregImpute3.r for glm Poisson regression
    * Improved describe.vector to format single unique values
    * Took aware warning about var, s.e., t, p in fit.mult.impute
+   * Switched from subversion to github repository
+   * Changed maintainer from Charles Dupont to Frank Harrell

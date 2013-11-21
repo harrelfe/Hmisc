@@ -13,3 +13,4 @@ Changes in version 3.12-3 (2013-10-24)
    * Took aware warning about var, s.e., t, p in fit.mult.impute
    * Switched from subversion to github repository
    * Changed maintainer from Charles Dupont to Frank Harrell
+   * Changed wtd.loess.noiter to use loess instead of stats:::simpleLoess

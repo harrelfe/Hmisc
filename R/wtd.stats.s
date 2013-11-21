@@ -208,8 +208,10 @@ wtd.loess.noiter <- function(x, y, weights=rep(1,n),
   }
   
   max.kd <- max(200, n)
-  y <- stats:::simpleLoess(y, x, weights=weights, span=span,
-                           degree=degree, cell=cell)$fitted 
+  # y <- stats:::simpleLoess(y, x, weights=weights, span=span,
+  #                          degree=degree, cell=cell)$fitted
+  y <- fitted(loess(y ~ x, weights=weights, span=span, degree=degree,
+		control=loess.control(cell=cell, iterations=1)))
 
   switch(type,
          all=list(x=x, y=y),

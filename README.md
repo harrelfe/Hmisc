@@ -9,9 +9,10 @@ Current Goals
    * See also bpplotM and tabulr
 * See http://biostat.mc.vanderbilt.edu/HmiscNew
 
-Main Web Site
+Web Sites
 =============
-http://biostat.mc.vanderbilt.edu/Hmisc
+* http://biostat.mc.vanderbilt.edu/Hmisc
+* http://cran.r-project.org/web/packages/Hmisc
 
 To Do
 =====

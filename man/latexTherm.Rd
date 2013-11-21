@@ -42,9 +42,11 @@ latexTherm(c(.5, .7, .4, .2), name='ltb')
 latexTherm(c(.5, NA, .75, 0), w=.3, h=1, name='ltc', extra=0)
 latexTherm(c(.5, NA, .75, 0), w=.3, h=1, name='ltcc')
 latexTherm(c(0, 0, 0, 0), name='ltd')
-ct('This is a the first:\\lta and the second:\\ltb\\\\ and the third without extra:\\ltc END\\\\\nThird with extra:\\ltcc END\\\\ \n\\vspace{2in}\\\\ \n')
-ct('All data = zero, frame only:\\ltd\\\\')
-ct('\\end{document}\n')
+ct('This is a the first:\\lta and the second:\\ltb\\\\ and the third
+without extra:\\ltc END\\\\\nThird with extra:\\ltcc END\\\\ 
+\\vspace{2in}\\\\ 
+All data = zero, frame only:\\ltd\\\\
+\\end{document}\n')
 }}
 \keyword{utilities}
 \keyword{interface}

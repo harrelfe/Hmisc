@@ -11,8 +11,9 @@ Current Goals
 
 Web Sites
 =============
-* http://biostat.mc.vanderbilt.edu/Hmisc
-* http://cran.r-project.org/web/packages/Hmisc
+* Overall: http://biostat.mc.vanderbilt.edu/Hmisc
+* CRAN: http://cran.r-project.org/web/packages/Hmisc
+* Changelog: https://github.com/harrelfe/Hmisc/commits/master
 
 To Do
 =====

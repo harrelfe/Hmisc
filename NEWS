@@ -1,4 +1,4 @@
-Changes in version 3.12-3 (2013-10-24)
+Changes in version 3.13-0 (2013-11-18)
    * Changed n location (nloc argument) in bpplotM
    * Improved dotchart3 to better compute string widths when there is a mixture of expressions and regular strings for auxdata/auxtitle
    * Changed rlegend to not take logs if log axes are in effect.  Fixes Ecdf(..., log='x', label.curves=list(keys=1:3)).  Thanks: Bayazid Sarker <sarkarbayazid@gmail.com>
@@ -10,7 +10,7 @@ Changes in version 3.12-3 (2013-10-24)
    * Added new test file for wtd.mean, wtd.quantile
    * New test aregImpute3.r for glm Poisson regression
    * Improved describe.vector to format single unique values
-   * Took aware warning about var, s.e., t, p in fit.mult.impute
+   * Took away warning about var, s.e., t, p in fit.mult.impute
    * Switched from subversion to github repository
    * Changed maintainer from Charles Dupont to Frank Harrell
    * Changed wtd.loess.noiter to use loess instead of stats:::simpleLoess

@@ -101,8 +101,6 @@ ftuss           \tab Sample size for 2-sample binomial test using  "  "  "  "\cr
 gbayes          \tab Bayesian posterior and predictive distributions when both\cr
                 \tab the prior and the likelihood are Gaussian\cr
 getHdata        \tab Fetch and list datasets on our web site\cr
-gs.slide        \tab Sets nice defaults for graph sheets for S-Plus for\cr
-                \tab copying graphs into Microsoft applications\cr
 hdquantile      \tab Harrell-Davis nonparametric quantile estimator with s.e.\cr
 histbackback    \tab Back-to-back histograms (Pat Burns, Salomon Smith\cr
                 \tab     Barney, London, \email{pburns@dorado.sbi.com})\cr
@@ -137,9 +135,8 @@ mgp.axis.labels
                 \tab Used by survplot and plot in \pkg{rms} library (and other\cr
                 \tab     functions in the future) so that different spacing\cr
                 \tab     between tick marks and axis tick mark labels may be\cr
-                \tab     specified for x- and y-axes.  ps.slide, win.slide,\cr
-                \tab     gs.slide set up nice defaults for mgp.axis.labels.\cr
-                \tab     Otherwise use mgp.axis.labels('default') to set defaults.\cr
+                \tab     specified for x- and y-axes.  \cr
+                \tab     Use mgp.axis.labels('default') to set defaults.\cr
                 \tab     Users can set values manually using \cr
                 \tab     mgp.axis.labels(x,y) where x and y are 2nd value of\cr
                 \tab     par('mgp') to use.  Use mgp.axis.labels(type=w) to\cr
@@ -257,8 +254,6 @@ varclus         \tab Graph hierarchical clustering of variables using squared\cr
 xy.group        \tab Compute mean x vs. function of y by groups of x\cr
 xYplot          \tab Like trellis xyplot but supports error bars and multiple\cr
                 \tab     response variables that are connected as separate lines\cr
-win.slide       \tab Setup win.graph or win.printer using nice defaults for\cr
-                \tab presentations/slides/publications\cr
 wtd.mean \tab \cr wtd.var \tab \cr  wtd.quantile \tab \cr  wtd.Ecdf \tab
 \cr wtd.table \tab \cr  wtd.rank \tab \cr wtd.loess.noiter \tab \cr
 num.denom.setup \tab Set of function for obtaining weighted estimates\cr

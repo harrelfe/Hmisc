@@ -1,3 +1,6 @@
+Changes in version 3.13-1 (2014-01-01)
+   * Added trans argument to varclus
+
 Changes in version 3.13-0 (2013-11-18)
    * Changed n location (nloc argument) in bpplotM
    * Improved dotchart3 to better compute string widths when there is a mixture of expressions and regular strings for auxdata/auxtitle

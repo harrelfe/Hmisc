@@ -47,7 +47,8 @@ the third variable was not missing.
 varclus(x, similarity=c("spearman","pearson","hoeffding","bothpos","ccbothpos"),
         type=c("data.matrix","similarity.matrix"), 
         method="complete",
-        data=NULL, subset=NULL, na.action=na.retain, ...)
+        data=NULL, subset=NULL, na.action=na.retain,
+        trans=c("square", "abs", "none"), ...)
 \method{print}{varclus}(x, abbrev=FALSE, ...)
 \method{plot}{varclus}(x, ylab, abbrev=FALSE, legend.=FALSE, loc, maxlen, labels, \dots)
 
@@ -128,6 +129,10 @@ These may be specified if \code{x} is a formula.  The default
 \code{na.action} is \code{na.retain}, defined by \code{varclus}.  This
 causes all observations to be kept in the model frame, with later
 pairwise deletion of \code{NA}s.}
+\item{trans}{By default, when the similarity measure is based on
+	Pearson's or Spearman's correlation coefficients, the coefficients are
+	squared.  Specify \code{trans="abs"} to take absolute values or
+	\code{trans="none"} to use the coefficients as they stand.}
 \item{...}{for \code{varclus} these are optional arguments to pass to
   the \code{\link{dataframeReduce}} function.  Otherwise,
 passed to \code{plclust} (or to \code{dotchart} or \code{dotchart2} for

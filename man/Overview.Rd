@@ -175,7 +175,6 @@ rcspline.plot   \tab Plot spline fit with nonparametric smooth and grouped estim
 rcspline.restate
                 \tab Restate restricted cubic spline in unrestricted form, and\cr
                 \tab     create TeX expression to print the fitted function\cr
-recode          \tab Recodes variables\cr
 reShape         \tab Reshape a matrix into 3 vectors, reshape serial data\cr
 rm.boot         \tab Bootstrap spline fit to repeated measurements model,\cr
                 \tab     with simultaneous confidence region - least\cr

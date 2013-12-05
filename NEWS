@@ -1,5 +1,6 @@
 Changes in version 3.13-1 (2014-01-01)
    * Added trans argument to varclus
+   * Removed recode function
 
 Changes in version 3.13-0 (2013-11-18)
    * Changed n location (nloc argument) in bpplotM

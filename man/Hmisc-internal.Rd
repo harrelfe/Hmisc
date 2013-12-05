@@ -55,7 +55,6 @@
 \alias{print.timePOSIXt}
 \alias{read.xportDataload}
 \alias{readSAScsv}
-\alias{recode}
 \alias{rowsumFast}
 \alias{sas.get.macro}
 \alias{setParNro}

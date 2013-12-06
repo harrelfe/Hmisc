@@ -33,7 +33,7 @@ valueTags <- function(x)
   consolidate(attributes(x)) <- value
 
   if(all(class(x) != 'labelled'))
-    oldClass(x) <- c('labelled', oldClass(x))
+    class(x) <- c('labelled', class(x))
 
   return(x)
 }
@@ -47,7 +47,7 @@ valueLabel <- function(x)
   
   attr(x, 'label') <- value
 
-  oldClass(x) <- c('labelled', oldClass(x)[oldClass(x) != 'labelled'])
+  class(x) <- c('labelled', class(x)[class(x) != 'labelled'])
 
   return(x)
 }
@@ -61,7 +61,7 @@ valueUnit <- function(x)
 
   attr(x, 'units') <- value
 
-  oldClass(x) <- c('labelled', oldClass(x)[oldClass(x) != 'labelled'])
+  class(x) <- c('labelled', class(x)[class(x) != 'labelled'])
 
   return(x)
 }
@@ -75,7 +75,7 @@ valueName <- function(x)
 
   attr(x, 'valueName') <- value
 
-  oldClass(x) <- c('labelled', oldClass(x)[oldClass(x) != 'labelled'])
+  class(x) <- c('labelled', class(x)[class(x) != 'labelled'])
 
   return(x)
 }

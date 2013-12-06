@@ -57,7 +57,7 @@ substi.source <- function(x) attr(x,"substi.source")
 
 print.substi <- function(x, ...)
 {
-  i <- oldUnclass(attr(x, "substi.source"))
+  i <- unclass(attr(x, "substi.source"))
   if(!length(i)) {
     print.default(x)
     return(invisible())

@@ -24,7 +24,6 @@
 \alias{format.timePOSIXt}
 \alias{ftuss}
 \alias{ftupwr}
-\alias{getFunction}
 \alias{get2rowHeads}
 \alias{groupn}
 \alias{gView}
@@ -42,7 +41,6 @@
 \alias{naprint.delete}
 \alias{naresid.delete}
 \alias{napredict.delete}
-\alias{oldUnclass}
 \alias{oPar}
 \alias{optionsCmds}
 \alias{ordGridFun}

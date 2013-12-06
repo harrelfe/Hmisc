@@ -40,9 +40,9 @@ scat1d <- function(x, side=3, frac=.02, jitfrac=.008, tfrac,
       stop("y must have same length as x (or length(y)=1)")
 
     selector <- !(is.na(x)|is.na(y))
-    x <- oldUnclass(x[selector])
-    y <- oldUnclass(y[selector])
-  } else x <- oldUnclass(x[!is.na(x)]) ## unclass 29Jul97
+    x <- unclass(x[selector])
+    y <- unclass(y[selector])
+  } else x <- unclass(x[!is.na(x)])
   ## Stop JOA 12.8.97
   
   if(length(curve))
@@ -158,8 +158,8 @@ jitter2.data.frame <- function(x, ...)
 
 datadensity <- function(object, ...)
 {
-  if(!length(oldClass(object)))
-    oldClass(object) <- data.class(object)
+  if(!length(class(object)))
+    class(object) <- data.class(object)
   
   UseMethod('datadensity')
 }
@@ -275,7 +275,7 @@ datadensity.data.frame <-
       x <- object[[i]]
       if(types[i] == 'cont' )
         {  ## continuous variable
-          x <- oldUnclass(x)         ## handles dates
+          x <- unclass(x)         ## handles dates
           isna <- is.na(x)
           nna  <- sum(isna)
           N <- length(x) - nna

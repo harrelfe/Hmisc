@@ -117,7 +117,7 @@ areg.boot <- function(x, data, weights, subset, na.action=na.delete,
       if(method=='avas' && j==1)
         stop('categorical y not allowed for method="avas"')
     } else {
-      xj <- oldUnclass(xj) # 5Mar01
+      xj <- unclass(xj) # 5Mar01
       xu <- sort(unique(xj))
       nu <- length(xu)
       if(nu < 3) typ <- 'l'
@@ -648,12 +648,8 @@ predict.areg.boot <-
 }
 
 
-monotone <- if(!.SV4.)
-  function(x) structure(x, class = unique(c("monotone",
-                                            attr(x,'class')))) else
-function(x) structure(x, class='monotone')
-## SV4 can't handle multiple inheritance.  The above gets rid
-## of e.g. "imputed" class
+monotone <- function(x) structure(x, class = unique(c("monotone",
+                                       attr(x,'class'))))
 
 Mean <- function(object, ...) UseMethod("Mean")
 Quantile <- function(object, ...) UseMethod("Quantile")

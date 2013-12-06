@@ -585,7 +585,7 @@ print.summary.formula.response <-
            formatArgs=NULL, ...)
 {
   stats <- x
-  stats <- oldUnclass(stats)
+  stats <- unclass(stats)
   vnames <- match.arg(vnames)
   ul <- vnames=='labels'
 
@@ -655,7 +655,7 @@ latex.summary.formula.response <-
     
 
   title <- title   # otherwise problem with lazy evaluation 25May01
-  stats <- oldUnclass(stats)
+  stats <- unclass(stats)
   at <- attributes(stats)
 
   vnames <- match.arg(vnames)
@@ -705,7 +705,7 @@ latex.summary.formula.response <-
   cdec <- rep(c(if(prn)0 else NULL,cdec), ns)
 
   if(missing(trios)) {
-    cstats <- oldUnclass(stats)
+    cstats <- unclass(stats)
   } else {
     fmt <- function(z, cdec) ifelse(is.na(z), '', format(round(z,cdec)))
     cstats <- list()
@@ -766,7 +766,7 @@ plot.summary.formula.response <-
            main, subtitles=TRUE, ...)
 {
   stats <- x
-  stats  <- oldUnclass(stats)
+  stats  <- unclass(stats)
   vnames <- match.arg(vnames)
   ul <- vnames=='labels'
   at <- attributes(stats)
@@ -2020,7 +2020,7 @@ latex.summary.formula.cross <-
   vnames <- match.arg(vnames)
   ul <- vnames=='labels'
 
-  stats <- oldUnclass(stats)
+  stats <- unclass(stats)
   a <- attributes(stats)
   ylab <- attr(stats$S,"label")
   nvar <- length(a$Levels)
@@ -2122,7 +2122,7 @@ stratify <- function(..., na.group = FALSE, shortlabel = TRUE)
 
   allf <- list(...)
   
-  if(length(allf) == 1 && is.list(ttt <- oldUnclass(allf[[1]]))) {
+  if(length(allf) == 1 && is.list(ttt <- unclass(allf[[1]]))) {
     allf <- ttt
     words <- names(ttt)
   }
@@ -2140,7 +2140,7 @@ stratify <- function(..., na.group = FALSE, shortlabel = TRUE)
   if(is.null(levels(what)))
     what <- factor(what)
 
-  levs <- oldUnclass(what) - 1
+  levs <- unclass(what) - 1
   wlab <- levels(what)
   if(na.group && any(is.na(what))) {
     levs[is.na(levs)] <- length(wlab)
@@ -2157,7 +2157,7 @@ stratify <- function(..., na.group = FALSE, shortlabel = TRUE)
       what <- factor(what)
 
     wlab <- levels(what)
-    wlev <- oldUnclass(what) - 1
+    wlev <- unclass(what) - 1
     if(na.group && any(is.na(wlev))) {
       wlev[is.na(wlev)] <- length(wlab)
       wlab <- c(wlab, "NA")
@@ -2176,7 +2176,7 @@ stratify <- function(..., na.group = FALSE, shortlabel = TRUE)
   levs <- match(levs, ulevs)
   labs <- labs[ulevs]
   levels(levs) <- labs
-  oldClass(levs) <- "factor"
+  class(levs) <- "factor"
 
   if(length(xlab))
     valueLabel(levs) <- xlab   #FEH 2Jun95
@@ -2194,7 +2194,7 @@ stratify <- function(..., na.group = FALSE, shortlabel = TRUE)
   at$dim <- at$dimnames <- NULL
 
   if(!missing(j)) {
-    x <- oldUnclass(x)[,j,drop=FALSE]
+    x <- unclass(x)[,j,drop=FALSE]
     at$ycolname <- at$ycolname[j]
     attributes(x) <- c(attributes(x), at)
   }
@@ -2228,7 +2228,7 @@ stratify <- function(..., na.group = FALSE, shortlabel = TRUE)
   at$nlevels <- at$nlevels[i]
   at$labels  <- at$labels[i]
 
-  x <- oldUnclass(x)[j,,drop=FALSE]
+  x <- unclass(x)[j,,drop=FALSE]
   attributes(x) <- c(attributes(x), at)
   x
 }
@@ -2240,7 +2240,7 @@ cumcategory <- function(y)
     y <- factor(y)
 
   lev <- levels(y)
-  y <- oldUnclass(y)
+  y <- unclass(y)
   Y <- matrix(NA, nrow=length(y), ncol=length(lev)-1,
               dimnames=list(NULL,paste('>=',lev[-1],sep='')))
   storage.mode(Y) <- 'integer'
@@ -2369,7 +2369,7 @@ summarize <- function(X, by, FUN, ...,
   ans <- structure(ans, class='data.frame', 
                    row.names=1 : length(ans[[1]]))
   ## removed [notna,] from end of above line; not sure why this was needed
-  iorder <- do.call('order', structure(oldUnclass(ans)[1 : nby], names=NULL))
+  iorder <- do.call('order', structure(unclass(ans)[1 : nby], names=NULL))
   ## order can bomb if data frame given (preserves names)
   ans[iorder,]
 }

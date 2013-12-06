@@ -79,7 +79,7 @@
 
   \code{reLabelled} is used to add a \code{'labelled'} class back to
   variables in data frame that have a 'label' attribute but no 'labelled'
-  oldClass.  Useful for changing \code{cleanup.import()}'d S-Plus data
+  class.  Useful for changing \code{cleanup.import()}'d S-Plus data
   frames back to general form for \R and old versions of S-Plus.
 }
 \usage{

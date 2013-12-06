@@ -76,7 +76,7 @@ if(FALSE) rcorrs <- function(x, y, weights=rep(1,length(y)),
   method <- match.arg(method)
   
   if(na.rm) {
-    s <- !is.na(x + oldUnclass(y) + weights)
+    s <- !is.na(x + unclass(y) + weights)
     x <- x[s]; y <- y[s]; weights <- weights[s]
   }
   

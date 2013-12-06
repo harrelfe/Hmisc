@@ -38,7 +38,7 @@ as.numeric.Cbind <- as.double.Cbind <- function(x, ...) x
 
 '[.Cbind' <- function(x, ...)
 {
-  structure(oldUnclass(x)[...], class='Cbind',
+  structure(unclass(x)[...], class='Cbind',
             label=attr(x,'label'),
             other=attr(x,'other')[...,,drop= FALSE])
 }
@@ -155,7 +155,7 @@ panel.xYplot <-
     }
   else nother <- 0
 
-  y <- oldUnclass(y)
+  y <- unclass(y)
   levnum <- if(length(groups)) sort(unique(g))
   else 1
 
@@ -591,7 +591,7 @@ panel.Dotplot <- function(x, y, groups = NULL,
     }
 
   other <- attr(x,'other')
-  x <- oldUnclass(x)
+  x <- unclass(x)
   attr(x,'other') <- NULL
   if(length(other))
     {

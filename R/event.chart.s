@@ -593,7 +593,7 @@ event.convert <- function(data2, event.time = 1, event.code = 2)
   n.col <- 1
   for (i in (1:len.t)) {
     tab.d <- table(data2[, event.code[i]])
-    if(is.null(oldClass(data2[, event.code[i]])))
+    if(is.null(class(data2[, event.code[i]])))
       level.value <- as.numeric(names(tab.d))
     else
       level.value <- names(tab.d)

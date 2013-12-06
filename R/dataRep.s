@@ -97,7 +97,7 @@ as.data.frame.roundN <- as.data.frame.vector
 '[.roundN' <- function(x, i, ...)
 {
   atr <- attributes(x)
-  x <- oldUnclass(x)[i]
+  x <- unclass(x)[i]
   attributes(x) <- atr
   x
 }

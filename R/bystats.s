@@ -103,7 +103,7 @@ latex.bystats <- function(object,
   out <- c("\\%","$\\leq$","$<$","$\\geq$","$>$","\\verb|[|")
   dimnames(object) <- dm
   caption <- sedit(caption, "cbind", "")
-  latex(oldUnclass(object), title=title, caption=caption, rowlabel=rowlabel, 
+  latex(unclass(object), title=title, caption=caption, rowlabel=rowlabel, 
         n.rgroup=c(nrow(object)-1,1), ...)
 }
 

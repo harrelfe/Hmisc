@@ -221,7 +221,7 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
 
   type <- 's'   # lattice histogram sets to 'percent'
 
-  g <- oldUnclass(groups)[subscripts]
+  g <- unclass(groups)[subscripts]
   ng <- if(length(groups)) max(g, na.rm=TRUE) else 1
 
   plot.symbol <- trellis.par.get(if(ng>1)

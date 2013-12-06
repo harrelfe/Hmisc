@@ -24,7 +24,7 @@ t.test.cluster <- function(y, cluster, group, conf.int=.95)
   nc <- tapply(cluster, group, function(x)length(unique(x)))
   bar <- tapply(y, group, mean)
 
-  u <- oldUnclass(group)
+  u <- unclass(group)
   y1 <- y[u==1];
   y2 <- y[u==2]
   

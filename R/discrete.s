@@ -10,7 +10,7 @@ discrete <- function(x, levels=sort(unique.default(x), na.last=TRUE),
   f <- x[!(x %in% exclude)]
   
   attr(f, 'levels') <- levels
-  oldClass(f) <- "discrete"
+  class(f) <- "discrete"
   f
 }
 
@@ -26,7 +26,7 @@ is.discrete <- function(x) inherits(x, 'discrete')
   y <- NextMethod("[")
 
   attr(y, 'levels') <- attr(x, 'levels')
-  class(y) <- oldClass(x)
+  class(y) <- class(x)
   if( drop ) {
     factor(y)
   } else {
@@ -36,7 +36,7 @@ is.discrete <- function(x) inherits(x, 'discrete')
 
 "[<-.discrete" <- function(x, ..., value) {
   lx <- levels(x)
-  cx <- oldClass(x)
+  cx <- class(x)
 
   m <- match(value, lx)
 
@@ -57,14 +57,14 @@ is.discrete <- function(x) inherits(x, 'discrete')
     y <- NextMethod("[[")
 
     attr(y,"levels")<-attr(x,"levels")
-    class(y) <- oldClass(x)
+    class(y) <- class(x)
     y
 }
 
 "is.na<-.discrete" <- function(x, value)
 {
     lx <- levels(x)
-    cx <- oldClass(x)
+    cx <- class(x)
     class(x) <- NULL
     x[value] <- NA
     structure(x, levels = lx, class = cx)

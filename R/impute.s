@@ -49,12 +49,8 @@ impute.default <- function(x, fun=median, ...)
     } else x[m] <- fill
   } else x[m] <- fill
   
-  ## .SV4. x 2 5may03
-  if(.SV4.)
-    warning('impute class not added to object because of S-Plus 6 restrictions; will not print or subset imputation information')
-  
   structure(x, imputed=(1:length(x))[m],
-            class=c(if(!.SV4.)'impute',attr(x,'class')))
+            class=c('impute', attr(x, 'class')))
 }
 
 

@@ -44,7 +44,7 @@ print.biVar <- function(x, ...) {
     x[,i] <- round(x[,i],dig[i])
   
   attr(x,'yname') <- attr(x, 'statinfo') <- attr(x, 'call') <-
-    attr(x, 'ylabel') <- attr(x, 'xlabel') <- oldClass(x) <- NULL
+    attr(x, 'ylabel') <- attr(x, 'xlabel') <- class(x) <- NULL
   print(x)
   invisible()
 }

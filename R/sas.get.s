@@ -450,7 +450,7 @@ print.timePOSIXt <- function(x, ...) print(format(x, ...))
 ## Output format routine needed by chron for usual SAS date format
 ddmmmyy <- function(x)
 {
-  y <- month.day.year(trunc(oldUnclass(x)), attr(x,"origin"))
+  y <- month.day.year(trunc(unclass(x)), attr(x,"origin"))
   yr <- y$year
   m <- c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct",
          "Nov","Dec")[y$month]
@@ -840,7 +840,7 @@ cleanup.import <-
       }
       
       if(storage.mode(x) == 'double') {
-        xu <- oldUnclass(x)
+        xu <- unclass(x)
         j <- is.infinite(xu) | is.nan(xu) | abs(xu) > big
         if(any(j,na.rm=TRUE)) {
           x[j] <- NA

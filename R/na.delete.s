@@ -15,7 +15,7 @@ na.delete <- function(frame)
     if(is.data.frame(x))
       x <- as.matrix(x)
     
-    oldClass(x) <- NULL	#so Surv object is.na ignored
+    class(x) <- NULL	#so Surv object is.na ignored
     if(!is.atomic(x)) 
       stop("non-atomic, non-data frame variables not allowed")
     
@@ -52,7 +52,7 @@ na.delete <- function(frame)
     na.info <- list(nmiss=nmiss, omit=temp, 
                     na.detail.response=y.detail)
     
-    oldClass(na.info) <- "delete"
+    class(na.info) <- "delete"
     attr(frame, "na.action") <- na.info
   }
   
@@ -70,7 +70,7 @@ naprint.delete <- function(x, ...)
   
   if(length(g <- x$na.detail.response)) {
     cat("\nStatistics on Response by Missing/Non-Missing Status of Predictors\n\n")
-    print(oldUnclass(g))
+    print(unclass(g))
     cat("\n")		
   }
   

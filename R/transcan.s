@@ -863,8 +863,7 @@ impute.transcan <-
           ## Note: if v was empty before, new v would have arbitrary length
           ## Avoid problem by requiring all variables to be in data
           attr(v,'imputed') <- sub
-          if(!.SV4.)
-            attr(v,'class') <- c('impute', attr(v,'class'))
+          attr(v,'class') <- c('impute', attr(v,'class'))
           
           nimp[nam] <- length(i)
           if(list.out)
@@ -1059,7 +1058,7 @@ predict.transcan <- function(object, newdata=NULL, iter.max=50, eps=.01,
               w <- factor(w)
             }
 
-          newdata[,i] <- oldUnclass(w)
+          newdata[,i] <- unclass(w)
         }
     }
   else
@@ -1200,7 +1199,7 @@ Function.transcan <- function(object, prefix=".", suffix="", pos=-1, ...)
       else if(nam %in% categorical)
         {
           codes <- attr(parms[[nam]], "codes")
-          g <- "{x <- oldUnclass(x);"
+          g <- "{x <- unclass(x);"
           cof[-1] <- cof[-1] + cof[1]  #convert from ref cell to cell means model
           for(j in 1:length(codes))
             {

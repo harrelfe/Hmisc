@@ -12,8 +12,7 @@
   after download.  For S-Plus, the datasets were stored in
   \code{data.dump} format and are made available by running
   \code{data.restore} after import.  The dataset is run through the
-  \code{\link{cleanup.import}} function to reduce multiple inheritance
-  problems for SV4 (S-Plus 5 or later).  Calling \code{getHdata} with no
+  \code{\link{cleanup.import}} function.  Calling \code{getHdata} with no
   \code{file} argument provides a character vector of names of available
   datasets that are currently on the web site.  For \R, \R's default
   browser can optionally be launched to view \verb{html} files that were

@@ -190,7 +190,7 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
             loandhi <- x.unique[c(1:5,(n.unique-4):n.unique)]
             fval <-
               if(isdot && (class(loandhi) %nin% 'timeDate')) {
-                formatDateTime(oldUnclass(loandhi), at=atx, roundDay=!timeUsed)
+                formatDateTime(unclass(loandhi), at=atx, roundDay=!timeUsed)
               } else format(format(loandhi), ...)
             counts <- fval
             names(counts) <- c("L1","L2","L3","L4","L5","H5","H4","H3","H2","H1")
@@ -403,7 +403,7 @@ print.describe.single <- function(x, condense=TRUE, ...)
 '[.describe' <- function(object, i, ...)
 {
   at <- attributes(object)
-  object <- '['(oldUnclass(object),i)
+  object <- '['(unclass(object),i)
   structure(object, descript=at$descript,
             dimensions=c(at$dimensions[1], length(object)),
             class='describe')

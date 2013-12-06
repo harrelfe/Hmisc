@@ -1130,8 +1130,8 @@ latexTranslate <- function(object, inn=NULL, out=NULL, pb=FALSE,
 latex <- function(object, ...)
 {
   ## added title= 25May01
-  if (!length(oldClass(object)))
-    oldClass(object) <- data.class(object)
+  if (!length(class(object)))
+    class(object) <- data.class(object)
   
   UseMethod("latex")
 }

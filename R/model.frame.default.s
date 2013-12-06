@@ -72,26 +72,6 @@ GetModelFrame <- function(formula, specials, default.na.action=NULL) {
 ## }
 
 
-##For compatibility with SV4
-if(!exists('oldUnclass'))
-  oldUnclass  <- unclass
-
-if(!exists('oldClass'))
-  oldClass    <- class
-
-if(!exists('oldClass<-'))
-  'oldClass<-' <- function(x, value)
-{
-  class(x) <- value
-  x
-}
-
-if(!exists('logb'))
-  logb <- log
-
-if(!exists('getFunction')) getFunction <- function(...)
-  get(..., mode='function')
-
 termsDrop <- function(object, drop, data)
 {
   trm <- terms(object, data=data)
@@ -104,7 +84,7 @@ termsDrop <- function(object, drop, data)
   }
   form <- update(trm,
                  as.formula(paste('~ . ',
-                                  paste('-',drop,collapse=''))))
+                                  paste('-', drop, collapse=''))))
   terms(form, data=data)
 }
 

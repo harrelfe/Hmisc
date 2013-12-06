@@ -1147,7 +1147,7 @@ pasteFit <- function(x, sep=',', width=.Options$width)
 testDateTime <- function(x, what=c('either','both','timeVaries'))
 {
   what <- match.arg(what)
-  cl <- class(x)  # was oldClass 22jun03
+  cl <- class(x)
   if(!length(cl))
     return(FALSE)
 

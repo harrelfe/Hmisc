@@ -52,7 +52,7 @@ hist.data.frame <- function(x, n.unique=3, nclass="compute", na.big=FALSE,
       type <- if(inherits(v,'Date')) 'Date' else 'none'
       
       if(type %nin% c('none','Date'))
-        v <- oldUnclass(v)
+        v <- unclass(v)
       
       w <- v[!is.na(v)]
       n <- length(w)

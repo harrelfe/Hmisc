@@ -29,7 +29,7 @@ labcurve <- function(curves, labels=names(curves),
   gfun <- ordGridFun(grid)    ## see Misc.s
   gun  <- gfun$unit
 
-  diffu <- function(v) diff(oldUnclass(v))  # mainly for POSIXt
+  diffu <- function(v) diff(unclass(v))  # mainly for POSIXt
   ## also look at difftime
   
   mcurves <- missing(curves)
@@ -1373,7 +1373,7 @@ plot.drawPlot <- function(x, xlab, ylab, ticks,
   for(j in 1:m) {
     w <- data[[j]]
     if(attr(w, 'class') == 'Abline') {
-      do.call("abline", oldUnclass(w))
+      do.call("abline", unclass(w))
       next
     }
     

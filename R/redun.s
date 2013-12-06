@@ -42,7 +42,7 @@ redun <- function(formula, data=NULL, subset=NULL,
           lev   <- levels(xi)
           iscat <- TRUE
         }
-      else if(is.category(xi))
+      else if(is.factor(xi))
         {
           lev   <- levels(xi)
           iscat <- TRUE

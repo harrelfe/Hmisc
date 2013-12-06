@@ -1146,16 +1146,16 @@ dataframeReduce <- function(data, fracmiss=1, maxlevels=NULL,
         r <- if(f > fracmiss)
           paste('fraction missing>',fracmiss,sep='') else ''
         if(is.character(x)) x <- factor(x)
-        if(length(maxlevels) && is.category(x) &&
+        if(length(maxlevels) && is.factor(x) &&
            length(levels(x)) > maxlevels)
           return(h(r, paste('categories>',maxlevels,sep='')))
         s <- ''
-        if(is.category(x) || length(unique(x))==2)
+        if(is.factor(x) || length(unique(x))==2)
           {
             tab <- table(x)
             if((min(tab) / n) < minprev)
               {
-                if(is.category(x))
+                if(is.factor(x))
                   {
                     x <- combine.levels(x, minlev=minprev)
                     s <- 'grouped categories'

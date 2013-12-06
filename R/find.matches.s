@@ -1,8 +1,6 @@
 find.matches <- function(x, y, tol=rep(0,ncol(y)), scale=tol,
                          maxmatch=10)
 {
-  if(.R.) rep.int <- rep
-  
   ##if(length(dim(x))==0) x <- matrix(x, nrow=1)  10may02
   if(!is.matrix(x))
     x <- as.matrix(x)

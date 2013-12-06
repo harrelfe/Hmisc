@@ -78,11 +78,8 @@ gbayes2 <- function(sd, prior, delta.w=0, alpha=0.05,
         prior(delta)
   }
   
-  ww <-
-    if(.R.)
-      'value'
-    else
-      'integral'
+  ww <- 'value'
+
 
   ip <- if(length(prior.aux))
     integrate(prior, -Inf, upper, prior.aux=prior.aux)[[ww]]
@@ -190,13 +187,7 @@ gbayesMixPowerNP <- function(pcdf, delta, v, delta.w=0, mix, interval,
     ##g$mix <- if(missing(mix)) pcdf$mix else mix  10may02
     formals(g) <- list(x=numeric(0), delta.w=delta.w, v=v,
                        alpha=alpha, pcdf=pcdf,
-                       mix=if(missing(mix))
-                             (if(.R.)
-                                as.list(pcdf)$mix
-                              else
-                                pcdf$mix)
-                           else
-                             mix)
+                       mix=if(missing(mix)) as.list(pcdf)$mix else mix)
 
     ##s <- seq(interval[1],interval[2],length=100)
     ##gs <- g(s)

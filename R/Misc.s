@@ -114,7 +114,7 @@ km.quick <- function(S, times, q)
   S <- S[!is.na(S),]
   n <- nrow(S)
   stratvar <- factor(rep(1,nrow(S)))
-  f <- survfitKM(stratvar, S, se.fit=FALSE, conf.type='none')
+  f <- survfit:::survfitKM(stratvar, S, se.fit=FALSE, conf.type='none')
   tt <- c(0, f$time)
   ss <- c(1, f$surv)
   if(missing(times))
@@ -1080,7 +1080,6 @@ xless <-
 {
   ## Usage: xless(x) - uses print method for x, puts in persistent window with
   ## xless using name of x as title (unless title= is specified)
-  if(under.unix) {
 	file <- tempfile()
   	sink(file)
   	print(x, ...)
@@ -1088,7 +1087,6 @@ xless <-
   	cmd <- paste('xless -title "',title,'" -geometry "90x40" "',
                file,'" &',sep='')
     system(cmd)
-  } else page(x, method='print', title=title, ...)
 invisible()
 }
 

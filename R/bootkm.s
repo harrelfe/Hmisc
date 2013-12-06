@@ -7,7 +7,7 @@ bootkm <- function(S, q=.5, B=500, times, pr=TRUE)
   S <- S[!is.na(S),]
   n <- nrow(S)
   stratvar <- factor(rep(1,nrow(S)))
-  f <- survfitKM(stratvar, S)
+  f <- survival:::survfitKM(stratvar, S)
   tt <- c(0, f$time)
   ss <- c(1, f$surv)
   if(!tthere) {
@@ -19,16 +19,13 @@ bootkm <- function(S, q=.5, B=500, times, pr=TRUE)
       stop(paste('overall Kaplan-Meier estimate not defined to time',times))
   }
 
-  ests <- if(.R.)
-            double(B)
-          else
-            single(B)
+  ests <- double(B)
 
   for(i in 1:B) {
     if(pr && (i %% 10)==0)
       cat(i,'\r')
     
-    f <- survfitKM(stratvar, S[sample(n,n,replace=TRUE),],
+    f <- survival:::survfitKM(stratvar, S[sample(n,n,replace=TRUE),],
                     se.fit=FALSE, conf.type='none')
     tt <- c(0, f$time)
     ss <- c(1, f$surv)

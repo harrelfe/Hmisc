@@ -5,9 +5,9 @@ substi <- function(x,y,pr=TRUE)
   if(length(x)!=length(y))
     stop("lengths of x and y are different")
 
-  nf <- is.category(x)+is.category(y)
+  nf <- is.factor(x) + is.factor(y)
   if(nf==1)
-    stop("both x and y must be category variables if either is")
+    stop("both x and y must be factor variables if either is")
 
   isna <- is.na(x)
   vnames <- sys.call()[c(2,3)]

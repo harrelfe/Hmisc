@@ -26,7 +26,7 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
   nuy <- length(unique(y))
   
   if(!length(ytype)) ytype <- 
-    if(is.factor(y) || is.category(y) || is.character(y)) 'c' else
+    if(is.factor(y) || is.character(y)) 'c' else
       if(nk==0 || (nuy < 3)) 'l' else 's'
   
   if(nk==0 && ytype=='s') ytype <- 'l'

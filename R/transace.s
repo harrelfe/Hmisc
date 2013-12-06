@@ -109,7 +109,7 @@ areg.boot <- function(x, data, weights, subset, na.action=na.delete,
       x[[j]] <- as.integer(xj)
       typ <- 'c'
       values[[j]] <- 1:length(lev)
-    } else if(is.category(xj)) {
+    } else if(is.factor(xj)) {
       cat.levels[[j]] <- lev <- levels(xj)
       x[[j]] <- as.integer(xj)
       typ <- 'c'
@@ -572,7 +572,7 @@ Function.areg.boot <-
 
       h <- function(x, trantab)
       {
-        if(is.category(x)) x <- as.character(x)
+        if(is.factor(x)) x <- as.character(x)
         trantab[x]
       }
 

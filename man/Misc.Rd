@@ -14,9 +14,6 @@
 \alias{strgraphwrap}
 \alias{trap.rule}
 \alias{trellis.strip.blank}
-\alias{under.unix}
-\alias{.R.}
-\alias{.SV4.}
 \alias{unPaste}
 \alias{whichClosest}
 \alias{whichClosePW}
@@ -109,15 +106,6 @@
   \code{trellis.strip.blank} sets up Trellis or Lattice graphs to have a
   clear background on the strips for panel labels.
   
-  \code{under.unix} is a scalar logical value that is \code{TRUE} if you
-  are running Linux or Unix.
-
-  \code{.R.} is a logical value set to \code{TRUE} if running \R,
-  \code{FALSE} for S-Plus.
-
-  \code{.SV4.} is a logical value set to \code{TRUE} if running version
-  4 of the S language under S-Plus, \code{FALSE} otherwise.
-  
   \code{unPaste} provides a version of the S-Plus \code{unpaste} that
   works for \R and S-Plus.
 
@@ -132,8 +120,7 @@
 
   \code{xless} is a function for Linux/Unix users to invoke the system
   \code{xless} command to pop up a window to display the result of
-  \code{print}ing an object.  For Windows, \code{xless} uses the builtin
-  \code{page} function but with better defaults.
+  \code{print}ing an object.
 }
 \usage{
 confbar(at, est, se, width, q = c(0.7, 0.8, 0.9, 0.95, 0.99), 

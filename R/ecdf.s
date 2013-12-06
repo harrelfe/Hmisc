@@ -139,7 +139,7 @@ Ecdf.data.frame <- function(x, group=rep(1,nrows),
     mf <- c(1,1)
   
   g <- function(v, n.unique) {
-    if(is.character(v) || is.category(v))
+    if(is.character(v) || is.factor(v))
       return(FALSE)
     
     length(unique(v[!is.na(v)])) >= n.unique

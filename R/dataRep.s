@@ -91,8 +91,7 @@ roundN <- function(x, tol=1, clip=NULL)
             percentiles=pct, name=name, label=lab, class='roundN')
 }
 
-if(.R.)
-  as.data.frame.roundN <- as.data.frame.vector
+as.data.frame.roundN <- as.data.frame.vector
 
 
 '[.roundN' <- function(x, i, ...)

@@ -12,10 +12,7 @@ uses the UNIX \code{sed} command to translate the series of characters in
 \code{old} to the series in \code{new} when these characters occur in \code{text}.
 If \code{old} or \code{new} contain a backslash, you sometimes have to quadruple
 it to make the UNIX command work. If they contain a forward slash,
-preceed it by two backslashes.  The Microsoft Windows version of
-\code{translate} invokes the \code{sedit()} function and does not allow
-\code{multichar=FALSE}, i.e., it does not support the UNIX \code{tr} function.
-The R version of \code{translate} invokes the builtin chartr function if
+preceed it by two backslashes.  Invokes the builtin chartr function if
 \code{multichar=FALSE}. 
 }
 \usage{
@@ -36,13 +33,7 @@ corresponding vector of new characters
 \value{
 an object like text but with characters translated
 }
-\seealso{
-unix, grep
-}
-\details{
-At present, \code{multichar=FALSE}, which requires the UNIX \code{tr} program, is not
-implemented under MS Windows.
-}
+\seealso{grep}
 \examples{
 translate(c("ABC","DEF"),"ABCDEFG", "abcdefg")
 translate("23.12","[.]","\\\\cdot ") # change . to \cdot
@@ -52,4 +43,3 @@ translate(c("dog","cat2","snake"),c("dog","cat"),"animal")
 # S-Plus gives  [1] "animal"  "animal2" "snake" 
 }
 \keyword{character}
-% Converted by Sd2Rd version 1.21.

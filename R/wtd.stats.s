@@ -118,28 +118,27 @@ wtd.table <- function(x, weights=NULL, type=c('list','table'),
   isdate <- testDateTime(x)  ## 31aug02 + next 2
   ax <- attributes(x)
   ax$names <- NULL
-  x <- if(is.character(x)) as.category(x)
-       else oldUnclass(x)
+  
+  x <- as.factor(x)
 
   lev <- levels(x)
   if(na.rm) {
     s <- !is.na(x + weights)
-    x <- x[s,drop=FALSE]    ## drop is for factor class
+    x <- x[s, drop=FALSE]    ## drop is for factor class
     weights <- weights[s]
   }
 
   n <- length(x)
   if(normwt)
-    weights <- weights*length(x)/sum(weights)
+    weights <- weights * length(x) / sum(weights)
 
   i <- order(x)  # R does not preserve levels here
   x <- x[i]; weights <- weights[i]
 
-  if(any(diff(x)==0)) {  ## slightly faster than any(duplicated(xo))
+  if(any(diff(x) == 0)) {  ## slightly faster than any(duplicated(xo))
     weights <- tapply(weights, x, sum)
-    if(length(lev)) {    ## 3apr03
-      levused <- lev[sort(unique(x))]  ## 7sep02
-      ## Next 3 lines 21apr03
+    if(length(lev)) {
+      levused <- lev[sort(unique(x))]
       if((length(weights) > length(levused)) &&
          any(is.na(weights)))
         weights <- weights[!is.na(weights)]
@@ -147,24 +146,24 @@ wtd.table <- function(x, weights=NULL, type=c('list','table'),
       if(length(weights) != length(levused))
         stop('program logic error')
 
-      names(weights) <- levused   # 10Apr01  length 16May01
+      names(weights) <- levused
     }
 
     if(!length(names(weights)))
-      stop('program logic error')  # 16May01
+      stop('program logic error')
 
     if(type=='table')
       return(weights)
 
-    x <- all.is.numeric(names(weights),'vector')
+    x <- all.is.numeric(names(weights), 'vector')
     if(isdate)
-      attributes(x) <- c(attributes(x),ax)   ## 31aug02
+      attributes(x) <- c(attributes(x),ax)
 
     names(weights) <- NULL
     return(list(x=x, sum.of.weights=weights))
   }
 
-  xx <- x  ## 31aug02
+  xx <- x
   if(isdate)
     attributes(xx) <- c(attributes(xx),ax)
 

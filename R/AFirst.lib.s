@@ -1,15 +1,6 @@
 ## $Id$
-under.unix <- !(version$os=='Microsoft Windows' ||
-                version$os=='Win32' || version$os=='mingw32')
-
-.R.   <- TRUE
-.SV4. <- FALSE
 
 .noGenenerics <- TRUE  # faster loading as new methods not used
-
-if(!exists('existsFunction')) {
-  existsFunction <- function(...) exists(..., mode='function')
-}
 
 .onAttach <- function(libname, pkgname, ...) {
   verbose <- .Options$Hverbose

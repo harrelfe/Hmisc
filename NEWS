@@ -1,6 +1,8 @@
 Changes in version 3.13-1 (2014-01-01)
    * Added trans argument to varclus
-   * Removed recode function
+   * Removed recode, existsFunction functions, under.unix object, survfitKM, functions used only by S-Plus: comment, mem, mulbar.chart, p.sunflowers
+   * as.category, is.category, untangle.special: removed
+   * Removed reference to .R. from many functions
 
 Changes in version 3.13-0 (2013-11-18)
    * Changed n location (nloc argument) in bpplotM

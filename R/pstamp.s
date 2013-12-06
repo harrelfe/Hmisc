@@ -1,4 +1,4 @@
-pstamp <- if(.R.) function(txt, pwd=FALSE, time.=TRUE)
+pstamp <- function(txt, pwd=FALSE, time.=TRUE)
 {
   stamp <- function(string = Sys.time(), print = TRUE, plot = TRUE)
   {
@@ -39,28 +39,4 @@ pstamp <- if(.R.) function(txt, pwd=FALSE, time.=TRUE)
   stamp(string=date.txt,print=FALSE,plot=TRUE)
   invisible()
 
-} else function(txt, pwd=FALSE, time.=under.unix)
-{
-
-  date.txt <- if(time.) date() else {
-    if(.SV4.)
-      format(timeDate(date(), in.format='%w %m %d %H:%M:%S %Z %Y',
-                      format='%Y-%m-%d'))
-    else if(under.unix)
-      unix('date +%Y-%m-%d')
-    else
-      stop('time.=T not supported')
-  }
-                 
-  if(pwd)
-    date.txt <- paste(getwd(), date.txt)
-  
-  oldpar <- par(mfrow = c(1,1), cex = 0.5)
-  on.exit(par(oldpar))
-  if(!missing(txt))
-    date.txt <- paste(txt,'   ',date.txt, sep='')
-  
-  stamp(string=date.txt,print=FALSE,plot=TRUE)
-  par(old)
-  invisible()
-}  
+}

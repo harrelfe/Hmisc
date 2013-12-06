@@ -98,7 +98,7 @@ chiSquare <- function(formula, data=NULL, subset=NULL, na.action=na.retain,
   
 g <- function(x, y, minlev=0, g=3) {
   if(minlev) y <- combine.levels(y, minlev=minlev)
-  if((is.character(x) || is.category(x)) && minlev)
+  if((is.character(x) || is.factor(x)) && minlev)
       x <- combine.levels(x, minlev=minlev)
   if(is.numeric(x) && length(unique(x)) > g) x <- cut2(x, g=g)
   ct <- chisq.test(x, y)
@@ -155,7 +155,7 @@ spearman2.default <- function(x, y, p=1, minlev=0,
 
   ## If is a factor and unique values are greater then 2 then find the
   ## lm.fit.qr.bare without an intercept.
-  if(is.category(x) && u > 2) {
+  if(is.factor(x) && u > 2) {
     if(minlev > 0) {
       x <- combine.levels(x, minlev)
       if(length(levels(x))<2) {

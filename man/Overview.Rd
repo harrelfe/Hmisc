@@ -55,9 +55,6 @@ cleanup.import  \tab More compactly store variables in a data frame, and clean u
                 \tab     problem data when e.g. Excel spreadsheet had a non-\cr
                 \tab     numeric value in a numeric column\cr
 combine.levels  \tab Combine infrequent levels of a categorical variable\cr
-comment         \tab Attach a comment attribute to an object:\cr
-                \tab     comment(fit) <- 'Used old data'\cr
-                \tab     comment(fit)    (prints comment)\cr
 confbar         \tab Draws confidence bars on an existing plot using multiple\cr
                 \tab     confidence levels distinguished using color or gray scale\cr
 contents        \tab Print the contents (variables, labels, etc.) of a data frame\cr
@@ -127,7 +124,6 @@ mask            \tab 8-bit logical representation of a short integer value\cr
                 \tab     (Rick Becker)\cr
 matchCases      \tab Match each case on one continuous variable\cr
 matxv           \tab Fast matrix * vector, handling intercept(s) and NAs\cr
-mem             \tab mem() types quick summary of memory used during session\cr
 mgp.axis        \tab Version of axis() that uses appropriate mgp from \cr
                 \tab     mgp.axis.labels and gets around bug in axis(2, ...)\cr
                 \tab     that causes it to assume las=1\cr
@@ -157,8 +153,6 @@ popower         \tab Power and sample size calculations for ordinal responses\cr
 prn             \tab prn(expression) does print(expression) but titles the\cr
                 \tab     output with 'expression'.  Do prn(expression,txt) to add\cr
                 \tab     a heading (\sQuote{txt}) before the \sQuote{expression} title\cr
-p.sunflowers    \tab Sunflower plots (Andreas Ruckstuhl, Werner Stahel,\cr
-                \tab     Martin Maechler, Tim Hesterberg)\cr
 pstamp          \tab Stamp a plot with date in lower right corner (pstamp())\cr
                 \tab     Add ,pwd=T and/or ,time=T to add current directory \cr
                 \tab      name or time\cr

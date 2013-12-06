@@ -9,16 +9,6 @@ first.word <- function(x, i=1, expr=substitute(x))
     else
       as.character(unlist(expr))[1]
   
-  ## Added !missing(x) as.char(x) 25May01
-  ##	first.letters <- substring(words, 1, 1)
-  ##	word.selector <- (match(first.letters, c(letters,LETTERS,"."), 0) > 0)
-  ##	words <- words[word.selector][i]
-  ##	if(!under.unix) {
-  ##	  words <- sedit(words,'.','')
-  ##	  words <- substring(words,1,8)
-  ##	}
-  ## 8Nov00 FEH:
-  
   if(i > 1) stop('i > 1 not implemented')
   
   chars <- substring(words, 1:nchar(words), 1:nchar(words))
@@ -1149,14 +1139,11 @@ latex <- function(object, ...)
 
 optionsCmds <- function(pgm)
 {
-  optionName <- paste(pgm,'cmd',sep='')
+  optionName <- paste(pgm, 'cmd', sep='')
   v <- .Options[[optionName]]
-  if(pgm=='xdvi' && !under.unix && !length(v))
-    v <- 'yap'  # MikTeX  7Feb03
-  
-  if(length(v) && v!='')
-    pgm <- v
-  
+  if(pgm=='xdvi' && .Platform$OS.type != 'unix' && !length(v))
+    v <- 'yap'  # MikTeX
+  if(length(v) && v!='') pgm <- v
   pgm
 }
 
@@ -1185,7 +1172,7 @@ dvi.latex <- function(object, prlog=FALSE,
       '\\end{document}\n', file=tmptex, sep='\n')
   
   sc <-
-    if(under.unix) {
+    if(.Platform$OS.type == 'unix') {
       '&&'
     } else {
       '&'   # DOS command separator
@@ -1291,13 +1278,8 @@ html.latex <- function(object, file, ...)
   infi <- readLines(fi)
   cat('\\documentclass{report}', sty, '\\begin{document}', infi,
       '\\end{document}\n', file=tmptex, sep='\n')
-  ##  if(under.unix)
-  ##    sys(paste('cat',pre,fi,post,'>',paste(tmp,'tex',sep='.')))
-  ##  else sys(paste('copy',pre,'+',fi,'+',post,paste(tmp,'tex',sep='.')))
-  ## 17dec02
-  ##  unlink(c(pre,post))
   sc <-
-    if(under.unix)
+    if(.Platform$OS.type == 'unix')
       ';'
     else
       '&'  # 7feb03
@@ -1389,7 +1371,7 @@ show.html <- function(object)
   if(!length(browser))
     browser <- 'netscape'
   
-  sys(paste(browser, object, if(under.unix) '&'))
+  sys(paste(browser, object, if(.Platform$OS.type == 'unix') '&'))
   invisible()
 }
 

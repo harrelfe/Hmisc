@@ -37,41 +37,31 @@ hoeffd <- function(x, y)
     x <- cbind(x, y)
   
   x[is.na(x)] <- 1e30
-  storage.mode(x) <-
-    if(.R.)
-      "double"
-    else
-      "single"
+  storage.mode(x) <- "double"
   
   p <- as.integer(ncol(x))
-  if(p<1)
-    stop("must have >1 column")
+  if(p < 1)
+    stop("must have > 1 column")
   
   n <- as.integer(nrow(x))
   if(n<5)
     stop("must have >4 observations")
 
   h <-
-    if(.R.)
       .Fortran("hoeffd", x, n, p, hmatrix=double(p*p), aad=double(p*p),
                maxad=double(p*p), npair=integer(p*p),
                double(n), double(n),  double(n), double(n), double(n), 
                PACKAGE="Hmisc")
-    else
-      .Fortran("hoeffd", x, n, p, hmatrix=single(p*p), npair=integer(p*p),
-               single(n), single(n),  single(n), single(n), single(n), 
-               single(n), integer(n))
   
   nam <- dimnames(x)[[2]]
   npair <- matrix(h$npair, ncol=p)
   aad <- maxad <- NULL
-  if(.R.) {
-    aad <- matrix(h$aad, ncol=p)
-    maxad <- matrix(h$maxad, ncol=p)
-    dimnames(aad) <- dimnames(maxad) <- list(nam, nam)
-  }
+  aad <- matrix(h$aad, ncol=p)
+  maxad <- matrix(h$maxad, ncol=p)
+  dimnames(aad) <- dimnames(maxad) <- list(nam, nam)
+
   h <- matrix(h$hmatrix, ncol=p)
-  h[h>1e29] <- NA
+  h[h > 1e29] <- NA
   dimnames(h) <- list(nam, nam)
   dimnames(npair) <- list(nam, nam)
   P <- phoeffd(h, npair)

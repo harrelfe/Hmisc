@@ -90,7 +90,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
       xi <- as.factor(xi)
       lev <- levels(xi)
       iscat <- TRUE
-    } else if(is.category(xi)) {
+    } else if(is.factor(xi)) {
       lev <- levels(xi)
       iscat <- TRUE
     }

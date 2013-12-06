@@ -129,9 +129,6 @@ substring2 <- function(text, first, last=100000L)
 }
 
 
-if(!.R. && !exists('substring<-')) assign('substring<-',substring2)
-#!R 25May01
-
 replace.substring.wild <- function(text, old, new, test=NULL, 
                                    front=FALSE, back=FALSE)
 {

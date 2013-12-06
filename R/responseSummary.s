@@ -153,7 +153,7 @@ responseSummary <- function(formula, data, na.action=na.pass,
       s <- is.na(x)
 
       ## If x is not a category make it into one
-      if(! is.category(x)) {
+      if(! is.factor(x)) {
         ## Find the all the unique non-null values of x
         xUnique <- unique(x[!is.na(x)])
 

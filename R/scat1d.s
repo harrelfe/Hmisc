@@ -190,7 +190,7 @@ datadensity.data.frame <-
 
              if(nu < 2) c(0,0)
              else
-               c(type=if(is.category(x) || is.character(x) || nu < n.unique)
+               c(type=if(is.factor(x) || is.character(x) || nu < n.unique)
                         1
                       else 2,
                  na=sum(is.na(x)))

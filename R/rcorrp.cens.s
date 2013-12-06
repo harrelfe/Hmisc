@@ -43,31 +43,19 @@ rcorrp.cens <- function(x1, x2, S, outx=FALSE, method=1)
     stop("<2 non-missing observations")
   
   ne <- sum(event)
-  storage.mode(x1) <- if(.R.)"double"
-                      else "single"
-  
-  storage.mode(x2) <- if(.R.)"double"
-                      else "single"
-  
-  storage.mode(y) <- if(.R.)"double"
-                     else "single"
-  
-  storage.mode(event) <- "logical"
+  storage.mode(x1) <- "double"
+  storage.mode(x2) <- "double"
+  storage.mode(y)  <- "double"
+  storage.mode(event)  <- "logical"
   storage.mode(method) <- "integer"
-  storage.mode(outx) <- "logical"
+  storage.mode(outx)   <- "logical"
 
   z <-
-    if(.R.)
       .Fortran("cidxcp",x1,x2,y,event,length(x1),method,outx,
                nrel=double(1),nuncert=double(1),
                c1=double(1),c2=double(1),gamma1=double(1),gamma2=double(1),
                gamma=double(1),sd=double(1),c12=double(1),c21=double(1),
                PACKAGE="Hmisc")
-    else
-      .Fortran("cidxcp",x1,x2,y,event,length(x1),method,outx,
-               nrel=double(1),nuncert=double(1),
-               c1=double(1),c2=double(1),gamma1=double(1),gamma2=double(1),
-               gamma=double(1),sd=double(1),c12=double(1),c21=double(1))
   
   r <- c(z$gamma,z$sd,z$c12,z$c21,n,nmiss,ne,z$nrel,z$nuncert,z$c1,z$c2,
          z$gamma1,z$gamma2)

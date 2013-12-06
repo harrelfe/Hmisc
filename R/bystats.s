@@ -30,10 +30,6 @@ bystats <- function(y, ..., fun, nmiss, subset)
   } else {
     funlab <- as.character(substitute(fun))
     funlab <- funlab[length(funlab)] #handles fun=function(x)mean(x)
-    if(!.R. && length(chf <- as.character(fun[[2]]))>3 && chf[1]=="apply")
-      funlab <- chf[4]
-    ## The preceeding gets "median" from function(y) apply(y, 2, median)
-    ## if(length(fun)==2 && length(fun[[2]])>1) funlab <- ""
   }
   lab <- as.character(sys.call())[-1]
   m <- (!missing(fun)) + (!missing(nmiss)) + (!missing(subset))
@@ -136,9 +132,6 @@ bystats2 <- function(y, v, h, fun, nmiss, subset)
   } else {
     funlab <- as.character(substitute(fun))
     funlab <- funlab[length(funlab)] #handles fun=function(x)mean(x)
-    if(!.R. && length(chf <- as.character(fun[[2]]))>3 && chf[1]=="apply")
-      funlab <- chf[4]
-    ##The preceeding gets "median" from function(y) apply(y, 2, median)
   }
   lab <- as.character(sys.call())[-1]
   m <- (!missing(fun)) + (!missing(nmiss)) + (!missing(subset))
@@ -231,11 +224,7 @@ print.bystats2 <- function(x, abbreviate.dimnames=FALSE,
       cstats2[i,j] <- paste(cstats[i,j,],collapse="\n")
     }
   }
-  invisible(if(.R.)
-              print.char.matrix(cstats2,...)
-            else
-              print.char.matrix(cstats2, prefix.width=prefix.width,
-                                abbreviate.dimnames=abbreviate.dimnames,...))
+  invisible(print.char.matrix(cstats2,...))
 }
 
 latex.bystats2 <- function(object,

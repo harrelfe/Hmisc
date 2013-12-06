@@ -22,8 +22,8 @@ list.tree <- function(struct,depth=-1, numbers=FALSE, maxlen=22,
         "array",paste(dim(struct),collapse=" X "))
   
   if(is.ts(struct)) cat("= time series",tsp(struct)) 
-  if(is.category(struct)) 
-    cat("= category (",length(levels(struct))," levels)",sep="")
+  if(is.factor(struct)) 
+    cat("= factor (",length(levels(struct))," levels)",sep="")
   
   if(length(attr(struct,'class'))>0)
     cat("(",attr(struct,'class'),")")

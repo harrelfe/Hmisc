@@ -21,16 +21,10 @@ minor.tick <- function(nx=2, ny=2, tick.ratio=.5)
     if(is.na(hi.minor))
       hi.minor <- tick.pos[2]
 
-    if(.R.)
       axis(if(w=="x") 1
            else 2,
            seq(low.minor,hi.minor,by=distance.between.minor),
            labels=FALSE, tcl=par('tcl')*tick.ratio)
-    else
-      axis(if(w=="x") 1
-           else 2,
-           seq(low.minor,hi.minor,by=distance.between.minor),
-           labels=FALSE, tck=par('tck')*tick.ratio)
   }
 
   if(nx>1)

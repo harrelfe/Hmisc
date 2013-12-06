@@ -77,7 +77,7 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
   n.unique <- length(x.unique)
   attributes(x) <- attributes(x.unique) <- atx
 
-  isnum <- (is.numeric(x) || isdat) && !is.category(x)
+  isnum <- (is.numeric(x) || isdat) && !is.factor(x)
   timeUsed <- isdat && testDateTime(x.unique, 'timeVaries')
 
   z <- list(descript=descript, units=un, format=fmt)
@@ -175,7 +175,7 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
 
   if(inherits(x,'mChoice'))
     z$mChoice <- summary(x, minlength=minlength) else {
-      if(n.unique <= listunique && !isnum && !is.category(x) &&
+      if(n.unique <= listunique && !isnum && !is.factor(x) &&
          max(nchar(x)) > listnchar)
         counts <- tableIgnoreCaseWhiteSpace(x) else {
           if(n.unique >= 20) {

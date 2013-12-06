@@ -199,7 +199,7 @@ summary.formula <-
 
       if(!(ismc <- is.matrix(x))) {
         s <- is.na(x)
-        if(!is.category(x)) {
+        if(!is.factor(x)) {
           xu <- unique(x[!s]);
           lu <- length(xu)
           x <- if(lu < continuous) {
@@ -2236,7 +2236,7 @@ stratify <- function(..., na.group = FALSE, shortlabel = TRUE)
 
 cumcategory <- function(y)
 {
-  if(!is.category(y))
+  if(!is.factor(y))
     y <- factor(y)
 
   lev <- levels(y)
@@ -2332,7 +2332,7 @@ summarize <- function(X, by, FUN, ...,
   for(i in 1:length(by)) {
     byi  <- by[[i]]
     ansi <- ans[[i]]
-    if(is.category(byi)) {
+    if(is.factor(byi)) {
       if(!is.character(ansi))
         stop('program logic error:ansi not character')
       
@@ -2383,7 +2383,7 @@ if(FALSE) {
   .Options$warn <- -1
   for(i in 1:length(by)) {
     byi <- by[[i]]
-    if(is.numeric(byi) && !is.category(byi)) dn[[i]] <- as.numeric(dn[[i]])
+    if(is.numeric(byi) && !is.factor(byi)) dn[[i]] <- as.numeric(dn[[i]])
   }
   .Options$warn <- wrn
   names(dn) <- names(by)

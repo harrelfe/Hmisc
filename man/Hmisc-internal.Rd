@@ -5,7 +5,6 @@
 \alias{as.double.Cbind}
 \alias{as.numeric.Cbind}
 \alias{format.sep}
-\alias{as.category}
 \alias{as.data.frame.impute}
 \alias{as.data.frame.roundN}
 \alias{as.data.frame.special.miss}
@@ -16,7 +15,6 @@
 \alias{[.substi}
 \alias{bpx}
 \alias{ddmmmyy}
-\alias{existsFunction}
 \alias{expr.tree}
 \alias{fillin}
 \alias{formatCats}
@@ -31,7 +29,6 @@
 \alias{groupn}
 \alias{gView}
 \alias{importConvertDateTime}
-\alias{is.category}
 \alias{is.present}
 \alias{lookupSASContents}
 \alias{makeNames}
@@ -60,12 +57,10 @@
 \alias{setParNro}
 \alias{stepfun.eval}
 \alias{stripChart}
-\alias{survfitKM}
 \alias{[.terms}
 \alias{termsDrop}
 \alias{testDateTime}
 \alias{uncbind}
-\alias{untangle.specials}
 \alias{var.inner}
 \alias{xInch}
 \alias{xySortNoDupNoNA}

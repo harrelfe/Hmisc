@@ -1,1 +1,0 @@
-survfitKM <- survival:::survfitKM

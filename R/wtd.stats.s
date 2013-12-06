@@ -119,9 +119,10 @@ wtd.table <- function(x, weights=NULL, type=c('list','table'),
   ax <- attributes(x)
   ax$names <- NULL
   
-  x <- as.factor(x)
-
+  if(is.character(x)) x <- as.factor(x)
   lev <- levels(x)
+  x <- unclass(x)
+  
   if(na.rm) {
     s <- !is.na(x + weights)
     x <- x[s, drop=FALSE]    ## drop is for factor class

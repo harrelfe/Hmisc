@@ -1,11 +1,6 @@
-##Thanks to David R. Lovell <David.Lovell@cmis.csiro.au> CSIRO
-##for scientific=    8Feb2000
-
 first.word <- function(x, i=1, expr=substitute(x))
 {
-  words <-
-    if(!missing(x))
-      as.character(x)[1]
+  words <- if(!missing(x)) as.character(x)[1]
     else
       as.character(unlist(expr))[1]
   
@@ -15,11 +10,9 @@ first.word <- function(x, i=1, expr=substitute(x))
   legal.chars <- c(letters,LETTERS,'.',
                    '0','1','2','3','4','5','6','7','8','9')
   non.legal.chars <- (1:length(chars))[chars %nin% legal.chars]
-  if(!any(non.legal.chars))
-    return(words)
+  if(!any(non.legal.chars)) return(words)
   
-  if(non.legal.chars[1]==1)
-    return(character(0))
+  if(non.legal.chars[1]==1) return(character(0))
   
   substring(words, 1, non.legal.chars[1]-1)
 }
@@ -61,6 +54,7 @@ first.word <- function(x, i=1, expr=substitute(x))
 ##    27May02 - added booktabs FEH
 ## 13Dec02 - added ctable   FEH
 ## arguments included check.names=TRUE 23jan03
+
 format.df <- function(x,
                       digits, dec=NULL, rdec=NULL, cdec=NULL,
                       numeric.dollar=!dcolumn, na.blank=FALSE,
@@ -666,8 +660,7 @@ latex.default <-
                      paste('label=', label, ',', sep=''),
                      if(!landscape)
                        paste('pos=', where, ',', sep=''),
-                     if(landscape)
-                       'rotate',
+                     if(landscape) 'sideways',
                      paste(']{', tabular.cols, '}', sep=''),
                      if(length(insert.bottom))
                        paste('{',

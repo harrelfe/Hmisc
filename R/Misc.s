@@ -1090,33 +1090,6 @@ xless <-
 invisible()
 }
 
-gView <- function(x, ...,
-                  title=substring(deparse(substitute(x)),1,40),
-                  nup=1, fancy=TRUE, fontsize=if(nup==1)9 else 8)
-{
-  ## Usage: gView(x) - uses print for x, converts to ps with enscript,
-  ##        views with gv using name of x as title (unless time=specified)
-  ##        nup = number of columns to print per page
-  ##        fancy controls fancy headers when nup>1
-  ##        fontsize default is 9 (8 if nup>1)
-  file2 <- paste(tempdir(),title,sep='/')
-  file <- tempfile()
-  sink(file)
-  print(x, ...)
-  sink()
-  cmd <- if(fancy) 'enscript -G'
-         else 'enscript'
-  
-  cmd <- if(nup==1)
-           paste(cmd, '-B -p')
-         else
-           paste(cmd, ' -',nup,' -r -j -p',sep='')
-  
-  font <- paste('Courier', fontsize, sep='')
-  sys(paste(cmd, file2, '-f', font, '-t', title, '-b', title, file))
-  sys(paste('gv', file2, '&'))
-  invisible()
-}
 
 pasteFit <- function(x, sep=',', width=.Options$width)
 {

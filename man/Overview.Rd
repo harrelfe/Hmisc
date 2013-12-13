@@ -116,7 +116,6 @@ labcurve        \tab Optimally label a set of curves that have been drawn on\cr
 label           \tab Set or fetch a label for an \R-object\cr
 Lag             \tab Lag a vector, padding on the left with NA or ''\cr
 latex           \tab Convert an \R object to LaTeX (R Heiberger & FE Harrell)\cr
-ldBands         \tab Lan-DeMets bands for group sequential tests\cr
 list.tree       \tab Pretty-print the structure of any data object\cr
                 \tab     (Alan Zaslavsky, \email{zaslavsk@hcp.med.harvard.edu})\cr
 Load            \tab Enhancement of \code{load}\cr
@@ -280,17 +279,9 @@ changes to the author.\cr
 
 If this software is used is work presented for publication, kindly
 reference it using for example:\cr
- Harrell FE (2004): Hmisc S function library.
-  Programs available from \url{http://biostat.mc.vanderbilt.edu/s/Hmisc}.\cr
-  Be sure to reference S-Plus or \R itself and other libraries used.
-}
-
-
-\section{Acknowledgements}{
-  This work was supported by grants
-  from the Agency for Health Care Policy and Research
-  (US Public Health Service) and the Robert Wood
-  Johnson Foundation.
+ Harrell FE (2014): Hmisc: A package of miscellaneous R functions.
+  Programs available from \url{http://biostat.mc.vanderbilt.edu/Hmisc}.\cr
+  Be sure to reference \R itself and other libraries used.
 }
 \author{
 Frank E Harrell Jr\cr

@@ -14,7 +14,3 @@ Web Sites
 * Overall: http://biostat.mc.vanderbilt.edu/Hmisc
 * CRAN: http://cran.r-project.org/web/packages/Hmisc
 * Changelog: https://github.com/harrelfe/Hmisc/commits/master
-
-To Do
-=====
-Remove ldBands as there are R packages for group sequential clinical trial monitoring

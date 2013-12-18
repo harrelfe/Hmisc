@@ -137,7 +137,7 @@ setParNro <- function(pars)
 {
   ## Sets non-read-only par parameters from the input list
   i <- names(pars) %nin%
-    c('cin','cra','csi','cxy','din','xlog','ylog','gamma')
+    c('cin','cra','csi','cxy','din','xlog','ylog','gamma','page')
   invisible(par(pars[i]))
 }
 

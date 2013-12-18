@@ -386,7 +386,7 @@ summaryM(formula, data, subset, na.action,
   \code{\link{formula}}, 
   \code{\link{format.default}}, \code{\link{latex}},
   \code{\link{latexTranslate}}, \code{\link{bpplt}},
-	\code{\link{tabulr}}, \code{\link{bpplotM}}
+	\code{\link{tabulr}}, \code{\link{bpplotM}}, \code{\link{summaryP}}
 }
 \examples{
 options(digits=3)

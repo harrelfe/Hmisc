@@ -152,6 +152,7 @@ summarize               Summarize Scalars or Matrices by
                         Cross-Classification
 summary.formula         Summarize Data for Making Tables and Plots
 summaryM                Summarize Mixed Data Types vs. Groups
+summaryP                Multi-way Graphical Summary of Proportions
 summaryRc               Graphical Summarization of Continuous Variables
                         Against a Response
 symbol.freq             Graphic Representation of a Frequency Table

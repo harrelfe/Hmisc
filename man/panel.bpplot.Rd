@@ -160,7 +160,9 @@ Vanderbilt University School of Medicine
 Software 8 No. 17, 2003.
 }
 \seealso{
-\code{\link{bpplot}}, \code{\link[lattice]{panel.bwplot}}, \code{\link{scat1d}}, \code{\link{quantile}}, \code{\link{Ecdf}}
+\code{\link{bpplot}}, \code{\link[lattice]{panel.bwplot}},
+        \code{\link{scat1d}}, \code{\link{quantile}},
+        \code{\link{Ecdf}}, \code{\link{summaryP}}
 }
 \examples{
 set.seed(13)

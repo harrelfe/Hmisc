@@ -7,6 +7,7 @@ Changes in version 3.13-1 (2014-01-01)
    * latex.default: changed 'rotate' to 'sideways' for ctable mode.  Thanks: Simon Zehnder <szehnder@uni-bonn.de>
    * gView: removed
    * ldBands: removed
+   * summaryP: new function - graphical replacement for tables of proportions
 
 Changes in version 3.13-0 (2013-11-18)
    * Changed n location (nloc argument) in bpplotM

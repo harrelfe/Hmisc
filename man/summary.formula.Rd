@@ -630,7 +630,8 @@ ordTestpo(group, x)
   \code{\link{print.char.matrix}}, \code{\link{update}},
   \code{\link{formula}}, \code{\link{cut2}}, \code{\link{llist}},
   \code{\link{format.default}}, \code{\link{latex}},
-  \code{\link{latexTranslate}} \code{\link{bpplt}}, \code{\link{summaryM}}
+  \code{\link{latexTranslate}} \code{\link{bpplt}},
+  \code{\link{summaryM}}, \code{\link{summary}}
 }
 \examples{
 options(digits=3)

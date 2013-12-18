@@ -42,6 +42,7 @@ bpower          \tab Approximate power of 2-sided test for 2 proportions\cr
                 \tab     Includes bpower.sim for exact power by simulation\cr
 bpplot          \tab Box-Percentile plot \cr
                 \tab     (Jeffrey Banfield, \email{umsfjban@bill.oscs.montana.edu})\cr
+bpplotM         \tab Chart extended box plots for multiple variables\cr
 bsamsize        \tab Sample size requirements for test of 2 proportions\cr
 bystats         \tab Statistics on a single variable by levels of >=1 factors\cr
 bystats2        \tab 2-way statistics\cr
@@ -76,6 +77,7 @@ describe.data.frame
                 \tab     of SAS UNIVARIATE)\cr
 describe.default
                 \tab Describe a variable (generalization of SAS UNIVARIATE)\cr
+dotplot3        \tab A more flexible version of dotplot\cr
 Dotplot         \tab Enhancement of Trellis dotplot allowing for matrix\cr
                 \tab     x-var., auto generation of Key function, superposition\cr
 drawPlot        \tab Simple mouse-driven drawing program, including a function\cr
@@ -221,8 +223,13 @@ summarize       \tab Generate a data frame containing stratified summary\cr
                 \tab     statistics.  Useful for passing to trellis.\cr
 summary.formula \tab General table making and plotting functions for summarizing\cr
                 \tab     data\cr
+summaryD        \tab Summarizing using user-provided formula and dotchart3\cr
+summaryM        \tab Replacement for summary.formula(..., method='reverse')\cr
+summaryP        \tab Multi-panel dot chart for summarizing proportions\cr
+summaryRc       \tab Summary for continuous variables using lowess\cr
 symbol.freq     \tab X-Y Frequency plot with circles' area prop. to frequency\cr
 sys             \tab Execute unix() or dos() depending on what's running\cr
+tabulr          \tab Front-end to tabular function in the tables package\cr
 tex             \tab Enclose a string with the correct syntax for using\cr
                 \tab    with the LaTeX psfrag package, for postscript graphics\cr
 transace        \tab ace() packaged for easily automatically transforming all\cr

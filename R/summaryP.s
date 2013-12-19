@@ -1,13 +1,8 @@
-summaryP <- function(formula, groups=NULL, data=NULL,
+summaryP <- function(formula, data=NULL,
                      subset=NULL, na.action=na.retain,
-                     xlim=c(0, 1), col=1:2, pch=1:2,
-                     cex.values=0.5, ydelta=0.04,
-                     key=list(columns=length(levels(groups)),
-                       x=.75, y=-.05, cex=.9, col=col),  sort=TRUE,
-                     asna=c('unknown', 'unspecified'), gformula=NULL) {
-  groupsname <- as.character(substitute(groups))
-  groups <- eval(substitute(groups), data, environment(formula))
-  if(length(groups) && length(subset)) groups <- groups[subset]
+                     exclude1=TRUE, sort=TRUE,
+                     asna=c('unknown', 'unspecified')) {
+  
   formula <- Formula(formula)
   environment(formula) <- new.env(parent = environment(formula))
   Asna <- asna
@@ -64,8 +59,6 @@ summaryP <- function(formula, groups=NULL, data=NULL,
   else
     model.frame(formula, data=data, na.action=na.action)
   X <- model.part(formula, data=Y, rhs=1)
-  if(length(groups)) X[[groupsname]] <- groups
-
   Y <- model.part(formula, data=Y, lhs=1)
 
   nY <- NCOL(Y)
@@ -79,7 +72,7 @@ summaryP <- function(formula, groups=NULL, data=NULL,
   if(Sort) {
     ## Compute marginal frequencies of all regular variables so can sort
     mfreq <- list()
-    for(ny in names(Y)) {
+    for(ny in namY) {
       y <- Y[[ny]]
       if(!inherits(y, 'yn')) {
         if(length(asna) && (is.factor(y) || is.character(y)))
@@ -106,40 +99,70 @@ summaryP <- function(formula, groups=NULL, data=NULL,
         z <- NULL
         for(iy in 1 : ncol(y)) {
           tab <- table(y[, iy])
-          z <- rbind(z, data.frame(var=overlab, val=labs[iy],
-                                   freq=as.numeric(tab['TRUE']),
-                                   denom=as.numeric(sum(tab))))
+          z <- rbind(z,
+                     data.frame(var=overlab, val=labs[iy],
+                                freq=as.numeric(tab['TRUE']),
+                                denom=as.numeric(sum(tab))))
         }
       }
       else {  # regular single column
         if(length(asna) && (is.factor(y) || is.character(y)))
           y[y %in% asna] <- NA
         tab <- table(y)
+        ny <- namY[k]
         la  <- label(y)
+        if(la == '') la <- ny
         lev <- names(tab)
-        if(Sort) lev <- reorder(lev, (mfreq[[namY[k]]])[lev])
-        if(la == '') la <- namY[k]
-        z <- data.frame(var=la, val=lev,
-                        freq=as.numeric(tab),
-                        denom=as.numeric(sum(tab)))
+        mf <- mfreq[[ny]]
+        if(exclude1 && length(mf) == 2) {
+          lowest <- names(which.min(mf))
+          z <- data.frame(var=la, val=lowest,
+                          freq=as.numeric(tab[lowest]),
+                          denom=as.numeric(sum(tab)))
+        }
+        else {
+          if(Sort) lev <- reorder(lev, (mfreq[[ny]])[lev])
+          z <- data.frame(var=la, val=lev,
+                          freq=as.numeric(tab),
+                          denom=as.numeric(sum(tab)))
+        }
       }
       ## Add current X subset settings
       if(nX > 0) for(k in 1: nX) z[[names(ux)[k]]] <- ux[i, k]
       Z <- rbind(Z, z)
     }
   }
-  form <- if(length(gformula)) gformula
+  structure(Z, class=c('summaryP', 'data.frame'), formula=formula, nX=nX, nY=nY)
+}
+
+plot.summaryP <-
+  function(x, formula=NULL, groups=NULL, xlim=c(0, 1), col=1:2, pch=1:2,
+           cex.values=0.5, xwidth=.125, ydelta=0.04,
+           key=list(columns=length(levels(groups)),
+             x=.75, y=-.04, cex=.9, col=col, corner=c(0,1)), outerlabels=TRUE)
+{
+  require(lattice)
+  if(outerlabels) require(latticeExtra)
+  X <- x
+  at <- attributes(x)
+  Form <- at$formula
+  nX   <- at$nX
+  nY   <- at$nY
+  groupsname <- as.character(substitute(groups))
+  if(length(groupsname)) groups <- x[[groupsname]]
+  
+  condvar <- setdiff(names(X), c('val', 'var', 'freq', 'denom', groupsname))
+  form <- if(length(formula)) formula
   else {
     form <- paste('val ~ freq | var')
-    cf <- as.character(formula)
-    if(nX > 1 * (length(groups) > 0))
-      form <- paste(form, cf[length(cf)], sep=' * ')
+    if(length(condvar))
+      form <- paste(form, paste(condvar, collapse=' * '), sep=' * ')
     as.formula(form)
   }
-
-  p <- function(x, y, subscripts, groups=NULL, col, ...) {
+  
+  pan <- function(x, y, subscripts, groups=NULL, col, ...) {
     y <- as.numeric(y)
-    denom <- Z$denom[subscripts]
+    denom <- X$denom[subscripts]
     prop <- x / denom
     panel.dotplot(x/denom, y, subscripts=subscripts, groups=groups, ...)
     if(length(cex.values) && cex.values > 0) {
@@ -151,7 +174,7 @@ summaryP <- function(formula, groups=NULL, data=NULL,
         groups <- groups[subscripts]
         tx <- ''
         ig <- 0
-        xw <- 0.12 * diff(xl)
+        xw <- xwidth * diff(xl)
         xpos <- xl[2] - xdel - length(levels(groups)) * xw
         for(g in levels(groups)) {
           ig <- ig + 1
@@ -165,15 +188,20 @@ summaryP <- function(formula, groups=NULL, data=NULL,
       else {
         fr <- paste(x, denom, sep='/')
         ltext(xl[2] - 0.025 * diff(xl), y - ydel, fr,
-            cex=cex.values, col=col[1], adj=1)
+              cex=cex.values, col=col[1], adj=1)
       }
     }
   }
-  trellis.par.set(superpose.symbol = list(col = col, pch=pch),
-                  dot.symbol = list(col = col, pch=pch))
-  # or auto.key=list(columns=length(levels(groups)))
-  d <- if(length(groups))
-    sprintf("dotplot(form, groups=%s, data=Z, scales=list(y='free', rot=0), panel=p, xlim=xlim, auto.key=key, xlab='Proportion', col=col)", groupsname)
-  else sprintf("dotplot(form, data=Z, scales=list(y='free', rot=0), panel=p, xlim=xlim, auto.key=key, xlab='Proportion', col=col)")
-  eval(parse(text = d))
+  if(length(groupsname))
+    trellis.par.set(superpose.symbol = list(col = col, pch=pch))
+  else
+    trellis.par.set(dot.symbol = list(col = col[1], pch=pch[1]))
+  d <- if(length(groupsname))
+    sprintf("dotplot(form, groups=%s, data=X, scales=list(y='free', rot=0), panel=pan, xlim=xlim, auto.key=key, xlab='Proportion', col=col)", groupsname)
+  else sprintf("dotplot(form, data=X, scales=list(y='free', rot=0), panel=pan, xlim=xlim, auto.key=key, xlab='Proportion', col=col[1])")
+  d <- eval(parse(text = d))
+
+  if(outerlabels && (nX - length(groupsname) + 1) == 2)
+    d <- useOuterStrips(d)
+  d
 }

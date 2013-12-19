@@ -33,15 +33,16 @@ summaryP(formula, data = NULL, subset = NULL,
          pch = 1:2, cex.values = 0.5, xwidth=.125, ydelta = 0.04,
          key = list(columns = length(levels(groups)), x = 0.75,
                     y = -0.04, cex = 0.9, col = col, corner=c(0,1)),
-         outerlabels=TRUE)
+         outerlabels=TRUE, \dots)
 }
 \arguments{
   \item{formula}{a formula with the variables for whose levels
 		proportions are computed on the left hand side, and major
 		classification variables on the right.  The formula need to include
 		any variable later used as \code{groups}, as the data summarization
-		does not distinguish between superpositioning and paneling.
-}
+		does not distinguish between superpositioning and paneling.  For the
+	plot method, \code{formula} can provide an overall to the default
+	formula for \code{dotplot()}.}
   \item{data}{an optional data frame}
   \item{subset}{an optional subsetting expression or vector}
   \item{na.action}{function specifying how to handle \code{NA}s.  The
@@ -55,7 +56,6 @@ summaryP(formula, data = NULL, subset = NULL,
   \item{asna}{character vector specifying level names to consider the
 		same as \code{NA}.  Set \code{asna=NULL} to not consider any.}
 	\item{x}{an object produced by \code{summaryP}}
-  \item{formula}{a substitute formula for passing to \code{dotplot}}
   \item{groups}{a superpositioning variable for obtaining
 		further stratification within a horizontal line in the dot chart}
   \item{xlim}{\code{x}-axis limits.  Default is \code{c(0,1)}.}
@@ -75,6 +75,7 @@ summaryP(formula, data = NULL, subset = NULL,
 		\code{useOuterStrips} function is used to put strip labels in the
 		margins, usually resulting in a much prettier chart.  Set to
 		\code{FALSE} to prevent usage of \code{useOuterStrips}.}
+	\item{\dots}{ignored}
 }
 \value{\code{summaryP} produces a data frame of class
 	\code{"summaryP"}.  The \code{plot} method produces a \code{lattice}

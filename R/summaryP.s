@@ -139,9 +139,8 @@ plot.summaryP <-
   function(x, formula=NULL, groups=NULL, xlim=c(0, 1), col=1:2, pch=1:2,
            cex.values=0.5, xwidth=.125, ydelta=0.04,
            key=list(columns=length(levels(groups)),
-             x=.75, y=-.04, cex=.9, col=col, corner=c(0,1)), outerlabels=TRUE)
+             x=.75, y=-.04, cex=.9, col=col, corner=c(0,1)), outerlabels=TRUE, ...)
 {
-  require(lattice)
   if(outerlabels) require(latticeExtra)
   X <- x
   at <- attributes(x)

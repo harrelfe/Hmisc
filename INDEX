@@ -152,7 +152,7 @@ summarize               Summarize Scalars or Matrices by
                         Cross-Classification
 summary.formula         Summarize Data for Making Tables and Plots
 summaryM                Summarize Mixed Data Types vs. Groups
-summaryP                Multi-way Graphical Summary of Proportions
+summaryP                Multi-way Summary of Proportions
 summaryRc               Graphical Summarization of Continuous Variables
                         Against a Response
 symbol.freq             Graphic Representation of a Frequency Table
@@ -180,3 +180,4 @@ xy.group                Mean x vs. function of y in groups of x
 xYplot                  xyplot and dotplot with Matrix Variables to
                         Plot Error Bars and Bands
 yearDays                Get Number of Days in Year or Month
+ynbind                  Combine Related yes/no Variables in a Matrix

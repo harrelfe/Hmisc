@@ -7,11 +7,10 @@
 	numerators (\code{freq}) and denominators (\code{denom}) after
 	stratifying the data by a series of variables.  A special capability
 	to group a series of related yes/no variables is included through the
-	internal \code{yn} function, for which the user specials a final
+	use of the \code{\link{ynbind}} function,
+	for which the user specials a final
 	argument \code{label} used to label the panel created for that group
-	of related variables.  For \code{yn}, a positive response is taken to
-	be \code{y, yes, present} (ignoring case) or a \code{logical}
-	\code{TRUE} value. 
+	of related variables.
 	
 	The plot method for \code{summaryP}	displays proportions as a
 	multi-panel dot chart using the \code{lattice} package's \code{dotplot}
@@ -31,7 +30,7 @@ summaryP(formula, data = NULL, subset = NULL,
          asna = c("unknown", "unspecified"))
 \method{plot}{summaryP}(x, formula, groups=NULL, xlim = c(0, 1), col = 1:2,
          pch = 1:2, cex.values = 0.5, xwidth=.125, ydelta = 0.04,
-         key = list(columns = length(levels(groups)), x = 0.75,
+         key = list(columns = length(groupslevels), x = 0.75,
                     y = -0.04, cex = 0.9, col = col, corner=c(0,1)),
          outerlabels=TRUE, \dots)
 }
@@ -56,8 +55,9 @@ summaryP(formula, data = NULL, subset = NULL,
   \item{asna}{character vector specifying level names to consider the
 		same as \code{NA}.  Set \code{asna=NULL} to not consider any.}
 	\item{x}{an object produced by \code{summaryP}}
-  \item{groups}{a superpositioning variable for obtaining
-		further stratification within a horizontal line in the dot chart}
+  \item{groups}{a character string containing the name of a
+   	superpositioning variable for obtaining 
+		further stratification within a horizontal line in the dot chart.}
   \item{xlim}{\code{x}-axis limits.  Default is \code{c(0,1)}.}
   \item{col}{vector of color codes or names corresponding to levels of \code{groups}}
   \item{pch}{symbol codes corresponding to \code{groups}}
@@ -107,26 +107,26 @@ d <- upData(d, labels=c(x1='MI', x2='Stroke', x3='AKI', x4='Migraines',
                  race='Race', sex='Sex'))
 dasna <- subset(d, region=='North America')
 with(dasna, table(race, treat))
-s <- summaryP(race + sex + yn(x1, x2, x3, x4, x5, x6, x7, label='Exclusions') ~
+s <- summaryP(race + sex + ynbind(x1, x2, x3, x4, x5, x6, x7, label='Exclusions') ~
               region + treat, data=d)
 # add exclude1=FALSE to include female category
-plot(s, val ~ freq | region * var, groups=treat, outerlabels=FALSE)
+plot(s, val ~ freq | region * var, groups='treat', outerlabels=FALSE)
 # Much better looking if omit outerlabels=FALSE; see output at
 # http://biostat.mc.vanderbilt.edu/HmiscNew#summaryP
 \dontrun{
-plot(s, groups=treat)
-# plot(s, groups=treat, outerlabels=FALSE) for standard lattice output
-plot(s, groups=region, key=list(columns=2, space='bottom'))
+plot(s, groups='treat')
+# plot(s, groups='treat', outerlabels=FALSE) for standard lattice output
+plot(s, groups='region', key=list(columns=2, space='bottom'))
 
 plot(summaryP(race + sex ~ region, data=d, exclude1=FALSE), col='green')
 
 # Make your own plot using data frame created by summaryP
-dotplot(val ~ freq | region * var, groups=treat, data=s,
+useOuterStrips(dotplot(val ~ freq | region * var, groups='treat', data=s,
         xlim=c(0,1), scales=list(y='free', rot=0), xlab='Fraction',
         panel=function(x, y, subscripts, ...) {
           denom <- s$denom[subscripts]
           x <- x / denom
-          panel.dotplot(x=x, y=y, subscripts=subscripts, ...) })
+          panel.dotplot(x=x, y=y, subscripts=subscripts, ...) }))
 }
 }
 \keyword{hplot}

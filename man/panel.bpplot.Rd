@@ -248,7 +248,7 @@ d <- data.frame(treatment=sample(c('a','b'), n, TRUE),
 label(d$bp) <- 'Systolic Blood Pressure'
 units(d$bp) <- 'mmHg'
 bpplotM(age + bp + wt ~ treatment, data=d)
-bpplotM(age + bp + wt ~ treatment * sex, data=d)
+bpplotM(age + bp + wt ~ treatment * sex, data=d, cex.strip=.8)
 
 bpplotM(c('age', 'bp', 'wt'), groups='treatment', data=d)
 # Can use Hmisc Cs function, e.g. Cs(age, bp, wt)
@@ -269,6 +269,10 @@ pbc <- upData(pbc, moveUnits=TRUE)
 s <- summaryM(stage + sex + spiders ~ drug, data=pbc)
 plot(s)
 Key(0, .5)
+s <- summaryP(stage + sex + spiders ~ drug, data=pbc)
+plot(s, val ~ freq | var, groups='drug', pch=1:3, col=1:3,
+     key=list(x=.6, y=.8))
+
 bpplotM(bili + albumin + protime + age ~ drug, data=pbc)
 }
 }

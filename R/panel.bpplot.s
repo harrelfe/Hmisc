@@ -314,4 +314,5 @@ bpplotM <- function(formula=NULL, groups=NULL, data=NULL, subset=NULL,
               nloc=nloc, cex.n=cex.n, strip=strip,
               par.strip.text=list(cex=cex.strip), ...)
   attr(d, 'nobs') <- nobs
+  d
 }

@@ -250,12 +250,13 @@ varclus         \tab Graph hierarchical clustering of variables using squared\cr
                 \tab Pearson or Spearman correlations or Hoeffding D as similarities\cr
                 \tab Also includes the naclus function for examining similarities in\cr
                 \tab patterns of missing values across variables.\cr
-xy.group        \tab Compute mean x vs. function of y by groups of x\cr
-xYplot          \tab Like trellis xyplot but supports error bars and multiple\cr
-                \tab     response variables that are connected as separate lines\cr
 wtd.mean \tab \cr wtd.var \tab \cr  wtd.quantile \tab \cr  wtd.Ecdf \tab
 \cr wtd.table \tab \cr  wtd.rank \tab \cr wtd.loess.noiter \tab \cr
 num.denom.setup \tab Set of function for obtaining weighted estimates\cr
+xy.group        \tab Compute mean x vs. function of y by groups of x\cr
+xYplot          \tab Like trellis xyplot but supports error bars and multiple\cr
+                \tab     response variables that are connected as separate lines\cr
+ynbind          \tab Combine a series of yes/no true/false present/absent variables into a matrix\cr
 zoom            \tab Zoom in on any graphical display\cr \tab     (Bill Dunlap, \email{bill@statsci.com})
 }}
 

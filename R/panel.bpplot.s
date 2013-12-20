@@ -274,6 +274,7 @@ bpplotM <- function(formula=NULL, groups=NULL, data=NULL, subset=NULL,
   X <- model.part(form, data=Y, rhs=1)
   if(ncol(X) == 0) X <- rep('', nrow(Y))
   Y <- model.part(form, data=Y, lhs=1)
+  nobs <- max(sapply(Y, function(x) sum(!is.na(x))))
 
   vars <- names(Y)
   labs <- vars
@@ -309,7 +310,8 @@ bpplotM <- function(formula=NULL, groups=NULL, data=NULL, subset=NULL,
   if(length(namx) > 1) form <- paste(form, '+',
                                      paste(namx[-1], collapse= '+'))
   form <- as.formula(form)
-  bwplot(form, panel=panel.bpplot, scales=scales, data=w, xlab='',
-         nloc=nloc, cex.n=cex.n, strip=strip,
-         par.strip.text=list(cex=cex.strip), ...)
+  d <- bwplot(form, panel=panel.bpplot, scales=scales, data=w, xlab='',
+              nloc=nloc, cex.n=cex.n, strip=strip,
+              par.strip.text=list(cex=cex.strip), ...)
+  attr(d, 'nobs') <- nobs
 }

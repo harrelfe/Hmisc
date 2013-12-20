@@ -67,9 +67,10 @@ bpplt(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
       pch=16, cex.labels=par('cex'), cex.points=if(prototype)1 else 0.5,
       grid=FALSE)
 
-bpplotM(vars, group=NULL, data, qlim=0.01, xlim=NULL,
+bpplotM(formula=NULL, groups=NULL, data=NULL, subset=NULL, na.action=NULL,
+        qlim=0.01, xlim=NULL,
         nloc=c('right lower','right','left','none'),
-        vnames=c('labels', 'names'), cex.n=.7, \dots)
+        vnames=c('labels', 'names'), cex.n=.7, cex.strip=1, \dots)
 }
 \arguments{
 \item{x}{
@@ -132,19 +133,28 @@ a list containing named arguments (without abbreviations) to pass to
         \code{x}-axis limits for selected variables.  Example:
         \code{xlim=list(age=c(20,60))}.
 				}
-\item{vars}{a character vector of names of variables to plot with
-  \code{bpplotM}.  \code{vars} may also be a formula.  If it has a left
-        hand side, that variable name is taken as the \code{group}
-        variable and the \code{group} argument is ignored.}
-\item{group}{a single character string specifying the name in
-  \code{data} of a \code{y}-axis grouping variable, if any}
-\item{data}{a data frame containing at least the \code{vars} variables}
+\item{formula}{a formula with continuous numeric analysis variables on
+        the left hand side and stratification variables on the right.
+        The first variable on the right is the one that will vary the
+        fastest, forming the \code{y}-axis.  \code{formula} may be
+        omitted, in which case all numeric variables with more than 5
+        unique values in \code{data} will be analyzed.  Or
+        \code{formula} may be a vector of variable names in \code{data}
+        to analyze.  In the latter two cases (and only those cases),
+        \code{groups} must be given, representing a character vector
+        with names of stratification variables.}
+\item{groups}{see above}
+\item{data}{an optional data frame}
+\item{subset}{an optional subsetting expression or logical vector}
+\item{na.action}{specifies a function to possibly subset the data
+        according to \code{NA}s (default is no such subsetting).}
 \item{qlim}{the outer quantiles to use for scaling each panel in
   \code{bpplotM}}
 \item{vnames}{default is to use variable \code{label} attributes when
         they exist, or use variable names otherwise.  Specify
         \code{vnames='names'} to always use variable names for panel
         labels in \code{bpplotM}}
+\item{cex.strip}{character size for panel strip labels}
 }
 \author{
 Frank Harrell
@@ -231,22 +241,26 @@ bpplt()
 set.seed(1)
 n <- 800
 d <- data.frame(treatment=sample(c('a','b'), n, TRUE),
+                sex=sample(c('female','male'), n, TRUE),
                 age=rnorm(n, 40, 10),
                 bp =rnorm(n, 120, 12),
                 wt =rnorm(n, 190, 30))
 label(d$bp) <- 'Systolic Blood Pressure'
 units(d$bp) <- 'mmHg'
-bpplotM(c('age', 'bp', 'wt'), group='treatment', data=d)
+bpplotM(age + bp + wt ~ treatment, data=d)
+bpplotM(age + bp + wt ~ treatment * sex, data=d)
+
+bpplotM(c('age', 'bp', 'wt'), groups='treatment', data=d)
 # Can use Hmisc Cs function, e.g. Cs(age, bp, wt)
-bpplotM(treatment ~ age + bp + wt, data=d, nloc='left')
-# Without treatment: bpplotM(~ age + bp + wt, data=d)
+bpplotM(age + bp + wt ~ treatment, data=d, nloc='left')
+
+# Without treatment: bpplotM(age + bp + wt ~ 1, data=d)
 
 \dontrun{
-# Example of finding all variables that appear to be continuous
+# Automatically find all variables that appear to be continuous
 getHdata(support)
-s <- sapply(support, function(x) is.numeric(x) && length(unique(x)) > 5)
-bpplotM(names(support)[s], group='dzgroup', data=support,
-        par.strip.text=list(cex=.4), cex.means=.3, cex.n=.45)
+bpplotM(data=support, group='dzgroup',
+        cex.strip=.4, cex.means=.3, cex.n=.45)
 
 # Separate displays for categorical vs. continuous baseline variables
 getHdata(pbc)
@@ -255,7 +269,7 @@ pbc <- upData(pbc, moveUnits=TRUE)
 s <- summaryM(stage + sex + spiders ~ drug, data=pbc)
 plot(s)
 Key(0, .5)
-bpplotM(drug ~ bili + albumin + protime + age ~ drug, data=pbc)
+bpplotM(bili + albumin + protime + age ~ drug, data=pbc)
 }
 }
 \keyword{nonparametric}

@@ -244,57 +244,72 @@ bpplt <- function(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
   }
 }
 
-bpplotM <- function(vars, group=NULL, data, qlim=0.01, xlim=NULL,
+bpplotM <- function(formula=NULL, groups=NULL, data=NULL, subset=NULL,
+                    na.action=NULL, qlim=0.01, xlim=NULL,
                     nloc=c('right lower','right','left','none'),
-                    vnames=c('labels', 'names'), cex.n=.7, ...) {
+                    vnames=c('labels', 'names'), cex.n=.7, cex.strip=1, ...) {
   nloc   <- match.arg(nloc)
   vnames <- match.arg(vnames)
-  if(inherits(vars, 'formula')) {
-    v <- all.vars(vars)
-    resp <- attr(terms(vars), 'response')
-    if(resp == 1) {
-      group <- v[1]
-      vars  <- v[-1]
-    }
-    else
-      vars <- v
+
+  if(! length(formula)) {
+    g <- function(x) is.numeric(x) && length(unique(x)) > 5
+    v <- setdiff(names(data), groups)
+    z <- sapply(data[, v], g)
+    if(!any(z))
+      stop('no variable was numeric with > 5 unique levels')
+    formula <- v[z]
   }
-  data <- data[, c(group, vars)]
-  labels <- if(vnames == 'names') vars
-  else {
-    lab <- sapply(data, label)[vars]
-    ifelse(lab == '', vars, lab)
+
+  if(!inherits(formula, 'formula')) {
+    if(!length(groups))
+      stop('must specify group if first argument is not a formula')
+    formula <- paste(paste(formula, collapse=' + '), '~',
+                     paste(groups, collapse=' + '))
+    formula <- as.formula(formula)
   }
-  names(labels) <- vars
-  g <- function(x) is.numeric(x) && length(unique(x)) > 5
-  z <- sapply(data[, vars], g)
-  if(any(!z))
-    stop(paste('variable is not numeric or has <= 5 unique levels:',
-               paste(names(z)[!z], collapse=', '), sep=''))
-  w <- reshape(data, direction='long', v.names='x', varying=vars, times=vars)
+  form <- Formula(formula)
+  Y <- if(length(subset)) model.frame(form, data=data, subset=subset,
+                                      na.action=na.action)
+  else model.frame(form, data=data, na.action=na.action)
+  X <- model.part(form, data=Y, rhs=1)
+  if(ncol(X) == 0) X <- rep('', nrow(Y))
+  Y <- model.part(form, data=Y, lhs=1)
+
+  vars <- names(Y)
+  labs <- vars
+  if(vnames == 'labels') {
+    ylabs <- sapply(Y, label)
+    labs <- ifelse(ylabs == '', labs, ylabs)
+  }
+  names(labs) <- vars
+  w <- reshape(cbind(X, Y), direction='long', v.names='x',
+               varying=vars, times=vars)
   w$time <- factor(w$time, levels=vars)
-  lims <- lapply(data[, vars],
+  lims <- lapply(Y,
                  function(x) quantile(x, c(qlim, 1 - qlim), na.rm=TRUE))
   if(length(xlim)) lims[names(xlim)] <- xlim
   scales <-  list(x=list(relation='free', limits=lims))
   nv <- length(vars)
   lev <- NULL
   for(v in levels(w$time)) {
-    un <- units(data[[v]])
-    l <- if(labels[v] == v && un == '') v else
-         labelPlotmath(labels[v], un)
+    un <- units(Y[[v]])
+    l <- if(labs[v] == v && un == '') v else
+         labelPlotmath(labs[v], un)
     lev <- c(lev, l)
   }
-  strip <- strip.custom(factor.levels=lev)
-  if(length(group)) {
-    y <- w[[group]]
-    bwplot(y ~ x | time, panel=panel.bpplot, scales=scales, data=w, xlab='',
-           nloc=nloc, cex.n=cex.n, strip=strip, ...)
-  }
-  else
-    bwplot(~ x | time, panel=panel.bpplot, scales=scales, data=w, xlab='',
-           nloc=nloc, cex.n=cex.n, strip=strip, ...)
-}
 
-    
+  strip <- function(which.given, ..., factor.levels) {
+    ## time (variable) is first
+    levs <- if(which.given == 1) lev else levels(X[[which.given]])
+    strip.default(which.given, ..., factor.levels=levs)
+  }
   
+  namx <- names(X)
+  form <- paste(namx[1], '~ x | time')
+  if(length(namx) > 1) form <- paste(form, '+',
+                                     paste(namx[-1], collapse= '+'))
+  form <- as.formula(form)
+  bwplot(form, panel=panel.bpplot, scales=scales, data=w, xlab='',
+         nloc=nloc, cex.n=cex.n, strip=strip,
+         par.strip.text=list(cex=cex.strip), ...)
+}

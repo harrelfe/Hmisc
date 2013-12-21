@@ -9,15 +9,14 @@ text string.  This is useful for annotating analysis output files and
 for debugging.
 }
 \usage{
-prn(x, txt)
+prn(x, txt, file)
 }
 \arguments{
-\item{x}{
-any object
+\item{x}{any object}
+\item{txt}{optional text string}
+\item{file}{optional file name.  By default, writes to console.
+	\code{append=TRUE} is assumed.}
 }
-\item{txt}{
-optional text string
-}}
 \section{Side Effects}{
 prints
 }

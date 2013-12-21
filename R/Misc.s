@@ -10,10 +10,11 @@ if(!exists("NCOL", mode='function')) {
     if (is.array(x) && length(dim(x)) > 1 || is.data.frame(x)) ncol(x) else as.integer(1)
 }
 
-prn <- function(x, txt)
+prn <- function(x, txt, file='')
 {
   calltext <- as.character(sys.call())[2]
-
+  if(file != '') sink(file, append=TRUE)
+  
   if(!missing(txt)) {
     if(nchar(txt) + nchar(calltext) +3 > .Options$width)
       calltext <- paste('\n\n  ',calltext,sep='')
@@ -22,7 +23,9 @@ prn <- function(x, txt)
     cat('\n', txt, calltext, '\n\n', sep='') 
   }
   else cat('\n',calltext,'\n\n',sep='')
-  invisible(print(x))
+  print(x)
+  if(file != '') sink()
+  invisible()
 }
 
 format.sep <- function(x, digits, ...)

@@ -113,6 +113,8 @@ with(dasna, table(race, treat))
 s <- summaryP(race + sex + ynbind(x1, x2, x3, x4, x5, x6, x7, label='Exclusions') ~
               region + treat, data=d)
 # add exclude1=FALSE to include female category
+plot(s, groups='treat')
+
 plot(s, val ~ freq | region * var, groups='treat', outerlabels=FALSE)
 # Much better looking if omit outerlabels=FALSE; see output at
 # http://biostat.mc.vanderbilt.edu/HmiscNew#summaryP

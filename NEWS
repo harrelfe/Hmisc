@@ -9,6 +9,8 @@ Changes in version 3.14-0 (2014-01-01)
    * ldBands: removed
    * summaryP: new function - graphical replacement for tables of proportions
    * ynbind: new function for combining related yes/no variables into a matrix with a label
+   * added file argument to prn
+   * summaryP: added autoarrange
 
 Changes in version 3.13-0 (2013-11-18)
    * Changed n location (nloc argument) in bpplotM

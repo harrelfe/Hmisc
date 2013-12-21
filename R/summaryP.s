@@ -1,7 +1,7 @@
 summaryP <- function(formula, data=NULL,
                      subset=NULL, na.action=na.retain,
                      exclude1=TRUE, sort=TRUE,
-                     asna=c('unknown', 'unspecified')) {
+                     asna=c('unknown', 'unspecified'), ...) {
   
   formula <- Formula(formula)
 
@@ -20,6 +20,13 @@ summaryP <- function(formula, data=NULL,
   Z <- NULL
   n <- nrow(X)
 
+  nobs <- 0
+  for(ny in namY) {
+    y <- Y[[ny]]
+    nobs <- max(nobs,
+                if(is.matrix(y)) colSums(! is.na(y)) else ! is.na(y))
+  }
+    
   if(sort) {
     ## Compute marginal frequencies of all regular variables so can sort
     mfreq <- list()
@@ -35,7 +42,6 @@ summaryP <- function(formula, data=NULL,
       }
     }
   }
-  nobs <- 0
   for(i in 1 : nrow(ux)) {
     j <- rep(TRUE, n)
     if(nX > 0) for(k in 1 : nX) j <- j & (X[[k]] == ux[i, k])
@@ -52,7 +58,6 @@ summaryP <- function(formula, data=NULL,
         for(iy in 1 : ncol(y)) {
           tab <- table(y[, iy])
           no <- as.numeric(sum(tab))
-          nobs <- max(nobs, no)
           z <- rbind(z,
                      data.frame(var=overlab, val=labs[iy],
                                 freq=as.numeric(tab['TRUE']),
@@ -69,7 +74,6 @@ summaryP <- function(formula, data=NULL,
         lev <- names(tab)
         mf <- mfreq[[ny]]
         no <- as.numeric(sum(tab))
-        nobs <- max(nobs, no)
         if(exclude1 && length(mf) == 2) {
           lowest <- names(which.min(mf))
           z <- data.frame(var=la, val=lowest,
@@ -96,9 +100,9 @@ plot.summaryP <-
   function(x, formula=NULL, groups=NULL, xlim=c(0, 1), col=1:2, pch=1:2,
            cex.values=0.5, xwidth=.125, ydelta=0.04,
            key=list(columns=length(groupslevels),
-             x=.75, y=-.04, cex=.9, col=col, corner=c(0,1)), outerlabels=TRUE, ...)
+             x=.75, y=-.04, cex=.9, col=col, corner=c(0,1)),
+           outerlabels=TRUE, autoarrange=TRUE, ...)
 {
-  if(outerlabels) require(latticeExtra)
   X <- x
   at <- attributes(x)
   Form <- at$formula
@@ -106,12 +110,18 @@ plot.summaryP <-
   nY   <- at$nY
 
   groupslevels <- if(length(groups)) levels(x[[groups]])
-  condvar <- setdiff(names(X), c('val', 'var', 'freq', 'denom', groups))
+  condvar <- setdiff(names(X), c('val', 'freq', 'denom', groups))
+  ## Reorder condvar in descending order of number of levels
+  if(autoarrange && length(condvar) > 1) {
+    nlev <- sapply(X[condvar],
+                   function(x) if(is.factor(x)) length(levels(x))
+                                  else length(unique(x[! is.na(x)])))
+    condvar <- condvar[order(nlev)]
+  }
   form <- if(length(formula)) formula
   else {
-    form <- paste('val ~ freq | var')
-    if(length(condvar))
-      form <- paste(form, paste(condvar, collapse=' * '), sep=' * ')
+    form <- paste('val ~ freq')
+    form <- paste(form, paste(condvar, collapse=' * '), sep=' | ')
     as.formula(form)
   }
   

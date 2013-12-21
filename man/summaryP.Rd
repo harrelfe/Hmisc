@@ -26,13 +26,13 @@
 }
 \usage{
 summaryP(formula, data = NULL, subset = NULL,
-         na.action = na.retain, exclude1=TRUE, sort=TRUE,
-         asna = c("unknown", "unspecified"))
+         na.action = na.retain, exclude1=TRUE, 
+         sort=TRUE,  asna = c("unknown", "unspecified"), \dots)
 \method{plot}{summaryP}(x, formula, groups=NULL, xlim = c(0, 1), col = 1:2,
          pch = 1:2, cex.values = 0.5, xwidth=.125, ydelta = 0.04,
          key = list(columns = length(groupslevels), x = 0.75,
                     y = -0.04, cex = 0.9, col = col, corner=c(0,1)),
-         outerlabels=TRUE, \dots)
+         outerlabels=TRUE, autoarrange=TRUE, \dots)
 }
 \arguments{
   \item{formula}{a formula with the variables for whose levels
@@ -75,6 +75,9 @@ summaryP(formula, data = NULL, subset = NULL,
 		\code{useOuterStrips} function is used to put strip labels in the
 		margins, usually resulting in a much prettier chart.  Set to
 		\code{FALSE} to prevent usage of \code{useOuterStrips}.}
+	\item{autoarrange}{If \code{TRUE}, the formula is re-arranged so that
+ 	 if there are two conditioning (paneling) variables, the variable with
+	 the most levels is taken as the vertical condition.}
 	\item{\dots}{ignored}
 }
 \value{\code{summaryP} produces a data frame of class

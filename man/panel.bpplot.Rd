@@ -70,7 +70,8 @@ bpplt(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
 bpplotM(formula=NULL, groups=NULL, data=NULL, subset=NULL, na.action=NULL,
         qlim=0.01, xlim=NULL,
         nloc=c('right lower','right','left','none'),
-        vnames=c('labels', 'names'), cex.n=.7, cex.strip=1, \dots)
+        vnames=c('labels', 'names'), cex.n=.7, cex.strip=1,
+        outerlabels=TRUE, \dots)
 }
 \arguments{
 \item{x}{
@@ -155,6 +156,10 @@ a list containing named arguments (without abbreviations) to pass to
         \code{vnames='names'} to always use variable names for panel
         labels in \code{bpplotM}}
 \item{cex.strip}{character size for panel strip labels}
+\item{outerlabels}{if \code{TRUE}, pass the \code{lattice} graphics
+        through the \code{latticeExtra} package's \code{useOuterStrips}
+        function if there are two conditioning (paneling) variables, to
+        put panel labels in outer margins.}			
 }
 \author{
 Frank Harrell
@@ -172,7 +177,8 @@ Software 8 No. 17, 2003.
 \seealso{
 \code{\link{bpplot}}, \code{\link[lattice]{panel.bwplot}},
         \code{\link{scat1d}}, \code{\link{quantile}},
-        \code{\link{Ecdf}}, \code{\link{summaryP}}
+        \code{\link{Ecdf}}, \code{\link{summaryP}},
+        \code{\link[latticeExtra]{useOuterStrips}}
 }
 \examples{
 set.seed(13)

@@ -247,7 +247,8 @@ bpplt <- function(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
 bpplotM <- function(formula=NULL, groups=NULL, data=NULL, subset=NULL,
                     na.action=NULL, qlim=0.01, xlim=NULL,
                     nloc=c('right lower','right','left','none'),
-                    vnames=c('labels', 'names'), cex.n=.7, cex.strip=1, ...) {
+                    vnames=c('labels', 'names'), cex.n=.7, cex.strip=1,
+                    outerlabels=TRUE, ...) {
   nloc   <- match.arg(nloc)
   vnames <- match.arg(vnames)
 
@@ -313,6 +314,8 @@ bpplotM <- function(formula=NULL, groups=NULL, data=NULL, subset=NULL,
   d <- bwplot(form, panel=panel.bpplot, scales=scales, data=w, xlab='',
               nloc=nloc, cex.n=cex.n, strip=strip,
               par.strip.text=list(cex=cex.strip), ...)
+  if(outerlabels && length(dim(d)) == 2)
+    d <- useOuterStrips(d, strip=strip)
   attr(d, 'nobs') <- nobs
   d
 }

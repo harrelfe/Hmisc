@@ -97,14 +97,15 @@ summaryP <- function(formula, data=NULL,
 }
 
 plot.summaryP <-
-  function(x, formula=NULL, groups=NULL, xlim=c(0, 1), col=1:2, pch=1:2,
+  function(x, formula=NULL, groups=NULL, xlim=c(0, 1), 
            cex.values=0.5, xwidth=.125, ydelta=0.04,
            key=list(columns=length(groupslevels),
-             x=.75, y=-.04, cex=.9, col=col, corner=c(0,1)),
+             x=.75, y=-.04, cex=.9,
+             col=trellis.par.get('superpose.symbol')$col, corner=c(0,1)),
            outerlabels=TRUE, autoarrange=TRUE, ...)
 {
   X <- x
-  at <- attributes(x)
+  at   <- attributes(x)
   Form <- at$formula
   nX   <- at$nX
   nY   <- at$nY
@@ -112,25 +113,26 @@ plot.summaryP <-
   groupslevels <- if(length(groups)) levels(x[[groups]])
   condvar <- setdiff(names(X), c('val', 'freq', 'denom', groups))
   ## Reorder condvar in descending order of number of levels
+  numu <- function(x) if(is.factor(x)) length(levels(x))
+                       else length(unique(x[! is.na(x)]))
+
   if(autoarrange && length(condvar) > 1) {
-    nlev <- sapply(X[condvar],
-                   function(x) if(is.factor(x)) length(levels(x))
-                                  else length(unique(x[! is.na(x)])))
+    nlev <- sapply(X[condvar], numu)
     condvar <- condvar[order(nlev)]
   }
   form <- if(length(formula)) formula
-  else {
-    form <- paste('val ~ freq')
-    form <- paste(form, paste(condvar, collapse=' * '), sep=' | ')
-    as.formula(form)
-  }
+  else as.formula(
+    paste('val ~ freq',
+          paste(condvar, collapse=' * '), sep=' | '))
   
-  pan <- function(x, y, subscripts, groups=NULL, col, ...) {
+  pan <- function(x, y, subscripts, groups=NULL, ...) {
     y <- as.numeric(y)
     denom <- X$denom[subscripts]
     prop <- x / denom
     panel.dotplot(x/denom, y, subscripts=subscripts, groups=groups, ...)
     if(length(cex.values) && cex.values > 0) {
+      col <- if(length(groups)) trellis.par.get('superpose.symbol')$col
+       else trellis.par.get('dot.symbol')$col
       xl <- current.panel.limits()$xlim
       xdel <- 0.025 * diff(xl)
       yl <- current.panel.limits()$ylim
@@ -157,16 +159,23 @@ plot.summaryP <-
       }
     }
   }
-  if(length(groups))
-    trellis.par.set(superpose.symbol = list(col = col, pch=pch))
-  else
-    trellis.par.set(dot.symbol = list(col = col[1], pch=pch[1]))
-  d <- if(length(groups))
-    sprintf("dotplot(form, groups=%s, data=X, scales=list(y='free', rot=0), panel=pan, xlim=xlim, auto.key=key, xlab='Proportion', col=col)", groups)
-  else sprintf("dotplot(form, data=X, scales=list(y='free', rot=0), panel=pan, xlim=xlim, auto.key=key, xlab='Proportion', col=col[1])")
-  d <- eval(parse(text = d))
 
-  if(outerlabels && (nX - length(groups) + 1) == 2)
+d <- if(!length(groups))
+    dotplot(form, data=X, scales=list(y='free', rot=0), panel=pan,
+            xlim=xlim, xlab='Proportion', ...)
+  else eval(parse(text=
+      sprintf("dotplot(form, groups=%s, data=X, scales=list(y='free', rot=0), panel=pan, xlim=xlim, auto.key=key, xlab='Proportion', ...)", groups) ))
+
+if(outerlabels && (nX - length(groups) + 1) == 2)
     d <- useOuterStrips(d)
+
+  ## Avoid wasting space for vertical variables with few levels
+  if(condvar[length(condvar)] == 'var') {
+    vars <- levels(X$var)
+    nv <- length(vars)
+    h <- integer(nv)
+    for(i in 1 : nv) h[i] <- length(unique((X$val[X$var == vars[i]])))
+    d <- resizePanels(d, h = h + 1)
+  }
   d
 }

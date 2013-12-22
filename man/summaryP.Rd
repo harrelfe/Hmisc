@@ -28,10 +28,12 @@
 summaryP(formula, data = NULL, subset = NULL,
          na.action = na.retain, exclude1=TRUE, 
          sort=TRUE,  asna = c("unknown", "unspecified"), \dots)
-\method{plot}{summaryP}(x, formula, groups=NULL, xlim = c(0, 1), col = 1:2,
-         pch = 1:2, cex.values = 0.5, xwidth=.125, ydelta = 0.04,
+\method{plot}{summaryP}(x, formula, groups=NULL, xlim = c(0, 1),
+         cex.values = 0.5, xwidth=.125, ydelta = 0.04,
          key = list(columns = length(groupslevels), x = 0.75,
-                    y = -0.04, cex = 0.9, col = col, corner=c(0,1)),
+                    y = -0.04, cex = 0.9,
+                    col = trellis.par.get('superpose.symbol')$col,
+                    corner=c(0,1)),
          outerlabels=TRUE, autoarrange=TRUE, \dots)
 }
 \arguments{
@@ -59,8 +61,6 @@ summaryP(formula, data = NULL, subset = NULL,
    	superpositioning variable for obtaining 
 		further stratification within a horizontal line in the dot chart.}
   \item{xlim}{\code{x}-axis limits.  Default is \code{c(0,1)}.}
-  \item{col}{vector of color codes or names corresponding to levels of \code{groups}}
-  \item{pch}{symbol codes corresponding to \code{groups}}
   \item{cex.values}{character size to use for plotting numerators and
 		denominators}
 	\item{xwidth}{fraction of a panel's \code{x}-axis width to set aside

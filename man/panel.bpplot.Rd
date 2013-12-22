@@ -125,7 +125,8 @@ a list containing named arguments (without abbreviations) to pass to
 \item{nogrid}{set to \code{TRUE} to use in base graphics}
 \item{height}{if \code{nogrid=TRUE}, specifies the height of the box in
         user \code{y} units}
-\item{\dots}{arguments passed to \code{points} or \code{panel.bpplot}}
+\item{\dots}{arguments passed to \code{points} or \code{panel.bpplot} or
+        \code{bwplot}}
 \item{stats,xlim,xlab,qomit,cex.labels,cex.points,grid}{
   undocumented arguments to \code{bpplt}.  For \code{bpplotM},
         \code{xlim} is a list with elements named as the \code{x}-axis

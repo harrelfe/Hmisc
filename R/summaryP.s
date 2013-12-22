@@ -168,8 +168,8 @@ d <- if(!length(groups))
   else eval(parse(text=
       sprintf("dotplot(form, groups=%s, data=X, scales=list(y='free', rot=0), panel=pan, xlim=xlim, auto.key=key, xlab='Proportion', ...)", groups) ))
 
-if(outerlabels && (nX - length(groups) + 1) == 2)
-    d <- useOuterStrips(d)
+if(outerlabels && ((nX - length(groups) + 1 == 2) ||
+   length(dim(d)) == 2))  d <- useOuterStrips(d)
 
   ## Avoid wasting space for vertical variables with few levels
   if(condvar[length(condvar)] == 'var') {

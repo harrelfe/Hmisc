@@ -123,11 +123,11 @@ plot(s, val ~ freq | region * var, groups='treat', outerlabels=FALSE)
 
 # Make a chart where there is a block of variables that
 # are only analyzed for males.  Keep redundant sex in block for demo.
-s <- summaryP(race + sex +
-              pBlock(race, sex, label='Race: Males', subset=sex=='Male') ~
-              region, data=d)
-plot(s)
-
+sb <- summaryP(race + sex +
+               pBlock(race, sex, label='Race: Males', subset=sex=='Male') ~
+               region, data=d)
+plot(sb)
+plot(sb, groups='region', layout=c(1,3), key=list(space='top'))
 \dontrun{
 plot(s, groups='treat')
 # plot(s, groups='treat', outerlabels=FALSE) for standard lattice output
@@ -136,12 +136,21 @@ plot(s, groups='region', key=list(columns=2, space='bottom'))
 plot(summaryP(race + sex ~ region, data=d, exclude1=FALSE), col='green')
 
 # Make your own plot using data frame created by summaryP
-useOuterStrips(dotplot(val ~ freq | region * var, groups='treat', data=s,
+useOuterStrips(dotplot(val ~ freq | region * var, groups=treat, data=s,
         xlim=c(0,1), scales=list(y='free', rot=0), xlab='Fraction',
         panel=function(x, y, subscripts, ...) {
           denom <- s$denom[subscripts]
           x <- x / denom
           panel.dotplot(x=x, y=y, subscripts=subscripts, ...) }))
+
+# Show marginal summary for all regions combined
+s <- summaryP(race + sex ~ region, data=addMarginal(d, region))
+plot(s, groups='region', key=list(space='top'), layout=c(1,2))
+
+# Show marginal summaries for both race and sex
+s <- summaryP(ynbind(x1, x2, x3, x4, label='Exclusions') ~
+              race + sex, data=addMarginal(d, race, sex))
+plot(s, val ~ freq | sex*race)
 }
 }
 \keyword{hplot}

@@ -11,6 +11,7 @@ Changes in version 3.14-0 (2014-01-01)
    * ynbind: new function for combining related yes/no variables into a matrix with a label
    * added file argument to prn
    * summaryP: added autoarrange
+   * added addMarginal and nobsY functions
 
 Changes in version 3.13-0 (2013-11-18)
    * Changed n location (nloc argument) in bpplotM

@@ -269,13 +269,13 @@ bpplotM <- function(formula=NULL, groups=NULL, data=NULL, subset=NULL,
     formula <- as.formula(formula)
   }
   form <- Formula(formula)
+  nobs <- nobsY(form, data=data, subset=subset, na.action=na.action)
   Y <- if(length(subset)) model.frame(form, data=data, subset=subset,
                                       na.action=na.action)
   else model.frame(form, data=data, na.action=na.action)
   X <- model.part(form, data=Y, rhs=1)
   if(ncol(X) == 0) X <- rep('', nrow(Y))
   Y <- model.part(form, data=Y, lhs=1)
-  nobs <- max(sapply(Y, function(x) sum(!is.na(x))))
 
   vars <- names(Y)
   labs <- vars

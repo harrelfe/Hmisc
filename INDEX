@@ -1,5 +1,6 @@
 abs.error.pred          Indexes of Absolute Prediction Error for Linear
                         Models
+addMarginal             Add Marginal Observations
 all.is.numeric          Check if All Elements in Character Vector are
                         Numeric
 approxExtrap            Linear Extrapolation
@@ -91,6 +92,8 @@ na.delete               Row-wise Deletion na.action
 na.detail.response      Detailed Response Variable Information
 na.keep                 Do-nothing na.action
 %nin%                   Find Matching (or Non-Matching) Elements
+nobsY                   Compute Number of Observations for Left Hand
+                        Side of Formula
 nstr                    Creates a string of arbitry length
 num.intercepts          Extract number of intercepts
 panel.bpplot            Box-Percentile Panel Function for Trellis

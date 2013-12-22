@@ -4,6 +4,7 @@ summaryP <- function(formula, data=NULL,
                      asna=c('unknown', 'unspecified'), ...) {
   
   formula <- Formula(formula)
+  nobs <- nobsY(formula, data=data, subset=subset, na.action=na.action)
 
   Y <- if(length(subset))
     model.frame(formula, data=data, subset=subset, na.action=na.action)
@@ -20,13 +21,6 @@ summaryP <- function(formula, data=NULL,
   Z <- NULL
   n <- nrow(X)
 
-  nobs <- 0
-  for(ny in namY) {
-    y <- Y[[ny]]
-    nobs <- max(nobs,
-                if(is.matrix(y)) colSums(! is.na(y)) else ! is.na(y))
-  }
-    
   if(sort) {
     ## Compute marginal frequencies of all regular variables so can sort
     mfreq <- list()

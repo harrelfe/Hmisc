@@ -268,8 +268,8 @@ bpplotM <- function(formula=NULL, groups=NULL, data=NULL, subset=NULL,
                      paste(groups, collapse=' + '))
     formula <- as.formula(formula)
   }
+  nobs <- nobsY(formula, data=data, subset=subset, na.action=na.action)
   form <- Formula(formula)
-  nobs <- nobsY(form, data=data, subset=subset, na.action=na.action)
   Y <- if(length(subset)) model.frame(form, data=data, subset=subset,
                                       na.action=na.action)
   else model.frame(form, data=data, na.action=na.action)

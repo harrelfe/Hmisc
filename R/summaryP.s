@@ -3,8 +3,8 @@ summaryP <- function(formula, data=NULL,
                      exclude1=TRUE, sort=TRUE,
                      asna=c('unknown', 'unspecified'), ...) {
   
-  formula <- Formula(formula)
   nobs <- nobsY(formula, data=data, subset=subset, na.action=na.action)
+  formula <- Formula(formula)
 
   Y <- if(length(subset))
     model.frame(formula, data=data, subset=subset, na.action=na.action)

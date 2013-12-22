@@ -90,7 +90,8 @@ summaryP(formula, data = NULL, subset = NULL,
   Vanderbilt University
   \cr
   \email{f.harrell@vanderbilt.edu}}
-\seealso{\code{\link{bpplotM}}, \code{\link{summaryM}}}
+\seealso{\code{\link{bpplotM}}, \code{\link{summaryM}},
+	\code{\link{ynbind}}, \code{\link{pBlock}}}
 \examples{
 n <- 100
 f <- function(na=FALSE) {
@@ -119,6 +120,14 @@ plot(s, val ~ freq | region * var, groups='treat', outerlabels=FALSE)
 # Much better looking if omit outerlabels=FALSE; see output at
 # http://biostat.mc.vanderbilt.edu/HmiscNew#summaryP
 # See more examples under bpplotM
+
+# Make a chart where there is a block of variables that
+# are only analyzed for males.  Keep redundant sex in block for demo.
+s <- summaryP(race + sex +
+              pBlock(race, sex, label='Race: Males', subset=sex=='Male') ~
+              region, data=d)
+plot(s)
+
 \dontrun{
 plot(s, groups='treat')
 # plot(s, groups='treat', outerlabels=FALSE) for standard lattice output

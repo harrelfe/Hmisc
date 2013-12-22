@@ -183,4 +183,4 @@ xy.group                Mean x vs. function of y in groups of x
 xYplot                  xyplot and dotplot with Matrix Variables to
                         Plot Error Bars and Bands
 yearDays                Get Number of Days in Year or Month
-ynbind                  Combine Related yes/no Variables in a Matrix
+ynbind                  Combine Variables in a Matrix

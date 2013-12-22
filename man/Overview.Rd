@@ -147,6 +147,7 @@ nobsY           \tab Compute no. non-NA observations for left hand formula side\
 nomiss          \tab Return a matrix after excluding any row with an NA\cr
 panel.bpplot    \tab Panel function for trellis bwplot - box-percentile plots\cr
 panel.plsmo     \tab Panel function for trellis xyplot - uses plsmo\cr
+pBlock          \tab Block variables for certain lattice charts\cr
 pc1             \tab Compute first prin. component and get coefficients on\cr\tab     original scale of variables\cr
 plotCorrPrecision  \tab Plot precision of estimate of correlation coefficient\cr
 plsmo           \tab Plot smoothed x vs. y with labeling and exclusion of NAs\cr

@@ -26,7 +26,7 @@ summaryP <- function(formula, data=NULL,
     mfreq <- list()
     for(ny in namY) {
       y <- Y[[ny]]
-      if(!inherits(y, 'ynbind')) {
+      if(!inherits(y, 'ynbind') && !inherits(y, 'pBlock')) {
         if(length(asna) && (is.factor(y) || is.character(y)))
           y[y %in% asna] <- NA
         freq <- table(y)
@@ -40,22 +40,30 @@ summaryP <- function(formula, data=NULL,
     j <- rep(TRUE, n)
     if(nX > 0) for(k in 1 : nX) j <- j & (X[[k]] == ux[i, k])
     ## yx <- Y[j,, drop=FALSE]
-    for(k in 1 : nY) {
+    ## Reverse order so first named variables will be at top of panel
+    for(k in nY : 1) {
       ## y <- yx[[k]] doesn't work as attributes lost by [.data.frame
       y <- Y[[k]]
       y <- if(is.matrix(y)) y[j,, drop=FALSE] else y[j]
 #      y <- (Y[[k]])[j,, drop=FALSE]
-      if(inherits(y, 'ynbind')) {
+      if(inherits(y, 'ynbind') || inherits(y, 'pBlock')) {
         overlab <- attr(y, 'label')
-        labs <- attr(y, 'labels')
+        labs    <- attr(y, 'labels')
         z <- NULL
         for(iy in 1 : ncol(y)) {
           tab <- table(y[, iy])
           no <- as.numeric(sum(tab))
-          z <- rbind(z,
-                     data.frame(var=overlab, val=labs[iy],
-                                freq=as.numeric(tab['TRUE']),
-                                denom=no))
+          d <- if(inherits(y, 'ynbind'))
+            data.frame(var=overlab,
+                       val=labs[iy],
+                       freq=as.numeric(tab['TRUE']),
+                       denom=no)
+          else
+            data.frame(var=overlab,
+                       val=names(tab),  # paste(labs[iy], names(tab)),
+                       freq=as.numeric(tab),
+                       denom=no)
+          z <- rbind(z, d)
         }
       }
       else {  # regular single column

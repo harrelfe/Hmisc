@@ -29,7 +29,7 @@ summaryP(formula, data = NULL, subset = NULL,
          na.action = na.retain, exclude1=TRUE, 
          sort=TRUE,  asna = c("unknown", "unspecified"), \dots)
 \method{plot}{summaryP}(x, formula, groups=NULL, xlim = c(0, 1),
-         cex.values = 0.5, xwidth=.125, ydelta = 0.04,
+         text.at=NULL, cex.values = 0.5,
          key = list(columns = length(groupslevels), x = 0.75,
                     y = -0.04, cex = 0.9,
                     col = trellis.par.get('superpose.symbol')$col,
@@ -61,12 +61,12 @@ summaryP(formula, data = NULL, subset = NULL,
    	superpositioning variable for obtaining 
 		further stratification within a horizontal line in the dot chart.}
   \item{xlim}{\code{x}-axis limits.  Default is \code{c(0,1)}.}
+	\item{text.at}{specify to leave unused space to the right of each
+	panel to prevent numerators and denominators from touching data
+	points.  \code{text.at} is the upper limit for scaling panels'
+	\code{x}-axes but tick marks are only labeled up to \code{max(xlim)}.}
   \item{cex.values}{character size to use for plotting numerators and
 		denominators}
-	\item{xwidth}{fraction of a panel's \code{x}-axis width to set aside
-		for the fraction text}
-  \item{ydelta}{fraction of a panel height to use for positioning
-		numerators and denominators below the horizontal line for a group}
   \item{key}{a list to pass to the \code{auto.key} argument of
 		\code{dotplot}.  To place a key above the entire chart use
 		\code{auto.key=list(columns=2)} for example.}
@@ -123,11 +123,13 @@ plot(s, val ~ freq | region * var, groups='treat', outerlabels=FALSE)
 
 # Make a chart where there is a block of variables that
 # are only analyzed for males.  Keep redundant sex in block for demo.
+# Leave extra space for numerators, denominators
 sb <- summaryP(race + sex +
                pBlock(race, sex, label='Race: Males', subset=sex=='Male') ~
                region, data=d)
-plot(sb)
-plot(sb, groups='region', layout=c(1,3), key=list(space='top'))
+plot(sb, text.at=1.3)
+plot(sb, groups='region', layout=c(1,3), key=list(space='top'),
+     text.at=1.15)
 \dontrun{
 plot(s, groups='treat')
 # plot(s, groups='treat', outerlabels=FALSE) for standard lattice output
@@ -148,7 +150,7 @@ s <- summaryP(race + sex ~ region, data=addMarginal(d, region))
 plot(s, groups='region', key=list(space='top'), layout=c(1,2))
 
 # Show marginal summaries for both race and sex
-s <- summaryP(ynbind(x1, x2, x3, x4, label='Exclusions') ~
+s <- summaryP(ynbind(x1, x2, x3, x4, label='Exclusions', sort=FALSE) ~
               race + sex, data=addMarginal(d, race, sex))
 plot(s, val ~ freq | sex*race)
 }

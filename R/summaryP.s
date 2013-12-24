@@ -99,8 +99,8 @@ summaryP <- function(formula, data=NULL,
 }
 
 plot.summaryP <-
-  function(x, formula=NULL, groups=NULL, xlim=c(0, 1), 
-           cex.values=0.5, xwidth=.125, ydelta=0.04,
+  function(x, formula=NULL, groups=NULL, xlim=c(0, 1), text.at=NULL,
+           cex.values=0.5,
            key=list(columns=length(groupslevels),
              x=.75, y=-.04, cex=.9,
              col=trellis.par.get('superpose.symbol')$col, corner=c(0,1)),
@@ -135,42 +135,46 @@ plot.summaryP <-
     if(length(cex.values) && cex.values > 0) {
       col <- if(length(groups)) trellis.par.get('superpose.symbol')$col
        else trellis.par.get('dot.symbol')$col
-      xl <- current.panel.limits()$xlim
-      xdel <- 0.025 * diff(xl)
-      yl <- current.panel.limits()$ylim
-      ydel <- ydelta * diff(yl)
+
+      longest.string <- paste(max(x), max(denom), sep='/  ')
+      length.longest <- unit(1, 'strwidth', longest.string)
+      xpos <- unit(1, 'npc') - unit(1, 'mm')
       txt <- if(length(groups)) {
         groups <- groups[subscripts]
         tx <- ''
         ig <- 0
-        xw <- xwidth * diff(xl)
-        xpos <- xl[2] - xdel - length(levels(groups)) * xw
+        xpos <- xpos - length(levels(groups)) * length.longest
         for(g in levels(groups)) {
           ig <- ig + 1
           i <- groups == g
           fr <- paste(x[i], denom[i], sep='/')
-          xpos <- xpos + xw
-          ltext(xpos, y - ydel, fr, cex=cex.values,
-                col=col[ig], adj=1)
+          xpos <- xpos + length.longest
+          grid.text(fr, xpos, unit(y, 'native') - unit(1, 'mm'),
+                    just='right', gp=gpar(cex=cex.values, col=col[ig]))
         }
       }
       else {
         fr <- paste(x, denom, sep='/')
-        ltext(xl[2] - 0.025 * diff(xl), y - ydel, fr,
-              cex=cex.values, col=col[1], adj=1)
+        grid.text(fr, xpos, unit(y, 'native') - unit(1, 'mm'),
+                  gp=gpar(cex=cex.values, col=col[1]), just='right')
       }
     }
   }
 
-d <- if(!length(groups))
-    dotplot(form, data=X, scales=list(y='free', rot=0), panel=pan,
-            xlim=xlim, xlab='Proportion', ...)
+  scal <- list(y='free', rot=0)
+  scal$x <- if(length(text.at)) {
+    at <- pretty(xlim)
+    list(limits=range(c(xlim, text.at)), at=pretty(xlim))
+  } else list(limits=xlim)
+  d <- if(!length(groups))
+    dotplot(form, data=X, scales=scal, panel=pan,
+            xlab='Proportion', ...)
   else eval(parse(text=
-      sprintf("dotplot(form, groups=%s, data=X, scales=list(y='free', rot=0), panel=pan, xlim=xlim, auto.key=key, xlab='Proportion', ...)", groups) ))
+                  sprintf("dotplot(form, groups=%s, data=X, scales=scal, panel=pan, auto.key=key, xlab='Proportion', ...)", groups) ))
 
-if(outerlabels && ((nX - length(groups) + 1 == 2) ||
-   length(dim(d)) == 2))  d <- useOuterStrips(d)
-
+  if(outerlabels && ((nX - length(groups) + 1 == 2) ||
+                     length(dim(d)) == 2))  d <- useOuterStrips(d)
+  
   ## Avoid wasting space for vertical variables with few levels
   if(condvar[length(condvar)] == 'var') {
     vars <- levels(X$var)

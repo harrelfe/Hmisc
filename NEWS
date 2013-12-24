@@ -13,6 +13,7 @@ Changes in version 3.14-0 (2014-01-01)
    * summaryP: added autoarrange
    * added addMarginal and nobsY functions
    * pBlock: new function for blocking variables for summaryP
+   * summaryP: changed text positioning to grid absolutes, added text.at argument
 
 Changes in version 3.13-0 (2013-11-18)
    * Changed n location (nloc argument) in bpplotM

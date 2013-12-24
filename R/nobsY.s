@@ -24,11 +24,23 @@ addMarginal <- function(data, ..., label='All') {
   vars <- as.character(sys.call())[- (1 : 2)]
   vars <- intersect(vars, names(data))
   data$.marginal. <- FALSE
+
+  labs <- sapply(data, function(x) {
+    la <- attr(x, 'label')
+    if(! length(la)) la <- ''
+    la })
+
   for(v in vars) {
     d <- data
     d$.marginal. <- TRUE
     d[[v]] <- label
     data <- rbind(data, d)
   }
+  if(any(labs != ''))
+    for(i in 1 : length(data))
+      if(labs[i] != '') {
+        attr(data[[i]], 'label') <- labs[i]
+        class(data[[i]]) <- c('labelled', class(data[[i]]))
+      }
   data
 }

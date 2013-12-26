@@ -977,7 +977,7 @@ upData <- function(object, ...,
   }
 
   z <- substitute(list(...))
-
+  
   if(length(z) > 1) {
     z <- z[-1]
     vn <- names(z)
@@ -1023,16 +1023,15 @@ upData <- function(object, ...,
       object[[v]] <- x
     }
   }
-  
+
   if(force.single) {
     sm <- sapply(object, storage.mode)
     if(any(sm=='double'))
       for(i in 1:length(sm)) {
         if(sm[i]=='double') {
           x <- object[[i]]
-          if(testDateTime(x))
+          if(testDateTime(x) || is.matrix(x))
             next
-
           if(all(is.na(x)))
             storage.mode(object[[i]]) <- 'integer'
           else {

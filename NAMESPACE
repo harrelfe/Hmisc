@@ -8,6 +8,7 @@ import(Formula)
 import(grid)
 
 importFrom(lattice, xyplot, panel.dotplot, llines, lpoints, lsegments)
+importFrom(latticeExtra, useOuterStrips, resizePanels)
 importFrom(cluster, clara)
 
 S3method(print, spower)

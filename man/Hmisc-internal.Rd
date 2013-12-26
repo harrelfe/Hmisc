@@ -8,7 +8,6 @@
 \alias{as.data.frame.impute}
 \alias{as.data.frame.roundN}
 \alias{as.data.frame.special.miss}
-\alias{as.data.frame.Surv}
 \alias{as.data.frame.substi}
 \alias{substi}
 \alias{substi.source}

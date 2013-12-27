@@ -4,8 +4,8 @@ plsmo <-
            lwd=par('lwd'), iter=if(length(unique(y)) > 2) 3 else 0,
            bass=0, f=2 / 3, trim, fun, group=rep(1, length(x)),
            prefix, xlim, ylim, 
-           label.curves=TRUE, datadensity=FALSE, lines.=TRUE,
-           subset=TRUE, grid=FALSE, evaluate=NULL, ...)
+           label.curves=TRUE, datadensity=FALSE, scat1d.opts=NULL,
+           lines.=TRUE, subset=TRUE, grid=FALSE, evaluate=NULL, ...)
 {
   gfun <- ordGridFun(grid)
   nam <- as.character(sys.call())[2 : 3]
@@ -115,7 +115,9 @@ plsmo <-
       x1 <- x[s]
       for(ii in which(clev == lev[i])) {
         y.x1 <- approx(curves[[ii]], xout=x1)$y
-        scat1d(x1, y=y.x1, col=col[ii], grid=grid, ...)
+        sopts <- c(list(x=x1, y=y.x1, col=col[ii], grid=grid), scat1d.opts)
+        do.call('scat1d', sopts)
+#        scat1d(x1, y=y.x1, col=col[ii], grid=grid, ...)
       }
     }
   }
@@ -135,7 +137,7 @@ panel.plsmo <- function(x, y, subscripts, groups=NULL, type='b',
                         pch  = superpose.symbol$pch, 
                         cex  = superpose.symbol$cex, 
                         font = superpose.symbol$font, 
-                        col  = NULL,...)
+                        col  = NULL, scat1d.opts=NULL, ...)
 {
   superpose.symbol <- trellis.par.get("superpose.symbol")
   superpose.line   <- trellis.par.get("superpose.line")
@@ -162,10 +164,11 @@ panel.plsmo <- function(x, y, subscripts, groups=NULL, type='b',
   
   if(type != 'p') if(ng > 1)
     plsmo(x, y, group=groups[subscripts, drop=FALSE], 
-          add=TRUE, lty=lty, col=col, label.curves=lc, grid=TRUE, ...)
+          add=TRUE, lty=lty, col=col, label.curves=lc, grid=TRUE,
+          scat1d.opts=scat1d.opts, ...)
   else
     plsmo(x, y, add=TRUE, lty=lty, col=col, label.curves=lc, grid=TRUE,
-          ...)
+          scat1d.opts=scat1d.opts, ...)
 
   if(type != 'l') {
     if(ng > 1)

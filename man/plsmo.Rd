@@ -50,7 +50,8 @@ plsmo(x, y, method=c("lowess","supsmu","raw"), xlab, ylab,
       add=FALSE, lty=1 : lc, col=par("col"), lwd=par("lwd"),
       iter=if(length(unique(y))>2) 3 else 0, bass=0, f=2/3, trim, 
       fun, group, prefix, xlim, ylim, 
-      label.curves=TRUE, datadensity=FALSE, lines.=TRUE, subset=TRUE,
+      label.curves=TRUE, datadensity=FALSE, scat1d.opts=NULL,
+      lines.=TRUE, subset=TRUE,
       grid=FALSE, evaluate=NULL, \dots)
 
 
@@ -63,7 +64,7 @@ plsmo(x, y, method=c("lowess","supsmu","raw"), xlab, ylab,
 #       pch = superpose.symbol$pch, 
 #       cex = superpose.symbol$cex, 
 #       font = superpose.symbol$font, 
-#       col = NULL, \dots)
+#       col = NULL, scat1d.opts=NULL, \dots)
 }
 \arguments{
 \item{x}{
@@ -138,6 +139,7 @@ curves corresponding to \code{group}s.  Set to a list to pass options to
 set to \code{TRUE} to draw tick marks on each curve, using x-coordinates
 of the raw data \code{x} values.  This is done using \code{scat1d}.
 }
+\item{scat1d.opts}{a list of options to hand to \code{scat1d}}
 \item{lines.}{
 set to \code{FALSE} to suppress smoothed curves from being drawn.  This can
 make sense if \code{datadensity=TRUE}.

@@ -300,10 +300,10 @@ bpplotM <- function(formula=NULL, groups=NULL, data=NULL, subset=NULL,
     lev <- c(lev, l)
   }
 
-  strip <- function(which.given, ..., factor.levels) {
-    ## time (variable) is first
-    levs <- if(which.given == 1) lev else levels(X[[which.given]])
-    strip.default(which.given, ..., factor.levels=levs)
+  strip <- function(which.given, which.panel, var.name, factor.levels, ...) {
+    current.var <- var.name[which.given]
+    levs <- if(current.var == 'time') lev else factor.levels
+    strip.default(which.given, which.panel, var.name, factor.levels=levs, ...)
   }
   
   namx <- names(X)
@@ -315,7 +315,7 @@ bpplotM <- function(formula=NULL, groups=NULL, data=NULL, subset=NULL,
               nloc=nloc, cex.n=cex.n, strip=strip,
               par.strip.text=list(cex=cex.strip), ...)
   if(outerlabels && length(dim(d)) == 2)
-    d <- useOuterStrips(d, strip=strip)
+    d <- useOuterStrips(d, strip=strip, strip.left=strip)
   attr(d, 'nobs') <- nobs
   d
 }

@@ -13,36 +13,34 @@ scat1d <- function(x, side=3, frac=.02, jitfrac=.008, tfrac,
   type <- match.arg(type)
   if(length(x) >= nhistSpike)
     return(histSpike(x, side=side, type=type,
-                     frac=2.5*frac, col=col, y=y, curve=curve,
+                     frac=2.5 * frac, col=col, y=y, curve=curve,
                      bottom.align=if(type=='density') TRUE else bottom.align, 
                      add=TRUE, nint=nint, grid=grid, ...))
 
   gfun <- ordGridFun(grid)
-
-  if(side==1 || side==3 || length(y) || length(curve))
-    {
-      l <- 1:2;
-      ax <- 1
-    } else {
-      l <- 3:4;
-      ax <- 2
-    }
-
+  if(side==1 || side==3 || length(y) || length(curve)) {
+    l <- 1:2
+    ax <- 1
+  } else {
+    l <- 3:4
+    ax <- 2
+  }
+  
   pr <- parGrid(grid)
   usr <- pr$usr; pin <- pr$pin; uin <- pr$uin
-
-  u <- usr[l]
-  u.opp <- usr[-l]
-  w <- u[2]-u[1]
+  
+  u     <- usr[  l]
+  u.opp <- usr[- l]
+  w     <- u[2] - u[1]
   ## Start JOA 12.8.97 : handle xy missings parallel
-  if (length(y)>1){ ## length=1 special case needed for datadensity
-    if (length(x)!=length(y))
+  if (length(y) > 1) { ## length=1 special case needed for datadensity
+    if (length(x) != length(y))
       stop("y must have same length as x (or length(y)=1)")
 
-    selector <- !(is.na(x)|is.na(y))
+    selector <- ! (is.na(x) | is.na(y))
     x <- unclass(x[selector])
     y <- unclass(y[selector])
-  } else x <- unclass(x[!is.na(x)])
+  } else x <- unclass(x[! is.na(x)])
   ## Stop JOA 12.8.97
   
   if(length(curve))
@@ -50,50 +48,45 @@ scat1d <- function(x, side=3, frac=.02, jitfrac=.008, tfrac,
 
   n <- length(x)
   if(missing(tfrac))
-    tfrac <- if(n<125) 1
-             else max(.1, 125/n)
+    tfrac <- if(n < 125) 1 else max(.1, 125 / n)
   else if (tfrac < 0 || tfrac > 1)
     stop("must have  0 <= tfrac <= 1")
 
   ## Start JOA 19.8.97
-  if(jitfrac>0 && any(duplicated( if(eps>0) round(x/w/eps) else x )))
+  if(jitfrac > 0 && any(duplicated( if(eps > 0) round(x / w / eps) else x )))
     if (preserve)
-      x <- jitter2(x, fill=fill, limit=limit, eps=w*eps)
+      x <- jitter2(x, fill=fill, limit=limit, eps=w * eps)
     else
       ## Stop JOA 19.8.97
-      x <- x + runif(n, -w*jitfrac, w*jitfrac)
-
-  h <- min(pin)*frac/uin[-ax]
-  if(length(y))
-    {
-      a <- y - h/2;
-      b <- y + h/2
-    } else {
-      a <- if(side<3) u.opp[1]
-      else u.opp[2]-h
-      
-      b <- if(side<3) u.opp[1]+h
-      else u.opp[2]
-    }
-  
-  if(tfrac<1)
-    {
-      l <- tfrac*(b-a)
-      a <- a + runif(n)*(b-l-a)   ##runif(n, a, b-l) if frac>0
-      b <- a+l
-    }
-
-  if(ax==1 && bottom.align)
-    {
-      a <- a + h/2;
-      b <- b + h/2
-    }
-
+      x <- x + runif(n, -w * jitfrac, w * jitfrac)
+  h <- min(pin) * frac / uin[- ax]
+  h2 <- h / 2
+  if(grid && length(y) && inherits(y, 'unit')) {
+    h  <- unit(frac,   'npc')
+    h2 <- unit(frac/2, 'npc')
+  }
+  if(length(y)) {
+    a <- y - h2
+    b <- y + h2
+  } else {
+    a <- if(side < 3) u.opp[1]
+    else u.opp[2] - h
+    b <- if(side < 3) u.opp[1] + h
+    else u.opp[2]
+  }
+  if(tfrac < 1) {
+    l <- tfrac * (b - a)
+    a <- a + runif(n) * (b - l - a)   ##runif(n, a, b-l) if frac>0
+    b <- a + l
+  }
+  if(ax == 1 && bottom.align) {
+    a <- a + h2
+    b <- b + h2
+  }
   if(ax==1)
-    gfun$segments(x, a, x, b, lwd=lwd, xpd=frac<0, col=col)
+    gfun$segments(x, a, x, b, lwd=lwd, xpd=frac < 0, col=col)
   else
-    gfun$segments(a, x, b, x, lwd=lwd, xpd=frac<0, col=col)
-  
+    gfun$segments(a, x, b, x, lwd=lwd, xpd=frac < 0, col=col)
   invisible()
 }
 
@@ -105,34 +98,32 @@ jitter2.default <- function(x, fill=1/3, limit=TRUE, eps=0,
 { 
   x2 <- x[!is.na(x)]
   if (!presorted){
-    o <- order(x2);
+    o <- order(x2)
     x2 <- x2[o]
   }
 
-  r <- if (eps>0)rle(round(x2/eps)*eps) else rle(x2)
+  r <- if (eps > 0) rle(round(x2 / eps) * eps) else rle(x2)
 
-  if ( length(r$length)<2 || max(r$length)<2 )
+  if ( length(r$length) < 2 || max(r$length) < 2 )
     return(x)
 
   d <- abs(diff(r$values))
-  d <- pmin( c(d[1],d), c(d,d[length(d)]) )
-  who <- rep(r$lengths>1,r$lengths)
-  d <- d[r$lengths>1]*fill/2
-  if (is.logical(limit) && limit)
-    limit <- min(d)
+  d <- pmin( c(d[1], d), c(d, d[length(d)]) )
+  who <- rep(r$lengths > 1, r$lengths)
+  d <- d[r$lengths > 1] * fill / 2
+  if (is.logical(limit) && limit) limit <- min(d)
 
-  if (limit)
-    d <- pmin(d,limit)
+  if (limit) d <- pmin(d,limit)
 
-  r$values <- r$values[r$lengths>1]-d
-  r$lengths <- r$lengths[r$lengths>1]
-  d <- d*2/(r$lengths-1)
+  r$values  <- r$values[r$lengths > 1] - d
+  r$lengths <- r$lengths[r$lengths > 1]
+  d <- d * 2 / (r$lengths - 1)
   k <- length(r$lengths)
   n <- sum(who)
-  val <- rep(r$values,r$lengths)
-  add <- (0:(n-1))-rep(c(0,cumsum(r$lengths[-k])),r$lengths)
-  add <- add[order(rep(1:k,r$lengths),runif(n))]
-  add <- add * rep(d,r$lengths)
+  val <- rep(r$values, r$lengths)
+  add <- (0 : (n - 1)) - rep(c(0, cumsum(r$lengths[-k])), r$lengths)
+  add <- add[order(rep(1 : k, r$lengths), runif(n))]
+  add <- add * rep(d, r$lengths)
   val <- val + add
   x2[who] <- val
   if (!presorted)
@@ -170,7 +161,7 @@ datadensity.data.frame <-
            method.cat=c('bar','freq'),
            col.group=1:10,
            n.unique=10, show.na=TRUE, nint=1, naxes,
-           q, bottom.align=nint>1,
+           q, bottom.align=nint > 1,
            cex.axis=sc(.5,.3), cex.var=sc(.8,.3),
            lmgp=NULL,   tck=sc(-.009,-.002),
            ranges=NULL, labels=NULL, ...)
@@ -337,28 +328,30 @@ datadensity.data.frame <-
       if(is.numeric(x))
         {
           xx <- as.numeric(lev)
-          xx <- (xx-min(xx))/(max(xx)-min(xx))
+          xx <- (xx - min(xx)) / (max(xx) - min(xx))
         } else {
           if(sum(nchar(lev)) > 200) 
-            lev <- substring(lev, 1, max(1, round(200/length(lev))))
+            lev <- substring(lev, 1, max(1, round(200 / length(lev))))
 
-          xx <- (0:(nl-1))/(nl-1)
+          xx <- (0 : (nl - 1)) / (nl - 1)
         }
 
           cex <- par(cex=cex.axis)
           axis(side=1, at=xx, labels=lev, pos=y, cex=cex.axis, tick=FALSE)
           par(cex=cex)
           
-          lines(c(0,1),c(y,y))
+          lines(c(0,1), c(y,y))
           maxfreq <- max(tab)
-          for(g in if(ngroup==0) 1 else 1:ngroup)
+          for(g in if(ngroup==0) 1 else 1 : ngroup)
             {
               tabg <- tab[g,]
               if(method.cat=='bar')
-                symbols(xx, y+.4*tabg/maxfreq/2, add=TRUE,
-                        rectangles=cbind(.02, .4*tabg/maxfreq), inches=FALSE,
+                symbols(xx, y + .4 * tabg / maxfreq / 2, add=TRUE,
+                        rectangles=cbind(.02, .4 * tabg / maxfreq),
+                        inches=FALSE,
                         col=col.group[g])
-              else text(xx, rep(y+.1,nl), format(tabg), cex=cex.axis*sqrt(tab/maxfreq),
+              else text(xx, rep(y + .1, nl), format(tabg),
+                        cex=cex.axis * sqrt(tab / maxfreq),
                         adj=.5)
             }
         }
@@ -376,36 +369,35 @@ datadensity.data.frame <-
 }
 
 
-histSpike <- function(x, side=1, nint=100, frac=.05, minf=NULL,
-                      mult.width=1,
-                      type=c('proportion','count','density'),
-                      xlim=range(x),
-                      ylim=c(0,max(f)), xlab=deparse(substitute(x)), 
-                      ylab=switch(type,proportion='Proportion',
-                                  count     ='Frequency',
-                                  density   ='Density'),
-                      y=NULL, curve=NULL, add=FALSE, 
-                      bottom.align=type=='density', 
-                      col=par('col'), lwd=par('lwd'), grid=FALSE, ...)
+histSpike <-
+  function(x, side=1, nint=100, frac=.05, minf=NULL, mult.width=1,
+           type=c('proportion','count','density'),
+           xlim=range(x),
+           ylim=c(0,max(f)), xlab=deparse(substitute(x)), 
+           ylab=switch(type,proportion='Proportion',
+             count     ='Frequency',
+             density   ='Density'),
+           y=NULL, curve=NULL, add=FALSE, 
+           bottom.align=type=='density', 
+           col=par('col'), lwd=par('lwd'), grid=FALSE, ...)
 {
   type <- match.arg(type)
-  if(!add && side!=1)
+  if(! add && side != 1)
     stop('side must be 1 if add=FALSE')
 
   if(add && type=='count')
     warning('type="count" is ignored if add=TRUE')
 
-  if(length(y) > 1)
-    {
-      if(length(y) != length(x))
-        stop('lengths of x and y must match')
-      
-      if(length(curve))
-        warning('curve ignored when y specified')
-      
-      i <- !is.na(x+y)
-      curve <- list(x=x[i], y=y[i])
-    }
+  if(length(y) > 1) {
+    if(length(y) != length(x))
+      stop('lengths of x and y must match')
+    
+    if(length(curve))
+      warning('curve ignored when y specified')
+    
+    i <- !is.na(x+y)
+    curve <- list(x=x[i], y=y[i])
+  }
   
   if(length(curve) && !missing(bottom.align) && bottom.align)
     warning('bottom.align=T specified with curve or y; ignoring bottom.align')
@@ -414,104 +406,100 @@ histSpike <- function(x, side=1, nint=100, frac=.05, minf=NULL,
   x <- x[!is.na(x)]
   x <- x[x >= xlim[1] & x <= xlim[2]]
   
-  if(type != 'density')
-    {
-      if(is.character(nint) || length(x) <= 10)
-        {
-          f <- table(x)
-          x <- as.numeric(names(f))
-        } else {
-          ncut <- nint+1
-          bins <- seq(xlim[1], xlim[2], length = ncut)
-          delta <- (bins[2]-bins[1]) / 2
-          f <- table(cut(x, c(bins[1]-delta,bins)))
-          
-          x <- bins
-          j <- f > 0
-          x <- x[j]
-          f <- f[j]
-        }
-
-      if(type=='proportion')
-        f <- f / sum(f)
+  if(type != 'density') {
+    if(is.character(nint) || length(x) <= 10) {
+      f <- table(x)
+      x <- as.numeric(names(f))
     } else {
-      nbar <- logb(length(x), base = 2) + 1
-      width <- diff(range(x))/nbar*.75*mult.width
-      den <- density(x,width=width,n=200,from=xlim[1],to=xlim[2])
-      x <- den$x
-      f <- den$y
+      ncut <- nint+1
+      bins <- seq(xlim[1], xlim[2], length = ncut)
+      delta <- (bins[2]-bins[1]) / 2
+      f <- table(cut(x, c(bins[1] - delta, bins)))
+      
+      x <- bins
+      j <- f > 0
+      x <- x[j]
+      f <- f[j]
     }
-
-  if(!add)
-    {
-      if(grid)
-        stop('add=FALSE not implemented for lattice')
-
-      plot(0, 0, xlim=xlim, ylim=ylim, xlab=xlab, ylab=ylab, type='n')
-    }
-
-  if(side==1 || side==3)
-    {
-      l <- 1:2;
-      ax <- 1
-    } else {
-      l <- 3:4;
-      ax <- 2
-    }
+    
+    if(type=='proportion') f <- f / sum(f)
+  } else {
+    nbar <- logb(length(x), base = 2) + 1
+    width <- diff(range(x)) / nbar * .75 * mult.width
+    den <- density(x, width=width, n=200, from=xlim[1], to=xlim[2])
+    x <- den$x
+    f <- den$y
+  }
+  
+  if(!add) {
+    if(grid)
+      stop('add=FALSE not implemented for lattice')
+    
+    plot(0, 0, xlim=xlim, ylim=ylim, xlab=xlab, ylab=ylab, type='n')
+  }
+  
+  if(side==1 || side==3) {
+    l <- 1:2;
+    ax <- 1
+  } else {
+    l <- 3:4;
+    ax <- 2
+  }
   
   f <- f / max(f)
-  if(length(minf))
-    f <- pmax(f, minf)
+  if(length(minf)) f <- pmax(f, minf)
 
   pr <- parGrid(grid)
   usr <- pr$usr;
   pin <- pr$pin;
   uin <- pr$uin
-
+  
   u <- usr[l]
-  u.opp <- usr[-l]
+  u.opp <- usr[- l]
+  
+  h <- min(pin) * frac / uin[- ax] * f
+  h2 <- h / 2
+  if(length(y) && inherits(y, 'unit')) {
+    h  <- unit(frac,   'npc')
+    h2 <- unit(frac/2, 'npc')
+  }
+  if(length(curve) || length(y)) {
+    if(length(curve))
+      y <- approx(curve, xout=x, rule=2)$y
 
-  h <- min(pin)*frac/uin[-ax] * f
-  if(length(curve) || length(y))
-    {
-      if(length(curve))
-        y <- approx(curve, xout=x, rule=2)$y
-
-      a <- y - h/2; b <- y + h/2
-    } else {
-      a <- if(side<3) u.opp[1]
-      else u.opp[2]-h
-      
-      b <- if(side<3) u.opp[1]+h
-      else u.opp[2]
-    }
-
-  if(ax==1 && bottom.align && type!='density')
-    {
-      a <- a + h/2;
-      b <- b + h/2
-    }
-
-  if(type=='density')
-    {
-      lll <- gfun$lines
-      ## Problem in S+ getting right value of lwd
-      if(ax==1)
-        do.call('lll',list(x,
-                           if(side==1)b
-                           else a,
-                           lwd=lwd,  col=col))
-      else
-        do.call('lll',list(if(side==2)b
-        else a,
-                           x, lwd=lwd, col=col))
-    } else {
-      lll <- gfun$segments
-      if(ax==1)
-        do.call('lll',list(x, a, x, b, lwd=lwd, xpd=frac<0, col=col))
-      else
-        do.call('lll',list(a, x, b, x, lwd=lwd, xpd=frac<0, col=col))
-    }
+    a <- y - h2; b <- y + h2
+  } else {
+    a <- if(side < 3) u.opp[1]
+    else u.opp[2] - h
+    
+    b <- if(side < 3) u.opp[1] + h
+    else u.opp[2]
+  }
+  
+  if(ax==1 && bottom.align && type!='density') {
+    a <- a + h2
+    b <- b + h2
+  }
+  
+  if(type=='density') {
+    lll <- gfun$lines
+    ## Problem in S+ getting right value of lwd
+    if(ax==1)
+      do.call('lll',list(x,
+                         if(side==1)b
+                         else a,
+                         lwd=lwd,  col=col))
+    else
+      do.call('lll',list(if(side==2)b
+      else a,
+                         x, lwd=lwd, col=col))
+  } else {
+    lll <- gfun$segments
+    if(ax==1)
+      do.call('lll',list(x, a, x, b, lwd=lwd, xpd=frac<0, col=col))
+    else
+      do.call('lll',list(a, x, b, x, lwd=lwd, xpd=frac<0, col=col))
+  }
   
   invisible(xlim)
 }

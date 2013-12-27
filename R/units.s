@@ -18,3 +18,17 @@ units.default <- function(x, none='', ...)
 
   lab
 }
+
+
+units.Surv <- function(x, none='', ...)
+{
+  at  <- attributes(x)
+  un  <- at$units
+  ia  <- at$inputAttributes
+  if(! length(un) && length(ia)) {
+    un <- ia$time2$units
+    if(! length(un)) un <- ia$time$units
+  }
+  if(! length(un)) un <- none
+  un
+}

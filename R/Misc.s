@@ -117,7 +117,7 @@ km.quick <- function(S, times, q)
   S <- S[!is.na(S),]
   n <- nrow(S)
   stratvar <- factor(rep(1,nrow(S)))
-  f <- survfit:::survfitKM(stratvar, S, se.fit=FALSE, conf.type='none')
+  f <- survfitKM(stratvar, S, se.fit=FALSE, conf.type='none')
   tt <- c(0, f$time)
   ss <- c(1, f$surv)
   if(missing(times))

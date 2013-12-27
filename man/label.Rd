@@ -2,6 +2,7 @@
 \alias{label}
 \alias{label<-}
 \alias{label.default}
+\alias{label.Surv}
 \alias{label<-.default}
 \alias{labelPlotmath}
 \alias{labelLatex}
@@ -45,6 +46,12 @@
   are typed verbatim if they contain percent signs, blanks, or
   underscores.
 
+	For \code{Surv} objects, \code{label} first looks to see if there is
+	an overall \code{"label"} attribute for the object, then it looks for
+	saved attributes that \code{Surv} put in the \code{"inputAttributes"}
+	object, looking first at the \code{event} variable, then \code{time2},
+	and finally \code{time}.
+
 	\code{labelLatex} constructs suitable LaTeX labels a variable or from the
 	\code{label} and \code{units} arguments, optionally right-justifying
 	\code{units} if \code{hfill=TRUE}.  This is useful when making tables
@@ -86,6 +93,9 @@
 label(x, default=NULL, ...)
 
 \method{label}{default}(x, default=NULL, units=FALSE, plot=FALSE,
+      grid=FALSE, \dots)
+
+\method{label}{Surv}(x, default=NULL, units=FALSE, plot=FALSE,
       grid=FALSE, \dots)
 
 \method{label}{data.frame}(x, default=NULL, self=FALSE, \dots)

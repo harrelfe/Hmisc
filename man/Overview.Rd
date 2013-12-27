@@ -229,6 +229,8 @@ summary.formula \tab General table making and plotting functions for summarizing
 summaryD        \tab Summarizing using user-provided formula and dotchart3\cr
 summaryM        \tab Replacement for summary.formula(..., method='reverse')\cr
 summaryP        \tab Multi-panel dot chart for summarizing proportions\cr
+summaryS        \tab Summarize multiple response variables for multi-panel\cr
+                \tab dot chart or scatterplot\cr
 summaryRc       \tab Summary for continuous variables using lowess\cr
 symbol.freq     \tab X-Y Frequency plot with circles' area prop. to frequency\cr
 sys             \tab Execute unix() or dos() depending on what's running\cr

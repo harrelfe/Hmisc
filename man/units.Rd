@@ -1,6 +1,7 @@
 \name{units}
 \alias{units}
 \alias{units.default}
+\alias{units.Surv}
 \alias{units<-.default}
 \title{
 Units Attribute of a Vector  
@@ -10,11 +11,14 @@ Sets or retrieves the \code{"units"} attribute of an object.
 For \code{units.default} replaces the builtin
 version, which only works for time series objects.  If the variable is
 also given a \code{label}, subsetting (using \code{[.labelled}) will
-retain the \code{"units"} attribute.  For S-Plus, the latter does not work.
+retain the \code{"units"} attribute.  For a \code{Surv} object,
+\code{units} first looks for an overall \code{"units"} attribute, then
+it looks for \code{units} for the \code{time2} variable then for \code{time1}.
 }
 \usage{
 units(x, \dots)
 \method{units}{default}(x, none='', \dots)
+\method{units}{Surv}(x, none='', \dots)
 \method{units}{default}(x) <- value
 }
 \arguments{
@@ -26,20 +30,19 @@ units(x, \dots)
 }
 \value{
 the units attribute of x, if any; otherwise, the \code{units} attribute of
-the \code{tspar} attribute of \code{x} if any; otherwise the value \code{none}
+the \code{tspar} attribute of \code{x} if any; otherwise the value
+\code{none}.  Handling for \code{Surv} objects is different (see above).
 }
 \seealso{\code{\link{label}}}
 \examples{
 fail.time <- c(10,20)
 units(fail.time) <- "Day"
 describe(fail.time)
+S <- Surv(fail.time)
+units(S)
+
 label(fail.time) <- 'Failure Time'
 fail.time
-\dontrun{
-f <- cph(Surv(fail.time, event) ~ xx)
-plot(xx,xx2,xlab=paste(label(xx),", ",units(xx),"s",sep=""))
-}
 }
 \keyword{utilities}
 \keyword{interface}
-% Converted by Sd2Rd version 1.21.

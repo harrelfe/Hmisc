@@ -130,7 +130,6 @@ plot.summaryP <-
   pan <- function(x, y, subscripts, groups=NULL, ...) {
     y <- as.numeric(y)
     denom <- X$denom[subscripts]
-    prop <- x / denom
     panel.dotplot(x/denom, y, subscripts=subscripts, groups=groups, ...)
     if(length(cex.values) && cex.values > 0) {
       col <- if(length(groups)) trellis.par.get('superpose.symbol')$col
@@ -172,8 +171,9 @@ plot.summaryP <-
   else eval(parse(text=
                   sprintf("dotplot(form, groups=%s, data=X, scales=scal, panel=pan, auto.key=key, xlab='Proportion', ...)", groups) ))
 
-  if(outerlabels && ((nX - length(groups) + 1 == 2) ||
-                     length(dim(d)) == 2))  d <- useOuterStrips(d)
+#  if(outerlabels && ((nX - length(groups) + 1 == 2) ||
+#                     length(dim(d)) == 2))  d <- useOuterStrips(d)
+  if(length(dim(d)) == 2) d <- useOuterStrips(d)
   
   ## Avoid wasting space for vertical variables with few levels
   if(condvar[length(condvar)] == 'var') {

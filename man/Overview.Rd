@@ -225,7 +225,7 @@ substi          \tab Substitute one var for another when observations NA\cr
 summarize       \tab Generate a data frame containing stratified summary\cr
                 \tab     statistics.  Useful for passing to trellis.\cr
 summary.formula \tab General table making and plotting functions for summarizing\cr
-                \tab     data\cr
+                \tab data\cr
 summaryD        \tab Summarizing using user-provided formula and dotchart3\cr
 summaryM        \tab Replacement for summary.formula(..., method='reverse')\cr
 summaryP        \tab Multi-panel dot chart for summarizing proportions\cr

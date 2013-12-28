@@ -117,7 +117,6 @@ plsmo <-
         y.x1 <- approx(curves[[ii]], xout=x1)$y
         sopts <- c(list(x=x1, y=y.x1, col=col[ii], grid=grid), scat1d.opts)
         do.call('scat1d', sopts)
-#        scat1d(x1, y=y.x1, col=col[ii], grid=grid, ...)
       }
     }
   }

@@ -5,7 +5,7 @@ Title: Harrell Miscellaneous
 Author: Frank E Harrell Jr <f.harrell@vanderbilt.edu>, with
   contributions from Charles Dupont and many others.
 Maintainer: Frank E Harrell Jr <f.harrell@vanderbilt.edu>
-Depends: methods, cluster, grid, lattice, latticeExtra, survival, Formula
+Depends: methods, cluster, grid, lattice, latticeExtra, survival (>= 2.37-5), Formula
 Suggests: nnet, foreign, chron, acepack, rms, mice, tables, rpart
 Description: The Hmisc package contains many functions useful for data
 	analysis, high-level graphics, utility operations, functions for

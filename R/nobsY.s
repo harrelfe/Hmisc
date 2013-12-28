@@ -14,8 +14,9 @@ nobsY <- function(formula, data=NULL, subset=NULL, na.action=na.retain) {
   nobs <- 0
   for(i in 1:ncol(Y)) {
     y <- Y[[i]]
+    ## is.na.Surv reduces to vector but need to keep as matrix
     nobs <- max(nobs,
-                if(is.matrix(y)) colSums(! is.na(y)) else sum(! is.na(y)))
+                if(is.matrix(y)) colSums(! is.na(unclass(y))) else sum(! is.na(y)))
   }
   nobs
 }
@@ -29,6 +30,10 @@ addMarginal <- function(data, ..., label='All') {
     la <- attr(x, 'label')
     if(! length(la)) la <- ''
     la })
+  un <- sapply(data, function(x) {
+    u <- attr(x, 'units')
+    if(! length(u)) u <- ''
+    u })
 
   for(v in vars) {
     d <- data
@@ -36,11 +41,14 @@ addMarginal <- function(data, ..., label='All') {
     d[[v]] <- label
     data <- rbind(data, d)
   }
-  if(any(labs != ''))
-    for(i in 1 : length(data))
+  ## Restore any Hmisc attributes
+  if(any(labs != '') || any(un != ''))
+    for(i in 1 : length(data)) {
       if(labs[i] != '') {
         attr(data[[i]], 'label') <- labs[i]
         class(data[[i]]) <- c('labelled', class(data[[i]]))
       }
+      if(un[i] != '') attr(data[[i]], 'units') <- un[i]
+    }
   data
 }

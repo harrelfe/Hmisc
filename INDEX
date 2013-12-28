@@ -158,6 +158,8 @@ summaryM                Summarize Mixed Data Types vs. Groups
 summaryP                Multi-way Summary of Proportions
 summaryRc               Graphical Summarization of Continuous Variables
                         Against a Response
+summaryS                Summarize Multiple Response Variables and Make
+                        Multipanel Scatter or Dot Plot
 symbol.freq             Graphic Representation of a Frequency Table
 sys                     Run Unix or Dos Depending on System
 tabulr                  Interface to Tabular Function

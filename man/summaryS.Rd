@@ -39,6 +39,7 @@ summaryS(formula, fun = NULL, data = NULL, subset = NULL,
 \method{plot}{summaryS}(x, formula=NULL, groups=NULL, panel=NULL,
            paneldoesgroups=FALSE, datadensity=NULL,
            funlabel=NULL, textonly='n', textplot=NULL,
+           digits=3, custom=NULL,
            xlim=NULL, cex.strip=1, cex.values=0.5, pch.stats=NULL,
            key=list(columns=length(groupslevels),
              x=.75, y=-.04, cex=.9,
@@ -63,7 +64,7 @@ summaryS(formula, fun = NULL, data = NULL, subset = NULL,
            conditioning variables is used for superpositioning and not
            paneling}
   \item{panel}{optional \code{lattice} \code{panel} function}
-  \item{panedoesgroups}{set to \code{TRUE} if, like
+  \item{paneldoesgroups}{set to \code{TRUE} if, like
            \code{\link{panel.plsmo}}, the paneling function internally
            handles superpositioning for \code{groups}}
   \item{datadensity}{set to \code{TRUE} to add rug plots etc. using
@@ -149,7 +150,7 @@ f <- function(x) {
   c(smean.cl.normal(x, na.rm=FALSE), n=length(x))
 }
 s <- summaryS(age + sbp + dbp ~ region + treat, data=d, fun=f)
-plot(s, funlabel=expression(bar(X) %+-% t[0.975] %*% s))
+plot(s, funlabel=expression(bar(X) \%+-\% t[0.975] \%*\% s))
 plot(s, groups='treat', cex.values=.65,
      key=list(space='bottom', columns=2,
        text=c('Treatment A:','Treatment B:')))

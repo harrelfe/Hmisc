@@ -2253,7 +2253,8 @@ cumcategory <- function(y)
 
 summarize <- function(X, by, FUN, ..., 
                       stat.name=deparse(substitute(X)), 
-                      type=c('variables','matrix'), subset=TRUE)
+                      type=c('variables','matrix'), subset=TRUE,
+                      keepcolnames=FALSE)
 {
   type <- match.arg(type)
   if(missing(stat.name) && length(stat.name) > 1) stat.name <- 'X'
@@ -2321,12 +2322,14 @@ summarize <- function(X, by, FUN, ...,
   if(nc>1 && (nc != ncol(r))) stop('program logic error')
   
   snames <- names(typical.computation)
-  if(!length(snames)) snames <- paste(stat.name,1:nc,sep='')
+  if(! length(snames)) snames <- paste(stat.name, 1 : nc, sep='')
+
+  if(! keepcolnames) {
+    if(length(stat.name) == 1) snames[1] <- stat.name
+    else if(length(stat.name))    snames <- stat.name
+  }
   
-  if(length(stat.name) == 1) snames[1] <- stat.name
-  else if(length(stat.name))    snames <- stat.name
-  
-  oldopt <- options(warn=-1)
+  oldopt <- options(warn = -1)
   on.exit(options(oldopt))
   notna <- rep(TRUE, length(ans[[1]]))
   for(i in 1:length(by)) {

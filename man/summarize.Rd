@@ -33,7 +33,8 @@ frame if it was created by \code{asNumericMatrix}.
 \usage{
 summarize(X, by, FUN, \dots, 
           stat.name=deparse(substitute(X)),
-          type=c('variables','matrix'), subset=TRUE)
+          type=c('variables','matrix'), subset=TRUE,
+          keepcolnames=FALSE)
 
 asNumericMatrix(x)
 
@@ -73,6 +74,10 @@ a logical vector or integer vector of subscripts used to specify the
 subset of data to use in the analysis.  The default is to use all
 observations in the data frame.
 }
+\item{keepcolnames}{by default when \code{type="matrix"}, the first
+	column of the computed matrix is the name of the first argument to
+	\code{summarize}.  Set \code{keepcolnames=TRUE} to retain the name of
+	the first column created by \code{FUN}}
 \item{x}{
   a data frame (for \code{asNumericMatrix}) or a numeric matrix (for
   \code{matrix2dataFrame}).

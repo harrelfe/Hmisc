@@ -37,7 +37,7 @@ summaryS(formula, fun = NULL, data = NULL, subset = NULL,
          na.action = na.retain, ...)
 
 \method{plot}{summaryS}(x, formula=NULL, groups=NULL, panel=NULL,
-           paneldoesgroups=FALSE, datadensity=NULL,
+           paneldoesgroups=FALSE, datadensity=NULL, ylab='',
            funlabel=NULL, textonly='n', textplot=NULL,
            digits=3, custom=NULL,
            xlim=NULL, cex.strip=1, cex.values=0.5, pch.stats=NULL,
@@ -69,6 +69,7 @@ summaryS(formula, fun = NULL, data = NULL, subset = NULL,
            handles superpositioning for \code{groups}}
   \item{datadensity}{set to \code{TRUE} to add rug plots etc. using
     \code{\link{scat1d}}}
+	\item{ylab}{optional \code{y}-axis label}
 	\item{funlabel}{optional axis label for when \code{fun} is given}
 	\item{textonly}{names of statistics to print and not plot.  By
            default, any statistic named \code{"n"} is only printed.}

@@ -51,7 +51,7 @@ summaryS <- function(formula, fun=NULL,
 
 plot.summaryS <-
   function(x, formula=NULL, groups=NULL, panel=NULL,
-           paneldoesgroups=FALSE, datadensity=NULL,
+           paneldoesgroups=FALSE, datadensity=NULL, ylab='',
            funlabel=NULL, textonly='n', textplot=NULL, digits=3, custom=NULL,
            xlim=NULL, cex.strip=1, cex.values=0.5, pch.stats=NULL,
            key=list(columns=length(groupslevels),
@@ -145,15 +145,15 @@ plot.summaryS <-
       if(! length(panel)) panel <- panel.xyplot
       xyplot(form, data=X, scales=list(y='free', rot=0),
              panel=function(...) {panel(...); pan(...)},
-             xlab=xlab, ylab='', strip=strip, par.strip.text=pst, ...)
+             xlab=xlab, ylab=ylab, strip=strip, par.strip.text=pst, ...)
     } else {
       panel.groups <- if(paneldoesgroups) NULL else
        if(length(panel)) panel else panel.xyplot
       if(! paneldoesgroups) panel <- panel.superpose
       g <- if(length(panel.groups))
-        "xyplot(form, groups=%s, data=X, scales=list(y='free', rot=0), panel=function(...) {panel(..., scat1d.opts=scat1d.opts); pan(...)}, panel.groups=panel.groups, auto.key=key, xlab=xlab, ylab='', strip=strip, par.strip.text=pst, ...)"
+        "xyplot(form, groups=%s, data=X, scales=list(y='free', rot=0), panel=function(...) {panel(..., scat1d.opts=scat1d.opts); pan(...)}, panel.groups=panel.groups, auto.key=key, xlab=xlab, ylab=ylab, strip=strip, par.strip.text=pst, ...)"
       else
-        "xyplot(form, groups=%s, data=X, scales=list(y='free', rot=0), panel=function(...) {panel(..., scat1d.opts=scat1d.opts); pan(...)}, auto.key=key, xlab=xlab, ylab='', strip=strip, par.strip.text=pst, ...)"
+        "xyplot(form, groups=%s, data=X, scales=list(y='free', rot=0), panel=function(...) {panel(..., scat1d.opts=scat1d.opts); pan(...)}, auto.key=key, xlab=xlab, ylab=ylab, strip=strip, par.strip.text=pst, ...)"
       eval(parse(text=sprintf(g, groups)))
   }
  } else {  # Dot chart

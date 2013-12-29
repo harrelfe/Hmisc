@@ -181,7 +181,9 @@ plot.summaryP <-
     nv <- length(vars)
     h <- integer(nv)
     for(i in 1 : nv) h[i] <- length(unique((X$val[X$var == vars[i]])))
-    d <- resizePanels(d, h = h + 1)
+    w <- llist(d, h)
+    save(w, file='/tmp/w.rda')
+    #d <- resizePanels(d, h = h + 1)
   }
   d
 }

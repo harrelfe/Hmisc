@@ -214,6 +214,7 @@ plot.summaryS <-
                      gp = gpar(...))
 
      if(length(yother)) {
+       snames <- colnames(yother)
        nc <- ncol(yother)
        yoth <- yother[subscripts,, drop=FALSE]
        gr <- if(gp) groups[subscripts] else factor(rep('', length(x)))
@@ -238,16 +239,18 @@ plot.summaryS <-
        }
        for(i in 1:length(levels(gr))) {
          j <- which(gr == levels(gr)[i])
-         if(nc == 1)
-           lpoints(yoth[j,], y[j], pch=3, cex=cex, col=col[i], font=font)
-         else if(nc > 1)
+         if(nc > 1)
            segmnts(yoth[j, 1], y[j], yoth[j, nc], y[j], lwd=2*plot.line$lwd[1],
                    lty=plot.line$lty[i], col=plot.line$col[i])
-         if(nc==4) {
+         if(nc == 4)
            segmnts(yoth[j ,2], y[j], yoth[j ,3], y[j], lwd=2*plot.line$lwd[1],
                    lty=plot.line$lty[i], col=plot.line$col[i])
-           lpoints(yoth[j,2], y[j], pch=3, cex=cex, col=col[i], font=font)
-           lpoints(yoth[j,3], y[j], pch=3, cex=cex, col=col[i], font=font)
+         for(k in 1 : nc) {
+           if(length(pch.stats)) {
+             p <- pch.stats[snames[k]]
+             if(!is.na(p)) 
+               lpoints(yoth[j, k], y[j], pch=p, cex=cex, col=col[i], font=font)
+           }
          }
          ## Show selected statistics just under dot lines
          if(length(yText)) {

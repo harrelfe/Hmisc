@@ -13,44 +13,67 @@ d <- data.frame(sbp=rnorm(n, 120, 10),
                 meda=sample(0:1, n, TRUE), medb=sample(0:1, n, TRUE))
 
 d <- upData(d, labels=c(sbp='Systolic BP', dbp='Diastolic BP',
-                 race='Race', sex='Sex', treat='Treatment', days='Time Since Randomization',
-                 S1='Hospitalization', S2='Re-Operation', meda='Medication A', medb='Medication B'),
-            units=c(sbp='mmHg', dbp='mmHg', age='Year', days='Days'))
+                 race='Race', sex='Sex', treat='Treatment',
+                 days='Time Since Randomization',
+                 S1='Hospitalization', S2='Re-Operation',
+                 meda='Medication A', medb='Medication B'),
+            units=c(sbp='mmHg', dbp='mmHg', age='years', days='days'))
 
-#png('/tmp/summaryP.png', width=550, height=550)
+Png <- function(z) png(paste('/tmp/summaryS', z, '.png', sep=''))
+Png(1)
 s <- summaryS(age + sbp + dbp ~ days + region + treat,  data=d)
 # plot(s)   # 3 pages
-plot(s, groups='treat', datadensity=TRUE, scat1d.opts=list(lwd=.5, nhistSpike=0))
-plot(s, groups='treat', panel=panel.loess, key=list(space='bottom', columns=2),
+plot(s, groups='treat', datadensity=TRUE,
+     scat1d.opts=list(lwd=.5, nhistSpike=0))
+dev.off()
+Png(2)
+plot(s, groups='treat', panel=panel.loess,
+     key=list(space='bottom', columns=2),
      datadensity=TRUE, scat1d.opts=list(lwd=.5))
+dev.off()
 # Show both points and smooth curves:
-plot(s, groups='treat', panel=function(...) {panel.xyplot(...); panel.loess(...)})
+Png(3)
+plot(s, groups='treat',
+     panel=function(...) {panel.xyplot(...); panel.loess(...)})
+dev.off()
 plot(s, y ~ days | yvar * region, groups='treat')
 
 # Make your own plot using data frame created by summaryP
 xyplot(y ~ days | yvar * region, groups=treat, data=s,
-        scales=list(y='free', rot=0))
+       scales=list(y='free', rot=0))
 
 # Use loess to estimate the probability of two different types of events as
 # a function of time
 s <- summaryS(meda + medb ~ days + treat + region, data=d)
-pan <- function(...) panel.plsmo(..., type='l', label.curves=max(which.packet()) == 1,
-                                 datadensity=TRUE)
-plot(s, groups='treat', panel=pan, paneldoesgroups=TRUE, scat1d.opts=list(lwd=.7),
-     cex.strip=.8)
+pan <- function(...)
+  panel.plsmo(..., type='l', label.curves=max(which.packet()) == 1,
+              datadensity=TRUE)
+Png(4)
+plot(s, groups='treat', panel=pan, paneldoesgroups=TRUE,
+     scat1d.opts=list(lwd=.7), cex.strip=.8)
+dev.off()
 
 # Demonstrate dot charts of summary statistics
 s <- summaryS(age + sbp + dbp ~ region + treat, data=d, fun=mean)
 plot(s)
+Png(5)
 plot(s, groups='treat', funlabel=expression(bar(X)))
+dev.off()
+
 # Compute parametric confidence limits for mean, and include sample sizes
 f <- function(x) {
   x <- x[! is.na(x)]
   c(smean.cl.normal(x, na.rm=FALSE), n=length(x))
 }
 s <- summaryS(age + sbp + dbp ~ region + treat, data=d, fun=f)
-plot(s, funlabel=expression(bar(X) %+-% t[0.975] %*% s))
+# Draw [ ] for lower and upper confidence limits in addition to thick line
+Png(6)
+plot(s, funlabel=expression(bar(X) %+-% t[0.975] %*% s),
+     pch.stats=c(Lower=91, Upper=93))  # type show.pch() to see defs.
+dev.off()
+Png(7)
 plot(s, textonly='n', textplot='Mean', digits=1)
+dev.off()
 
 # Customize printing of statistics to use X bar symbol and smaller
 # font for n=...
@@ -67,10 +90,12 @@ cust <- function(y) {
   list(result=s,
        longest=simplyformatted[which.max(nchar(simplyformatted))])
 }
+Png(8)
 plot(s, groups='treat', cex.values=.65,
      textplot='Mean', custom=cust,
      key=list(space='bottom', columns=2,
        text=c('Treatment A:','Treatment B:')))
+dev.off()
 
 ## Stratifying by region and treat fit an exponential distribution to
 ## S1 and S2 and estimate the probability of an event within 0.5 years
@@ -82,8 +107,3 @@ f <- function(y) {
 
 s <- summaryS(S1 + S2 ~ region + treat, data=d, fun=f)
 plot(s, groups='treat', funlabel='Prob[Event Within 6m]', xlim=c(.3, .7))
-
-
-
-
-

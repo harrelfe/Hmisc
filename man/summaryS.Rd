@@ -84,7 +84,9 @@ summaryS(formula, fun = NULL, data = NULL, subset = NULL,
 	\item{cex.values}{size of statistics printed as text}
 	\item{pch.stats}{symbols to use for statistics (not included the one
            one in columne one) that are plotted.  This is a named
-           vectors, with names exactly matching those created by \code{fun}}
+           vectors, with names exactly matching those created by
+           \code{fun}.  When a column does not have an entry in
+           \code{pch.stats}, no point is drawn for that column.}
 	\item{key}{\code{lattice} \code{key} specification}
 	\item{outerlabels}{set to \code{FALSE} to not pass two-way charts
     through \code{\link[latticeExtra]{useOuterStrips}}}

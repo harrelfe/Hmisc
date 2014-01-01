@@ -19,6 +19,8 @@ Changes in version 3.14-0 (2014-01-01)
    * label.Surv, units.Surv: added, removed ::: in survival calls
    * summarize: added keepcolnames argument
    * Suppressed startup message unless options(Hverbose=TRUE) is set
+   * summaryS: new function - multi-panel lattice xy and dot plots
+   * summaryD: added ylab argument
 
 Changes in version 3.13-0 (2013-11-18)
    * Changed n location (nloc argument) in bpplotM

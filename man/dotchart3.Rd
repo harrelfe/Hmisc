@@ -37,7 +37,7 @@ dotchart3(x, labels = NULL, groups = NULL, gdata = NULL,
 summaryD(formula, data=NULL, fun=mean, funm=fun,
          groupsummary=TRUE, auxvar=NULL, auxtitle='',
          vals=length(auxvar) > 0, fmtvals=format,
-         cex.auxdata=.7, xlab=v[1],
+         cex.auxdata=.7, xlab=v[1], ylab=NULL,
          gridevery=NULL, gridcol=gray(.95), sort=TRUE, ...)
 }
 \arguments{

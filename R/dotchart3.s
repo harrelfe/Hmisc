@@ -130,8 +130,8 @@ dotchart3 <-
 summaryD <- function(formula, data=NULL, fun=mean, funm=fun,
                      groupsummary=TRUE, auxvar=NULL, auxtitle='',
                      vals=length(auxvar) > 0, fmtvals=format,
-                     cex.auxdata=.7, xlab=v[1], gridevery=NULL,
-                     gridcol=gray(.95), sort=TRUE, ...) {
+                     cex.auxdata=.7, xlab=v[1], ylab=NULL,
+                     gridevery=NULL, gridcol=gray(.95), sort=TRUE, ...) {
   if(!missing(fmtvals)) vals <- TRUE
   if(!length(data)) data <- environment(formula)
   else data <- list2env(data, parent=environment(formula))
@@ -175,12 +175,12 @@ summaryD <- function(formula, data=NULL, fun=mean, funm=fun,
               cex.auxdata=cex.auxdata,
               gdata   =if(groupsummary) z2$sy,
               auxgdata=if(groupsummary) z2$fval,
-              xlab=xlab, ...)
+              xlab=xlab, ylab=ylab, ...)
   }
   else
     dotchart3(z$sy, s$x1, auxdata=z$fval,
               auxtitle=if(vals) auxtitle,
-              cex.auxdata=cex.auxdata, xlab=xlab, ...)
+              cex.auxdata=cex.auxdata, xlab=xlab, ylab=ylab, ...)
   
   if(length(gridevery)) {
     xmin <- par('usr')[1]

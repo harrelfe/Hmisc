@@ -268,7 +268,6 @@ bpplotM <- function(formula=NULL, groups=NULL, data=NULL, subset=NULL,
                      paste(groups, collapse=' + '))
     formula <- as.formula(formula)
   }
-  nobs <- nobsY(formula, data=data, subset=subset, na.action=na.action)
   form <- Formula(formula)
   Y <- if(length(subset)) model.frame(form, data=data, subset=subset,
                                       na.action=na.action)
@@ -316,6 +315,5 @@ bpplotM <- function(formula=NULL, groups=NULL, data=NULL, subset=NULL,
               par.strip.text=list(cex=cex.strip), ...)
   if(outerlabels && length(dim(d)) == 2)
     d <- useOuterStrips(d, strip=strip, strip.left=strip)
-  attr(d, 'nobs') <- nobs
   d
 }

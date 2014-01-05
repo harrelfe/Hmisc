@@ -1,6 +1,7 @@
 \name{summaryS}
 \alias{summaryS}
 \alias{plot.summaryS}
+\alias{mbarclPanel}
 \title{Summarize Multiple Response Variables and Make Multipanel Scatter
 	or Dot Plot}
 \description{
@@ -16,11 +17,18 @@ takes individual response variables (which may be matrices, as in
 statistics that will be computed while the resulting data frame is being
 collapsed to one row per condition.  The \code{plot} method in this case
 plots a multi-panel dot chart using the \code{lattice}
-\code{\link[lattice]{dotplot}} function.  There is an option to print
+\code{\link[lattice]{dotplot}} function if \code{panel} is not specified
+to \code{plot}.  There is an option to print
 selected statistics as text on the panels.  \code{summaryS} pays special
 attention to \code{Hmisc} variable annotations: \code{label, units}.
+When \code{panel} is specified in addition to \code{fun}, a special
+\code{x-y} plot is made that assumes that the \code{x}-axis variable
+(typically time) is discrete.  This is used for example to plot multiple
+quantile intervals as vertical lines next to the main point.  A special
+panel function \code{mvarclPanel} is provided for this purpose.
 
-When \code{fun} is given and the result is a vector of more than one
+When \code{fun} is given and \code{panel} is omitted, and the result of
+\code{fun} is a vector of more than one 
 statistic, the first statistic is taken as the main one.  Any columns
 with names not in \code{textonly} will figure into the calculation of
 axis limits.  Those in \code{textonly} will be printed right under the
@@ -31,20 +39,36 @@ be used to specify symbols for statistics after the first column.  When
 three are taken as confidence limits for which horizontal "error bars"
 are drawn.  Two levels with different thicknesses are drawn if there are
 four plotted summary statistics beyond the first.
+
+\code{mbarclPanel} is used to draw multiple vertical lines around the
+main points, such as a series of quantile intervals stratified by
+\code{x} and paneling variables.  If \code{mbarclPanel} finds a column
+of an arument \code{yother} that is named \code{"se"}, and if there are
+exactly two levels to a superpositioning variable, the half-height of
+the approximate 0.95 confidence interval for the difference between two
+point estimates is shown, positioned at the midpoint of the two point
+estimates at an \code{x} value.  This assume normality of point
+estimates, and the standard error of the difference is the square root
+of the sum of squares of the two standard errors.  By positioning the
+intervals in this fashion, a failure of the two point estimates to touch
+the half-confidence interval is consistent with rejecting the null
+hypothesis of no difference at the 0.05 level.
 }
 \usage{
 summaryS(formula, fun = NULL, data = NULL, subset = NULL,
-         na.action = na.retain, ...)
+         na.action = na.retain, continuous=10, \dots)
 
 \method{plot}{summaryS}(x, formula=NULL, groups=NULL, panel=NULL,
            paneldoesgroups=FALSE, datadensity=NULL, ylab='',
            funlabel=NULL, textonly='n', textplot=NULL,
            digits=3, custom=NULL,
-           xlim=NULL, cex.strip=1, cex.values=0.5, pch.stats=NULL,
+           xlim=NULL, ylim=NULL, cex.strip=1, cex.values=0.5, pch.stats=NULL,
            key=list(columns=length(groupslevels),
              x=.75, y=-.04, cex=.9,
              col=trellis.par.get('superpose.symbol')$col, corner=c(0,1)),
-           outerlabels=TRUE, autoarrange=TRUE, scat1d.opts=NULL, ...)
+           outerlabels=TRUE, autoarrange=TRUE, scat1d.opts=NULL, \dots)
+
+mbarclPanel(x, y, subscripts, groups=NULL, yother, \dots)
 }
 \arguments{
   \item{formula}{a formula with possibly multiple left and right-side
@@ -57,9 +81,12 @@ summaryS(formula, fun = NULL, data = NULL, subset = NULL,
   \item{subset}{optional subsetting criteria}
   \item{na.action}{function for dealing with \code{NA}s when
 		constructing the model data frame}
-  \item{\dots}{ignored for \code{summaryS}, passed to \code{strip} and
-		\code{panel} for \code{plot}.}
-	\item{x}{an object created by \code{summaryS}}
+	\item{continuous}{minimum number of unique values for a numeric
+           variable to have to be considered continuous}
+  \item{\dots}{ignored for \code{summaryS} and \code{mbarclPanel},
+		passed to \code{strip} and \code{panel} for \code{plot}.}
+	\item{x}{an object created by \code{summaryS}.  For \code{mbarclPanel}
+		is an \code{x}-axis argument provided by \code{lattice}}
 	\item{groups}{a character string specifying that one of the
            conditioning variables is used for superpositioning and not
            paneling}
@@ -81,6 +108,7 @@ summaryS(formula, fun = NULL, data = NULL, subset = NULL,
            are printed as text.  This is useful for generating plotmath
            notation.  See the example in the tests directory.}
 	\item{xlim}{optional \code{x}-axis limits}
+	\item{ylim}{optional \code{y}-axis limits}			 
 	\item{cex.strip}{size of strip labels}
 	\item{cex.values}{size of statistics printed as text}
 	\item{pch.stats}{symbols to use for statistics (not included the one
@@ -94,6 +122,9 @@ summaryS(formula, fun = NULL, data = NULL, subset = NULL,
 	\item{autoarrange}{set to \code{FALSE} to prevent \code{plot} from
     trying to optimize which conditioning variable is vertical}
 	\item{scat1d.opts}{a list of options to specify to \code{\link{scat1d}}}
+	\item{y, subscripts}{provided by \code{lattice}}
+	\item{yother}{passed to the panel function from the \code{plot} method
+		based on multiple statistics computed}
 }
 \value{a data frame with added attributes for \code{summaryS} or a
            \code{lattice} object ready to render for \code{plot}}
@@ -157,6 +188,35 @@ plot(s, funlabel=expression(bar(X) \%+-\% t[0.975] \%*\% s))
 plot(s, groups='treat', cex.values=.65,
      key=list(space='bottom', columns=2,
        text=c('Treatment A:','Treatment B:')))
+
+# For discrete time, plot Harrell-Davis quantiles of y variables across
+# time using different line characteristics to distinguish quantiles
+d <- upData(d, days=round(days / 30) * 30)
+g <- function(y) {
+  probs <- c(0.05, 0.125, 0.25, 0.375)
+  probs <- sort(c(probs, 1 - probs))
+  y <- y[! is.na(y)]
+  w <- hdquantile(y, probs)
+  m <- hdquantile(y, 0.5, se=TRUE)
+  se <- as.numeric(attr(m, 'se'))
+  c(Median=as.numeric(m), w, se=se, n=length(y))
+}
+s <- summaryS(sbp + dbp ~ days + region, fun=g, data=d)
+plot(s, panel=mbarclPanel)
+plot(s, groups='region', panel=mbarclPanel, paneldoesgroups=TRUE)
+
+# Proportions and Wilson confidence limits, plus approx. Gaussian
+# based half/width confidence limits for difference in probabilities
+g <- function(y) {
+  y <- y[!is.na(y)]
+  n <- length(y)
+  p <- mean(y)
+  se <- sqrt(p * (1. - p) / n)
+  structure(c(binconf(sum(y), n), se=se, n=n),
+            names=c('Proportion', 'Lower', 'Upper', 'se', 'n'))
+}
+s <- summaryS(meda + medb ~ days + region, fun=g, data=d)
+plot(s, groups='region', panel=mbarclPanel, paneldoesgroups=TRUE)
 }
 \keyword{category}
 \keyword{hplot}

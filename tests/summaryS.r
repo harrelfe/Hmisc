@@ -107,3 +107,38 @@ f <- function(y) {
 
 s <- summaryS(S1 + S2 ~ region + treat, data=d, fun=f)
 plot(s, groups='treat', funlabel='Prob[Event Within 6m]', xlim=c(.3, .7))
+
+
+## Demonstrate simultaneous use of fun and panel
+## First show the same quantile intervals used in panel.bppplot by
+## default, stratified by region and day
+
+d <- upData(d, days=round(days / 30) * 30)
+g <- function(y) {
+  probs <- c(0.05, 0.125, 0.25, 0.375)
+  probs <- sort(c(probs, 1 - probs))
+  y <- y[! is.na(y)]
+  w <- hdquantile(y, probs)
+  m <- hdquantile(y, 0.5, se=TRUE)
+  se <- as.numeric(attr(m, 'se'))
+  c(Median=as.numeric(m), w, se=se, n=length(y))
+}
+s <- summaryS(sbp + dbp ~ days + region, fun=g, data=d)
+Png(9)
+plot(s, groups='region', panel=mbarclPanel, paneldoesgroups=TRUE)
+dev.off()
+
+## Show Wilson confidence intervals for proportions, and confidence
+## intervals for difference in two proportions
+g <- function(y) {
+  y <- y[!is.na(y)]
+  n <- length(y)
+  p <- mean(y)
+  se <- sqrt(p * (1. - p) / n)
+  structure(c(binconf(sum(y), n), se=se, n=n),
+            names=c('Proportion', 'Lower', 'Upper', 'se', 'n'))
+}
+s <- summaryS(meda + medb ~ days + region, fun=g, data=d)
+Png(10)
+plot(s, groups='region', panel=mbarclPanel, paneldoesgroups=TRUE)
+dev.off()

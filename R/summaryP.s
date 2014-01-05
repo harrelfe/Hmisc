@@ -3,7 +3,6 @@ summaryP <- function(formula, data=NULL,
                      exclude1=TRUE, sort=TRUE,
                      asna=c('unknown', 'unspecified'), ...) {
   
-  nobs <- nobsY(formula, data=data, subset=subset, na.action=na.action)
   formula <- Formula(formula)
 
   Y <- if(length(subset))
@@ -12,7 +11,6 @@ summaryP <- function(formula, data=NULL,
     model.frame(formula, data=data, na.action=na.action)
   X <- model.part(formula, data=Y, rhs=1)
   Y <- model.part(formula, data=Y, lhs=1)
-
   nY <- NCOL(Y)
   nX <- NCOL(X)
   namY <- names(Y)
@@ -20,7 +18,7 @@ summaryP <- function(formula, data=NULL,
   ux <- unique(X)
   Z <- NULL
   n <- nrow(X)
-
+  
   if(sort) {
     ## Compute marginal frequencies of all regular variables so can sort
     mfreq <- list()
@@ -95,7 +93,7 @@ summaryP <- function(formula, data=NULL,
     }
   }
   structure(Z, class=c('summaryP', 'data.frame'), formula=formula,
-            nX=nX, nY=nY, nobs=nobs)
+            nX=nX, nY=nY)
 }
 
 plot.summaryP <-
@@ -182,8 +180,7 @@ plot.summaryP <-
     h <- integer(nv)
     for(i in 1 : nv) h[i] <- length(unique((X$val[X$var == vars[i]])))
     w <- llist(d, h)
-    save(w, file='/tmp/w.rda')
-    #d <- resizePanels(d, h = h + 1)
+    d <- resizePanels(d, h = h + 1)
   }
   d
 }

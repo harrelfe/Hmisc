@@ -142,6 +142,8 @@ mgp.axis.labels
                 \tab     to get 3 mgp values (first 3 types) or 2 mgp.axis.labels.\cr
 minor.tick      \tab Add minor tick marks to an existing plot\cr
 mtitle          \tab Add outer titles and subtitles to a multiple plot layout\cr
+multLines       \tab Draw multiple vertical lines at each x\cr
+                \tab in a line plot\cr
 \%nin\%         \tab Opposite of \%in\%\cr
 nobsY           \tab Compute no. non-NA observations for left hand formula side\cr
 nomiss          \tab Return a matrix after excluding any row with an NA\cr

@@ -1,24 +1,43 @@
 nobsY <- function(formula, data=NULL, subset=NULL, na.action=na.retain) {
+  forig <- formula
+  formula <- Formula(formula)
+  environment(formula) <- new.env(parent = environment(formula))
+  en <- environment(formula)
+  assign(envir = en, 'id', function(x) x)
   marg <- length(data) && '.marginal.' %in% names(data)
   if(marg) formula <- update(formula, .~. + .marginal.)
-  formula <- Formula(formula)
   mf <- if(length(subset))
     model.frame(formula, data=data, subset=subset, na.action=na.action)
   else
     model.frame(formula, data=data, na.action=na.action)
+  
   Y <- model.part(formula, data=mf, lhs=1)
+  X <- model.part(formula, data=mf, rhs=1)
+  ## Get id variable if present so can count unique subjects
+  rhs <- terms(formula, rhs=1, specials='id')
+  sr  <- attr(rhs, 'specials')
+  ## specials counts from lhs variables
+  wid <- sr$id
+  if(length(wid)) {
+    xid <- X[[wid - ncol(Y)]]
+    ## Remove id() from formula
+    forig <- sub(' \\+ id(.*)', '', as.character(forig))
+    forig <- as.formula(paste(forig[2], forig[3], sep=' ~ '))
+  }
+  else xid <- 1 : nrow(Y)
+  xid  <- if(! length(wid)) 1 : nrow(Y) else X[[wid - ncol(Y)]]
   if(marg) {
-    X <- model.part(formula, data=mf, rhs=1)
-    Y <- Y[! X$.marginal.,, drop=FALSE]
+    Y   <- Y  [! X$.marginal.,, drop=FALSE]
+    xid <- xid[! X$.marginal.]
   }
   nobs <- 0
   for(i in 1:ncol(Y)) {
     y <- Y[[i]]
     ## is.na.Surv reduces to vector but need to keep as matrix
-    nobs <- max(nobs,
-                if(is.matrix(y)) colSums(! is.na(unclass(y))) else sum(! is.na(y)))
+    notna <- if(is.matrix(y)) rowSums(is.na(unclass(y))) == 0 else ! is.na(y)
+    nobs <- max(nobs, length(unique(xid[notna])))
   }
-  nobs
+  structure(nobs, formula=forig)
 }
 
 addMarginal <- function(data, ..., label='All') {

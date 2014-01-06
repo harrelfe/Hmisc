@@ -1,4 +1,5 @@
-nobsY <- function(formula, data=NULL, subset=NULL, na.action=na.retain) {
+nobsY <- function(formula, group=NULL,
+                  data=NULL, subset=NULL, na.action=na.retain) {
   forig <- formula
   formula <- Formula(formula)
   environment(formula) <- new.env(parent = environment(formula))
@@ -21,23 +22,39 @@ nobsY <- function(formula, data=NULL, subset=NULL, na.action=na.retain) {
   if(length(wid)) {
     xid <- X[[wid - ncol(Y)]]
     ## Remove id() from formula
-    forig <- sub(' \\+ id(.*)', '', as.character(forig))
-    forig <- as.formula(paste(forig[2], forig[3], sep=' ~ '))
+    forig <- as.character(forig)
+    if(ncol(X) == 1)  ## id() is the only right-hand term
+      forig <- as.formula(paste(forig[2], ' ~ 1'))
+    else {
+      forig[3] <- sub(' \\+ id(.*)', '', forig[3])
+      forig <- as.formula(paste(forig[2], forig[3], sep=' ~ '))
+    }
   }
-  else xid <- 1 : nrow(Y)
   xid  <- if(! length(wid)) 1 : nrow(Y) else X[[wid - ncol(Y)]]
+  group <- if(length(group) && group %in% names(X)) X[[group]]
   if(marg) {
-    Y   <- Y  [! X$.marginal.,, drop=FALSE]
-    xid <- xid[! X$.marginal.]
+    xm <- X$.marginal.
+    if(length(group)) group <- group[! xm]
+    Y   <- Y  [! xm,, drop=FALSE]
+    xid <- xid[! xm]
   }
-  nobs <- 0
-  for(i in 1:ncol(Y)) {
+  nY   <- ncol(Y)
+  nobs <- rep(NA, nY)
+  nobsg <- if(length(group)) {
+    glev <- if(is.factor(group)) levels(group)
+     else sort(unique(group[! is.na(group)]))
+    matrix(NA, ncol=nY, nrow=length(glev), dimnames=list(glev, names(Y)))
+  }
+  for(i in 1 : nY) {
     y <- Y[[i]]
     ## is.na.Surv reduces to vector but need to keep as matrix
     notna <- if(is.matrix(y)) rowSums(is.na(unclass(y))) == 0 else ! is.na(y)
-    nobs <- max(nobs, length(unique(xid[notna])))
+    nobs[i] <- length(unique(xid[notna]))
+    if(length(group))
+      nobsg[, i] <- tapply(xid[notna], group[notna],
+                           function(x) length(unique(x)))
   }
-  structure(nobs, formula=forig)
+  structure(list(nobs=nobs, nobsg=nobsg, formula=forig))
 }
 
 addMarginal <- function(data, ..., label='All') {

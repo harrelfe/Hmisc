@@ -1,5 +1,7 @@
 nobsY <- function(formula, group=NULL,
-                  data=NULL, subset=NULL, na.action=na.retain) {
+                  data=NULL, subset=NULL, na.action=na.retain,
+                  matrixna=c('all', 'any')) {
+  matrixna <- match.arg(matrixna)
   forig <- formula
   formula <- Formula(formula)
   environment(formula) <- new.env(parent = environment(formula))
@@ -45,10 +47,14 @@ nobsY <- function(formula, group=NULL,
      else sort(unique(group[! is.na(group)]))
     matrix(NA, ncol=nY, nrow=length(glev), dimnames=list(glev, names(Y)))
   }
+
   for(i in 1 : nY) {
     y <- Y[[i]]
     ## is.na.Surv reduces to vector but need to keep as matrix
-    notna <- if(is.matrix(y)) rowSums(is.na(unclass(y))) == 0 else ! is.na(y)
+    notna <- if(is.matrix(y)) {
+      numna <- rowSums(is.na(unclass(y)))
+      if(matrixna == 'any') numna == 0 else numna < ncol(y)
+    } else ! is.na(y)
     nobs[i] <- length(unique(xid[notna]))
     if(length(group))
       nobsg[, i] <- tapply(xid[notna], group[notna],

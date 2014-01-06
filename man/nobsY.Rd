@@ -2,7 +2,8 @@
 \alias{nobsY}
 \title{Compute Number of Observations for Left Hand Side of Formula}
 \usage{
-nobsY(formula, group=NULL, data = NULL, subset = NULL, na.action = na.retain)
+nobsY(formula, group=NULL, data = NULL, subset = NULL,
+      na.action = na.retain, matrixna=c('all', 'any'))
 }
 \arguments{
   \item{formula}{a formula object}
@@ -11,6 +12,10 @@ nobsY(formula, group=NULL, data = NULL, subset = NULL, na.action = na.retain)
   \item{data}{a data frame}
   \item{subset}{an optional subsetting criterion}
   \item{na.action}{an optional \code{NA}-handling function}
+	\item{matrixna}{set to \code{"all"} if an observation is to be
+		considered \code{NA} if all the columns of the variable are
+		\code{NA}, otherwise use \code{matrixna="any"} to consider the row
+		missing if any of the columns are missing}
 }
 \value{an integer, with an attribute \code{"formula"} containing the
 	original formula but with an \code{id} variable (if present) removed}

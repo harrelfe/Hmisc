@@ -56,6 +56,7 @@ panel.bpplot(x, y, box.ratio=1, means=TRUE, qref=c(.5,.25,.75),
              probs=c(.05,.125,.25,.375), nout=0,
              nloc=c('right lower', 'right', 'left', 'none'), cex.n=.7,
              datadensity=FALSE, scat1d.opts=NULL,
+             violin=FALSE, violin.opts=NULL,
              font=box.dot$font, pch=box.dot$pch, 
              cex.means =box.dot$cex,  col=box.dot$col,
              nogrid=NULL, height=NULL, \dots)
@@ -120,6 +121,9 @@ set to \code{TRUE} to invoke \code{scat1d} to draw a data density
 a list containing named arguments (without abbreviations) to pass to
 \code{scat1d} when \code{datadensity=TRUE} or \code{nout > 0}
 }
+\item{violin}{set to \code{TRUE} to invoke \code{panel.violin} in
+  addition to drawing box-percentile plots}
+\item{violin.opts}{a list of options to pass to \code{panel.violin}}
 \item{cex.means}{character size for dots representing means}
 \item{font,pch,col}{see \code{\link[lattice]{panel.bwplot}}}
 \item{nogrid}{set to \code{TRUE} to use in base graphics}
@@ -256,6 +260,11 @@ label(d$bp) <- 'Systolic Blood Pressure'
 units(d$bp) <- 'mmHg'
 bpplotM(age + bp + wt ~ treatment, data=d)
 bpplotM(age + bp + wt ~ treatment * sex, data=d, cex.strip=.8)
+bpplotM(age + bp + wt ~ treatment*sex, data=d,
+        violin=TRUE,
+        violin.opts=list(col=adjustcolor('blue', alpha.f=.15),
+                         border=FALSE))
+
 
 bpplotM(c('age', 'bp', 'wt'), groups='treatment', data=d)
 # Can use Hmisc Cs function, e.g. Cs(age, bp, wt)

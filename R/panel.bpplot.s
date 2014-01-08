@@ -3,6 +3,7 @@ panel.bpplot <- function(x, y, box.ratio = 1, means=TRUE,
                          probs= c(.05, .125, .25, .375), nout=0,
                          nloc=c('right lower', 'right', 'left', 'none'),
                          cex.n=.7, datadensity=FALSE, scat1d.opts=NULL,
+                         violin=FALSE, violin.opts=NULL,
                          font = box.dot$font, pch = box.dot$pch, 
                          cex.means  = box.dot$cex,  col = box.dot$col,
                          nogrid=NULL, height=NULL, ...)
@@ -85,6 +86,9 @@ panel.bpplot <- function(x, y, box.ratio = 1, means=TRUE,
 
     if(datadensity)
       do.call('scat1d',c(list(x=X, y=Y, grid=grid), scat1d.opts))
+
+    if(violin)
+      do.call('panel.violin', c(list(x=X, y=Y), violin.opts))
 
     if(nout > 0) {
       ii <- if(nout < 1) {

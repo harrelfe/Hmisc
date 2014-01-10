@@ -26,7 +26,7 @@ Changes in version 3.14-0 (2014-01-10)
    * Improved nobsY to respect subject IDs when counting number of subjects, and to return an attribute 'formula' without id variable; changed bpplotM, summaryP, summaryS to use this
    * Removed nobsY calculations from bpplotM, summaryP, summaryS, enhanced nobsY to allow stratification by treatment
    * panel.bpplot: added violin and violin.opts arguments
-   * summaryS: added byx.type to support during-plot vertical violin plots
+   * summaryS: added medvPanel support during-plot vertical violin plots
 
 Changes in version 3.13-0 (2013-11-18)
    * Changed n location (nloc argument) in bpplotM

@@ -2,6 +2,7 @@
 \alias{summaryS}
 \alias{plot.summaryS}
 \alias{mbarclPanel}
+\alias{medvPanel}
 \title{Summarize Multiple Response Variables and Make Multipanel Scatter
 	or Dot Plot}
 \description{
@@ -53,6 +54,13 @@ of the sum of squares of the two standard errors.  By positioning the
 intervals in this fashion, a failure of the two point estimates to touch
 the half-confidence interval is consistent with rejecting the null
 hypothesis of no difference at the 0.05 level.
+
+\code{medvPanel} takes raw data and plots median \code{y} vs. \code{x},
+along with confidence intervals and half-interval for the difference in
+medians as with \code{mbarclPanel}.  Quantile intervals are optional.
+Very transparent vertical violin plots are added by default.  Unlike
+\code{panel.violin}, only half of the violin is plotted, and when there
+are two superpose groups they are side-by-side in different colors.
 }
 \usage{
 summaryS(formula, fun = NULL, data = NULL, subset = NULL,
@@ -69,6 +77,8 @@ summaryS(formula, fun = NULL, data = NULL, subset = NULL,
            outerlabels=TRUE, autoarrange=TRUE, scat1d.opts=NULL, \dots)
 
 mbarclPanel(x, y, subscripts, groups=NULL, yother, \dots)
+
+medvPanel(x, y, subscripts, groups=NULL, violin=TRUE, quantiles=FALSE, \dots)
 }
 \arguments{
   \item{formula}{a formula with possibly multiple left and right-side
@@ -84,7 +94,8 @@ mbarclPanel(x, y, subscripts, groups=NULL, yother, \dots)
 	\item{continuous}{minimum number of unique values for a numeric
            variable to have to be considered continuous}
   \item{\dots}{ignored for \code{summaryS} and \code{mbarclPanel},
-		passed to \code{strip} and \code{panel} for \code{plot}.}
+		passed to \code{strip} and \code{panel} for \code{plot}.  Passed to
+		the \code{\link{density}} function by \code{medvPanel}.}
 	\item{x}{an object created by \code{summaryS}.  For \code{mbarclPanel}
 		is an \code{x}-axis argument provided by \code{lattice}}
 	\item{groups}{a character string specifying that one of the
@@ -125,6 +136,8 @@ mbarclPanel(x, y, subscripts, groups=NULL, yother, \dots)
 	\item{y, subscripts}{provided by \code{lattice}}
 	\item{yother}{passed to the panel function from the \code{plot} method
 		based on multiple statistics computed}
+	\item{violin}{controls whether violin plots are included}
+	\item{quantiles}{controls whether quantile intervals are included}
 }
 \value{a data frame with added attributes for \code{summaryS} or a
            \code{lattice} object ready to render for \code{plot}}
@@ -204,6 +217,13 @@ g <- function(y) {
 s <- summaryS(sbp + dbp ~ days + region, fun=g, data=d)
 plot(s, panel=mbarclPanel)
 plot(s, groups='region', panel=mbarclPanel, paneldoesgroups=TRUE)
+
+# For discrete time, plot median y vs x along with CL for difference,
+# using Harrell-Davis median estimator and its s.e., and use violin
+# plots
+
+s <- summaryS(sbp + dbp ~ days + region, data=d)
+plot(s, groups='region', panel=medvPanel, paneldoesgroups=TRUE)
 
 # Proportions and Wilson confidence limits, plus approx. Gaussian
 # based half/width confidence limits for difference in probabilities

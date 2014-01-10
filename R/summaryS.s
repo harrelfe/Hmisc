@@ -87,9 +87,10 @@ plot.summaryS <-
   xunits  <- at$xunits
   fun     <- at$fun
   funlabel <- if(length(at$funlabel)) at$funlabel else funlabel
+  Panel    <- panel
   
   ptype <- if(length(fun)) {  # used to always be 'dot'
-    if(length(panel)) 'xy.special' else 'dot'
+    if(length(Panel)) 'xy.special' else 'dot'
   } else 'xy'
   if(ptype %in% c('xy', 'xy.special') && ! any(xtype == 'numeric'))
     stop('must have a numeric x variable to make x-y plot')
@@ -157,18 +158,18 @@ plot.summaryS <-
     xlab <- labelPlotmath(xlabels[xtype == 'numeric'],
                           xunits [xtype == 'numeric'])
     if(! length(groups)) {
-      if(! length(panel)) panel <- panel.xyplot
+      if(! length(Panel)) Panel <- panel.xyplot
       xyplot(form, data=X, scales=list(y='free', rot=0),
-             panel=function(...) {panel(...); pan(...)},
+             panel=function(...) {Panel(...); pan(...)},
              xlab=xlab, ylab=ylab, strip=strip, par.strip.text=pst, ...)
     } else {
       panel.groups <- if(paneldoesgroups) NULL else
-       if(length(panel)) panel else panel.xyplot
-      if(! paneldoesgroups) panel <- panel.superpose
+       if(length(Panel)) Panel else panel.xyplot
+      if(! paneldoesgroups) Panel <- panel.superpose
       g <- if(length(panel.groups))
-        "xyplot(form, groups=%s, data=X, scales=list(y='free', rot=0), panel=function(...) {if(length(panel)) panel(..., scat1d.opts=scat1d.opts); pan(...)}, panel.groups=panel.groups, auto.key=key, xlab=xlab, ylab=ylab, strip=strip, par.strip.text=pst, ...)"
+        "xyplot(form, groups=%s, data=X, scales=list(y='free', rot=0), panel=function(...) {if(length(Panel)) Panel(..., scat1d.opts=scat1d.opts); pan(...)}, panel.groups=panel.groups, auto.key=key, xlab=xlab, ylab=ylab, strip=strip, par.strip.text=pst, ...)"
       else
-        "xyplot(form, groups=%s, data=X, scales=list(y='free', rot=0), panel=function(...) {if(length(panel)) panel(..., scat1d.opts=scat1d.opts); pan(...)}, auto.key=key, xlab=xlab, ylab=ylab, strip=strip, par.strip.text=pst, ...)"
+        "xyplot(form, groups=%s, data=X, scales=list(y='free', rot=0), panel=function(...) {if(length(Panel)) Panel(..., scat1d.opts=scat1d.opts); pan(...)}, auto.key=key, xlab=xlab, ylab=ylab, strip=strip, par.strip.text=pst, ...)"
       eval(parse(text=sprintf(g, groups)))
   }
  } else {  # Dot chart or xy.special
@@ -298,20 +299,19 @@ plot.summaryS <-
      xl <- labelPlotmath(xlabels[1], xunits[1])
      yl <- if(ylab == '') funlabel else ylab
      d <- if(!length(groups))
-       xyplot(form, data=X, panel=panel, strip=strip,
+       xyplot(form, data=X, panel=Panel, strip=strip,
               par.strip.text=pst, xlab=xl, ylab=yl, scale=scal, yother=yother,
              ...)
      else {
-       panel.groups <- if(paneldoesgroups) NULL else panel
+       panel.groups <- if(paneldoesgroups) NULL else Panel
        if(! paneldoesgroups) panel <- panel.superpose
        g <- if(length(panel.groups))
-         "xyplot(form, groups=%s, data=X, panel=panel, panel.groups=panel.groups, strip=strip, par.strip.text=pst, auto.key=key, xlab=xl, ylab=yl, scale=scal, yother=yother, ...)"
-       else "xyplot(form, groups=%s, data=X, panel=panel, strip=strip, par.strip.text=pst, auto.key=key, xlab=xl, ylab=yl, scale=scal, yother=yother, ...)"
+         "xyplot(form, groups=%s, data=X, panel=Panel, panel.groups=panel.groups, strip=strip, par.strip.text=pst, auto.key=key, xlab=xl, ylab=yl, scale=scal, yother=yother, ...)"
+       else "xyplot(form, groups=%s, data=X, panel=Panel, strip=strip, par.strip.text=pst, auto.key=key, xlab=xl, ylab=yl, scale=scal, yother=yother, ...)"
        eval(parse(text=sprintf(g, groups)))
      }
    }
  }
-  
   if(outerlabels && length(dim(d)) == 2)
     d <- useOuterStrips(d, strip=strip, strip.left=strip)
   d
@@ -356,6 +356,98 @@ mbarclPanel <- function(x, y, subscripts, groups=NULL, yother, ...) {
     Y[x1, 'se1'] <- se[j1]
     Y[x2, 'y2' ] <- y [j2]
     Y[x2, 'se2'] <- se[j2]
+    ymid <- (Y[, 'y1'] + Y[, 'y2']) / 2.
+    halfwidthci <- qnorm(0.975) * sqrt(Y[, 'se1']^2 + Y[, 'se2']^2)
+    col <- adjustcolor('black', alpha.f=0.7)
+    grid.segments(xu, ymid - 0.5 * halfwidthci,
+                  xu, ymid + 0.5 * halfwidthci,
+                  default.units='native',
+                  gp=gpar(col=col, lwd=1.5))
+  }
+}
+
+medvPanel <-
+  function(x, y, subscripts, groups=NULL, violin=TRUE, quantiles=FALSE,
+           ...) {
+  gp <- length(groups)
+  plot.line <-
+         trellis.par.get(if(gp) "superpose.line"   else "plot.line")
+  sym <- trellis.par.get(if(gp) "superpose.symbol" else "plot.symbol")
+
+  quant <- function(y) {
+    probs <- c(0.05, 0.125, 0.25, 0.375)
+    probs <- sort(c(probs, 1. - probs))
+    y <- y[! is.na(y)]
+    if(length(y) < 3) {
+      if(quantiles) {
+        w <- c(median(y), rep(NA, 9), length(y))
+        names(w) <- c('Median', format(probs), 'se', 'n')
+      }
+      else w <- c(Median=median(y), se=NA, n=length(y))
+      return(w)
+    }
+    w  <- if(quantiles) hdquantile(y, probs)
+    m  <- hdquantile(y, 0.5, se=TRUE)
+    se <- as.numeric(attr(m, 'se'))
+    c(Median=as.numeric(m), w, se=se, n=length(y))
+  }
+
+  denpoly <- function(x, y, col, n=50, pos, ...) {
+    y <- y[! is.na(y)]
+    if(length(y) < 8) return()
+    den <- density(y, n=n, ...)
+    d <- den$y
+    y <- den$x
+    ## Scale density of 0-3 mm
+    d <- 3 * d / max(d)
+    d <- c(d, d[length(d)])
+    mm <- convertUnit(unit(d, 'mm'), 'mm', typeFrom='dimension')
+    grid.polygon(y=unit(c(y, y[1]), 'native'),
+                 x=if(pos == 'left') unit(x, 'native') - mm
+                   else              unit(x, 'native') + mm,
+                 gp=gpar(col=FALSE, fill=col))
+  }
+    
+
+  gr <- if(gp) groups[subscripts] else factor(rep('', length(x)))
+  lev <- levels(gr)
+  W <- NULL
+  for(i in 1 : length(lev)) {
+    j <- which(gr == levels(gr)[i])
+    xj <- x[j]
+    yj <- y[j]
+    w <- summarize(yj, xj, quant, type='matrix', keepcolnames=TRUE)
+    Y <- w$yj
+    xu <- w$xj
+    lpoints(xu, Y[,'Median'], cex=sym$cex[i], pch=sym$pch[i], col=sym$col[i],
+            alpha=sym$alpha[i])
+    col <- plot.line$col[i]
+    if(violin) for(xx in sort(unique(xj)))
+      denpoly(xx, yj[xj == xx],
+              col=adjustcolor(plot.line$col[i], alpha.f=0.2),
+              pos=c('left', 'right')[i])
+      
+    if(quantiles)
+      multLines(xu, Y[, colnames(Y) %nin% c('se', 'n'), drop=FALSE],
+                col=plot.line$col[i],
+                lty=plot.line$lty[i],
+                lwd=plot.line$lwd[i],
+                grid=TRUE, pos=c('left', 'right')[i])
+    W <- rbind(W, cbind(gr=levels(gr)[i], w))
+  }
+  if(length(lev) == 2) {
+    x <- W$xj
+    xu <- sort(unique(W$xj))
+    j1 <- W$gr == lev[1]
+    j2 <- W$gr == lev[2]
+    Y <- matrix(NA, nrow=length(xu), ncol=4,
+                dimnames=list(as.character(xu), c('y1', 'y2', 'se1', 'se2')))
+    x1 <- as.character(x)[j1]
+    x2 <- as.character(x)[j2]
+    Y[x1, 'y1' ] <- W$yj[j1, 'Median']
+    Y[x1, 'se1'] <- W$yj[j1, 'se']
+    Y[x2, 'y2' ] <- W$yj[j2, 'Median']
+    Y[x2, 'se2'] <- W$yj[j2, 'se']
     ymid <- (Y[, 'y1'] + Y[, 'y2']) / 2.
     halfwidthci <- qnorm(0.975) * sqrt(Y[, 'se1']^2 + Y[, 'se2']^2)
     col <- adjustcolor('black', alpha.f=0.7)

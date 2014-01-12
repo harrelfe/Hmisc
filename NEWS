@@ -27,6 +27,7 @@ Changes in version 3.14-0 (2014-01-10)
    * Removed nobsY calculations from bpplotM, summaryP, summaryS, enhanced nobsY to allow stratification by treatment
    * panel.bpplot: added violin and violin.opts arguments
    * summaryS: added medvPanel support during-plot vertical violin plots
+   * plot.summaryP: padded x-axis limits
 
 Changes in version 3.13-0 (2013-11-18)
    * Changed n location (nloc argument) in bpplotM

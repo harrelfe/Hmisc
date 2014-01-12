@@ -97,7 +97,7 @@ summaryP <- function(formula, data=NULL,
 }
 
 plot.summaryP <-
-  function(x, formula=NULL, groups=NULL, xlim=c(0, 1), text.at=NULL,
+  function(x, formula=NULL, groups=NULL, xlim=c(-.05, 1.05), text.at=NULL,
            cex.values=0.5,
            key=list(columns=length(groupslevels),
              x=.75, y=-.04, cex=.9,
@@ -147,13 +147,13 @@ plot.summaryP <-
           fr <- paste(x[i], denom[i], sep='/')
           xpos <- xpos + length.longest
           grid.text(fr, xpos, unit(y, 'native') - unit(1, 'mm'),
-                    just='right', gp=gpar(cex=cex.values, col=col[ig]))
+                    just=c('right','top'), gp=gpar(cex=cex.values, col=col[ig]))
         }
       }
       else {
         fr <- paste(x, denom, sep='/')
         grid.text(fr, xpos, unit(y, 'native') - unit(1, 'mm'),
-                  gp=gpar(cex=cex.values, col=col[1]), just='right')
+                  gp=gpar(cex=cex.values, col=col[1]), just=c('right','top'))
       }
     }
   }

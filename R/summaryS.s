@@ -155,21 +155,24 @@ plot.summaryS <-
                               scat1d.opts))
         }
       }
+    scal <-  list(y=list(relation='free',
+                    limits=if(length(ylim)) ylim else ylims, rot=0))
     xlab <- labelPlotmath(xlabels[xtype == 'numeric'],
                           xunits [xtype == 'numeric'])
     if(! length(groups)) {
       if(! length(Panel)) Panel <- panel.xyplot
-      xyplot(form, data=X, scales=list(y='free', rot=0),
+      xyplot(form, data=X, 
              panel=function(...) {Panel(...); pan(...)},
-             xlab=xlab, ylab=ylab, strip=strip, par.strip.text=pst, ...)
+             xlab=xlab, ylab=ylab, scales=scal, strip=strip,
+             par.strip.text=pst, ...)
     } else {
       panel.groups <- if(paneldoesgroups) NULL else
        if(length(Panel)) Panel else panel.xyplot
       if(! paneldoesgroups) Panel <- panel.superpose
       g <- if(length(panel.groups))
-        "xyplot(form, groups=%s, data=X, scales=list(y='free', rot=0), panel=function(...) {if(length(Panel)) Panel(..., scat1d.opts=scat1d.opts); pan(...)}, panel.groups=panel.groups, auto.key=key, xlab=xlab, ylab=ylab, strip=strip, par.strip.text=pst, ...)"
+        "xyplot(form, groups=%s, data=X, scales=scal, panel=function(...) {if(length(Panel)) Panel(..., scat1d.opts=scat1d.opts); pan(...)}, panel.groups=panel.groups, auto.key=key, xlab=xlab, ylab=ylab, strip=strip, par.strip.text=pst, ...)"
       else
-        "xyplot(form, groups=%s, data=X, scales=list(y='free', rot=0), panel=function(...) {if(length(Panel)) Panel(..., scat1d.opts=scat1d.opts); pan(...)}, auto.key=key, xlab=xlab, ylab=ylab, strip=strip, par.strip.text=pst, ...)"
+        "xyplot(form, groups=%s, data=X, scales=scal, panel=function(...) {if(length(Panel)) Panel(..., scat1d.opts=scat1d.opts); pan(...)}, auto.key=key, xlab=xlab, ylab=ylab, strip=strip, par.strip.text=pst, ...)"
       eval(parse(text=sprintf(g, groups)))
   }
  } else {  # Dot chart or xy.special
@@ -394,7 +397,8 @@ medvPanel <-
 
   denpoly <- function(x, y, col, n=50, pos, ...) {
     y <- y[! is.na(y)]
-    if(length(y) < 8) return()
+    n <- length(y)
+    if(n < 2) return()
     den <- density(y, n=n, ...)
     d <- den$y
     y <- den$x
@@ -402,10 +406,13 @@ medvPanel <-
     d <- 3 * d / max(d)
     d <- c(d, d[length(d)])
     mm <- convertUnit(unit(d, 'mm'), 'mm', typeFrom='dimension')
+    kol <- if(n < 5 ) adjustcolor(col, alpha.f=0.2)
+     else  if(n < 10) adjustcolor(col, alpha.f=0.4)
+     else col
     grid.polygon(y=unit(c(y, y[1]), 'native'),
                  x=if(pos == 'left') unit(x, 'native') - mm
                    else              unit(x, 'native') + mm,
-                 gp=gpar(col=FALSE, fill=col))
+                 gp=gpar(col=FALSE, fill=kol))
   }
     
 
@@ -413,14 +420,16 @@ medvPanel <-
   lev <- levels(gr)
   W <- NULL
   for(i in 1 : length(lev)) {
-    j <- which(gr == levels(gr)[i])
+    j  <- which(gr == levels(gr)[i])
     xj <- x[j]
     yj <- y[j]
     w <- summarize(yj, xj, quant, type='matrix', keepcolnames=TRUE)
-    Y <- w$yj
+    Y  <- w$yj
     xu <- w$xj
     lpoints(xu, Y[,'Median'], cex=sym$cex[i], pch=sym$pch[i], col=sym$col[i],
             alpha=sym$alpha[i])
+    llines(xu, Y[,'Median'], col=plot.line$col[i], lty=plot.line$lty[i],
+           lwd=plot.line$lwd[i], alpha=plot.line$alpha)
     col <- plot.line$col[i]
     if(violin) for(xx in sort(unique(xj)))
       denpoly(xx, yj[xj == xx],

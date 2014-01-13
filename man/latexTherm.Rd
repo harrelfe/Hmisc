@@ -13,6 +13,11 @@ randomized to B being analyzed.  The picture is placed
 inside a LaTeX macro definition for macro variable named \code{name}, to
 be invoked by the user later in the LaTeX file using \code{name}
 preceeded by a backslash.
+
+If \code{y} has an attribute \code{"table"}, it is assumed to contain a
+character string with LaTeX code.  This code is used as a tooltip popup
+for PDF using the LaTeX \code{ocgtools} package.  Typically the code
+will contain a \code{tabular} environment.
 }
 \usage{
 latexTherm(y, name, w = 0.075, h = 0.15, spacefactor = 1/2, extra = 0.07,

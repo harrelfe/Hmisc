@@ -2,6 +2,10 @@ latexTherm <- function(y, name, w=.075, h=.15, spacefactor=1/2, extra=.07,
                        file='', append=TRUE) {
   ct <- function(..., append=TRUE) cat(..., file=file, append=append, sep='')
   ct('\\def\\', name, '{\n', append=append)
+  tab <- attr(y, 'table')
+  if(length(tab)) {
+    ct('\\protect\\ocgminitext[width=3in,bg=white]{\n')
+  }
   ct('\\setlength{\\unitlength}{.001in}\n')
   k <- length(y)
   W <- k * w + (k-1) * spacefactor * w
@@ -26,5 +30,9 @@ latexTherm <- function(y, name, w=.075, h=.15, spacefactor=1/2, extra=.07,
     x <- x + w + spacefactor * w
   }
   
-  ct('\\end{picture}}\n')
+  ct('\\end{picture}',
+     if(length(tab)) '}{\n',
+     tab,
+     if(length(tab)) '}',
+     '}\n')
 }

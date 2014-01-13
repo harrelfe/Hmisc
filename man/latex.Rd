@@ -154,7 +154,7 @@ latexSN(x)
 latexTabular(x, headings=colnames(x), 
              align =paste(rep('c',ncol(x)),collapse=''),
              halign=paste(rep('c',ncol(x)),collapse=''),
-             helvetica=TRUE, \dots)
+             helvetica=TRUE, translate=TRUE, hline=0, \dots)
 
 latexVerbatim(x, title=first.word(deparse(substitute(x))),
     file=paste(title, ".tex", sep=""),
@@ -483,7 +483,12 @@ dvigv(object, \dots)
   \item{halign}{a character strings specifying alignment for
 	column headings, defaulting to centered.}
   \item{helvetica}{set to \code{FALSE} to use default LaTeX font in
-	\samp{latexTabular} instead of helvetica.}
+		\samp{latexTabular} instead of helvetica.}
+	\item{translate}{set to \code{FALSE} if column headings are already in
+		LaTeX format, otherwise \code{latexTabular} will run them through
+		\code{latexTranslate}}
+	\item{hline}{set to 1 to put \code{hline} after heading, 2 to also put
+		\code{hline}s before and after heading and at table end}
   \item{hspace}{
     horizontal space, e.g., extra left margin for verbatim text.  Default
     is none.  Use e.g. \code{hspace="10ex"} to add 10 extra spaces to the left

@@ -30,6 +30,7 @@ Changes in version 3.14-0 (2014-01-10)
    * plot.summaryP: padded x-axis limits
    * latexTabular: added translate and hline arguments
    * latexTherm: added tooltip using LaTeX ocgtools package
+   * summaryP: stopped reversing order of panels
 
 Changes in version 3.13-0 (2013-11-18)
    * Changed n location (nloc argument) in bpplotM

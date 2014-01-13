@@ -42,6 +42,7 @@ nobsY <- function(formula, group=NULL,
   }
   nY   <- ncol(Y)
   nobs <- rep(NA, nY)
+  names(nobs) <- names(Y)
   nobsg <- if(length(group)) {
     glev <- if(is.factor(group)) levels(group)
      else sort(unique(group[! is.na(group)]))

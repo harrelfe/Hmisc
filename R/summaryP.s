@@ -37,9 +37,7 @@ summaryP <- function(formula, data=NULL,
   for(i in 1 : nrow(ux)) {
     j <- rep(TRUE, n)
     if(nX > 0) for(k in 1 : nX) j <- j & (X[[k]] == ux[i, k])
-    ## yx <- Y[j,, drop=FALSE]
-    ## Reverse order so first named variables will be at top of panel
-    for(k in nY : 1) {
+    for(k in 1 : nY) {
       ## y <- yx[[k]] doesn't work as attributes lost by [.data.frame
       y <- Y[[k]]
       y <- if(is.matrix(y)) y[j,, drop=FALSE] else y[j]

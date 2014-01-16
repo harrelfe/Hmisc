@@ -45,7 +45,7 @@
   variables.
 }
 \usage{
-summaryM(formula, data, subset, na.action,
+summaryM(formula, data, subset, na.action=na.retain,
          overall=FALSE, continuous=10, na.include=FALSE,
          quant=c(0.025, 0.05, 0.125, 0.25, 0.375, 0.5, 0.625,
                  0.75, 0.875, 0.95, 0.975),
@@ -83,7 +83,7 @@ summaryM(formula, data, subset, na.action,
       insert.bottom = TRUE, dcolumn = FALSE, formatArgs=NULL, round=NULL,
       prtest = c('P', 'stat', 'df', 'name'), prmsd = FALSE,
       msdsize = NULL, long = FALSE, pdig = 3, eps = 0.001,
-      auxCol = NULL, \dots)
+      auxCol = NULL, table.env=TRUE, \dots)
 }
 \arguments{
   \item{formula}{
@@ -299,6 +299,8 @@ summaryM(formula, data, subset, na.action,
     is filled with blanks when a variable being summarized takes up more
     than one row in the output.  This happens with categorical variables.
   }
+	\item{table.env}{set to \code{FALSE} to use \code{tabular} environment
+      with no caption}
   \item{what}{
     specifies whether proportions or percentages are to be plotted
   }

@@ -1,30 +1,37 @@
-summaryM <- function(formula, data, subset, na.action,
+summaryM <- function(formula, data, subset, na.action=na.retain,
                      overall=FALSE, continuous=10, na.include=FALSE,
                      quant=c(0.025, 0.05, 0.125, 0.25, 0.375, 0.5, 0.625,
                        0.75, 0.875, 0.95, 0.975),
                      nmin=100, test=FALSE,
                      conTest=conTestkw, catTest=catTestchisq,
                      ordTest=ordTestpo) {
-  
-  mf <- match.call(expand.dots=FALSE)
-  m <- match(c('formula', 'data', 'subset', 'na.action'), names(mf), 0)
-  mf <- mf[c(1, m)]
-  if(missing(na.action)) mf$na.action <- na.retain
+
   formula <- Formula(formula)
-  mf[[1]] <- as.name('model.frame')
-  mf$formula <- formula
-  Y <- eval(mf, parent.frame())
-  group <- model.part(formula, data=Y, rhs=1)
-  Y <- model.part(formula, data=Y, lhs=1)
+  Y <- if(!missing(subset) && length(subset))
+    model.frame(formula, data=data, subset=subset, na.action=na.action)
+  else
+    model.frame(formula, data=data, na.action=na.action)
 
-  getlab <- function(x, default) {
-    lab <- attr(x, 'label')
-    if(!length(lab) || lab=='') default else lab
-  }
+#  mf <- match.call(expand.dots=FALSE)
+#  m <- match(c('formula', 'data', 'subset', 'na.action'), names(mf), 0)
+#  mf <- mf[c(1, m)]
+#  if(missing(na.action)) mf$na.action <- na.retain
+#  formula <- Formula(formula)
+#  mf[[1]] <- as.name('model.frame')
+#  mf$formula <- formula
+#  Y <- eval(mf, parent.frame())
 
-  if(length(group)) {
+   group <- model.part(formula, data=Y, rhs=1)
+   Y <- model.part(formula, data=Y, lhs=1)
+
+   getlab <- function(x, default) {
+     lab <- attr(x, 'label')
+     if(!length(lab) || lab=='') default else lab
+   }
+   
+   if(length(group)) {
     gname <- names(group)
-    if(length(gname) > 1) stop('cannot have > 1 right hand side variable')
+    if(length(gname) > 1) warning('cannot have > 1 right hand side variable')
     group <- group[[1]]
     glabel <- getlab(group, gname)
     group.freq <- table(group)
@@ -526,7 +533,7 @@ latex.summaryM <-
            caption, rowlabel="",
            insert.bottom=TRUE, dcolumn=FALSE, formatArgs=NULL, round=NULL,
            prtest=c('P','stat','df','name'), prmsd=FALSE, msdsize=NULL,
-           long=FALSE, pdig=3, eps=.001, auxCol=NULL, ...)
+           long=FALSE, pdig=3, eps=.001, auxCol=NULL, table.env=TRUE, ...)
 {
   x      <- object
   npct   <- match.arg(npct)
@@ -673,7 +680,8 @@ latex.summaryM <-
                  if(length(testUsed)==1)'\\noindent Test used:'
                  else '\\indent Tests used:',
                  if(length(testUsed)==1) paste(testUsed,'test')
-                 else paste(paste('\\textsuperscript{\\normalfont ',1:length(testUsed),'}',testUsed,
+                 else paste(paste('\\textsuperscript{\\normalfont ',
+                                  1:length(testUsed),'}',testUsed,
                                   ' test',sep=''),collapse='; '))
 
   }
@@ -692,10 +700,11 @@ latex.summaryM <-
     if(length(col.just)) col.just <- c('r', col.just)
     if(length(extracolheads)) extracolheads <- c(heads[2], extracolheads)
   }
-  resp <- latex.default(cstats, title=title, caption=caption, rowlabel=rowlabel,
-                        col.just=col.just, numeric.dollar=FALSE, 
-                        insert.bottom=legend,  rowname=lab, dcolumn=dcolumn,
-                        extracolheads=extracolheads, extracolsize=Nsize,
-                        ...)
-  resp
+  if(length(legend) && ! table.env) legend[1] <- paste('\n', legend[1], sep='')
+  latex.default(cstats, title=title, caption=if(table.env) caption,
+                rowlabel=rowlabel, table.env=table.env,
+                col.just=col.just, numeric.dollar=FALSE, 
+                insert.bottom=legend,  rowname=lab, dcolumn=dcolumn,
+                extracolheads=extracolheads, extracolsize=Nsize,
+                ...)
 }

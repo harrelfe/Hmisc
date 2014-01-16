@@ -1429,27 +1429,29 @@ print.summary.formula.reverse <-
 
 ## Function to format subtable for categorical var, for method='reverse'
 formatCats <- function(tab, nam, tr, type, group.freq,
+                       what=c('%', 'proportion'),
                        npct, pctdig, exclude1, long, prtest,
                        latex=FALSE, testUsed=character(0),
                        npct.size='scriptsize', pdig=3, eps=.001,
                        footnoteTest=TRUE, dotchart=FALSE)
 {
+  what   <- match.arg(what)
   gnames <- names(group.freq)
-  nr <- nrow(tab)
+  nr     <- nrow(tab)
 
   ## If there was a missing column of tab because e.g. the variable was
   ## always NA for one (or more) of the groups, add columns of NAs
   if(ncol(tab) < length(group.freq)) {
-    tabfull <- matrix(NA,nrow=nr,ncol=length(group.freq),
-                      dimnames=list(dimnames(tab)[[1]],gnames))
+    tabfull <- matrix(NA, nrow=nr, ncol=length(group.freq),
+                      dimnames=list(dimnames(tab)[[1]], gnames))
     tabfull[,dimnames(tab)[[2]]] <- tab
     tab <- tabfull
   }
 
   denom <- if(type==1) apply(tab, 2, sum)
            else group.freq
-
   pct <- 100*(if(ncol(tab) > 1)sweep(tab, 2, denom, FUN='/') else tab/denom)
+  pct <- pct * (if(what =='%') 100 else 1)
   cpct <- paste(format(round(pct, pctdig)),
                 if(latex)"\\%"
                 else "%",

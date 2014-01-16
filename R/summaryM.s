@@ -525,7 +525,8 @@ print.summaryM <-
 
 latex.summaryM <- 
   function(object, title=first.word(deparse(substitute(object))),
-           digits, prn = any(n!=N), pctdig=0, 
+           digits, prn = any(n!=N),
+           what=c('proportion', '%'), pctdig=if(what=='%') 0 else 2, 
            npct=c('numerator','both','denominator','none'),
            npct.size='scriptsize', Nsize='scriptsize',
            exclude1=TRUE,  vnames=c("labels","names"), prUnits=TRUE,
@@ -536,6 +537,7 @@ latex.summaryM <-
            long=FALSE, pdig=3, eps=.001, auxCol=NULL, table.env=TRUE, ...)
 {
   x      <- object
+  what   <- match.arg(what)
   npct   <- match.arg(npct)
   vnames <- match.arg(vnames)
   if(is.logical(prtest) && !prtest) prtest <- 'none'
@@ -600,6 +602,7 @@ latex.summaryM <-
     if(type[i]==1 || type[i]==3) {
       cs <- formatCats(stats[[i]], nam, tr, type[i],
                        if(length(x$group.freq)) x$group.freq else x$n[i],
+                       'proportion',
                        npct, pctdig, exclude1, long, prtest,
                        latex=TRUE, testUsed=testUsed,
                        npct.size=npct.size,

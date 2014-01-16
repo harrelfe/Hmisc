@@ -75,7 +75,8 @@ summaryM(formula, data, subset, na.action=na.retain,
 
 \method{latex}{summaryM}(object, title =
       first.word(deparse(substitute(object))), digits, 
-      prn = any(n != N), pctdig = 0,
+      prn = any(n != N), what=c('proportion', '%'),
+      pctdig = if(what == '%') 0 else 2,
       npct = c('numerator', 'both', 'denominator', 'none'),
       npct.size = 'scriptsize', Nsize = 'scriptsize', exclude1 = TRUE,
       vnames=c("labels", "names"), prUnits = TRUE, middle.bold = FALSE,
@@ -222,8 +223,9 @@ summaryM(formula, data, subset, na.action=na.retain,
   }
   \item{pctdig}{
     number of digits to the right of the decimal place for printing
-    percentages. The default is zero, so percents will be rounded to the
-    nearest percent.
+    percentages or proportions. The default is zero if \code{what='%'},
+		so percents will be rounded to the nearest percent.  The default is
+    2 for proportions.
   }
   \item{npct}{
     specifies which counts are to be printed to the right of percentages.
@@ -302,7 +304,7 @@ summaryM(formula, data, subset, na.action=na.retain,
 	\item{table.env}{set to \code{FALSE} to use \code{tabular} environment
       with no caption}
   \item{what}{
-    specifies whether proportions or percentages are to be plotted
+    specifies whether proportions or percentages are to be plotted or LaTeX'd
   }
   \item{which}{
 	Specifies whether to plot results

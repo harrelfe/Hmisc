@@ -28,7 +28,7 @@ Changes in version 3.14-0 (2014-01-10)
    * panel.bpplot: added violin and violin.opts arguments
    * summaryS: added medvPanel support during-plot vertical violin plots
    * plot.summaryP: padded x-axis limits
-   * latexTabular: added translate and hline arguments
+   * latexTabular: added translate and hline arguments; moved to its own file and help page
    * latexTherm: added tooltip using LaTeX ocgtools package
    * summaryP: stopped reversing order of panels
 

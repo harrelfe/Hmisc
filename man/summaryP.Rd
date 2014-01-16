@@ -7,8 +7,7 @@
 	numerators (\code{freq}) and denominators (\code{denom}) after
 	stratifying the data by a series of variables.  A special capability
 	to group a series of related yes/no variables is included through the
-	use of the \code{\link{ynbind}} function,
-	for which the user specials a final
+	use of the \code{\link{ynbind}} function, for which the user specials a final
 	argument \code{label} used to label the panel created for that group
 	of related variables.
 	
@@ -26,8 +25,8 @@
 }
 \usage{
 summaryP(formula, data = NULL, subset = NULL,
-         na.action = na.retain, exclude1=TRUE, 
-         sort=TRUE,  asna = c("unknown", "unspecified"), \dots)
+         na.action = na.retain, exclude1=TRUE, sort=TRUE,
+         TRUE,  asna = c("unknown", "unspecified"), \dots)
 \method{plot}{summaryP}(x, formula, groups=NULL, xlim = c(-.05, 1.05),
          text.at=NULL, cex.values = 0.5,
          key = list(columns = length(groupslevels), x = 0.75,

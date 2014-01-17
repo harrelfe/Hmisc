@@ -75,8 +75,8 @@ summaryM(formula, data, subset, na.action=na.retain,
 
 \method{latex}{summaryM}(object, title =
       first.word(deparse(substitute(object))), digits, 
-      prn = any(n != N), what=c('proportion', '%'),
-      pctdig = if(what == '%') 0 else 2,
+      prn = any(n != N), what=c('proportion', '\%'),
+      pctdig = if(what == '\%') 0 else 2,
       npct = c('numerator', 'both', 'denominator', 'none'),
       npct.size = 'scriptsize', Nsize = 'scriptsize', exclude1 = TRUE,
       vnames=c("labels", "names"), prUnits = TRUE, middle.bold = FALSE,
@@ -223,7 +223,7 @@ summaryM(formula, data, subset, na.action=na.retain,
   }
   \item{pctdig}{
     number of digits to the right of the decimal place for printing
-    percentages or proportions. The default is zero if \code{what='%'},
+    percentages or proportions. The default is zero if \code{what='\%'},
 		so percents will be rounded to the nearest percent.  The default is
     2 for proportions.
   }

@@ -1450,11 +1450,11 @@ formatCats <- function(tab, nam, tr, type, group.freq,
 
   denom <- if(type==1) apply(tab, 2, sum)
            else group.freq
-  pct <- 100*(if(ncol(tab) > 1)sweep(tab, 2, denom, FUN='/') else tab/denom)
+  pct <- if(ncol(tab) > 1) sweep(tab, 2, denom, FUN='/') else tab / denom
   pct <- pct * (if(what =='%') 100 else 1)
   cpct <- paste(format(round(pct, pctdig)),
-                if(latex)"\\%"
-                else "%",
+                if(latex && what == '%')"\\%"
+                else if(what == '%') "%",
                 sep="")
 
   denom.rep <- matrix(rep(format(denom),nr),nrow=nr,byrow=TRUE)

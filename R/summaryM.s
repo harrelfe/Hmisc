@@ -602,8 +602,7 @@ latex.summaryM <-
     if(type[i]==1 || type[i]==3) {
       cs <- formatCats(stats[[i]], nam, tr, type[i],
                        if(length(x$group.freq)) x$group.freq else x$n[i],
-                       'proportion',
-                       npct, pctdig, exclude1, long, prtest,
+                       what, npct, pctdig, exclude1, long, prtest,
                        latex=TRUE, testUsed=testUsed,
                        npct.size=npct.size,
                        pdig=pdig, eps=eps,

@@ -36,7 +36,7 @@ character.table <- function(font=1)
 
   v <- 40:377
   v <- v[v %% 100 < 80 & v %% 10 < 8]
-  par(mar = c(5, 5, 4, 2) + 0.1)
+  opar <- par(mar = c(5, 5, 4, 2) + 0.1, xpd=NA)
   plot(0:7, seq(4, 31, length = 8), type = "n", axes = FALSE, xlab = "",
        ylab = "")
   k <- 1
@@ -50,6 +50,7 @@ character.table <- function(font=1)
   text(0:7, rep(33, 7), as.character(0:7), font = 3)
   text(rep(-1, 28), 31:4, as.character(c(4:7, 10:17, 20:27, 30:37)),
        font = 3)
+  par(opar)
   invisible()
 }
 

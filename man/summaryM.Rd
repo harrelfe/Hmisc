@@ -266,7 +266,8 @@ summaryM(formula, data, subset, na.action=na.retain,
   \item{round}{
 	Specify \code{round} to round
 	the quantiles and optional mean and standard deviation to
-	\code{round} digits after the decimal point
+	\code{round} digits after the decimal point.  Set \code{round='auto'}
+      to try an automatic choice.
 	}
   \item{prmsd}{
     set to \code{TRUE} to print mean and SD after the three quantiles, for

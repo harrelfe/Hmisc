@@ -1585,6 +1585,14 @@ formatCons <- function(stats, nam, tr, group.freq, prmsd, sep='/',
   qu <- stats[,c(q1,med,q3),drop=FALSE]
   if(prmsd)
     qu <- cbind(qu,stats[,c('Mean','SD'),drop=FALSE])
+  if(length(round) && round == 'auto') {
+    ## r <- max(stats[, 'SD'],
+    ##          diff(range(stats[, colnames(stats) %nin% c('N', 'SD')])),
+    ##          na.rm=TRUE)
+    r <- max(abs(stats[, colnames(stats) %nin% c('N', 'SD')]), na.rm=TRUE)
+    round <- if(r == 0) 2
+     else max(0, min(5, 3 - round(log10(r))))
+  }
   if(length(round)) qu <- round(qu, round)
   ww <- c(list(qu), formatArgs)
   cqu <- do.call('format', ww)

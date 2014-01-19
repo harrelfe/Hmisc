@@ -433,7 +433,7 @@ medvPanel <-
     col <- plot.line$col[i]
     if(violin) for(xx in sort(unique(xj)))
       denpoly(xx, yj[xj == xx],
-              col=adjustcolor(plot.line$col[i], alpha.f=0.2),
+              col=adjustcolor(plot.line$col[i], alpha.f=0.4),
               pos=c('left', 'right')[i])
       
     if(quantiles)

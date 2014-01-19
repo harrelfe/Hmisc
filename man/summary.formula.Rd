@@ -933,6 +933,3 @@ summary(cumcategory(disease.severity) ~ age + sex)
 \concept{stratification}
 \concept{aggregation}
 \concept{cross-classification}
-
-
-

@@ -45,7 +45,7 @@
   variables.
 }
 \usage{
-summaryM(formula, data, subset, na.action=na.retain,
+summaryM(formula, data=NULL, subset, na.action=na.retain,
          overall=FALSE, continuous=10, na.include=FALSE,
          quant=c(0.025, 0.05, 0.125, 0.25, 0.375, 0.5, 0.625,
                  0.75, 0.875, 0.95, 0.975),

@@ -215,7 +215,7 @@ latex.summaryP <- function(object, groups=NULL, file='', round=3,
     if(length(groups)) {
     r <- reshape(x, timevar=groups, direction='wide',
                  idvar=c('var', 'val'))
-#    class(r) <- 'data.frame'
+
     lev <- levels(x[[groups]])
     nl  <- length(lev)
     var <- unique(as.character(r$var))

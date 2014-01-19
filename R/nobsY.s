@@ -42,11 +42,13 @@ nobsY <- function(formula, group=NULL,
   }
   nY   <- ncol(Y)
   nobs <- rep(NA, nY)
-  names(nobs) <- names(Y)
+  ylab <- sapply(Y, label)
+  ylab <- ifelse(ylab == '', names(Y), ylab)
+  names(nobs) <- ylab
   nobsg <- if(length(group)) {
     glev <- if(is.factor(group)) levels(group)
      else sort(unique(group[! is.na(group)]))
-    matrix(NA, ncol=nY, nrow=length(glev), dimnames=list(glev, names(Y)))
+    matrix(NA, ncol=nY, nrow=length(glev), dimnames=list(glev, ylab))
   }
 
   for(i in 1 : nY) {

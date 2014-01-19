@@ -182,3 +182,61 @@ plot.summaryP <-
   }
   d
 }
+
+latex.summaryP <- function(object, groups=NULL, file='', round=3,
+                           size=NULL, append=TRUE) {
+  class(object) <- 'data.frame'
+  if(! append) cat('', file=file)
+
+  p <- round(object$freq / object$denom, round)
+  object$y <- paste(format(p), ' {\\scriptsize$\\frac{',
+                    format(object$freq), '}{', format(object$denom),
+                    '}$}', sep='')
+  object$freq <- object$denom <- NULL
+
+  stratvar <- setdiff(names(object), c('var', 'val', 'y', groups))
+  svar <- if(! length(stratvar)) as.factor(rep('', nrow(object)))
+   else {
+     if(length(stratvar) == 1) object[[stratvar]]
+      else do.call('interaction', list(object[stratvar], sep=' '))
+   }
+
+  object$stratvar <- svar
+  object <- object[, c('var', 'val', 'y', groups, 'stratvar')]
+
+  nl <- 0
+
+  slev <- levels(svar)
+  nslev <- length(slev)
+  for(i in 1 : nslev) {
+    if(nslev > 1) cat('\\begin{center}\\textbf{', slev[i], '}\\end{center}\n',
+                      file=file, append=TRUE)
+    x <- object[svar == slev[i], colnames(object) != 'stratvar']
+    if(length(groups)) {
+    r <- reshape(x, timevar=groups, direction='wide',
+                 idvar=c('var', 'val'))
+#    class(r) <- 'data.frame'
+    lev <- levels(x[[groups]])
+    nl  <- length(lev)
+    var <- unique(as.character(r$var))
+    w <- latex(r[colnames(r) != 'var'],
+               table.env=FALSE, file=file, append=TRUE,
+               rowlabel='', rowname=rep('', nrow(r)),
+               rgroup=levels(r$var), n.rgroup=as.vector(table(r$var)),
+               size=size,
+               colheads=c(' ', lev),
+               center='none')
+  }
+    else {
+      w <- latex(x[colnames(x) != 'var'],
+                 table.env=FALSE, file=file, append=TRUE,
+                 rowlabel='', rowname=rep('', nrow(x)),
+                 rgroup=levels(x$var), n.rgroup=as.vector(table(x$var)),
+                 size=size, colheads=c(' ', ' '), center='none')
+    }
+  }
+  attr(w, 'ngrouplevels') <- nl
+  w
+}
+
+

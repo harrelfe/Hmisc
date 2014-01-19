@@ -1,6 +1,7 @@
 \name{summaryP}
 \alias{summaryP}
 \alias{plot.summaryP}
+\alias{latex.summary}
 \title{Multi-way Summary of Proportions}
 \description{
 	\code{summaryP} produces a tall and thin data frame containing
@@ -11,7 +12,7 @@
 	argument \code{label} used to label the panel created for that group
 	of related variables.
 	
-	The plot method for \code{summaryP}	displays proportions as a
+	The \code{plot} method for \code{summaryP}	displays proportions as a
 	multi-panel dot chart using the \code{lattice} package's \code{dotplot}
 	function with a special \code{panel} function.  Numerators and
 	denominators of proportions are also included as text, in the same
@@ -22,6 +23,12 @@
 	\code{var} (classification variable name), \code{freq} (calculated
 	result) plus the overall cross-classification variables excluding
 	\code{groups}.
+
+	The \code{latex} method produces one or more LaTeX \code{tabular}s
+	containing a table representation of the result, with optional
+	side-by-side display if \code{groups} is specified.  Multiple
+	\code{tabular}s result from the presence of non-group stratification
+	factors.
 }
 \usage{
 summaryP(formula, data = NULL, subset = NULL,
@@ -34,6 +41,8 @@ summaryP(formula, data = NULL, subset = NULL,
                     col = trellis.par.get('superpose.symbol')$col,
                     corner=c(0,1)),
          outerlabels=TRUE, autoarrange=TRUE, \dots)
+\method{latex}{summaryP}(object, groups=NULL, file='', round=3,
+                           size=NULL, append=TRUE)
 }
 \arguments{
   \item{formula}{a formula with the variables for whose levels
@@ -77,11 +86,21 @@ summaryP(formula, data = NULL, subset = NULL,
 	\item{autoarrange}{If \code{TRUE}, the formula is re-arranged so that
  	 if there are two conditioning (paneling) variables, the variable with
 	 the most levels is taken as the vertical condition.}
-	\item{\dots}{ignored}
+ \item{\dots}{ignored}
+ \item{object}{an object produced by \code{summaryP}}
+ \item{file}{file name, defaults to writing to console}
+ \item{round}{number of digits to the right of the decimal place for
+	 proportions}
+ \item{size}{optional font size such as \code{"small"}}
+ \item{append}{set to \code{FALSE} to start output over}
 }
 \value{\code{summaryP} produces a data frame of class
 	\code{"summaryP"}.  The \code{plot} method produces a \code{lattice}
-	object of class \code{"trellis"}} 
+	object of class \code{"trellis"}.  The \code{latex} method produces an
+	object of class \code{"latex"} with an additional attribute
+	\code{ngrouplevels} specifying the number of levels of any
+	\code{groups} variable.
+	}
 \author{Frank Harrell
   \cr
   Department of Biostatistics
@@ -160,3 +179,4 @@ plot(s, val ~ freq | sex*race)
 \concept{grouping}
 \concept{stratification}
 \concept{aggregation}
+\concept{cross-classification}

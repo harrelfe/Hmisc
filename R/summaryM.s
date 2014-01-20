@@ -573,8 +573,9 @@ latex.summaryM <-
   npct   <- match.arg(npct)
   vnames <- match.arg(vnames)
   if(is.logical(prtest) && !prtest) prtest <- 'none'
+  strats <- names(object$results)
   
-  for(strat in names(object$results)) {
+  for(strat in strats) {
     x <- object$results[[strat]]
     
     stats  <- x$stats
@@ -742,7 +743,9 @@ latex.summaryM <-
                        caption=if(table.env) caption,
                        rowlabel=rowlabel, table.env=table.env,
                        col.just=col.just, numeric.dollar=FALSE, 
-                       insert.bottom=legend,  rowname=lab, dcolumn=dcolumn,
+                       insert.bottom=if(strat==strats[length(strats)])
+                         legend,
+                       rowname=lab, dcolumn=dcolumn,
                        extracolheads=extracolheads, extracolsize=Nsize,
                        insert.top=if(strat != '.ALL.') strat,
                        ...)

@@ -638,8 +638,8 @@ latex.default <-
 
   intop <- function() {
     if(! length(insert.top)) return(NULL)
-    paste(if(center == 'none') '\n\\vspace{1ex}\n\n',
-          insert.top, '\n\\vpsace{1ex}\n\n')
+    paste(if(center == 'none') '\n\\vspace{1ex}\n\n\\textbf{',
+          insert.top, '}\n\\vspace{1ex}\n\n', sep='')
   }
   
   if(length(caption) && !ctable) {

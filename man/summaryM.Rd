@@ -45,7 +45,7 @@
   variables.
 }
 \usage{
-summaryM(formula, data=NULL, subset, na.action=na.retain,
+summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
          overall=FALSE, continuous=10, na.include=FALSE,
          quant=c(0.025, 0.05, 0.125, 0.25, 0.375, 0.5, 0.625,
                  0.75, 0.875, 0.95, 0.975),
@@ -53,7 +53,8 @@ summaryM(formula, data=NULL, subset, na.action=na.retain,
          conTest=conTestkw, catTest=catTestchisq,
          ordTest=ordTestpo)
 
-\method{print}{summaryM}(x, digits, prn = any(n != N), pctdig = 0,
+\method{print}{summaryM}(x, digits, prn = any(n != N),
+      what=c('proportion', '\%'), pctdig = if(what == '\%') 0 else 2,
       npct = c('numerator', 'both', 'denominator', 'none'),
       exclude1 = TRUE, vnames = c('labels', 'names'), prUnits = TRUE,
       sep = '/', abbreviate.dimnames = FALSE,
@@ -88,15 +89,21 @@ summaryM(formula, data=NULL, subset, na.action=na.retain,
 }
 \arguments{
   \item{formula}{
-    An S formula with additive effects.  There may be only one variable
-      on the right hand side, or the numeral \code{1}, indicating that
-      there is not grouping variable so that only margin summaries are
-      produced.  The right hand side variable, if present, must be a
-      discrete variable producing a limited number of groups.  On the
-      left hand side there may be any number of variables, separated by
-      "+", and these may be of mixed types.  These varibles are analyzed
-      separately by the grouping variable.
+    An S formula with additive effects.  There may be several variables
+    on the right hand side separated by "+",
+		or the numeral \code{1}, indicating that
+    there is no grouping variable so that only margin summaries are
+    produced.  The right hand side variable, if present, must be a
+    discrete variable producing a limited number of groups.  On the
+    left hand side there may be any number of variables, separated by
+    "+", and these may be of mixed types.  These variables are analyzed
+    separately by the grouping variable.
   }
+	\item{groups}{if there is more than one right-hand variable, specify
+    \code{groups} as a character string containing the name of the
+		variable used to produce columns of the table.  The remaining right
+      hand variables are combined to produce levels that cause separate
+      tables or plots to be produced.}
   \item{x}{an object created by \code{summaryM}.  For
     \code{conTestkw} a numeric vector, and for \code{ordTestpo}, a numeric
     or factor variable that can be considered ordered}
@@ -215,17 +222,19 @@ summaryM(formula, data=NULL, subset, na.action=na.retain,
     number of significant digits to print.  Default is to use the current
     value of the \code{digits} system option.
   }
-  \item{prn}{
-    set to \code{TRUE} to print the number of non-missing observations on the
-    current (row) variable.  The default is to print these only if any of
-    the counts of non-missing values differs from the total number of
-    non-missing values of the left-hand-side variable.
-  }
+	\item{what}{specifies whether proportions or percentages are to be
+      printed, plotted, or LaTeX'd} 
   \item{pctdig}{
     number of digits to the right of the decimal place for printing
     percentages or proportions. The default is zero if \code{what='\%'},
 		so percents will be rounded to the nearest percent.  The default is
     2 for proportions.
+  }
+  \item{prn}{
+    set to \code{TRUE} to print the number of non-missing observations on the
+    current (row) variable.  The default is to print these only if any of
+    the counts of non-missing values differs from the total number of
+    non-missing values of the left-hand-side variable.
   }
   \item{npct}{
     specifies which counts are to be printed to the right of percentages.
@@ -304,9 +313,6 @@ summaryM(formula, data=NULL, subset, na.action=na.retain,
   }
 	\item{table.env}{set to \code{FALSE} to use \code{tabular} environment
       with no caption}
-  \item{what}{
-    specifies whether proportions or percentages are to be plotted or LaTeX'd
-  }
   \item{which}{
 	Specifies whether to plot results
     for categorical variables, continuous variables, or both (the default).
@@ -397,6 +403,7 @@ summaryM(formula, data=NULL, subset, na.action=na.retain,
 options(digits=3)
 set.seed(173)
 sex <- factor(sample(c("m","f"), 500, rep=TRUE))
+country <- factor(sample(c('US', 'Canada'), 500, rep=TRUE))
 age <- rnorm(500, 50, 5)
 sbp <- rnorm(500, 120, 12)
 label(sbp) <- 'Systolic BP'
@@ -425,6 +432,11 @@ print(f, long=TRUE)
 plot(f)
 plot(f, conType='dot', prtest='P')
 bpplt()    # annotated example showing layout of bp plot
+
+# Produce separate tables by country
+f <- summaryM(age + sex + sbp + Symptoms ~ treatment + country,
+              groups='treatment', test=TRUE)
+f
 
 \dontrun{
 getHdata(pbc)

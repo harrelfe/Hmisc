@@ -31,6 +31,12 @@ Changes in version 3.14-0 (2014-01-10)
    * latexTabular: added translate and hline arguments; moved to its own file and help page
    * latexTherm: added tooltip using LaTeX ocgtools package
    * summaryP: stopped reversing order of panels
+   * summaryM: added table.env argument, changed how model.frame built
+   * latex.summaryM: changed to print proportions by default, added round='auto'
+   * character.table: added xpd=NA; thanks: Dale
+   * summaryP: added latex method
+   * latex.default: added insert.top argument
+   * summaryM: added stratification (multiple tables)
 
 Changes in version 3.13-0 (2013-11-18)
    * Changed n location (nloc argument) in bpplotM

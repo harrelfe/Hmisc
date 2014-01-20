@@ -392,6 +392,7 @@ latex.default <-
            double.slash=FALSE,
            vbar=FALSE, collabel.just=rep("c",nc), na.blank=TRUE,
            insert.bottom=NULL, insert.bottom.width=NULL,
+           insert.top=NULL,
            first.hline.double=!(booktabs | ctable),
            where='!tbp', size=NULL,
            center=c('center','centering','none'),
@@ -418,8 +419,8 @@ latex.default <-
 
   if (length(cgroup)) {
     k <- length(cgroup)
-    if(!length(n.cgroup))
-      n.cgroup <- rep(nc/k, k)
+    if(! length(n.cgroup))
+      n.cgroup <- rep(nc / k, k)
     
     if(sum(n.cgroup)!=nc)
       stop("sum of n.cgroup must equal number of columns")
@@ -635,6 +636,12 @@ latex.default <-
     tabular.cols <- paste(tabular.cols, collapse="")
   }
 
+  intop <- function() {
+    if(! length(insert.top)) return(NULL)
+    paste(if(center == 'none') '\n\\vspace{1ex}\n\n',
+          insert.top, '\n\\vpsace{1ex}\n\n')
+  }
+  
   if(length(caption) && !ctable) {
     caption <- paste(sl,"caption",
                      if(length(caption.lot))
@@ -648,31 +655,33 @@ latex.default <-
   }
 
   if(ctable) {
-    latex.begin <- paste(if(length(size))
-                       paste('{', sl, size, sep=''),
-                     paste(sl, "ctable[", sep=''),
-                     if(length(caption) && caption.loc=='bottom')
-                       'botcap,',
-                     if(length(caption))
-                       paste('caption={', caption, '},', sep=''),
-                     if(length(caption.lot))
-                       paste('cap={', caption.lot, '},', sep=''),
-                     paste('label=', label, ',', sep=''),
-                     if(!landscape)
-                       paste('pos=', where, ',', sep=''),
-                     if(landscape) 'sideways',
-                     paste(']{', tabular.cols, '}', sep=''),
-                     if(length(insert.bottom))
-                       paste('{',
-                             paste(sl,'tnote[]{',
-                                   sedit(insert.bottom,'\\\\',' '),'}',
-                                   sep='', collapse=''),
-                             '}',
-                             sep='')
-                     else '{}',
-                     ## tnote does not allow \\ in its argument
-                     paste('{', toprule, sep=''),
-                         sep='')
+    latex.begin <-
+      paste(if(length(size))
+            paste('{', sl, size, sep=''),
+            intop(),
+            paste(sl, "ctable[", sep=''),
+            if(length(caption) && caption.loc=='bottom')
+            'botcap,',
+            if(length(caption))
+            paste('caption={', caption, '},', sep=''),
+            if(length(caption.lot))
+            paste('cap={', caption.lot, '},', sep=''),
+            paste('label=', label, ',', sep=''),
+            if(!landscape)
+            paste('pos=', where, ',', sep=''),
+            if(landscape) 'sideways',
+            paste(']{', tabular.cols, '}', sep=''),
+            if(length(insert.bottom))
+            paste('{',
+                  paste(sl,'tnote[]{',
+                        sedit(insert.bottom,'\\\\',' '),'}',
+                        sep='', collapse=''),
+                  '}',
+                  sep='')
+            else '{}',
+            ## tnote does not allow \\ in its argument
+            paste('{', toprule, sep=''),
+            sep='')
     
     latex.end <- paste('}', if(length(size)) '}', sep='')
     
@@ -689,11 +698,12 @@ latex.default <-
             if(caption.loc=='top' && !missing(caption))
             paste(caption, "\n"),
             if(center == 'center')
-            paste(sl, "begin{center}\n", sep="")
+             paste(sl, "begin{center}\n", sep="")
             else {
               if (center == 'centering')
                 paste(sl,"centering\n", sep="")
             },
+            intop(),
             paste(sl,"begin{tabular}{", tabular.cols, "}\n",
                   toprule, sep=""),
             sep='')
@@ -719,6 +729,7 @@ latex.default <-
                   paste(sl, "begin{landscape}",sep=""),
                   if(length(size))
                   paste('{', sl, size, '\n', sep=''),
+                  intop(),
                   paste(sl,"begin{longtable}{", tabular.cols, "}",
                         sep=""),
                   sep="\n"),

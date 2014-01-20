@@ -114,6 +114,7 @@ latex(object, \dots)
     double.slash=FALSE,
     vbar=FALSE, collabel.just=rep("c",nc), na.blank=TRUE,
     insert.bottom=NULL, insert.bottom.width=NULL,
+    insert.top=NULL,
     first.hline.double=!(booktabs | ctable),
     where='!tbp', size=NULL,
     center=c('center','centering','none'),
@@ -296,6 +297,9 @@ dvigv(object, \dots)
     insert.bottom text.  Currently only does something with using
     \code{longtable=TRUE}.
   }
+	\item{insert.top}{a character string to insert as a heading right
+		before beginning \code{tabular} environment.  Useful for multiple
+		sub-tables.}
   \item{first.hline.double}{
     set to \code{FALSE} to use single horizontal rules for styles other than
     \code{"bookmark"} or \code{"ctable"}

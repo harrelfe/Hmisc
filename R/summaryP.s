@@ -184,7 +184,7 @@ plot.summaryP <-
 }
 
 latex.summaryP <- function(object, groups=NULL, file='', round=3,
-                           size=NULL, append=TRUE) {
+                           size=NULL, append=TRUE, ...) {
   class(object) <- 'data.frame'
   if(! append) cat('', file=file)
 

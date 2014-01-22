@@ -1,7 +1,7 @@
 \name{summaryP}
 \alias{summaryP}
 \alias{plot.summaryP}
-\alias{latex.summary}
+\alias{latex.summaryP}
 \title{Multi-way Summary of Proportions}
 \description{
 	\code{summaryP} produces a tall and thin data frame containing
@@ -33,7 +33,7 @@
 \usage{
 summaryP(formula, data = NULL, subset = NULL,
          na.action = na.retain, exclude1=TRUE, sort=TRUE,
-         TRUE,  asna = c("unknown", "unspecified"), \dots)
+         asna = c("unknown", "unspecified"), \dots)
 \method{plot}{summaryP}(x, formula, groups=NULL, xlim = c(-.05, 1.05),
          text.at=NULL, cex.values = 0.5,
          key = list(columns = length(groupslevels), x = 0.75,
@@ -42,7 +42,7 @@ summaryP(formula, data = NULL, subset = NULL,
                     corner=c(0,1)),
          outerlabels=TRUE, autoarrange=TRUE, \dots)
 \method{latex}{summaryP}(object, groups=NULL, file='', round=3,
-                           size=NULL, append=TRUE)
+                           size=NULL, append=TRUE, \dots)
 }
 \arguments{
   \item{formula}{a formula with the variables for whose levels

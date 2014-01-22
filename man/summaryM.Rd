@@ -75,7 +75,8 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
      conType = c('bp', 'dot', 'raw'), cex.means = 0.5, cex=par('cex'), \dots)
 
 \method{latex}{summaryM}(object, title =
-      first.word(deparse(substitute(object))), digits, 
+      first.word(deparse(substitute(object))),
+      file=paste(title, 'tex', sep='.'), append=FALSE, digits, 
       prn = any(n != N), what=c('proportion', '\%'),
       pctdig = if(what == '\%') 0 else 2,
       npct = c('numerator', 'both', 'denominator', 'none'),

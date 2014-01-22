@@ -1325,7 +1325,8 @@ dotchart2 <-
 
 
 print.summary.formula.reverse <- 
-  function(x, digits, prn=any(n != N), pctdig=0, 
+  function(x, digits, prn=any(n != N), pctdig=0,
+           what=c('%', 'proportion'),
            npct=c('numerator','both','denominator','none'),
            exclude1=TRUE, vnames=c("labels","names"), prUnits=TRUE,
            sep="/", abbreviate.dimnames=FALSE, 
@@ -1336,6 +1337,7 @@ print.summary.formula.reverse <-
 {
   npct   <- match.arg(npct)
   vnames <- match.arg(vnames)
+  what <- match.arg(what)
   if(is.logical(prtest) && !prtest)
     prtest <- 'none'
 
@@ -1375,7 +1377,7 @@ print.summary.formula.reverse <-
     if(type[i]==1 || type[i]==3) {
       cs <- formatCats(stats[[i]], nam, tr, type[i],
                        if(length(x$group.freq)) x$group.freq else x$n[i],
-                       npct, pctdig, exclude1, long, prtest,
+                       what, npct, pctdig, exclude1, long, prtest,
                        pdig=pdig, eps=eps)
       nn <- c(nn, rep(NA, nrow(cs)-1))
     } else cs <- formatCons(stats[[i]], nam, tr, x$group.freq, prmsd,
@@ -1747,7 +1749,8 @@ formatTestStats <- function(tr, multchoice=FALSE,
 
 latex.summary.formula.reverse <- 
   function(object, title=first.word(deparse(substitute(object))),
-           digits, prn = any(n!=N), pctdig=0, 
+           digits, prn = any(n!=N), pctdig=0,
+           what=c('%', 'proportion'),
            npct=c('numerator','both','denominator','none'),
            npct.size='scriptsize', Nsize='scriptsize',
            exclude1=TRUE,  vnames=c("labels","names"), prUnits=TRUE,
@@ -1760,6 +1763,7 @@ latex.summary.formula.reverse <-
   x      <- object
   npct   <- match.arg(npct)
   vnames <- match.arg(vnames)
+  what <- match.arg(what)
   if(is.logical(prtest) && !prtest)
     prtest <- 'none'
 
@@ -1824,7 +1828,7 @@ latex.summary.formula.reverse <-
     if(type[i]==1 || type[i]==3) {
       cs <- formatCats(stats[[i]], nam, tr, type[i],
                        if(length(x$group.freq)) x$group.freq else x$n[i],
-                       npct, pctdig, exclude1, long, prtest,
+                       what, npct, pctdig, exclude1, long, prtest,
                        latex=TRUE, testUsed=testUsed,
                        npct.size=npct.size,
                        pdig=pdig, eps=eps,

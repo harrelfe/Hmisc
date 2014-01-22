@@ -29,6 +29,8 @@ latexTabular(x, headings=colnames(x),
 		\code{latexTranslate}}
 	\item{hline}{set to 1 to put \code{hline} after heading, 2 to also put
 		\code{hline}s before and after heading and at table end}
+	\item{\dots}{if present, \code{x} is run through \code{format.df} with
+		those extra arguments}
   }
 \value{a character string containing LaTeX markup}
 \author{

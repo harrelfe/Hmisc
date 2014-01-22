@@ -110,6 +110,7 @@
       rowlabel = '', cdec = 2, ncaption = TRUE, \dots)
 
 \method{print}{summary.formula.reverse}(x, digits, prn = any(n != N), pctdig = 0,
+      what=c('%', 'proportion'),
       npct = c('numerator', 'both', 'denominator', 'none'),
       exclude1 = TRUE, vnames = c('labels', 'names'), prUnits = TRUE,
       sep = '/', abbreviate.dimnames = FALSE,
@@ -129,7 +130,7 @@
      conType = c('dot', 'bp', 'raw'), cex.means = 0.5, \dots)
 
 \method{latex}{summary.formula.reverse}(object, title = first.word(deparse(substitute(object))), digits,
-      prn = any(n != N), pctdig = 0,
+      prn = any(n != N), pctdig = 0, what=c('%', 'proportion'),
       npct = c("numerator", "both", "denominator", "none"),
       npct.size = 'scriptsize', Nsize = "scriptsize", exclude1 = TRUE,
       vnames=c("labels", "names"), prUnits = TRUE, middle.bold = FALSE,
@@ -403,6 +404,10 @@ ordTestpo(group, x)
   \item{prnmiss}{
     set to \code{FALSE} to suppress printing counts of missing values for \code{"cross"}
   }
+  \item{what}{
+    for \code{method="reverse"} specifies whether proportions or percentages
+    are to be plotted
+  }
   \item{pctdig}{
     number of digits to the right of the decimal place for printing
     percentages. The default is zero, so percents will be rounded to the
@@ -483,10 +488,6 @@ ordTestpo(group, x)
     \code{extracolheads} argument to \code{latex.default}.  \code{auxCol}
     is filled with blanks when a variable being summarized takes up more
     than one row in the output.  This happens with categorical variables.
-  }
-  \item{what}{
-    for \code{method="reverse"} specifies whether proportions or percentages
-    are to be plotted
   }
   \item{twoway}{
     for \code{method="cross"} with two right hand side variables, \code{twoway}

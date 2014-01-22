@@ -209,8 +209,9 @@ latex.summaryP <- function(object, groups=NULL, file='', round=3,
   slev <- levels(svar)
   nslev <- length(slev)
   for(i in 1 : nslev) {
-    if(nslev > 1) cat('\\begin{center}\\textbf{', slev[i], '}\\end{center}\n',
-                      file=file, append=TRUE)
+    
+    if(nslev > 1) cat('\n\\vspace{1ex}\n\n\\textbf{', slev[i],
+                      '}\n\\vspace{1ex}\n\n', sep='', file=file, append=TRUE)
     x <- object[svar == slev[i], colnames(object) != 'stratvar']
     if(length(groups)) {
     r <- reshape(x, timevar=groups, direction='wide',

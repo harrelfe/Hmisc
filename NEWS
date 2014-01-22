@@ -1,4 +1,4 @@
-Changes in version 3.14-0 (2014-01-10)
+Changes in version 3.14-0 (2014-01-22)
    * Added trans argument to varclus
    * Removed recode, existsFunction functions, under.unix object, survfitKM, functions used only by S-Plus: comment, mem, mulbar.chart, p.sunflowers
    * as.category, is.category, untangle.special: removed

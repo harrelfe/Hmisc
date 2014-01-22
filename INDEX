@@ -75,6 +75,8 @@ latex                   Convert an S object to LaTeX, and Related
                         Utilities
 latexDotchart           Enhanced Dot Chart for LaTeX Picture
                         Environment with epic
+latexTabular            Convert a Data Frame or Matrix to a LaTeX
+                        Tabular
 latexTherm              Create LaTeX Thermometers
 legendfunctions         Legend Creation Functions
 list.tree               Pretty-print the Structure of a Data Object
@@ -88,6 +90,7 @@ mgp.axis                Draw Axes With Side-Specific mgp Parameters
 mhgr                    Miscellaneous Functions for Epidemiology
 minor.tick              Minor Tick Marks
 mtitle                  Margin Titles
+multLines               Plot Multiple Lines
 na.delete               Row-wise Deletion na.action
 na.detail.response      Detailed Response Variable Information
 na.keep                 Do-nothing na.action

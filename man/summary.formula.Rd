@@ -110,7 +110,7 @@
       rowlabel = '', cdec = 2, ncaption = TRUE, \dots)
 
 \method{print}{summary.formula.reverse}(x, digits, prn = any(n != N), pctdig = 0,
-      what=c('%', 'proportion'),
+      what=c('\%', 'proportion'),
       npct = c('numerator', 'both', 'denominator', 'none'),
       exclude1 = TRUE, vnames = c('labels', 'names'), prUnits = TRUE,
       sep = '/', abbreviate.dimnames = FALSE,
@@ -130,7 +130,7 @@
      conType = c('dot', 'bp', 'raw'), cex.means = 0.5, \dots)
 
 \method{latex}{summary.formula.reverse}(object, title = first.word(deparse(substitute(object))), digits,
-      prn = any(n != N), pctdig = 0, what=c('%', 'proportion'),
+      prn = any(n != N), pctdig = 0, what=c('\%', 'proportion'),
       npct = c("numerator", "both", "denominator", "none"),
       npct.size = 'scriptsize', Nsize = "scriptsize", exclude1 = TRUE,
       vnames=c("labels", "names"), prUnits = TRUE, middle.bold = FALSE,

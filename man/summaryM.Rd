@@ -178,10 +178,7 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
     For \code{Key} and \code{Key2} these arguments are passed to \code{key},
     \code{text}, or \code{mtitle}.  For \code{print} methods these are
     optional arguments to \code{print.char.matrix}. For \code{latex} methods
-    these are passed to \code{latex.default}.  One of the most important of
-    these is \code{file}.  Specifying \code{file=""} will cause LaTeX code
-    to just be printed to standard output rather than be stored in a
-    permanent file.
+    these are passed to \code{latex.default}. 
   }
   \item{object}{an object created by \code{summaryM}}
   \item{quant}{
@@ -355,6 +352,11 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
     is the name of the \code{summary} object.  If \code{caption} is specied,
     \code{title} is also used for the table's symbolic reference label. 
   }
+	\item{file}{name of file to write LaTeX code to. Specifying
+      \code{file=""} will cause LaTeX code to just be printed to
+      standard output rather than be stored in a  permanent file.
+		}
+  \item{append}{specify \code{TRUE} to add code to an existing file}
   \item{rowlabel}{
     see \code{latex.default} (under the help file \code{latex})
   }

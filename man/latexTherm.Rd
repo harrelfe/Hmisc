@@ -1,8 +1,10 @@
 \name{latexTherm}
 \alias{latexTherm}
-\title{Create LaTeX Thermometers}
+\alias{latexNeedle}
+\title{Create LaTeX Thermometers and Colored Needles}
 \description{
-Creates a LaTeX picture environment for drawing a series of thermometers
+\code{latexTherm} creates a LaTeX picture environment for drawing a
+series of thermometers 
 whose heights depict the values of a variable \code{y} assumed to be
 scaled from 0 to 1.  This is useful for showing fractions of sample
 analyzed in any table or plot, intended for a legend.  For example, four
@@ -18,22 +20,39 @@ If \code{y} has an attribute \code{"table"}, it is assumed to contain a
 character string with LaTeX code.  This code is used as a tooltip popup
 for PDF using the LaTeX \code{ocgtools} package.  Typically the code
 will contain a \code{tabular} environment.
+
+\code{latexNeedle} is similar to \code{latexTherm} except that vertical
+needles are produced and each may have its own color.  A grayscale box
+is placed around the needles and provides the 0-1 \code{y}-axis
+reference.  Horizontal grayscale grid lines may be drawn.
 }
 \usage{
 latexTherm(y, name, w = 0.075, h = 0.15, spacefactor = 1/2, extra = 0.07,
            file = "", append = TRUE)
+
+latexNeedle(y, col='black', href=0.5, name, w=.045, h=.15,
+            extra=0, file = "", append=TRUE)
 }
 \arguments{
   \item{y}{a vector of 0-1 scaled values.  Boxes and their frames are
 		omitted for \code{NA} elements}
   \item{name}{name of LaTeX macro variable to be defined}
-  \item{w}{width of a single box (thermometer) in inches}
-  \item{h}{height of a single box in inches}
-  \item{spacefactor}{fraction of \code{w} added for extra space between boxes}
+  \item{w}{width of a single box (thermometer) in inches.  For
+    \code{latexNeedle} is the spacing between needles.}
+  \item{h}{height of a single box in inches.  For \code{latexNeedle} is
+    the height of the frame.}
+  \item{spacefactor}{fraction of \code{w} added for extra space between
+    boxes for \code{latexTherm}}
   \item{extra}{extra space in inches to set aside to the right of and
-		above the series of boxes}
-  \item{file}{name of file to which to write LaTeX code.  Default is the console.}
+		above the series of boxes or frame}
+  \item{file}{name of file to which to write LaTeX code.  Default is the
+    console.} 
   \item{append}{set to \code{FALSE} to write over \code{file}}
+	\item{col}{a vector of colors corresponding to positions in \code{y}.
+    \code{col} is repeated if too short.}
+	\item{href}{values of \code{y} (0-1) for which horizontal grayscale
+    reference lines are drawn for \code{latexNeedle}.  Set to
+    \code{NULL} to not draw any.} 
 }
 \author{Frank Harrell}
 \examples{

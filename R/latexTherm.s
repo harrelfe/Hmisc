@@ -4,7 +4,7 @@ latexTherm <- function(y, name, w=.075, h=.15, spacefactor=1/2, extra=.07,
   ct('\\def\\', name, '{\n', append=append)
   tab <- attr(y, 'table')
   if(length(tab)) {
-    ct('\\protect\\ocgminitext[width=3in,bg=white]{\n')
+    ct('\\protect\\tooltipn{\n')
   }
   ct('\\setlength{\\unitlength}{.001in}\n')
   k <- length(y)
@@ -43,7 +43,7 @@ latexNeedle <- function(y, col='black', href=0.5, name, w=.045, h=.15,
   ct('\\def\\', name, '{%\n', append=append)
   tab <- attr(y, 'table')
   if(length(tab)) {
-    ct('\\protect\\ocgminitext[width=3in,bg=white]{%\n')
+    ct('\\protect\\tooltipn{%\n')
   }
   ct('\\setlength{\\unitlength}{.001in}%\n')
   k <- length(y)

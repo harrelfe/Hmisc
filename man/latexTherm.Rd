@@ -18,8 +18,11 @@ preceeded by a backslash.
 
 If \code{y} has an attribute \code{"table"}, it is assumed to contain a
 character string with LaTeX code.  This code is used as a tooltip popup
-for PDF using the LaTeX \code{ocgtools} package.  Typically the code
-will contain a \code{tabular} environment.
+for PDF using the LaTeX \code{ocgtools} package or using style
+\code{tooltips}.  Typically the code will contain a \code{tabular}
+environment.  The user must define a LaTeX macro \code{tooltipn} that
+takes two arguments (original object and pop-up object) that does
+the pop-up.
 
 \code{latexNeedle} is similar to \code{latexTherm} except that vertical
 needles are produced and each may have its own color.  A grayscale box

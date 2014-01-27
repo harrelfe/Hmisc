@@ -22,7 +22,8 @@ sas.get <-
            check.unique.id=TRUE,
            force.single=FALSE,
            pos,
-           uncompress=FALSE)
+           uncompress=FALSE,
+           defaultencoding="latin1")
 {
   if(force.single) stop('force.single does not work under R')
   dates. <- match.arg(dates.)
@@ -91,79 +92,61 @@ sas.get <-
   
   if(missing(libraryName))
     stop("SAS library name is required")
-  
-  cat(macro, sep="\n", file=sasin)
+
+  ## Encoding added by Reinhold Koch 24Jan14 <reinhold.koch@roche.com>
+  cat("%LET DEFAULTE=", defaultencoding, ";\n", sep="", file=sasin)
+  cat(macro, sep="\n", file=sasin, append=TRUE)
 
   sasds.suffix <- c('sd2','sd7','ssd01','ssd02','ssd03','ssd04','sas7bdat') 
   ## 22Oct00
 
-  if(libraryName == "") {
-    if(uncompress) {  # 22Oct00
-      unix.file <- paste(member, sasds.suffix, sep=".")
-      if(any(fe <- fexists(paste(unix.file,".gz",sep=""))))
-        system(paste("gunzip ",attr(fe,'which'),'.gz',sep=''))
-      else if(any(fe <- fexists(paste(unix.file,".Z",sep=""))))
-        system(paste("uncompress ",attr(fe,'which'),'.Z',sep=''))
-    }
+  if(libraryName == "") libraryName <- "."
+  if(!file.is.dir(libraryName))
+    stop(paste(sep = "", "library, \"", libraryName, 
+               "\", is not a directory"))
 
-    cat("%sas_get(", member, ",\n",
-        "  ", sasout1, ",\n",
-        "  ", sasout2, ",\n",
-        "  ", sasout3, ",\n",
-        "  ", sasout4, ",\n",
-        "  dates=", dates., ",\n",
-        "  vars=",  varstring, ",\n",
-        "  ifs=",   ifs, ",\n",
-        "  formats=", as.integer(formats), "\n,",
-        "  specmiss=", as.integer(special.miss), ");\n",
-        file = sasin, append = TRUE, sep = "")
-  } else {
-    if(!file.is.dir(libraryName))
-      stop(paste(sep = "", "library, \"", libraryName, 
-                 "\", is not a directory"))
-    
-    unix.file <- file.path(libraryName, paste(member, sasds.suffix, sep="."))
+  unix.file <- file.path(libraryName, paste(member, sasds.suffix, sep="."))
 
-    ##23Nov00
-    if(uncompress) {  #22Oct00
-      if(any(fe <- fexists(paste(unix.file,".gz",sep=""))))
-        system(paste("gunzip ", attr(fe,'which'),'.gz',sep=''))
-      else if(any(fe <- fexists(paste(unix.file,".Z",sep=""))))
-        system(paste("uncompress ",attr(fe,'which'),'.Z',sep=''))
-    }
-    
-    if(!any(fe <- fexists(unix.file))) {
-      stop(paste(sep = "", "Unix file, \"",
-                 paste(unix.file,collapse=' '), 
-                 "\", does not exist"))
-    } else {
-      file.name <- attr(fe,'which')
-      if(!file.is.readable(file.name)) {
-        stop(paste(sep = "", 
-                   "You do not have read permission for Unix file, \"",
-                   file.name, "\""))   # 22Oct00
-      }
-    }
-    
-    cat("libname temp '", libraryName, "';\n", file = sasin, append = TRUE,
-        sep = "")
-    
-    ## format.library should contain formats.sct containing user defined
-    ## formats used by this dataset.  It must be present.
-    cat("libname library '", format.library, "';\n", file = sasin,
-        append = TRUE, sep = "")
-    cat("%sas_get(temp.", member, ",\n",
-        "  ", sasout1, ",\n",
-        "  ", sasout2, ",\n",
-        "  ", sasout3, ",\n",
-        "  ", sasout4, ",\n",
-        "  dates=", dates., ",\n",
-        "  vars=",  varstring, ",\n",
-        "  ifs=",   ifs, ",\n",
-        "  formats=", as.integer(formats), "\n,",
-        "  specmiss=", as.integer(special.miss), ");\n",
-        file = sasin, append = TRUE, sep = "")
+  ##23Nov00
+  if(uncompress) {  #22Oct00
+    if(any(fe <- fexists(paste(unix.file,".gz",sep=""))))
+      system(paste("gunzip ", attr(fe,'which'),'.gz',sep=''))
+    else if(any(fe <- fexists(paste(unix.file,".Z",sep=""))))
+      system(paste("uncompress ",attr(fe,'which'),'.Z',sep=''))
   }
+
+  if(!any(fe <- fexists(unix.file))) {
+    stop(paste(sep = "", "Unix file, \"",
+               paste(unix.file,collapse=' '), 
+               "\", does not exist"))
+  } else {
+    file.name <- attr(fe,'which')
+    if(!file.is.readable(file.name)) {
+      stop(paste(sep = "", 
+                 "You do not have read permission for Unix file, \"",
+                 file.name, "\""))   # 22Oct00
+    }
+  }
+    
+  cat("libname temp '", libraryName, "';\n", file = sasin, append = TRUE,
+      sep = "")
+  
+  ## format.library should contain formats.sct containing user defined
+  ## formats used by this dataset.  It must be present.
+  cat("libname library '", format.library, "';\n", file = sasin,
+      append = TRUE, sep = "")
+  cat("%sas_get(temp.", member, ",\n",
+      "  ", sasout1, ",\n",
+      "  ", sasout2, ",\n",
+      "  ", sasout3, ",\n",
+      "  ", sasout4, ",\n",
+      "  dates=", dates., ",\n",
+      "  vars=",  varstring, ",\n",
+      "  ifs=",   ifs, ",\n",
+      "  formats=", as.integer(formats), "\n,",
+      "  specmiss=", as.integer(special.miss), ");\n",
+      file = sasin, append = TRUE, sep = "")
+
   
   status <- system(paste(shQuote(sasprog), shQuote(sasin), "-log",
                          shQuote(log.file)), intern=FALSE)
@@ -612,10 +595,14 @@ sas.get.macro <-
     "\tspecmiss- 0 (default).  Set to 1 to write a data file on temp4 with",
     "\t\t  the fields: variable name, special missing value code,", 
     "\t\t  observation number", 
+    "\tdefencod - default encoding of dataset if it does not specify",
     "                                                                              */",
     "%macro sas_get(dataset,  temp1, temp2, temp3, temp4, dates=SAS, vars=, ifs=, ",
-    "\tformats=0, specmiss=0);", 
+    "\tformats=0, specmiss=0, defencod=&DEFAULTE);", 
     "OPTIONS NOFMTERR;",
+    "%LET DSID=%SYSFUNC(open(&dataset,i));",
+    "%LET ENCODE=%SCAN(%SYSFUNC(ATTRC(&DSID,ENCODING)),1);",
+    "%IF &ENCODE=Default %THEN %LET dataset=&dataset(encoding=&defencod);",
     "%IF %QUOTE(&temp1)=  %THEN %LET temp1=/tmp/file.1;", 
     "%IF %QUOTE(&temp2)=  %THEN %LET temp2=/tmp/file.2;", 
     "%IF %QUOTE(&temp3)=  %THEN %LET temp3=/tmp/file.3;", 

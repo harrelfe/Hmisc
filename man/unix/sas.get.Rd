@@ -48,7 +48,7 @@ sas.get(libraryName, member, variables=character(0), ifs=character(0),
      temp=tempfile("SaS"), formats=TRUE, recode=formats,
      special.miss=FALSE, sasprog="sas", 
      as.is=.5, check.unique.id=TRUE, force.single=FALSE,
-     pos, uncompress=FALSE)
+     pos, uncompress=FALSE, defaultencoding="latin1")
 
 is.special.miss(x, code)
 
@@ -267,6 +267,9 @@ code.levels(object)
     against.  If \code{code} is omitted, \code{is.special.miss} will return
     a \code{TRUE} for each observation that has any special missing value.
   }
+  \item{defaultencoding}{
+    encoding to assume if the SAS dataset does not specify one. Defaults to "latin1".
+  }
   \item{object}{
     a variable in a data frame created by \code{sas.get}
   }
@@ -335,6 +338,8 @@ code.levels(object)
   Bill Dunlap, University of Washington and Insightful Corporation
   \cr
   Michael W. Kattan, Cleveland Clinic Foundation
+  \cr
+  Reinhold Koch (encoding)
 }
 \references{
   \acronym{SAS} Institute Inc. (1990).

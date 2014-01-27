@@ -697,7 +697,8 @@ latex.summaryM <-
     else {
       legend <- character()
       if(any(type==2)) {
-        legend <- paste("\\noindent {\\", outer.size, " $a$\\ }{", bld,
+        legend <- paste("\\\\\\begin{minipage}[t]{3.75in}{\\", outer.size,
+                        " $a$\\ }{", bld,
                         "$b$\\ }{\\", outer.size,
                         " $c$\\ } represent the lower quartile $a$, the median $b$, and the upper quartile $c$\\ for continuous variables.",
                         if(prmsd) '~~$x\\pm s$ represents $\\bar{X}\\pm 1$ SD.'
@@ -721,6 +722,7 @@ latex.summaryM <-
                    else paste(paste('\\textsuperscript{\\normalfont ',
                                     1:length(testUsed),'}',testUsed,
                                     ' test',sep=''),collapse='; '))
+      legend <- c(legend, '\\end{minipage}%')
 
     }
 

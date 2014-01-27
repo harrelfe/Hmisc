@@ -709,13 +709,13 @@ latex.default <-
             sep='')
     
     latex.end <-
-      paste(paste(sl,"end{tabular}\n", sep = ""),
+      paste(paste(sl,"end{tabular}", sep = ""),
             if(center == 'center')
             paste(sl,"end{center}\n", sep=""),
             if(caption.loc == 'bottom' && !missing(caption))
             paste(caption,'\n'),
             if(length(insert.bottom))
-            paste(insert.bottom, collapse='\\\\'),
+            paste(insert.bottom, collapse=' '),  # was collapse='\\\\'
             if(length(size)) paste('}\n'),
             if(table.env) paste(sl, "end{table}\n", sep=""),
             if(landscape) paste(sl, "end{landscape}\n", sep=""),

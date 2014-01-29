@@ -128,6 +128,12 @@ Png(9)
 plot(s, groups='region', panel=mbarclPanel, paneldoesgroups=TRUE)
 dev.off()
 
+# Similar but use half-violin plots
+s <- summaryS(sbp + dbp ~ days + region, data=d)
+Png('9v')
+plot(s, groups='region', panel=medvPanel, paneldoesgroups=TRUE)
+dev.off()
+
 ## Show Wilson confidence intervals for proportions, and confidence
 ## intervals for difference in two proportions
 g <- function(y) {

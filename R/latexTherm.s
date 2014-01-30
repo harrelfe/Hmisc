@@ -37,7 +37,7 @@ latexTherm <- function(y, name, w=.075, h=.15, spacefactor=1/2, extra=.07,
      '}\n')
 }
 
-latexNeedle <- function(y, col='black', href=0.5, name, w=.045, h=.15,
+latexNeedle <- function(y, col='black', href=0.5, name, w=.05, h=.15,
                         extra=0, file='', append=TRUE) {
   ct <- function(..., append=TRUE) cat(..., file=file, append=append, sep='')
   ct('\\def\\', name, '{%\n', append=append)
@@ -65,7 +65,7 @@ latexNeedle <- function(y, col='black', href=0.5, name, w=.045, h=.15,
 
   ## Draw vertical needles
   x <- w / 2
-  ct('\\linethickness{1.0pt}%\n')
+  ct('\\linethickness{1.8pt}%\n')
   for(i in 1 : k) {
     b <- y[i]
     if(! is.na(b)) { 

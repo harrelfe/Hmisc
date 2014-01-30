@@ -33,7 +33,7 @@ reference.  Horizontal grayscale grid lines may be drawn.
 latexTherm(y, name, w = 0.075, h = 0.15, spacefactor = 1/2, extra = 0.07,
            file = "", append = TRUE)
 
-latexNeedle(y, col='black', href=0.5, name, w=.045, h=.15,
+latexNeedle(y, col='black', href=0.5, name, w=.05, h=.15,
             extra=0, file = "", append=TRUE)
 }
 \arguments{

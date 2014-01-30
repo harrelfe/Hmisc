@@ -159,7 +159,7 @@ plot.summaryP <-
   scal <- list(y='free', rot=0)
   scal$x <- if(length(text.at)) {
     at <- pretty(xlim)
-    list(limits=range(c(xlim, text.at)), at=pretty(xlim))
+    list(limits=range(c(xlim, text.at)), at=at[at >= -0.0001 & at <= 1.0001])
   } else list(limits=xlim)
   d <- if(!length(groups))
     dotplot(form, data=X, scales=scal, panel=pan,

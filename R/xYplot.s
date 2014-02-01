@@ -543,7 +543,6 @@ xYplot <-
 
   ## Note: c(list(something), NULL) = list(something)
   ## The following was c(list(formula=formula,...,panel=panel),if()c(),...)
-
   do.call("xyplot", c(list(x = formula, data=data, prepanel=prepanel,
                            panel=panel),
                       if(length(ylab))list(ylab=ylab),

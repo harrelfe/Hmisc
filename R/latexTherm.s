@@ -65,7 +65,7 @@ latexNeedle <- function(y, col='black', href=0.5, name, w=.05, h=.15,
 
   ## Draw vertical needles
   x <- w / 2
-  ct('\\linethickness{1.8pt}%\n')
+  ct('\\linethickness{1.55pt}%\n')
   for(i in 1 : k) {
     b <- y[i]
     if(! is.na(b)) { 

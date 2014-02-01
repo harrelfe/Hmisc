@@ -51,7 +51,7 @@ nobsY <- function(formula, group=NULL,
     matrix(NA, ncol=nY, nrow=length(glev), dimnames=list(glev, ylab))
   }
 
-  for(i in 1 : nY) {
+  if(nY > 0) for(i in 1 : nY) {
     y <- Y[[i]]
     ## is.na.Surv reduces to vector but need to keep as matrix
     notna <- if(is.matrix(y)) {

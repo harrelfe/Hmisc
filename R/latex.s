@@ -92,8 +92,7 @@ format.df <- function(x,
   if((!length(digits))+(!length(dec))+(!length(rdec))+(!length(cdec)) < 3)
     stop('only one of digits, dec, rdec, cdec may be given')
   
-  ##if(length(digits)) .Options$digits    6Aug00 what was that?
-  if(is.null(digits) && is.null(dec) && is.null(rdec) && is.null(cdec)) {
+  if(!length(digits) && !length(dec) && !length(rdec) && !length(cdec)) {
     digits <- 15
   }
 
@@ -102,75 +101,34 @@ format.df <- function(x,
     on.exit(options(oldopt))
   }
   
-
-  ## For now nsmall and scientific are ignored in R  25May01
-  formt <-
-    function(x, decimal.mark='.', nsmall=0, scientific=c(-4,4), digits=NULL)
-      {
-        x <- format(x, nsmall=nsmall, decimal.mark=decimal.mark, digits=digits)
-        if(decimal.mark!='.')
-          x <- gsub('\\.',decimal.mark,x)
-        
-        x
-      }
+  formt <- function(x, decimal.mark='.', nsmall=0,
+                    scientific=c(-4,4), digits=NULL, na.blank=FALSE) {
+    y <- format(x, nsmall=nsmall, decimal.mark=decimal.mark, digits=digits)
+    if(decimal.mark!='.') y <- gsub('\\.', decimal.mark, y)
+    if(na.blank) y <- ifelse(is.na(x), '', y)
+    y
+  }
   
-  dot <-
-    if(cdot==TRUE && numeric.dollar==TRUE) {
-      paste(sl,sl,'cdotp',sl,sl,'!',sep='')
-    }
-    else {
-      '.'
-    }
+  dot <- if(cdot==TRUE && numeric.dollar==TRUE)
+    paste(sl,sl,'cdotp',sl,sl,'!',sep='')
+  else '.'
   
-  decimal.point <- if(cdot==TRUE && dcolumn==TRUE) {
+  decimal.point <- if(cdot==TRUE && dcolumn==TRUE)
     paste(sl,'cdot',sep='')
-  } else {
-    dot
-  }
-  
-  if(is.data.frame(x))
-    x <- unclass(x)
-  
-  xtype <-
-    if(is.list(x))
-      1
-    else if(length(dim(x)))
-      2
-    else
-      3
-  
-  ##Following changed as above 10Mar01
-  ##  atx <- attributes(x)
-  ##  cl <- atx$class
-  ##  if(length(cl) && (idf <- any(cl=='data.frame'))) 
-  ##    attr(x,'class') <- cl[cl!='data.frame']
-  ##  xtype <- if(is.list(x))1 else if(length(atx$dim))2 else 3
-  
-  ncx <-
-    if(xtype==1)
-      length(x)
-    else if(xtype==2)
-      ncol(x)
-    else
-      1
-  
-  nams <-
-    if(xtype==1)
-      names(x)
-    else if(xtype==2)
-      dimnames(x)[[2]]
-    else
-      ''
+  else dot
 
+  if(is.data.frame(x)) x <- unclass(x)
   
-  ## Added Check to see that if the user passed col.just into format.df
-  ## that the length of col.just if >= ncx 29apr05
-  if(!missing(col.just) && (length(col.just) < ncx)) {
+  xtype <- if(is.list(x)) 1 else if(length(dim(x))) 2 else 3
+  
+  ncx <- if(xtype==1) length(x) else if(xtype==2) ncol(x) else 1
+  
+  nams <- if(xtype==1) names(x) else if(xtype==2) dimnames(x)[[2]] else ''
+
+  if(!missing(col.just) && (length(col.just) < ncx))
     stop('col.just needs the same number of elements as number of columns')
-  }
   
-  if(!length(nams))
-    nams <- rep('', ncx)  ## 19apr03
+  if(!length(nams)) nams <- rep('', ncx)
   
   nrx <-
     if(xtype==1) {
@@ -191,7 +149,7 @@ format.df <- function(x,
     else
       names(x)
   
-  if(length(dec)+length(rdec)+length(cdec)==0)
+  if(length(dec) + length(rdec) + length(cdec) == 0)
     rtype <- 1
   
   if(length(rdec)) {
@@ -201,13 +159,13 @@ format.df <- function(x,
   
   if(length(dec)) {
     rtype <- 3
-    if(length(dec)==1) cdec <- rep(dec, ncx)
+    if(length(dec) == 1) cdec <- rep(dec, ncx)
   }
   
   if(length(cdec)) rtype <- 4
   
-  cx <- NULL
-  nam <- NULL
+  cx    <- NULL
+  nam   <- NULL
   cjust <- NULL
   
   if(blank.dot) sas.char <- function(x) {
@@ -231,9 +189,9 @@ format.df <- function(x,
 
   for(j in 1:ncx) {
     xj <-
-      if(xtype==1)
+      if(xtype == 1)
         x[[j]]
-      else if(xtype==2)
+      else if(xtype == 2)
         x[,j]
       else
         x
@@ -242,12 +200,12 @@ format.df <- function(x,
     if(testDateTime(xj)) num <- FALSE
     
     ## using xtype avoids things like as.matrix changing special characters 
-    ncxj <- max(1,dim(xj)[2], na.rm=TRUE)
+    ncxj <- max(1, dim(xj)[2], na.rm=TRUE)
 
-    for(k in 1:ncxj) {
+    for(k in 1 : ncxj) {
       xk <-
         if(ld <- length(dim(xj))==2)
-          xj[,k]
+          xj[, k]
         else
           xj
       
@@ -279,29 +237,29 @@ format.df <- function(x,
           if(length(col.just))
             col.just[j]
           else 'r'
-        
+
         if(rtype==1)
-          cxk <- formt(xk, decimal.mark=dot, scientific=scientific, digits=digits)
+          cxk <- formt(xk, decimal.mark=dot, scientific=scientific,
+                       digits=digits, na.blank=na.blank)
         else if(rtype==3) {
-          cxk <- character(nrx)  ## corrected 4Nov97 Eric Bissonette
+          cxk <- character(nrx)
           for(i in 1:nrx)
             cxk[i] <-
               if(is.na(dec[i,j]))
-                formt(xk[i], decimal.mark=dot, scientific=scientific, digits=digits)
+                formt(xk[i], decimal.mark=dot, scientific=scientific,
+                      digits=digits, na.blank=na.blank)
               else
                 formt(round(xk[i], dec[i,j]), decimal.mark=dot,
-                      digits=digits, nsmall=dec[i,j], scientific=scientific)
-          ## 12Aug99
-        } else if(rtype==4)  # 12Aug99
+                      digits=digits, nsmall=dec[i,j], scientific=scientific,
+                      na.blank=na.blank)
+        } else if(rtype==4)
           cxk <-
             if(is.na(cdec[j]))
-              formt(xk, decimal.mark=dot, scientific=scientific, digits=digits)
+              formt(xk, decimal.mark=dot, scientific=scientific, digits=digits,
+                    na.blank=na.blank)
             else
               formt(round(xk, cdec[j]), decimal.mark=dot, nsmall=cdec[j],
-                    digits=digits, scientific=scientific)
-        
-        if(na.blank)
-          cxk[is.na(xk)] <- ''
+                    digits=digits, scientific=scientific, na.blank=na.blank)
         
         if(na.dot)
           cxk[is.na(xk)] <- '.'  # SAS-specific
@@ -332,6 +290,7 @@ format.df <- function(x,
         } else {
           cxk <- cleanLatex(xk)
         }
+        if(na.blank) cxk <- ifelse(is.na(xk), '', cxk)
       }
       
       cx <- cbind(cx, cxk)
@@ -410,7 +369,7 @@ latex.default <-
   if (missing(rowname))
     rowname <- dimnames(cx)[[1]]
   
-  if (is.null(colheads))
+  if (!length(colheads))
     colheads <- dimnames(cx)[[2]]
 
   col.just <- attr(cx,"col.just")
@@ -483,7 +442,7 @@ latex.default <-
 
   ## Check to make sure the dimensions of the cell formats
   ## match the dimensions of the object to be formatted.
-  if (!is.null(cellTexCmds) &
+  if (length(cellTexCmds) &
       !(all(dim(cx) == dim(cellTexCmds)) &
         length(dim(cx)) == length(dim(cellTexCmds)))) {
     msg <- "The dimensions of cellTexCmds must be:"
@@ -497,7 +456,7 @@ latex.default <-
   
   ## If there are column groups, add a blank column
   ## of formats between the groups.
-  if (length(cgroup) & !is.null(cellTexCmds)) {
+  if (length(cgroup) & length(cellTexCmds)) {
     my.index <- split(1:NCOL(cellTexCmds), rep(cumsum(n.cgroup), times=n.cgroup))
     new.index <- NULL
     new.col <- dim(cx)[2] + 1
@@ -508,15 +467,15 @@ latex.default <-
     cellTexCmds <- cbind(cellTexCmds, "")[, new.index]
   }
 
-  if (!is.null(cellTexCmds) | !is.null(rownamesTexCmd)) {
+  if (length(cellTexCmds) | length(rownamesTexCmd)) {
     ## LaTeX commands have been specified for either the rownames or
     ## the cells.
     ## Fake rownamesTexCmd if it is NULL and if rowname exists.
-    if (is.null(rownamesTexCmd) & !is.null(rowname))
+    if (!length(rownamesTexCmd) & length(rowname))
       rownamesTexCmd <- rep("", nr)
     
     ## Fake cellTexCmds if it is NULL.
-    if (is.null(cellTexCmds)) {
+    if (!length(cellTexCmds)) {
       cellTexCmds <- rep("", dim(cx)[1] * dim(cx)[2])
       dim(cellTexCmds) <- dim(cx)
     }
@@ -564,7 +523,7 @@ latex.default <-
       cgroupxx <- c(cgroupxx, "", cgroup[i])
       n.cgroupxx <- c(n.cgroupxx, 1, n.cgroup[i])
       colheadsxx <- c(colheadsxx, "", colheads[col.subs[[i]]])
-      if(!is.null(extracolheads)) {
+      if(length(extracolheads)) {
         extracolheadsxx <- c(extracolheadsxx, "",
                              extracolheads[col.subs[[i]]])
       }
@@ -754,7 +713,7 @@ latex.default <-
     cvbar[1] <- paste(vbar, cvbar[1], sep="")
     cvbar[-length(cvbar)] <- paste(cvbar[-length(cvbar)], vbar, sep="")
     slmc <- paste(sl, "multicolumn{", sep="")
-    if (!is.null(cgroupTexCmd))
+    if (length(cgroupTexCmd))
       labs <- paste(sl, cgroupTexCmd, " ", cgroup, sep="")
     else
       labs <- cgroup
@@ -784,7 +743,7 @@ latex.default <-
     slmc1 <- paste(sl, "multicolumn{1}{", sep="")
 
     labs <- colheads
-    if (!is.null(colnamesTexCmd))
+    if (length(colnamesTexCmd))
       labs <- paste(sl, colnamesTexCmd, " ", labs, sep="")
                                         # DRW 12apr05.
     header <- NULL
@@ -834,7 +793,7 @@ latex.default <-
       cat(sl,"caption[]{\\em (continued)} ", eol,
           sep="",file=file, append=file!='')
       cat(midrule, sep="",file=file, append=file!='')
-      if(!is.null(cgroupheader))
+      if(length(cgroupheader))
         cat(cgroupheader, file=file, append=file!='')
       cat(header, file=file, sep="&", append=file!='')
       cat(eog, midrule, sl, "endhead", '\n', midrule,
@@ -861,7 +820,7 @@ latex.default <-
       if(!length(rgroup)) {
         rgroup <- rep("",length(n.rgroup))
       } else {
-        if (!is.null(rgroupTexCmd)) {
+        if (length(rgroupTexCmd)) {
           rgroup <- paste("{",sl, rgroupTexCmd, " ", rgroup,"}",sep="") 
         } else rgroup <- paste("{", rgroup,"}",sep="") 
       }
@@ -901,7 +860,7 @@ latex.default <-
         ## Loop through the columns of the object
         ## write each value (and it's format if there
         ## is one). 
-        if (!is.null(rcellTexCmds)) {
+        if (length(rcellTexCmds)) {
           num.cols <- ncol(cx)
           for (colNum in 1:num.cols) {
             cat(rcellTexCmds[i, colNum], " ", cx[i, colNum],

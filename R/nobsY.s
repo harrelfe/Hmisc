@@ -9,6 +9,8 @@ nobsY <- function(formula, group=NULL,
   assign(envir = en, 'id', function(x) x)
   assign(envir = en, 'pending', function(x) x)
   assign(envir = en, 'randomized', function(x) x)
+  assign(envir = en, 'cond',
+         function(x, label, condition) rep(1, length(condition)))
   marg <- length(data) && '.marginal.' %in% names(data)
   if(marg) formula <- update(formula, .~. + .marginal.)
   mf <- if(length(subset))

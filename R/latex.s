@@ -670,14 +670,13 @@ latex.default <-
     latex.end <-
       paste(paste(sl,"end{tabular}", sep = ""),
             if(center == 'center')
-            paste(sl,"end{center}\n", sep=""),
-            if(caption.loc == 'bottom' && !missing(caption))
-            paste(caption,'\n'),
+            paste(sl,"end{center}", sep=""),
+            if(caption.loc == 'bottom' && !missing(caption)) caption,
             if(length(insert.bottom))
-            paste(insert.bottom, collapse=' '),  # was collapse='\\\\'
-            if(length(size)) paste('}\n'),
-            if(table.env) paste(sl, "end{table}\n", sep=""),
-            if(landscape) paste(sl, "end{landscape}\n", sep=""),
+            paste(insert.bottom, collapse=' '),
+            if(length(size)) paste('}'),
+            if(table.env) paste(sl, "end{table}", sep=""),
+            if(landscape) paste(sl, "end{landscape}", sep=""),
             sep='')
   } else {
     latex.begin <-
@@ -698,10 +697,10 @@ latex.default <-
     
     latex.end <- paste(if(caption.loc=='bottom' && !missing(caption))
                        paste(caption, eog),
-                       paste(sl,"end{longtable}\n", sep=""),
-                       if(length(size)) '}\n',
+                       paste(sl,"end{longtable}", sep=""),
+                       if(length(size)) '}',
                        if(landscape)
-                       paste(sl,"end{landscape}\n",sep=""),
+                       paste(sl,"end{landscape}",sep=""),
                        sep='')
   }
   
@@ -890,7 +889,7 @@ latex.default <-
     }
   }
 
-  cat(latex.end, file=file, sep="\n", append=file!='')
+  cat(latex.end, file=file, sep='\n', append=file != '')
   sty <- c("longtable"[longtable], "here"[here], "dcolumn"[dcolumn],
            "ctable"[ctable], "booktabs"[booktabs],
            if(landscape && !ctable) "lscape")

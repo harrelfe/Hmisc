@@ -358,8 +358,13 @@ latex.default <-
            landscape=FALSE,
            multicol=TRUE, ## to remove multicolumn if no need
            math.row.names=FALSE, math.col.names=FALSE,
+           hyperref=NULL,
            ...)
 {
+  if(length(hyperref) && ! table.env)
+    stop('must have table.env=TRUE when specifying hyperref')
+  if(length(hyperref)) hyperref <- sprintf('\\hyperref[%s]{', hyperref)
+  
   center <- match.arg(center)
   caption.loc <- match.arg(caption.loc)
   cx <- format.df(object, dcolumn=dcolumn, na.blank=na.blank,
@@ -649,7 +654,7 @@ latex.default <-
       paste(if(landscape)
             paste(sl, "begin{landscape}",sep=""),
             if(table.env)
-            paste(sl, "begin{table}",
+            paste(hyperref, sl, "begin{table}",
                   if(here) "[H]"
                   else paste('[',where,']',sep=''),
                   "\n", sep=""),
@@ -675,7 +680,8 @@ latex.default <-
             if(length(insert.bottom))
             paste(insert.bottom, collapse=' '),
             if(length(size)) paste('}'),
-            if(table.env) paste(sl, "end{table}", sep=""),
+            if(table.env) paste(sl, "end{table}",
+                                if(length(hyperref)) '}', sep=""),
             if(landscape) paste(sl, "end{landscape}", sep=""),
             sep='')
   } else {

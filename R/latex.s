@@ -354,7 +354,7 @@ latex.default <-
            insert.top=NULL,
            first.hline.double=!(booktabs | ctable),
            where='!tbp', size=NULL,
-           center=c('center','centering','none'),
+           center=c('center','centering','centerline','none'),
            landscape=FALSE,
            multicol=TRUE, ## to remove multicolumn if no need
            math.row.names=FALSE, math.col.names=FALSE,
@@ -662,11 +662,11 @@ latex.default <-
             if(caption.loc=='top' && !missing(caption))
             paste(caption, "\n"),
             if(center == 'center')
-             paste(sl, "begin{center}\n", sep="")
-            else {
-              if (center == 'centering')
-                paste(sl,"centering\n", sep="")
-            },
+             paste(sl, "begin{center}\n", sep=""),
+            if (center == 'centering')
+             paste('{', sl, 'centering\n', sep=''),
+            if(center == 'centerline')
+             paste(sl, 'centerline{', sep=''),
             intop(),
             paste(hyperref, sl,"begin{tabular}{", tabular.cols, "}\n",
                   toprule, sep=""),
@@ -675,7 +675,9 @@ latex.default <-
     latex.end <-
       paste(paste(sl,"end{tabular}", if(length(hyperref)) '}', sep = ""),
             if(center == 'center')
-            paste(sl,"end{center}", sep=""),
+             paste(sl, 'end{center}', sep=''),
+            if(center == 'centering')  ' \\\\}',
+            if(center == 'centerline') '}',
             if(caption.loc == 'bottom' && !missing(caption)) caption,
             if(length(insert.bottom))
             paste(insert.bottom, collapse=' '),

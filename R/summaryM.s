@@ -697,7 +697,7 @@ latex.summaryM <-
     else {
       legend <- character()
       if(any(type==2)) {
-        legend <- paste("\\\\\\begin{minipage}[t]{3.75in}{\\", outer.size,
+        legend <- paste("\n\\begin{minipage}[t]{3.75in}{\\", outer.size,
                         " $a$\\ }{", bld,
                         "$b$\\ }{\\", outer.size,
                         " $c$\\ } represent the lower quartile $a$, the median $b$, and the upper quartile $c$\\ for continuous variables.",

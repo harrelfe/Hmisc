@@ -654,7 +654,7 @@ latex.default <-
       paste(if(landscape)
             paste(sl, "begin{landscape}",sep=""),
             if(table.env)
-            paste(hyperref, sl, "begin{table}",
+            paste(sl, "begin{table}",
                   if(here) "[H]"
                   else paste('[',where,']',sep=''),
                   "\n", sep=""),
@@ -668,20 +668,19 @@ latex.default <-
                 paste(sl,"centering\n", sep="")
             },
             intop(),
-            paste(sl,"begin{tabular}{", tabular.cols, "}\n",
+            paste(hyperref, sl,"begin{tabular}{", tabular.cols, "}\n",
                   toprule, sep=""),
             sep='')
     
     latex.end <-
-      paste(paste(sl,"end{tabular}", sep = ""),
+      paste(paste(sl,"end{tabular}", if(length(hyperref)) '}', sep = ""),
             if(center == 'center')
             paste(sl,"end{center}", sep=""),
             if(caption.loc == 'bottom' && !missing(caption)) caption,
             if(length(insert.bottom))
             paste(insert.bottom, collapse=' '),
             if(length(size)) paste('}'),
-            if(table.env) paste(sl, "end{table}",
-                                if(length(hyperref)) '}', sep=""),
+            if(table.env) paste(sl, "end{table}", sep=""),
             if(landscape) paste(sl, "end{landscape}", sep=""),
             sep='')
   } else {

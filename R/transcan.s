@@ -212,7 +212,6 @@ transcan <-
       } else {
         fillin[i] <- if(usefill==2) imp.con[i]
                      else median(y[!is.na(y)])
-        
         R[[i]] <- rcspline.eval(y, nk=nk, inclx=TRUE)
         parms[[i]] <- attr(R[[i]], "knots")
         if(usefill>0)

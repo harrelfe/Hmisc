@@ -64,7 +64,7 @@ rcspline.eval <- function(x, knots=NULL, nk=5, inclx=FALSE, knots.only=FALSE,
       if(f[length(f)] >= fractied) {
         lastknot <- max(xx[xx < max(xx)])
         xx <- xx[xx < lastknot]
-        nke <- nke -1
+        nke <- nke - 1
         overrideLast <- TRUE
       }
     }
@@ -78,9 +78,16 @@ rcspline.eval <- function(x, knots=NULL, nk=5, inclx=FALSE, knots.only=FALSE,
         knots <- quantile(xx, p)
         if(length(unique(knots)) < min(nke, 3)) {
           knots <- quantile(xx, seq(outer, 1.0 - outer, length=2 * nke))
+          if(length(firstknot) && length(unique(knots)) < 3) {
+            midval <- if(length(firstknot) && length(lastknot))
+              (firstknot + lastknot) / 2. else median(xx)
+            knots <- sort(c(firstknot, midval,
+                            if(length(lastknot)) lastknot
+                            else quantile(xx, 1.0 - outer) ))
+            }
           if((nu <- length(unique(knots))) < 3) {
             cat("Fewer than 3 unique knots.  Frequency table of variable:\n")
-            print(table(xx))
+            print(table(x))
             stop()
           }
         

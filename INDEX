@@ -77,7 +77,7 @@ latexDotchart           Enhanced Dot Chart for LaTeX Picture
                         Environment with epic
 latexTabular            Convert a Data Frame or Matrix to a LaTeX
                         Tabular
-latexTherm              Create LaTeX Thermometers
+latexTherm              Create LaTeX Thermometers and Colored Needles
 legendfunctions         Legend Creation Functions
 list.tree               Pretty-print the Structure of a Data Object
 makeNstr                creates a string that is a repeat of a

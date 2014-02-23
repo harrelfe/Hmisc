@@ -9,6 +9,7 @@ Changes in version 3.14-1 (2014-03-01)
    * latex: removed newlines when ending environments, added hyperref argument
    * latex: added center='centerline', fixed 'centering'
    * upData, cleanup.import, dataframeReduce: changed argument pr to print
+   * rcspline.eval: added more evasive action in case of extreme ties
 
 Changes in version 3.14-0 (2014-01-22)
    * Added trans argument to varclus

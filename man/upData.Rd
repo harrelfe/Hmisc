@@ -47,16 +47,16 @@
 \usage{
 cleanup.import(obj, labels, lowernames=FALSE, 
                force.single=TRUE, force.numeric=TRUE, rmnames=TRUE,
-               big=1e20, sasdict, pr, datevars=NULL, datetimevars=NULL,
+               big=1e20, sasdict, print, datevars=NULL, datetimevars=NULL,
                dateformat='\%F',
                fixdates=c('none','year'), charfactor=FALSE)
 
 upData(object, \dots, 
-       rename, drop, labels, units, levels, force.single=TRUE,
+       rename, drop, keep, labels, units, levels, force.single=TRUE,
        lowernames=FALSE, caplabels=FALSE, moveUnits=FALSE,
-       charfactor=FALSE, pr=TRUE)
+       charfactor=FALSE, print=TRUE)
 
-dataframeReduce(data, fracmiss=1, maxlevels=NULL,  minprev=0, pr=TRUE)
+dataframeReduce(data, fracmiss=1, maxlevels=NULL,  minprev=0, print=TRUE)
 }
 \arguments{
   \item{obj}{a data frame or list}
@@ -103,11 +103,11 @@ dataframeReduce(data, fracmiss=1, maxlevels=NULL,  minprev=0, pr=TRUE)
     attributes to the new data frame specifying the original SAS dataset
     name and label.
   }
-  \item{pr}{
+  \item{print}{
     set to \code{TRUE} or \code{FALSE} to force or prevent printing of the current
     variable number being processed.  By default, such messages are printed if the
     product of the number of variables and number of observations in \code{obj}
-    exceeds 500,000.  For \code{dataframeReduce} set \code{pr} to
+    exceeds 500,000.  For \code{dataframeReduce} set \code{print} to
     \code{FALSE} to suppress printing information about dropped or
 	modified variables.  Similar for \code{upData}.}
   \item{datevars}{character vector of names (after \code{lowernames} is
@@ -149,12 +149,12 @@ dataframeReduce(data, fracmiss=1, maxlevels=NULL,  minprev=0, pr=TRUE)
     \code{gender}, specify \code{rename=list(age="Age", sex="gender")} or
     \code{rename=c(age=\dots)}. 
   }
-  \item{drop}{
-    a vector of variable names to remove from the data frame
-  }
+  \item{drop}{a vector of variable names to remove from the data frame}
+	\item{keep}{a vector of variable names to keep, with all other
+		variables dropped}
   \item{units}{
-    a named vector or list defining \code{"units"} attributes of variables, in no
-    specific order
+    a named vector or list defining \code{"units"} attributes of
+		variables, in no specific order
   }
   \item{levels}{
     a named list defining \code{"levels"} attributes for factor variables, in

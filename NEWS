@@ -1,3 +1,15 @@
+Changes in version 3.14-1 (2014-03-01)
+   * Added latexNeedle function
+   * Change latexTherm, latexNeedle to use user LaTeX macro \tooltipn to do the pop-up
+   * latex.default: changed line breaks around \end{tabular}
+   * latex.summaryM: put insert.bottom text in minipage so \tooltip will not devote wide space to it
+   * sas.get: added defaultencoding argument and logic (Thanks: Reinhold Koch)
+   * plot.summaryP: omit tick marks for proportion > 1.0
+   * format.df (used by latex): fixed na.blank logic for character var
+   * latex: removed newlines when ending environments, added hyperref argument
+   * latex: added center='centerline', fixed 'centering'
+   * upData, cleanup.import, dataframeReduce: changed argument pr to print
+
 Changes in version 3.14-0 (2014-01-22)
    * Added trans argument to varclus
    * Removed recode, existsFunction functions, under.unix object, survfitKM, functions used only by S-Plus: comment, mem, mulbar.chart, p.sunflowers

@@ -107,8 +107,7 @@ sas.get <-
 
   unix.file <- file.path(libraryName, paste(member, sasds.suffix, sep="."))
 
-  ##23Nov00
-  if(uncompress) {  #22Oct00
+  if(uncompress) {
     if(any(fe <- fexists(paste(unix.file,".gz",sep=""))))
       system(paste("gunzip ", attr(fe,'which'),'.gz',sep=''))
     else if(any(fe <- fexists(paste(unix.file,".Z",sep=""))))
@@ -716,7 +715,7 @@ cleanup.import <-
            force.single=TRUE, force.numeric=TRUE,
            rmnames=TRUE,
            big=1e20, sasdict, 
-           pr=prod(dimobj) > 5e5,
+           print=prod(dimobj) > 5e5,
            datevars=NULL, datetimevars=NULL,
            dateformat='%F', fixdates=c('none','year'),
            charfactor=FALSE)
@@ -745,12 +744,12 @@ cleanup.import <-
   if(lowernames)
     names(obj) <- casefold(nam)
 
-  if(pr)
+  if(print)
     cat(dimobj[2],'variables; Processing variable:')
 
   for(i in 1:dimobj[2])
     {
-      if(pr) cat(i,'')
+      if(print) cat(i,'')
 
       x <- obj[[i]];
       modif <- FALSE
@@ -832,7 +831,7 @@ cleanup.import <-
         if(any(j,na.rm=TRUE)) {
           x[j] <- NA
           modif <- TRUE
-          if(pr)
+          if(print)
             cat('\n')
           
           cat(sum(j,na.rm=TRUE),'infinite values set to NA for variable',
@@ -869,7 +868,7 @@ cleanup.import <-
       NULL
     }
   
-  if(pr) cat('\n')
+  if(print) cat('\n')
   if(!missing(sasdict)) {
     sasat <- sasdict[1,]
     attributes(obj) <- c(attributes(obj),
@@ -881,10 +880,10 @@ cleanup.import <-
 }
 
 upData <- function(object, ...,
-                   rename=NULL, drop=NULL,
+                   rename=NULL, drop=NULL, keep=NULL,
                    labels=NULL, units=NULL, levels=NULL,
                    force.single=TRUE, lowernames=FALSE, caplabels=FALSE,
-                   moveUnits=FALSE, charfactor=FALSE, pr=TRUE) {
+                   moveUnits=FALSE, charfactor=FALSE, print=TRUE) {
 
   upfirst <- function(txt) gsub("(\\w)(\\w*)", "\\U\\1\\L\\2", txt, perl=TRUE)
 
@@ -902,8 +901,8 @@ upData <- function(object, ...,
     names(object) <- casefold(names(object))
   no <- names(object)
 
-  if(pr) cat('Input object size:\t',object.size(object),'bytes;\t',
-             length(no),'variables\n')
+  if(print) cat('Input object size:\t',object.size(object),'bytes;\t',
+                length(no),'variables\n')
 
   ## The following is targeted at R workspaces exported from StatTransfer
   al <- attr(object, 'var.labels')
@@ -931,7 +930,7 @@ upData <- function(object, ...,
       if(paren+brack == 0)
         next
 
-      if(pr) cat('Label for',no[i],'changed from',lab,'to ')
+      if(print) cat('Label for',no[i],'changed from',lab,'to ')
       u <- if(paren)regexpr('\\(.*\\)',lab)
            else regexpr('\\[.*\\]',lab)
 
@@ -941,7 +940,7 @@ upData <- function(object, ...,
       if(substring(lab, nchar(lab), nchar(lab)) == ' ')
         lab <- substring(lab, 1, nchar(lab)-1) # added 2nd char above 8jun03
 
-      if(pr) cat(lab,'\n\tunits set to ',un,'\n',sep='')
+      if(print) cat(lab,'\n\tunits set to ',un,'\n',sep='')
       attr(z,'label') <- lab
       attr(z,'units') <- un
       object[[i]] <- z
@@ -956,7 +955,7 @@ upData <- function(object, ...,
       if(nr[i] %nin% no)
         stop(paste('unknown variable name:',nr[i]))
 
-      if(pr) cat('Renamed variable\t', nr[i], '\tto', rename[[i]], '\n')
+      if(print) cat('Renamed variable\t', nr[i], '\tto', rename[[i]], '\n')
     }
 
     no[match(nr, no)] <- unlist(rename)
@@ -973,10 +972,10 @@ upData <- function(object, ...,
 
     for(i in 1:length(z)) {
       v <- vn[i]
-      if(v %in% no && pr)
+      if(v %in% no && print)
         cat('Modified variable\t',v,'\n')
       else {
-        if(pr) cat('Added variable\t\t', v,'\n')
+        if(print) cat('Added variable\t\t', v,'\n')
         no <- c(no, v)
       }
 
@@ -991,7 +990,7 @@ upData <- function(object, ...,
                         ' is 1; will replicate this value.',sep=''))
         else {
           f <- find(v)
-          if(length(f) && pr) cat('Variable',v,'found in',
+          if(length(f) && print) cat('Variable',v,'found in',
                                   paste(f,collapse=' '),'\n')
           
           stop(paste('length of ',v,' (',lx, ')\n',
@@ -1042,21 +1041,40 @@ upData <- function(object, ...,
         object[[i]] <- factor(x, exclude='')
       }
   }
-  
+
+  if(length(drop)  && length(keep)) stop('cannot specify both drop and keep')
+
   if(length(drop)) {
-    if(pr) {
-      if(length(drop)==1)
+    if(print) {
+      if(length(drop) == 1)
         cat('Dropped variable\t',drop,'\n')
       else
-        cat('Dropped variables\t',paste(drop,collapse=','),'\n')
+        cat('Dropped variables\t', paste(drop,collapse=','), '\n')
     }
 
     s <- drop %nin% no
     if(any(s))
       warning(paste('The following variables in drop= are not in object:',
-                    paste(drop[s],collapse=' ')))
+                    paste(drop[s], collapse=' ')))
 
     no <- no[no %nin% drop]
+    object <- object[no]
+  }
+
+  if(length(keep)) {
+    if(print) {
+      if(length(keep) == 1)
+        cat('Kept variable\t', keep, '\n')
+      else
+        cat('Kept variables\t', paste(keep, collapse=','), '\n')
+    }
+
+    s <- keep %nin% no
+    if(any(s))
+      warning(paste('The following variables in keep= are not in object:',
+                    paste(keep[s], collapse=' ')))
+
+    no <- no[no %in% keep]
     object <- object[no]
   }
 
@@ -1068,12 +1086,12 @@ upData <- function(object, ...,
     s <- nl %nin% no
     if(any(s)) {
       warning(paste('The following variables in levels= are not in object:',
-                    paste(nl[s],collapse=' ')))
-      nl <- nl[!s]
+                    paste(nl[s], collapse=' ')))
+      nl <- nl[! s]
     }
 
     for(n in nl) {
-      if(!is.factor(object[[n]]))
+      if(! is.factor(object[[n]]))
         object[[n]] <- as.factor(object[[n]])
 
       levels(object[[n]]) <- levels[[n]]
@@ -1096,7 +1114,6 @@ upData <- function(object, ...,
   }
 
   if(length(units)) {
-    ##if(!is.list(units))stop('units must be a list')
     nu <- names(units)
     s <- nu %nin% no
     if(any(s)) {
@@ -1108,13 +1125,13 @@ upData <- function(object, ...,
       attr(object[[n]],'units') <- units[[n]]
   }
 
-  if(pr) cat('New object size:\t',object.size(object),'bytes;\t',
+  if(print) cat('New object size:\t',object.size(object),'bytes;\t',
              length(no),'variables\n')
     object
   }
 
 dataframeReduce <- function(data, fracmiss=1, maxlevels=NULL,
-                            minprev=0, pr=TRUE)
+                            minprev=0, print=TRUE)
   {
     g <- function(x, fracmiss, maxlevels, minprev)
       {
@@ -1155,7 +1172,7 @@ dataframeReduce <- function(data, fracmiss=1, maxlevels=NULL,
       }
     h <- sapply(data, g, fracmiss, maxlevels, minprev)
     if(all(h=='')) return(data)
-    if(pr)
+    if(print)
       {
         cat('\nVariables Removed or Modified\n\n')
         print(data.frame(Variable=names(data)[h!=''],

@@ -386,10 +386,10 @@ latex.default <-
     if(! length(n.cgroup))
       n.cgroup <- rep(nc / k, k)
     
-    if(sum(n.cgroup)!=nc)
+    if(sum(n.cgroup) != nc)
       stop("sum of n.cgroup must equal number of columns")
     
-    if(length(n.cgroup)!=length(cgroup))
+    if(length(n.cgroup) != length(cgroup))
       stop("cgroup and n.cgroup must have same lengths")
   }
 
@@ -397,12 +397,12 @@ latex.default <-
     rgroup <- NULL
   
   if(!length(n.rgroup) && length(rgroup))
-    n.rgroup <- rep(nr/length(rgroup), length(rgroup))
+    n.rgroup <- rep(nr / length(rgroup), length(rgroup))
   
-  if(length(n.rgroup) && sum(n.rgroup)!=nr)
+  if(length(n.rgroup) && sum(n.rgroup) != nr)
     stop("sum of n.rgroup must equal number of rows in object")
   
-  if(length(rgroup) && length(n.rgroup) && (length(rgroup)!=length(n.rgroup)))
+  if(length(rgroup) && length(n.rgroup) && (length(rgroup) != length(n.rgroup)))
     stop("lengths of rgroup and n.rgroup must match")
   
   if (length(rgroup) && rowlabel.just=="l")
@@ -413,29 +413,29 @@ latex.default <-
     eol <- paste(sl, 'NN\n', sep='')
     eog <- ""
   } else if(longtable && length(n.rgroup)) {
-    eol <- paste(sl,"tabularnewline*\n",sep='')
+    eol <- paste(sl,"tabularnewline*\n", sep='')
     eog <- paste(sl, "tabularnewline\n", sep='')
   } else {
-    eol <- paste(sl,"tabularnewline\n",sep='')
+    eol <- paste(sl,"tabularnewline\n",  sep='')
     eog <- paste(sl, "tabularnewline\n", sep='')      
   }
   
-  if(booktabs) {  # 27may02
-    toprule    <- paste(sl,"toprule\n",sep="")
-    midrule    <- paste(sl,"midrule\n",sep="")
-    bottomrule <- paste(sl,"bottomrule\n",sep="")
-  } else if(ctable) {   ## 13dec02
+  if(booktabs) {
+    toprule    <- paste(sl, "toprule\n",sep="")
+    midrule    <- paste(sl, "midrule\n",sep="")
+    bottomrule <- paste(sl, "bottomrule\n",sep="")
+  } else if(ctable) {
     toprule    <- paste(sl, 'FL\n', sep='')
     midrule    <- paste(sl, 'ML\n', sep='')
     bottomrule <- paste(sl, 'LL\n', sep='')
   } else {
     toprule <-
       if(first.hline.double)
-        paste(sl,"hline",sl,"hline\n",sep="")
+        paste(sl, "hline", sl, "hline\n", sep="")
       else
-        paste(sl,"hline\n",sep="")
+        paste(sl, "hline\n", sep="")
     
-    midrule <- bottomrule <- paste(sl,"hline\n",sep="")
+    midrule <- bottomrule <- paste(sl, "hline\n", sep="")
   }
 
 
@@ -504,24 +504,25 @@ latex.default <-
   ##if (!vbar && length(cgroup)) {
   if (length(cgroup)) {
     last.col <- cumsum(n.cgroup)
-    first.col <- c(1, 1+last.col[-length(last.col)])
+    first.col <- c(1, 1 + last.col[-length(last.col)])
     cgroup.cols <- cbind(first.col,last.col)
-    col.subs <- split(seq(length.out=nc), rep.int(seq_along(n.cgroup), times=n.cgroup))
+    col.subs <- split(seq(length.out=nc),
+                      rep.int(seq_along(n.cgroup), times=n.cgroup))
     
     cxi <- list()
     for (i in seq(along=col.subs))
       cxi[[i]] <- cx[,col.subs[[i]],drop=FALSE]
     
     cxx <- cxi[[1]]
-    col.justxx <- col.just[col.subs[[1]]]
+    col.justxx      <- col.just[col.subs[[1]]]
     collabel.justxx <- collabel.just[col.subs[[1]]]
-    colheadsxx <-  colheads[col.subs[[1]]]
+    colheadsxx      <-  colheads[col.subs[[1]]]
     extracolheadsxx <- extracolheads[col.subs[[1]]]
 
     cgroupxx <- cgroup[1]
     n.cgroupxx <- n.cgroup[1]
     for (i in seq(along=col.subs)[-1]) {
-      cxx <- cbind(cxx, "", cxi[[i]])  # was ""="" 23Feb01 "=" 2Apr02
+      cxx <- cbind(cxx, "", cxi[[i]])
       col.justxx <- c(col.justxx, "c", col.just[col.subs[[i]]])
       collabel.justxx <- c(collabel.justxx, "c",
                            collabel.just[col.subs[[i]]])
@@ -553,7 +554,7 @@ latex.default <-
     col.just <- c(rowlabel.just, col.just)
 
     if(length(extracolheads))
-      extracolheads <- c('', extracolheads)  ## 16jun03
+      extracolheads <- c('', extracolheads)
     
     collabel.just <- c(rowlabel.just, collabel.just)
     if (length(cgroup) == 0L)
@@ -578,14 +579,12 @@ latex.default <-
   if(!append)
     cat("", file=file)	#start new file
   
-  cat("%",deparse(sys.call()), "\n%\n", file=file, append=file!='')
-  ## append= 19apr03 and other places
-  ## Was as.character(as.name(match.call()))  15Sep00
+  cat("%", deparse(sys.call()), "%\n", file=file, append=file!='', sep='')
 
   if(dcolumn) {
-    decimal.point <- ifelse(cdot, paste(sl,"cdot",sep=""), ".")
+    decimal.point <- ifelse(cdot, paste(sl, "cdot", sep=""), ".")
     cat(sl,"newcolumntype{.}{D{.}{",decimal.point,"}{-1}}\n",
-        sep="", file=file, append=file!='')  # was newcolumn 26Feb02
+        sep="", file=file, append=file!='')
   }
 
   { # tabular.cols
@@ -602,17 +601,19 @@ latex.default <-
 
   intop <- function() {
     if(! length(insert.top)) return(NULL)
-    paste(if(center == 'none') '\n\\vspace{1ex}\n\n\\textbf{',
-          insert.top, '}\n\\vspace{1ex}\n\n', sep='')
+    paste(if(center == 'none') '\n\\vspace{1ex}\n\n',
+          paste('\\textbf{', insert.top, '}', sep=''),
+          if(center == 'centerline') '\\\\',
+          if(center == 'none') '\n\\vspace{1ex}\n\n', sep='')
   }
   
   if(length(caption) && !ctable) {
-    caption <- paste(sl,"caption",
+    caption <- paste(sl, "caption",
                      if(length(caption.lot))
-                       paste("[",caption.lot,"]",sep=""),
+                       paste("[", caption.lot, "]", sep=""),
                      "{", caption,
                      if(!longtable)
-                       paste(sl,"label{", label, "}",sep=""),
+                       paste(sl, "label{", label, "}", sep=""),
                      "}", sep="")
     
     table.env <- TRUE
@@ -620,97 +621,68 @@ latex.default <-
 
   if(ctable) {
     latex.begin <-
-      paste(if(length(size))
-            paste('{', sl, size, sep=''),
-            intop(),
-            paste(sl, "ctable[", sep=''),
-            if(length(caption) && caption.loc=='bottom')
-            'botcap,',
-            if(length(caption))
-            paste('caption={', caption, '},', sep=''),
-            if(length(caption.lot))
-            paste('cap={', caption.lot, '},', sep=''),
-            paste('label=', label, ',', sep=''),
-            if(!landscape)
-            paste('pos=', where, ',', sep=''),
-            if(landscape) 'sideways',
-            paste(']{', tabular.cols, '}', sep=''),
-            if(length(insert.bottom))
-            paste('{',
-                  paste(sl,'tnote[]{',
-                        sedit(insert.bottom,'\\\\',' '),'}',
-                        sep='', collapse=''),
-                  '}',
-                  sep='')
-            else '{}',
-            ## tnote does not allow \\ in its argument
-            paste('{', toprule, sep=''),
-            sep='')
+      latexBuild(
+        if(length(size)) paste('{', sl, size, sep=''), '{',
+        intop(), '',
+        paste(sl, 'ctable[', sep=''), '',
+        if(length(caption) && caption.loc == 'bottom') 'botcap', '',
+        if(length(caption)) paste('caption={', caption, '}', sep=''),
+         '',
+        if(length(caption.lot)) paste('cap={', caption.lot, '},',
+                                      sep=''), '',
+        if(length(caption)) paste('label=', label, ',', sep=''), '',
+        if(! landscape) paste('pos=', where, ',', sep=''), '',
+        if(landscape) 'sideways', '',
+        paste(']{', tabular.cols, '}', sep=''), '',
+        if(length(insert.bottom)) 
+         paste('{',
+              paste(sl,'tnote[]{',
+                    sedit(insert.bottom,'\\\\',' '),'}',
+                    sep='', collapse=''),
+              '}',
+              sep=''), '',
+        if(! length(insert.bottom)) '{}', '',
+        ## tnote does not allow \\ in its argument
+        paste('{', toprule, sep=''), '{')
     
-    latex.end <- paste('}', if(length(size)) '}', sep='')
+    latex.end <- attr(latex.begin, 'close')
     
   } else if(!longtable) {
     latex.begin <-
-      paste(if(landscape)
-            paste(sl, "begin{landscape}",sep=""),
-            if(table.env)
-            paste(sl, "begin{table}",
-                  if(here) "[H]"
-                  else paste('[',where,']',sep=''),
-                  "\n", sep=""),
-            if(length(size)) paste('{', sl, size, '\n', sep=''),
-            if(caption.loc=='top' && !missing(caption))
-            paste(caption, "\n"),
-            if(center == 'center')
-             paste(sl, "begin{center}\n", sep=""),
-            if (center == 'centering')
-             paste('{', sl, 'centering\n', sep=''),
-            if(center == 'centerline')
-             paste(sl, 'centerline{', sep=''),
-            intop(),
-            paste(hyperref, sl,"begin{tabular}{", tabular.cols, "}\n",
-                  toprule, sep=""),
-            sep='')
+      latexBuild(
+        if(landscape) paste(sl, "begin{landscape}", sep=""), 'landscape',
+        if(table.env) paste(sl, "begin{table}", if(here) "[H]"
+         else paste('[', where, ']', sep=''), "\n", sep=""), 'table',
+        if(length(size)) paste('{', sl, size, '\n', sep=''), '{',
+        if(caption.loc == 'top' && length(caption)) paste(caption, "\n"), '',
+        intop(), '',
+        if(center == 'center') paste(sl, "begin{center}\n", sep=""), 'center',
+        if(center == 'centering') paste('{', sl, 'centering\n', sep=''), '{',
+        if(center == 'centerline') paste(sl, 'centerline{', sep=''),'{',
+        hyperref, '{',
+        paste(sl, "begin{tabular}{", tabular.cols, "}\n", toprule, sep=""),
+         'tabular')
     
-    latex.end <-
-      paste(paste(sl,"end{tabular}", if(length(hyperref)) '}', sep = ""),
-            if(center == 'center')
-             paste(sl, 'end{center}', sep=''),
-            if(center == 'centering')  ' \\\\}',
-            if(center == 'centerline') '}',
-            if(caption.loc == 'bottom' && !missing(caption)) caption,
-            if(length(insert.bottom))
-            paste(insert.bottom, collapse=' '),
-            if(length(size)) paste('}'),
-            if(table.env) paste(sl, "end{table}", sep=""),
-            if(landscape) paste(sl, "end{landscape}", sep=""),
-            sep='')
+    latex.end <- attr(latex.begin, 'close')
+
   } else {
     latex.begin <-
-      paste(paste(if (!draft.longtable)
-                  paste(sl,"let",sl,"LTmulticolumn=",sl,"multicolumn", sep=""),
-                  paste(sl,"setlongtables",sep=""),
-                  if(landscape)
-                  paste(sl, "begin{landscape}",sep=""),
-                  if(length(size))
-                  paste('{', sl, size, '\n', sep=''),
-                  intop(),
-                  paste(sl,"begin{longtable}{", tabular.cols, "}",
-                        sep=""),
-                  sep="\n"),
-            if(caption.loc=='top' && !missing(caption))
-            paste(caption, eog)
-            else '\n', toprule, sep="")
+      latexBuild(
+        if(! draft.longtable) 
+          paste(sl,"let",sl,"LTmulticolumn=",sl,"multicolumn", sep=""),
+          '',
+        paste(sl, "setlongtables", sep=""), '',
+        if(landscape) paste(sl, "begin{landscape}",sep=""), 'landscape',
+        if(length(size)) paste('{', sl, size, '\n', sep=''), '{',
+        intop(), '',
+        paste(sl,"begin{longtable}{", tabular.cols, "}", sep=""),
+          'longtable',
+        if(caption.loc == 'top' && length(caption)) paste(caption, eog),
+          '',
+        toprule, '')
     
-    latex.end <- paste(if(caption.loc=='bottom' && !missing(caption))
-                       paste(caption, eog),
-                       paste(sl,"end{longtable}", sep=""),
-                       if(length(size)) '}',
-                       if(landscape)
-                       paste(sl,"end{landscape}",sep=""),
-                       sep='')
+    latex.end <- attr(latex.begin, 'close')
   }
-  
   cat(latex.begin, file=file, append=file != '')
   
   cgroupheader <- NULL
@@ -731,7 +703,7 @@ latex.default <-
     
     if (!length(cline)) {
       inr <- as.numeric(length(rowname))
-      cline <- paste(sl,"cline{",1+inr,"-",nc,"}",sep="")
+      cline <- paste(sl, "cline{", 1 + inr, "-", nc, "}", sep="")
     }
 
     cgroupheader <- paste(cgroupheader, eol, cline, "\n", sep="")
@@ -744,14 +716,13 @@ latex.default <-
     cvbar[1] <- paste(vbar, cvbar[1], sep="")
     if (length(n.cgroup)) {
       vv2 <- cumsum(n.cgroup[-length(n.cgroup)])
-      cvbar[vv2] <- paste(cvbar[vv2],vbar,sep="")
+      cvbar[vv2] <- paste(cvbar[vv2], vbar, sep="")
     }
     slmc1 <- paste(sl, "multicolumn{1}{", sep="")
 
     labs <- colheads
     if (length(colnamesTexCmd))
       labs <- paste(sl, colnamesTexCmd, " ", labs, sep="")
-                                        # DRW 12apr05.
     header <- NULL
     if(length(labs)) {
       if(!length(extracolheads)) {
@@ -791,7 +762,7 @@ latex.default <-
   }
 
   if(longtable) {
-    if(missing(caption))
+    if(! length(caption))
       cat(sl,"endhead\n",midrule,sl,"endfoot\n",sep="",
           file=file,append=file!='')
     else {
@@ -843,22 +814,22 @@ latex.default <-
       if (length(n.rgroup)) {
         if(longtable && linecnt>0 &&
            (linecnt+n.rgroup[j]+(n.rgroup[j]>1)) > lines.page) {
-          cat(sl,"newpage\n", sep="",file=file, append=file!='')
+          cat(sl, "newpage\n", sep="", file=file, append=file != '')
           linecnt <- 0
         }
         
-        cat(rgroup[j], rep("",nc-1), sep="&", file=file, append=file!='')
+        cat(rgroup[j], rep("", nc-1), sep="&", file=file, append=file!='')
         cat(eol, sep="",file=file, append=file!='')
-        linecnt <- linecnt+1
+        linecnt <- linecnt + 1
       }
 
       ## Write the object (and it's formatting instructions)
       ## to the output.
       ## Loop through the rows of the object.
-      for(i in rg.start[j]:rg.end[j]) {
-        if (!length(n.rgroup)) {
-          if(longtable && linecnt>0 && (linecnt+1 > lines.page)) {
-            cat(sl,"newpage\n",sep="",file=file, append=file!='')
+      for(i in rg.start[j] : rg.end[j]) {
+        if (! length(n.rgroup)) {
+          if(longtable && linecnt > 0 && (linecnt + 1 > lines.page)) {
+            cat(sl, "newpage\n", sep="", file=file, append=file!='')
             linecnt <- 0						
           }
         }
@@ -870,7 +841,7 @@ latex.default <-
           num.cols <- ncol(cx)
           for (colNum in 1:num.cols) {
             cat(rcellTexCmds[i, colNum], " ", cx[i, colNum],
-                file=file, append=file!='')
+                file=file, append=file != '')
             if (colNum < num.cols)
               cat("&", file=file, append=file!='')
           }
@@ -883,9 +854,8 @@ latex.default <-
               eog
             else if(i < rg.end[j])
               eol,
-            sep="",file=file, append=file!='')
+            sep="", file=file, append=file!='')
         
-        ## eol was sl,sl  added if( ) 13dec02
         linecnt <- linecnt+1
       }  ## End of for loop that writes the object.
 

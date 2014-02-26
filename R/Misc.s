@@ -1490,3 +1490,33 @@ makeSteps <- function(x, y)
     list(x = x, y = y)
   else list(x = x[c(1, 2, 2)], y = y[c(1, 1, 2)])
 }
+
+latexBuild <- function(..., sep='') {
+  w <- list(...)
+  l <- length(w)
+  if(l %% 2 != 0) stop('# arguments must be multiple of 2')
+  k <- l / 2
+  j <- 1
+  txt <- op <- character(0)
+  for(i in 1 : k) {
+    a <- w[[j]]
+    if(length(a)) {
+      txt <- c(txt, a)
+      if(w[[j + 1]] != '') op <- c(op,  w[[j + 1]])
+    }
+    j <- j + 2
+  }
+  txt <- paste(txt, collapse=sep)
+  w <- character(0)
+  close <- if(length(op)) {
+    for(y in rev(op))
+      w <- c(w,
+             if(y == '(') ')'
+             else if(y == '{') '}'
+             else if(y == '[') ']'
+             else sprintf('\\end{%s}', y))
+    paste(w, collapse=sep)
+  }
+  structure(txt, close=close)
+}
+

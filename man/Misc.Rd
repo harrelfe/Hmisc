@@ -5,6 +5,7 @@
 \alias{inverseFunction}
 \alias{james.stein}
 \alias{km.quick}
+\alias{latexBuild}
 \alias{lm.fit.qr.bare}
 \alias{matxv}
 \alias{makeSteps}
@@ -55,6 +56,16 @@
   \code{survival} package to get Kaplan-Meier estimates for a
   single stratum for a vector of time points (if \code{times} is given) or to
   get a vector of survival time quantiles (if \code{q} is given).
+
+	\code{latexBuild} takes pairs of character strings and produces a
+	single character string containing concatenation of all of them, plus
+	an attribute \code{"close"} which is a character string containing the
+	LaTeX closure that will balance 
+	LaTeX code with respect to parentheses, braces, brackets, or
+	\code{begin} vs. \code{end}.  When an even-numbered element of the
+	vector is not a left parenthesis, brace, or bracket, the element is
+	taken as a word that was surrounded by \code{begin} and braces, for which the
+	corresponding \code{end} is constructed in the returned attribute.
 
   \code{lm.fit.qr.bare} is a fast stripped-down function for computing
   regression coefficients, residuals, \eqn{R^2}, and fitted values.  It
@@ -137,6 +148,7 @@ getLatestSource(x=NULL, package='Hmisc', recent=NULL, avail=FALSE,
 inverseFunction(x, y)
 james.stein(y, group)
 km.quick(S, times, q)
+latexBuild(\dots, sep='')
 lm.fit.qr.bare(x, y, tolerance, intercept=TRUE, xpxi=FALSE, singzero=FALSE)
 matxv(a, b, kint=1, bmat=FALSE)
 nomiss(x)
@@ -191,7 +203,8 @@ xless(x, \dots, title)
   \item{round}{set to \code{TRUE} to round converted values}
   \item{S}{a \code{\link[survival]{Surv}} object}
   \item{se}{vector of standard errors}
-  \item{sep}{a single character string specifying the delimiter}
+  \item{sep}{a single character string specifying the delimiter.  For
+		\code{latexBuild} the default is \code{""}.}
   \item{side}{for \code{confbar} is \code{"b","l","t","r"} for bottom,
 	left, top, right.}
   \item{str}{a character string vector}
@@ -222,13 +235,17 @@ xless(x, \dots, title)
   \item{xpxi}{set to \code{TRUE} to add an element to the result
 		containing the inverse of \eqn{X'X}}
 	\item{singzero}{set to \code{TRUE} to set coefficients corresponding
-		to singular variables to zero instead of \code{NA}}
+		to singular variables to zero instead of \code{NA}.}
   \item{y}{a numeric vector.  For \code{inverseFunction} \code{y} is the
 	evaluated function values at \code{x}.}
   \item{indent, exdent, prefix}{see \code{\link{strwrap}}}
   \item{simplify}{see \code{\link{sapply}}}
   \item{units}{see \code{\link{par}}}
-  \item{\dots}{arguments passed through to another function}
+  \item{\dots}{arguments passed through to another function.  For
+		\code{latexBuild} represents pairs, with odd numbered elements being
+		character strings containing LaTeX code or a zero-length object to
+		ignore, and even-numbered elements representing LaTeX left
+		parenthesis, left brace, or left bracket, or environment name.}
 }
 \author{Frank Harrell and Charles Dupont}
 \examples{

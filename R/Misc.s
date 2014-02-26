@@ -1491,7 +1491,7 @@ makeSteps <- function(x, y)
   else list(x = x[c(1, 2, 2)], y = y[c(1, 1, 2)])
 }
 
-latexBuild <- function(..., sep='') {
+latexBuild <- function(..., afterEndtabular=NULL, beforeEndtable=NULL, sep='') {
   w <- list(...)
   l <- length(w)
   if(l %% 2 != 0) stop('# arguments must be multiple of 2')
@@ -1509,12 +1509,17 @@ latexBuild <- function(..., sep='') {
   txt <- paste(txt, collapse=sep)
   w <- character(0)
   close <- if(length(op)) {
-    for(y in rev(op))
+    for(y in rev(op)) {
+      if(length(beforeEndtable) && y == 'table')
+        w <- c(w, '\n\n', beforeEndtable, '\n')
       w <- c(w,
              if(y == '(') ')'
              else if(y == '{') '}'
              else if(y == '[') ']'
              else sprintf('\\end{%s}', y))
+      if(length(afterEndtabular) && y == 'tabular')
+        w <- c(w, '\n\n', afterEndtabular, '\n')
+    }
     paste(w, collapse=sep)
   }
   structure(txt, close=close)

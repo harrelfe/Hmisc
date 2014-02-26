@@ -148,7 +148,7 @@ getLatestSource(x=NULL, package='Hmisc', recent=NULL, avail=FALSE,
 inverseFunction(x, y)
 james.stein(y, group)
 km.quick(S, times, q)
-latexBuild(\dots, sep='')
+latexBuild(\dots, afterEndtabular=NULL, beforeEndtable=NULL, sep='')
 lm.fit.qr.bare(x, y, tolerance, intercept=TRUE, xpxi=FALSE, singzero=FALSE)
 matxv(a, b, kint=1, bmat=FALSE)
 nomiss(x)
@@ -168,12 +168,17 @@ xless(x, \dots, title)
 }
 \arguments{
   \item{a}{a numeric matrix or vector}
+	\item{afterEndtabular}{one or more character strings that are to be
+		placed right after the end of any \code{tabular} environment, in
+		\code{latexBuild}}
   \item{at}{x-coordinate for vertical confidence intervals, y-coordinate
 	for horizontal}
   \item{avail}{set to \code{TRUE} to have \code{getLatestSource} return
 	a data frame of available files and latest versions instead of
 	fetching any}
   \item{b}{a numeric vector}
+  \item{beforeEndtable}{one or more character strings that are to be placed
+		right before the end of any \code{table} environment, in \code{latexBuild}}
   \item{cex}{character expansion factor}
   \item{clip}{interval to truncate limits}
   \item{col}{vector of colors}

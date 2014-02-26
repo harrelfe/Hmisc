@@ -603,10 +603,10 @@ latex.default <-
     if(! length(insert.top)) return(NULL)
     paste(if(center == 'none') '\n\\vspace{1ex}\n\n',
           paste('\\textbf{', insert.top, '}', sep=''),
-          if(center == 'centerline') '\\\\',
+          if(center %in% c('centerline', 'centering')) '\\\\',
           if(center == 'none') '\n\\vspace{1ex}\n\n', sep='')
   }
-  
+
   if(length(caption) && !ctable) {
     caption <- paste(sl, "caption",
                      if(length(caption.lot))
@@ -661,7 +661,9 @@ latex.default <-
         if(center == 'centerline') paste(sl, 'centerline{', sep=''),'{',
         hyperref, '{',
         paste(sl, "begin{tabular}{", tabular.cols, "}\n", toprule, sep=""),
-         'tabular')
+         'tabular',
+        afterEndtabular = if(! table.env) insert.bottom,
+        beforeEndtable  = if(table.env) insert.bottom)
     
     latex.end <- attr(latex.begin, 'close')
 
@@ -812,13 +814,13 @@ latex.default <-
     linecnt <- 0
     for (j in seq.rgroup) {
       if (length(n.rgroup)) {
-        if(longtable && linecnt>0 &&
-           (linecnt+n.rgroup[j]+(n.rgroup[j]>1)) > lines.page) {
+        if(longtable && linecnt > 0 &&
+           (linecnt + n.rgroup[j] + (n.rgroup[j] > 1)) > lines.page) {
           cat(sl, "newpage\n", sep="", file=file, append=file != '')
           linecnt <- 0
         }
         
-        cat(rgroup[j], rep("", nc-1), sep="&", file=file, append=file!='')
+        cat(rgroup[j], rep("", nc - 1), sep="&", file=file, append=file!='')
         cat(eol, sep="",file=file, append=file!='')
         linecnt <- linecnt + 1
       }
@@ -867,6 +869,7 @@ latex.default <-
   }
 
   cat(latex.end, file=file, sep='\n', append=file != '')
+
   sty <- c("longtable"[longtable], "here"[here], "dcolumn"[dcolumn],
            "ctable"[ctable], "booktabs"[booktabs],
            if(landscape && !ctable) "lscape")

@@ -2,6 +2,8 @@ Changes in version 3.14-2 (2014-02-26)
    * latex.default: improved logic using new function in Misc: latexBuild
 	 * latex.default: fixed bug with ctable=TRUE with no caption by removing default label
    * latex.default: improved formatting for insert.top
+   * latex.default: added tests, fixed insert.bottom
+   * latex.summaryM: return stat summary key as legend attribute, use this according to insert.bottom argument
 
 Changes in version 3.14-1 (2014-02-25)
    * Added latexNeedle function

@@ -1511,14 +1511,14 @@ latexBuild <- function(..., afterEndtabular=NULL, beforeEndtable=NULL, sep='') {
   close <- if(length(op)) {
     for(y in rev(op)) {
       if(length(beforeEndtable) && y == 'table')
-        w <- c(w, '\n\n', beforeEndtable, '\n')
+        w <- c(w, '\n\n', beforeEndtable)
       w <- c(w,
              if(y == '(') ')'
              else if(y == '{') '}'
              else if(y == '[') ']'
              else sprintf('\\end{%s}', y))
       if(length(afterEndtabular) && y == 'tabular')
-        w <- c(w, '\n\n', afterEndtabular, '\n')
+        w <- c(w, '\n\n', afterEndtabular)
     }
     paste(w, collapse=sep)
   }

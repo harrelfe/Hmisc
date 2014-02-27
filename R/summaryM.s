@@ -608,12 +608,11 @@ latex.summaryM <-
     if(missing(caption))
       caption <- paste("Descriptive Statistics",
                        if(length(x$group.label))
-                        paste(" by",x$group.label)
+                        paste(" by", x$group.label)
                        else
-                        paste("  $(N=",x$N,")$",sep=""), sep="")
+                        paste("  $(N=", x$N, ")$", sep=""), sep="")
     
-    bld <- if(middle.bold) '\\bf '
-     else ''
+    bld <- if(middle.bold) '\\bf ' else ''
 
     cstats <- NULL
     testUsed <- auxc <- character(0)
@@ -692,39 +691,28 @@ latex.summaryM <-
       col.just <- c("r",col.just)
     }
     
-    if(is.logical(insert.bottom) && !insert.bottom)
-      legend <- NULL
-    else {
-      legend <- character()
-      if(any(type==2)) {
-        legend <- paste("\n\\begin{minipage}[t]{3.75in}{\\", outer.size,
-                        " $a$\\ }{", bld,
-                        "$b$\\ }{\\", outer.size,
-                        " $c$\\ } represent the lower quartile $a$, the median $b$, and the upper quartile $c$\\ for continuous variables.",
-                        if(prmsd) '~~$x\\pm s$ represents $\\bar{X}\\pm 1$ SD.'
-                        else '',
-                        sep="")
-      }
-      
-      if(prn) {
+    legend <- character()
+    if(any(type==2))
+      legend <- paste("{\\", outer.size, " $a$\\ }{", bld, "$b$\\ }{\\",
+                      outer.size, " $c$\\ } represent the lower quartile $a$, the median $b$, and the upper quartile $c$\\ for continuous variables.",
+                      if(prmsd) '~~$x\\pm s$ represents $\\bar{X}\\pm 1$ SD.'
+                      else '',
+                      sep="")
+
+    if(prn)
         legend <- c(legend, '$N$\\ is the number of non--missing values.')
-      }
       
-      if(any(type==1) && npct=='numerator') {
+      if(any(type == 1) && npct=='numerator')
         legend <- c(legend, 'Numbers after percents are frequencies.')
-      }
       
       if(length(testUsed))
         legend <-c(legend,
                    if(length(testUsed) == 1)'\\noindent Test used:'
                    else '\\indent Tests used:',
-                   if(length(testUsed) == 1) paste(testUsed,'test')
+                   if(length(testUsed) == 1) paste(testUsed, 'test')
                    else paste(paste('\\textsuperscript{\\normalfont ',
                                     1:length(testUsed),'}',testUsed,
                                     ' test',sep=''),collapse='; '))
-      legend <- c(legend, '\\end{minipage}%')
-
-    }
 
     if(length(auxc)) {
       if(length(auxc) != nrow(cstats))
@@ -740,17 +728,21 @@ latex.summaryM <-
       if(length(col.just)) col.just <- c('r', col.just)
       if(length(extracolheads)) extracolheads <- c(heads[2], extracolheads)
     }
-    if(length(legend) && ! table.env) legend[1] <- paste('\n', legend[1], sep='')
-    w <- latex.default(cstats, title=title, file=file, append=TRUE,
-                       caption=if(table.env) caption,
-                       rowlabel=rowlabel, table.env=table.env,
-                       col.just=col.just, numeric.dollar=FALSE, 
-                       insert.bottom=if(strat==strats[length(strats)])
-                         legend,
-                       rowname=lab, dcolumn=dcolumn,
-                       extracolheads=extracolheads, extracolsize=Nsize,
-                       insert.top=if(strat != '.ALL.') strat,
-                       ...)
+    if(length(legend) && ! table.env)
+      legend[1] <- paste('\n', legend[1], sep='')
+    laststrat <- strat == strats[length(strats)]
+    noib <- is.logical(insert.bottom) && ! insert.bottom
+    w <- latex(cstats, title=title, file=file, append=TRUE,
+               caption=if(table.env)
+               paste(caption, if(laststrat) legend, sep='. '),
+               rowlabel=rowlabel, table.env=table.env,
+               col.just=col.just, numeric.dollar=FALSE, 
+               insert.bottom=if(! noib && laststrat && ! table.env) legend,
+               rowname=lab, dcolumn=dcolumn,
+               extracolheads=extracolheads, extracolsize=Nsize,
+               insert.top=if(strat != '.ALL.') strat,
+               ...)
+    attr(w, 'legend') <- legend
   }
   w
 }

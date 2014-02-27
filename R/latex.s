@@ -361,10 +361,7 @@ latex.default <-
            hyperref=NULL,
            ...)
 {
-  if(length(hyperref) && ! table.env)
-    stop('must have table.env=TRUE when specifying hyperref')
   if(length(hyperref)) hyperref <- sprintf('\\hyperref[%s]{', hyperref)
-  
   center <- match.arg(center)
   caption.loc <- match.arg(caption.loc)
   cx <- format.df(object, dcolumn=dcolumn, na.blank=na.blank,
@@ -663,7 +660,7 @@ latex.default <-
         paste(sl, "begin{tabular}{", tabular.cols, "}\n", toprule, sep=""),
          'tabular',
         afterEndtabular = if(! table.env) insert.bottom,
-        beforeEndtable  = if(table.env) insert.bottom)
+        beforeEndtable  = if(table.env)   insert.bottom)
     
     latex.end <- attr(latex.begin, 'close')
 

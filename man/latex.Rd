@@ -111,6 +111,7 @@ latex(object, \dots)
     longtable=FALSE, draft.longtable=TRUE, ctable=FALSE, booktabs=FALSE,
     table.env=TRUE, here=FALSE, lines.page=40,
     caption=NULL, caption.lot=NULL, caption.loc=c('top','bottom'),
+    star=FALSE,
     double.slash=FALSE,
     vbar=FALSE, collabel.just=rep("c",nc), na.blank=TRUE,
     insert.bottom=NULL, insert.bottom.width=NULL,
@@ -400,6 +401,10 @@ dvigv(object, \dots)
   \item{caption.loc}{
     set to \code{"bottom"} to position a caption below
     the table instead of the default of \code{"top"}.
+  }
+  \item{star}{
+    apply the star option for ctables to allow a table to spread over
+    two columns when in twocolumn mode.
   }
   \item{double.slash}{
     set to \code{TRUE} to output \samp{"\\"} as \samp{"\\\\"} in LaTeX commands. Useful when you

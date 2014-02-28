@@ -696,33 +696,35 @@ latex.summary.formula.response <-
   }
 
   vn <- latexTranslate(vn, greek=TRUE)
+
   if(missing(trios)) {
     cdec <- rep(cdec, length = nstat)
   } else {
-    cdec <- rep(cdec, length = nstat/3)
+    cdec <- rep(cdec, length = nstat / 3)
   }
-  
-  cdec <- rep(c(if(prn)0 else NULL,cdec), ns)
+  cdec <- rep(cdec, ns)
+  isn <- colnames(stats) %in% c('N', 'n')
+  if(any(isn) && prn) cdec[isn] <- 0
 
   if(missing(trios)) {
     cstats <- unclass(stats)
   } else {
-    fmt <- function(z, cdec) ifelse(is.na(z), '', format(round(z,cdec)))
+    fmt <- function(z, cdec) ifelse(is.na(z), '', format(round(z, cdec)))
     cstats <- list()
     k <- m <- 0
-    for(is in 1:ns) {
+    for(is in 1 : ns) {
       if(prn) {
-        k <- k+1
-        m <- m+1
-        cstats[[k]] <- stats[,m]   ## N, numeric mode
+        k <- k + 1
+        m <- m + 1
+        cstats[[k]] <- stats[, m]   ## N, numeric mode
       }
-      for(j in 1:ntrio) {
-        m <- m+1
-        k <- k+1
-        cstats[[k]] <- paste('{\\scriptsize ',fmt(stats[,m],cdec[k]),'~}',
-                             fmt(stats[,m+1],cdec[k]), ' {\\scriptsize ',
-                             fmt(stats[,m+2],cdec[k]), '}',sep='')
-        m <- m+2
+      for(j in 1 : ntrio) {
+        m <- m + 1
+        k <- k + 1
+        cstats[[k]] <- paste('{\\scriptsize ', fmt(stats[,m], cdec[k]), '~}',
+                             fmt(stats[,m + 1], cdec[k]), ' {\\scriptsize ',
+                             fmt(stats[,m + 2], cdec[k]), '}',sep='')
+        m <- m + 2
       }
     }
 
@@ -744,15 +746,17 @@ latex.summary.formula.response <-
       '\\noindent {\\scriptsize $a$\\ } $b$ {\\scriptsize $c$\\ } represent the lower quartile $a$, the median $b$, and the upper quartile $c$.'
 
   r <-
-    if(ns>1) latex(cstats, title=title, caption=caption, rowlabel=rowlabel,
-                   n.rgroup=at$nlevels, rgroup=vn[vn!=''],
-                   n.cgroup=rep(nstat,ns), cgroup=at$strat.levels, cdec=cdec,
-                   col.just=rep('c',ncol(cstats)),
-                   rowname=dm[[1]], insert.bottom=insert.bottom, ...)
-    else latex(cstats, title=title, caption=caption, rowlabel=rowlabel,
-               n.rgroup=at$nlevels, rgroup=vn[vn!=''], cdec=cdec,
-               col.just=rep('c',ncol(cstats)),
-               rowname=dm[[1]], insert.bottom=insert.bottom, ...)
+    if(ns > 1)
+      latex(cstats, title=title, caption=caption, rowlabel=rowlabel,
+            n.rgroup=at$nlevels, rgroup=vn[vn!=''],
+            n.cgroup=rep(nstat,ns), cgroup=at$strat.levels, cdec=cdec,
+            col.just=rep('c',ncol(cstats)),
+            rowname=dm[[1]], insert.bottom=insert.bottom, ...)
+    else
+      latex(cstats, title=title, caption=caption, rowlabel=rowlabel,
+            n.rgroup=at$nlevels, rgroup=vn[vn!=''], cdec=cdec,
+            col.just=rep('c',ncol(cstats)),
+            rowname=dm[[1]], insert.bottom=insert.bottom, ...)
 
   r
 }

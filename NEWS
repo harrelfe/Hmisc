@@ -4,6 +4,7 @@ Changes in version 3.14-2 (2014-02-26)
    * latex.default: improved formatting for insert.top
    * latex.default: added tests, fixed insert.bottom
    * latex.summaryM: return stat summary key as legend attribute, use this according to insert.bottom argument
+   * latex.summary.formula.response: fixed bug related to computation of cdec.  Thanks: Kevin Thorpe
 
 Changes in version 3.14-1 (2014-02-25)
    * Added latexNeedle function

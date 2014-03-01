@@ -69,8 +69,8 @@ format.df(x, digits, dec=NULL, rdec=NULL, cdec=NULL,
     contain decimal places.  When you use \code{dcolumn = TRUE}, 
     \code{numeric.dollar} is set by default to \code{FALSE}.  When you
     use \code{dcolumn = TRUE}, the
-    object attribute \code{"style"} set to \samp{dcolumn} as the \code{latex} \preformatted{\\usepackage}
-    must reference \preformatted{[dcolumn]}.
+    object attribute \code{"style"} set to \samp{dcolumn} as the
+		\code{latex} \code{usepackage} must reference \code{[dcolumn]}.
     The three files \file{dcolumn.sty}, \file{newarray.sty}, and
     \file{array.sty} will 
     need to be in a directory in your \env{TEXINPUTS} path.
@@ -107,11 +107,14 @@ format.df(x, digits, dec=NULL, rdec=NULL, cdec=NULL,
     whose length is equal to the number of columns of the result matrix.
     When \code{format.df} is called by \code{latex.default}, the
     \code{col.just} is used as the \code{cols} argument to the
-    \preformatted{\\tabular} environment and the letters \samp{l}, \samp{r},
+    \code{tabular} environment and the letters \samp{l}, \samp{r},
     and \samp{c} are valid values.  When \code{format.df} is called by
     \acronym{SAS}, the \code{col.just} is used to determine whether a
     \samp{\$} is needed on the \samp{input} line of the \file{sysin} file,
-    and the letters \samp{l} and \samp{r} are valid values.
+    and the letters \samp{l} and \samp{r} are valid values.  You can
+		pass specifications other than \code{l,r,c} in \code{col.just},
+		e.g., \code{"p{3in}"} to get paragraph-formatted columns from
+		\code{latex()}. 
   }
   \item{matrix.sep}{
     When \code{x} is a data frame containing a matrix, so that new column names

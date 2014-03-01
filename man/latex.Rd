@@ -604,6 +604,15 @@ texi2dvi('/tmp/my.tex')   # compile and produce pdf file in working dir.
 latex(x, file="")   # just write out LaTeX code to screen
 
 \dontrun{
+# Use paragraph formatting to wrap text to 3 in. wide in a column
+d <- data.frame(x=1:2,
+                y=c(paste("a",
+                    paste(rep("very",30),collapse=" "),"long string"),
+                "a short string"))
+latex(d, file="", col.just=c("l", "p{3in}"), table.env=FALSE)
+}
+
+\dontrun{
 # After running latex( ) multiple times with different special styles in
 # effect, make a file that will call for the needed LaTeX packages when
 # latex is run (especially when using Sweave with R)

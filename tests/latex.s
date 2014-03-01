@@ -4,6 +4,14 @@ file <- '/tmp/z.tex'
 # Note: adding here package caused LaTeX problems
 cat('\\documentclass{article}\n\\usepackage{hyperref,lscape,ctable,booktabs,longtable}\n\\begin{document}\n', file=file)
 
+# Example from Ben Bolker
+d <- data.frame(x=1:2,
+                y=c(paste("a",
+                    paste(rep("very",30),collapse=" "),"long string"),
+                "a short string"))
+w <- latex(d, file=file, col.just=c("l","p{3in}"), table.env=FALSE, append=TRUE)
+
+## Test various permutations of options
 test <- function(caption=NULL, center=NULL, table.env=TRUE, size=NULL,
                  booktabs=FALSE, landscape=FALSE, ctable=FALSE, longtable=FALSE,
                  hyperref=NULL, insert=TRUE) {

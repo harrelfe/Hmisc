@@ -39,9 +39,16 @@ label.Surv <- function(x, default=NULL, units=FALSE, plot=FALSE,
   if(length(default) && (!length(lab) || lab==''))
     lab <- default
   
-  un  <- at$units
-  labelPlotmath(lab,
-                if(units) un else NULL,
+  un  <- NULL
+  if(units) {
+    un <- at$units
+    if(! length(un) && length(ia)) {
+      un <- ia$time2$units
+      if(! length(un)) un <- ia$time$units
+    }
+  }
+
+  labelPlotmath(lab, un,
                 plotmath=plot, grid=grid)
 }
 

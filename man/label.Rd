@@ -50,7 +50,8 @@
 	an overall \code{"label"} attribute for the object, then it looks for
 	saved attributes that \code{Surv} put in the \code{"inputAttributes"}
 	object, looking first at the \code{event} variable, then \code{time2},
-	and finally \code{time}.
+	and finally \code{time}.  You can restrict the looking by specifying
+	\code{type}.
 
 	\code{labelLatex} constructs suitable LaTeX labels a variable or from the
 	\code{label} and \code{units} arguments, optionally right-justifying
@@ -96,7 +97,7 @@ label(x, default=NULL, ...)
       grid=FALSE, \dots)
 
 \method{label}{Surv}(x, default=NULL, units=FALSE, plot=FALSE,
-      grid=FALSE, \dots)
+      grid=FALSE, type=c('any', 'time', 'event'), \dots)
 
 \method{label}{data.frame}(x, default=NULL, self=FALSE, \dots)
 
@@ -159,6 +160,8 @@ combineLabels(\dots)
     argument \code{grid} to \code{TRUE} so that \code{labelPlotmath} can
     return an ordinary character string instead of an expression.
   }
+	\item{type}{for \code{Surv} objects specifies the type of element for
+		which to restrict the search for a label}
   \item{label}{a character string containing a variable's label}
   \item{plotmath}{
     set to \code{TRUE} to have \code{labelMathplot} return an expression

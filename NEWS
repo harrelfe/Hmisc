@@ -1,3 +1,8 @@
+Changes in version 3.14-3 (2014-03-??)
+   * format.df: clarified in help file that col.just can contain specifications other than l,r,c, e.g., "p{3in}" to get paragraph formatting in a column.  Thanks: Ben Bolker
+   * latex.default: added example for the above in tests
+   * label.Surv: got units from inputAttributes in addition, and added type argument
+
 Changes in version 3.14-2 (2014-02-26)
    * latex.default: improved logic using new function in Misc: latexBuild
 	 * latex.default: fixed bug with ctable=TRUE with no caption by removing default label

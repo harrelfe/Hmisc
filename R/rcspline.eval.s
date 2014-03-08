@@ -30,85 +30,97 @@
 ##		   27 Dec 91 - added norm argument
 ##		   26 Jun 93 - added evasive action if <3 knots
 ##        1 Oct 13 - added logic to handle excessive ties at start or end x
+##        8 Mar 14 - refined that logic, added logic for low # uniques
 
 rcspline.eval <- function(x, knots=NULL, nk=5, inclx=FALSE, knots.only=FALSE,
                           type="ordinary", norm=2, rpm=NULL, pc=FALSE,
                           fractied=0.05)
 {
-  if(! length(knots)) {
+  if(! length(knots)) {   ## knot locations unspecified
     xx <- x[!is.na(x)]
     n <- length(xx)
     if(n < 6)
-      stop('fewer than 6 non-missing observations with knots omitted')
+      stop('knots not specified, and < 6 non-missing observations')
     
     if(nk < 3)
       stop('nk must be >= 3')
-    
-    outer <- if(nk > 3) .05 else .1
-    if(nk > 6) outer <- .025
 
-    knots <- numeric(nk)
-    overrideFirst <- overrideLast <- FALSE
-    nke <- nk
-    firstknot <- lastknot <- numeric(0)
+    xu  <- sort(unique(xx))
+    nxu <- length(xu)
     
-    if(fractied > 0 && fractied < 1) {
-      f <- table(xx) / n
-      tied <- max(f[1], f[length(f)])
-      if(f[1] >= fractied) {
-        firstknot <- min(xx[xx > min(xx)])
-        xx <- xx[xx > firstknot]
-        nke <- nke - 1
-        overrideFirst <- TRUE
-      }
-      if(f[length(f)] >= fractied) {
-        lastknot <- max(xx[xx < max(xx)])
-        xx <- xx[xx < lastknot]
-        nke <- nke - 1
-        overrideLast <- TRUE
-      }
+    if((nxu - 2) <= nk) {
+      warning(sprintf('%s knots requested with %s unique values of x.  knots set to %s interior values.', nk, nxu, nxu - 2))
+      knots <- xu[- c(1, length(xu))]
     }
-    if(nke == 1) knots <- median(xx)
     else {
-      if(length(unique(xx)) <= nke) knots <- xx
-      else {
-        p <- if(nke == 2) seq(.5, 1.0 - outer, length=nke)
-        else
-          seq(outer, 1.0 - outer, length=nke)
-        knots <- quantile(xx, p)
-        if(length(unique(knots)) < min(nke, 3)) {
-          knots <- quantile(xx, seq(outer, 1.0 - outer, length=2 * nke))
-          if(length(firstknot) && length(unique(knots)) < 3) {
-            midval <- if(length(firstknot) && length(lastknot))
-              (firstknot + lastknot) / 2. else median(xx)
-            knots <- sort(c(firstknot, midval,
-                            if(length(lastknot)) lastknot
-                            else quantile(xx, 1.0 - outer) ))
-            }
-          if((nu <- length(unique(knots))) < 3) {
-            cat("Fewer than 3 unique knots.  Frequency table of variable:\n")
-            print(table(x))
-            stop()
+      outer <- if(nk > 3) .05 else .1
+      if(nk > 6) outer <- .025
+      
+      knots <- numeric(nk)
+      overrideFirst <- overrideLast <- FALSE
+      nke <- nk
+      firstknot <- lastknot <- numeric(0)
+      
+      if(fractied > 0 && fractied < 1) {
+        f <- table(xx) / n
+        if(max(f[- c(1, length(f))]) < fractied) {
+          if(f[1] >= fractied) {
+            firstknot <- min(xx[xx > min(xx)])
+            xx <- xx[xx > firstknot]
+            nke <- nke - 1
+            overrideFirst <- TRUE
           }
-        
-        warning(paste("could not obtain", nke,
-                      "interior knots with default algorithm.\n",
-                      "Used alternate algorithm to obtain",
-                      nu, "knots"))
+          if(f[length(f)] >= fractied) {
+            lastknot <- max(xx[xx < max(xx)])
+            xx <- xx[xx < lastknot]
+            nke <- nke - 1
+            overrideLast <- TRUE
+          }
         }
       }
-         
-      if(length(xx) < 100) {
-        xx <- sort(xx)
-        if(! overrideFirst) knots[1]   <- xx[5]
-        if(! overrideLast)  knots[nke] <- xx[length(xx) - 4]
+      if(nke == 1) knots <- median(xx)
+      else {
+        if(nxu <= nke) knots <- xu
+        else {
+          p <- if(nke == 2) seq(.5, 1.0 - outer, length=nke)
+          else
+            seq(outer, 1.0 - outer, length=nke)
+          knots <- quantile(xx, p)
+          if(length(unique(knots)) < min(nke, 3)) {
+            knots <- quantile(xx, seq(outer, 1.0 - outer, length=2 * nke))
+            if(length(firstknot) && length(unique(knots)) < 3) {
+              midval <- if(length(firstknot) && length(lastknot))
+                (firstknot + lastknot) / 2. else median(xx)
+              knots <- sort(c(firstknot, midval,
+                              if(length(lastknot)) lastknot
+                              else quantile(xx, 1.0 - outer) ))
+            }
+            if((nu <- length(unique(knots))) < 3) {
+              cat("Fewer than 3 unique knots.  Frequency table of variable:\n")
+              print(table(x))
+              stop()
+            }
+            
+            warning(paste("could not obtain", nke,
+                          "interior knots with default algorithm.\n",
+                          "Used alternate algorithm to obtain",
+                          nu, "knots"))
+          }
+        }
+        
+        if(length(xx) < 100) {
+          xx <- sort(xx)
+          if(! overrideFirst) knots[1]   <- xx[5]
+          if(! overrideLast)  knots[nke] <- xx[length(xx) - 4]
+        }
       }
+      knots <- c(firstknot, knots, lastknot)
     }
-    knots <- c(firstknot, knots, lastknot)
-  }
+  }   ## end knot locations not specified
       
   knots <- sort(unique(knots))
   nk <- length(knots)
+
   if(nk < 3) {
     cat("fewer than 3 unique knots.  Frequency table of variable:\n")
     print(table(x))
@@ -118,7 +130,6 @@ rcspline.eval <- function(x, knots=NULL, nk=5, inclx=FALSE, knots.only=FALSE,
   if(knots.only) return(knots)
   
   if(length(rpm)) x[is.na(x)] <- rpm
-  
   xx <- matrix(1.1, length(x), nk - 2)
   knot1   <- knots[1     ]
   knotnk  <- knots[nk    ]

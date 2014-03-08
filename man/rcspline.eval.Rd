@@ -69,7 +69,9 @@ rcspline.eval(x, knots, nk=5, inclx=FALSE, knots.only=FALSE,
 		excluding these values is small, the unique values will be used as
 		the knots.  If the number of knots to use other than these exterior
 		values is only one, that knot will be at the median of the
-		non-extreme \code{x}.}
+		non-extreme \code{x}.  This algorithm is not used if any interior
+		values of \code{x} also have a proportion of ties equal to or
+		exceeding \code{fractied}.}
 }
 \value{
   If \code{knots.only=TRUE}, returns a vector of knot

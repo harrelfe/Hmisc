@@ -1491,7 +1491,8 @@ makeSteps <- function(x, y)
   else list(x = x[c(1, 2, 2)], y = y[c(1, 1, 2)])
 }
 
-latexBuild <- function(..., afterEndtabular=NULL, beforeEndtable=NULL, sep='') {
+#latexBuild <- function(..., afterEndtabular=NULL, beforeEndtable=NULL, sep='') {
+latexBuild <- function(..., insert=NULL, sep='') {
   w <- list(...)
   l <- length(w)
   if(l %% 2 != 0) stop('# arguments must be multiple of 2')
@@ -1510,15 +1511,21 @@ latexBuild <- function(..., afterEndtabular=NULL, beforeEndtable=NULL, sep='') {
   w <- character(0)
   close <- if(length(op)) {
     for(y in rev(op)) {
-      if(length(beforeEndtable) && y == 'table')
-        w <- c(w, '\n\n', beforeEndtable)
+      if(length(insert))
+        for(ins in insert)
+          if(length(ins) &&
+             ins[[1]] == y && ins[[2]] == 'before')
+            w <- c(w, '\n\n', ins[[3]])
       w <- c(w,
              if(y == '(') ')'
              else if(y == '{') '}'
              else if(y == '[') ']'
              else sprintf('\\end{%s}', y))
-      if(length(afterEndtabular) && y == 'tabular')
-        w <- c(w, '\n\n', afterEndtabular)
+      if(length(insert))
+        for(ins in insert)
+          if(length(ins) &&
+             ins[[1]] == y && ins[[2]] == 'after')
+            w <- c(w, '\n\n', ins[[3]])
     }
     paste(w, collapse=sep)
   }

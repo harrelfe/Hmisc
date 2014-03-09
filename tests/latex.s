@@ -1,3 +1,5 @@
+# Copy to /tmp, and after running to create z.tex, run pdflatex
+
 require(Hmisc)
 x <- cbind(x1=1:5, x2=2:6)
 file <- '/tmp/z.tex'
@@ -14,7 +16,7 @@ w <- latex(d, file=file, col.just=c("l","p{3in}"), table.env=FALSE, append=TRUE)
 ## Test various permutations of options
 test <- function(caption=NULL, center=NULL, table.env=TRUE, size=NULL,
                  booktabs=FALSE, landscape=FALSE, ctable=FALSE, longtable=FALSE,
-                 hyperref=NULL, insert=TRUE) {
+                 hyperref=NULL, insert=TRUE, caption.loc='top') {
   i <<- i + 1
   cat('\\clearpage\ni=', i, '\n\\hrule\n', sep='', file=file, append=TRUE)
   ib <- it <- NULL
@@ -26,7 +28,8 @@ test <- function(caption=NULL, center=NULL, table.env=TRUE, size=NULL,
   }
   if(insert) {
     z <- paste(g(caption), g(center), g(table.env), g(size), g(booktabs),
-               g(landscape), g(ctable), g(longtable), g(hyperref), sep='')
+               g(landscape), g(ctable), g(longtable), g(hyperref),
+               if(caption.loc != 'top') g(caption.loc), sep='')
     it <- paste('Top: i=', i, ':', z, sep='')
     ib <- 'Text for bottom'
   }
@@ -34,7 +37,7 @@ test <- function(caption=NULL, center=NULL, table.env=TRUE, size=NULL,
              caption=caption, center=center, table.env=table.env,
              size=size, booktabs=booktabs, landscape=landscape,
              ctable=ctable, longtable=longtable, hyperref=hyperref,
-             insert.top=it, insert.bottom=ib)
+             insert.top=it, insert.bottom=ib, caption.loc=caption.loc)
   invisible()
 }
 
@@ -42,6 +45,7 @@ i <- 0
 test()
 test(hyperref='rrrrr')
 test(caption='This caption')
+test(caption='This caption, supposed to be at bottom', caption.loc='bottom')
 for(cen in c('center', 'centering', 'centerline')) test(center=cen)
 test(table.env=FALSE)
 test(size='scriptsize')

@@ -60,12 +60,12 @@
 	\code{latexBuild} takes pairs of character strings and produces a
 	single character string containing concatenation of all of them, plus
 	an attribute \code{"close"} which is a character string containing the
-	LaTeX closure that will balance 
-	LaTeX code with respect to parentheses, braces, brackets, or
-	\code{begin} vs. \code{end}.  When an even-numbered element of the
-	vector is not a left parenthesis, brace, or bracket, the element is
-	taken as a word that was surrounded by \code{begin} and braces, for which the
-	corresponding \code{end} is constructed in the returned attribute.
+	LaTeX closure that will balance LaTeX code with respect to
+	parentheses, braces, brackets, or \code{begin} vs. \code{end}.  When
+	an even-numbered element of the vector is not a left parenthesis,
+	brace, or bracket, the element is taken as a word that was surrounded
+	by \code{begin} and braces, for which the corresponding \code{end} is
+	constructed in the returned attribute.
 
   \code{lm.fit.qr.bare} is a fast stripped-down function for computing
   regression coefficients, residuals, \eqn{R^2}, and fitted values.  It
@@ -148,7 +148,7 @@ getLatestSource(x=NULL, package='Hmisc', recent=NULL, avail=FALSE,
 inverseFunction(x, y)
 james.stein(y, group)
 km.quick(S, times, q)
-latexBuild(\dots, afterEndtabular=NULL, beforeEndtable=NULL, sep='')
+latexBuild(\dots, insert, sep='')
 lm.fit.qr.bare(x, y, tolerance, intercept=TRUE, xpxi=FALSE, singzero=FALSE)
 matxv(a, b, kint=1, bmat=FALSE)
 nomiss(x)
@@ -168,17 +168,12 @@ xless(x, \dots, title)
 }
 \arguments{
   \item{a}{a numeric matrix or vector}
-	\item{afterEndtabular}{one or more character strings that are to be
-		placed right after the end of any \code{tabular} environment, in
-		\code{latexBuild}}
   \item{at}{x-coordinate for vertical confidence intervals, y-coordinate
 	for horizontal}
   \item{avail}{set to \code{TRUE} to have \code{getLatestSource} return
 	a data frame of available files and latest versions instead of
 	fetching any}
   \item{b}{a numeric vector}
-  \item{beforeEndtable}{one or more character strings that are to be placed
-		right before the end of any \code{table} environment, in \code{latexBuild}}
   \item{cex}{character expansion factor}
   \item{clip}{interval to truncate limits}
   \item{col}{vector of colors}
@@ -188,6 +183,13 @@ xless(x, \dots, title)
   \item{f}{a scaling constant}
   \item{fun}{function to transform scale}
   \item{group}{a categorical grouping variable}
+	\item{insert}{a list of 3-element lists for \code{latexBuild}.
+		The first of each 3-element
+		list is a character string with an environment name.  The second
+		specifies the order: \code{"before"} or \code{"after"}, the former
+		indicating that when the environment is found, the third element of
+		the list is inserted before or after it, according to the second
+		element.}
   \item{intercept}{set to \code{FALSE} to not automatically add a column
 	of ones to the \code{x} matrix}
   \item{k}{get the \code{k} closest matches}

@@ -6,15 +6,15 @@ first.word <- function(x, i=1, expr=substitute(x))
   
   if(i > 1) stop('i > 1 not implemented')
   
-  chars <- substring(words, 1:nchar(words), 1:nchar(words))
-  legal.chars <- c(letters,LETTERS,'.',
+  chars <- substring(words, 1 : nchar(words), 1 : nchar(words))
+  legal.chars <- c(letters, LETTERS, '.',
                    '0','1','2','3','4','5','6','7','8','9')
   non.legal.chars <- (1:length(chars))[chars %nin% legal.chars]
   if(!any(non.legal.chars)) return(words)
   
-  if(non.legal.chars[1]==1) return(character(0))
+  if(non.legal.chars[1] == 1) return(character(0))
   
-  substring(words, 1, non.legal.chars[1]-1)
+  substring(words, 1, non.legal.chars[1] - 1)
 }
 
 
@@ -73,7 +73,7 @@ format.df <- function(x,
     
     ## Find strings not in math mode (surrounded by $)
     s <- gsub("(^[[:space:]]+)|([[:space:]]+$)", "", string)
-    k <- !(substring(s, 1, 1) =='$' & substring(s, nchar(s))=='$')
+    k <- !(substring(s, 1, 1) == '$' & substring(s, nchar(s)) == '$')
     k <- k & !is.na(k)
     
     if(!any(k)) return(string)
@@ -83,7 +83,7 @@ format.df <- function(x,
     string
   }
 
-  if(numeric.dollar == TRUE && dcolumn == TRUE)
+  if(numeric.dollar && dcolumn)
     stop('cannot have both numeric.dollar=TRUE and dcolumn=TRUE')
   
   if(missing(digits))
@@ -109,11 +109,11 @@ format.df <- function(x,
     y
   }
   
-  dot <- if(cdot==TRUE && numeric.dollar==TRUE)
+  dot <- if(cdot && numeric.dollar)
     paste(sl,sl,'cdotp',sl,sl,'!',sep='')
   else '.'
   
-  decimal.point <- if(cdot==TRUE && dcolumn==TRUE)
+  decimal.point <- if(cdot && dcolumn)
     paste(sl,'cdot',sep='')
   else dot
 
@@ -121,9 +121,9 @@ format.df <- function(x,
   
   xtype <- if(is.list(x)) 1 else if(length(dim(x))) 2 else 3
   
-  ncx <- if(xtype==1) length(x) else if(xtype==2) ncol(x) else 1
+  ncx <- if(xtype == 1) length(x) else if(xtype == 2) ncol(x) else 1
   
-  nams <- if(xtype==1) names(x) else if(xtype==2) dimnames(x)[[2]] else ''
+  nams <- if(xtype == 1) names(x) else if(xtype == 2) dimnames(x)[[2]] else ''
 
   if(!missing(col.just) && (length(col.just) < ncx))
     stop('col.just needs the same number of elements as number of columns')
@@ -131,25 +131,25 @@ format.df <- function(x,
   if(!length(nams)) nams <- rep('', ncx)
   
   nrx <-
-    if(xtype==1) {
+    if(xtype == 1) {
       if(length(d <- dim(x[[1]])))
         d[1]
       else
         length(x[[1]])
-    } else if(xtype==2)
+    } else if(xtype == 2)
       nrow(x)
     else
       length(x)
   
   rnams <-
-    if(xtype==1)
+    if(xtype == 1)
       attr(x,'row.names')
-    else if(xtype==2)
+    else if(xtype == 2)
       dimnames(x)[[1]]
     else
       names(x)
   
-  if(length(dec) + length(rdec) + length(cdec) == 0)
+  if(length(dec) + length(rdec) + length(cdec)  ==  0)
     rtype <- 1
   
   if(length(rdec)) {
@@ -204,7 +204,7 @@ format.df <- function(x,
 
     for(k in 1 : ncxj) {
       xk <-
-        if(ld <- length(dim(xj))==2)
+        if(ld <- length(dim(xj)) == 2)
           xj[, k]
         else
           xj
@@ -216,7 +216,7 @@ format.df <- function(x,
       namk <-
         if(ld) {
           dn <- dimnames(xj)[[2]][k]
-          if(length(dn)==0)
+          if(length(dn) == 0)
             dn <- as.character(k)
           
           if(math.row.names) {
@@ -238,10 +238,10 @@ format.df <- function(x,
             col.just[j]
           else 'r'
 
-        if(rtype==1)
+        if(rtype == 1)
           cxk <- formt(xk, decimal.mark=dot, scientific=scientific,
                        digits=digits, na.blank=na.blank)
-        else if(rtype==3) {
+        else if(rtype == 3) {
           cxk <- character(nrx)
           for(i in 1:nrx)
             cxk[i] <-
@@ -252,7 +252,7 @@ format.df <- function(x,
                 formt(round(xk[i], dec[i,j]), decimal.mark=dot,
                       digits=digits, nsmall=dec[i,j], scientific=scientific,
                       na.blank=na.blank)
-        } else if(rtype==4)
+        } else if(rtype == 4)
           cxk <-
             if(is.na(cdec[j]))
               formt(xk, decimal.mark=dot, scientific=scientific, digits=digits,
@@ -272,7 +272,7 @@ format.df <- function(x,
         
         ## These columns get real minus signs in LaTeX, not hyphens,
         ## but lose alignment unless their col.just="r"
-        if(dcolumn | (length(col.just) && col.just[j]=='c')) {
+        if(dcolumn | (length(col.just) && col.just[j] == 'c')) {
           cxk <- sedit(cxk, " ", "~")
           if(dcolumn)
             cj <- paste("D{.}{",decimal.point,"}{-1}",sep='')
@@ -403,7 +403,7 @@ latex.default <-
   if(length(rgroup) && length(n.rgroup) && (length(rgroup) != length(n.rgroup)))
     stop("lengths of rgroup and n.rgroup must match")
   
-  if (length(rgroup) && rowlabel.just=="l")
+  if (length(rgroup) && rowlabel.just == "l")
     rowname <- paste("~~",rowname,sep="")
 
   sl <- ifelse(double.slash, "\\\\", "\\")
@@ -561,7 +561,7 @@ latex.default <-
       colheads <- c('', colheads)
       cgroup <- c(rowlabel, cgroup)
 
-      rlj <- ifelse(rowlabel.just=="l", "l", "c")
+      rlj <- ifelse(rowlabel.just == "l", "l", "c")
       cgroup.just <- c(rlj, cgroup.just)
       n.cgroup <- c(1, n.cgroup)
       cgroup.cols <- 1+cgroup.cols
@@ -661,12 +661,17 @@ latex.default <-
         hyperref, '{',
         paste(sl, "begin{tabular}{", tabular.cols, "}\n", toprule, sep=""),
          'tabular',
-        afterEndtabular = if(! table.env) insert.bottom,
-        beforeEndtable  = if(table.env)   insert.bottom)
+        insert=list(if(! table.env && length(insert.bottom))
+                      list('tabular', 'after', insert.bottom),
+                    if(table.env)
+                      list('table',   'before', insert.bottom),
+                    if(caption.loc == 'bottom' && length(caption))
+                      list('tabular', 'after', caption)
+                   ) )
     
     latex.end <- attr(latex.begin, 'close')
 
-  } else {
+  } else {           ## longtable, not ctable
     latex.begin <-
       latexBuild(
         if(! draft.longtable) 
@@ -680,7 +685,10 @@ latex.default <-
           'longtable',
         if(caption.loc == 'top' && length(caption)) paste(caption, eog),
           '',
-        toprule, '')
+        toprule, '',
+        insert=list(
+          if(caption.loc == 'bottom' && length(caption))
+           list('longtable', 'after', caption) ) )
     
     latex.end <- attr(latex.begin, 'close')
   }
@@ -738,16 +746,16 @@ latex.default <-
       
       header <- paste(colheads, collapse='&')
       if(length(extracolheads)) {
-        extracolheads <- ifelse(extracolheads==''| extracolsize=='',
+        extracolheads <- ifelse(extracolheads == ''| extracolsize == '',
                                 extracolheads,
                                 paste('{',sl,extracolsize,' ',
                                       extracolheads,'}',sep=''))
         
         if(multicol)
-          extracolheads <- ifelse(extracolheads=='',extracolheads,
+          extracolheads <- ifelse(extracolheads == '',extracolheads,
                                   paste(slmc1,cvbar,'}{',extracolheads,'}',sep=''))
         else
-          extracolheads <- ifelse(extracolheads=='',extracolheads,
+          extracolheads <- ifelse(extracolheads == '',extracolheads,
                                   paste(extracolheads,sep=''))
         
         header <- paste(header, eol, paste(extracolheads, collapse='&'), sep='')
@@ -889,16 +897,16 @@ latex.function <- function(object,
   type <- match.arg(type)
   fctxt <- deparse(object, width.cutoff=width.cutoff)
   if(assignment) fctxt[1] <- paste(title , '<-', fctxt[1]) 
-  environment <- ifelse(type=='example', "alltt", "verbatim")
+  environment <- ifelse(type == 'example', "alltt", "verbatim")
   environment <- c(example='alltt', verbatim='verbatim',
                    Sinput=paste('Sinput',size,sep=''))[type]
   preamble <- paste("\\begin{",environment,"}\n",sep="")
   cat(preamble, file=file, append=file!="")
 
-  if(type=='Sinput') cat(fctxt, sep='\n')
+  if(type == 'Sinput') cat(fctxt, sep='\n')
   else {
     rxs <-
-      if(type=='example')
+      if(type == 'example')
         c("\t=>    ",
           "\\\\=>\\\\(\\\\backslash\\\\)",
           "([{}])=>\\\\\\1",
@@ -921,7 +929,7 @@ latex.function <- function(object,
   postamble <- paste("\\end{",environment,"}\n", sep="")
   cat(postamble, file=file, append=file!='')
   
-  structure(list(file=file, style=if(type=='example')'alltt'), class='latex')
+  structure(list(file=file, style=if(type == 'example')'alltt'), class='latex')
 }
 
 latexVerbatim <- function(x,
@@ -1024,14 +1032,14 @@ latexTranslate <- function(object, inn=NULL, out=NULL, pb=FALSE,
   for(i in 1:length(text)) {
     lt <- nchar(text[i])
     x <- substring(text[i],1:lt,1:lt)
-    j <- x=='^'
+    j <- x == '^'
     if(any(j)) {
       is <- ((1:lt)[j])[1]  #get first ^
       remain <- x[-(1:is)]
       k <- remain %in% c(' ',',',')',']','\\','$')
       ## Following 3 lines 31aug02
       if(remain[1] %in% dig ||
-         (length(remain) > 1 && remain[1]=='-' && remain[2] %in% dig))
+         (length(remain) > 1 && remain[1] == '-' && remain[2] %in% dig))
         k[-1] <- k[-1] | remain[-1] %nin% dig
       
       ie <-
@@ -1042,7 +1050,7 @@ latexTranslate <- function(object, inn=NULL, out=NULL, pb=FALSE,
       
       ##See if math mode already turned on (odd number of $ to left of ^)
       dol <-
-        if(sum(x[1:is]=='$') %% 2)
+        if(sum(x[1:is] == '$') %% 2)
           ''
         else '$'
       
@@ -1082,7 +1090,7 @@ optionsCmds <- function(pgm)
 {
   optionName <- paste(pgm, 'cmd', sep='')
   v <- .Options[[optionName]]
-  if(pgm=='xdvi' && .Platform$OS.type != 'unix' && !length(v))
+  if(pgm == 'xdvi' && .Platform$OS.type != 'unix' && !length(v))
     v <- 'yap'  # MikTeX
   if(length(v) && v!='') pgm <- v
   pgm
@@ -1158,7 +1166,7 @@ show.dvi <- function(object, width=5.5, height=7)
 ## enhanced show.latex 22dec02 - special treatment of file==''
 show.latex <- function(object)
 {
-  if(object$file=='') {
+  if(object$file == '') {
     if(length(object$style)) {
       environment(show.latex)$latexStyles <-
         if(exists("latexStyles", envir=environment(show.latex)))
@@ -1278,7 +1286,7 @@ html.data.frame <-
     if(is.matrix(link)) 
       x[link!=''] <- paste('<a ',linkType,'="', link[link!=''],'">',
                            x[link!=''],'</a>',sep='') else
-    x[,linkCol] <- ifelse(link=='',x[,linkCol],
+    x[,linkCol] <- ifelse(link == '',x[,linkCol],
                           paste('<a ',linkType,'="',link,'">',
                                 x[,linkCol],'</a>',sep=''))
   }

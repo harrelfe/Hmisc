@@ -6,6 +6,11 @@ file <- '/tmp/z.tex'
 # Note: adding here package caused LaTeX problems
 cat('\\documentclass{article}\n\\usepackage{hyperref,lscape,ctable,booktabs,longtable}\n\\begin{document}\n', file=file)
 
+# Example from Johannes Hofrichter
+dat <- data.frame(a=c(1,2), b=c(2,3))
+w <- latex(dat, file=file, ctable=TRUE,
+           caption = "caption", label="test", append=TRUE)
+
 # Example from Ben Bolker
 d <- data.frame(x=1:2,
                 y=c(paste("a",

@@ -624,7 +624,7 @@ latex.default <-
         intop(), '',
         paste(sl, 'ctable[', sep=''), '',
         if(length(caption) && caption.loc == 'bottom') 'botcap', '',
-        if(length(caption)) paste('caption={', caption, '}', sep=''),
+        if(length(caption)) paste('caption={', caption, '},', sep=''),
          '',
         if(length(caption.lot)) paste('cap={', caption.lot, '},',
                                       sep=''), '',

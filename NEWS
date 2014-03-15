@@ -1,8 +1,15 @@
-Changes in version 3.14-3 (2014-03-??)
+Changes in version 3.14-4 (2014-03-??)
+   * rcspline.eval: stop new logic for ignoring outer values when there are many ties when there are also many ties on interior values.  Added new logic to use interior unique values of x when the number of unique x is small.
+   * latexBuild: generalized with insert argument
+   * latex.default: modified to use mods of latexBuild, fixed bug with caption.loc='bottom' (thanks: YacineH)
+   * latex.default: fixed bug where comma did not appear after caption={} for ctable (thanks: Johannes Hofrichter)
+   * tests: fit.mult.impute.bootstrap.r: added new example (thanks: Jane Cook)
+   * fit.mult.impute: added call for fit.mult.impute in returned object, replacing call from fitter; makes update work for fit.mult.impute
+
+Changes in version 3.14-3 (2014-03-02)
    * format.df: clarified in help file that col.just can contain specifications other than l,r,c, e.g., "p{3in}" to get paragraph formatting in a column.  Thanks: Ben Bolker
    * latex.default: added example for the above in tests
    * label.Surv: got units from inputAttributes in addition, and added type argument
-   * rcspline.eval: stop new logic for ignoring outer values when there are many ties when there are also many ties on interior values.  Added new logic to use interior unique values of x when the number of unique x is small.
 
 Changes in version 3.14-2 (2014-02-26)
    * latex.default: improved logic using new function in Misc: latexBuild

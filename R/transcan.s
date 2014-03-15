@@ -1263,6 +1263,7 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
                             vcovOpts=NULL,
                             pr=TRUE, subset, ...)
 {
+  call <- match.call()
   using.Design <- FALSE
   fits <- if(fit.reps) vector('list', n.impute)
   used.mice <- any(class(xtrans)=='mids')
@@ -1408,6 +1409,7 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
   f$fits    <- fits
   f$formula <- formula
   f$assign  <- assign
+  f$call    <- call
   if(using.Design) options(Design.attr=NULL)
   class(f) <- c('fit.mult.impute', class(f))
   f

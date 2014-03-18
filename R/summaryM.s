@@ -44,7 +44,7 @@ summaryM <- function(formula, groups=NULL, data=NULL, subset,
      glabel <- getlab(group, groups)
    } else {
      svar  <- factor(rep('.ALL.', nrow(Y)))
-     group <- rep(0, nrow(Y))  # y1 + y2 ~ 1, no grouping
+     group <- rep('', nrow(Y))  # y1 + y2 ~ 1, no grouping
      groups <- group.freq <- NULL
      glabel <- ''
    }

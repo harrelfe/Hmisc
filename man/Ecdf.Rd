@@ -5,9 +5,7 @@
 \alias{Ecdf.formula}
 \alias{panel.Ecdf}
 \alias{prepanel.Ecdf}
-\title{
-Empirical Cumulative Distribution Plot
-}
+\title{Empirical Cumulative Distribution Plot}
 \description{
 Computes coordinates of cumulative distribution function of x, and by defaults
 plots it as a step function.  A grouping variable may be specified so that
@@ -45,7 +43,7 @@ user to define the keys for the groups.
 \usage{
 Ecdf(x, \dots)
 
-\method{Ecdf}{default}(x, what=c('F','1-F','f'),
+\method{Ecdf}{default}(x, what=c('F','1-F','f','1-f'),
      weights=rep(1, length(x)), normwt=FALSE,
      xlab, ylab, q, pl=TRUE, add=FALSE, lty=1, 
      col=1, group=rep(1,length(x)), label.curves=TRUE, xlim, 
@@ -62,22 +60,21 @@ Ecdf(x, \dots)
 
 \method{Ecdf}{formula}(x, data=sys.frame(sys.parent()), groups=NULL,
      prepanel=prepanel.Ecdf, panel=panel.Ecdf, \dots, xlab,
-     ylab, fun=function(x)x, subset=TRUE)
+     ylab, fun=function(x)x, what=c('F','1-F','f','1-f'), subset=TRUE)
 }
 \arguments{
 \item{x}{a numeric vector, data frame, or Trellis/Lattice formula}
 \item{what}{
 The default is \code{"F"} which results in plotting the fraction of values
 <= x.  Set to \code{"1-F"} to plot the fraction > x or \code{"f"} to plot the
-cumulative frequency of values <= x.
+cumulative frequency of values <= x.  Use \code{"1-f"} to plot the
+cumulative frequency of values >= x.
 }
 \item{weights}{
 numeric vector of weights.  Omit or specify a zero-length vector or
 NULL to get unweighted estimates.
 }
-\item{normwt}{
-see above
-}
+\item{normwt}{see above}
 \item{xlab}{
 x-axis label.  Default is label(x) or name of calling argument.  For
 \code{Ecdf.formula}, \code{xlab} defaults to the \code{label} attribute
@@ -91,9 +88,7 @@ or "Frequency <= x" depending on value of \code{what}.
 a vector for quantiles for which to draw reference lines on the plot.
 Default is not to draw any.
 }
-\item{pl}{
-set to F to omit the plot, to just return estimates.
-}
+\item{pl}{set to F to omit the plot, to just return estimates}
 \item{add}{
 set to TRUE to add the cdf to an existing plot.  Does not apply if using
      lattice graphics (i.e., if a formula is given as the first argument).

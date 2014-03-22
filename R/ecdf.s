@@ -1,7 +1,7 @@
 Ecdf <- function(x, ...) UseMethod('Ecdf')
 
 
-Ecdf.default <- function(x, what=c('F','1-F','f'), 
+Ecdf.default <- function(x, what=c('F','1-F','f','1-f'), 
                          weights=rep(1, length(x)), normwt=FALSE,
                          xlab, ylab, q, pl=TRUE, add=FALSE, lty=1,
                          col=1, group=rep(1, length(x)), 
@@ -13,6 +13,7 @@ Ecdf.default <- function(x, what=c('F','1-F','f'),
                          dens.opts=NULL, lwd=1, log='', ...)
 {
   datadensity <- match.arg(datadensity)
+  what        <- match.arg(what)
   colspec <- FALSE
   if(datadensity != 'none') {
     if(side %in% c(2,4))
@@ -73,33 +74,38 @@ Ecdf.default <- function(x, what=c('F','1-F','f'),
     z <- wtd.Ecdf(x, wt, type='i/n', normwt=normwt, na.rm=FALSE)
     x <- z$x; y <- z$ecdf
     switch(what,
-           '1-F' = {y <- 1-y},
-           'f'   = {y <- y * sum(wt)})
+           '1-F' = {y <- 1 - y},
+           'f'   = {y <- y * sum(wt)},
+           '1-f' = {x <- x[-1]
+                    y <- as.vector((1 - y[- length(y)]) * sum(wt)) } )
     
     if(pl) {
       if(i==1 && !add)
         plot(x, y, xlab=xlab, ylab=ylab, xlim=xlim, type='n', log=log, ...)
       
       lines(x, y, type="s", lty=lty[i], col=col[i], lwd=lwd[i])
-      if(subtitles && i==1) {
-        pm <- paste("n:",n," m:",m,sep="")
-        title(sub=pm,adj=0,cex=.5)
+      if(subtitles && i == 1) {
+        pm <- paste("n:", n, " m:", m, sep="")
+        title(sub=pm, adj=0, cex=.5)
       }
       
       if(!missing(q)) {
-        if(what=='f') q <- q*y[length(y)] else if(what=='1-F') q <- 1-q
+        if(what == '1-f') stop('what="1-f" not yet implemented with q')
+        if(what=='f') q <- q * y[length(y)]
+        else
+          if(what == '1-F') q <- 1 - q
         q <- switch(what,
-                    'f'   = q*sum(wt),
+                    'f'   = q * sum(wt),
                     '1-F' = 1 - q,
                     'F'   = q)
         
         a <- par("usr")
         for(w in q) {
           quant <-
-            if(what=='1-F') min(x[y<=w]) else min(x[y>=w])
+            if(what=='1-F') min(x[y <= w]) else min(x[y >= w])
           
-          lines(c(a[1],quant),c(w,w),lty=2,col=1)
-          lines(c(quant,quant),c(w,a[3]),lty=2,col=col[i])
+          lines(c(a[1],  quant), c(w, w),    lty=2, col=1)
+          lines(c(quant, quant), c(w, a[3]), lty=2, col=col[i])
         }
       }
     }
@@ -127,7 +133,7 @@ Ecdf.default <- function(x, what=c('F','1-F','f'),
 }
 
 
-Ecdf.data.frame <- function(x, group=rep(1,nrows), 
+Ecdf.data.frame <- function(x, group=rep(1, nrows), 
                             weights=rep(1,nrows), normwt=FALSE,
                             label.curves=TRUE, n.unique=10, na.big=FALSE, 
                             subtitles=TRUE,  vnames=c("labels","names"),
@@ -135,8 +141,8 @@ Ecdf.data.frame <- function(x, group=rep(1,nrows),
 {
   vnames <- match.arg(vnames)
   mf <- par('mfrow')
-  if(length(mf)==0)
-    mf <- c(1,1)
+  if(length(mf) == 0)
+    mf <- c(1, 1)
   
   g <- function(v, n.unique) {
     if(is.character(v) || is.factor(v))
@@ -147,7 +153,7 @@ Ecdf.data.frame <- function(x, group=rep(1,nrows),
   
   use <- sapply(x, g, n.unique=n.unique)
   automf <- FALSE
-  if((la <- sum(use)) > 1 & max(mf)==1) {
+  if((la <- sum(use)) > 1 & max(mf) == 1) {
     mf <-
       if(la<=4) c(2,2)
       else if(la<=6) c(2,3)
@@ -169,19 +175,19 @@ Ecdf.data.frame <- function(x, group=rep(1,nrows),
 
   group <- as.factor(group)
   
-  for(j in (1:length(x))[use]) {
+  for(j in (1 : length(x))[use]) {
     v <- x[[j]]
-    i <- i+1
-    lab <- if(vnames=='names') nam[j] else
+    i <- i + 1
+    lab <- if(vnames == 'names') nam[j] else
     label(v, units=TRUE, plot=TRUE, default=nam[j])
     
     z <- Ecdf(v, group=group, weights=weights, normwt=normwt, 
               xlab=lab, label.curves=label.curves, 
               subtitles=subtitles, ...)
     if(na.big) {
-      m <- attr(z,'N')$m
+      m <- attr(z, 'N')$m
       if(m > 0)
-        mtext(paste(m,"NAs"),line=-2,cex=1)
+        mtext(paste(m,"NAs"), line=-2, cex=1)
     }
     
     if(automf && interactive() && 
@@ -196,10 +202,16 @@ Ecdf.data.frame <- function(x, group=rep(1,nrows),
 }
 
 
-prepanel.Ecdf <- function(x, y, fun, ...) {
-  xlim <- range(x,na.rm=TRUE)
-  ylim <- fun(c(0,1))
-  if(any(is.infinite(ylim))) ylim <- fun(c(.001,.999))
+prepanel.Ecdf <- function(x, y, fun, what, ...) {
+  xlim <- range(x, na.rm=TRUE)
+  l <- length(x[! is.na(x)])
+  ylim <- switch(what,
+                 F = c(0, 1),
+                 '1-F' = c(0, 1),
+                 f = c(0, l),
+                 '1-f' = c(0, l))
+  ylim <- fun(ylim)
+  if(any(is.infinite(ylim))) ylim <- fun(c(.001, .999))
   list(xlim=xlim, ylim=ylim, dx=diff(xlim), dy=diff(ylim))
 }
 
@@ -207,6 +219,7 @@ prepanel.Ecdf <- function(x, y, fun, ...) {
 panel.Ecdf <- function(x, y, subscripts, groups=NULL, 
                        q=NULL, type='s',
                        method=c('i/n','(i-1)/(n-1)','i/(n+1)'), fun,
+                       what = c('F', '1-F', 'f', '1-f'),
                        label.curves=TRUE, 
                        lwd = plot.line$lwd, 
                        lty = plot.line$lty,
@@ -215,8 +228,8 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
                        font= plot.symbol$font, 
                        col = NULL, ...)
 {
-  ## y duplicates x in S-Plus
   method <- match.arg(method)
+  what   <- match.arg(what)
   if(length(groups)) groups <- as.factor(groups)
 
   type <- 's'   # lattice histogram sets to 'percent'
@@ -224,27 +237,23 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
   g <- unclass(groups)[subscripts]
   ng <- if(length(groups)) max(g, na.rm=TRUE) else 1
 
-  plot.symbol <- trellis.par.get(if(ng>1)
-                                 "superpose.symbol"
-  else
-                                 "plot.symbol")
+  plot.symbol <- trellis.par.get(
+    if(ng > 1) "superpose.symbol" else "plot.symbol")
   
-  plot.line   <- trellis.par.get(if(ng>1)
-                                 "superpose.line"
-  else
-                                 "plot.line")
+  plot.line   <- trellis.par.get(
+    if(ng > 1) "superpose.line" else "plot.line")
 
   qrefs <- function(x, q, col, fun, llines, grid) {
     quant <- quantile(x, probs=q, na.rm=TRUE)
     a <- parGrid(grid)$usr
-    for(i in 1:length(q)) {
-      llines(c(a[1],quant[i]),fun(c(q[i],q[i])),lty=2,col=1)
-      llines(c(quant[i],quant[i]),fun(c(q[i],a[3])),lty=2,col=col)
+    for(i in 1 : length(q)) {
+      llines(c(a[1],     quant[i]), fun(c(q[i], q[i])), lty=2, col=1)
+      llines(c(quant[i], quant[i]), fun(c(q[i], a[3])), lty=2, col=col)
     }
   }
   
   ppanel <- function(x, y, type, cex, pch, font, lwd, lty, col, q, 
-                     qrefs, ecdf.type, fun=fun, 
+                     qrefs, ecdf.type, fun=fun, what,
                      datadensity=c('none','rug','hist','density'), 
                      side=1, 
                      frac=switch(datadensity,
@@ -256,12 +265,20 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
     {
       ## y ignored
       z <- wtd.Ecdf(x, type=ecdf.type, na.rm=FALSE)
+      zx <- z$x
+      y  <- z$ecdf
+      switch(what,
+             '1-F' = {y <- 1 - y},
+             'f'   = {y <- y * length(x)},
+             '1-f' = {zx <- zx[-1]
+                      y <- as.vector((1 - y[- length(y)]) * length(x)) } )
+
     
       ## For some reason S-Plus will not plot anything the following way
       ## when lwd is a variable
       ##llines(z$x, fun(z$ecdf), lwd = lwd, lty = lty, col = col,
       ##       type = type, ...)
-      do.call('llines', list(z$x, fun(z$ecdf), lwd = lwd, lty = lty, col = col,
+      do.call('llines', list(zx, fun(y), lwd = lwd, lty = lty, col = col,
                              type = type, ...))
       if(length(q))
         qrefs(x, q, col, fun=fun, llines=llines, grid=TRUE)
@@ -287,8 +304,8 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
                        rug    ='scat1d',
                        hist='histSpike',
                        density='histSpike'),
-                c(list(x=x,add=TRUE,grid=TRUE),
-                  if(datadensity=='density')
+                c(list(x=x, add=TRUE, grid=TRUE),
+                  if(datadensity == 'density')
                   list(type='density'),
                   dens.opts))
       }
@@ -296,7 +313,7 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
   
   pspanel <- function(x, subscripts, groups, type, lwd, lty,
                       pch, cex, font, col, q, qrefs, 
-                      ecdf.type, fun, llines, ...)
+                      ecdf.type, fun, what, llines, ...)
     {
       ## y ignored
       lev <- levels(groups)
@@ -310,12 +327,22 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
         j <- which # no sorting
         if(any(j)) {
           z <- wtd.Ecdf(x[j], type=ecdf.type, na.rm=FALSE)
-          do.call('llines',list(z$x, fun(z$ecdf),
-                                col = col[i], lwd = lwd[i], lty = lty[i], 
-                                type = type, ...))
+          zx <- z$x
+          y  <- z$ecdf
+          switch(what,
+                 '1-F' = {y <- 1 - y},
+                 'f'   = {y <- y * length(x[j])},
+                 '1-f' = {zx <- zx[-1]
+                          y <- as.vector((1 - y[- length(y)]) * length(x[j])) } )
+
+          
+          do.call('llines',
+                  list(zx, fun(y),
+                       col = col[i], lwd = lwd[i], lty = lty[i], 
+                       type = type, ...))
           if(length(q)) qrefs(x[j], q, col[i], fun=fun, llines=llines,
                               grid=TRUE)
-          curves[[lev[i]]] <- list(x=z$x, y=fun(z$ecdf))
+          curves[[lev[i]]] <- list(x=zx, y=fun(y))
         }
       }
       
@@ -336,7 +363,7 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
     curves <- pspanel(x, subscripts, groups,
                       lwd=lwd, lty=lty, pch=pch, cex=cex, 
                       font=font, col=col, type=type, q=q, qrefs=qrefs, 
-                      ecdf.type=method, fun=fun, llines=llines)
+                      ecdf.type=method, fun=fun, what=what, llines=llines)
     if(!(is.logical(label.curves) && !label.curves)) {
       lc <-
         if(is.logical(label.curves))
@@ -348,12 +375,12 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
                opts=lc, grid=TRUE, ...)
     }
   }
-  else ppanel(x,
+  else ppanel(x, what=what,
               lwd=lwd, lty=lty, pch=pch, cex=cex, 
               font=font, col=col, type=type, q=q, qrefs=qrefs, 
               ecdf.type=method, fun=fun, llines=llines, ...)
 
-  if(ng>1) { ##set up for key() if points plotted
+  if(ng > 1) { ##set up for key() if points plotted
     .Key <- function(x=0, y=1, lev, col, lty, lwd, ...)
       {
         oldpar <- par(usr=c(0,1,0,1),xpd=NA)
@@ -383,8 +410,11 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
 Ecdf.formula <- function(x, data = sys.frame(sys.parent()), 
                          groups = NULL, 
                          prepanel=prepanel.Ecdf, panel=panel.Ecdf, ..., 
-                         xlab, ylab, fun=function(x)x, subset=TRUE)
+                         xlab, ylab, fun=function(x)x,
+                         what=c('F', '1-F', 'f', '1-f'),
+                         subset=TRUE)
 {
+  what <- match.arg(what)
   vars <- all.vars(x)
   xname <- vars[1]
   if(missing(xlab))
@@ -393,17 +423,20 @@ Ecdf.formula <- function(x, data = sys.frame(sys.parent()),
   if(missing(ylab)) 
     ylab <-
       if(missing(fun))
-        paste('Proportion <=',xname)
-      else
-        ''
+        paste(switch(what,
+                     F = 'Proportion <=',
+                     '1-F' = 'Proportion >=',
+                     'f' = 'Number <=',
+                     '1-f' = 'Number >='), xname)
+      else ''
   
   subset <- eval(substitute(subset), data)
 
   do.call("histogram",
           c(list(x, data=data, prepanel=prepanel, panel=panel,
-                 ylab=ylab, xlab=xlab, fun=fun),
+                 ylab=ylab, xlab=xlab, fun=fun, what=what),
             if(!missing(groups))
-            list(groups=eval(substitute(groups),data)),
+            list(groups=eval(substitute(groups), data)),
             if(!missing(subset))
             list(subset=subset),
             list(...)))

@@ -206,9 +206,9 @@ prepanel.Ecdf <- function(x, y, fun, what, ...) {
   xlim <- range(x, na.rm=TRUE)
   l <- length(x[! is.na(x)])
   ylim <- switch(what,
-                 F = c(0, 1),
+                 F     = c(0, 1),
                  '1-F' = c(0, 1),
-                 f = c(0, l),
+                 f     = c(0, l),
                  '1-f' = c(0, l))
   ylim <- fun(ylim)
   if(any(is.infinite(ylim))) ylim <- fun(c(.001, .999))
@@ -375,10 +375,9 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
                opts=lc, grid=TRUE, ...)
     }
   }
-  else ppanel(x, what=what,
-              lwd=lwd, lty=lty, pch=pch, cex=cex, 
+  else ppanel(x, lwd=lwd, lty=lty, pch=pch, cex=cex, 
               font=font, col=col, type=type, q=q, qrefs=qrefs, 
-              ecdf.type=method, fun=fun, llines=llines, ...)
+              ecdf.type=method, fun=fun, what=what, llines=llines, ...)
 
   if(ng > 1) { ##set up for key() if points plotted
     .Key <- function(x=0, y=1, lev, col, lty, lwd, ...)

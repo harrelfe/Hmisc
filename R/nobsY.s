@@ -27,6 +27,7 @@ nobsY <- function(formula, group=NULL,
   wid <- sr$id
   if(length(wid)) {
     xid <- X[[wid - ncol(Y)]]
+    if(length(wid) > 1) xid <- do.call('paste', xid, sep='.')
     ## Remove id() from formula
     forig <- as.character(forig)
     if(ncol(X) == 1)  ## id() is the only right-hand term
@@ -35,14 +36,16 @@ nobsY <- function(formula, group=NULL,
       forig[3] <- sub(' \\+ id(.*)', '', forig[3])
       forig <- as.formula(paste(forig[2], forig[3], sep=' ~ '))
     }
-  }
-  xid  <- if(! length(wid)) 1 : nrow(Y) else X[[wid - ncol(Y)]]
+  } else xid <- 1 : nrow(Y)
+  idv <- xid
+
   group <- if(length(group) && group %in% names(X)) X[[group]]
   if(marg) {
     xm <- X$.marginal.
+    idv <- paste(idv, xm, sep='')
     if(length(group)) group <- group[! xm]
-    Y   <- Y  [! xm,, drop=FALSE]
-    xid <- xid[! xm]
+    Y   <- Y  [xm == '',, drop=FALSE]
+    xid <- xid[xm == '']
   }
   nY   <- ncol(Y)
   nobs <- rep(NA, nY)
@@ -67,13 +70,13 @@ nobsY <- function(formula, group=NULL,
       nobsg[, i] <- tapply(xid[notna], group[notna],
                            function(x) length(unique(x)))
   }
-  structure(list(nobs=nobs, nobsg=nobsg, formula=forig))
+  structure(list(nobs=nobs, nobsg=nobsg, id=idv, formula=forig))
 }
 
 addMarginal <- function(data, ..., label='All') {
   vars <- as.character(sys.call())[- (1 : 2)]
   vars <- intersect(vars, names(data))
-  data$.marginal. <- FALSE
+  data$.marginal. <- ''
 
   labs <- sapply(data, function(x) {
     la <- attr(x, 'label')
@@ -86,7 +89,8 @@ addMarginal <- function(data, ..., label='All') {
 
   for(v in vars) {
     d <- data
-    d$.marginal. <- TRUE
+    d$.marginal. <- ifelse(d$.marginal. == '', v,
+                           paste(d$.marginal., v, sep=','))
     d[[v]] <- label
     data <- rbind(data, d)
   }

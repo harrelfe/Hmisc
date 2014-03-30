@@ -144,7 +144,7 @@ plot.curveRep <- function(x, which=1:length(res),
                           nx=NULL, fill=TRUE,
                           idcol=NULL, freq=NULL, plotfreq=FALSE,
                           xlim=range(x), ylim=range(y),
-                          xlab='x', ylab='y', ...) {
+                          xlab='x', ylab='y', colorfreq=FALSE, ...) {
   method <- match.arg(method)
   ncuts <- x$ncuts
   res <- x$res; id <- x$id; y <- x$y; k <- x$k; x <- x$x
@@ -236,13 +236,45 @@ plot.curveRep <- function(x, which=1:length(res),
           return()
         }
         txt <- paste(names(tab), tab, sep=':')
+        txt2 <- txt
         paste(txt, collapse=';')
       } else {
         size <- sizecluster[subscripts[1]]
         paste('N=',size,sep='')
       }
-      grid.text(txt, x=.005, y=.99, just=c(0,1),
-                gp=gpar(fontsize=9, col=gray(.25)))
+      if (!colorfreq | is.null(idcol) | is.null(freq))  #Do same as original
+      {
+        grid.text(txt, x = 0.005, y = 0.99, just = c(0, 1), 
+                  gp = gpar(fontsize = 9, col = gray(0.25)))
+      }
+      else  #color freq text using idcol
+      {
+        mycolors<-data.frame(idcol,freq)
+        mycolors<-unique(mycolors)
+        curtext<-txt2[1]
+        curtrt<-strsplit(curtext,':')[[1]][1]
+        curcol<-as.character( mycolors[ curtrt==as.character( mycolors[,2]) ,1] )
+        
+        grid.text(curtext, 
+                  x = 0.005, 
+                  y = 0.99, 
+                  just = c(0, 1), 
+                  gp = gpar(fontsize = 9, col =curcol)
+        )
+        emspace<-2*strwidth('M', unit="figure")
+        for (i in 2:length(txt2))
+        {
+          curtext<-txt2[i]
+          curtrt<-strsplit(curtext,':')[[1]][1]
+          curcol<-as.character( mycolors[ curtrt==as.character( mycolors[,2]) ,1] )
+          
+          grid.text(curtext, 
+                    x = emspace+strwidth(txt2[i-1], unit="figure") ,
+                    y = 0.99, just = c(0, 1), 
+                    gp = gpar(fontsize = 9, col = curcol)
+          )
+        }
+      }
     }
     pan <- if(length(idcol))
       function(x, y, subscripts, groups, type, ...) {

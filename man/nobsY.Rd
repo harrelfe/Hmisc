@@ -31,8 +31,7 @@ a variable in the right-hand-side of the model, an additional object
 are left-hand variables, and as many rows as there are levels to the
 \code{group} variable.  This matrix has the further breakdown of unique
 non-missing observations by \code{group}.  The concatenation of all ID
-variables, appended by any names of marginalized variables (separated by
-commas), is returned.
+variables, is returned in a \code{list} element \code{id}.
 }
 \examples{
 d <- expand.grid(sex=c('female', 'male', NA),

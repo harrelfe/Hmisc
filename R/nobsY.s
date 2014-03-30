@@ -42,8 +42,7 @@ nobsY <- function(formula, group=NULL,
   group <- if(length(group) && group %in% names(X)) X[[group]]
   if(marg) {
     xm <- X$.marginal.
-    idv <- paste(idv, xm, sep='')
-    if(length(group)) group <- group[! xm]
+    if(length(group)) group <- group[xm == '']
     Y   <- Y  [xm == '',, drop=FALSE]
     xid <- xid[xm == '']
   }

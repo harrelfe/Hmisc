@@ -27,7 +27,10 @@ nobsY <- function(formula, group=NULL,
   wid <- sr$id
   if(length(wid)) {
     xid <- X[[wid - ncol(Y)]]
-    if(length(wid) > 1) xid <- do.call('paste', xid, sep='.')
+    if(length(wid) > 1) {
+      xid$sep <- '.'
+      xid <- do.call('paste', xid)
+    }
     ## Remove id() from formula
     forig <- as.character(forig)
     if(ncol(X) == 1)  ## id() is the only right-hand term

@@ -445,7 +445,6 @@ f
 getHdata(pbc)
 s5 <- summaryM(bili + albumin + stage + protime + sex + 
                age + spiders ~ drug, data=pbc)
-# To summarize all variables, use summaryM(drug ~ ., data=pbc)
 
 print(s5, npct='both')
 # npct='both' : print both numerators and denominators

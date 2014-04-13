@@ -1,4 +1,4 @@
-Changes in version 3.14-4 (2014-03-??)
+Changes in version 3.14-4 (2014-04-13)
    * rcspline.eval: stop new logic for ignoring outer values when there are many ties when there are also many ties on interior values.  Added new logic to use interior unique values of x when the number of unique x is small.
    * latexBuild: generalized with insert argument
    * latex.default: modified to use mods of latexBuild, fixed bug with caption.loc='bottom' (thanks: YacineH)
@@ -10,6 +10,7 @@ Changes in version 3.14-4 (2014-03-??)
    * Ecdf: added what argument to all functions
    * nobsY: return constructed id vector
    * addMarginal: instead of .marginal. being logical, make it contain names of variables being marginalized over
+   * mChoice.c: fixed some inconsistencies
 
 Changes in version 3.14-3 (2014-03-02)
    * format.df: clarified in help file that col.just can contain specifications other than l,r,c, e.g., "p{3in}" to get paragraph formatting in a column.  Thanks: Ben Bolker

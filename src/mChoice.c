@@ -7,7 +7,8 @@ static Hmisc_StringBuffer cbuff = {NULL, 0, MAXELTSIZE};
 
 int get_next_mchoice(char **s)
 {
-     int opt, errsv;
+     long opt;
+     int errsv;
      char *begin, *end, *err_chk;
      S_EVALUATOR
      
@@ -55,7 +56,7 @@ int get_next_mchoice(char **s)
           PROBLEM "string %s is not a valid integer number", begin ERROR;
      
      /* return the integer mChoice option */
-     return opt;
+     return (int)opt;
 }
 
 SEXP do_mchoice_match(SEXP x, SEXP table, SEXP nomatch) 
@@ -63,12 +64,12 @@ SEXP do_mchoice_match(SEXP x, SEXP table, SEXP nomatch)
      SEXP elm_index;            /* Storage for value of first row of 
                                    first match of each element in x *\/ */
      R_len_t len;               /* Number of elements in x */
-     R_len_t t_len;             /* Number of elements in table REMOVE*/
      R_len_t nfound = 0;        /* count of number of elements of
                                    x matched in table */
      char *str_ptr;             /* current location pointer */
      const char *str;
-		 int i, j, k, comp, slen;   /* REMOVE k */
+		 int i, j, comp;
+     size_t slen;               /* length of string */
 
      S_EVALUATOR
      /* get number of elements in x */
@@ -149,7 +150,8 @@ SEXP do_mchoice_equals(SEXP x, SEXP y)
      int y_len = LENGTH(y);     /* length of y vector */
      SEXP ans;                  /* Logical return vector */
      int nfound = 0;                /* number of matches found */
-     int i,j, slen, comp;       /* iterators */
+     int i,j, comp;             /* iterators */
+     size_t slen;
      char *str_ptr;             /* copy of the x string element */
      const char *str;
 

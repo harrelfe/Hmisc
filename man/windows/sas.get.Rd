@@ -50,7 +50,7 @@ sas.get(libraryName, member, variables=character(0), ifs=character(0),
      temp=tempfile("SaS"), formats=TRUE, 
      recode=formats, special.miss=FALSE, sasprog="sas",
      as.is=.5, check.unique.id=TRUE, force.single=FALSE, pos,
-     uncompress=FALSE, defaultencoding="latin1")
+     uncompress=FALSE, defaultencoding="latin1", var.case="lower")
 
 is.special.miss(x, code)
 
@@ -257,6 +257,10 @@ code.levels(object)
   }
 \item{defaultencoding}{
     encoding to assume if the SAS dataset does not specify one. Defaults to "latin1".
+  }
+\item{var.case}{
+    specify the case that you want variable names to be in.  "lower" for lower case, 
+    "upper" for upper case, and "preserve" to retain the case from SAS.
   }
   \item{object}{
     a variable in a data frame created by \code{sas.get}

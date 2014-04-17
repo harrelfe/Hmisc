@@ -734,7 +734,8 @@ latex.summaryM <-
     noib <- is.logical(insert.bottom) && ! insert.bottom
     w <- latex(cstats, title=title, file=file, append=TRUE,
                caption=if(table.env)
-               paste(caption, if(laststrat) legend, sep='. '),
+               paste(caption, if(laststrat) paste(legend, collapse=' '),
+                     sep='. '),
                rowlabel=rowlabel, table.env=table.env,
                col.just=col.just, numeric.dollar=FALSE, 
                insert.bottom=if(! noib && laststrat && ! table.env) legend,

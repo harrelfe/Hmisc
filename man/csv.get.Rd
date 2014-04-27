@@ -7,7 +7,8 @@
   There is a facility for reading long variable labels as one of the
   rows.  If labels are not specified and a final variable name is not
   the same as that in the header, the original variable name is saved as
-  a variable label.
+  a variable label.  Uses \code{read.csv} if the \code{data.table}
+	package is not in effect, otherwise calls \code{fread}.
 }
 \usage{
 csv.get(file, lowernames=FALSE, datevars=NULL, datetimevars=NULL,
@@ -77,7 +78,8 @@ csv.get(file, lowernames=FALSE, datevars=NULL, datetimevars=NULL,
 \seealso{
   \code{\link{sas.get}}, \code{\link{data.frame}},
   \code{\link{cleanup.import}}, \code{\link{read.csv}},
-  \code{\link{strptime}}, \code{\link{POSIXct}}, \code{\link{Date}}
+  \code{\link{strptime}}, \code{\link{POSIXct}}, \code{\link{Date}},
+	\code{\link[data.table]{fread}}
 }
 \examples{
 \dontrun{

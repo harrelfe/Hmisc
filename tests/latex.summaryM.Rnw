@@ -1,5 +1,5 @@
 % From Yonghao Pua  <puayonghao@gmail.com>
-
+% Lauren Samuels <lauren.samuels@vanderbilt.edu>
 \documentclass{article}
 \usepackage{relsize,setspace} % used by latex(describe( ))
 \usepackage{longtable}
@@ -52,4 +52,20 @@ latex(summaryM(age + height + type ~ sex , data=dbase, overall=TRUE, test=TRUE),
       msdsize='scriptsize', round = 2, digits=2, prtest='P', pdig =2, file='',
       label="table:summary")
 @
+
+<<results='asis'>>=
+# From Lauren Samuels
+set.seed(1)
+d <- expand.grid(x1=c('A', 'B'), x2=c('a', 'b', 'c'))
+d$y <- runif(nrow(d))
+d
+latex(
+    summaryM(x2 + y ~ x1, data= d, test=TRUE, overall=TRUE, continuous=6 ),
+    file="", where="htbp", 
+    caption="Descriptive stats and tests of between-group differences for all primary and secondary neuroimaging outcomes", 
+    label= "tbl:descrOutcomes",
+    exclude1=FALSE,   digits=2, long=TRUE, prmsd=TRUE, 
+    npct="both", size="tiny",  
+    center="centering")
+@ 
 \end{document}

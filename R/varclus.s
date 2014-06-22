@@ -263,16 +263,17 @@ naplot <- function(obj, which=c('all','na per var','na per obs','mean na',
 }
 
 
-combine.levels <- function(x, minlev=.05)
-{
+combine.levels <- function(x, minlev=.05) {
   x <- as.factor(x)
+  notna <- sum(! is.na(x))
+  if(notna == 0) return(rep(NA, length(x)))
   lev <- levels(x)
-  f <- table(x)/sum(!is.na(x))
+  f <- table(x) / notna
   i <- f < minlev
   si <- sum(i)
-  if(si==0) return(x)
+  if(si == 0) return(x)
 
-  comb <- if(si==1) names(sort(f))[1:2]
+  comb <- if(si == 1) names(sort(f))[1 : 2]
   else names(f)[i]
   
   keepsep <- setdiff(names(f), comb)

@@ -1160,7 +1160,7 @@ dataframeReduce <- function(data, fracmiss=1, maxlevels=NULL,
             s <- paste('prevalence<', minprev, sep='')
         }
         else s <- paste('prevalence<', minprev, sep='')
-      }
+      } 
     }
     h(r, s)
   }

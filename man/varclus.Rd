@@ -32,7 +32,9 @@ than variable i, for observations in which variable i is missing.  The
 So as to not generate too many dummy variables for multi-valued
 character or categorical predictors, \code{varclus} will automatically
 combine infrequent cells of such variables using an auxiliary
-function \code{combine.levels} that is defined here.
+function \code{combine.levels} that is defined here.  If all values of
+\code{x} are \code{NA}, \code{combine.levels} returns a numeric vector
+is returned that is all \code{NA}. 
 
 \code{plotMultSim} plots multiple similarity matrices, with the similarity
 measure being on the x-axis of each subplot.

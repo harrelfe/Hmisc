@@ -44,7 +44,7 @@ latexTabular(x, headings=colnames(x),
 }
 \examples{
 x <- matrix(1:6, nrow=2, dimnames=list(c('a','b'),c('c','d','this that')))
-latexTabular(x)   # creates x.tex in working directory
+latexTabular(x)   # a character string with LaTeX markup
 }
 \keyword{utilities}
 \keyword{interface}

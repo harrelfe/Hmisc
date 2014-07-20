@@ -5,6 +5,7 @@ Changes in version 3.14-5 (2014-06-??)
    * dataframeReduce: handle all-NA factor variable
    * subplot: replaced with latest version from TeachingDemos package by Greg Snow
    * latexTabular: fixed error in example in help file; result is not a file
+   * latex: another test added in tests/latex.s
 
 Changes in version 3.14-4 (2014-04-13)
    * rcspline.eval: stop new logic for ignoring outer values when there are many ties when there are also many ties on interior values.  Added new logic to use interior unique values of x when the number of unique x is small.

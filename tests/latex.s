@@ -18,6 +18,11 @@ d <- data.frame(x=1:2,
                 "a short string"))
 w <- latex(d, file=file, col.just=c("l","p{3in}"), table.env=FALSE, append=TRUE)
 
+# Example from Yacine H
+df <- data.frame(matrix(1:16, ncol=4))
+latex(df, file="", rownamesTexCmd="bfseries")
+latex(df, file="", cgroup=c("G1","G2"), n.cgroup=c(2,2))
+
 ## Test various permutations of options
 test <- function(caption=NULL, center=NULL, table.env=TRUE, size=NULL,
                  booktabs=FALSE, landscape=FALSE, ctable=FALSE, longtable=FALSE,

@@ -15,6 +15,14 @@ summaryP <- function(formula, data=NULL,
   nX <- NCOL(X)
   namY <- names(Y)
   if(nX == 0) X <- data.frame(x=rep(1, NROW(Y)))
+  else {
+    ## Remove observations with any values of X NA
+    i <- apply(is.na(X), 1, any)
+    if(any(i)) {
+      X <- X[! i, ]
+      Y <- Y[! i, ]
+    }
+  }
   ux <- unique(X)
   Z <- NULL
   n <- nrow(X)
@@ -170,14 +178,12 @@ plot.summaryP <-
 #  if(outerlabels && ((nX - length(groups) + 1 == 2) ||
 #                     length(dim(d)) == 2))  d <- useOuterStrips(d)
   if(length(dim(d)) == 2) d <- useOuterStrips(d)
-  
   ## Avoid wasting space for vertical variables with few levels
   if(condvar[length(condvar)] == 'var') {
     vars <- levels(X$var)
     nv <- length(vars)
     h <- integer(nv)
     for(i in 1 : nv) h[i] <- length(unique((X$val[X$var == vars[i]])))
-    w <- llist(d, h)
     d <- resizePanels(d, h = h + 1)
   }
   d

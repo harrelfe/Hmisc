@@ -19,8 +19,8 @@ summaryP <- function(formula, data=NULL,
     ## Remove observations with any values of X NA
     i <- apply(is.na(X), 1, any)
     if(any(i)) {
-      X <- X[! i, ]
-      Y <- Y[! i, ]
+      X <- X[! i,, drop=FALSE]
+      Y <- Y[! i,, drop=FALSE]
     }
   }
   ux <- unique(X)
@@ -220,20 +220,22 @@ latex.summaryP <- function(object, groups=NULL, file='', round=3,
                       '}\n\\vspace{1ex}\n\n', sep='', file=file, append=TRUE)
     x <- object[svar == slev[i], colnames(object) != 'stratvar']
     if(length(groups)) {
-    r <- reshape(x, timevar=groups, direction='wide',
-                 idvar=c('var', 'val'))
-
-    lev <- levels(x[[groups]])
-    nl  <- length(lev)
-    var <- unique(as.character(r$var))
-    w <- latex(r[colnames(r) != 'var'],
-               table.env=FALSE, file=file, append=TRUE,
-               rowlabel='', rowname=rep('', nrow(r)),
-               rgroup=levels(r$var), n.rgroup=as.vector(table(r$var)),
-               size=size,
-               colheads=c(' ', lev),
-               center='none')
-  }
+      r <- reshape(x, timevar=groups, direction='wide',
+                   idvar=c('var', 'val'))
+      ## reshape does not respect order of levels of factor variables; reorder
+      r <- r[c('var', 'val', paste('y', lev, sep='.'))]
+      
+      lev <- levels(x[[groups]])
+      nl  <- length(lev)
+      var <- unique(as.character(r$var))
+      w <- latex(r[colnames(r) != 'var'],
+                 table.env=FALSE, file=file, append=TRUE,
+                 rowlabel='', rowname=rep('', nrow(r)),
+                 rgroup=levels(r$var), n.rgroup=as.vector(table(r$var)),
+                 size=size,
+                 colheads=c(' ', lev),
+                 center='none')
+    }
     else {
       w <- latex(x[colnames(x) != 'var'],
                  table.env=FALSE, file=file, append=TRUE,
@@ -245,5 +247,3 @@ latex.summaryP <- function(object, groups=NULL, file='', round=3,
   attr(w, 'ngrouplevels') <- nl
   w
 }
-
-

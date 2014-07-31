@@ -78,8 +78,15 @@ format.df <- function(x,
     
     if(!any(k)) return(string)
 
-    string[k] <- gsub('<', paste(sl, sl, 'textless ', sep=''), string[k])
-    string[k] <- gsub('>', paste(sl, sl, 'textgreater ', sep=''), string[k])
+    in  <- c('<=', '>=', '<', '>', '%', '&')
+    out <- c('$\leq$',
+             '$\geq$',
+             paste(sl, sl, 'textless', sep=''),
+             paste(sl, sl, 'textgreater', sep=''),
+             paste(sl, sl, '%', sep=''),
+             paste(sl, sl, '&', sep=''))
+    for(i in 1 : length(in))
+      string[k] <- gsub(in[i], out[i], string[k])
     string
   }
 

@@ -1,4 +1,4 @@
-Changes in version 3.14-5 (2014-07-??)
+Changes in version 3.14-5 (2014-08-??)
    * latex.summaryM: fixed bug in caption with test=TRUE.  Thanks: Yonghao Pua
    * csv.get: uses data.table package's fread in place of read.csv if data.table is in effect
    * combined.levels: sensed all NA vector, now return non-factor numeric instead
@@ -8,6 +8,7 @@ Changes in version 3.14-5 (2014-07-??)
    * latex: another test added in tests/latex.s
    * summaryP: removed observations with a right-hand-side variable missing
    * latex.summaryP: fixed bug with wrong column labels due to reshape reordering columns coming from factor levels alphabetically instead of by original levels
+   * format.df: added % & <= >= to list of characters handled, the last two by going into math mode
 
 Changes in version 3.14-4 (2014-04-13)
    * rcspline.eval: stop new logic for ignoring outer values when there are many ties when there are also many ties on interior values.  Added new logic to use interior unique values of x when the number of unique x is small.

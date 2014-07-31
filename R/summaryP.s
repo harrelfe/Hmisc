@@ -223,9 +223,9 @@ latex.summaryP <- function(object, groups=NULL, file='', round=3,
       r <- reshape(x, timevar=groups, direction='wide',
                    idvar=c('var', 'val'))
       ## reshape does not respect order of levels of factor variables; reorder
+      lev <- levels(x[[groups]])
       r <- r[c('var', 'val', paste('y', lev, sep='.'))]
       
-      lev <- levels(x[[groups]])
       nl  <- length(lev)
       var <- unique(as.character(r$var))
       w <- latex(r[colnames(r) != 'var'],

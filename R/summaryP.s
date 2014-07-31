@@ -194,8 +194,9 @@ latex.summaryP <- function(object, groups=NULL, file='', round=3,
   class(object) <- 'data.frame'
   if(! append) cat('', file=file)
 
-  p <- round(object$freq / object$denom, round)
-  object$y <- paste(format(p), ' {\\scriptsize$\\frac{',
+  p <- ifelse(object$denom == 0, '',
+              format(round(object$freq / object$denom, round)))
+  object$y <- paste(p, ' {\\scriptsize$\\frac{',
                     format(object$freq), '}{', format(object$denom),
                     '}$}', sep='')
   object$freq <- object$denom <- NULL

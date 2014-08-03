@@ -9,6 +9,7 @@ Changes in version 3.14-5 (2014-08-??)
    * summaryP: removed observations with a right-hand-side variable missing
    * latex.summaryP: fixed bug with wrong column labels due to reshape reordering columns coming from factor levels alphabetically instead of by original levels
    * format.df: added % & <= >= to list of characters handled, the last two by going into math mode
+   * latex.summaryP: use blank if denominator 0, instead of NaN
 
 Changes in version 3.14-4 (2014-04-13)
    * rcspline.eval: stop new logic for ignoring outer values when there are many ties when there are also many ties on interior values.  Added new logic to use interior unique values of x when the number of unique x is small.

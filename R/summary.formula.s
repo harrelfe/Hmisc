@@ -21,7 +21,7 @@ summary.formula <-
   method <- match.arg(method)
 
   ## Multiple left hand side variables -> automatically call summaryM
-  if(grepl('.*\\+.*~', deparse(formula)))
+  if(grepl('.*\\+.*~', paste(deparse(formula), collapse='')))
     return(summaryM(formula, data=data, subset=subset,
                      na.action=na.action, overall=overall,
                      continuous=continuous, na.include=na.include,

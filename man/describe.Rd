@@ -43,7 +43,19 @@ printed.  If a date variable has an attribute \code{partial.date}
 actually present (missing month, missing day, missing both) are also presented.
 If a variable was created by the special-purpose function \code{substi} (which
 substitutes values of a second variable if the first variable is NA),
-the frequency table of substitutions is also printed.  
+the frequency table of substitutions is also printed.
+
+For numeric variables, \code{describe} adds an item called \code{Info}
+which is a relative information measure using the relative efficiency of
+a proportional odds/Wilcoxon test on the variable relative to the same
+test on a variable that has no ties.  \code{Info} is related to how
+continuous the variable is, and ties are less harmful the more untied
+values there are.  The formula for \code{Info} is one minus the sum of
+the cubes of relative frequencies of values divided by one minus the
+square of the reciprocal of the sample size.  The lowest information
+comes from a variable having only one unique values following by a
+highly skewed binary variable.  \code{Info} is reported to
+two decimal places.
 
 A latex method exists for converting the \code{describe} object to a
 LaTeX file.  For numeric variables having at least 20 unique values,

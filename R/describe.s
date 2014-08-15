@@ -1,4 +1,3 @@
-## $Id$
 describe <- function(x, ...) UseMethod("describe")
 describe.default <- function(x, descript, ...) {
   if(missing(descript)) {
@@ -20,41 +19,35 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
   oldopt <- options(digits=digits)
   on.exit(options(oldopt))
   
-  if(length(weights)==0) {
-    weights <- rep(1,length(x))
-  }
+  if(! length(weights)) weights <- rep(1,length(x))
   
   special.codes <- attr(x, "special.miss")$codes
   labx <- attr(x,"label")
   
-  if(missing(descript)) {
-    descript <- as.character(sys.call())[2]
-  }
+  if(missing(descript)) descript <- as.character(sys.call())[2]
 
-  if(length(labx) && labx!=descript) {
-    descript <- paste(descript,":",labx)
-  }
+  if(length(labx) && labx!=descript) descript <- paste(descript,":",labx)
 
-  un <- attr(x,"units")
-  if(length(un) && un=='') un <- NULL
+  un <- attr(x, "units")
+  if(length(un) && un == '') un <- NULL
 
-  fmt <- attr(x,'format')
-  if(length(fmt) && (is.function(fmt) || fmt=='')) fmt <- NULL
+  fmt <- attr(x, 'format')
+  if(length(fmt) && (is.function(fmt) || fmt == '')) fmt <- NULL
   
   if(length(fmt) > 1)
-    fmt <- paste(as.character(fmt[[1]]),as.character(fmt[[2]]))
+    fmt <- paste(as.character(fmt[[1]]), as.character(fmt[[2]]))
   
-  present <- if(all(is.na(x))) rep(FALSE,length(x))
-  else if(is.character(x)) x!="" & x!=" " & !is.na(x)
-  else !is.na(x)
+  present <- if(all(is.na(x))) rep(FALSE, length(x))
+  else if(is.character(x)) x != "" & x != " " & ! is.na(x)
+  else ! is.na(x)
   
-  present <- present & !is.na(weights)
+  present <- present & ! is.na(weights)
   
   if(length(weights) != length(x))
     stop('length of weights must equal length of x')
 
   if(normwt) {
-    weights <- sum(present)*weights/sum(weights[present])
+    weights <- sum(present) * weights / sum(weights[present])
     n <- sum(present)
   } else n <- sum(weights[present])
   
@@ -70,7 +63,7 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
   isdot <- testDateTime(x,'either') # is date or time var
   isdat <- testDateTime(x,'both')   # is date and time combo var
 
-  x <- x[present,drop=FALSE]
+  x <- x[present, drop=FALSE]
   x.unique <- sort(unique(x))
   weights <- weights[present]
 
@@ -99,7 +92,7 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
   if(length(pd <- atx$partial.date)) {
     if((nn <- length(pd$month))>0) {
       counts <- c(counts, nn)
-      lab <- c(lab,"missing month")
+      lab <- c(lab, "missing month")
     }
     
     if((nn <- length(pd$day)) > 0) {
@@ -119,8 +112,21 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
     lab <- c(lab, names(tabss))
   }
 
-  counts <- c(counts,n.unique)
+  counts <- c(counts, n.unique)
   lab <- c(lab, "unique")
+
+  if(isnum) {
+    xnum <- unclass(x)
+    if(n.unique < 2) reff <- 0
+    else {
+      fp <- wtd.table(xnum, weights, normwt=FALSE, na.rm=FALSE, type='table') /
+        sum(weights)
+      reff   <- (1 - sum(fp ^ 3)) / (1 - 1 / n / n)
+    }
+    counts <- c(counts, round(reff, 2))
+    lab    <- c(lab, 'Info')
+  }
+  
   x.binary <- n.unique == 2 && isnum && x.unique[1] == 0 && x.unique[2] == 1
   if(x.binary) {
     counts <- c(counts, sum(weights[x == 1]))
@@ -128,11 +134,9 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
   }
   
   if(isnum) {
-    xnum <- unclass(x)
-    
     if(isdot) {
-      dd <- sum(weights*xnum)/sum(weights)
-      fval <- formatDateTime(dd, atx, !timeUsed)
+      dd <- sum(weights * xnum)  /sum(weights)
+      fval <- formatDateTime(dd, atx, ! timeUsed)
       counts <- c(counts, fval)
     } else counts <- c(counts, format(sum(weights * x) / sum(weights), ...))
     
@@ -147,7 +151,7 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
       if(any(weights != 1)) {
         wtd.quantile(xnum,weights,normwt=FALSE,na.rm=FALSE,
                      probs=c(.05,.1,.25,.5,.75,.90,.95))
-      } else quantile(xnum,c(.05,.1,.25,.5,.75,.90,.95),na.rm=FALSE)
+      } else quantile(xnum,c(.05,.1,.25,.5,.75,.90,.95), na.rm=FALSE)
 
     ## Only reason to call quantile is that the two functions can give
     ## different results if there are ties, and users are used to quantile()
@@ -354,7 +358,7 @@ print.describe.single <- function(x, condense=TRUE, ...)
   val <- x$values
   if(length(val)) {
     if(!is.matrix(val)) {
-      if(length(val)!=10 || !all(names(val)==
+      if(length(val) != 10 || ! all(names(val)==
                  c("L1","L2","L3","L4","L5","H5","H4","H3","H2","H1"))) {
         cat('\n')
         val <- paste(names(val),
@@ -366,7 +370,7 @@ print.describe.single <- function(x, condense=TRUE, ...)
           low <- paste('lowest :', paste(val[1:5],collapse=' '))
           hi  <- paste('highest:', paste(val[6:10],collapse=' '))
           cat('\n',low,sep='')
-          if(nchar(low)+nchar(hi)+2>wide) cat('\n') else cat(', ')
+          if(nchar(low) + nchar(hi) + 2 > wide) cat('\n') else cat(', ')
           cat(hi,'\n')
         } else {
           cat('\n'); print(val, quote=FALSE)
@@ -376,7 +380,7 @@ print.describe.single <- function(x, condense=TRUE, ...)
       lev <- dimnames(val)[[2]]
       if(condense && (mean(nchar(lev))>10 | length(lev) < 5)) {
         z <- ''; len <- 0; cat('\n')
-        for(i in 1:length(lev)) {
+        for(i in 1 : length(lev)) {
           w <- paste(lev[i], ' (', val[1,i], ', ', val[2,i], '%)', sep='')
           l <- nchar(w)
           if(len + l + 2 > wide) {

@@ -136,7 +136,7 @@ wtd.table <- function(x, weights=NULL, type=c('list','table'),
   i <- order(x)  # R does not preserve levels here
   x <- x[i]; weights <- weights[i]
 
-  if(any(diff(x) == 0)) {  ## slightly faster than any(duplicated(xo))
+  if(any(duplicated(x))) {  ## diff(x) == 0 faster but doesn't handle Inf
     weights <- tapply(weights, x, sum)
     if(length(lev)) {
       levused <- lev[sort(unique(x))]

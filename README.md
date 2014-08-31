@@ -14,3 +14,7 @@ Web Sites
 * Overall: http://biostat.mc.vanderbilt.edu/Hmisc
 * CRAN: http://cran.r-project.org/web/packages/Hmisc
 * Changelog: https://github.com/harrelfe/Hmisc/commits/master
+
+To Do
+=====
+* Once more users are using R >= 2.9.1 replace any(duplicated()) with anyDuplicated (which returns an integer).  Thanks: Benjamin Tyler

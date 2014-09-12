@@ -45,8 +45,8 @@ transcan <-
   if(imputed.actual!='none')
     imputed <- TRUE
 
-  if(impcat=='multinom') require(nnet)
-  if(impcat=='rpart') require(rpart)
+#  if(impcat=='multinom') require(nnet)
+#  if(impcat=='rpart') require(rpart)
 
   if(missing(data))
     stop('Must specify data= when using R')
@@ -485,8 +485,8 @@ transcan <-
               Imputed[[i]] <- pred
               NULL
             } else {
-              if(n.impute==0) {
-                if(usefill>0)
+              if(n.impute == 0) {
+                if(usefill > 0)
                   Im <- rep(fillin[i], sum(j))
                 else
                   Im <- invertTabulated(x[!j,i], newy[!j], aty=newy[j],
@@ -1272,7 +1272,7 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
                         'icoef', 'scale', 'center', 'y.imputed')
   
   for(i in 1:n.impute) {
-    if(used.mice) completed.data <- complete(xtrans, i)
+    if(used.mice) completed.data <- mice::complete(xtrans, i)
     else {
       completed.data <- data
       imputed.data <-

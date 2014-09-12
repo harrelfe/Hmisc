@@ -1,4 +1,4 @@
-Changes in version 3.14-5 (2014-09-01)
+Changes in version 3.14-5 (2014-09-11)
    * latex.summaryM: fixed bug in caption with test=TRUE.  Thanks: Yonghao Pua
    * csv.get: uses data.table package's fread in place of read.csv if data.table is in effect
    * combined.levels: sensed all NA vector, now return non-factor numeric instead
@@ -13,6 +13,7 @@ Changes in version 3.14-5 (2014-09-01)
    * summary.formula: fixed problem with deparse formula.  Thanks: Andreas Kiermeier
    * describe: added relative information measure for numeric variables - a measure of how continuous the variable is
    * wtd.table: detect duplications using duplicated() instead of diff(x) to handle Inf.  Thanks: Benjamin Tyner
+   * DESCRIPTION, NAMESPACE: multiple function changes to work in R-devel
 
 Changes in version 3.14-4 (2014-04-13)
    * rcspline.eval: stop new logic for ignoring outer values when there are many ties when there are also many ties on interior values.  Added new logic to use interior unique values of x when the number of unique x is small.

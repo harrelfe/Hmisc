@@ -8,8 +8,13 @@ import(Formula)
 import(grid)
 import(lattice)
 
+importFrom(acepack, ace, avas)
 importFrom(latticeExtra, useOuterStrips, resizePanels)
 importFrom(cluster, clara)
+importFrom(foreign, read.dta, lookup.xport, read.spss, read.xport)
+importFrom(nnet, multinom)
+importFrom(rpart, rpart, rpart.control)
+# importFrom(tables, tabular, table_options)
 
 S3method(print, spower)
 S3method(print, Quantile2)

@@ -52,13 +52,13 @@ tabulr <- function(formula, data=NULL, nolabel=NULL, nofill=NULL, ...) {
 
   f <- ff(formula, lab)
   f <- as.formula(gsub("`", "", as.character(deparse(f))))
-  result <- tabular(f, data=data, ...)
+  result <- tables::tabular(f, data=data, ...)
   attr(result, 'originalformula') <- formula
   result
 }
 
 table_trio <- function(x) {
-  o <- table_options()
+  o <- tables::table_options()
   s <- function(x, default) if(length(x)) x else default
   left     <- s(o$left,  3)
   right    <- s(o$right, 1)
@@ -101,7 +101,7 @@ table_freq <- function(x) {
   if(!length(x) || all(is.na(x))) return('')
   w   <- table(x)
   den <- sum(w)
-  to <- table_options()
+  to <- tables::table_options()
   showfreq <- to$showfreq
   if(!length(showfreq)) showfreq <- 'all'
   pctdec <- to$pctdec
@@ -137,7 +137,7 @@ table_pc <- function(x, y) {
 
 table_formatpct <- function(num, den) {
   if(den == 0 | all(is.na(num + den))) return('')
-  to     <- table_options()
+  to     <- tables::table_options()
   npct   <- to$npct
   pctdec <- to$pctdec
   if(!length(pctdec)) pctdec <- 0

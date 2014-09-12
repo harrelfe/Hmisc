@@ -432,7 +432,7 @@ print.timePOSIXt <- function(x, ...) print(format(x, ...))
 ## Output format routine needed by chron for usual SAS date format
 ddmmmyy <- function(x)
 {
-  y <- month.day.year(trunc(unclass(x)), attr(x,"origin"))
+  y <- chron::month.day.year(trunc(unclass(x)), attr(x,"origin"))
   yr <- y$year
   m <- c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct",
          "Nov","Dec")[y$month]
@@ -805,7 +805,7 @@ cleanup.import <-
         require('chron')
         cform <- if(dateformat=='%F') 'y-m-d'
         else gsub('%','',tolower(dateformat))
-        chron(x, xt, format=c(dates=cform,times='h:m:s'))
+        chron::chron(x, xt, format=c(dates=cform,times='h:m:s'))
       }
       else as.Date(x, format=dateformat)
       modif <- TRUE
@@ -1185,7 +1185,6 @@ spss.get <- function(file, lowernames=FALSE,
                      to.data.frame=TRUE,
                      max.value.labels=Inf,
                      force.single=TRUE, allow=NULL, charfactor=FALSE) {
-  require('foreign')
   if(length(grep('http://', file))) {
     tf <- tempfile()
     download.file(file, tf, mode='wb', quiet=TRUE)
@@ -1253,8 +1252,8 @@ sasxport.get <- function(file, force.single=TRUE,
   if(length(out) && method!='csv')
     stop('out only applies to method="csv"')
   
-  if(method != 'csv')
-    require('foreign') || stop('foreign package is not installed')
+##  if(method != 'csv')
+##    require('foreign') || stop('foreign package is not installed')
 
   rootsoftware <- if(method=='dataload')'dataload'
   else 'sas'

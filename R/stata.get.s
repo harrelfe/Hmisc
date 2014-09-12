@@ -5,7 +5,6 @@ stata.get <- function(file, lowernames=FALSE,
                         allow=NULL, charfactor=FALSE, ...)
   {
     ## depends on the read.dta function from foriegn
-    require('foreign')
 
     ## Function to convert the elements of w into more compact
     ## data storage types.

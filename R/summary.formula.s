@@ -1472,8 +1472,9 @@ formatCats <- function(tab, nam, tr, type, group.freq,
                            denominator=paste('{\\',npct.size,' of',denom.rep,'}'),
                            both=paste('{\\', npct.size, ' $\\frac{', format(tab),'}{',
                              denom.rep,'}$}',sep=''),
-                           slash=paste('~{\\', npct.size, ' ', format(tab), '/', denom.rep,
-                             '}', sep='')
+                           slash=paste('~{\\', npct.size, ' ', format(tab),
+                             '\\,/\\,',   #  \, = LaTeX thin space
+                             denom.rep, '}', sep='')
                            )
                   else
                   switch(npct,

@@ -47,7 +47,7 @@ When I use the \texttt{summaryM} function, note that the table footers are shown
 <<echo=FALSE, results='asis'>>=
 latex(summaryM(age + height + type ~ sex , data=dbase, overall=TRUE, test=TRUE),
       size='small', where="ht",  
-      long=TRUE, prmsd = TRUE,
+      long=TRUE, prmsd = TRUE, npct='slash',
       caption="Descriptive Statistics",
       msdsize='scriptsize', round = 2, digits=2, prtest='P', pdig =2, file='',
       label="table:summary")
@@ -65,7 +65,7 @@ latex(
     caption="Descriptive stats and tests of between-group differences for all primary and secondary neuroimaging outcomes", 
     label= "tbl:descrOutcomes",
     exclude1=FALSE,   digits=2, long=TRUE, prmsd=TRUE, 
-    npct="both", size="tiny",  
+    npct="slash", size="tiny",  npct.size='tiny',
     center="centering")
 @ 
 \end{document}

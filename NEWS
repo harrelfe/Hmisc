@@ -1,3 +1,8 @@
+Changes in version 3.14-6 (2014-09-30)
+   * wtd.rank: fixed bug in no weights case (thanks: DPlat)
+   * latex.summaryM, latex.summary.formula.reverse: added npct='slash' to present numerators and denominators horizontally instead of vertically
+ 
+
 Changes in version 3.14-5 (2014-09-11)
    * latex.summaryM: fixed bug in caption with test=TRUE.  Thanks: Yonghao Pua
    * csv.get: uses data.table package's fread in place of read.csv if data.table is in effect

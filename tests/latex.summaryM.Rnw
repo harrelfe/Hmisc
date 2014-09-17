@@ -68,4 +68,42 @@ latex(
     npct="slash", size="tiny",  npct.size='tiny',
     center="centering")
 @ 
+
+Put a complex table in an external \texttt{.tex} file for conversion
+to \texttt{html} using \texttt{htlatex}:
+<<extex>>=
+## Example taken from help file for summaryM
+options(digits=3)
+set.seed(173)
+sex <- factor(sample(c("m","f"), 500, rep=TRUE))
+country <- factor(sample(c('US', 'Canada'), 500, rep=TRUE))
+age <- rnorm(500, 50, 5)
+sbp <- rnorm(500, 120, 12)
+label(sbp) <- 'Systolic BP'
+units(sbp) <- 'mmHg'
+treatment <- factor(sample(c("Drug","Placebo"), 500, rep=TRUE))
+treatment[1]
+sbp[1] <- NA
+
+# Generate a 3-choice variable; each of 3 variables has 5 possible levels
+symp <- c('Headache','Stomach Ache','Hangnail',
+          'Muscle Ache','Depressed')
+symptom1 <- sample(symp, 500,TRUE)
+symptom2 <- sample(symp, 500,TRUE)
+symptom3 <- sample(symp, 500,TRUE)
+Symptoms <- mChoice(symptom1, symptom2, symptom3, label='Primary Symptoms')
+table(as.character(Symptoms))
+# Produce separate tables by country
+f <- summaryM(age + sex + sbp + Symptoms ~ treatment + country,
+              groups='treatment', test=TRUE)
+fi <- '/tmp/z.tex'
+cat('\\documentclass{report}\\begin{document}\n', file=fi)
+w <- latex(f, file=fi, npct='slash', middle.bold=TRUE, prmsd=TRUE, append=TRUE)
+cat('\\end{document}\n', file=fi, append=TRUE)
+## In /tmp run htlatex z.tex to produce z.html
+## To get htlatex install the linux tex4ht package
+## You may also need to install the tth package
+## See http://biostat.mc.vanderbilt.edu/SweaveConvert
+@ 
+
 \end{document}

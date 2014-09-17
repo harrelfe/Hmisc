@@ -79,7 +79,7 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
       file=paste(title, 'tex', sep='.'), append=FALSE, digits, 
       prn = any(n != N), what=c('proportion', '\%'),
       pctdig = if(what == '\%') 0 else 2,
-      npct = c('numerator', 'both', 'denominator', 'none'),
+      npct = c('numerator', 'both', 'denominator', 'slash', 'none'),
       npct.size = 'scriptsize', Nsize = 'scriptsize', exclude1 = TRUE,
       vnames=c("labels", "names"), prUnits = TRUE, middle.bold = FALSE,
       outer.size = "scriptsize", caption, rowlabel = "",
@@ -238,7 +238,8 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
     specifies which counts are to be printed to the right of percentages.
     The default is to print the frequency (numerator of the percent) in
     parentheses.  You can specify \code{"both"} to print both numerator and
-    denominator, \code{"denominator"}, or \code{"none"}.
+    denominator as a fraction, \code{"denominator"}, \code{"slash"} to
+		typeset horizontally using a forward slash, or \code{"none"}.
   }
   \item{npct.size}{
     the size for typesetting \code{npct} information which appears after

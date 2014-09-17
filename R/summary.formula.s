@@ -1470,9 +1470,11 @@ formatCats <- function(tab, nam, tr, type, group.freq,
                     switch(npct,
                            numerator=paste('{\\',npct.size,' (',format(tab),')}',sep=''),
                            denominator=paste('{\\',npct.size,' of',denom.rep,'}'),
-                           both=paste('{\\',npct.size,' $\\frac{',
-                                      format(tab),'}{',denom.rep,
-                                      '}$}',sep=''))
+                           both=paste('{\\', npct.size, ' $\\frac{', format(tab),'}{',
+                             denom.rep,'}$}',sep=''),
+                           slash=paste('~{\\', npct.size, ' ', format(tab), '/', denom.rep,
+                             '}', sep='')
+                           )
                   else
                   switch(npct,
                          numerator=paste('(',format(tab),')',sep=''),
@@ -1755,7 +1757,7 @@ latex.summary.formula.reverse <-
   function(object, title=first.word(deparse(substitute(object))),
            digits, prn = any(n!=N), pctdig=0,
            what=c('%', 'proportion'),
-           npct=c('numerator','both','denominator','none'),
+           npct=c('numerator','both','denominator','slash','none'),
            npct.size='scriptsize', Nsize='scriptsize',
            exclude1=TRUE,  vnames=c("labels","names"), prUnits=TRUE,
            middle.bold=FALSE, outer.size="scriptsize",

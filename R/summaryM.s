@@ -558,7 +558,7 @@ latex.summaryM <-
            file=paste(title, 'tex', sep='.'), append=FALSE,
            digits, prn = any(n!=N),
            what=c('proportion', '%'), pctdig=if(what=='%') 0 else 2, 
-           npct=c('numerator','both','denominator','none'),
+           npct=c('numerator','both','denominator','slash','none'),
            npct.size='scriptsize', Nsize='scriptsize',
            exclude1=TRUE,  vnames=c("labels","names"), prUnits=TRUE,
            middle.bold=FALSE, outer.size="scriptsize",

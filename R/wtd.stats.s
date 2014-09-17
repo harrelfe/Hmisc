@@ -183,7 +183,7 @@ wtd.table <- function(x, weights=NULL, type=c('list','table'),
 wtd.rank <- function(x, weights=NULL, normwt=FALSE, na.rm=TRUE)
 {
   if(!length(weights))
-    return(rank(x),na.last=if(na.rm)NA else TRUE)
+    return(rank(x, na.last=if(na.rm) NA else TRUE))
 
   tab <- wtd.table(x, weights, normwt=normwt, na.rm=na.rm)
   

@@ -10,6 +10,8 @@ plsmo <-
   gfun <- ordGridFun(grid)
   nam <- as.character(sys.call())[2 : 3]
   method <- match.arg(method)
+  if(missing(ylab))
+    ylab <- label(y, units=TRUE, plot=TRUE, default=nam[2])
   Y <- as.matrix(y)
   p <- ncol(Y)
   if(!missing(subset)) {
@@ -84,9 +86,7 @@ plsmo <-
   else {
     if(missing(xlab))
       xlab <- label(x, units=TRUE, plot=TRUE, default=nam[1])
-    if(missing(ylab))
-      ylab <- label(Y, units=TRUE, plot=TRUE, default=nam[2])
-
+ 
     if(missing(xlim)) xlim <- c(xmin, xmax)
     if(missing(ylim)) ylim <- c(ymin, ymax)
     plot(xmin, ymin, xlim=xlim, ylim=ylim,

@@ -1,6 +1,8 @@
 Changes in version 3.14-6 (2014-09-30)
    * wtd.rank: fixed bug in no weights case (thanks: DPlat)
    * latex.summaryM, latex.summary.formula.reverse: added npct='slash' to present numerators and denominators horizontally instead of vertically
+   * plsmo: put derivation of ylab earlier so will use original attributes
+   * NAMESPACE: exported more S3 methods for label
  
 
 Changes in version 3.14-5 (2014-09-11)

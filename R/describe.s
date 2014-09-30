@@ -755,7 +755,7 @@ contents.data.frame <- function(object, sortlevels=FALSE,
 
 print.contents.data.frame <-
   function(x, sort=c('none','names','labels','NAs'),
-           prlevels=TRUE, number=FALSE, ...)
+           prlevels=TRUE, maxlevels=Inf, number=FALSE, ...)
 {
   sort <- match.arg(sort)
   d <- x$dim
@@ -776,40 +776,40 @@ print.contents.data.frame <-
          },
          labels={
            if(length(cont$Labels)) 
-             cont <-  cont[order(cont$Labels, nam),,drop=FALSE]
+             cont <-  cont[order(cont$Labels, nam),, drop=FALSE]
          },
          NAs={
-           if(maxnas>0)
-             cont <- cont[order(cont$NAs,nam),,drop=FALSE]
+           if(maxnas > 0)
+             cont <- cont[order(cont$NAs, nam),, drop=FALSE]
          })
 
   if(length(cont$Levels))
-    cont$Levels <- ifelse(cont$Levels==0,'',format(cont$Levels))
+    cont$Levels <- ifelse(cont$Levels == 0, '', format(cont$Levels))
 
   print(cont)
 
   if(prlevels && length(L <- x$Levels)) {
     cat('\n')
     nam <- names(L)
-    w <- .Options$width-max(nchar(nam))-5
+    w <- .Options$width - max(nchar(nam)) - 5
     reusingLevels <- sapply(L, is.name)
-    fullLevels <- which(!reusingLevels)
+    fullLevels    <- which(!reusingLevels)
     namf <- lin <- names(L[fullLevels])
     ## separate multiple lines per var with \n for print.char.matrix
     j <- 0
-    for(i in fullLevels)
-      {
-        j <- j + 1
-        varsUsingSame <- NULL
-        if(sum(reusingLevels))
-          {
-            for(k in which(reusingLevels)) if(L[[k]] == namf[j]) 
-              varsUsingSame <- c(varsUsingSame, nam[k])
-            if(length(varsUsingSame))
-              namf[j] <- paste(c(namf[j], varsUsingSame), collapse='\n')
-          }
-        lin[j] <- paste(pasteFit(L[[i]], width=w), collapse='\n')
+    for(i in fullLevels) {
+      j <- j + 1
+      varsUsingSame <- NULL
+      if(sum(reusingLevels)) {
+        for(k in which(reusingLevels))
+          if(L[[k]] == namf[j]) varsUsingSame <- c(varsUsingSame, nam[k])
+        if(length(varsUsingSame))
+          namf[j] <- paste(c(namf[j], varsUsingSame), collapse='\n')
       }
+      Li <- L[[i]]
+      if(length(Li) > maxlevels) Li <- c(Li[1 : maxlevels], '...')
+      lin[j] <- paste(pasteFit(Li, width=w), collapse='\n')
+    }
     z <- cbind(Variable=namf, Levels=lin)
     print.char.matrix(z, col.txt.align='left', col.name.align='left',
                       row.names=TRUE, col.names=TRUE)
@@ -836,7 +836,7 @@ print.contents.data.frame <-
 
 html.contents.data.frame <-
   function(object, sort=c('none', 'names', 'labels', 'NAs'), prlevels=TRUE,
-           file=paste('contents',object$dfname, 'html', sep='.'),
+           maxlevels=Inf, file=paste('contents',object$dfname, 'html', sep='.'),
            levelType=c('list', 'table'),
            append=FALSE, number=FALSE, nshow=TRUE, ...)
 {
@@ -914,7 +914,7 @@ html.contents.data.frame <-
   
   cat('<hr>\n', file=file, append=TRUE)
   
-  if(prlevels && length(L)) {
+  if(prlevels && length(L) > 0) {
     if(levelType=='list') {
       cat('<h2 align="center">Category Levels</h2>\n', file=file, append=TRUE)
       for(i in fullLevels) {
@@ -928,6 +928,7 @@ html.contents.data.frame <-
             paste(w, collapse=', '), '</h3>\n', sep='', 
             file=file, append=TRUE)
         cat('<ul>\n', file=file, append=TRUE)
+        if(length(l) > maxlevels) l <- c(l[1 : maxlevels], '...')
         for(k in l) cat('<li>', k, '</li>\n', sep='',
                         file=file, append=TRUE)
         cat('</ul>\n', file=file, append=TRUE)
@@ -938,8 +939,8 @@ html.contents.data.frame <-
       ## possible into n elements, pasting multiple elements
       ## together when needed
       evenSplit <- function(x, n) {
-        indent <- function(z) if(length(z)==1)z else
-        c(z[1], paste('&nbsp&nbsp&nbsp',z[-1],sep=''))
+        indent <- function(z) if(length(z) == 1) z else
+        c(z[1], paste('&nbsp&nbsp&nbsp', z[-1], sep=''))
         m <- length(x)
         if(m <= n) return(c(indent(x), rep('',n-m)))
         totalLength <- sum(nchar(x)) + (m-1)*3.5
@@ -954,9 +955,9 @@ html.contents.data.frame <-
           if(m <= n) break
         }
         ## Take evasive action if needed
-        if(m==n) indent(y) else if(m < n)
-          c(indent(y), rep('', n-m)) else 
-        c(paste(x, collapse=', '), rep('',n-1))
+        if(m == n) indent(y) else if(m < n)
+          c(indent(y), rep('', n - m)) else 
+        c(paste(x, collapse=', '), rep('', n - 1))
       }
       nam <- names(L)
       v <- lab <- lev <- character(0)
@@ -964,6 +965,7 @@ html.contents.data.frame <-
       for(i in fullLevels) {
         j <- j + 1
         l <- L[[i]]
+        if(length(l) > maxlevels) l <- c(l[1 : maxlevels], '...')
         nami <- nam[i]
         v <- c(v, nami)
         w <- nami

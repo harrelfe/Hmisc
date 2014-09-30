@@ -32,9 +32,10 @@
 contents(object, \dots)
 \method{contents}{data.frame}(object, sortlevels=FALSE, id=NULL, range=NULL, \dots)
 \method{print}{contents.data.frame}(x,
-    sort=c('none','names','labels','NAs'), prlevels=TRUE, number=FALSE, \dots) 
+    sort=c('none','names','labels','NAs'), prlevels=TRUE, maxlevels=Inf,
+    number=FALSE, \dots) 
 \method{html}{contents.data.frame}(object,
-           sort=c('none','names','labels','NAs'), prlevels=TRUE,
+           sort=c('none','names','labels','NAs'), prlevels=TRUE, maxlevels=Inf,
            file=paste('contents',object$dfname,'html',sep='.'),
            levelType=c('list','table'),
            append=FALSE, number=FALSE, nshow=TRUE, \dots)
@@ -75,6 +76,7 @@ contents(object, \dots)
   \item{prlevels}{
     set to \code{FALSE} to not print all levels of \code{factor} variables
   }
+	\item{maxlevels}{maximum number of levels to print for a \code{factor} variable}
   \item{number}{
 	set to \code{TRUE} to have the \code{print} and \code{latex} methods
 	number the variables by their order in the data frame

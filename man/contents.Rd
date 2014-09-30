@@ -30,7 +30,7 @@
 }
 \usage{
 contents(object, \dots)
-\method{contents}{data.frame}(object, sortlevels=FALSE, \dots)
+\method{contents}{data.frame}(object, sortlevels=FALSE, id=NULL, range=NULL, \dots)
 \method{print}{contents.data.frame}(x,
     sort=c('none','names','labels','NAs'), prlevels=TRUE, number=FALSE, \dots) 
 \method{html}{contents.data.frame}(object,
@@ -52,6 +52,14 @@ contents(object, \dots)
   variables use the same levels but in different orders.  They will
   still be recognized by the \code{html} method as having identical
   levels if sorted.}
+  \item{id}{an optional subject ID variable name that if present in
+		\code{object} will cause the number of unique IDs to be printed in
+    the contents header}
+	\item{range}{an optional variable name that if present in \code{object}
+    will cause its range to be printed in the contents header}
+	\item{values}{an optional variable name that if present in
+    \code{object} will cause its unique values to be printed in the
+    contents header}
   \item{x}{
     an object created by \code{contents}
   }

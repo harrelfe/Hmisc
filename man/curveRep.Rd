@@ -63,7 +63,7 @@ curveRep(x, y, id, kn = 5, kxdist = 5, k = 5, p = 5,
                         m=NULL, probs=c(.5, .25, .75), nx=NULL, fill=TRUE,
                         idcol=NULL, freq=NULL, plotfreq=FALSE,
                         xlim=range(x), ylim=range(y),
-                        xlab='x', ylab='y', \dots)
+                        xlab='x', ylab='y', colorfreq=FALSE, \dots)
 curveSmooth(x, y, id, p=NULL, pr=TRUE)
 
 }
@@ -134,6 +134,8 @@ curveSmooth(x, y, id, p=NULL, pr=TRUE)
 	Applies only to \code{method = "lattice"}.  By default the largest bar
 	is 0.1 times the length of a panel's x-axis.  Specify
 	\code{plotfreq = 0.5} for example to make the longest bar half this long.}
+  \item{colorfreq}{set to \code{TRUE} to color the frequencies printed by 
+	\code{plotfreq} using the colors provided by \code{idcol}.}
   \item{xlim, ylim, xlab, ylab}{plotting parameters.  Default ranges are
 	the ranges in the entire set of raw data given to \code{curveRep}.}
   \item{\dots}{arguments passed to other functions.}

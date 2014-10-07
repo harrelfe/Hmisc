@@ -5,6 +5,7 @@ Changes in version 3.14-6 (2014-09-30)
    * NAMESPACE: exported more S3 methods for label
    * contents: added arguments id, range, values
    * print.contents.data.frame, html.contents.data.frame: added maxlevels argument
+   * curveRep: added option to have the color of frequencies displayed match line colors.  Thanks: jstat10
 
 Changes in version 3.14-5 (2014-09-11)
    * latex.summaryM: fixed bug in caption with test=TRUE.  Thanks: Yonghao Pua

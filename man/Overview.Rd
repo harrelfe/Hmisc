@@ -47,8 +47,6 @@ bpplotM         \tab Chart extended box plots for multiple variables\cr
 bsamsize        \tab Sample size requirements for test of 2 proportions\cr
 bystats         \tab Statistics on a single variable by levels of >=1 factors\cr
 bystats2        \tab 2-way statistics\cr
-calltree        \tab Calling tree of functions \cr
-                \tab     (David Lubinsky, \email{david@hoqax.att.com})\cr
 character.table \tab Shows numeric equivalents of all latin characters\cr
                 \tab     Useful for putting many special chars. in graph titles\cr
                 \tab     (Pierre Joyet, \email{pierre.joyet@bluewin.ch})\cr

@@ -1,4 +1,3 @@
-## $Id$
 curveRep <- function(x, y, id, kn=5, kxdist=5, k=5, p=5, force1=TRUE,
                      metric=c('euclidean','manhattan'),
                      smooth=FALSE, extrap=FALSE, pr=FALSE) {
@@ -261,7 +260,7 @@ plot.curveRep <- function(x, which=1:length(res),
                   just = c(0, 1), 
                   gp = gpar(fontsize = 9, col =curcol)
         )
-        emspace<-2*strwidth('M', unit="figure")
+        emspace<-2*strwidth('M', units="figure")
         for (i in 2:length(txt2))
         {
           curtext<-txt2[i]
@@ -269,7 +268,7 @@ plot.curveRep <- function(x, which=1:length(res),
           curcol<-as.character( mycolors[ curtrt==as.character( mycolors[,2]) ,1] )
           
           grid.text(curtext, 
-                    x = emspace+strwidth(txt2[i-1], unit="figure") ,
+                    x = emspace+strwidth(txt2[i-1], units="figure") ,
                     y = 0.99, just = c(0, 1), 
                     gp = gpar(fontsize = 9, col = curcol)
           )

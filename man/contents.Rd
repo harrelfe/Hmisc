@@ -30,7 +30,8 @@
 }
 \usage{
 contents(object, \dots)
-\method{contents}{data.frame}(object, sortlevels=FALSE, id=NULL, range=NULL, \dots)
+\method{contents}{data.frame}(object, sortlevels=FALSE, id=NULL,
+  range=NULL, values=NULL, \dots)
 \method{print}{contents.data.frame}(x,
     sort=c('none','names','labels','NAs'), prlevels=TRUE, maxlevels=Inf,
     number=FALSE, \dots) 

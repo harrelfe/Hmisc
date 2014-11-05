@@ -163,6 +163,8 @@ concentration--I.  Bootstrapping vs other methods.  Atmospheric Env
 Gatz DF, Smith L (1995): The standard error of a weighted mean
 concentration--II.  Estimating confidence intervals.  Atmospheric Env
 29:1195-1200.
+
+http://en.wikipedia.org/wiki/Weighted_arithmetic_mean
 }
 \seealso{
 \code{\link{mean}}, \code{\link{var}}, \code{\link{quantile}}, \code{\link{table}}, \code{\link{rank}}, \code{\link{loess.smooth}}, \code{\link{lowess}},

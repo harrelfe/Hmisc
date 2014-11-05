@@ -25,10 +25,11 @@ wtd.var <- function(x, weights=NULL, normwt=FALSE, na.rm=TRUE)
   }
 
   if(normwt)
-    weights <- weights*length(x)/sum(weights)
+    weights <- weights * length(x) / sum(weights)
 
-  xbar <- sum(weights*x)/sum(weights)
-  sum(weights*((x - xbar)^2)) / (sum(weights) - 1)
+  sw <- sum(weights)
+  xbar <- sum(weights * x) / sw
+  sum(weights*((x - xbar)^2)) / (sw - sum(weights ^ 2) / sw)
 }
 
 

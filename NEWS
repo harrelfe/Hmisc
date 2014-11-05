@@ -1,4 +1,4 @@
-Changes in version 3.14-6 (2014-11-02)
+Changes in version 3.14-6 (2014-11-05)
    * wtd.rank: fixed bug in no weights case (thanks: DPlat)
    * latex.summaryM, latex.summary.formula.reverse: added npct='slash' to present numerators and denominators horizontally instead of vertically
    * plsmo: put derivation of ylab earlier so will use original attributes
@@ -8,6 +8,7 @@ Changes in version 3.14-6 (2014-11-02)
    * curveRep: added option to have the color of frequencies displayed match line colors.  Thanks: jstat10
    * curveRep: changed call to strwidth to use units instead of unit argument
    * contents.data.frame: corrected omission in help file
+   * wtd.var: corrected denominator.  Thanks: Shan Huang
 
 Changes in version 3.14-5 (2014-09-11)
    * latex.summaryM: fixed bug in caption with test=TRUE.  Thanks: Yonghao Pua

@@ -10,6 +10,7 @@ Changes in version 3.14-6 (2014-11-16)
    * contents.data.frame: corrected omission in help file
    * wtd.var: corrected denominator.  Thanks: Shan Huang
    * latex.default: changed to use colheads=FALSE to suppress column headings.  Thanks: Michael Rose
+   * mdb.get: added system option -b strip to mdb-export to skip binary output
 
 Changes in version 3.14-5 (2014-09-11)
    * latex.summaryM: fixed bug in caption with test=TRUE.  Thanks: Yonghao Pua

@@ -32,7 +32,8 @@ mdb.get(file, tables=NULL, lowernames=FALSE, allow=NULL,
 }
 \details{
   Uses the \code{mdbtools} package executables \code{mdb-tables},
-  \code{mdb-schema}, and \code{mdb-export}.  In Debian/Ubuntu Linux run
+  \code{mdb-schema}, and \code{mdb-export} (with option \code{-b skip}
+	to drop any binary output).  In Debian/Ubuntu Linux run
   \code{apt get install mdbtools}.
   \code{cleanup.import} is invoked by \code{csv.get} to transform
   variables and store them as efficiently as possible.

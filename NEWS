@@ -1,4 +1,4 @@
-Changes in version 3.14-6 (2014-11-05)
+Changes in version 3.14-6 (2014-11-16)
    * wtd.rank: fixed bug in no weights case (thanks: DPlat)
    * latex.summaryM, latex.summary.formula.reverse: added npct='slash' to present numerators and denominators horizontally instead of vertically
    * plsmo: put derivation of ylab earlier so will use original attributes
@@ -9,6 +9,7 @@ Changes in version 3.14-6 (2014-11-05)
    * curveRep: changed call to strwidth to use units instead of unit argument
    * contents.data.frame: corrected omission in help file
    * wtd.var: corrected denominator.  Thanks: Shan Huang
+   * latex.default: changed to use colheads=FALSE to suppress column headings.  Thanks: Michael Rose
 
 Changes in version 3.14-5 (2014-09-11)
    * latex.summaryM: fixed bug in caption with test=TRUE.  Thanks: Yonghao Pua

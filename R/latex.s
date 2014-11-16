@@ -382,6 +382,8 @@ latex.default <-
                   double.slash=double.slash, ...)
   if (missing(rowname))
     rowname <- dimnames(cx)[[1]]
+
+  nocolheads <- length(colheads) == 1 && is.logical(colheads) && ! colheads
   
   if (!length(colheads))
     colheads <- dimnames(cx)[[2]]
@@ -743,6 +745,7 @@ latex.default <-
     labs <- colheads
     if (length(colnamesTexCmd))
       labs <- paste(sl, colnamesTexCmd, " ", labs, sep="")
+    if(nocolheads) colheads <- labs <- NULL
     header <- NULL
     if(length(labs)) {
       if(!length(extracolheads)) {
@@ -755,7 +758,7 @@ latex.default <-
       if(multicol)
         colheads <- paste(slmc1, cvbar, "}{", colheads, "}", sep="")
       
-      header <- paste(colheads, collapse='&')
+      header <- if(length(colheads)) paste(colheads, collapse='&')
       if(length(extracolheads)) {
         extracolheads <- ifelse(extracolheads == ''| extracolsize == '',
                                 extracolheads,
@@ -769,10 +772,11 @@ latex.default <-
           extracolheads <- ifelse(extracolheads == '',extracolheads,
                                   paste(extracolheads,sep=''))
         
-        header <- paste(header, eol, paste(extracolheads, collapse='&'), sep='')
+        header <- if(length(header))
+          paste(header, eol, paste(extracolheads, collapse='&'), sep='')
       }
     
-      cat(header, eog, file=file, sep='', append=file!='')
+      if(length(header)) cat(header, eog, file=file, sep='', append=file!='')
 
       if(ctable)
         cat(midrule, file=file, append=file!='')
@@ -792,7 +796,7 @@ latex.default <-
       cat(midrule, sep="",file=file, append=file!='')
       if(length(cgroupheader))
         cat(cgroupheader, file=file, append=file!='')
-      cat(header, file=file, sep="&", append=file!='')
+      if(length(header)) cat(header, file=file, sep="&", append=file!='')
       cat(eog, midrule, sl, "endhead", '\n', midrule,
           sep="", file=file, append=file!='')
       if(length(insert.bottom)) {

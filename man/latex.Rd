@@ -314,7 +314,7 @@ dvigv(object, \dots)
     justification for labels for column groups.  Defaults to \code{"c"}.
   }
   \item{colheads}{a character vector of column headings if you don't want
-    to use \code{dimnames(object)[[2]]}.  Specify \code{colheads=NULL} to
+    to use \code{dimnames(object)[[2]]}.  Specify \code{colheads=FALSE} to
     suppress column headings.}
   \item{extracolheads}{
     an optional vector of extra column headings that will appear under the

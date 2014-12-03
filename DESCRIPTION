@@ -8,9 +8,9 @@ Maintainer: Frank E Harrell Jr <f.harrell@vanderbilt.edu>
 Depends: methods, grid, lattice, survival (>= 2.37-6), Formula
 Imports: latticeExtra, cluster, rpart, nnet, acepack, foreign
 Suggests: chron, rms, mice, tables
-Description: The Hmisc package contains many functions useful for data
+Description: Contains many functions useful for data
 	analysis, high-level graphics, utility operations, functions for
-	computing sample size and power, importing datasets,
+	computing sample size and power, importing and annotating datasets,
 	imputing missing values, advanced table making, variable clustering,
 	character string manipulation, conversion of R objects to LaTeX code,
 	and recoding variables.

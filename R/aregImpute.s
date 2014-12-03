@@ -1,4 +1,3 @@
-# $Id$
 aregImpute <- function(formula, data, subset, n.impute=5,
                        group=NULL, nk=3, tlinear=TRUE,
                        type=c('pmm','regression','normpmm'), pmmtype=1,
@@ -18,10 +17,10 @@ aregImpute <- function(formula, data, subset, n.impute=5,
   lgroup <- length(group)
   if(type == 'normpmm' && lgroup)
     stop('group makes no sense when type="normpmm"')
-  if(type == 'normpmm' && !tlinear)
+  if(type == 'normpmm' && ! tlinear)
     stop('type="normpmm" not implemented when tlinear=FALSE because no covariance matrix is available for right hand side beta for first canonical variate')
   
-  if(!inherits(formula,'formula'))
+  if(! inherits(formula,'formula'))
     stop('formula must be a formula')
   
   nam <- all.vars(formula)
@@ -39,7 +38,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
   p <- length(z)
   n <- nrow(z)
   rnam <- row.names(z)
-  if(length(rnam)==0) rnam <- as.character(1:n)
+  if(length(rnam) == 0) rnam <- as.character(1:n)
 
   if(lgroup) {
     if(boot.method == 'approximate bayesian')
@@ -47,7 +46,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
     if(lgroup != n)
       stop('group should have length equal to number of observations')
     
-    ngroup <- length(unique(group[!is.na(group)]))
+    ngroup <- length(unique(group[! is.na(group)]))
   }
 
   linear <- nam[attr(Terms,'specials')$I]
@@ -74,15 +73,15 @@ aregImpute <- function(formula, data, subset, n.impute=5,
     if(nnai > 0) imp[[ni]] <-  matrix(NA, nrow=nnai, ncol=n.impute,
                                       dimnames=list(rnam[nai],NULL))
     if(lgroup) {
-      if(any(is.na(group[!nai])))
+      if(any(is.na(group[! nai])))
         stop('NAs not allowed in group')
       
-      if(length(unique(group[!nai])) != ngroup)
+      if(length(unique(group[! nai])) != ngroup)
         stop(paste('not all',ngroup,
                    'values of group are represented in\n',
                    'observations with non-missing values of',
                    ni))
-      group.inds[[i]] <- split((1:n)[!nai], group[!nai])
+      group.inds[[i]] <- split((1:n)[! nai], group[! nai])
     }
     
     iscat <- FALSE
@@ -97,9 +96,9 @@ aregImpute <- function(formula, data, subset, n.impute=5,
     if(iscat) {
       if(length(lev) < 2) stop(paste(ni,'is constant'))
       tab <- table(xi)
-      if(any(tab==0))
+      if(any(tab == 0))
         stop(paste(ni,'has the following levels with no observations:',
-                   paste(names(tab)[tab==0],collapse=' ')))
+                   paste(names(tab)[tab == 0],collapse=' ')))
       if(any(tab < 5))
         warning(paste(ni,'has the following levels with < 5 observations:',
                       paste(names(tab)[tab < 5],collapse=' '),
@@ -109,18 +108,18 @@ aregImpute <- function(formula, data, subset, n.impute=5,
       vtype[ni] <- 'c'
     }
     else {
-      u <- unique(xi[!nai])
+      u <- unique(xi[! nai])
       if(length(u) == 1)
         stop(paste(ni,'is constant'))
       else
-        if((length(nk)==1 && nk==0) || length(u) == 2 || ni %in% linear)
+        if((length(nk) == 1 && nk == 0) || length(u) == 2 || ni %in% linear)
           vtype[ni] <- 'l'
     }
     xf[,i] <- xi
     
     ## Initialize imputed values to random sample of non-missings
     if(nnai > 0) xf[nai,i] <-
-      sample(xi[!nai], nnai, replace=nnai > (n-nnai))
+      sample(xi[! nai], nnai, replace=nnai > (n-nnai))
   }
   z <- NULL
   wna <- (1:p)[nna > 0]
@@ -142,9 +141,9 @@ aregImpute <- function(formula, data, subset, n.impute=5,
       nai <- na[[i]]      ## subscripts of NAs on xf[i,]
       j <- (1:n)[-nai]    ## subscripts of non-NAs on xf[i,]
       npr <- length(j)
-      ytype <- if(tlinear && vtype[i]=='s')'l' else vtype[i]
+      ytype <- if(tlinear && vtype[i] == 's')'l' else vtype[i]
       
-      if(iter==(burnin + n.impute) && length(nk) > 1) {
+      if(iter == (burnin + n.impute) && length(nk) > 1) {
         rn <- c('Bootstrap bias-corrected R^2',
                 '10-fold cross-validated  R^2',
                 'Bootstrap bias-corrected mean   |error|',
@@ -174,7 +173,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
           gi <- (group.inds[[i]])[[ji]]
           s[gi] <- sample(gi, length(gi), replace=TRUE)
         }
-        s <- s[!is.na(s)]
+        s <- s[! is.na(s)]
       }
       else { ## sample of non-NAs
         if(type == 'normpmm') s <- j
@@ -190,7 +189,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
       nm <- c(nami, nam[-i])
 
       if(type != 'normpmm') {
-        xch <- which(vtype=='c')
+        xch <- which(vtype == 'c')
         if(length(xch)) {
           nus <- apply(xf[s, xch, drop=FALSE], 2,
                        function(z)length(unique(z)))
@@ -231,7 +230,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
 
       if(type == 'normpmm') {
         xpxi <- f$xpxi
-        if(!length(xpxi)) stop('type="normpmm" cannot be used when any variable needing imputation is categorical or nonlinear')
+        if(! length(xpxi)) stop('type="normpmm" cannot be used when any variable needing imputation is categorical or nonlinear')
         ## See mice package .norm.draw function
         px <- sum(xdf)
         sigma.star <- sqrt(sum(res^2)/rchisq(1, length(res) - px))
@@ -253,10 +252,10 @@ aregImpute <- function(formula, data, subset, n.impute=5,
         }
       }
       if(type != 'regression') {
-        if(ytype=='l') pti <- (pti - mean(pti))/sqrt(var(pti))
+        if(ytype == 'l') pti <- (pti - mean(pti))/sqrt(var(pti))
         whichclose <-
-          if(match=='kclosest') j[whichClosek(pti[j], pti[nai], k=kclosest)]
-          else if(match=='closest') {
+          if(match == 'kclosest') j[whichClosek(pti[j], pti[nai], k=kclosest)]
+          else if(match == 'closest') {
           ## Jitter predicted transformed values for non-NAs to randomly
           ## break ties in matching with predictions for NAs in xf[,i]
           ## Because of normalization used by fitter, pti usually ranges
@@ -289,7 +288,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
   if(pr)
     cat('\n')
   
-  if(!x) xf <- NULL
+  if(! x) xf <- NULL
   
   structure(list(call=acall, formula=formula,
                  match=match, fweighted=fweighted, pmmtype=pmmtype,
@@ -341,7 +340,7 @@ plot.aregImpute <- function(x, nclass=NULL, type=c('ecdf','hist'),
   n.impute <- x$n.impute
   for(n in names(i)) {
     xi <- i[[n]]
-    if(!length(xi))
+    if(! length(xi))
       next
     
     if(diagnostics) {
@@ -360,7 +359,7 @@ plot.aregImpute <- function(x, nclass=NULL, type=c('ecdf','hist'),
                 ylab=lab)
     }
     else {
-      if(type=='ecdf')
+      if(type == 'ecdf')
         Ecdf(ix, xlab=lab, datadensity=datadensity, subtitles=FALSE)
       else {
         if(length(nclass))

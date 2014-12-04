@@ -1112,6 +1112,29 @@ optionsCmds <- function(pgm)
 }
 
 
+## From Rich Heiberger 2014-12-04:
+## The original function in Hmisc_3.14-5 doesn't work on Windows.
+## system doesn't handle DOS internal commands such as 'cd'
+## I switched it to 'shell' on Windows.
+
+## This revision works on Windows and Macintosh without setting options.
+## On Windows yap displays the dvi file and gives a warning I don't understand
+## on Mac X displays the dvi file.
+
+## For pdflatex, we need options
+## Windows and Macintosh
+## options(latexcmd='pdflatex')
+## options(dviExtension='pdf')
+
+## Windows with pdflatex
+## options(xdvicmd='c:\\progra~1\\Adobe\\Reader~1.0\\Reader\\AcroRd32.exe') ## 32-bit
+## options(xdvicmd='c:\\progra~2\\Adobe\\Reader~1.0\\Reader\\AcroRd32.exe') ## 64 bit windows
+## Adobe opens correctly and displays the file, but it also gives a warning that
+## I don't understand.
+
+## Macintosh with pdflatex
+## options(xdvicmd='open')
+
 dvi.latex <- function(object, prlog=FALSE,
                       nomargins=TRUE, width=5.5, height=7, ...)
 {
@@ -1135,15 +1158,14 @@ dvi.latex <- function(object, prlog=FALSE,
       '\\begin{document}\\pagestyle{empty}', infi,
       '\\end{document}\n', file=tmptex, sep='\n')
   
-  sc <-
-    if(.Platform$OS.type == 'unix') {
-      '&&'
-    } else {
-      '&'   # DOS command separator
-    }
-  
-  sys(paste('cd',shQuote(tempdir()),sc,optionsCmds('latex'),
-            '-interaction=scrollmode', shQuote(tmp)), output=FALSE)
+  if (.Platform$OS.type == "unix")
+    sys(paste("cd", shQuote(tempdir()), "&&", optionsCmds("latex"), 
+              "-interaction=scrollmode", shQuote(tmp)), output = FALSE)
+  else ## MS DOS
+    shell(paste("cd", shQuote(tempdir()), "&", optionsCmds("latex"), 
+                "-interaction=scrollmode", shQuote(tmp)), shell="CMD",
+          intern = FALSE)
+
   
   if(prlog)
     cat(scan(paste(tmp,'log',sep='.'),list(''),sep='\n')[[1]],

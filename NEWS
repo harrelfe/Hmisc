@@ -1,3 +1,6 @@
+Changes in version 3.14-7 (2015-01-??)
+   * dvi.latex: For Windows switched from system() to shell() so that cd command works.  Thanks: Rich Heiberger
+
 Changes in version 3.14-6 (2014-11-16)
    * wtd.rank: fixed bug in no weights case (thanks: DPlat)
    * latex.summaryM, latex.summary.formula.reverse: added npct='slash' to present numerators and denominators horizontally instead of vertically

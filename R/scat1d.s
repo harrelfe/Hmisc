@@ -1,5 +1,4 @@
-## $Id$
-## -*-S-*- Improvements due to Martin Maechler <maechler@stat.math.ethz.ch>
+## Improvements due to Martin Maechler <maechler@stat.math.ethz.ch>
 
 scat1d <- function(x, side=3, frac=.02, jitfrac=.008, tfrac, 
                    eps=ifelse(preserve,0,.001),
@@ -14,11 +13,11 @@ scat1d <- function(x, side=3, frac=.02, jitfrac=.008, tfrac,
   if(length(x) >= nhistSpike)
     return(histSpike(x, side=side, type=type,
                      frac=2.5 * frac, col=col, y=y, curve=curve,
-                     bottom.align=if(type=='density') TRUE else bottom.align, 
+                     bottom.align=if(type == 'density') TRUE else bottom.align, 
                      add=TRUE, nint=nint, grid=grid, ...))
 
   gfun <- ordGridFun(grid)
-  if(side==1 || side==3 || length(y) || length(curve)) {
+  if(side == 1 || side == 3 || length(y) || length(curve)) {
     l <- 1:2
     ax <- 1
   } else {
@@ -83,7 +82,7 @@ scat1d <- function(x, side=3, frac=.02, jitfrac=.008, tfrac,
     a <- a + h2
     b <- b + h2
   }
-  if(ax==1)
+  if(ax == 1)
     gfun$segments(x, a, x, b, lwd=lwd, xpd=frac < 0, col=col)
   else
     gfun$segments(a, x, b, x, lwd=lwd, xpd=frac < 0, col=col)
@@ -223,8 +222,8 @@ datadensity.data.frame <-
   mxlb <-  .1 + max(strwidth(nams, units='inches', cex=cex.var))
   mai[2] <- mxlb
   if(!show.na) maxna <- 0
-  max.digits.na <- if(maxna==0) 0
-                   else trunc(log10(maxna))+1
+  max.digits.na <- if(maxna == 0) 0
+                   else trunc(log10(maxna)) + 1
 
   if(maxna > 0)
     mai[4] <- .1 + strwidth('Missing', units='inches', cex=cex.var)
@@ -277,7 +276,7 @@ datadensity.data.frame <-
               range(x, na.rm=TRUE)
           
           p <- pretty(r,
-                      if(nint==1)5
+                      if(nint == 1)5
                       else nint)
           
           if(nint < 2)
@@ -297,7 +296,7 @@ datadensity.data.frame <-
                    minf=.075, frac=sc(.02,.005), ...)
           else for(g in 1:ngroup)
             {
-              j <- group==levels(group)[g]
+              j <- group == levels(group)[g]
               scat1d((x[j]-xmin)/(xmax-xmin), y=y, bottom.align=bottom.align,
                      col=col.group[g], tfrac=if(N<125) 1 else max(.1, 125/N), 
                      minf=.075, frac=sc(.02,.005), ...)
@@ -342,10 +341,10 @@ datadensity.data.frame <-
           
           lines(c(0,1), c(y,y))
           maxfreq <- max(tab)
-          for(g in if(ngroup==0) 1 else 1 : ngroup)
+          for(g in if(ngroup == 0) 1 else 1 : ngroup)
             {
               tabg <- tab[g,]
-              if(method.cat=='bar')
+              if(method.cat == 'bar')
                 symbols(xx, y + .4 * tabg / maxfreq / 2, add=TRUE,
                         rectangles=cbind(.02, .4 * tabg / maxfreq),
                         inches=FALSE,
@@ -374,18 +373,18 @@ histSpike <-
            type=c('proportion','count','density'),
            xlim=range(x),
            ylim=c(0,max(f)), xlab=deparse(substitute(x)), 
-           ylab=switch(type,proportion='Proportion',
+           ylab=switch(type, proportion='Proportion',
              count     ='Frequency',
              density   ='Density'),
            y=NULL, curve=NULL, add=FALSE, 
-           bottom.align=type=='density', 
+           bottom.align=type == 'density', 
            col=par('col'), lwd=par('lwd'), grid=FALSE, ...)
 {
   type <- match.arg(type)
   if(! add && side != 1)
     stop('side must be 1 if add=FALSE')
 
-  if(add && type=='count')
+  if(add && type == 'count')
     warning('type="count" is ignored if add=TRUE')
 
   if(length(y) > 1) {
@@ -395,7 +394,7 @@ histSpike <-
     if(length(curve))
       warning('curve ignored when y specified')
     
-    i <- !is.na(x+y)
+    i <- !is.na(x + y)
     curve <- list(x=x[i], y=y[i])
   }
   
@@ -422,7 +421,7 @@ histSpike <-
       f <- f[j]
     }
     
-    if(type=='proportion') f <- f / sum(f)
+    if(type == 'proportion') f <- f / sum(f)
   } else {
     nbar <- logb(length(x), base = 2) + 1
     width <- diff(range(x)) / nbar * .75 * mult.width
@@ -438,7 +437,7 @@ histSpike <-
     plot(0, 0, xlim=xlim, ylim=ylim, xlab=xlab, ylab=ylab, type='n')
   }
   
-  if(side==1 || side==3) {
+  if(side == 1 || side == 3) {
     l <- 1:2;
     ax <- 1
   } else {
@@ -460,8 +459,8 @@ histSpike <-
   h <- min(pin) * frac / uin[- ax] * f
   h2 <- h / 2
   if(length(y) && inherits(y, 'unit')) {
-    h  <- unit(frac,   'npc')
-    h2 <- unit(frac/2, 'npc')
+    h  <- unit(frac,     'npc')
+    h2 <- unit(frac / 2, 'npc')
   }
   if(length(curve) || length(y)) {
     if(length(curve))
@@ -476,29 +475,29 @@ histSpike <-
     else u.opp[2]
   }
   
-  if(ax==1 && bottom.align && type!='density') {
+  if(ax == 1 && bottom.align && type != 'density') {
     a <- a + h2
     b <- b + h2
   }
   
-  if(type=='density') {
+  if(type == 'density') {
     lll <- gfun$lines
     ## Problem in S+ getting right value of lwd
-    if(ax==1)
+    if(ax == 1)
       do.call('lll',list(x,
-                         if(side==1)b
+                         if(side == 1)b
                          else a,
                          lwd=lwd,  col=col))
     else
-      do.call('lll',list(if(side==2)b
+      do.call('lll',list(if(side == 2)b
       else a,
                          x, lwd=lwd, col=col))
   } else {
     lll <- gfun$segments
-    if(ax==1)
-      do.call('lll',list(x, a, x, b, lwd=lwd, xpd=frac<0, col=col))
+    if(ax == 1)
+      do.call('lll',list(x, a, x, b, lwd=lwd, xpd=frac < 0, col=col))
     else
-      do.call('lll',list(a, x, b, x, lwd=lwd, xpd=frac<0, col=col))
+      do.call('lll',list(a, x, b, x, lwd=lwd, xpd=frac < 0, col=col))
   }
   
   invisible(xlim)

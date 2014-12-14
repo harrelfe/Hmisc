@@ -6,9 +6,8 @@
 \alias{datadensity}
 \alias{datadensity.data.frame}
 \alias{histSpike}
-\title{
-  One-Dimensional Scatter Diagram, Spike Histogram, or Density
-}
+\alias{histSpikeg}
+\title{One-Dimensional Scatter Diagram, Spike Histogram, or Density}
 \description{
   \code{scat1d} adds tick marks (bar codes. rug plot) on any of the four
   sides of an existing plot, corresponding with non-missing values of a
@@ -80,6 +79,9 @@
   existing plot.  When \code{y} or \code{curve} is specified, the
   density or spikes are drawn with respect to the curve rather than the
   x-axis.
+
+	\code{histSpikeg} is similar to \code{histSpike} but is for adding a
+	layer to a \code{ggplot2} graphics object.  
 }
 \usage{
 scat1d(x, side=3, frac=0.02, jitfrac=0.008, tfrac,
@@ -120,6 +122,9 @@ histSpike(x, side=1, nint=100, frac=.05, minf=NULL, mult.width=1,
           y=NULL, curve=NULL, add=FALSE, 
           bottom.align=type=='density', col=par('col'), lwd=par('lwd'),
           grid=FALSE, ...)
+
+histSpikeg(formula=NULL, predictions=NULL, data, xlim=NULL, ylim=NULL,
+           side=1, nint=100, frac=.02)
 }
 \arguments{
   \item{x}{
@@ -138,7 +143,9 @@ histSpike(x, side=1, nint=100, frac=.05, minf=NULL, mult.width=1,
     lengths. Can be negative to move tick marks outside of plot. For
     \code{histSpike}, this is the relative length to be used for the
     largest frequency. When \code{scat1d} calls \code{histSpike}, it
-    multiplies its \code{frac} argument by 2.5.
+    multiplies its \code{frac} argument by 2.5.  For \code{histSpikeg}
+    if \code{predictions} is not given (i.e., \code{side} is used),
+    \code{frac} is doubled.
   }
   \item{jitfrac}{
     fraction of axis for jittering.  If
@@ -234,7 +241,10 @@ histSpike(x, side=1, nint=100, frac=.05, minf=NULL, mult.width=1,
     \code{nint} is a character string (e.g.,\code{nint="all"}), the
     frequency tabulation is done with no binning.  In other words,
     frequencies for all unique values of \code{x} are derived and
-    plotted.
+    plotted.  For \code{histSpikeg}, if \code{x} has no more than
+    \code{nint} unique values, all observed values are used, otherwise
+    the data are rounded before tabulation so that there are no more
+    than \code{nint} intervals.
   }
   \item{\dots}{
     optional arguments passed to \code{scat1d} from \code{datadensity}
@@ -329,7 +339,8 @@ histSpike(x, side=1, nint=100, frac=.05, minf=NULL, mult.width=1,
     plotting, if \code{add=FALSE} and \code{nint} is a number)
   }
   \item{ylim}{
-    y-axis range for plotting (if \code{add=FALSE})
+    y-axis range for plotting (if \code{add=FALSE}; mandatory for
+    \code{histSpikeg})
   }
   \item{xlab}{
     x-axis label (\code{add=FALSE}); default is name of input argument
@@ -342,6 +353,24 @@ histSpike(x, side=1, nint=100, frac=.05, minf=NULL, mult.width=1,
     set to \code{TRUE} to add the spike-histogram to an existing plot,
     to show marginal data densities
   }
+	\item{formula}{
+		a formula of the form \code{y ~ x1} or \code{y ~ x1 + x2} where
+    \code{y} is the name of the \code{y}-axis variable being plotted
+    with \code{ggplot}, \code{x1} is the name of the \code{x}-axis
+    variable, and optional \code{x2} is the name of the variable used by
+    \code{ggplot} to produce multiple curves on a panel.
+	}
+	\item{predictions}{
+		the data frame being plotted by \code{ggplot}, containing \code{x}
+    and \code{y} coordinates of curves.  If omitted, spike histograms
+    are drawn at the bottom (default) or top of the plot according to
+    \code{side}.
+  }
+	\item{data}{
+		for \code{histSpikeg} is a mandatory data frame containing raw data whose
+    frequency distribution is to be summarized, using variables in
+    \code{formula}. 
+	}
 }
 \value{
   \code{histSpike} returns the actual range of \code{x} used in its binning
@@ -461,9 +490,20 @@ datadensity(dfram, group=cut2(dfram$x2,g=3))
 # datadensity.data.frame(split(x, grouping.variable))
 # need to explicitly invoke datadensity.data.frame when the
 # first argument is a list
+
+\dontrun{
+require(rms)
+f <- lrm(y ~ blood.pressure + sex * (age + rcs(cholesterol,4)),
+         data=d)
+p <- Predict(f, cholesterol, sex)
+g <- ggplot(p, aes(x=cholesterol, y=yhat, color=sex)) + geom_line() +
+  xlab(xl2) + ylim(-1, 1)
+g <- g + geom_ribbon(data=p, aes(ymin=lower, ymax=upper), alpha=0.2,
+                linetype=0, show_guide=FALSE)
+g + histSpikeg(yhat ~ cholesterol + sex, p, d, ylim=c(-1, 1))
+}
 }
 \keyword{dplot}
 \keyword{aplot}
 \keyword{hplot}
 \keyword{distribution}
-% Converted by Sd2Rd version 1.21.

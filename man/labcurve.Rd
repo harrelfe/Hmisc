@@ -6,9 +6,7 @@
 \alias{drawPlot}
 \alias{plot.drawPlot}
 \alias{bezier}
-\title{
-Label Curves, Make Keys, and Interactively Draw Points and Curves
-}
+\title{Label Curves, Make Keys, and Interactively Draw Points and Curves}
 \description{
 \code{labcurve} optionally draws a set of curves then labels the curves.
 A variety of methods for drawing labels are implemented, ranging from
@@ -287,7 +285,9 @@ range for current plot (\code{par("usr")[1:2]}).  For
 rectanges, but it has the same default as above. For
 \code{pl=TRUE,add=FALSE} you may want to extend \code{xlim} somewhat to
 allow large keys to fit, when using \code{keyloc="auto"}.  For
-\code{drawPlot} default is \code{c(0,1)}.
+\code{drawPlot} default is \code{c(0,1)}.  When using
+\code{largest.empty} with \code{ggplot2}, \code{xlim} and \code{ylim}
+are mandatory.
 }
 \item{tilt}{
 set to \code{TRUE} to tilt labels to follow the curves, for \code{method="offset"}
@@ -380,7 +380,7 @@ drawn, under the control of \code{type},\code{lty},\code{lwd},\code{col} paramet
 either in the \code{curves} lists or in the separate arguments given to
 \code{labcurve} or through \code{opts}.
 For \code{largest.empty}, set \code{pl=TRUE} to show the rectangle the function 
-found by drawing it with a solid color.
+found by drawing it with a solid color.  May not be used under \code{ggplot2}.
 }
 \item{add}{
 By default, when curves are actually drawn by \code{labcurve} a new plot is
@@ -634,8 +634,6 @@ plot(d, key=FALSE)  # label groups using labcurve
 \keyword{aplot}
 \keyword{dplot}
 \keyword{iplot}
-% Converted by Sd2Rd version 1.21.
-
 
 
 

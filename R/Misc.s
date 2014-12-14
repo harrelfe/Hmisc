@@ -1,5 +1,3 @@
-## $Id$
-		
 if(!exists("NROW", mode='function')) {
   NROW <- function(x)
     if (is.array(x) || is.data.frame(x)) nrow(x) else length(x)
@@ -1531,4 +1529,3 @@ latexBuild <- function(..., insert=NULL, sep='') {
   }
   structure(txt, close=close)
 }
-

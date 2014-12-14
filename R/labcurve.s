@@ -1,5 +1,3 @@
-## $Id$
-
 labcurve <- function(curves, labels=names(curves), 
                      method=NULL, keys=NULL, keyloc=c('auto','none'),
                      type='l', step.type=c('left','right'),
@@ -942,7 +940,7 @@ largest.empty <- function(x, y,
                           pl=FALSE, grid=FALSE)
 {
   method <- match.arg(method)
-  pr <- parGrid(grid)
+  if(missing(xlim) || missing(ylim)) pr <- parGrid(grid)
   isna <- is.na(x + y)
   if(any(isna)) {
     x <- x[!isna]
@@ -968,11 +966,10 @@ largest.empty <- function(x, y,
                width, height, numbins, itype,
                rx=double(2), ry=double(2), PACKAGE="Hmisc")
     x <- a$rx
-    if(any(x > 1e29))
-      {
-        warning('no empty rectangle was large enough')
-        return(list(x=NA, y=NA, rect=list(x=rep(NA,4),y=rep(NA,4)), area=NA))
-      }
+    if(any(x > 1e29)) {
+      warning('no empty rectangle was large enough')
+      return(list(x=NA, y=NA, rect=list(x=rep(NA,4),y=rep(NA,4)), area=NA))
+    }
     y <- a$ry
   } else if(method=='rexhaustive') {
     ## Author: Hans Borchers <hwborchers@googlemail.com>

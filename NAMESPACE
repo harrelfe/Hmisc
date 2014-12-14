@@ -15,6 +15,7 @@ importFrom(foreign, read.dta, lookup.xport, read.spss, read.xport)
 importFrom(nnet, multinom)
 importFrom(rpart, rpart, rpart.control)
 # importFrom(tables, tabular, table_options)
+# importFrom(ggplot2, geom_segment)
 
 S3method(print, spower)
 S3method(print, Quantile2)

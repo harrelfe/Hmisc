@@ -70,6 +70,9 @@ installed in your latex installation: setspace and relsize.
 
 Sample weights may be specified to any of the functions, resulting
 in weighted means, quantiles, and frequency tables.
+
+Note: As discussed in Cox and Longton (2008), Stata Technical Bulletin 8(4)
+pp. 557, the term "unique" should really be "distinct".
 }
 \usage{
 \method{describe}{vector}(x, descript, exclude.missing=TRUE, digits=4,

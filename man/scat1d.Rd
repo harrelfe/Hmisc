@@ -354,11 +354,11 @@ histSpikeg(formula=NULL, predictions=NULL, data, xlim=NULL, ylim=NULL,
     to show marginal data densities
   }
 	\item{formula}{
-		a formula of the form \code{y ~ x1} or \code{y ~ x1 + x2} where
+		a formula of the form \code{y ~ x1} or \code{y ~ x1 + \dots} where
     \code{y} is the name of the \code{y}-axis variable being plotted
     with \code{ggplot}, \code{x1} is the name of the \code{x}-axis
-    variable, and optional \code{x2} is the name of the variable used by
-    \code{ggplot} to produce multiple curves on a panel.
+    variable, and optional \dots are variables used by
+    \code{ggplot} to produce multiple curves on a panel and/or facets.
 	}
 	\item{predictions}{
 		the data frame being plotted by \code{ggplot}, containing \code{x}

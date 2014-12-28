@@ -51,6 +51,7 @@
 \alias{rowsumFast}
 \alias{sas.get.macro}
 \alias{setParNro}
+\alias{StatPlsmo}
 \alias{stepfun.eval}
 \alias{stripChart}
 \alias{[.terms}

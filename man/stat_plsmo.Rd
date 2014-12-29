@@ -11,17 +11,12 @@ stat_plsmo(mapping = NULL, data = NULL, geom = "smooth",
 \arguments{
 \item{mapping,data,geom,position}{see \code{\link[ggplot2]{ggplot}}}
 \item{n}{number of points to evaluate smoother at}
-
 \item{fullrange}{should the fit span the full range of the plot, or just
 the data}
-
 \item{span}{see \code{f} argument to \code{lowess}}
-
 \item{fun}{a function to transform smoothed \code{y}}
-
-item{na.rm}{If \code{FALSE} (the default), removes missing values with
+\item{na.rm}{If \code{FALSE} (the default), removes missing values with
 a warning.  If \code{TRUE} silently removes missing values.}
-
 \item{...}{other arguments are passed to smoothing function}
 }
 \value{

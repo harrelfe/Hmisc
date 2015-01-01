@@ -401,7 +401,8 @@ transcan <-
             uvals <- unPaste(vals, ';')
             names(tab) <- NULL
             Trantab[[i]] <- 
-              list(x=uvals[[1]], y=uvals[[2]], frequency=tab)
+              list(x=as.numeric(uvals[[1]]), y=as.numeric(uvals[[2]]),
+                   frequency=unname(tab))
             NULL
           }
 
@@ -1233,6 +1234,7 @@ plot.transcan <- function(x, ...)
 
   trantab <- x$trantab
   imputed <- x$imputed
+  n.impute <- x$n.impute
   if(length(trantab)==0)
     stop('you did not specify trantab=TRUE to transcan()')
 
@@ -1247,7 +1249,7 @@ plot.transcan <- function(x, ...)
         m <- imputed[[w]]
         if(L <- length(m))
           {
-            title(sub=paste(L,'missing'),cex=.4,adj=1)
+            title(sub=paste(L / n.impute, 'missing'),cex=.4,adj=1)
             m.trans <- approx(z, xout=m, rule=2)$y
             scat1d(m, 3, ...)
             scat1d(m.trans, 4, ...)
@@ -1256,6 +1258,46 @@ plot.transcan <- function(x, ...)
   }
 }
 
+ggplot.transcan <- function(x, ...)
+{
+  trantab  <- x$trantab
+  imputed  <- x$imputed
+  n.impute <- x$n.impute
+  rsq      <- x$rsq
+  if(length(trantab) == 0)
+    stop('you did not specify trantab=TRUE to transcan()')
+
+  p   <- length(trantab)
+  nam <- names(trantab)
+  data <- adata <- NULL
+  for(w in nam) {
+    z <- trantab[[w]]
+    x <- z[[1]]
+    y <- z[[2]]
+    data  <- rbind(data, data.frame(type='transform', X=w, x=x, y=y))
+    loc   <- largest.empty(x, y, xlim=range(x), ylim=range(y))
+    lab   <- paste('R^2==', round(rsq[w], 2), sep='')
+    if(length(imputed)) {
+      m <- as.vector(imputed[[w]])
+      if(L <- length(m)) {
+        lab <- paste('atop(', lab, ',"',
+                     paste(L / n.impute, 'missing")'), sep='')
+        m.trans <- approx(z, xout=m, rule=2)$y
+        data <- rbind(data,
+                      data.frame(type='imputed', X=w, x=m, y=m.trans))
+      }
+      adata <- rbind(adata, data.frame(X=w, x=loc$x, y=loc$y,
+                                       lab=lab, type='transform'))
+    }
+  }
+  ggplot(data, aes(x=x, y=y, color=type, shape=type, size=type)) + geom_point() +
+       facet_wrap(~ X, scales='free', ...) + xlab(NULL) + ylab('Transformed') +
+       scale_color_manual(values=c('#00000059', '#FF000059')) +
+       scale_shape_manual(values=c(1, 3)) +
+       scale_size_manual(values=c(1.3, 2.5)) +
+       theme(legend.position='none') +
+       geom_text(data=adata, aes(label=lab), parse=TRUE, size=3, col='black')
+}
 
 fit.mult.impute <- function(formula, fitter, xtrans, data,
                             n.impute=xtrans$n.impute, fit.reps=FALSE,

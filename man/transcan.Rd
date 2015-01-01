@@ -3,6 +3,7 @@
 \alias{summary.transcan}
 \alias{print.transcan}
 \alias{plot.transcan}
+\alias{ggplot.transcan}
 \alias{impute.transcan}
 \alias{predict.transcan}
 \alias{Function}
@@ -100,10 +101,11 @@
   It has an optional argument \code{long}, which if set to \code{TRUE}
   causes detailed parameters to be printed.  Instead of plotting while
   \code{transcan} is running, you can plot the final transformations
-  after the fact using \code{plot.transcan}, if the option \code{trantab
-  = TRUE} was specified to \code{transcan}.  If in addition the option
+  after the fact using \code{plot.transcan} or \code{ggplot.transcan},
+  if the option \code{trantab  = TRUE} was specified to \code{transcan}.
+  If in addition the option 
   \code{imputed = TRUE} was specified to \code{transcan},
-  \code{plot.transcan} will show the location of imputed values
+  \code{plot} and \code{ggplot} will show the location of imputed values
   (including multiples) along the axes.
   
   \code{\link{impute}} method for \code{transcan} does imputations for a
@@ -172,6 +174,8 @@ transcan(x, method=c("canonical","pc"),
 
 \method{plot}{transcan}(x, \dots)
 
+\method{ggplot}{transcan}(x, \dots)
+
 \method{impute}{transcan}(x, var, imputation, name, pos.in, data, 
        list.out=FALSE, pr=TRUE, check=TRUE, \dots)
 
@@ -218,8 +222,8 @@ invertTabulated(x, y, freq=rep(1,length(x)),
     components: the x vector, the corresponding vector of transformed
     values, and the corresponding vector of frequencies of the pair of
     original and transformed variables. For \code{print}, \code{plot},
-    \code{impute}, and \code{predict}, \code{x} is an object created by
-    \code{transcan}.
+    \code{ggplot}, \code{impute}, and \code{predict}, \code{x} is an
+		object created by \code{transcan}.
   }
   \item{formula}{
     any \R model formula
@@ -478,7 +482,8 @@ invertTabulated(x, y, freq=rep(1,length(x)),
   }
   \item{\dots}{
     arguments passed to \code{\link{scat1d}} or to the \code{fitter}
-    function (for \code{fit.mult.impute})  
+    function (for \code{fit.mult.impute}).  For \code{ggplot.transcan},
+		these arguments are passed to \code{facet_wrap}, e.g. \code{ncol=2}.
   }
   \item{long}{
     for \code{\link{summary}}, set to \code{TRUE} to print all imputed
@@ -875,7 +880,7 @@ invertTabulated(x, y, freq=rep(1,length(x)),
   \code{\link[acepack]{avas}}, \code{\link{cancor}},
   \code{\link{prcomp}}, \code{\link{rcspline.eval}},
   \code{\link{lsfit}}, \code{\link{approx}}, \code{\link{datadensity}},
-  \code{\link[mice]{mice}}
+  \code{\link[mice]{mice}}, \code{\link[ggplot2]{ggplot}}
 }
 \examples{
 \dontrun{
@@ -910,6 +915,7 @@ predict(x.trans, expand.grid(age=50, disease="pneumonia",
         blood.pressure=60:260, pH=7.4))
 z <- transcan(~ age + factor(disease.code),  # disease.code categorical
               transformed=TRUE, trantab=TRUE, imputed=TRUE, pl=FALSE)
+ggplot(z)
 plot(z$transformed)
 }
 

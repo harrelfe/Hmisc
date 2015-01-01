@@ -39,7 +39,7 @@ transace <- function(x, monotonic=NULL, categorical=NULL, binary=NULL,
     xt[,i] <- a$ty
     rsq[i] <- a$rsq
     if(pl)
-      plot(x[,i], xt[,i], xlab=nam[i], ylab=paste("Transformed",nam[i]))
+      plot(x[,i], xt[,i], xlab=nam[i], ylab='')
   }
 
   cat("R-squared achieved in predicting each variable:\n\n")

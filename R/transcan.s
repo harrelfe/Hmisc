@@ -1258,11 +1258,11 @@ plot.transcan <- function(x, ...)
   }
 }
 
-ggplot.transcan <- function(x, ...)
+ggplot.transcan <- function(x, scale=FALSE, ...)
 {
   trantab  <- x$trantab
   imputed  <- x$imputed
-  n.impute <- x$n.impute
+  n.impute <- max(1, x$n.impute)
   rsq      <- x$rsq
   if(length(trantab) == 0)
     stop('you did not specify trantab=TRUE to transcan()')
@@ -1274,14 +1274,19 @@ ggplot.transcan <- function(x, ...)
     z <- trantab[[w]]
     x <- z[[1]]
     y <- z[[2]]
+    if(scale) {
+      r <- range(y)
+      y <- (y - r[1]) / (r[2] - r[1])
+      z <- list(x=x, y=y)
+    }
     data  <- rbind(data, data.frame(type='transform', X=w, x=x, y=y))
     loc   <- largest.empty(x, y, xlim=range(x), ylim=range(y))
     lab   <- paste('R^2==', round(rsq[w], 2), sep='')
     if(length(imputed)) {
       m <- as.vector(imputed[[w]])
       if(L <- length(m)) {
-        lab <- paste('atop(', lab, ',"',
-                     paste(L / n.impute, 'missing")'), sep='')
+        lab <- paste('paste(', lab, ',"   ',
+                     L / n.impute, ' missing")', sep='')
         m.trans <- approx(z, xout=m, rule=2)$y
         data <- rbind(data,
                       data.frame(type='imputed', X=w, x=m, y=m.trans))
@@ -1291,12 +1296,13 @@ ggplot.transcan <- function(x, ...)
     }
   }
   ggplot(data, aes(x=x, y=y, color=type, shape=type, size=type)) + geom_point() +
-       facet_wrap(~ X, scales='free', ...) + xlab(NULL) + ylab('Transformed') +
+       facet_wrap(~ X, scales=if(scale) 'free_x' else 'free', ...) +
+       xlab(NULL) + ylab('Transformed') +
        scale_color_manual(values=c('#00000059', '#FF000059')) +
        scale_shape_manual(values=c(1, 3)) +
-       scale_size_manual(values=c(1.3, 2.5)) +
+       scale_size_manual(values=c(1.3, 2.25)) +
        theme(legend.position='none') +
-       geom_text(data=adata, aes(label=lab), parse=TRUE, size=3, col='black')
+       geom_text(data=adata, aes(label=lab), parse=TRUE, size=1.65, col='black')
 }
 
 fit.mult.impute <- function(formula, fitter, xtrans, data,

@@ -106,7 +106,8 @@
   If in addition the option 
   \code{imputed = TRUE} was specified to \code{transcan},
   \code{plot} and \code{ggplot} will show the location of imputed values
-  (including multiples) along the axes.
+  (including multiples) along the axes.  For \code{ggplot}, imputed
+  values are shown as red plus signs.
   
   \code{\link{impute}} method for \code{transcan} does imputations for a
   selected original data variable, on the original scale (if
@@ -174,7 +175,7 @@ transcan(x, method=c("canonical","pc"),
 
 \method{plot}{transcan}(x, \dots)
 
-\method{ggplot}{transcan}(x, \dots)
+\method{ggplot}{transcan}(x, scale=FALSE, \dots)
 
 \method{impute}{transcan}(x, var, imputation, name, pos.in, data, 
        list.out=FALSE, pr=TRUE, check=TRUE, \dots)
@@ -677,7 +678,8 @@ invertTabulated(x, y, freq=rep(1,length(x)),
   }
   \item{scale}{
     a vector of scales used to determine convergence for a
-    transformation
+    transformation.  For \code{ggplot.transcan} set \code{scale=TRUE} to
+		scale transformed values to [0,1] before plotting.
   }
   \item{formula}{
     the formula (if \code{x} was a formula)
@@ -915,7 +917,7 @@ predict(x.trans, expand.grid(age=50, disease="pneumonia",
         blood.pressure=60:260, pH=7.4))
 z <- transcan(~ age + factor(disease.code),  # disease.code categorical
               transformed=TRUE, trantab=TRUE, imputed=TRUE, pl=FALSE)
-ggplot(z)
+ggplot(z, scale=TRUE)
 plot(z$transformed)
 }
 

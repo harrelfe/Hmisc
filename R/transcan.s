@@ -1258,8 +1258,9 @@ plot.transcan <- function(x, ...)
   }
 }
 
-ggplot.transcan <- function(x, scale=FALSE, ...)
+ggplot.transcan <- function(data, scale=FALSE, ...)
 {
+  x <- data
   trantab  <- x$trantab
   imputed  <- x$imputed
   n.impute <- max(1, x$n.impute)
@@ -1651,3 +1652,4 @@ rMultinom <- function(probs, m)
   
   ran
 }
+utils::globalVariables('type')

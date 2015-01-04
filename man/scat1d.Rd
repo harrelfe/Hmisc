@@ -126,7 +126,7 @@ histSpike(x, side=1, nint=100, frac=.05, minf=NULL, mult.width=1,
 
 histSpikeg(formula=NULL, predictions=NULL, data,
            lowess=FALSE, xlim=NULL, ylim=NULL,
-           side=1, nint=100, frac=.03, span=3/4)
+           side=1, nint=100, frac=.03, span=3/4, histcol='black')
 }
 \arguments{
   \item{x}{
@@ -146,8 +146,7 @@ histSpikeg(formula=NULL, predictions=NULL, data,
     \code{histSpike}, this is the relative length to be used for the
     largest frequency. When \code{scat1d} calls \code{histSpike}, it
     multiplies its \code{frac} argument by 2.5.  For \code{histSpikeg}
-    if \code{predictions} is not given (i.e., \code{side} is used),
-    \code{frac} is doubled.
+    the default value for \code{frac} is 0.03.
   }
   \item{jitfrac}{
     fraction of axis for jittering.  If
@@ -338,11 +337,12 @@ histSpikeg(formula=NULL, predictions=NULL, data,
   }
   \item{xlim}{
     a 2-vector specifying the outer limits of \code{x} for binning (and
-    plotting, if \code{add=FALSE} and \code{nint} is a number)
+    plotting, if \code{add=FALSE} and \code{nint} is a number).  For
+    \code{histSpikeg}, observations outside the \code{xlim} range are ignored.
   }
   \item{ylim}{
     y-axis range for plotting (if \code{add=FALSE}).  Often needed for
-           \code{histSpikeg}.
+    \code{histSpikeg} to help scale the tick mark line segments.
   }
   \item{xlab}{
     x-axis label (\code{add=FALSE}); default is name of input argument
@@ -384,7 +384,12 @@ histSpikeg(formula=NULL, predictions=NULL, data,
            \code{iter=0} is passed to \code{lowess} so that outlier
            detection is turned off; otherwise \code{iter=3} is passed.
 				 }
-\item{span}{passed to \code{lowess} as the \code{f} argument}				 
+\item{span}{passed to \code{lowess} as the \code{f} argument}
+\item{histcolor}{color of line segments (tick marks) for
+ \code{histSpikeg}.  Default is black.  Set to any color or to
+   \code{"default"} to use the prevailing colors for the
+   graphic.
+}	 
 }
 \value{
   \code{histSpike} returns the actual range of \code{x} used in its binning

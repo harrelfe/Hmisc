@@ -1,6 +1,7 @@
 histSpikeg <- function(formula=NULL, predictions=NULL, data,
                        lowess=FALSE, xlim=NULL, ylim=NULL,
-                       side=1, nint=100, frac=.03, span=3/4) {
+                       side=1, nint=100, frac=.03, span=3/4,
+                       histcol='black') {
   ## Raw data in data, predicted curves are in predictions
   ## If predictions is not given, side (1 or 3) is used
   v  <- all.vars(formula)
@@ -13,6 +14,10 @@ histSpikeg <- function(formula=NULL, predictions=NULL, data,
       stop(paste(yv, 'must be in data if lowess=TRUE'))
     yval <- data[[yv]]
     iter <- if(length(unique(yval[! is.na(yval)])) > 2) 3 else 0
+    lows <- function(x, y, iter, span) {
+      i <- ! is.na(x + y)
+      lowess(x[i], y[i], iter=iter, f=span)
+    }
   }
 
   if(length(xv) > 1 && ! (lowess || length(predictions)))
@@ -38,7 +43,7 @@ histSpikeg <- function(formula=NULL, predictions=NULL, data,
     if(length(xr)) tab    <- tab[tab[[X]] >= xr[1] & tab[[X]] <= xr[2], ]
     tab$.rf. <- tab$Freq / max(tab$Freq)
     if(lowess) {
-      p <- as.data.frame(lowess(data[[X]], yval, iter=iter, f=span))
+      p <- as.data.frame(lows(data[[X]], yval, iter, span))
       names(p) <- c(X, yv)
       }
     if(length(p)) tab$.yy. <- approx(p[[X]], p[[yv]], xout=tab[[X]])$y
@@ -73,9 +78,9 @@ histSpikeg <- function(formula=NULL, predictions=NULL, data,
           i <- i & (tab[[gv[l]]]  == currgroup)
           j <- j & (data[[gv[l]]] == currgroup)
         }  ## now all grouping variables intersected
-        sm <- lowess(data[[X]][j], data[[yv]][j], iter=iter, f=span)
+        sm <- lows(data[[X]][j], data[[yv]][j], iter, span)
         Sm <- sm; names(Sm) <- c(X, yv)
-        Uk <- U[k, ]; row.names(Uk) <- NULL
+        Uk <- U[k, , drop=FALSE]; row.names(Uk) <- NULL
         p <- rbind(p, data.frame(Uk, Sm))
         tab$.yy.[i] <- approx(sm, xout=tab[[X]][i])$y
       }
@@ -89,7 +94,9 @@ histSpikeg <- function(formula=NULL, predictions=NULL, data,
   }
   if(! length(ylim)) stop('no way to infer ylim from information provided')
 
-  tab$.rf. <- tab$.rf. * diff(ylim) * frac / max(tab$.rf.)
+  maxf <- if(length(tab$.rf.) < 3) max(tab$.rf.) else
+          - sort(- tab$.rf.)[3]
+  tab$.rf. <- tab$.rf. * diff(ylim) * frac / maxf
   n <- nrow(tab)
   tab$.ylo. <- if(length(p)) tab$.yy. - tab$.rf.
   else if(side == 1) rep(ylim[1], n) else rep(ylim[2], n)
@@ -97,12 +104,14 @@ histSpikeg <- function(formula=NULL, predictions=NULL, data,
   tab$.yhi. <- if(length(p)) tab$.yy. + tab$.rf.
   else if(side == 1) ylim[1] + tab$.rf. else ylim[2] - tab$.rf.
 
+  hcol <- if(histcol == 'default') '' else sprintf(', col="%s"', histcol)
+  
   res <- eval(parse(text=sprintf('ggplot2::geom_segment(data=tab,
                         aes(x=%s, xend=%s,
-                            y=.ylo., yend=.yhi.))', X, X)))
-  if(lowess) res <- list(hist=res, lowess=
-         ggplot2::geom_line(data=p, aes(x=x, y=y)))
+                            y=.ylo., yend=.yhi.), size=.5 %s)', X, X, hcol)))
+  if(lowess) res <- list(hist=res, lowess=eval(parse(text=
+         sprintf('ggplot2::geom_line(data=p, aes(x=%s, y=%s))', X, yv))))
   res
 }
 
-utils::globalVariables(c('aes', 'Freq', '.ylo.', '.yhi.'))
+utils::globalVariables(c('aes', 'Freq', '.ylo.', '.yhi.', 'x', 'y'))

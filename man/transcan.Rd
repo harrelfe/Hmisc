@@ -175,7 +175,7 @@ transcan(x, method=c("canonical","pc"),
 
 \method{plot}{transcan}(x, \dots)
 
-\method{ggplot}{transcan}(x, scale=FALSE, \dots)
+\method{ggplot}{transcan}(data, scale=FALSE, \dots)
 
 \method{impute}{transcan}(x, var, imputation, name, pos.in, data, 
        list.out=FALSE, pr=TRUE, check=TRUE, \dots)
@@ -443,7 +443,8 @@ invertTabulated(x, y, freq=rep(1,length(x)),
     \code{nres} is higher if \code{boot.method="approximate bayesian"}.
   }
   \item{data}{
-    Data frame used to fill the formula.
+    Data frame used to fill the formula.  For \code{ggplot} is the
+		result of \code{transcan} with \code{trantab=TRUE}.
   }
   \item{subset}{
     an integer or logical vector specifying the subset of observations
@@ -495,6 +496,8 @@ invertTabulated(x, y, freq=rep(1,length(x)),
     number of significant digits for printing values by
     \code{\link{summary}}
   }
+	\item{scale}{for \code{ggplot.transcan} set \code{scale=TRUE} to
+		scale transformed values to [0,1] before plotting.}
   \item{var}{
     For \code{\link{impute}}, is a variable that was originally a column
     in \code{x}, for which imputated values are to be filled
@@ -678,8 +681,7 @@ invertTabulated(x, y, freq=rep(1,length(x)),
   }
   \item{scale}{
     a vector of scales used to determine convergence for a
-    transformation.  For \code{ggplot.transcan} set \code{scale=TRUE} to
-		scale transformed values to [0,1] before plotting.
+    transformation.
   }
   \item{formula}{
     the formula (if \code{x} was a formula)

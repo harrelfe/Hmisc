@@ -1,4 +1,4 @@
-Changes in version 3.15-0 (2015-01-??)
+Changes in version 3.15-0 (2015-01-04)
    * dvi.latex: For Windows switched from system() to shell() so that cd command works.  Thanks: Rich Heiberger
    * histSpike: added test
    * histSpikeg: new function for ggplot2
@@ -8,6 +8,7 @@ Changes in version 3.15-0 (2015-01-??)
    * transcan: added ggplot method
    * transace: removed y-axis labels
    * residuals.lrm: remove y-axis labels
+   * histSpikeg: added lowess and span arguments
 
 Changes in version 3.14-6 (2014-11-16)
    * wtd.rank: fixed bug in no weights case (thanks: DPlat)

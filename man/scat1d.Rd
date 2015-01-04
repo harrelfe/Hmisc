@@ -80,8 +80,9 @@
   density or spikes are drawn with respect to the curve rather than the
   x-axis.
 
-	\code{histSpikeg} is similar to \code{histSpike} but is for adding a
-	layer to a \code{ggplot2} graphics object.  
+	\code{histSpikeg} is similar to \code{histSpike} but is for adding layers
+	to a \code{ggplot2} graphics object.  \code{histSpikeg} can also add
+	\code{lowess} curves to the plot.
 }
 \usage{
 scat1d(x, side=3, frac=0.02, jitfrac=0.008, tfrac,
@@ -123,8 +124,9 @@ histSpike(x, side=1, nint=100, frac=.05, minf=NULL, mult.width=1,
           bottom.align=type=='density', col=par('col'), lwd=par('lwd'),
           grid=FALSE, ...)
 
-histSpikeg(formula=NULL, predictions=NULL, data, xlim=NULL, ylim=NULL,
-           side=1, nint=100, frac=.02)
+histSpikeg(formula=NULL, predictions=NULL, data,
+           lowess=FALSE, xlim=NULL, ylim=NULL,
+           side=1, nint=100, frac=.03, span=3/4)
 }
 \arguments{
   \item{x}{
@@ -339,8 +341,8 @@ histSpikeg(formula=NULL, predictions=NULL, data, xlim=NULL, ylim=NULL,
     plotting, if \code{add=FALSE} and \code{nint} is a number)
   }
   \item{ylim}{
-    y-axis range for plotting (if \code{add=FALSE}; mandatory for
-    \code{histSpikeg})
+    y-axis range for plotting (if \code{add=FALSE}).  Often needed for
+           \code{histSpikeg}.
   }
   \item{xlab}{
     x-axis label (\code{add=FALSE}); default is name of input argument
@@ -371,6 +373,18 @@ histSpikeg(formula=NULL, predictions=NULL, data, xlim=NULL, ylim=NULL,
     frequency distribution is to be summarized, using variables in
     \code{formula}. 
 	}
+	\item{lowess}{
+		set to \code{TRUE} to have \code{histSpikeg} add a \code{geom_line}
+           layer to the \code{ggplot2} graphic, containing
+           \code{lowess()} nonparametric smoothers.  This causes the
+           returned value of \code{histSpikeg} to be a list with two
+           components: \code{"hist"} and \code{"lowess"} each containing
+           a layer.  Fortunately, \code{ggplot2} plots both layers
+           automatically.  If the dependent variable is binary,
+           \code{iter=0} is passed to \code{lowess} so that outlier
+           detection is turned off; otherwise \code{iter=3} is passed.
+				 }
+\item{span}{passed to \code{lowess} as the \code{f} argument}				 
 }
 \value{
   \code{histSpike} returns the actual range of \code{x} used in its binning
@@ -411,7 +425,7 @@ D-70597 Stuttgart Germany\cr
 }
 \seealso{
   \code{\link{segments}}, \code{\link{jitter}}, \code{\link{rug}},
-  \code{\link{plsmo}}, \code{\link{stripplot}},
+  \code{\link{plsmo}}, \code{\link{lowess}}, \code{\link{stripplot}},
   \code{\link{hist.data.frame}},\code{\link{Ecdf}}, \code{\link{hist}},
   \code{\link[lattice]{histogram}}, \code{\link{table}},
   \code{\link{density}}
@@ -500,7 +514,7 @@ g <- ggplot(p, aes(x=cholesterol, y=yhat, color=sex)) + geom_line() +
   xlab(xl2) + ylim(-1, 1)
 g <- g + geom_ribbon(data=p, aes(ymin=lower, ymax=upper), alpha=0.2,
                 linetype=0, show_guide=FALSE)
-g + histSpikeg(yhat ~ cholesterol + sex, p, d, ylim=c(-1, 1))
+g + histSpikeg(yhat ~ cholesterol + sex, p, d)
 }
 }
 \keyword{dplot}

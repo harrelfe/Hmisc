@@ -60,5 +60,5 @@ qplot(Age, as.numeric(Kyphosis) - 1, data = kyphosis) +
 }
 }
 \seealso{
-\code{\link{lowess}} for \code{loess} smoother.
+\code{\link{lowess}} for \code{loess} smoother, and \code{\link{histSpikeg}}
 }

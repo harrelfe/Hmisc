@@ -126,7 +126,9 @@ histSpike(x, side=1, nint=100, frac=.05, minf=NULL, mult.width=1,
 
 histSpikeg(formula=NULL, predictions=NULL, data,
            lowess=FALSE, xlim=NULL, ylim=NULL,
-           side=1, nint=100, frac=.03, span=3/4, histcol='black')
+           side=1, nint=100,
+           frac=function(f) 0.01 + 0.02*sqrt(f-1)/sqrt(max(f,2)-1),
+           span=3/4, histcol='black')
 }
 \arguments{
   \item{x}{
@@ -145,9 +147,11 @@ histSpikeg(formula=NULL, predictions=NULL, data,
     lengths. Can be negative to move tick marks outside of plot. For
     \code{histSpike}, this is the relative y-direction length to be used for the
     largest frequency. When \code{scat1d} calls \code{histSpike}, it
-    multiplies its \code{frac} argument by 2.5.  For \code{histSpikeg}
-    the default value for \code{frac} is 0.03 and the user may use
-    \code{ylim} to better control scaling of \code{frac}.
+    multiplies its \code{frac} argument by 2.5.  For \code{histSpikeg},
+    \code{frac} is a function of \code{f}, the vector of all frequencies.  The
+		default function scales tick marks so that they are between 0.01 and
+    0.03 of the y range, linearly scaled in the square root of the
+    frequency less one.
   }
   \item{jitfrac}{
     fraction of axis for jittering.  If

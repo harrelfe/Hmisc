@@ -1,7 +1,9 @@
 histSpikeg <- function(formula=NULL, predictions=NULL, data,
                        lowess=FALSE, xlim=NULL, ylim=NULL,
-                       side=1, nint=100, frac=.03, span=3/4,
-                       histcol='black') {
+                       side=1, nint=100,
+                       frac=function(f) 0.01 + 0.02*sqrt(f-1) /
+                         sqrt(max(f,2)-1),
+                       span=3/4, histcol='black') {
   ## Raw data in data, predicted curves are in predictions
   ## If predictions is not given, side (1 or 3) is used
   v  <- all.vars(formula)
@@ -41,7 +43,6 @@ histSpikeg <- function(formula=NULL, predictions=NULL, data,
     tab    <- as.data.frame(do.call(table, data[X]))
     tab[[X]] <- as.numeric(as.character(tab[[X]]))
     if(length(xr)) tab    <- tab[tab[[X]] >= xr[1] & tab[[X]] <= xr[2], ]
-    tab$.rf. <- tab$Freq / max(tab$Freq)
     if(lowess) {
       p <- as.data.frame(lows(data[[X]], yval, iter, span))
       names(p) <- c(X, yv)
@@ -52,7 +53,6 @@ histSpikeg <- function(formula=NULL, predictions=NULL, data,
     tab <- subset(tab, Freq > 0)
     tab[[X]] <- as.numeric(as.character(tab[[X]]))
     if(length(xr)) tab    <- tab[tab[[X]] >= xr[1] & tab[[X]] <= xr[2], ]
-    tab$.rf. <- tab$Freq / max(tab$Freq)
     tab$.yy. <- rep(NA, nrow(tab))
     gv <- xv[-1]           # grouping variables
     U <- unique(tab[gv])   # unique combinations
@@ -94,9 +94,7 @@ histSpikeg <- function(formula=NULL, predictions=NULL, data,
   }
   if(! length(ylim)) stop('no way to infer ylim from information provided')
 
-  maxf <- if(length(tab$.rf.) < 3) max(tab$.rf.) else
-          - sort(- tab$.rf.)[3]
-  tab$.rf. <- tab$.rf. * diff(ylim) * frac / maxf
+  tab$.rf. <- frac(tab$Freq) * diff(ylim)
   n <- nrow(tab)
   tab$.ylo. <- if(length(p)) tab$.yy. - tab$.rf.
   else if(side == 1) rep(ylim[1], n) else rep(ylim[2], n)
@@ -108,7 +106,7 @@ histSpikeg <- function(formula=NULL, predictions=NULL, data,
   
   res <- eval(parse(text=sprintf('ggplot2::geom_segment(data=tab,
                         aes(x=%s, xend=%s,
-                            y=.ylo., yend=.yhi.), size=.5 %s)', X, X, hcol)))
+                            y=.ylo., yend=.yhi.), size=.25 %s)', X, X, hcol)))
   if(lowess) res <- list(hist=res, lowess=eval(parse(text=
          sprintf('ggplot2::geom_line(data=p, aes(x=%s, y=%s))', X, yv))))
   res

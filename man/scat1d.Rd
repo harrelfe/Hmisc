@@ -386,7 +386,7 @@ histSpikeg(formula=NULL, predictions=NULL, data,
            detection is turned off; otherwise \code{iter=3} is passed.
 				 }
 \item{span}{passed to \code{lowess} as the \code{f} argument}
-\item{histcolor}{color of line segments (tick marks) for
+\item{histcol}{color of line segments (tick marks) for
  \code{histSpikeg}.  Default is black.  Set to any color or to
    \code{"default"} to use the prevailing colors for the
    graphic.

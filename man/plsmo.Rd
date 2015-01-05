@@ -44,6 +44,9 @@ By default, the key is positioned at the upper right
 corner of the graph.  If \code{Key(locator(1))} is specified, the key will
 appear so that its upper left corner is at the coordinates of the
 mouse click.
+
+For \code{ggplot2} graphics the counterparts are
+\code{\link{stat_plsmo}} and \code{\link{histSpikeg}}.
 }
 \usage{
 plsmo(x, y, method=c("lowess","supsmu","raw"), xlab, ylab, 
@@ -178,8 +181,11 @@ if \code{group} is absent).  By default, the parameters set up by
 plots, and \code{panel.plsmo} creates the \code{Key} function in the session frame.
 }
 \seealso{
-\code{\link{lowess}}, \code{\link{supsmu}}, \code{\link{label}}, \code{\link{quantile}}, \code{\link{labcurve}}, \code{\link{scat1d}},
-\code{\link[lattice]{xyplot}}, \code{\link[lattice]{panel.superpose}}, \code{\link[lattice]{panel.xyplot}}
+	\code{\link{lowess}}, \code{\link{supsmu}}, \code{\link{label}},
+	\code{\link{quantile}}, \code{\link{labcurve}}, \code{\link{scat1d}},
+	\code{\link[lattice]{xyplot}}, \code{\link[lattice]{panel.superpose}},
+	\code{\link[lattice]{panel.xyplot}}, \code{\link{stat_plsmo}},
+	\code{\link{histSpikeg}}
 }
 \examples{
 set.seed(1)

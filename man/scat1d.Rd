@@ -143,10 +143,11 @@ histSpikeg(formula=NULL, predictions=NULL, data,
   \item{frac}{
     fraction of smaller of vertical and horizontal axes for tick mark
     lengths. Can be negative to move tick marks outside of plot. For
-    \code{histSpike}, this is the relative length to be used for the
+    \code{histSpike}, this is the relative y-direction length to be used for the
     largest frequency. When \code{scat1d} calls \code{histSpike}, it
     multiplies its \code{frac} argument by 2.5.  For \code{histSpikeg}
-    the default value for \code{frac} is 0.03.
+    the default value for \code{frac} is 0.03 and the user may use
+    \code{ylim} to better control scaling of \code{frac}.
   }
   \item{jitfrac}{
     fraction of axis for jittering.  If

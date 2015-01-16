@@ -137,8 +137,9 @@ format.df(x, digits, dec=NULL, rdec=NULL, cdec=NULL,
     String used to format objects of the POSIXt class.
   }
   \item{\dots}{
-    other arguments are accepted and ignored.  For \code{latexVerbatim} these
-    arguments are passed to the \code{print} function.
+    other arguments are accepted and passed to \code{format.default}.
+    For \code{latexVerbatim} these arguments are passed to the
+    \code{print} function.
   }
 }
 \value{
@@ -179,11 +180,11 @@ format.df(x, digits, dec=NULL, rdec=NULL, cdec=NULL,
 \examples{
 \dontrun{
 x <- data.frame(a=1:2, b=3:4)
-x$m <- matrix(5:8,nrow=2)
+x$m <- 10000*matrix(5:8,nrow=2)
 names(x)
 dim(x)
 x
-format.df(x)
+format.df(x, big.mark=",")
 dim(format.df(x))
 }
 }

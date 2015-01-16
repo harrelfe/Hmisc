@@ -54,6 +54,8 @@ first.word <- function(x, i=1, expr=substitute(x))
 ##    27May02 - added booktabs FEH
 ## 13Dec02 - added ctable   FEH
 ## arguments included check.names=TRUE 23jan03
+##
+## 16Jan15 (A. Kiermeier) pass "..." to formt() and format()
 
 format.df <- function(x,
                       digits, dec=NULL, rdec=NULL, cdec=NULL,
@@ -113,8 +115,9 @@ format.df <- function(x,
   }
   
   formt <- function(x, decimal.mark='.', nsmall=0,
-                    scientific=c(-4,4), digits=NULL, na.blank=FALSE) {
-    y <- format(x, nsmall=nsmall, decimal.mark=decimal.mark, digits=digits)
+                    scientific=c(-4,4), digits=NULL, na.blank=FALSE, ...) {
+    y <- format(x, nsmall=nsmall, decimal.mark=decimal.mark,
+                digits=digits, ...)
     if(decimal.mark!='.') y <- gsub('\\.', decimal.mark, y)
     if(na.blank) y <- ifelse(is.na(x), '', y)
     y
@@ -251,26 +254,27 @@ format.df <- function(x,
 
         if(rtype == 1)
           cxk <- formt(xk, decimal.mark=dot, scientific=scientific,
-                       digits=digits, na.blank=na.blank)
+                       digits=digits, na.blank=na.blank, ...)
         else if(rtype == 3) {
           cxk <- character(nrx)
           for(i in 1:nrx)
             cxk[i] <-
               if(is.na(dec[i,j]))
                 formt(xk[i], decimal.mark=dot, scientific=scientific,
-                      digits=digits, na.blank=na.blank)
+                      digits=digits, na.blank=na.blank, ...)
               else
                 formt(round(xk[i], dec[i,j]), decimal.mark=dot,
                       digits=digits, nsmall=dec[i,j], scientific=scientific,
-                      na.blank=na.blank)
+                      na.blank=na.blank, ...)
         } else if(rtype == 4)
           cxk <-
             if(is.na(cdec[j]))
               formt(xk, decimal.mark=dot, scientific=scientific, digits=digits,
-                    na.blank=na.blank)
+                    na.blank=na.blank, ...)
             else
               formt(round(xk, cdec[j]), decimal.mark=dot, nsmall=cdec[j],
-                    digits=digits, scientific=scientific, na.blank=na.blank)
+                    digits=digits, scientific=scientific,
+                    na.blank=na.blank, ...)
         
         if(na.dot)
           cxk[is.na(xk)] <- '.'  # SAS-specific

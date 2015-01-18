@@ -4,6 +4,7 @@ histSpikeg <- function(formula=NULL, predictions=NULL, data,
                        frac=function(f) 0.01 + 0.02*sqrt(f-1) /
                          sqrt(max(f,2)-1),
                        span=3/4, histcol='black') {
+
   ## Raw data in data, predicted curves are in predictions
   ## If predictions is not given, side (1 or 3) is used
   v  <- all.vars(formula)
@@ -61,7 +62,7 @@ histSpikeg <- function(formula=NULL, predictions=NULL, data,
         i <- rep(TRUE, nrow(tab))
         j <- rep(TRUE, nrow(p))
         for(l in 1 : ncol(U)) {
-          currgroup <- U[k, gv[l], drop=TRUE]
+          currgroup <- as.character(U[k, gv[l], drop=TRUE])
           i <- i & (tab[[gv[l]]] == currgroup)
           j <- j & (p[[gv[l]]]   == currgroup)
         }   ## now all grouping variables intersected
@@ -74,7 +75,7 @@ histSpikeg <- function(formula=NULL, predictions=NULL, data,
         i <- rep(TRUE, nrow(tab))
         j <- rep(TRUE, nrow(data))
         for(l in 1 : ncol(U)) {
-          currgroup <-U[k, gv[l], drop=TRUE]
+          currgroup <- as.character(U[k, gv[l], drop=TRUE])
           i <- i & (tab[[gv[l]]]  == currgroup)
           j <- j & (data[[gv[l]]] == currgroup)
         }  ## now all grouping variables intersected

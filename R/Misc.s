@@ -801,7 +801,6 @@ parGrid <- function(grid=FALSE)
 }
 
 ## Replaces R's xinch, yinch, extending them to grid
-## Defines these for S-Plus
 ## These convert inches to data units
 xInch <- function(x=1, warn.log=!grid, grid=FALSE)
 {
@@ -1115,8 +1114,8 @@ pasteFit <- function(x, sep=',', width=.Options$width)
   out
 }
 
-## Determine if variable is a date, time, or date/time variable in R
-## or S-Plus.  The following 2 functions are used by describe.vector
+## Determine if variable is a date, time, or date/time variable in R.
+## The following 2 functions are used by describe.vector
 ## timeUsed assumes is date/time combination variable and has no NAs
 testDateTime <- function(x, what=c('either','both','timeVaries'))
 {
@@ -1170,7 +1169,7 @@ formatDateTime <- function(x, at, roundDay=FALSE)
 
 getHdata <-
   function(file, what=c('data','contents','description','all'),
-           where='http://biostat.mc.vanderbilt.edu/twiki/pub/Main/DataSets')
+           where='http://biostat.mc.vanderbilt.edu/wiki/pub/Main/DataSets')
   {
     what <- match.arg(what)
     fn <- as.character(substitute(file))

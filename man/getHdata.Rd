@@ -40,17 +40,6 @@ getHdata(file, what = c("data", "contents", "description", "all"),
     \acronym{URL} containing the data and metadata files
   }
 }
-\details{
-  For S-Plus, Hmisc defines a function \code{download.file} that is used
-  by \code{getHdata}.  This is a stripped-down version of the \R
-  \code{\link{download.file}} function that uses the system
-  \command{wget} executable for fetching files from the Internet.  For
-  Unix and Linux systems, \command{wget} will be pre-installed usually.
-  For windows S-Plus systems, get \command{wget} from
-  \url{ftp://sunsite.dk/projects/wget/windows}.  Once you unzip the file
-  from there, move \command{wget.exe} to the same Windows directory that
-  contains \command{ftp.exe}.
-}
 \value{
   \code{getHdata()} without a \code{file} argument returns a character
   vector of dataset base names.  When a dataset is downloaded, the data

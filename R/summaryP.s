@@ -211,6 +211,28 @@ ggplot.summaryP <-
     condvar <- condvar[order(nlev)]
   }
 
+  ## Find list of variables that contain only one level but have a
+  ## variable name that is longer than 5 characters.  The space devoted
+  ## to one-level variables is not tall enough to print the variable name.
+  ## Replace the name with (1) (2) ... and put the variable names possibly
+  ## in a footnote
+
+  fnvar <- ''
+  lvar <- levels(X$var)
+  i <- 0
+  for(v in lvar) {
+    if(nchar(v) > 5) {
+      nlev <- length(unique(X$val[X$var == v]))
+      if(nlev == 1) {
+        i <- i + 1
+        w <- paste('(', i, ')', sep='')
+        if(i > 1) fnvar <- paste(fnvar, '; ', sep='')
+        fnvar <- paste(fnvar, w, ' ', v, sep='')
+        levels(X$var)[levels(X$var) == v] <- w
+      }
+    }
+  }
+  
   spl <- function(x) {
     u <- levels(x)
     n <- length(u)
@@ -240,6 +262,8 @@ ggplot.summaryP <-
   p <- p + xlim(xlim) + xlab('Proportion') + ylab('')
   if(length(col))   p <- p + scale_color_manual(values=col)
   if(length(shape)) p <- p + scale_shape_manual(values=shape)
+  
+  if(fnvar != '') attr(p, 'fnvar') <- fnvar
   p
 }
 

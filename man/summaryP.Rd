@@ -28,6 +28,10 @@
 	The \code{ggplot} method for \code{summaryP} does not draw numerators
 	and denominators but the chart is more compact because \code{ggplot2}
 	does not repeat category names the same way as \code{lattice} does.
+	Variable names that are too long to fit in panel strips are renamed
+	(1), (2), etc. and an attribute \code{"fnvar"} is added to the result;
+	this attribute is a character string defining the abbreviations,
+	useful in a figure caption.
 
 	The \code{latex} method produces one or more LaTeX \code{tabular}s
 	containing a table representation of the result, with optional

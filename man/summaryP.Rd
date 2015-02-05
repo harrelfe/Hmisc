@@ -46,7 +46,7 @@ summaryP(formula, data = NULL, subset = NULL,
                     col = trellis.par.get('superpose.symbol')$col,
                     corner=c(0,1)),
          outerlabels=TRUE, autoarrange=TRUE, \dots)
-\method{ggplot}{summaryP}(x, groups=NULL, xlim=c(0, 1),
+\method{ggplot}{summaryP}(data, groups=NULL, xlim=c(0, 1),
            col=NULL, shape=NULL, autoarrange=TRUE, \dots)
 \method{latex}{summaryP}(object, groups=NULL, file='', round=3,
                            size=NULL, append=TRUE, \dots)
@@ -59,7 +59,8 @@ summaryP(formula, data = NULL, subset = NULL,
 		does not distinguish between superpositioning and paneling.  For the
 	plot method, \code{formula} can provide an overall to the default
 	formula for \code{dotplot()}.}
-  \item{data}{an optional data frame}
+  \item{data}{an optional data frame.  For \code{ggplot.summaryP}
+	  \code{data} is the result of \code{summaryP}.}
   \item{subset}{an optional subsetting expression or vector}
   \item{na.action}{function specifying how to handle \code{NA}s.  The
 		default is to keep all \code{NA}s in the analysis frame.}

@@ -190,17 +190,17 @@ plot.summaryP <-
 }
 
 ggplot.summaryP <-
-  function(x, formula=NULL, groups=NULL, xlim=c(0, 1),
+  function(data, formula=NULL, groups=NULL, xlim=c(0, 1),
            col=NULL, shape=NULL, autoarrange=TRUE, ...)
 {
-  X <- x
+  X <- data
   class(X) <- setdiff(class(X), 'summaryP')
-  at   <- attributes(x)
+  at   <- attributes(X)
   Form <- at$formula
   nX   <- at$nX
   nY   <- at$nY
 
-  groupslevels <- if(length(groups)) levels(x[[groups]])
+  groupslevels <- if(length(groups)) levels(X[[groups]])
   condvar <- setdiff(names(X), c('val', 'freq', 'denom', groups))
   ## Reorder condvar in descending order of number of levels
   numu <- function(x) if(is.factor(x)) length(levels(x))
@@ -211,6 +211,20 @@ ggplot.summaryP <-
     condvar <- condvar[order(nlev)]
   }
 
+  spl <- function(x) {
+    u <- levels(x)
+    n <- length(u)
+    utrans <- character(n); names(utrans) <- u
+    for(w in u)
+      utrans[w] <- paste(strwrap(w, 10), collapse='\n')
+    factor(x, u, utrans)
+  }
+  X$var <- spl(X$var)
+  if(length(condvar) == 2) {
+    othvar <- setdiff(condvar, 'var')
+    X[[othvar]] <- spl(X[[othvar]])
+  }
+
   k <- 'ggplot(X, aes(x=freq / denom, y=val'
   if(length(groups)) k <- paste(k, sprintf(', color=%s, shape=%s',
                                            groups, groups))
@@ -219,11 +233,10 @@ ggplot.summaryP <-
   if('var' %nin% condvar) stop('program logic error')
   if(length(condvar) == 1)
     p <- p + facet_grid(var ~ . , scales='free_y', space='free_y')
-  else
-    p <- p + facet_grid(as.formula(sprintf('var ~ %s',
-                                           setdiff(condvar, 'var'))),
-                                   scales='free_y', space='free_y')
-
+  else {
+    p <- p + facet_grid(as.formula(sprintf('var ~ %s', othvar)),
+                        scales='free_y', space='free_y')
+  }
   p <- p + xlim(xlim) + xlab('Proportion') + ylab('')
   if(length(col))   p <- p + scale_color_manual(values=col)
   if(length(shape)) p <- p + scale_shape_manual(values=shape)

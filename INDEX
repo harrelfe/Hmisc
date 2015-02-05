@@ -150,6 +150,8 @@ spss.get                Enhanced Importing of SPSS Files
 src                     Source a File from the Current Working
                         Directory
 stata.get               Enhanced Importing of STATA Files
+stat_plsmo              Add a lowess smoother without counfidence
+                        bands.
 string.bounding.box     Determine Diamentions of Strings
 string.break.line       Break a String into Many Lines at Newlines
 stringDims              String Dimentions

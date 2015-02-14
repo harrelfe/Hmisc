@@ -565,7 +565,8 @@ latex.summaryM <-
            caption, rowlabel="",
            insert.bottom=TRUE, dcolumn=FALSE, formatArgs=NULL, round=NULL,
            prtest=c('P','stat','df','name'), prmsd=FALSE, msdsize=NULL,
-           long=FALSE, pdig=3, eps=.001, auxCol=NULL, table.env=TRUE, ...)
+           long=FALSE, pdig=3, eps=.001, auxCol=NULL, table.env=TRUE,
+           tabenv1=FALSE, ...)
 {
   if(! append) cat('', file=file)
   append <- TRUE
@@ -574,8 +575,10 @@ latex.summaryM <-
   vnames <- match.arg(vnames)
   if(is.logical(prtest) && !prtest) prtest <- 'none'
   strats <- names(object$results)
-  
+
+  istr <- 0
   for(strat in strats) {
+    istr <- istr + 1
     x <- object$results[[strat]]
     
     stats  <- x$stats
@@ -659,7 +662,7 @@ latex.summaryM <-
     gl <- names(x$group.freq)
     if(!length(gl)) gl <- " "
     
-    lab <- sedit(lab,c(" ","&"),c("~","\\&"))  #was format(lab) 21Jan99
+    lab <- sedit(lab,c(" ","&"),c("~","\\&"))
     lab <- latexTranslate(lab, greek=TRUE)
     gl  <- latexTranslate(gl, greek=TRUE)
     extracolheads <-
@@ -733,17 +736,21 @@ latex.summaryM <-
     laststrat <- strat == strats[length(strats)]
     noib <- is.logical(insert.bottom) && ! insert.bottom
     w <- latex(cstats, title=title, file=file, append=TRUE,
-               caption=if(table.env)
-               paste(caption, if(laststrat) paste(legend, collapse=' '),
-                     sep='. '),
-               rowlabel=rowlabel, table.env=table.env,
+               caption=if((! tabenv1 && table.env) || (tabenv1 && istr == 1))
+               paste(caption, if((! tabenv1 && laststrat) ||
+                                 (tabenv1 && istr == 1))
+                                paste(legend, collapse=' '), sep='. '),
+               rowlabel=rowlabel,
+               table.env=(! tabenv1 && table.env) || (tabenv1 && istr == 1),
                col.just=col.just, numeric.dollar=FALSE, 
                insert.bottom=if(! noib && laststrat && ! table.env) legend,
                rowname=lab, dcolumn=dcolumn,
                extracolheads=extracolheads, extracolsize=Nsize,
                insert.top=if(strat != '.ALL.') strat,
                ...)
-    attr(w, 'legend') <- legend
+  if(tabenv1 && istr == 1) cat('\\clearpage\n', file=file, append=TRUE)
+  attr(w, 'legend') <- legend
   }
+  attr(w, 'nstrata') <- istr
   w
 }

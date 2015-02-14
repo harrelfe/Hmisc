@@ -190,8 +190,8 @@ plot.summaryP <-
 }
 
 ggplot.summaryP <-
-  function(data, formula=NULL, groups=NULL, xlim=c(0, 1),
-           col=NULL, shape=NULL, autoarrange=TRUE, ...)
+  function(data, groups=NULL, xlim=c(0, 1),
+           col=NULL, shape=NULL, autoarrange=TRUE, addlayer=NULL, ...)
 {
   X <- data
   class(X) <- setdiff(class(X), 'summaryP')
@@ -252,6 +252,7 @@ ggplot.summaryP <-
                                            groups, groups))
   k <- paste(k, '))')
   p <- eval(parse(text=k)) + geom_point()
+  if(length(addlayer)) p <- p + addlayer
   if('var' %nin% condvar) stop('program logic error')
   if(length(condvar) == 1)
     p <- p + facet_grid(var ~ . , scales='free_y', space='free_y')
@@ -325,5 +326,6 @@ latex.summaryP <- function(object, groups=NULL, file='', round=3,
     }
   }
   attr(w, 'ngrouplevels') <- nl
+  attr(w, 'nstrata') <- nslev
   w
 }

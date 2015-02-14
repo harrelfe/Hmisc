@@ -51,7 +51,7 @@ summaryP(formula, data = NULL, subset = NULL,
                     corner=c(0,1)),
          outerlabels=TRUE, autoarrange=TRUE, \dots)
 \method{ggplot}{summaryP}(data, groups=NULL, xlim=c(0, 1),
-           col=NULL, shape=NULL, autoarrange=TRUE, \dots)
+           col=NULL, shape=NULL, autoarrange=TRUE, addlayer=NULL, \dots)
 \method{latex}{summaryP}(object, groups=NULL, file='', round=3,
                            size=NULL, append=TRUE, \dots)
 }
@@ -108,13 +108,15 @@ summaryP(formula, data = NULL, subset = NULL,
 	 proportions}
  \item{size}{optional font size such as \code{"small"}}
  \item{append}{set to \code{FALSE} to start output over}
+ \item{addlayer}{a \code{ggplot} layer to add to the plot object}
 }
 \value{\code{summaryP} produces a data frame of class
 	\code{"summaryP"}.  The \code{plot} method produces a \code{lattice}
 	object of class \code{"trellis"}.  The \code{latex} method produces an
 	object of class \code{"latex"} with an additional attribute
 	\code{ngrouplevels} specifying the number of levels of any
-	\code{groups} variable.
+	\code{groups} variable and an attribute \code{nstrata} specifying the
+	number of strata.
 	}
 \author{Frank Harrell
   \cr

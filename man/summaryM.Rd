@@ -86,7 +86,7 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
       insert.bottom = TRUE, dcolumn = FALSE, formatArgs=NULL, round=NULL,
       prtest = c('P', 'stat', 'df', 'name'), prmsd = FALSE,
       msdsize = NULL, long = FALSE, pdig = 3, eps = 0.001,
-      auxCol = NULL, table.env=TRUE, \dots)
+      auxCol = NULL, table.env=TRUE, tabenv1=FALSE, \dots)
 }
 \arguments{
   \item{formula}{
@@ -311,7 +311,10 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
     than one row in the output.  This happens with categorical variables.
   }
 	\item{table.env}{set to \code{FALSE} to use \code{tabular} environment
-      with no caption}
+    with no caption}
+	\item{tabenv1}{set to \code{TRUE} in the case of stratification when
+      you want only the first stratum's table to be in a table
+      environment.  This is useful when using \code{hyperref}.}
   \item{which}{
 	Specifies whether to plot results
     for categorical variables, continuous variables, or both (the default).
@@ -376,7 +379,8 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
   }
 \value{
   a list.  \code{plot.summaryM} returns the number
-  of pages of plots that were made.
+  of pages of plots that were made.  The \code{latex} method returns
+      attributes \code{legend} and \code{nstrata}.
 }
 \section{Side Effects}{
   \code{plot.summaryM} creates a function \code{Key} and

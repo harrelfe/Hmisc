@@ -1,4 +1,4 @@
-Changes in version 3.15-0 (2015-02-14)
+Changes in version 3.15-0 (2015-02-15)
    * dvi.latex: For Windows switched from system() to shell() so that cd command works.  Thanks: Rich Heiberger
    * histSpike: added test
    * histSpikeg: new function for ggplot2
@@ -12,6 +12,8 @@ Changes in version 3.15-0 (2015-02-14)
    * format.df: Andreas Kiermeier: The "..." argument of format.df is no longer ignored, but included in the definition of formt() and passed to format(). The help file has also been updated and the example modified to show an example of big.mark.
    * getHdata: removed S-Plus specific stuff, updated url to DataSets
    * summaryP: added ggplot method
+   * NAMESPACE: many additions to register all S3 methods
+   * format.sep: renamed to formatSep
 
 Changes in version 3.14-6 (2014-11-16)
    * wtd.rank: fixed bug in no weights case (thanks: DPlat)

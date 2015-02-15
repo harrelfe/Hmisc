@@ -45,11 +45,11 @@ rcspline.restate <- function(knots, coef, type=c("ordinary","integral"),
   if(type=="integral")
     coef <- c(.5*coef[1],.25*coef[-1])
 
-  cof <- format.sep(coef, digits)
-  kn <- format.sep(-knots, digits)
+  cof <- formatSep(coef, digits)
+  kn <- formatSep(-knots, digits)
   if(Intc!=0)
     {
-      txt <- txt2 <- format.sep(Intc, digits)
+      txt <- txt2 <- formatSep(Intc, digits)
       if(type=="integral")
         {
           txt <- paste(txt, "* x")
@@ -113,8 +113,8 @@ rcspline.restate <- function(knots, coef, type=c("ordinary","integral"),
 
   func <- parse(text=paste('function(x)', txt))
 
-  cof <- format.sep(coef, digits)
-  kn <- format.sep(-knots, digits)
+  cof <- formatSep(coef, digits)
+  kn <- formatSep(-knots, digits)
 
   lcof <- nchar(cof)
   cof <- latexSN(cof)
@@ -122,7 +122,7 @@ rcspline.restate <- function(knots, coef, type=c("ordinary","integral"),
   cur <- begin; colcnt <- nbegin; tex <- NULL
   if(Intc!=0)
     {
-      fint <- format.sep(Intc, digits)
+      fint <- formatSep(Intc, digits)
       if(type=="integral")
         {
           fint <- paste(fint, x)

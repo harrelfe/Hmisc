@@ -77,15 +77,10 @@ rcspline.plot <- function(x, y, model=c("logistic","cox","ols"), xrange,
   nk <- length(knots)
 
   df1 <- nk-2
-  if(model=="logistic") {
-    require(rms)
-    b <- rms::lrm.fit(cbind(x,xx,adj),y)
-    ##b <- glim(cbind(x,xx,adj),y,rep(1,n),error="binomial",
-    ##link="logit")
-    ##if(!noprint)glim.print(b)
+  if(model == "logistic") {
+    b <- rms::lrm.fit(cbind(x,xx,adj), y)
     beta <- b$coef
     cov <- b$var
-    ##model.lr <- b$deviance[1] - b$deviance[2]
     model.lr <- b$stats["Model L.R."]
     offset <- 1 	#to skip over intercept parameter
     ylabl <-

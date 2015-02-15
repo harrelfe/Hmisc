@@ -4,7 +4,7 @@
 \alias{aregTran}
 \alias{as.double.Cbind}
 \alias{as.numeric.Cbind}
-\alias{format.sep}
+\alias{formatSep}
 \alias{as.data.frame.impute}
 \alias{as.data.frame.roundN}
 \alias{as.data.frame.special.miss}

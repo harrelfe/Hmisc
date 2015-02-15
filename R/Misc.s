@@ -26,14 +26,14 @@ prn <- function(x, txt, file='')
   invisible()
 }
 
-format.sep <- function(x, digits, ...)
+formatSep <- function(x, digits, ...)
 {
   y <- character(length(x))
   for(i in 1:length(x))
     y[i] <- if(missing(digits)) format(x[i], ...)
-            else format(x[i],digits=digits, ...)  ## 17Apr02
+            else format(x[i],digits=digits, ...)
 
-  names(y) <- names(x)  ## 17Apr02
+  names(y) <- names(x)
   y
 }
 

@@ -2649,7 +2649,6 @@ catTestchisq=function(tab) {
        plotmathstat='chi[df]^2')
 }
 ordTestpo=function(group, x) {
-  require(rms)
   f <- rms::lrm(x ~ group)$stats
   list(P=f['P'], stat=f['Model L.R.'], df=f['d.f.'],
        testname='Proportional odds likelihood ratio',

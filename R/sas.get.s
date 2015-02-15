@@ -801,8 +801,7 @@ cleanup.import <-
                     '%m/%d/%y'=gsub('^([0-9]{1,2})/([0-9]{1,2})/[0-9]{2}([0-9]{2})', '\\1/\\2/\\3',x),
                     '%m/%d/%Y'=gsub('^([0-9]{1,2})/([0-9]{1,2})/([0-9]{2})$','\\1/\\2/20\\3',x))
       }
-      x <- if(length(xt)) {
-        require('chron')
+      x <- if(length(xt) && requireNamespace("chron", quietly = TRUE)) {
         cform <- if(dateformat=='%F') 'y-m-d'
         else gsub('%','',tolower(dateformat))
         chron::chron(x, xt, format=c(dates=cform,times='h:m:s'))

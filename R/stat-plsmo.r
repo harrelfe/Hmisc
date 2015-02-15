@@ -36,18 +36,9 @@
 #' c + stat_plsmo(aes(fill = factor(cyl))) + geom_point()
 #' c + stat_plsmo(fullrange=TRUE) + geom_point()
 #'
-#' # Use qplot instead
-#' qplot(qsec, wt, data=mtcars, geom=c("plsmo", "point"))
-#'
 #' # Example with logistic regression
 #' data("kyphosis", package="rpart")
-#' qplot(Age, Kyphosis, data=kyphosis)
-#' qplot(Age, data=kyphosis, facets = . ~ Kyphosis, binwidth = 10)
-#' qplot(Age, Kyphosis, data=kyphosis, position="jitter")
-#' qplot(Age, Kyphosis, data=kyphosis, position=position_jitter(height=0.1))
-#'
-#' qplot(Age, as.numeric(Kyphosis) - 1, data = kyphosis) +
-#'   stat_plsmo()
+#' qplot(Age, as.numeric(Kyphosis) - 1, data = kyphosis) + stat_plsmo()
 #' }
 
 stat_plsmo <- function (mapping = NULL, data = NULL, geom = "smooth",

@@ -848,15 +848,15 @@ html.contents.data.frame <-
     cat('<hr><h2>Data frame:',object$dfname,
         '</h2>',d[1],
         ' observations and ',d[2],
-        ' variables, maximum # NAs:',maxnas, '&nbsp&nbsp&nbsp&nbsp',
+        ' variables, maximum # NAs:',maxnas, '&nbsp;&nbsp;&nbsp;&nbsp;',
         sep='', file=file, append=append)
     if(length(object$id)) cat('Unique ', object$id, ':', object$unique.ids,
-                              '&nbsp&nbsp&nbsp&nbsp',
+                              '&nbsp;&nbsp;&nbsp;&nbsp;',
                               sep='', file=file, append=TRUE)
     if(length(object$rangevar)) cat(object$rangevar, ' range:', object$range,
-                                    '&nbsp&nbsp&nbsp&nbsp', sep='', file=file, append=TRUE)
+                                    '&nbsp;&nbsp;&nbsp;&nbsp;', sep='', file=file, append=TRUE)
     if(length(object$valuesvar))cat(object$valuesvar, ':', object$values,
-                                    '&nbsp&nbsp&nbsp&nbsp', sep='', file=file, append=TRUE)
+                                    '&nbsp;&nbsp;&nbsp;&nbsp;', sep='', file=file, append=TRUE)
     cat('<hr>\n', file=file, append=TRUE)
   } else
     cat('<hr><h2>Data frame:',object$dfname,
@@ -940,7 +940,7 @@ html.contents.data.frame <-
       ## together when needed
       evenSplit <- function(x, n) {
         indent <- function(z) if(length(z) == 1) z else
-        c(z[1], paste('&nbsp&nbsp&nbsp', z[-1], sep=''))
+        c(z[1], paste('&nbsp;&nbsp;&nbsp;', z[-1], sep=''))
         m <- length(x)
         if(m <= n) return(c(indent(x), rep('',n-m)))
         totalLength <- sum(nchar(x)) + (m-1)*3.5

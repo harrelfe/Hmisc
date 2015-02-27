@@ -127,7 +127,7 @@ summaryP(formula, data = NULL, subset = NULL,
 	abbreviated and documented in \code{fnvar} (described elsewhere
 	here).  The default \code{abblen=5} is good for labels plotted
 	vertically.  If labels are rotated using \code{theme} a better value
-	would be 10.}
+	would be 12.}
  \item{\dots}{ignored}
  \item{object}{an object produced by \code{summaryP}}
  \item{file}{file name, defaults to writing to console}

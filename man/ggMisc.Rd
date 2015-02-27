@@ -14,10 +14,7 @@ colorFacet(g, col = adjustcolor("blue", alpha.f = 0.3))
   \item{g}{a \code{ggplot2} object that used faceting}
 	\item{col}{color for facet separator rectanges}
 }
-\value{
-}
 \author{Sandy Muspratt}
-}
 \examples{
 \dontrun{
 s <- summaryP(age + sex ~ region + treatment)

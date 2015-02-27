@@ -51,7 +51,8 @@ summaryP(formula, data = NULL, subset = NULL,
                     corner=c(0,1)),
          outerlabels=TRUE, autoarrange=TRUE, \dots)
 \method{ggplot}{summaryP}(data, groups=NULL, xlim=c(0, 1),
-           col=NULL, shape=NULL, autoarrange=TRUE, addlayer=NULL, \dots)
+           col=NULL, shape=NULL, size=function(n) n ^ (1/4),
+           sizerange=NULL, abblen=5, autoarrange=TRUE, addlayer=NULL, \dots)
 \method{latex}{summaryP}(object, groups=NULL, file='', round=3,
                            size=NULL, append=TRUE, \dots)
 }
@@ -100,13 +101,38 @@ summaryP(formula, data = NULL, subset = NULL,
 	 the most levels is taken as the vertical condition.}
  \item{col}{a vector of colors to use to override defaults in
 	 \code{ggplot}}
- \item{shape}{a vector of plotting symbols to override \code{ggplot} defaults}
+ \item{shape}{a vector of plotting symbols to override \code{ggplot}
+	 defaults}
+ \item{size}{for \code{ggplot}, a function that transforms denominators
+	into metrics used for the \code{size} aesthetic.  Default is the
+	fourth root function so that the area of symbols is proportional to
+	the square root of sample size.  Specify \code{NULL} to not vary point
+	sizes. 	\code{size=sqrt} is a reasonable 	alternative.  Set
+	\code{size} to an integer to categorize the denominators into
+	\code{size} quantile groups using \code{cut2}. Unless \code{size} is
+	an integer, the legend for sizes uses the minimum and maximum
+	denominators and 6-tiles using \code{quantile(..., type=1)} so that
+	actually occurring sample sizes are used as labels.  \code{size} is
+	overridden to \code{NULL} if the range in denominators is less than 10
+	or the ratio of the maximum to the minimum is less than 1.2.
+	For	\code{latex}, \code{size} is an optional font size such as
+	\code{"small"}}  
+ \item{sizerange}{a 2-vector specifying the \code{range} argument to the
+	\code{ggplot2} \code{scale_size_...} function, which is the
+	range of sizes allowed for the points according to the denominator.
+	The default is \code{sizerange=c(.7, 3.25)} but the lower limit is
+	increased according to the ratio of maximum to minimum sample sizes.}
+ \item{abblen}{labels of variables having only one level and having
+	their name longer than \code{abblen} characters are 
+	abbreviated and documented in \code{fnvar} (described elsewhere
+	here).  The default \code{abblen=5} is good for labels plotted
+	vertically.  If labels are rotated using \code{theme} a better value
+	would be 10.}
  \item{\dots}{ignored}
  \item{object}{an object produced by \code{summaryP}}
  \item{file}{file name, defaults to writing to console}
  \item{round}{number of digits to the right of the decimal place for
 	 proportions}
- \item{size}{optional font size such as \code{"small"}}
  \item{append}{set to \code{FALSE} to start output over}
  \item{addlayer}{a \code{ggplot} layer to add to the plot object}
 }
@@ -126,7 +152,9 @@ summaryP(formula, data = NULL, subset = NULL,
   \cr
   \email{f.harrell@vanderbilt.edu}}
 \seealso{\code{\link{bpplotM}}, \code{\link{summaryM}},
-	\code{\link{ynbind}}, \code{\link{pBlock}}, \code{\link[ggplot2]{ggplot}}}
+	\code{\link{ynbind}}, \code{\link{pBlock}},
+	\code{\link[ggplot2]{ggplot}}, \code{colorFacet}
+}
 \examples{
 n <- 100
 f <- function(na=FALSE) {
@@ -171,6 +199,7 @@ ggplot(sb, groups='region')
 plot(s, groups='treat')
 # plot(s, groups='treat', outerlabels=FALSE) for standard lattice output
 plot(s, groups='region', key=list(columns=2, space='bottom'))
+colorFacet(ggplot(s))
 
 plot(summaryP(race + sex ~ region, data=d, exclude1=FALSE), col='green')
 

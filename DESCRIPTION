@@ -6,7 +6,7 @@ Author: Frank E Harrell Jr <f.harrell@vanderbilt.edu>, with
   contributions from Charles Dupont and many others.
 Maintainer: Frank E Harrell Jr <f.harrell@vanderbilt.edu>
 Depends: methods, grid, lattice, survival (>= 2.37-6), Formula, ggplot2
-Imports: proto, scales, latticeExtra, cluster, rpart, nnet, acepack, foreign
+Imports: proto, scales, latticeExtra, cluster, rpart, nnet, acepack, foreign, gtable
 Suggests: chron, rms, mice, tables
 Description: Contains many functions useful for data
 	analysis, high-level graphics, utility operations, functions for

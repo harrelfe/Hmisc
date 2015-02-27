@@ -191,7 +191,9 @@ plot.summaryP <-
 
 ggplot.summaryP <-
   function(data, groups=NULL, xlim=c(0, 1),
-           col=NULL, shape=NULL, autoarrange=TRUE, addlayer=NULL, ...)
+           col=NULL, shape=NULL, size=function(n) n ^ (1/4),
+           sizerange=NULL, abblen=5,
+           autoarrange=TRUE, addlayer=NULL, ...)
 {
   X <- data
   class(X) <- setdiff(class(X), 'summaryP')
@@ -212,7 +214,8 @@ ggplot.summaryP <-
   }
 
   ## Find list of variables that contain only one level but have a
-  ## variable name that is longer than 5 characters.  The space devoted
+  ## variable name longer than abblen characters.
+  ## The space devoted
   ## to one-level variables is not tall enough to print the variable name.
   ## Replace the name with (1) (2) ... and put the variable names possibly
   ## in a footnote
@@ -221,7 +224,8 @@ ggplot.summaryP <-
   lvar <- levels(X$var)
   i <- 0
   for(v in lvar) {
-    if(nchar(v) > 5) {
+    maxlen <- nchar(v)   # max(nchar(strsplit(v, split=' ')[[1]]))
+    if(maxlen > abblen) {
       nlev <- length(unique(X$val[X$var == v]))
       if(nlev == 1) {
         i <- i + 1
@@ -246,12 +250,45 @@ ggplot.summaryP <-
     othvar <- setdiff(condvar, 'var')
     X[[othvar]] <- spl(X[[othvar]])
   }
+  N <- X$denom
+  rN <- range(N)
+  ratioN <- rN[2] / rN[1]
+  if(diff(rN) < 10 | (ratioN < 1.2)) size <- NULL
 
   k <- 'ggplot(X, aes(x=freq / denom, y=val'
   if(length(groups)) k <- paste(k, sprintf(', color=%s, shape=%s',
                                            groups, groups))
   k <- paste(k, '))')
-  p <- eval(parse(text=k)) + geom_point()
+  
+  if(length(size)) {
+    k <- paste(k,
+               if(length(size)) 'geom_point(aes(size = N))' else
+                'geom_point()',
+               sep=' + ')
+    Ns <- X$denom
+    if(! length(sizerange)) {
+      fn <- if(is.function(size)) size else sqrt
+      sizerange <- c(max(0.7, 2.7 / fn(ratioN)), 3.25)
+    }
+
+    if(is.function(size)) {
+      X$N <- size(Ns)
+      Ns0 <- Ns[Ns > 0]
+      uN <- unique(sort(Ns0))
+      Nbreaks <- if(length(uN) < 8) uN else
+       unique(round(quantile(Ns0, (0 : 6) / 6, type=1)))
+      Nbreakst <- size(Nbreaks)
+      k <- paste(k,
+       'scale_size_continuous(breaks=Nbreakst, labels=format(Nbreaks), range=sizerange)', sep=' + ')
+    }
+    else {
+      k <- paste(k, 'scale_size_discrete(range = sizerange)', sep=' + ')
+      X$N <- cut2(Ns, g=size)
+    }
+  }
+  else k <- paste(k, 'geom_point()', sep=' + ')
+  p <- eval(parse(text=k))
+  
   if(length(addlayer)) p <- p + addlayer
   if('var' %nin% condvar) stop('program logic error')
   if(length(condvar) == 1)

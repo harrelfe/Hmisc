@@ -1,5 +1,8 @@
 Changes in version 3.15-1 (2015-03-??)
    * html.contents.data.frame: corrected html space character to add semicolon
+   * ggplot.summaryP: added size of points according to denominators
+   * colorFacet: new function
+
 
 Changes in version 3.15-0 (2015-02-15)
    * dvi.latex: For Windows switched from system() to shell() so that cd command works.  Thanks: Rich Heiberger

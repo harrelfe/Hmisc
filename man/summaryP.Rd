@@ -153,7 +153,7 @@ summaryP(formula, data = NULL, subset = NULL,
   \email{f.harrell@vanderbilt.edu}}
 \seealso{\code{\link{bpplotM}}, \code{\link{summaryM}},
 	\code{\link{ynbind}}, \code{\link{pBlock}},
-	\code{\link[ggplot2]{ggplot}}, \code{colorFacet}
+	\code{\link[ggplot2]{ggplot}}, \code{\link{colorFacet}}
 }
 \examples{
 n <- 100

@@ -76,7 +76,8 @@ label.data.frame <- function(x, default=NULL, self=FALSE, ...) {
   }
 }
 
-labelPlotmath <- function(label, units=NULL, plotmath=TRUE, grid=FALSE)
+labelPlotmath <- function(label, units=NULL, plotmath=TRUE, grid=FALSE,
+                          chexpr=FALSE)
 {
   if(!length(label)) label <- ''
   
@@ -86,22 +87,19 @@ labelPlotmath <- function(label, units=NULL, plotmath=TRUE, grid=FALSE)
     if(plotmath) function(x, y=NULL, xstyle=NULL, ystyle=NULL)
       {
         h <- function(w, style=NULL)
-          if(length(style))
-            paste(style,'(',w,')',sep='')
-          else
-            w
+          if(length(style)) sprintf('%s(%s)', style, w) else w
 
-        tryparse <- function(z, original)
-          {
-            p <- try(parse(text=z), silent=TRUE)
-            if(is.character(p)) original else p
-          }
+        tryparse <- function(z, original, chexpr) {
+          p <- try(parse(text=z), silent=TRUE)
+          if(is.character(p)) original else
+             if(chexpr) sprintf('expression(%s)', z) else p
+        }
         if(!length(y))
-          return(tryparse(h(plotmathTranslate(x), xstyle), x))
+          return(tryparse(h(plotmathTranslate(x), xstyle), x, chexpr))
       
         w <- paste('list(',h(plotmathTranslate(x), xstyle), ',',
                    h(plotmathTranslate(y), ystyle), ')', sep='')
-        tryparse(w, paste(x, y))
+        tryparse(w, paste(x, y), chexpr)
       } else function(x, y=NULL, ...) if(length(y)) paste(x,y) else x
 
   if(units=='') g(label)

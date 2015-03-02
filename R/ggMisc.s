@@ -20,12 +20,12 @@ gt <- ggplotGrob(g)
 ## Rmin and Rmax give the span of the horizontal gap;
 ## Bmin and Bmax give the span of the vertical gap
 panelsR <- unique(gt$layout$r[grepl("panel", gt$layout$name)])
-Rmin = 4
+Rmin = panelsR[1]  ## 4
 Rmax = panelsR[length(panelsR)] + 1
 panelsR = panelsR[-length(panelsR)] +1
 
 panelsB <- unique(gt$layout$b[grepl("panel", gt$layout$name)])
-Bmin = 3
+Bmin = panelsB[1] - 1  ## 3
 Bmax = panelsB[length(panelsB)]
 panelsB = panelsB[-length(panelsB)] + 1
 

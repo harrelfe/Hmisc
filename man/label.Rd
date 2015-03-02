@@ -44,7 +44,9 @@
   attributes.  When \code{plotmath} mode is used to construct labels, the
   \code{'label'} or \code{'units'} may contain math expressions but they
   are typed verbatim if they contain percent signs, blanks, or
-  underscores.
+  underscores.  \code{labelPlotmath} can optionally create the
+  expression as a character string, which is useful in building
+  \code{ggplot} commants.
 
 	For \code{Surv} objects, \code{label} first looks to see if there is
 	an overall \code{"label"} attribute for the object, then it looks for
@@ -107,7 +109,7 @@ label(x, ...) <- value
 
 \method{label}{data.frame}(x, self=TRUE, ...) <- value
 
-labelPlotmath(label, units=NULL, plotmath=TRUE, grid=FALSE)
+labelPlotmath(label, units=NULL, plotmath=TRUE, grid=FALSE, chexpr=FALSE)
 
 labelLatex(x=NULL, label='', units='', size='smaller[2]',
            hfill=FALSE, bold=FALSE, default='', double=FALSE)
@@ -168,6 +170,8 @@ combineLabels(\dots)
     for plotting using \R's \code{plotmath} facility.  If \R is not in
     effect, an ordinary character string is returned.
   }
+	\item{chexpr}{set to \code{TRUE} to have \code{labelPlotmath} return a
+		character string of the form \code{"expression(...)"}}
 	\item{size}{LaTeX size for \code{units}.  Default is two sizes smaller
 		than \code{label}, which assumes that the LaTeX \code{relsize}
 		package is in use.}

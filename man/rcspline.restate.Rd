@@ -21,7 +21,7 @@ rcspline.restate(knots, coef,
                  norm=2, columns=65, before="& &", after="\\\\",
                  begin="", nbegin=0, digits=max(8, .Options$digits))
 
-rcsplineFunction(knots, coef, norm=2)
+rcsplineFunction(knots, coef, norm=2, type=c('ordinary', 'integral'))
 }
 \arguments{
   \item{knots}{

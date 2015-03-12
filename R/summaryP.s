@@ -78,10 +78,10 @@ summaryP <- function(formula, data=NULL,
         la  <- label(y)
         if(la == '') la <- ny
         lev <- names(tab)
-        mf <- mfreq[[ny]]
+        ## mf <- mfreq[[ny]]
         no <- as.numeric(sum(tab))
-        if(exclude1 && length(mf) == 2) {
-          lowest <- names(which.min(mf))
+        if(exclude1 && length(tab) == 2) {   ## was length(tab)
+          lowest <- names(which.min(tab))    ## was tab
           z <- data.frame(var=la, val=lowest,
                           freq=as.numeric(tab[lowest]),
                           denom=no)

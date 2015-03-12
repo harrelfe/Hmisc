@@ -197,28 +197,42 @@ rcspline.restate <- function(knots, coef, type=c("ordinary","integral"),
   coef
 }
 
-rcsplineFunction <- function(knots, coef=numeric(0), norm=2)
-{
+rcsplineFunction <- function(knots, coef=numeric(0), norm=2,
+                             type=c('ordinary', 'integral')) {
+  type <- match.arg(type)
   k <- length(knots)
   kd <- if(norm==0) 1 else if(norm==1) knots[k]-knots[k-1] else
   (knots[k]-knots[1])^.66666666666666666666666
   
-  f <- function(x, knots, coef, kd)
-    {
-      k       <- length(knots)
-      knotnk  <- knots[k]
-      knotnk1 <- knots[k-1]
-      knot1   <- knots[1]
-      if(length(coef) < k) coef <- c(0, coef)
-      y <- coef[1] + coef[2]*x
-      for(j in 1:(k-2))
-        y <- y +
-          coef[j+2]*(pmax((x - knots[j])/kd, 0)^3 +
-                     ((knotnk1 - knots[j]) * pmax((x - knotnk)/kd, 0)^3 -
-                      (knotnk -  knots[j]) * (pmax((x - knotnk1)/kd, 0)^3))/
-                     (knotnk -  knotnk1))
-      y
+  f <- function(x, knots, coef, kd, type) {
+    k       <- length(knots)
+    knotnk  <- knots[k]
+    knotnk1 <- knots[k - 1]
+    knot1   <- knots[1]
+    if(length(coef) < k) coef <- c(0, coef)
+    if(type == 'ordinary') {
+      y <- coef[1] + coef[2] * x
+      for(j in 1 : (k - 2))
+        y <- y + coef[j + 2] *
+          (pmax((x - knots[j]) / kd, 0) ^ 3 +
+             ((knotnk1 - knots[j]) *
+                pmax((x - knotnk) / kd, 0) ^ 3 -
+                  (knotnk -  knots[j]) *
+                    (pmax((x - knotnk1) / kd, 0) ^ 3)) /
+                      (knotnk -  knotnk1))
+      return(y)
     }
-  formals(f) <- list(x=numeric(0), knots=knots, coef=coef, kd=kd)
+    y <- coef[1] * x + 0.5 * coef[2] * x * x
+    for(j in 1 : (k - 2))
+      y <- y + 0.25 * coef[j + 2] * kd *
+        (pmax((x - knots[j]) / kd, 0) ^ 4 +
+           ((knotnk1 - knots[j]) *
+              pmax((x - knotnk) / kd, 0) ^ 4 -
+                (knotnk -  knots[j]) *
+                  (pmax((x - knotnk1) / kd, 0) ^ 4)) /
+                    (knotnk -  knotnk1))
+    y
+  }
+  formals(f) <- list(x=numeric(0), knots=knots, coef=coef, kd=kd, type=type)
   f
 }

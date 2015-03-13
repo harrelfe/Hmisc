@@ -26,6 +26,7 @@ summaryP <- function(formula, data=NULL,
   ux <- unique(X)
   Z <- NULL
   n <- nrow(X)
+  Lev <- character(0)
   
   if(sort) {
     ## Compute marginal frequencies of all regular variables so can sort
@@ -57,16 +58,20 @@ summaryP <- function(formula, data=NULL,
         for(iy in 1 : ncol(y)) {
           tab <- table(y[, iy])
           no <- as.numeric(sum(tab))
-          d <- if(inherits(y, 'ynbind'))
-            data.frame(var=overlab,
-                       val=labs[iy],
-                       freq=as.numeric(tab['TRUE']),
-                       denom=no)
-          else
-            data.frame(var=overlab,
-                       val=names(tab),  # paste(labs[iy], names(tab)),
-                       freq=as.numeric(tab),
-                       denom=no)
+          
+          if(inherits(y, 'ynbind')) {
+            d <- data.frame(var=overlab,
+                            val=labs[iy],
+                            freq=as.numeric(tab['TRUE']),
+                            denom=no)
+            Lev <- c(Lev, as.character(labs[iy]))
+          } else {
+            d <- data.frame(var=overlab,
+                            val=names(tab),  # paste(labs[iy], names(tab)),
+                            freq=as.numeric(tab),
+                            denom=no)
+            Lev <- c(Lev, names(tab))
+          }
           z <- rbind(z, d)
         }
       }
@@ -82,12 +87,14 @@ summaryP <- function(formula, data=NULL,
         no <- as.numeric(sum(tab))
         if(exclude1 && length(tab) == 2) {   ## was length(tab)
           lowest <- names(which.min(tab))    ## was tab
+          Lev <- c(Lev, lowest)
           z <- data.frame(var=la, val=lowest,
                           freq=as.numeric(tab[lowest]),
                           denom=no)
         }
         else {
           if(sort) lev <- reorder(lev, (mfreq[[ny]])[lev])
+          Lev <- c(Lev, as.character(lev))
           z <- data.frame(var=la, val=lev,
                           freq=as.numeric(tab),
                           denom=no)
@@ -98,6 +105,7 @@ summaryP <- function(formula, data=NULL,
       Z <- rbind(Z, z)
     }
   }
+  Z$val <- factor(Z$val, levels=unique(Lev))
   structure(Z, class=c('summaryP', 'data.frame'), formula=formula,
             nX=nX, nY=nY)
 }
@@ -177,7 +185,7 @@ plot.summaryP <-
 
 #  if(outerlabels && ((nX - length(groups) + 1 == 2) ||
 #                     length(dim(d)) == 2))  d <- useOuterStrips(d)
-  if(length(dim(d)) == 2) d <- useOuterStrips(d)
+  if(length(dim(d)) == 2) d <- latticeExtra::useOuterStrips(d)
   ## Avoid wasting space for vertical variables with few levels
   if(condvar[length(condvar)] == 'var') {
     vars <- levels(X$var)
@@ -346,6 +354,7 @@ latex.summaryP <- function(object, groups=NULL, file='', round=3,
       
       nl  <- length(lev)
       var <- unique(as.character(r$var))
+
       w <- latex(r[colnames(r) != 'var'],
                  table.env=FALSE, file=file, append=TRUE,
                  rowlabel='', rowname=rep('', nrow(r)),

@@ -318,6 +318,6 @@ bpplotM <- function(formula=NULL, groups=NULL, data=NULL, subset=NULL,
               nloc=nloc, cex.n=cex.n, strip=strip,
               par.strip.text=list(cex=cex.strip), ...)
   if(outerlabels && length(dim(d)) == 2)
-    d <- useOuterStrips(d, strip=strip, strip.left=strip)
+    d <- latticeExtra::useOuterStrips(d, strip=strip, strip.left=strip)
   d
 }

@@ -6,6 +6,7 @@ Changes in version 3.15-1 (2015-03-??)
    * rcsplineFunction: added type='integral'
    * summaryP: fixed bug with sort=FALSE using mfreq when shouldn't
    * summaryP: stored levels(val) in original levels order
+   * summaryM: removed observations added by addMarginal when computing N in left column of tables
 
 
 Changes in version 3.15-0 (2015-02-15)

@@ -7,6 +7,9 @@ summaryM <- function(formula, groups=NULL, data=NULL, subset,
                      conTest=conTestkw, catTest=catTestchisq,
                      ordTest=ordTestpo) {
 
+  marg <- length(data) && '.marginal.' %in% names(data)
+  if(marg) formula <- update(formula, .~. + .marginal.)
+  
   formula <- Formula(formula)
   Y <- if(!missing(subset) && length(subset))
     model.frame(formula, data=data, subset=subset, na.action=na.action)
@@ -29,7 +32,12 @@ summaryM <- function(formula, groups=NULL, data=NULL, subset,
      lab <- attr(x, 'label')
      if(!length(lab) || lab=='') default else lab
    }
-   
+
+  if(marg) {
+    xm <- X$.marginal.
+    X$.marginal. <- NULL
+  } else xm <- rep('', nrow(X))
+  
    if(length(X)) {
      xname <- names(X)
      if(length(xname) == 1 && ! length(groups)) groups <- xname
@@ -72,6 +80,10 @@ summaryM <- function(formula, groups=NULL, data=NULL, subset,
     }
 
     gr <- group[instrat]
+    xms <- xm[instrat]
+    ## Need to ignore marginal summaries in N unless stratifying by
+    ## the variable that is marginalized over
+    if(all(xms != '')) xms <- rep('', length(xms))
     group.freq <- table(gr)
     group.freq <- group.freq[group.freq > 0]
     if(overall) group.freq <- c(group.freq, Combined=sum(group.freq))
@@ -97,7 +109,7 @@ summaryM <- function(formula, groups=NULL, data=NULL, subset,
           s <- rep(TRUE, length(s))
         }
 
-        n[i] <- sum(s)
+        n[i] <- sum(s & xms == '')
         w <- w[s]
         g <- gr[s, drop=TRUE]
         if(is.factor(w) || is.logical(w)) {
@@ -159,7 +171,8 @@ summaryM <- function(formula, groups=NULL, data=NULL, subset,
         }
       } else {
         w <- as.numeric(w) == 1 ## multiple choice variables
-        n[i] <- nrow(w)
+        ## n[i] <- nrow(w)
+        n[i] <- sum(! is.na(w) & xms == '')
         g    <- as.factor(gr)
         ncat <- ncol(w)
         tab <- matrix(NA, nrow=ncat, ncol=length(levels(g)),
@@ -192,13 +205,12 @@ summaryM <- function(formula, groups=NULL, data=NULL, subset,
         type[i]   <- 3
       }
     }
-  
   labels <- ifelse(nchar(labels), labels, names(comp))
   R[[strat]] <- list(stats=comp, type=type, 
                      group.freq=group.freq,
                      labels=labels, units=Units,
                      quant=quant, data=dat,
-                     N=sum(!is.na(group)), n=n,
+                     N=sum(!is.na(gr) & xms ==''), n=n,
                      testresults=if(test)testresults)
   }
   structure(list(results=R, group.name=groups, group.label=glabel,

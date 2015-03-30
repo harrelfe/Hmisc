@@ -1254,48 +1254,58 @@ dvigv.latex <- function(object, ...) invisible(dvigv.dvi(dvi.latex(object),...))
 html <- function(object, ...) UseMethod('html')
 
 
-html.latex <- function(object, file, ...)
+html.latex <- function(object, file, where=c('cwd', 'tmp'),
+                       method=c('hevea', 'htlatex'), cleanup=TRUE, ...)
 {
+  where  <- match.arg(where)
+  method <- match.arg(method)
+  if(where == 'tmp') cleanup <- FALSE
+  if(method == 'htlatex' && ! missing(file) && file != '')
+    stop('file may not be given when method="htlatex" unless file=""')
+  
   fi  <- object$file
+  fibase <- gsub('\\.tex', '', fi)
   sty <- object$style
   
   if(length(sty))
-    sty <- paste('\\usepackage{',sty,'}',sep='')
+    sty <- paste('\\usepackage{', unique(sty), '}', sep='')
   
-  ## pre <- tempfile(); post <- tempfile()  1dec03
-  tmp <- tempfile()
-  tmptex <- paste(tmp,'tex',sep='.')  # 5dec03
-  infi <- readLines(fi)
+  tmp    <- switch(where,
+                   cwd = paste(fibase, 'enclosed', sep='-'),
+                   tmp = tempfile())
+  tmptex <- paste(tmp, 'tex', sep='.')
+  infi   <- readLines(fi)
   cat('\\documentclass{report}', sty, '\\begin{document}', infi,
       '\\end{document}\n', file=tmptex, sep='\n')
-  sc <-
-    if(.Platform$OS.type == 'unix')
-      ';'
-    else
-      '&'  # 7feb03
+  sc <- if(.Platform$OS.type == 'unix') ';' else '&'
 
-  ## Create system call to hevea to convert temporary latex file to html.
+  ## Create system call to hevea to convert enclosed latex file to html.
   cmd <-
-    if(missing(file)) {
-      paste(optionsCmds('hevea'), shQuote(tmptex))
-    } else {
-      paste(optionsCmds('hevea'), '-o', file, shQuote(tmptex))
-    }
+    if(missing(file) || file == '') 
+      paste(optionsCmds(method), shQuote(tmptex))
+    else 
+      paste(optionsCmds(method), '-o', file, shQuote(tmptex))
     
   ## perform system call
   sys(cmd)
-  ## 24nov03 dQuote
+  if(cleanup && method == 'htlatex')
+    unlink(paste(tmp, c('tmp','idv','lg','4tc','aux','dvi','log','xref','4ct'),
+                 sep='.'))
+  
+  if(! missing(file) && file == '') {
+    w <- readLines(paste(tmp, 'html', sep='.'))
+    cat(w, sep='\n')
+    return(invisible())
+  }
 
-  ## Check to see if .html tag exist and add it if
-  ## if does not
+  ## Check to see if .html tag exists and add it if it does not
   if(missing(file)) {
-    file <- paste(tmp,'html',sep='.')
+    file <- paste(tmp, 'html', sep='.')
   } else {
-    if(!length(grep(".*\\.html", file))) {
+    if(! length(grep(".*\\.html", file))) {
       file <- paste(file, 'html', sep='.')
     }
   }
-  
   structure(list(file=file), class='html')
 }
 

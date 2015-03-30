@@ -21,7 +21,8 @@ runs \code{html.data.frame}.
 }
 \usage{
 html(object, \dots)
-\method{html}{latex}(object, file, ...)
+\method{html}{latex}(object, file, where=c('cwd', 'tmp'),
+  method=c('hevea', 'htlatex'), cleanup=TRUE, ...)
 \method{html}{data.frame}(object,
   file=paste(first.word(deparse(substitute(object))),'html',sep='.'),
      append=FALSE, link=NULL, linkCol=1, linkType=c('href','name'), \dots)
@@ -38,8 +39,20 @@ html(object, \dots)
 \item{file}{
 name of the file to create.  The default file
 name is \code{object.html} where \code{object} is the first word in
-the name of the argument for \code{object}.
+the name of the argument for \code{object}.  For \code{html.latex}
+specify \code{file=''} to print html code to the console, as when using \code{knitr}.
 }
+\item{where}{for \code{html}.  Default is to put output files in current
+	working directory.  Specify \code{where='tmp'} to put in a system
+	temporary directory area.}
+\item{method}{default is to use system command \code{hevea} to convert
+	from LaTeX to html.  Specify \code{method='htlatex'} to use system
+	command \code{htlatex}, assuming the system package \code{tex4ht} is
+	installed.}
+\item{cleanup}{if using \code{method='htlatex'} set to \code{FALSE} if
+	\code{where='cwd'} to	prevent deletion of auxiliary files created by
+	\code{htlatex} that are not needed when using the final \code{html}
+	document (only the \code{.css} file is needed in addition to \code{.html})}
 \item{append}{set to \code{TRUE} to append to an existing file}
 \item{link}{character vector specifying hyperlink names to attach to
   selected elements of the matrix or data frame.  No hyperlinks are used

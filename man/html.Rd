@@ -91,9 +91,22 @@ x <- matrix(1:6, nrow=2, dimnames=list(c('a','b'),c('c','d','e')))
 w <- latex(x)
 h <- html(w) # run HeVeA to convert .tex to .html
 h <- html(x) # convert x directly to html
-options(browser='konqueror')  # use help.browser for S-Plus
 h            # launch html browser by running print.html
 w <- html(x, link=c('','B'))   # hyperlink first row first col to B
+
+# Assuming system package tex4ht is installed, easily convert advanced
+# LaTeX tables to html
+getHdata(pbc)
+s <- summaryM(bili + albumin + stage + protime + sex + age + spiders ~ drug,
+              data=pbc, test=TRUE)
+w <- latex(s, npct='slash', file='s.tex')
+z <- html(w)
+browseURL(z$file)
+
+d <- describe(pbc)
+w <- latex(d, file='d.tex')
+z <- html(w)
+browseURL(z$file)
 }
 }
 \keyword{utilities}

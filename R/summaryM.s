@@ -502,7 +502,7 @@ print.summaryM <-
       nn <- c(nn, n[i])
       nam <- if(vnames=="names") nams[i] else labels[i]
       if(prUnits && nchar(Units[i]))
-        nam <- paste(nam,' [',translate(Units[i],'*',' '),']',sep='')
+        nam <- paste(nam,' [', gsub('\\*', ' ', Units[i]),']',sep='')
       
       tr <- if(length(test) && all(prtest!='none')) test[[nams[i]]]
       else NULL
@@ -641,7 +641,7 @@ latex.summaryM <-
       else labels[i]
       
       if(prUnits && nchar(Units[i]) > 0)
-        nam <- paste(nam, '~\\hfill\\tiny{',translate(Units[i],'*',' '),'}',sep='')
+        nam <- paste(nam, '~\\hfill\\tiny{', gsub('\\*', ' ', Units[i]),'}',sep='')
       
       tr  <- if(length(test) && all(prtest!='none')) test[[nams[i]]]
        else NULL

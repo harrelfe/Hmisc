@@ -594,7 +594,7 @@ print.summary.formula.response <-
 
   vlabels <- at$labels
   if(prUnits) {
-    atu <- translate(at$units, '*',' ')
+    atu <- gsub('\\*', ' ', at$units)
     vlabels <- ifelse(atu=='',vlabels,
                       paste(vlabels,' [',atu,']',sep=''))
   }
@@ -690,7 +690,7 @@ latex.summary.formula.response <-
         else at$vname
 
   if(prUnits) {
-    atvu <- translate(at$vunits, '*', ' ')
+    atvu <- gsub('\\*', ' ', at$vunits)
     vn <- ifelse(atvu=='', vn,
                  paste(vn,'~\\hfill\\tiny{', atvu, '}',sep=''))
   }
@@ -1373,7 +1373,7 @@ print.summary.formula.reverse <-
     nam <- if(vnames=="names") nams[i] else labels[i]
 
     if(prUnits && nchar(Units[i]))
-      nam <- paste(nam,' [',translate(Units[i],'*',' '),']',sep='')
+      nam <- paste(nam,' [', gsub('\\*',' ', Units[i]),']',sep='')
 
     tr <- if(length(test) && all(prtest!='none')) test[[nams[i]]]
           else NULL
@@ -1824,7 +1824,7 @@ latex.summary.formula.reverse <-
            else labels[i]
 
     if(prUnits && nchar(Units[i]) > 0)
-      nam <- paste(nam, '~\\hfill\\tiny{',translate(Units[i],'*',' '),'}',sep='')
+      nam <- paste(nam, '~\\hfill\\tiny{', gsub('\\*',' ', Units[i]),'}',sep='')
 
     tr  <- if(length(test) && all(prtest!='none')) test[[nams[i]]]
            else NULL

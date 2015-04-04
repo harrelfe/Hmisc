@@ -41,19 +41,20 @@
 }
 \usage{
 summaryP(formula, data = NULL, subset = NULL,
-         na.action = na.retain, exclude1=TRUE, sort=TRUE,
+         na.action = na.retain, sort=TRUE,
          asna = c("unknown", "unspecified"), \dots)
-\method{plot}{summaryP}(x, formula, groups=NULL, xlim = c(-.05, 1.05),
+\method{plot}{summaryP}(x, formula, groups=NULL, exclude1=TRUE,
+         xlim = c(-.05, 1.05),
          text.at=NULL, cex.values = 0.5,
          key = list(columns = length(groupslevels), x = 0.75,
                     y = -0.04, cex = 0.9,
                     col = trellis.par.get('superpose.symbol')$col,
                     corner=c(0,1)),
          outerlabels=TRUE, autoarrange=TRUE, \dots)
-\method{ggplot}{summaryP}(data, groups=NULL, xlim=c(0, 1),
+\method{ggplot}{summaryP}(data, groups=NULL, exclude1=TRUE, xlim=c(0, 1),
            col=NULL, shape=NULL, size=function(n) n ^ (1/4),
            sizerange=NULL, abblen=5, autoarrange=TRUE, addlayer=NULL, \dots)
-\method{latex}{summaryP}(object, groups=NULL, file='', round=3,
+\method{latex}{summaryP}(object, groups=NULL, exclude1=TRUE, file='', round=3,
                            size=NULL, append=TRUE, \dots)
 }
 \arguments{
@@ -69,10 +70,6 @@ summaryP(formula, data = NULL, subset = NULL,
   \item{subset}{an optional subsetting expression or vector}
   \item{na.action}{function specifying how to handle \code{NA}s.  The
 		default is to keep all \code{NA}s in the analysis frame.}
-  \item{exclude1}{By default, \code{summaryP} removes redundant entries
-		from tables for variables with only two levels.  For example, if you
-		print the proportion of females, you don't need to print the
-		proportion of males.  To override this, set \code{exclude1=FALSE}.}
   \item{sort}{set to \code{FALSE} to not sort category levels in
 		descending order of global proportions}
   \item{asna}{character vector specifying level names to consider the
@@ -81,6 +78,11 @@ summaryP(formula, data = NULL, subset = NULL,
   \item{groups}{a character string containing the name of a
    	superpositioning variable for obtaining 
 		further stratification within a horizontal line in the dot chart.}
+  \item{exclude1}{By default, \code{ggplot}, \code{plot}, and
+	\code{latex} methods for \code{summaryP} remove redundant entries 
+		from tables for variables with only two levels.  For example, if you
+		print the proportion of females, you don't need to print the
+		proportion of males.  To override this, set \code{exclude1=FALSE}.}
   \item{xlim}{\code{x}-axis limits.  Default is \code{c(0,1)}.}
 	\item{text.at}{specify to leave unused space to the right of each
 	panel to prevent numerators and denominators from touching data
@@ -176,7 +178,7 @@ dasna <- subset(d, region=='North America')
 with(dasna, table(race, treat))
 s <- summaryP(race + sex + ynbind(x1, x2, x3, x4, x5, x6, x7, label='Exclusions') ~
               region + treat, data=d)
-# add exclude1=FALSE to include female category
+# add exclude1=FALSE below to include female category
 plot(s, groups='treat')
 ggplot(s, groups='treat')
 
@@ -201,7 +203,7 @@ plot(s, groups='treat')
 plot(s, groups='region', key=list(columns=2, space='bottom'))
 colorFacet(ggplot(s))
 
-plot(summaryP(race + sex ~ region, data=d, exclude1=FALSE), col='green')
+plot(summaryP(race + sex ~ region, data=d), exclude1=FALSE, col='green')
 
 # Make your own plot using data frame created by summaryP
 useOuterStrips(dotplot(val ~ freq | region * var, groups=treat, data=s,

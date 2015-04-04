@@ -1,6 +1,6 @@
 summaryP <- function(formula, data=NULL,
                      subset=NULL, na.action=na.retain,
-                     exclude1=TRUE, sort=TRUE,
+                     sort=TRUE,
                      asna=c('unknown', 'unspecified'), ...) {
   
   formula <- Formula(formula)
@@ -43,6 +43,19 @@ summaryP <- function(formula, data=NULL,
       }
     }
   }
+  ## Save combinations of var and val to exclude if exclude1 is used in
+  ## a function that operates on summaryP result
+  ylevels.to.exclude1 <- NULL
+  for(ny in namY) {
+    y <- Y[[ny]]
+    tab <- table(y)
+    tab <- structure(as.numeric(tab), names=names(tab))
+    if(length(tab) == 2)
+      ylevels.to.exclude1 <-
+        rbind(ylevels.to.exclude1,
+              data.frame(var=ny, val=names(tab)[which.max(tab)]))
+  }
+              
   for(i in 1 : nrow(ux)) {
     j <- rep(TRUE, n)
     if(nX > 0) for(k in 1 : nX) j <- j & (X[[k]] == ux[i, k])
@@ -85,20 +98,11 @@ summaryP <- function(formula, data=NULL,
         lev <- names(tab)
         ## mf <- mfreq[[ny]]
         no <- as.numeric(sum(tab))
-        if(exclude1 && length(tab) == 2) {   ## was length(tab)
-          lowest <- names(which.min(tab))    ## was tab
-          Lev <- c(Lev, lowest)
-          z <- data.frame(var=la, val=lowest,
-                          freq=as.numeric(tab[lowest]),
-                          denom=no)
-        }
-        else {
-          if(sort) lev <- reorder(lev, (mfreq[[ny]])[lev])
-          Lev <- c(Lev, as.character(lev))
-          z <- data.frame(var=la, val=lev,
-                          freq=as.numeric(tab),
-                          denom=no)
-        }
+        if(sort) lev <- reorder(lev, (mfreq[[ny]])[lev])
+        Lev <- c(Lev, as.character(lev))
+        z <- data.frame(var=la, val=lev,
+                        freq=as.numeric(tab),
+                        denom=no)
       }
       ## Add current X subset settings
       if(nX > 0) for(k in 1: nX) z[[names(ux)[k]]] <- ux[i, k]
@@ -106,12 +110,27 @@ summaryP <- function(formula, data=NULL,
     }
   }
   Z$val <- factor(Z$val, levels=unique(Lev))
+
+  yl <- ylevels.to.exclude1
+  iex <- integer(0)
+  if(length(yl)) {
+    for(i in 1 : nrow(Z)) {
+      exi <- FALSE
+      for(j in 1 : nrow(yl))
+        if(as.character(Z$var[i]) == as.character(yl$var[j]) &&
+           as.character(Z$val[i]) == as.character(yl$val[j])) exi <- TRUE
+      if(exi) iex <- c(iex, i)
+    }
+  }
+
+  
   structure(Z, class=c('summaryP', 'data.frame'), formula=formula,
-            nX=nX, nY=nY)
+            nX=nX, nY=nY, rows.to.exclude1=iex)
 }
 
 plot.summaryP <-
-  function(x, formula=NULL, groups=NULL, xlim=c(-.05, 1.05), text.at=NULL,
+  function(x, formula=NULL, groups=NULL, exclude1=TRUE,
+           xlim=c(-.05, 1.05), text.at=NULL,
            cex.values=0.5,
            key=list(columns=length(groupslevels),
              x=.75, y=-.04, cex=.9,
@@ -129,6 +148,9 @@ plot.summaryP <-
   ## Reorder condvar in descending order of number of levels
   numu <- function(x) if(is.factor(x)) length(levels(x))
                        else length(unique(x[! is.na(x)]))
+
+  if(exclude1 && length(at$rows.to.exclude1))
+    X <- X[- at$rows.to.exclude1, , drop=FALSE]
 
   if(autoarrange && length(condvar) > 1) {
     nlev <- sapply(X[condvar], numu)
@@ -198,7 +220,7 @@ plot.summaryP <-
 }
 
 ggplot.summaryP <-
-  function(data, groups=NULL, xlim=c(0, 1),
+  function(data, groups=NULL, exclude1=TRUE, xlim=c(0, 1),
            col=NULL, shape=NULL, size=function(n) n ^ (1/4),
            sizerange=NULL, abblen=5,
            autoarrange=TRUE, addlayer=NULL, ...)
@@ -215,6 +237,9 @@ ggplot.summaryP <-
   ## Reorder condvar in descending order of number of levels
   numu <- function(x) if(is.factor(x)) length(levels(x))
                        else length(unique(x[! is.na(x)]))
+
+  if(exclude1 && length(at$rows.to.exclude1))
+    X <- X[- at$rows.to.exclude1, , drop=FALSE]
 
   if(autoarrange && length(condvar) > 1) {
     nlev <- sapply(X[condvar], numu)
@@ -314,9 +339,13 @@ ggplot.summaryP <-
 }
 
 
-latex.summaryP <- function(object, groups=NULL, file='', round=3,
+latex.summaryP <- function(object, groups=NULL, exclude1=TRUE, file='', round=3,
                            size=NULL, append=TRUE, ...) {
   class(object) <- 'data.frame'
+  rte <- attr(object, 'rows.to.exclude1')
+  if(exclude1 && rte)
+    object <- object[- rte, , drop=FALSE]
+
   if(! append) cat('', file=file)
 
   p <- ifelse(object$denom == 0, '',

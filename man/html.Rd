@@ -22,7 +22,7 @@ runs \code{html.data.frame}.
 \usage{
 html(object, \dots)
 \method{html}{latex}(object, file, where=c('cwd', 'tmp'),
-  method=c('hevea', 'htlatex'), cleanup=TRUE, ...)
+  method=c('htlatex', 'hevea'), cleanup=TRUE, ...)
 \method{html}{data.frame}(object,
   file=paste(first.word(deparse(substitute(object))),'html',sep='.'),
      append=FALSE, link=NULL, linkCol=1, linkType=c('href','name'), \dots)
@@ -45,10 +45,10 @@ specify \code{file=''} to print html code to the console, as when using \code{kn
 \item{where}{for \code{html}.  Default is to put output files in current
 	working directory.  Specify \code{where='tmp'} to put in a system
 	temporary directory area.}
-\item{method}{default is to use system command \code{hevea} to convert
-	from LaTeX to html.  Specify \code{method='htlatex'} to use system
-	command \code{htlatex}, assuming the system package \code{tex4ht} is
-	installed.}
+\item{method}{default is to use system command \code{htlatex} to convert
+	from LaTeX to html (this is from the \code{tex4ht} package).  Specify
+	\code{method='hevea'} to use system command \code{hevea}, assuming the
+	system package \code{hevea} is installed.}
 \item{cleanup}{if using \code{method='htlatex'} set to \code{FALSE} if
 	\code{where='cwd'} to	prevent deletion of auxiliary files created by
 	\code{htlatex} that are not needed when using the final \code{html}

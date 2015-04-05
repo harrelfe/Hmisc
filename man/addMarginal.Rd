@@ -2,7 +2,7 @@
 \alias{addMarginal}
 \title{Add Marginal Observations}
 \usage{
-addMarginal(data, ..., label = "All")
+addMarginal(data, ..., label = "All", margloc=c('last', 'first'))
 }
 \arguments{
   \item{data}{a data frame \dots one or more variable
@@ -10,6 +10,9 @@ addMarginal(data, ..., label = "All")
   name of the combined category, default is \code{"All"}.}
 	\item{\dots}{a list of names of variables to marginalize}
 	\item{label}{category name for added marginal observations}
+	\item{margloc}{location for marginal category within factor variable
+		specifying categories.  Set to \code{"first"} to override the
+		default - to put a category with value \code{label} as the first category.}
 }
 \description{
 Given a data frame and the names of variable, doubles the

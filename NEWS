@@ -10,6 +10,7 @@ Changes in version 3.15-1 (2015-04-??)
    * html.latex: added method for htlatex, added where argument, cleaned up code, implemented file='' for knitr when using html/Rmarkdown
    * summaryM, summary.formula: changed calls to translate to gsub()
    * summaryP: corrected but in exclude1 logic, moved exclude1 to methods that operate on summaryP objects and out of summaryP itself
+   * addMarginal: respect original levels, add argument margloc
 
 
 Changes in version 3.15-0 (2015-02-15)

@@ -75,10 +75,11 @@ nobsY <- function(formula, group=NULL,
   structure(list(nobs=nobs, nobsg=nobsg, id=idv, formula=forig))
 }
 
-addMarginal <- function(data, ..., label='All') {
+addMarginal <- function(data, ..., label='All', margloc=c('last', 'first')) {
   vars <- as.character(sys.call())[- (1 : 2)]
   vars <- intersect(vars, names(data))
   data$.marginal. <- ''
+  margloc <- match.arg(margloc)
 
   labs <- sapply(data, function(x) {
     la <- attr(x, 'label')
@@ -89,13 +90,20 @@ addMarginal <- function(data, ..., label='All') {
     if(! length(u)) u <- ''
     u })
 
+  levs <- vector('list', length(vars))
+  names(levs) <- vars
   for(v in vars) {
     d <- data
     d$.marginal. <- ifelse(d$.marginal. == '', v,
                            paste(d$.marginal., v, sep=','))
+    levs[[v]] <- levels(as.factor(d[[v]]))
+    levs[[v]] <- if(margloc == 'last') c(levs[[v]], label)
+                 else c(label, levs[[v]])
     d[[v]] <- label
-    data <- rbind(data, d)
+    data <- if(margloc == 'last') rbind(data, d) else rbind(d, data)
   }
+  for(v in vars) data[[v]] <- factor(data[[v]], levs[[v]])
+  
   ## Restore any Hmisc attributes
   if(any(labs != '') || any(un != ''))
     for(i in 1 : length(data)) {

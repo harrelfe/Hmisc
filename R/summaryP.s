@@ -343,7 +343,7 @@ latex.summaryP <- function(object, groups=NULL, exclude1=TRUE, file='', round=3,
                            size=NULL, append=TRUE, ...) {
   class(object) <- 'data.frame'
   rte <- attr(object, 'rows.to.exclude1')
-  if(exclude1 && rte)
+  if(exclude1 && length(rte))
     object <- object[- rte, , drop=FALSE]
 
   if(! append) cat('', file=file)

@@ -316,7 +316,7 @@ plot.summaryS <-
    }
  }
   if(outerlabels && length(dim(d)) == 2)
-    d <- useOuterStrips(d, strip=strip, strip.left=strip)
+    d <- latticeExtra::useOuterStrips(d, strip=strip, strip.left=strip)
   d
 }
 

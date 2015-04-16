@@ -242,13 +242,10 @@ all.is.numeric <- function(x, what=c('test','vector'),
                            extras=c('.','NA'))
 {
   what <- match.arg(what)
-  old <- options(warn=-1)
-  on.exit(options(old))
-  ##.Options$warn <- -1  6Aug00
   x <- sub('[[:space:]]+$', '', x)
   x <- sub('^[[:space:]]+', '', x)
   xs <- x[x %nin% c('',extras)]
-  isnum <- !any(is.na(as.numeric(xs)))
+  isnum <- suppressWarnings(!any(is.na(as.numeric(xs))))
   if(what=='test')
     isnum
   else if(isnum)

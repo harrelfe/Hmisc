@@ -257,14 +257,7 @@ replace.substring.wild <- function(text, old, new, test=NULL,
 
 
 ## Some functions useful as test= arguments to replace.substring.wild, sedit
-numeric.string <- function(string)
-{
-  ##.Options$warn <- -1  6Aug00
-  oldopt <- options(warn=-1)
-  on.exit(options(oldopt))
-  !is.na(as.numeric(string))
-}
-
+numeric.string <- function(string) suppressWarnings(!is.na(as.numeric(string)))
 
 all.digits <- function(string)
 {

@@ -42,3 +42,20 @@ for(j in panelsB)
 grid::grid.draw(gt)
 invisible()
 }
+
+## The following exists to nullify invisible() used in arrangeGrob's
+## returned value.  Regarding class and print see
+## http://stackoverflow.com/questions/29062766/store-output-from-gridextragrid-arrange-into-an-object
+arrGrob <- function(...) {
+  if(! requireNamespace('gridExtra', quietly=TRUE))
+    stop('gridExtra package not installed')
+  z <- gridExtra::arrangeGrob(...)
+  class(z) <- c("arrGrob", class(z))
+  z
+}
+
+print.arrGrob <- function(x, ...) {
+  grid::grid.newpage()
+  grid::grid.draw(x)
+}
+

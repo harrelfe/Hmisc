@@ -1,12 +1,12 @@
 Package: Hmisc
 Version: 3.15-1
-Date: 2015-03-??
+Date: 2015-04-22
 Title: Harrell Miscellaneous
 Author: Frank E Harrell Jr <f.harrell@vanderbilt.edu>, with
   contributions from Charles Dupont and many others.
 Maintainer: Frank E Harrell Jr <f.harrell@vanderbilt.edu>
 Depends: methods, grid, lattice, survival (>= 2.37-6), Formula, ggplot2
-Imports: proto, scales, latticeExtra, cluster, rpart, nnet, acepack, foreign, gtable
+Imports: proto, scales, latticeExtra, cluster, rpart, nnet, acepack, foreign, gtable, gridExtra
 Suggests: chron, rms, mice, tables
 Description: Contains many functions useful for data
 	analysis, high-level graphics, utility operations, functions for

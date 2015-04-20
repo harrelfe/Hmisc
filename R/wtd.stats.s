@@ -11,25 +11,31 @@ wtd.mean <- function(x, weights=NULL, normwt='ignored', na.rm=TRUE)
 }
 
 
+
 wtd.var <- function(x, weights=NULL, normwt=FALSE, na.rm=TRUE)
 {
+  method <- match.arg(method)
   if(!length(weights)) {
     if(na.rm) x <- x[!is.na(x)]
     return(var(x))
   }
 
   if(na.rm) {
-    s <- !is.na(x + weights)
-    x <- x[s]
+    s       <- !is.na(x + weights)
+    x       <- x[s]
     weights <- weights[s]
   }
 
   if(normwt)
     weights <- weights * length(x) / sum(weights)
 
-  sw <- sum(weights)
+  if(method == 'ML')
+    return(as.numeric(stats::cov.wt(cbind(x), w, method = "ML")$cov))
+
+  sw   <- sum(weights)
   xbar <- sum(weights * x) / sw
-  sum(weights*((x - xbar)^2)) / (sw - sum(weights ^ 2) / sw)
+  sum(weights*((x - xbar)^2)) /
+    (sw - (if(normwt) sum(weights ^ 2) / sw else 1))
 }
 
 

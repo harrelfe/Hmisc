@@ -14,6 +14,7 @@ Changes in version 3.15-1 (2015-04-22)
    * added latticeExtra:: in front of function calls
    * numeric.string, all.is.numeric: replaced options(warn=-1) with suppressWarnings() (thanks: Yihui)
    * arrGrob, print.arrGrob: new functions
+   * wtd.var: added maximum likelihood method, fixed unbiased method, improved documentation (all provided by Benjamin Tyner)
 
 
 Changes in version 3.15-0 (2015-02-15)

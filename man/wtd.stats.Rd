@@ -49,7 +49,8 @@ for each of the \code{y=0}, \code{y=1} cells per observation.
 }
 \usage{
 wtd.mean(x, weights=NULL, normwt="ignored", na.rm=TRUE)
-wtd.var(x, weights=NULL, normwt=FALSE, na.rm=TRUE)
+wtd.var(x, weights=NULL, normwt=FALSE, na.rm=TRUE,
+        method=c('unbiased', 'ML'))
 wtd.quantile(x, weights=NULL, probs=c(0, .25, .5, .75, 1), 
              type=c('quantile','(i-1)/(n-1)','i/(n+1)','i/n'), 
              normwt=FALSE, na.rm=TRUE)
@@ -80,12 +81,21 @@ vector of denominators (numbers of trials)
 a numeric vector of weights
 }
 \item{normwt}{
-specify \code{normwt=TRUE} to make \code{weights} sum to \code{length(x)} after deletion
-of NAs
+specify \code{normwt=TRUE} to make \code{weights} sum to
+\code{length(x)} after deletion of \code{NA}s.  If \code{weights} are
+frequency weights, then \code{normwt} should be \code{FALSE}, and if
+\code{weights} are normalization (aka reliability) weights, then
+\code{normwt} should be \code{TRUE}. In the case of the former, no check
+is made that \code{weights} are valid frequencies. 
 }
 \item{na.rm}{
 set to \code{FALSE} to suppress checking for NAs
 }
+\item{method}{determines the estimator type; if \code{'unbiased'} (the
+	default) then the usual unbiased estimate (using Bessel's correction)
+	is returned, if \code{'ML'} then it is the maximum likelihood estimate
+	for a Gaussian distribution. In the case of the latter, the
+	\code{normwt} argument has no effect.}
 \item{probs}{
 a vector of quantiles to compute.  Default is 0 (min), .25, .5, .75, 1
 (max).
@@ -151,6 +161,8 @@ Department of Biostatistics
 Vanderbilt University School of Medicine
 \cr
 \email{f.harrell@vanderbilt.edu}
+\cr
+Benjamin Tyner
 }
 \references{
 Research Triangle Institute (1995): SUDAAN User's Manual, Release

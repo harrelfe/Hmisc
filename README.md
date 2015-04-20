@@ -17,4 +17,4 @@ Web Sites
 
 To Do
 =====
-* Once more users are using R >= 2.9.1 replace any(duplicated()) with anyDuplicated (which returns an integer).  Thanks: Benjamin Tyler
+

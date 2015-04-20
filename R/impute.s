@@ -149,7 +149,7 @@ as.data.frame.impute <- function(x, row.names = NULL, optional = FALSE, ...)
     ## the next line is not needed for the 1993 version of data.class and is
     ## included for compatibility with 1992 version
     if(length(row.names <- names(x)) == nrows &&
-                           !any(duplicated(row.names))) {
+                           !anyDuplicated(row.names)) {
     } else if(optional)
       row.names <- character(nrows)
     else

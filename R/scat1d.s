@@ -52,7 +52,7 @@ scat1d <- function(x, side=3, frac=.02, jitfrac=.008, tfrac,
     stop("must have  0 <= tfrac <= 1")
 
   ## Start JOA 19.8.97
-  if(jitfrac > 0 && any(duplicated( if(eps > 0) round(x / w / eps) else x )))
+  if(jitfrac > 0 && anyDuplicated( if(eps > 0) round(x / w / eps) else x ))
     if (preserve)
       x <- jitter2(x, fill=fill, limit=limit, eps=w * eps)
     else

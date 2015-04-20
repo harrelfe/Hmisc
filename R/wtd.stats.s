@@ -12,7 +12,8 @@ wtd.mean <- function(x, weights=NULL, normwt='ignored', na.rm=TRUE)
 
 
 
-wtd.var <- function(x, weights=NULL, normwt=FALSE, na.rm=TRUE)
+wtd.var <- function(x, weights=NULL, normwt=FALSE, na.rm=TRUE,
+                    method = c('unbiased', 'ML'))
 {
   method <- match.arg(method)
   if(!length(weights)) {

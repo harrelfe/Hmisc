@@ -31,7 +31,7 @@ wtd.var <- function(x, weights=NULL, normwt=FALSE, na.rm=TRUE,
     weights <- weights * length(x) / sum(weights)
 
   if(method == 'ML')
-    return(as.numeric(stats::cov.wt(cbind(x), w, method = "ML")$cov))
+    return(as.numeric(stats::cov.wt(cbind(x), weights, method = "ML")$cov))
 
   sw   <- sum(weights)
   xbar <- sum(weights * x) / sw

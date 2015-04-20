@@ -163,6 +163,8 @@ Vanderbilt University School of Medicine
 \email{f.harrell@vanderbilt.edu}
 \cr
 Benjamin Tyner
+\cr
+\email{btyner@gmail.com}
 }
 \references{
 Research Triangle Institute (1995): SUDAAN User's Manual, Release

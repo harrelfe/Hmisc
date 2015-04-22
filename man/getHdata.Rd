@@ -34,7 +34,7 @@ getHdata(file, what = c("data", "contents", "description", "all"),
     the dataset rather than fetching the data themselves.  Specify
     \code{what="description"} to browse a data description file if
     available.  Specify \code{what="all"} to retrieve the data and see
-    the metadataand description.
+    the metadata and description.
   }
   \item{where}{
     \acronym{URL} containing the data and metadata files

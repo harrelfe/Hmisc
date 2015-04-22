@@ -1526,22 +1526,6 @@ latexBuild <- function(..., insert=NULL, sep='') {
   structure(txt, close=close)
 }
 
-
-# To fetch a file from the internet and put it in the RStudio script
-# editor
-
-# To fetch a file from the Vanderbilt Biostatistics R script repository
-# Windows users must install wget.exe; instructions are at
-# http://biostat.mc.vanderbilt.edu/RConfiguration
-# Usage: getRs() to get the contents of the repository,
-# getRs('filename.suffix') to get a single script
-# getRs(cats=TRUE) to list major and minor categories of scripts
-# getRs(cats='string') to list scripts in the first category that matches
-#                      'string' ignoring case
-# When file is not specified, to store result in a data frame that can
-# be nicely viewed with RStudio, use e.g. scripts <- getRs()
-# To store a list with categories do cats <- getRs(cats=TRUE)
-
 getRs <- function(file=NULL,
                   where='https://github.com/harrelfe/rscripts/raw/master',
                   browse=c('local', 'browser'), cats=FALSE) {
@@ -1626,11 +1610,6 @@ getRs <- function(file=NULL,
   invisible()
 }
 
-# Usage:
-# <<echo=FALSE>>=
-# knitrSet()
-# knitrSet('basename') e.g. knitrSet('regressionChapter')
-# @
 knitrSet <- function(basename=NULL, w=4, h=3, fig.path=basename,
                      fig.align='center', fig.show='hold', fig.pos='htbp',
                      fig.lp=paste('fig', basename, sep=':'),
@@ -1639,7 +1618,8 @@ knitrSet <- function(basename=NULL, w=4, h=3, fig.path=basename,
                      messages=c('messages.txt', 'console'),
                      width=61, decinline=5, size=NULL, cache=FALSE,
                      echo=TRUE, results='markup', lang=c('latex','markdown')) {
-  require(knitr)
+
+  if(! requireNamespace('knitr')) stop('knitr package not available')
   messages <- match.arg(messages)
   lang  <- match.arg(lang)
   ## Specify e.g. dev=c('pdf','png') or dev=c('pdf','postscript')
@@ -1650,19 +1630,19 @@ knitrSet <- function(basename=NULL, w=4, h=3, fig.path=basename,
   ## Default width fills Sweavel boxes when font size is \small and svmono.cls
   ## is in effect (use 65 without svmono)
 
-  if(lang == 'latex') render_listings()
+  if(lang == 'latex') knitr::render_listings()
   if(messages != 'console') {
 	unlink(messages) # Start fresh with each run
 	hook_log = function(x, options) cat(x, file=messages, append=TRUE)
-	knit_hooks$set(warning = hook_log, message = hook_log)
+	knitr::knit_hooks$set(warning = hook_log, message = hook_log)
   }
-  else opts_chunk$set(message=FALSE, warning=FALSE)
-  if(length(size)) opts_chunk$set(size = size)
+  else knitr::opts_chunk$set(message=FALSE, warning=FALSE)
+  if(length(size)) knitr::opts_chunk$set(size = size)
   
   if(length(decinline)) {
     rnd <- function(x, dec) if(!is.numeric(x)) x else round(x, dec)
     formals(rnd) <- list(x=NULL, dec=decinline)
-    knit_hooks$set(inline = rnd)
+    knitr::knit_hooks$set(inline = rnd)
   }
 
   spar <- function(mar=if(!axes)
@@ -1683,28 +1663,28 @@ knitrSet <- function(basename=NULL, w=4, h=3, fig.path=basename,
   if(multi) par(mfrow=mfrow)
 }
 
-  knit_hooks$set(par=function(before, options, envir)
+  knitr::knit_hooks$set(par=function(before, options, envir)
                  if(before && options$fig.show != 'none') {
                    p <- c('bty','mfrow','ps','bot','top','left','rt','lwd',
                           'mgp','las','tcl','axes','xpd')
-                   pars <- opts_current$get(p)
+                   pars <- knitr::opts_current$get(p)
                    pars <- pars[!is.na(names(pars))]
                    ## knitr 1.6 started returning NULLs for unspecified pars
                    i <- sapply(pars, function(x) length(x) > 0)
                    if(any(i)) do.call('spar', pars[i]) else spar()
                  })
-  opts_knit$set(
+  knitr::opts_knit$set(
     width=width,
     aliases=c(h='fig.height', w='fig.width', cap='fig.cap', scap='fig.scap'))
     #eval.after = c('fig.cap','fig.scap'),
     #error=error)  #, keep.source=keep.source (TRUE))
-  opts_chunk$set(fig.path=fig.path, fig.align=fig.align, w=w, h=h,
+  knitr::opts_chunk$set(fig.path=fig.path, fig.align=fig.align, w=w, h=h,
                  fig.show=fig.show, fig.lp=fig.lp, fig.pos=fig.pos,
                  dev=dev, par=TRUE, tidy=tidy, out.width=NULL, cache=cache,
                  echo=echo, error=error, comment='', results=results)
-  hook_chunk = knit_hooks$get('chunk')
+  hook_chunk = knitr::knit_hooks$get('chunk')
   ## centering will not allow too-wide figures to go into left margin
-  if(lang == 'latex') knit_hooks$set(chunk = function(x, options) { 
+  if(lang == 'latex') knitr::knit_hooks$set(chunk = function(x, options) { 
     res = hook_chunk(x, options) 
     if (options$fig.align != 'center') return(res) 
     gsub('\\{\\\\centering (\\\\includegraphics.+)\n\n\\}', 

@@ -31,9 +31,7 @@ getRs(file=NULL,
 }
 \value{a data frame or list, depending on arguments}
 \author{Frank Harrell and Cole Beck}
-\seealso{
-  \code{\link{download.file}}
-}
+\seealso{\code{\link{download.file}}}
 \examples{
 \dontrun{
 getRs()             # list available scripts

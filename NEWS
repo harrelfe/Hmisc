@@ -1,4 +1,4 @@
-Changes in version 3.15-1 (2015-04-20)
+Changes in version 3.15-1 (2015-04-27)
    * html.contents.data.frame: corrected html space character to add semicolon
    * ggplot.summaryP: added size of points according to denominators
    * colorFacet: new function
@@ -16,6 +16,7 @@ Changes in version 3.15-1 (2015-04-20)
    * arrGrob, print.arrGrob: new functions
    * wtd.var: added maximum likelihood method, fixed unbiased method, improved documentation (all provided by Benjamin Tyner)
    * Changed all any(duplicated()) to anyDuplicated(); thanks Benjamin Tyler
+   * getRs: new function to interact with https://github.com/harrelfe/rscripts
 
 
 Changes in version 3.15-0 (2015-02-15)

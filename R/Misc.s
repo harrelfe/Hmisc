@@ -1525,3 +1525,192 @@ latexBuild <- function(..., insert=NULL, sep='') {
   }
   structure(txt, close=close)
 }
+
+
+# To fetch a file from the internet and put it in the RStudio script
+# editor
+
+# To fetch a file from the Vanderbilt Biostatistics R script repository
+# Windows users must install wget.exe; instructions are at
+# http://biostat.mc.vanderbilt.edu/RConfiguration
+# Usage: getRs() to get the contents of the repository,
+# getRs('filename.suffix') to get a single script
+# getRs(cats=TRUE) to list major and minor categories of scripts
+# getRs(cats='string') to list scripts in the first category that matches
+#                      'string' ignoring case
+# When file is not specified, to store result in a data frame that can
+# be nicely viewed with RStudio, use e.g. scripts <- getRs()
+# To store a list with categories do cats <- getRs(cats=TRUE)
+
+getRs <- function(file=NULL,
+                  where='https://github.com/harrelfe/rscripts/raw/master',
+                  browse=c('local', 'browser'), cats=FALSE) {
+  browse <- match.arg(browse)
+  extra <- '--no-check-certificate'
+
+  trim <- function(x) sub('^[[:space:]]+','',sub('[[:space:]]+$','', x))
+
+  pc <- function(s) {
+    library(Hmisc)
+    wr <- function(x) {
+      n <- length(x)
+      z <- character(n)
+      for(i in 1 : n) z[i] <- paste(strwrap(x[i], width=15), collapse='\n')
+      z
+    }
+    s <- with(s, cbind(Major = wr(Major),
+                       Minor = wr(Minor),
+                       File  = wr(File),
+                       Type  = wr(Type),
+                       Description = wr(Description)))
+    print.char.matrix(s, col.names=TRUE)
+  }
+
+  if(! length(file)) {
+    s <- read.table(paste(where, 'contents.md', sep='/'),
+                    sep='|', quote='', header=TRUE, as.is=TRUE)
+    s <- s[-1,]
+    names(s) <- c('Major', 'Minor', 'File', 'Type', 'Description')
+    sd <- s; n <- nrow(s)   # sd = s with dittoed items duplicated
+    for(x in c('Major', 'Minor')) {
+      u <- v <- gsub('\\*\\*', '', trim(s[[x]]))
+      for(i in 2 : n) if(u[i] == '"') u[i] <- u[i - 1]
+      v <- gsub('"', '', v)
+      s[[x]] <- v; sd[[x]] <- u
+    }
+    s$File        <- trim(gsub('\\[(.*)\\].*', '\\1', s$File))
+    d <- trim(gsub('\\[.*\\]\\(.*\\)', '', s$Description))
+    s$Description <- gsub('\\[report\\].*', '', d)
+
+    if(is.logical(cats)) {
+      if(cats) {
+        ## List all major and minor categories
+        maj <- sort(unique(sd$Major))
+        min <- setdiff(sort(unique(sd$Minor)), '')
+        cat('\nMajor categories:\n', maj,
+            '\nMinor categories:\n', min, '', sep='\n')
+        return(invisible(list(Major=maj, Minor=min)))
+      }
+    } else {  ## list all scripts whose "first hit" major category contains cats
+        i <- grepl(tolower(cats), tolower(sd$Major))
+        if(! any(i)) cat('No scripts with', cats, 'in major category\n')
+        else pc(s[i, ])
+        return(invisible(s[i, ]))
+      }
+    if(browse == 'local') pc(s)
+    else
+      browseURL('https://github.com/harrelfe/rscripts/blob/master/contents.md')
+    return(invisible(s))
+  }
+  
+  download.file(paste(where, file, sep='/'), file, method='libcurl',
+                extra=extra, quiet=TRUE)
+  os <- Sys.info()['sysname']
+  windowsRstudio <- function() {    # Written by Cole Beck
+    RSTUDIO_BIN <- file.path('C:','Program Files','RStudio','bin','rstudio.exe')
+    if(file.access(RSTUDIO_BIN, mode=1) == -1) {
+      opts <- system("where /r c: rstudio.exe", TRUE)
+      for(i in seq_along(opts)) {
+        RSTUDIO_BIN <- opts[i]
+        if(file.access(RSTUDIO_BIN, mode=1) == 0) return(RSTUDIO_BIN)
+      }
+      stop('rstudio cannot be found')
+    }
+    RSTUDIO_BIN
+  }
+  switch(os,
+         Linux   = system2('rstudio', file),
+         Windows = system2(windowsRstudio(), file),
+         system(paste('open -a rstudio', file)) )
+         ## assume everything else is Mac
+  invisible()
+}
+
+# Usage:
+# <<echo=FALSE>>=
+# knitrSet()
+# knitrSet('basename') e.g. knitrSet('regressionChapter')
+# @
+knitrSet <- function(basename=NULL, w=4, h=3, fig.path=basename,
+                     fig.align='center', fig.show='hold', fig.pos='htbp',
+                     fig.lp=paste('fig', basename, sep=':'),
+                     dev=switch(lang, latex='pdf', markdown='png'),
+                     tidy=FALSE, error=FALSE,
+                     messages=c('messages.txt', 'console'),
+                     width=61, decinline=5, size=NULL, cache=FALSE,
+                     echo=TRUE, results='markup', lang=c('latex','markdown')) {
+  require(knitr)
+  messages <- match.arg(messages)
+  lang  <- match.arg(lang)
+  ## Specify e.g. dev=c('pdf','png') or dev=c('pdf','postscript')
+  ## to produce two graphics files for each plot
+  ## But: dev='CairoPNG' is preferred for png
+  if(length(basename)) basename <- paste(basename, '-', sep='')
+
+  ## Default width fills Sweavel boxes when font size is \small and svmono.cls
+  ## is in effect (use 65 without svmono)
+
+  if(lang == 'latex') render_listings()
+  if(messages != 'console') {
+	unlink(messages) # Start fresh with each run
+	hook_log = function(x, options) cat(x, file=messages, append=TRUE)
+	knit_hooks$set(warning = hook_log, message = hook_log)
+  }
+  else opts_chunk$set(message=FALSE, warning=FALSE)
+  if(length(size)) opts_chunk$set(size = size)
+  
+  if(length(decinline)) {
+    rnd <- function(x, dec) if(!is.numeric(x)) x else round(x, dec)
+    formals(rnd) <- list(x=NULL, dec=decinline)
+    knit_hooks$set(inline = rnd)
+  }
+
+  spar <- function(mar=if(!axes)
+                 c(2.25+bot-.45*multi,2*(las==1)+2+left,.5+top+.25*multi,
+                   .5+rt) else
+                 c(3.25+bot-.45*multi,2*(las==1)+3.5+left,.5+top+.25*multi,
+                   .5+rt),
+                 lwd = if(multi)1 else 1.75,
+                 mgp = if(!axes) mgp=c(.75, .1, 0) else
+                 if(multi) c(1.5, .365, 0) else c(2.4-.4, 0.475, 0),
+                 tcl = if(multi)-0.25 else -0.4, xpd=FALSE, las=1,
+                 bot=0, left=0, top=0, rt=0, ps=if(multi) 14 else 10,
+                 mfrow=NULL, axes=TRUE, cex.lab=1.15, cex.axis=.8,
+                 ...) {
+  multi <- length(mfrow) > 0
+  par(mar=mar, lwd=lwd, mgp=mgp, tcl=tcl, ps=ps, xpd=xpd,
+      cex.lab=cex.lab, cex.axis=cex.axis, las=las, ...)
+  if(multi) par(mfrow=mfrow)
+}
+
+  knit_hooks$set(par=function(before, options, envir)
+                 if(before && options$fig.show != 'none') {
+                   p <- c('bty','mfrow','ps','bot','top','left','rt','lwd',
+                          'mgp','las','tcl','axes','xpd')
+                   pars <- opts_current$get(p)
+                   pars <- pars[!is.na(names(pars))]
+                   ## knitr 1.6 started returning NULLs for unspecified pars
+                   i <- sapply(pars, function(x) length(x) > 0)
+                   if(any(i)) do.call('spar', pars[i]) else spar()
+                 })
+  opts_knit$set(
+    width=width,
+    aliases=c(h='fig.height', w='fig.width', cap='fig.cap', scap='fig.scap'))
+    #eval.after = c('fig.cap','fig.scap'),
+    #error=error)  #, keep.source=keep.source (TRUE))
+  opts_chunk$set(fig.path=fig.path, fig.align=fig.align, w=w, h=h,
+                 fig.show=fig.show, fig.lp=fig.lp, fig.pos=fig.pos,
+                 dev=dev, par=TRUE, tidy=tidy, out.width=NULL, cache=cache,
+                 echo=echo, error=error, comment='', results=results)
+  hook_chunk = knit_hooks$get('chunk')
+  ## centering will not allow too-wide figures to go into left margin
+  if(lang == 'latex') knit_hooks$set(chunk = function(x, options) { 
+    res = hook_chunk(x, options) 
+    if (options$fig.align != 'center') return(res) 
+    gsub('\\{\\\\centering (\\\\includegraphics.+)\n\n\\}', 
+         '\\\\centerline{\\1}', res) 
+  }) 
+}
+## see http://yihui.name/knitr/options#package_options
+
+## Use caption package options to control caption font size

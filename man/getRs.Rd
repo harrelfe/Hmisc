@@ -13,7 +13,8 @@
 \usage{
 getRs(file=NULL,
       where='https://github.com/harrelfe/rscripts/raw/master',
-      browse=c('local', 'browser'), cats=FALSE)
+      browse=c('local', 'browser'), cats=FALSE,
+      put=c('rstudio', 'source'))
 }
 \arguments{
   \item{file}{a character string containing a script file name.
@@ -27,7 +28,12 @@ getRs(file=NULL,
 	\item{cats}{Leave at the default (\code{FALSE}) to list whole contents
       or download a script.  Specify \code{cats=TRUE} to list major and
       minor categories available.  Specify a character string to list
-      all scripts whose major category contains the string (ignoring case).}
+      all scripts whose major category contains the string (ignoring
+			case).}
+	\item{put}{Leave at the default (\code{'rstudio'}) to load \code{file}
+		into the RStudio script editor window.  Use \code{put='source'} to
+		\code{source()} the file.  This is useful when the file just defines
+		a function you want to use in the session.}
 }
 \value{a data frame or list, depending on arguments}
 \author{Frank Harrell and Cole Beck}
@@ -42,6 +48,7 @@ getRs(cats=TRUE)    # list available major and minor categories
 categories <- getRs(cats=TRUE)
 # likewise but store results in a list for later viewing
 getRs(cats='reg')   # list all scripts in a major category containing 'reg'
+getRs('importREDCap.r', put='source')   # source() to define a function
 }
 }
 \keyword{interface}

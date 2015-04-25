@@ -1528,9 +1528,13 @@ latexBuild <- function(..., insert=NULL, sep='') {
 
 getRs <- function(file=NULL,
                   where='https://github.com/harrelfe/rscripts/raw/master',
-                  browse=c('local', 'browser'), cats=FALSE) {
+                  browse=c('local', 'browser'), cats=FALSE,
+                  put=c('rstudio', 'source')) {
+  
   browse <- match.arg(browse)
-  extra <- '--no-check-certificate'
+  put    <- match.arg(put)
+  
+  extra  <- '--no-check-certificate'
 
   trim <- function(x) sub('^[[:space:]]+','',sub('[[:space:]]+$','', x))
 
@@ -1586,7 +1590,10 @@ getRs <- function(file=NULL,
       browseURL('https://github.com/harrelfe/rscripts/blob/master/contents.md')
     return(invisible(s))
   }
-  
+
+  if(put == 'source')
+    return(invisible(source(paste(where, file, sep='/'))))
+    
   download.file(paste(where, file, sep='/'), file, method='libcurl',
                 extra=extra, quiet=TRUE)
   os <- Sys.info()['sysname']

@@ -1,13 +1,12 @@
-## Changes since sent to statlib: improved printing N matrix in print.hoeffd
 hoeffd <- function(x, y)
 {
   phoeffd <- function(d, n)
   {
     d <- as.matrix(d); n <- as.matrix(n)
-    b <- d + 1/36/n
-    z <- .5*(pi^4)*n*b
+    b <- d + 1 / 36 / n
+    z <- .5 * (pi ^ 4) * n * b
     zz <- as.vector(z)
-    zz[is.na(zz)] <- 1e30   # so approx won't bark
+    zz[is.na(zz)] <- 1e50   # so approx won't bark
  
     tabvals <- c(5297,4918,4565,4236,3930,
                  3648,3387,3146,2924,2719,2530,2355,
@@ -23,8 +22,9 @@ hoeffd <- function(x, y)
                  0050,0047,0045,0042,0025,0014,0008,
                  0005,0003,0002,0001)/10000
 
-    P <- ifelse(z<1.1 | z>8.5, pmax(1e-8,pmin(1,exp(.3885037-1.164879*z))),
-                matrix(approx(c(seq(1.1, 5,by=.05),
+    P <- ifelse(z < 1.1 | z > 8.5,
+                pmax(1e-8, pmin(1, exp(.3885037 -1.164879 * z))),
+                matrix(approx(c(seq(1.1, 5, by=.05),
                                 seq(5.5,8.5,by=.5)),
                               tabvals, zz)$y,
                        ncol=ncol(d)))
@@ -36,16 +36,14 @@ hoeffd <- function(x, y)
   if(!missing(y))
     x <- cbind(x, y)
   
-  x[is.na(x)] <- 1e30
+  x[is.na(x)] <- 1e50
   storage.mode(x) <- "double"
   
   p <- as.integer(ncol(x))
-  if(p < 1)
-    stop("must have > 1 column")
+  if(p < 1) stop("must have > 1 column")
   
   n <- as.integer(nrow(x))
-  if(n<5)
-    stop("must have >4 observations")
+  if(n<5) stop("must have >4 observations")
 
   h <-
       .Fortran("hoeffd", x, n, p, hmatrix=double(p*p), aad=double(p*p),
@@ -61,7 +59,7 @@ hoeffd <- function(x, y)
   dimnames(aad) <- dimnames(maxad) <- list(nam, nam)
 
   h <- matrix(h$hmatrix, ncol=p)
-  h[h > 1e29] <- NA
+  h[h > 1e49] <- NA
   dimnames(h) <- list(nam, nam)
   dimnames(npair) <- list(nam, nam)
   P <- phoeffd(h, npair)
@@ -83,8 +81,8 @@ print.hoeffd <- function(x, ...)
     print(round(mad,4))
   }
   n <- x$n
-  if(all(n==n[1,1]))
-    cat("\nn=",n[1,1],"\n")
+  if(all(n == n[1,1]))
+    cat("\nn=", n[1,1], "\n")
   else {
     cat("\nn\n")
     print(x$n)
@@ -92,8 +90,8 @@ print.hoeffd <- function(x, ...)
   
   cat("\nP\n")
   P <- x$P
-  P <- ifelse(P<.0001,0,P)
-  p <- format(round(P,4))
+  P <- ifelse(P < .0001, 0, P)
+  p <- format(round(P, 4))
   p[is.na(P)] <- ""
   print(p, quote=FALSE)
   invisible()

@@ -9,13 +9,13 @@ C Output from Public domain Ratfor, version 1.01
       do23000 i=1, p 
       np=0
       do23002 k=1, n 
-      if(xx(k,i).lt.1e30)then
-      np=np+1
+      if(xx(k,i) .lt. 1e49)then
+      np = np + 1
       endif
 23002 continue
 23003 continue
-      npair(i,i)=np
-      do23006 j=(i+1),p 
+      npair(i,i) = np
+      do23006 j=(i+1), p 
       m=0
       if(itype.eq.1)then
       sumx=0d0
@@ -24,17 +24,17 @@ C Output from Public domain Ratfor, version 1.01
       sumy2=0d0
       sumxy=0d0
       endif
-      do23010 k=1,n 
+      do23010 k=1, n 
       xk=xx(k,i)
       yk=xx(k,j)
-      if(xk.lt.1e30 .and. yk.lt.1e30)then
-      m=m+1
+      if(xk .lt. 1e49 .and. yk .lt. 1e49)then
+      m=m + 1
       if(itype.eq.1)then
       a=xk
       b=yk
-      sumx=sumx+a
+      sumx =sumx+a
       sumx2=sumx2+a*a
-      sumy=sumy+b
+      sumy =sumy+b
       sumy2=sumy2+b*b
       sumxy=sumxy+a*b
       else
@@ -44,8 +44,8 @@ C Output from Public domain Ratfor, version 1.01
       endif
 23010 continue
 23011 continue
-      npair(i,j)=m
-      if(m.gt.1)then
+      npair(i,j) = m
+      if(m .gt. 1)then
       if(itype.eq.1)then
       z=m
       d=(sumxy-sumx*sumy/z)/dsqrt((sumx2-sumx*sumx/z)*(sumy2-sumy*sumy/z
@@ -55,7 +55,7 @@ C Output from Public domain Ratfor, version 1.01
       endif
       dmat(i,j)=d
       else
-      dmat(i,j)=1e30
+      dmat(i,j)=1e50
       endif
 23006 continue
 23007 continue
@@ -86,9 +86,9 @@ C Output from Public domain Ratfor, version 1.01
       do23024 i=1,n 
       a=rx(i)
       b=ry(i)
-      sumx=sumx+a
+      sumx =sumx+a
       sumx2=sumx2+a*a
-      sumy=sumy+b
+      sumy =sumy+b
       sumy2=sumy2+b*b
       sumxy=sumxy+a*b
 23024 continue

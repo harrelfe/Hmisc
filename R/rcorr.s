@@ -2,33 +2,30 @@ rcorr <- function(x, y, type=c("pearson","spearman"))
 {
   type <- match.arg(type)
 
-  if(!missing(y))
-    x <- cbind(x, y)
+  if(!missing(y)) x <- cbind(x, y)
   
-  x[is.na(x)] <- 1e30
+  x[is.na(x)] <- 1e50
   storage.mode(x) <- "double"
   
   p <- as.integer(ncol(x))
-  if(p < 1)
-    stop("must have >1 column")
+  if(p < 1) stop("must have >1 column")
   
   n <- as.integer(nrow(x))
-  if(n < 5)
-    stop("must have >4 observations")
+  if(n < 5) stop("must have >4 observations")
   
   h <-
       .Fortran("rcorr", x, n, p, itype=as.integer(1+(type=="spearman")),
-               hmatrix=double(p*p), npair=integer(p*p),
+               hmatrix=double(p*p),   npair=integer(p*p),
                double(n), double(n),  double(n), double(n),
                double(n), integer(n), PACKAGE="Hmisc")
   
   npair <- matrix(h$npair, ncol=p)
   h <- matrix(h$hmatrix, ncol=p)
-  h[h > 1e29] <- NA
+  h[h > 1e49] <- NA
   nam <- dimnames(x)[[2]]
   dimnames(h) <- list(nam, nam)
   dimnames(npair) <- list(nam, nam)
-  P <- matrix(2 * (1 - pt(abs(h)*sqrt(npair - 2) / sqrt(1 - h * h),
+  P <- matrix(2 * (1 - pt(abs(h) * sqrt(npair - 2) / sqrt(1 - h * h),
                           npair - 2)), ncol=p)
   P[abs(h) == 1] <- 0
   diag(P) <- NA

@@ -18,6 +18,7 @@ Changes in version 3.16-0 (2015-04-25)
    * Changed all any(duplicated()) to anyDuplicated(); thanks Benjamin Tyler
    * getRs: new function to interact with https://github.com/harrelfe/rscripts
    * knitrSet: new function to setup knitr with nice defaults for books etc.
+	 * rcorr: fixed sensing of NAs and diagonal elements of n matrix; thanks: Keith Jewell, Campden BRI Group; similar for hoeffd
 
 Changes in version 3.15-0 (2015-02-15)
    * dvi.latex: For Windows switched from system() to shell() so that cd command works.  Thanks: Rich Heiberger

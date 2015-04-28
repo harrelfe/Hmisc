@@ -1539,7 +1539,6 @@ getRs <- function(file=NULL,
   trim <- function(x) sub('^[[:space:]]+','',sub('[[:space:]]+$','', x))
 
   pc <- function(s) {
-    library(Hmisc)
     wr <- function(x) {
       n <- length(x)
       z <- character(n)

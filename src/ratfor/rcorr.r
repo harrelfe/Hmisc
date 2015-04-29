@@ -7,7 +7,7 @@ DOUBLE PRECISION sumx,sumx2,sumy,sumy2,sumxy,z,a,b
 DO i=1, p {
   np=0
   DO k=1, n {
-    if(xx(k,i) < 1e49) np = np + 1
+    if(xx(k,i) < 1d49) np = np + 1
   }
   npair(i,i) = np
 
@@ -19,7 +19,7 @@ DO i=1, p {
     DO k=1, n {
       xk=xx(k,i)
       yk=xx(k,j)
-      if(xk < 1e49 & yk < 1e49) {
+      if(xk < 1d49 & yk < 1d49) {
         m=m + 1
 	if(itype==1) {
 	  a=xk; b=yk
@@ -41,7 +41,7 @@ DO i=1, p {
 	d=(sumxy-sumx*sumy/z)/dsqrt((sumx2-sumx*sumx/z)*(sumy2-sumy*sumy/z))
       } else CALL docorr(x, y, m, d, rx, ry, work, iwork)
       dmat(i,j)=d
-    } else dmat(i,j)=1e50
+    } else dmat(i,j)=1d50
   }
 }
 DO i=1,p {

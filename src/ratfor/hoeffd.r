@@ -8,7 +8,7 @@ DOUBLE PRECISION xx(n,p), dmat(p,p), aadmat(p,p), madmat(p,p), x(n), y(n), rx(n)
     DO i=1, p {
         np=0
         DO k=1, n {
-            if(xx(k,i) < 1e49) np = np + 1
+            if(xx(k,i) < 1d49) np = np + 1
         }
         npair(i,i) = np
 
@@ -17,7 +17,7 @@ DOUBLE PRECISION xx(n,p), dmat(p,p), aadmat(p,p), madmat(p,p), x(n), y(n), rx(n)
             DO k=1,n {
                 xk = xx(k,i)
                 yk = xx(k,j)
-                if(xk < 1e49 & yk < 1e49) {
+                if(xk < 1d49 & yk < 1d49) {
                     m = m + 1
                     x(m) = xk
                     y(m) = yk
@@ -30,7 +30,7 @@ DOUBLE PRECISION xx(n,p), dmat(p,p), aadmat(p,p), madmat(p,p), x(n), y(n), rx(n)
                 aadmat(i,j) = aad
                 madmat(i,j) = maxad
             }
-            else dmat(i,j) = 1e50
+            else dmat(i,j) = 1d50
         }
     }
     DO i=1,p {

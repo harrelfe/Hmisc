@@ -9,7 +9,7 @@ C Output from Public domain Ratfor, version 1.01
       do23000 i=1, p 
       np=0
       do23002 k=1, n 
-      if(xx(k,i) .lt. 1e49)then
+      if(xx(k,i) .lt. 1d49)then
       np = np + 1
       endif
 23002 continue
@@ -27,7 +27,7 @@ C Output from Public domain Ratfor, version 1.01
       do23010 k=1, n 
       xk=xx(k,i)
       yk=xx(k,j)
-      if(xk .lt. 1e49 .and. yk .lt. 1e49)then
+      if(xk .lt. 1d49 .and. yk .lt. 1d49)then
       m=m + 1
       if(itype.eq.1)then
       a=xk
@@ -55,7 +55,7 @@ C Output from Public domain Ratfor, version 1.01
       endif
       dmat(i,j)=d
       else
-      dmat(i,j)=1e50
+      dmat(i,j)=1d50
       endif
 23006 continue
 23007 continue

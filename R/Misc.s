@@ -1534,8 +1534,6 @@ getRs <- function(file=NULL,
   browse <- match.arg(browse)
   put    <- match.arg(put)
   
-  extra  <- '--no-check-certificate'
-
   trim <- function(x) sub('^[[:space:]]+','',sub('[[:space:]]+$','', x))
 
   pc <- function(s) {
@@ -1553,9 +1551,38 @@ getRs <- function(file=NULL,
     print.char.matrix(s, col.names=TRUE)
   }
 
+  read.table.HTTPS <- function(url) {
+    res <- tryCatch(read.table(url,
+                               sep='|', quote='', header=TRUE, as.is=TRUE), 
+                    error=function(e) e)
+    if(inherits(res, "simpleError")) {
+      if(res$message == "https:// URLs are not supported") {
+        res$message <- paste(res$message, "Try installing R version >= 3.2.0", sep="\n\n")
+      }
+      stop(res)
+    }
+    res
+  }
+
+  download.file.HTTPS <- function(url, file, method='libcurl', 
+                                  quiet=TRUE, extra='--no-check-certificate') {
+    res <- tryCatch(download.file(url, file, method, quiet=quiet, extra=extra), 
+                    error=function(e) e)
+    if(inherits(res, "simpleError")) {
+      if(res$message == "download.file(method = \"libcurl\") is not supported on this platform") {
+        warning(paste(res$message, "Try installing R version >= 3.2.0", "Attempting method=\"wget\"", sep="\n\n"))
+        return(download.file.HTTPS(url, file, method='wget'))
+      }
+      if(res$message == "https:// URLs are not supported") {
+        res$message <- paste(res$message, "Try installing R version >= 3.2.0", sep="\n\n")
+      }
+      stop(res)
+    }
+    invisible(res)
+  }
+  
   if(! length(file)) {
-    s <- read.table(paste(where, 'contents.md', sep='/'),
-                    sep='|', quote='', header=TRUE, as.is=TRUE)
+    s <- read.table.HTTPS(paste(where, 'contents.md', sep='/'))
     s <- s[-1,]
     names(s) <- c('Major', 'Minor', 'File', 'Type', 'Description')
     sd <- s; n <- nrow(s)   # sd = s with dittoed items duplicated
@@ -1593,8 +1620,7 @@ getRs <- function(file=NULL,
   if(put == 'source')
     return(invisible(source(paste(where, file, sep='/'))))
     
-  download.file(paste(where, file, sep='/'), file, method='libcurl',
-                extra=extra, quiet=TRUE)
+  download.file.HTTPS(paste(where, file, sep='/'), file)
   os <- Sys.info()['sysname']
   windowsRstudio <- function() {    # Written by Cole Beck
     RSTUDIO_BIN <- file.path('C:','Program Files','RStudio','bin','rstudio.exe')

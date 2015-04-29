@@ -23,6 +23,7 @@ ciapower                Power of Interaction Test for Exponential
 clowess                 Miscellaneous Functions
 cnvrt.coords            Convert between the 5 different coordinate
                         sytems on a graphical device
+colorFacet              Miscellaneous ggplot2 and grid Helper Functions
 consolidate             Element Merging
 contents                Metadata for a Data Frame
 cpower                  Power of Cox/log-rank Two-Sample Test
@@ -57,6 +58,7 @@ gbayes                  Gaussian Bayesian Posterior and Predictive
                         Distributions
 getHdata                Download and Install Datasets for 'Hmisc',
                         'rms', and Statistical Modeling
+getRs                   Interact with github rscripts Project
 getZip                  Open a Zip File From a URL.
 hdquantile              Harrell-Davis Distribution-Free Quantile
                         Estimator
@@ -67,6 +69,7 @@ hoeffd                  Matrix of Hoeffding's D Statistics
 html                    Convert an S object to HTML
 impute                  Generic Functions and Methods for Imputation
 inc<-                   Increment and Decrement
+knitrSet                knitr Setup
 labcurve                Label Curves, Make Keys, and Interactively Draw
                         Points and Curves
 label                   Label Attribute of an Object

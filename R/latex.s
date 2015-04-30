@@ -87,8 +87,8 @@ format.df <- function(x,
              '>=',
              paste('$', sl, sl, 'leq$', sep=''),
              paste('$', sl, sl, 'geq$', sep=''),
-             paste(sl, sl, 'textless', sep=''),
-             paste(sl, sl, 'textgreater', sep=''),
+             paste(sl, sl, 'textless ', sep=''),
+             paste(sl, sl, 'textgreater ', sep=''),
              '%', paste(sl, sl, '%', sep=''),
              '&', paste(sl, sl, '&', sep=''))
     for(i in 1 : length(inn))

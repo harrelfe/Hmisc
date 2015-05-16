@@ -46,7 +46,7 @@
   are typed verbatim if they contain percent signs, blanks, or
   underscores.  \code{labelPlotmath} can optionally create the
   expression as a character string, which is useful in building
-  \code{ggplot} commants.
+  \code{ggplot} commands.
 
 	For \code{Surv} objects, \code{label} first looks to see if there is
 	an overall \code{"label"} attribute for the object, then it looks for

@@ -95,10 +95,10 @@
 \usage{
 label(x, default=NULL, ...)
 
-\method{label}{default}(x, default=NULL, units=FALSE, plot=FALSE,
+\method{label}{default}(x, default=NULL, units=plot, plot=FALSE,
       grid=FALSE, \dots)
 
-\method{label}{Surv}(x, default=NULL, units=FALSE, plot=FALSE,
+\method{label}{Surv}(x, default=NULL, units=plot, plot=FALSE,
       grid=FALSE, type=c('any', 'time', 'event'), \dots)
 
 \method{label}{data.frame}(x, default=NULL, self=FALSE, \dots)
@@ -139,7 +139,8 @@ combineLabels(\dots)
     set to \code{TRUE} to append the \code{'units'} attribute (if present)
     to the returned label.  The \code{'units'} are surrounded
     by brackets.  For \code{labelPlotmath} and \code{labelLatex} is a
-		character string containing the units of measurement.
+		character string containing the units of measurement.  When
+		\code{plot} is \code{TRUE}, \code{units} defaults to \code{TRUE}.
   }
   \item{plot}{
     set to \code{TRUE} to return a label suitable for \R's \code{plotmath}

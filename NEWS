@@ -1,5 +1,6 @@
 Changes in version 3.16-1 (2015-06-??)
    * format.df (used by latex.default): added space after textless, textgreater
+	 * label: changed default for units to value of plot
 
 Changes in version 3.16-0 (2015-04-25)
    * html.contents.data.frame: corrected html space character to add semicolon

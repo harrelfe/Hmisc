@@ -5,7 +5,7 @@
 
 label <- function(x, default=NULL, ...) UseMethod("label")
 
-label.default <- function(x, default=NULL, units=FALSE, plot=FALSE,
+label.default <- function(x, default=NULL, units=plot, plot=FALSE,
                           grid=FALSE, ...)
 {
   if(length(default) > 1)
@@ -169,14 +169,6 @@ labelLatex <- function(x=NULL, label='', units='', size='smaller[2]',
   }
   return(x)
 }
-## } else function(x, ..., value)
-##   {
-##     ## Splus 5.x, 6.x
-##     ##  oldClass(x) <- unique(c('labelled', oldClass(x),
-##     ##                          if(is.matrix(x))'matrix'))
-##     attr(x,'label') <- value
-##     return(x)
-##   }
 
 "label<-.data.frame" <- function(x, self=TRUE, ..., value) {
   if(!is.data.frame(x)) {

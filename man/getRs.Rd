@@ -11,16 +11,18 @@
 	case), or to list all major and mino categories.
 }
 \usage{
-getRs(file=NULL,
-      where='https://github.com/harrelfe/rscripts/raw/master',
-      browse=c('local', 'browser'), cats=FALSE,
+getRs(file=NULL, guser='harrelfe', grepo='rscripts', gdir='raw/master',
+      dir=NULL,  browse=c('local', 'browser'), cats=FALSE,
       put=c('rstudio', 'source'))
 }
 \arguments{
   \item{file}{a character string containing a script file name.
     Omit \code{file} to obtain a list of available scripts with major
     and minor categories.}
-	\item{where}{location of github rscripts raw file area}
+	\item{guser}{GitHub user name, default is \code{'harrelfe'}}
+	\item{grepo}{Github repository name, default is \code{'rscripts'}}
+	\item{gdir}{Github directory under which to find retrievable files}
+	\item{dir}{directory under \code{grepo} in which to find files}
   \item{browse}{When showing the rscripts contents directory, the
       default is to list in tabular form in the console.  Specify
       \code{browse='browser'} to open the online contents in a web
@@ -49,6 +51,8 @@ categories <- getRs(cats=TRUE)
 # likewise but store results in a list for later viewing
 getRs(cats='reg')   # list all scripts in a major category containing 'reg'
 getRs('importREDCap.r', put='source')   # source() to define a function
+# source() a new version of the Hmisc package's cut2 function:
+getRs('cut2.s', grepo='Hmisc', dir='R')
 }
 }
 \keyword{interface}

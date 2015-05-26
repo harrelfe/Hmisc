@@ -52,7 +52,7 @@ categories <- getRs(cats=TRUE)
 getRs(cats='reg')   # list all scripts in a major category containing 'reg'
 getRs('importREDCap.r', put='source')   # source() to define a function
 # source() a new version of the Hmisc package's cut2 function:
-getRs('cut2.s', grepo='Hmisc', dir='R')
+getRs('cut2.s', grepo='Hmisc', dir='R', put='source')
 }
 }
 \keyword{interface}

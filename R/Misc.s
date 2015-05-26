@@ -1527,14 +1527,15 @@ latexBuild <- function(..., insert=NULL, sep='') {
 }
 
 getRs <- function(file=NULL,
-                  guser='harrelfe', grepo='rscripts', dir=NULL,
+                  guser='harrelfe', grepo='rscripts',
+                  gdir='raw/master', dir=NULL,
                   where='https://github.com/harrelfe/rscripts/raw/master',
                   browse=c('local', 'browser'), cats=FALSE,
                   put=c('rstudio', 'source')) {
   
   browse <- match.arg(browse)
   put    <- match.arg(put)
-  where  <- paste('https://github.com', guser, grepo, 'raw/master', sep='/')
+  where  <- paste('https://github.com', guser, grepo, gdir, sep='/')
   if(length(dir)) where <- paste(where, dir, sep='/')
   
   trim <- function(x) sub('^[[:space:]]+','',sub('[[:space:]]+$','', x))

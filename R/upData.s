@@ -167,29 +167,30 @@ cleanup.import <-
 }
 
 upData <- function(object, ...,
-                   rename=NULL, drop=NULL, keep=NULL,
+                   subset, rename=NULL, drop=NULL, keep=NULL,
                    labels=NULL, units=NULL, levels=NULL,
                    force.single=TRUE, lowernames=FALSE, caplabels=FALSE,
                    moveUnits=FALSE, charfactor=FALSE, print=TRUE) {
 
   upfirst <- function(txt) gsub("(\\w)(\\w*)", "\\U\\1\\L\\2", txt, perl=TRUE)
 
-  n  <- nrow(object)
-  if(!length(n)) {
-    x <- object[[1]]
-    d <- dim(x)
-    n <- if(length(d)) d[1]
-         else length(x)
+  if(lowernames) names(object) <- casefold(names(object))
+  no   <- names(object)
+  nobs <- nrow(object)
+  if(print) cat('Input object size:\t', object.size(object), 'bytes;\t',
+                length(no), 'variables\t', nobs, 'observations\n')
+
+  if(! missing(subset)) {
+    s <- substitute(subset)
+    r <- eval(s, object, parent.frame())
+    if(! is.logical(r)) stop('subset must be a logical expression')
+    r <- r & ! is.na(r)
+    object <- object[r, , drop=FALSE]
+    nobs <- sum(r)
   }
-  
+    
   rnames <- row.names(object)
 
-  if(lowernames)
-    names(object) <- casefold(names(object))
-  no <- names(object)
-
-  if(print) cat('Input object size:\t',object.size(object),'bytes;\t',
-                length(no),'variables\n')
 
   ## The following is targeted at R workspaces exported from StatTransfer
   al <- attr(object, 'var.labels')
@@ -218,25 +219,24 @@ upData <- function(object, ...,
     for(i in 1:length(no)) {
       z <- object[[i]]
       lab <- attr(z,'label')
-      if(!length(lab) || length(attr(z,'units')))
+      if(!length(lab) || length(attr(z, 'units')))
         next
 
       paren <- length(grep('\\(.*\\)',lab))
       brack <- length(grep('\\[.*\\]',lab))
-      if(paren+brack == 0)
-        next
+      if(paren + brack == 0) next
 
-      if(print) cat('Label for',no[i],'changed from',lab,'to ')
-      u <- if(paren)regexpr('\\(.*\\)',lab)
-           else regexpr('\\[.*\\]',lab)
+      if(print) cat('Label for',no[i],'changed from',lab, 'to ')
+      u <- if(paren)regexpr('\\(.*\\)', lab)
+           else regexpr('\\[.*\\]', lab)
 
       len <- attr(u,'match.length')
-      un <- substring(lab, u+1, u+len-2)
+      un <- substring(lab, u + 1, u + len - 2)
       lab <- substring(lab, 1, u-1)
       if(substring(lab, nchar(lab), nchar(lab)) == ' ')
-        lab <- substring(lab, 1, nchar(lab)-1) # added 2nd char above 8jun03
+        lab <- substring(lab, 1, nchar(lab) - 1)
 
-      if(print) cat(lab,'\n\tunits set to ',un,'\n',sep='')
+      if(print) cat(lab, '\n\tunits set to ', un, '\n', sep='')
       attr(z,'label') <- lab
       attr(z,'units') <- un
       object[[i]] <- z
@@ -247,7 +247,7 @@ upData <- function(object, ...,
     if(length(nr)==0 || any(nr==''))
       stop('the list or vector specified in rename must specify variable names')
 
-    for(i in 1:length(rename)) {
+    for(i in 1 : length(rename)) {
       if(nr[i] %nin% no)
         stop(paste('unknown variable name:',nr[i]))
 
@@ -263,35 +263,34 @@ upData <- function(object, ...,
   if(length(z) > 1) {
     z <- z[-1]
     vn <- names(z)
-    if(!length(vn) || any(vn==''))
+    if(!length(vn) || any(vn == ''))
       stop('variables must all have names')
 
-    for(i in 1:length(z)) {
+    for(i in 1 : length(z)) {
       v <- vn[i]
       if(v %in% no && print)
-        cat('Modified variable\t',v,'\n')
+        cat('Modified variable\t', v, '\n')
       else {
-        if(print) cat('Added variable\t\t', v,'\n')
+        if(print) cat('Added variable\t\t', v, '\n')
         no <- c(no, v)
       }
 
-      x <- eval(z[[i]], object)
+      x <- eval(z[[i]], object, parent.frame())
       d <- dim(x)
-      lx <- if(length(d))d[1]
-            else length(x)
+      lx <- if(length(d))d[1] else length(x)
 
-      if(lx != n) {
+      if(lx != nobs) {
         if(lx == 1)
           warning(paste('length of ',v,
-                        ' is 1; will replicate this value.',sep=''))
+                        ' is 1; will replicate this value.', sep=''))
         else {
           f <- find(v)
-          if(length(f) && print) cat('Variable',v,'found in',
-                                  paste(f,collapse=' '),'\n')
+          if(length(f) && print) cat('Variable', v, 'found in',
+                                  paste(f,collapse=' '), '\n')
           
-          stop(paste('length of ',v,' (',lx, ')\n',
+          stop(paste('length of ', v, ' (', lx, ')\n',
                      'does not match number of rows in object (',
-                     n,')',sep=''))
+                     nobs, ')', sep=''))
         }
       }
       
@@ -299,7 +298,7 @@ upData <- function(object, ...,
       ## msg.
       if(is.factor(x) && all(is.na(x)))
         warning(paste('Variable ',v,'is a factor with all values NA.\n',
-                      'Check that the second argument to factor() matched the original levels.\n',
+         'Check that the second argument to factor() matched the original levels.\n',
                       sep=''))
 
       object[[v]] <- x
@@ -308,9 +307,9 @@ upData <- function(object, ...,
 
   if(force.single) {
     sm <- sapply(object, storage.mode)
-    if(any(sm=='double'))
-      for(i in 1:length(sm)) {
-        if(sm[i]=='double') {
+    if(any(sm == 'double'))
+      for(i in 1 : length(sm)) {
+        if(sm[i] == 'double') {
           x <- object[[i]]
           if(testDateTime(x) || is.matrix(x))
             next
@@ -318,7 +317,7 @@ upData <- function(object, ...,
             storage.mode(object[[i]]) <- 'integer'
           else {
             notfractional <- !any(floor(x) != x, na.rm=TRUE)
-            if(notfractional && max(abs(x),na.rm=TRUE) <= (2^31-1))
+            if(notfractional && max(abs(x), na.rm=TRUE) <= (2 ^ 31 - 1))
               storage.mode(object[[i]]) <- 'integer'
           }
         }
@@ -328,11 +327,11 @@ upData <- function(object, ...,
   if(charfactor) {
     g <- function(z) {
       if(!is.character(z)) return(FALSE)
-      length(unique(z)) < .5*length(z)
+      length(unique(z)) < .5 * length(z)
     }
     mfact <- sapply(object, g)
     if(any(mfact))
-      for(i in (1:length(mfact))[mfact]) {
+      for(i in (1 : length(mfact))[mfact]) {
         x <- sub(' +$', '', object[[i]])  # remove trailing blanks
         object[[i]] <- factor(x, exclude='')
       }
@@ -375,8 +374,7 @@ upData <- function(object, ...,
   }
 
   if(length(levels)) {
-    if(!is.list(levels))
-      stop('levels must be a list')
+    if(!is.list(levels)) stop('levels must be a list')
 
     nl <- names(levels)
     s <- nl %nin% no
@@ -405,8 +403,7 @@ upData <- function(object, ...,
       nl <- nl[!s]
     }
     
-    for(n in nl)
-      label(object[[n]]) <- labels[[n]]
+    for(n in nl) label(object[[n]]) <- labels[[n]]
   }
 
   if(length(units)) {
@@ -418,11 +415,11 @@ upData <- function(object, ...,
       nu <- nu[!s]
     }
     for(n in nu)
-      attr(object[[n]],'units') <- units[[n]]
+      attr(object[[n]], 'units') <- units[[n]]
   }
 
-  if(print) cat('New object size:\t',object.size(object),'bytes;\t',
-             length(no),'variables\n')
+  if(print) cat('New object size:\t', object.size(object),
+                'bytes;\t', length(no), 'variables\t', nobs, 'observations\n')
     object
   }
 

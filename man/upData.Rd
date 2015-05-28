@@ -22,7 +22,8 @@
   \code{upData} is a function facilitating the updating of a data frame
   without attaching it in search position one.  New variables can be
   added, old variables can be modified, variables can be removed or renamed, and
-  \code{"labels"} and \code{"units"} attributes can be provided.  Various checks
+  \code{"labels"} and \code{"units"} attributes can be provided.
+  Observations can be subsetted.  Various checks
   are made for errors and inconsistencies, with warnings issued to help
   the user.  Levels of factor variables can be replaced, especially
   using the \code{list} notation of the standard \code{merge.levels}
@@ -53,7 +54,7 @@ cleanup.import(obj, labels, lowernames=FALSE,
                fixdates=c('none','year'), charfactor=FALSE)
 
 upData(object, \dots, 
-       rename, drop, keep, labels, units, levels, force.single=TRUE,
+       subset, rename, drop, keep, labels, units, levels, force.single=TRUE,
        lowernames=FALSE, caplabels=FALSE, moveUnits=FALSE,
        charfactor=FALSE, print=TRUE)
 
@@ -143,6 +144,10 @@ dataframeReduce(data, fracmiss=1, maxlevels=NULL,  minprev=0, print=TRUE)
     for \code{upData}, one or more expressions of the form
     \code{variable=expression}, to derive new variables or change old ones.
   }
+	\item{subset}{an expression that evaluates to a logical vector
+		specifying which rows of \code{object} should be retained.  The
+		expressions should use the original variable names, i.e., before any
+	variables are renamed but after \code{lowernames} takes effect.}
   \item{rename}{
     list or named vector specifying old and new names for variables.  Variables are
     renamed before any other operations are done.  For example, to rename
@@ -209,6 +214,7 @@ dat2
 describe(dat2)
 dat <- dat2    # copy to original name and delete dat2 if OK
 rm(dat2)
+dat3 <- upData(dat, x=x^2, subset = a < 3/7, rename=c(a='x'))
 
 # Remove hard to analyze variables from a redundancy analysis of all
 # variables in the data frame

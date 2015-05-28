@@ -204,6 +204,15 @@ upData <- function(object, ...,
       if(length(la <- attr(object[[i]], 'label')))
         attr(object[[i]], 'label') <- upfirst(la)
   }
+  al <- attr(object, 'label.table')
+  if(length(al)) {
+    for(i in 1 : length(no)) {
+      ali <- al[[i]]
+      if(length(ali))
+        object[[i]] <- factor(object[[i]], unname(ali), names(ali))
+    }
+    attr(object, 'label.table') <- attr(object, 'val.labels') <- NULL
+  }
   
   if(moveUnits)
     for(i in 1:length(no)) {

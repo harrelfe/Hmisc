@@ -30,9 +30,10 @@
   \code{upData} also converts double precision vectors to integer if no
   fractional values are present in 
   a vector.  \code{upData} is also used to process R workspace objects
-  created by StatTransfer, which puts variable labels as an attribute on
-  the data frame rather than on each variable. If such an attribute is
-  present, it is used to define all the labels before any label changes
+  created by StatTransfer, which puts variable and value labels as attributes on
+  the data frame rather than on each variable. If such attributes are
+  present, they are used to define all the labels and value labels
+  (through conversion to factor variables) before any label changes
   take place, and \code{force.single} is set to a default of
   \code{FALSE}, as StatTransfer already does conversion to integer.
 

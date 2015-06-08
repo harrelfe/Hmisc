@@ -640,7 +640,7 @@ latex.default <-
         if(length(size)) paste('{', sl, size, sep=''), '{',
         intop(), '',
         paste(sl, 'ctable[', sep=''), '',
-        if(length(caption) && caption.loc == 'bottom') 'botcap', '',
+        if(length(caption) && caption.loc == 'bottom') 'botcap,', '',
         if(length(caption)) paste('caption={', caption, '},', sep=''),
          '',
         if(length(caption.lot)) paste('cap={', caption.lot, '},',
@@ -1260,8 +1260,8 @@ html.latex <- function(object, file, where=c('cwd', 'tmp'),
   where  <- match.arg(where)
   method <- match.arg(method)
   if(where == 'tmp') cleanup <- FALSE
-  if(method == 'htlatex' && ! missing(file) && file != '')
-    stop('file may not be given when method="htlatex" unless file=""')
+  if(method == 'htlatex' && ! missing(file) && length(file) && file != '')
+    stop('file may not be given when method="htlatex" unless file=character() or ""')
   
   fi  <- object$file
   fibase <- gsub('\\.tex', '', fi)
@@ -1269,7 +1269,7 @@ html.latex <- function(object, file, where=c('cwd', 'tmp'),
   
   if(length(sty))
     sty <- paste('\\usepackage{', unique(sty), '}', sep='')
-  
+
   tmp    <- switch(where,
                    cwd = paste(fibase, 'enclosed', sep='-'),
                    tmp = tempfile())
@@ -1279,9 +1279,9 @@ html.latex <- function(object, file, where=c('cwd', 'tmp'),
       '\\end{document}\n', file=tmptex, sep='\n')
   sc <- if(.Platform$OS.type == 'unix') ';' else '&'
 
-  ## Create system call to hevea to convert enclosed latex file to html.
+  ## Create system call to convert enclosed latex file to html.
   cmd <-
-    if(missing(file) || file == '') 
+    if(missing(file) || ! length(file) || file == '') 
       paste(optionsCmds(method), shQuote(tmptex))
     else 
       paste(optionsCmds(method), '-o', file, shQuote(tmptex))
@@ -1289,11 +1289,11 @@ html.latex <- function(object, file, where=c('cwd', 'tmp'),
   ## perform system call
   sys(cmd)
   if(cleanup && method == 'htlatex')
-    unlink(paste(tmp, c('tmp','idv','lg','4tc','aux','dvi','log','xref','4ct'),
-                 sep='.'))
-  
-  if(! missing(file) && file == '') {
+    unlink(paste(tmp, c('tex', 'tmp','idv','lg','4tc','aux','dvi','log',
+                        'xref','4ct'), sep='.'))
+  if(! missing(file) && (length(file) == 0 || file == '')) {
     w <- readLines(paste(tmp, 'html', sep='.'))
+    if(! length(file)) return(paste(w, collapse='\n'))
     cat(w, sep='\n')
     return(invisible())
   }

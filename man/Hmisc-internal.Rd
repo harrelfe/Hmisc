@@ -54,7 +54,6 @@
 \alias{StatPlsmo}
 \alias{stepfun.eval}
 \alias{stripChart}
-\alias{[.terms}
 \alias{termsDrop}
 \alias{testDateTime}
 \alias{uncbind}

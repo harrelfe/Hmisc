@@ -5,6 +5,8 @@ Changes in version 3.16-1 (2015-06-??)
 	 * Separated sas.get source code from other .get functions and from upData/cleanup.import by putting into 3 separate files.  Moved stata.get into misc.get.s
 	 * upData: for Stat/Transfer exported R workspaces, change variables into factors to incorporate value labels when present; added subset argument and reporting of number of observations pre and post subsetting
 	 * latex.default: added comma after botcap directive for ctable.  Thanks: Paul Trowbridge
+   * Hmisc-internal.Rd: removed  alias{[.terms}
+
 
 Changes in version 3.16-0 (2015-04-25)
    * html.contents.data.frame: corrected html space character to add semicolon

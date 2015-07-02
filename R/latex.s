@@ -708,6 +708,8 @@ latex.default <-
            list('longtable', 'after', caption) ) )
     
     latex.end <- attr(latex.begin, 'close')
+    if(! length(caption))
+      latex.end <- paste(latex.end, '\\addtocounter{table}{-1}', sep='\n')
   }
   cat(latex.begin, file=file, append=file != '')
   

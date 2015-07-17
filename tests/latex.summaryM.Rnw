@@ -1,5 +1,6 @@
 % From Yonghao Pua  <puayonghao@gmail.com>
 % Lauren Samuels <lauren.samuels@vanderbilt.edu>
+% JoAnn Alvarez
 \documentclass{article}
 \usepackage{relsize,setspace} % used by latex(describe( ))
 \usepackage{longtable}
@@ -106,4 +107,10 @@ cat('\\end{document}\n', file=fi, append=TRUE)
 ## See http://biostat.mc.vanderbilt.edu/SweaveConvert
 @ 
 
+<<pbc,results='asis'>>=
+getHdata(pbc)
+s5 <- summaryM(bili + albumin + stage + protime + sex +
+                age + spiders ~ drug, data=pbc)
+latex(s5, npct='both', here=TRUE, insert.bottom = "Polly", file='')
+@ 
 \end{document}

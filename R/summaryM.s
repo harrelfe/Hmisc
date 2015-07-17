@@ -275,12 +275,12 @@ plot.summaryM <-
 
     npages <- 0
   
-    if(which != 'continuous' && any(type %in% c(1,3))) {
+    if(which != 'continuous' && any(type %in% c(1, 3))) {
       ftstats <- NULL  
-      for(i in (1:length(type))[type==1 | type==3]) {
+      for(i in (1:length(type))[type %in% c(1, 3)]) {
         nam <- vn[i]
         tab <- obj$stats[[i]]
-        if(nw==1)
+        if(nw == 1)
           tab <- as.matrix(tab)
 
         nr <- nrow(tab)
@@ -291,15 +291,15 @@ plot.summaryM <-
           sweep(tab, 2, denom, FUN='/')
 
         lev <- dimnames(y)[[1]]
-        exc <- exclude1 && (nr==2)
+        exc <- exclude1 && (nr == 2)
         jstart <- if(exc) 2 else 1
 
         rl <- casefold(lev)
-        binary <- type[i]==1 && exc &&
-          (all(rl %in% c("0","1"))|all(rl %in% c("false","true"))|
-           all(rl %in% c("absent","present")))
+        binary <- type[i] == 1 && exc &&
+          (all(rl %in% c("0", "1")) | all(rl %in% c("false", "true"))|
+           all(rl %in% c("absent", "present")))
 
-        for(j in jstart:nrow(y)) {
+        for(j in jstart : nrow(y)) {
           if(nw==1) z <- rbind(z, y[j,])
           else {
             yj               <- rep(NA, nw)
@@ -314,17 +314,16 @@ plot.summaryM <-
         }
         
         if(any(prtest != 'none')) {
-          fts <- formatTestStats(test[[varNames[i]]], type[i]==3,
-                                 if(type[i]==1)1
-                                 else 1:nr,
-                                 prtest=prtest,
+          fts <- formatTestStats(test[[varNames[i]]], type[i] == 3,
+                                 if(type[i] == 1) 1
+                                 else 1 : nr,
+                                 prtest  =prtest,
                                  plotmath=TRUE,
                                  pdig=pdig, eps=eps)
           
           ftstats <- c(ftstats, fts, 
-                       if(type[i]==1 && nr-exc-1 > 0)
-                       rep(expression(''),
-                           nr-exc-1))
+                       if(type[i] == 1 && nr - exc - 1 > 0)
+                       rep(expression(''), nr - exc - 1))
         }
       }
       
@@ -345,7 +344,7 @@ plot.summaryM <-
         .setKey(Key1)
       } else { ##set up for key() if > 1 column
         Key3 <- function(x=NULL, y=NULL, lev, pch) {
-          oldpar <- par(usr=c(0,1,0,1),xpd=NA)
+          oldpar <- par(usr=c(0, 1, 0, 1), xpd=NA)
           on.exit(par(oldpar))
           if(is.list(x)) {
             y <- x$y
@@ -370,9 +369,9 @@ plot.summaryM <-
     ncont <- sum(type==2)
     if(which != 'categorical' && ncont) {
       mf <- par('mfrow')
-      if(length(mf)==0) mf <- c(1,1)
+      if(length(mf) == 0) mf <- c(1, 1)
       
-      if(ncont > 1 & max(mf)==1) {
+      if(ncont > 1 & max(mf) == 1) {
         mf <-      if(ncont <= 2) c(2,1)
         else if(ncont <= 4) c(2,2)
         else if(ncont <= 6) c(2,3)
@@ -384,25 +383,25 @@ plot.summaryM <-
         par(mfrow=mf)
       }
       
-      npages <- npages + ceiling(sum(type==2) / prod(mf))
+      npages <- npages + ceiling(sum(type == 2) / prod(mf))
       
-      for(i in (1:length(type))[type==2]) {
+      for(i in (1 : length(type))[type == 2]) {
         nam <- labelPlotmath(vn[i], Units[i])
         st <- obj$stats[[i]]
         if(nw==1) st <- as.matrix(st)
-        N <- st[,'N']
+        N <- st[, 'N']
         
-        if(conType=='dot') {
-          quantile.columns <- dimnames(st)[[2]] %nin% c('Mean','SD','N')
-          st <- st[,quantile.columns,drop=FALSE]
+        if(conType == 'dot') {
+          quantile.columns <- dimnames(st)[[2]] %nin% c('Mean', 'SD', 'N')
+          st <- st[,quantile.columns, drop=FALSE]
           xlim <- range(st)
           ns <- as.numeric(dimnames(st)[[2]])
-          l  <- 1:length(ns)
-          q1  <- l[abs(ns-.25) < .001]
-          med <- l[abs(ns-.5)  < .001]
-          q3  <- l[abs(ns-.75) < .001]
-          st <- st[,c(q1,med,q3),drop=FALSE]
-          dotchart3(st, xlim=xlim, xlab=nam, pch=c(91,16,93),
+          l  <- 1 : length(ns)
+          q1  <- l[abs(ns - .25) < .001]
+          med <- l[abs(ns - .5)  < .001]
+          q3  <- l[abs(ns - .75) < .001]
+          st <- st[,c(q1, med, q3), drop=FALSE]
+          dotchart3(st, xlim=xlim, xlab=nam, pch=c(91, 16, 93),
                     auxtitle='N', auxdata=N)
           
           Key2 <- function(x=NULL, y=NULL, quant, ...) {
@@ -415,7 +414,7 @@ plot.summaryM <-
                 y <- x$y;
                 x <- x$x
               }
-              text(x,y,txt, cex=.8, adj=0, ...)
+              text(x, y, txt, cex=.8, adj=0, ...)
             } else mtitle(lr=txt, cex.l=.8, line=1, ...)
             
             invisible()
@@ -423,19 +422,19 @@ plot.summaryM <-
           formals(Key2) <- list(x=NULL, y=NULL, quant=obj$quant)
           .setKey2(Key2)
           
-        } else if(conType=='bp') {
-          st <- st[,colnames(st) != 'N', drop=FALSE]
+        } else if(conType == 'bp') {
+          st <- st[, colnames(st) != 'N', drop=FALSE]
           mw <- max(strwidth(N, 'inches', cex=cex))
           omai <- par('mai')
           mai <- omai
-          mai[4] <- .3 + 1.1*mw
+          mai[4] <- .3 + 1.1 * mw
           par(mai=mai)
           bpplt(st, xlab=nam, cex.points=cex.means)
           upedge <- par('usr')[4]
           outerText('N',
-                    upedge + strheight('N', cex=cex)/2,
+                    upedge + strheight('N', cex=cex) / 2,
                     cex=cex)
-          outerText(N, length(N):1, cex=cex)
+          outerText(N, length(N) : 1, cex=cex)
           par(omai)
         }
         else
@@ -455,20 +454,19 @@ plot.summaryM <-
 
 print.summaryM <- 
   function(x, digits, prn=any(n != N),
-           what=c('proportion', '%'), pctdig=if(what=='%') 0 else 2, 
-           npct=c('numerator','both','denominator','none'),
-           exclude1=TRUE, vnames=c("labels","names"), prUnits=TRUE,
+           what=c('proportion', '%'), pctdig=if(what == '%') 0 else 2, 
+           npct=c('numerator', 'both', 'denominator', 'none'),
+           exclude1=TRUE, vnames=c("labels", "names"), prUnits=TRUE,
            sep="/", abbreviate.dimnames=FALSE, 
            prefix.width=max(nchar(lab)), 
            min.colwidth, formatArgs=NULL, round=NULL,
-           prtest=c('P','stat','df','name'), prmsd=FALSE, long=FALSE,
+           prtest=c('P', 'stat', 'df', 'name'), prmsd=FALSE, long=FALSE,
            pdig=3, eps=0.001, ...)
 {
   npct   <- match.arg(npct)
   vnames <- match.arg(vnames)
   what   <- match.arg(what)
-  if(is.logical(prtest) && !prtest)
-    prtest <- 'none'
+  if(is.logical(prtest) && !prtest) prtest <- 'none'
   obj <- x
   for(strat in names(obj$results)) {
     x <- obj$results[[strat]]
@@ -484,11 +482,9 @@ print.summaryM <-
     labels <- x$labels
     Units  <- x$units
     test   <- x$testresults
-    if(!length(test))
-      prtest <- 'none'
+    if(!length(test)) prtest <- 'none'
     
-    nw     <- if(lg <- length(x$group.freq)) lg
-     else 1
+    nw     <- if(lg <- length(x$group.freq)) lg else 1
 
     gnames <- names(x$group.freq)
 
@@ -500,14 +496,14 @@ print.summaryM <-
     cstats <- NULL
     for(i in 1 : nv) {
       nn <- c(nn, n[i])
-      nam <- if(vnames=="names") nams[i] else labels[i]
+      nam <- if(vnames == "names") nams[i] else labels[i]
       if(prUnits && nchar(Units[i]))
         nam <- paste(nam,' [', gsub('\\*', ' ', Units[i]),']',sep='')
       
-      tr <- if(length(test) && all(prtest!='none')) test[[nams[i]]]
+      tr <- if(length(test) && all(prtest != 'none')) test[[nams[i]]]
       else NULL
       
-      if(type[i]==1 || type[i]==3) {
+      if(type[i] %in% c(1, 3)) {
         cs <- formatCats(stats[[i]], nam, tr, type[i],
                          if(length(x$group.freq)) x$group.freq else x$n[i],
                          what, npct, pctdig, exclude1, long, prtest,
@@ -522,13 +518,13 @@ print.summaryM <-
     
     lab <- dimnames(cstats)[[1]]
     gl <- names(x$group.freq)
-    gl <- if(length(gl)) paste(gl," \n(N=",x$group.freq,")",sep="")
+    gl <- if(length(gl)) paste(gl," \n(N=", x$group.freq, ")", sep="")
     else ""
     
-    if(length(test) && !all(prtest=='none'))
+    if(length(test) && !all(prtest == 'none'))
       gl <- c(gl,
-              if(length(prtest)==1 && prtest!='stat')
-              if(prtest=='P')'P-value'
+              if(length(prtest) == 1 && prtest != 'stat')
+              if(prtest == 'P')'P-value'
               else prtest
               else '  Test\nStatistic')
     
@@ -552,9 +548,9 @@ print.summaryM <-
       cat('\n', strat, '\n', sep='')
     cat("\n\nDescriptive Statistics",
         if(length(x$group.label))
-        paste(" by",x$group.label)
+        paste(" by", x$group.label)
         else
-        paste("  (N=",x$N,")",sep=""),"\n\n", sep="")
+        paste("  (N=", x$N,")", sep=""), "\n\n", sep="")
     
     if(missing(min.colwidth))
       min.colwidth <- max(min(nchar(gl)), min(nc[nc > 0]))
@@ -569,14 +565,14 @@ latex.summaryM <-
   function(object, title=first.word(deparse(substitute(object))),
            file=paste(title, 'tex', sep='.'), append=FALSE,
            digits, prn = any(n!=N),
-           what=c('proportion', '%'), pctdig=if(what=='%') 0 else 2, 
-           npct=c('numerator','both','denominator','slash','none'),
+           what=c('proportion', '%'), pctdig=if(what == '%') 0 else 2, 
+           npct=c('numerator', 'both', 'denominator', 'slash', 'none'),
            npct.size='scriptsize', Nsize='scriptsize',
            exclude1=TRUE,  vnames=c("labels","names"), prUnits=TRUE,
            middle.bold=FALSE, outer.size="scriptsize",
            caption, rowlabel="",
            insert.bottom=TRUE, dcolumn=FALSE, formatArgs=NULL, round=NULL,
-           prtest=c('P','stat','df','name'), prmsd=FALSE, msdsize=NULL,
+           prtest=c('P', 'stat', 'df', 'name'), prmsd=FALSE, msdsize=NULL,
            long=FALSE, pdig=3, eps=.001, auxCol=NULL, table.env=TRUE,
            tabenv1=FALSE, ...)
 {
@@ -585,7 +581,7 @@ latex.summaryM <-
   what   <- match.arg(what)
   npct   <- match.arg(npct)
   vnames <- match.arg(vnames)
-  if(is.logical(prtest) && !prtest) prtest <- 'none'
+  if(is.logical(prtest) && ! prtest) prtest <- 'none'
   strats <- names(object$results)
 
   istr <- 0
@@ -606,16 +602,15 @@ latex.summaryM <-
     nw     <- if(lg <- length(x$group.freq)) lg else 1
     gnames <- names(x$group.freq)
     test   <- x$testresults
-    if(!length(test))
-      prtest <- 'none'
+    if(!length(test)) prtest <- 'none'
     
     gt1.test <-
-      if(all(prtest=='none'))
+      if(all(prtest == 'none'))
         FALSE
       else
         length(unique(sapply(test,function(a)a$testname))) > 1
 
-    if(!missing(digits)) {   #.Options$digits <- digits 6Aug00
+    if(!missing(digits)) {
       oldopt <- options(digits=digits)
       on.exit(options(oldopt))
     }
@@ -637,19 +632,20 @@ latex.summaryM <-
         auxc <- c(auxc, auxCol[[1]][i])
 
       nn <- c(nn, n[i])
-      nam <- if(vnames=="names") nams[i]
+      nam <- if(vnames == "names") nams[i]
       else labels[i]
       
       if(prUnits && nchar(Units[i]) > 0)
-        nam <- paste(nam, '~\\hfill\\tiny{', gsub('\\*', ' ', Units[i]),'}',sep='')
+        nam <- paste(nam, '~\\hfill\\tiny{', gsub('\\*', ' ', Units[i]),'}',
+                     sep='')
       
-      tr  <- if(length(test) && all(prtest!='none')) test[[nams[i]]]
+      tr  <- if(length(test) && all(prtest != 'none')) test[[nams[i]]]
        else NULL
       
-      if(length(test) && all(prtest!='none'))
+      if(length(test) && all(prtest != 'none'))
         testUsed <- unique(c(testUsed, tr$testname))
 
-      if(type[i]==1 || type[i]==3) {
+      if(type[i] %in% c(1, 3)) {
         cs <- formatCats(stats[[i]], nam, tr, type[i],
                          if(length(x$group.freq)) x$group.freq else x$n[i],
                          what, npct, pctdig, exclude1, long, prtest,
@@ -667,47 +663,47 @@ latex.summaryM <-
       
       cstats <- rbind(cstats, cs)
       if(length(auxc) && nrow(cstats) > 1)
-        auxc <- c(auxc, rep(NA, nrow(cs)-1))
+        auxc <- c(auxc, rep(NA, nrow(cs) - 1))
     }
     
     lab <- dimnames(cstats)[[1]]
     gl <- names(x$group.freq)
     if(!length(gl)) gl <- " "
     
-    lab <- sedit(lab,c(" ","&"),c("~","\\&"))
+    lab <- sedit(lab, c(" ", "&"), c("~", "\\&"))
     lab <- latexTranslate(lab, greek=TRUE)
-    gl  <- latexTranslate(gl, greek=TRUE)
+    gl  <- latexTranslate(gl,  greek=TRUE)
     extracolheads <-
       if(any(gl != " "))
-        c(if(prn)'', paste('$N=',x$group.freq,'$',sep=''))
+        c(if(prn)'', paste('$N=', x$group.freq, '$', sep=''))
       else NULL
     
-    if(length(test) && !all(prtest=='none')) {
+    if(length(test) && !all(prtest == 'none')) {
       gl <- c(gl,
-              if(length(prtest)==1 && prtest!='stat')
-              if(prtest=='P') 'P-value'
+              if(length(prtest) == 1 && prtest != 'stat')
+              if(prtest == 'P') 'P-value'
               else prtest
               else 'Test Statistic')
       
-      if(length(extracolheads)) extracolheads <- c(extracolheads,'')
+      if(length(extracolheads)) extracolheads <- c(extracolheads, '')
     }
     
-    dimnames(cstats) <- list(NULL,gl) 
+    dimnames(cstats) <- list(NULL, gl) 
     cstats <- data.frame(cstats, check.names=FALSE, stringsAsFactors=FALSE)
     
-    col.just <- rep("c",length(gl))
-    if(dcolumn && all(prtest!='none') &&
-       gl[length(gl)] %in% c('P-value','Test Statistic'))
+    col.just <- rep("c", length(gl))
+    if(dcolumn && all(prtest != 'none') &&
+       gl[length(gl)] %in% c('P-value', 'Test Statistic'))
       col.just[length(col.just)] <- '.'
     
     if(prn) {
       cstats <- data.frame(N=nn, cstats, check.names=FALSE,
                            stringsAsFactors=FALSE)
-      col.just <- c("r",col.just)
+      col.just <- c("r", col.just)
     }
     
     legend <- character()
-    if(any(type==2))
+    if(any(type == 2))
       legend <- paste("{\\", outer.size, " $a$\\ }{", bld, "$b$\\ }{\\",
                       outer.size, " $c$\\ } represent the lower quartile $a$, the median $b$, and the upper quartile $c$\\ for continuous variables.",
                       if(prmsd) '~~$x\\pm s$ represents $\\bar{X}\\pm 1$ SD.'
@@ -717,7 +713,7 @@ latex.summaryM <-
     if(prn)
         legend <- c(legend, '$N$\\ is the number of non--missing values.')
       
-      if(any(type == 1) && npct=='numerator')
+      if(any(type == 1) && npct == 'numerator')
         legend <- c(legend, 'Numbers after percents are frequencies.')
       
       if(length(testUsed))
@@ -727,7 +723,9 @@ latex.summaryM <-
                    if(length(testUsed) == 1) paste(testUsed, 'test')
                    else paste(paste('\\textsuperscript{\\normalfont ',
                                     1:length(testUsed),'}',testUsed,
-                                    ' test',sep=''),collapse='; '))
+                                    ' test',sep=''),collapse='; '), '.')
+    if(is.character(insert.bottom))
+      legend <- c(legend, insert.bottom)
 
     if(length(auxc)) {
       if(length(auxc) != nrow(cstats))

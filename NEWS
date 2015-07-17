@@ -7,6 +7,7 @@ Changes in version 3.16-1 (2015-07-??)
 	 * latex.default: added comma after botcap directive for ctable.  Thanks: Paul Trowbridge
    * Hmisc-internal.Rd: removed  alias{[.terms}
 	 * latex.default: for longtable when no caption is given, subtract one from table counter
+	 * latex.summaryM: quit ignoring insert.bottom if it is a character string (thanks: JoAnn Alvarez)
 
 
 Changes in version 3.16-0 (2015-04-25)

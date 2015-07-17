@@ -8,6 +8,7 @@ Changes in version 3.16-1 (2015-07-??)
    * Hmisc-internal.Rd: removed  alias{[.terms}
 	 * latex.default: for longtable when no caption is given, subtract one from table counter
 	 * latex.summaryM: quit ignoring insert.bottom if it is a character string (thanks: JoAnn Alvarez)
+	 * minor.tick: revised version by Earl Belllinger that fixes problem reported in https://github.com/harrelfe/Hmisc/issues/28
 
 
 Changes in version 3.16-0 (2015-04-25)

@@ -1,8 +1,6 @@
 \name{minor.tick}
 \alias{minor.tick}
-\title{
-Minor Tick Marks
-}
+\title{Minor Tick Marks}
 \description{
 Adds minor tick marks to an existing plot.  All minor tick marks that
 will fit on the axes will be drawn.
@@ -33,6 +31,8 @@ Department of Biostatistics
 Vanderbilt University
 \cr
 \email{f.harrell@vanderbilt.edu}
+\cr
+Earl Bellinger
 }
 \seealso{
 \code{\link{axis}}
@@ -43,4 +43,3 @@ minor.tick()
 }
 \keyword{aplot}
 \keyword{hplot}
-% Converted by Sd2Rd version 1.21.

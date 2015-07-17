@@ -33,12 +33,16 @@ Vanderbilt University
 \email{f.harrell@vanderbilt.edu}
 \cr
 Earl Bellinger
+\cr
+Max Planck Institute
+\cr
+\email{earlbellinger@gmail.com}
 }
 \seealso{
 \code{\link{axis}}
 }
 \examples{
-plot(runif(20),runif(20))
+plot(runif(20), runif(20))
 minor.tick()
 }
 \keyword{aplot}

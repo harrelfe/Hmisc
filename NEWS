@@ -1,4 +1,4 @@
-Changes in version 3.16-1 (2015-07-??)
+Changes in version 3.17-0 (2015-07-30)
    * format.df (used by latex.default): added space after textless, textgreater
 	 * label: changed default for units to value of plot
 	 * getRs: replaced where argument with guser, grepo, gdir, dir to allow easy fetching of updated functions from Hmisc etc.
@@ -9,6 +9,9 @@ Changes in version 3.16-1 (2015-07-??)
 	 * latex.default: for longtable when no caption is given, subtract one from table counter
 	 * latex.summaryM: quit ignoring insert.bottom if it is a character string (thanks: JoAnn Alvarez)
 	 * minor.tick: revised version by Earl Belllinger that fixes problem reported in https://github.com/harrelfe/Hmisc/issues/28
+	 * several functions: used new names when assigning temporary functions
+	 * NAMESPACE: add imports to base functions to avoid new R CMD CHECK warnings
+	 * ffCompress: new function
 
 
 Changes in version 3.16-0 (2015-04-25)

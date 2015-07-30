@@ -19,8 +19,18 @@ importFrom(gtable, gtable_add_grob)
 importFrom(nnet, multinom)
 importFrom(rpart, rpart, rpart.control)
 importFrom(gridExtra, arrangeGrob)
-# importFrom(tables, tabular, table_options)
-# importFrom(ggplot2, geom_segment)
+## importFrom(tables, tabular, table_options)
+## importFrom(ggplot2, geom_segment)
+
+importFrom(grDevices, adjustcolor, col2rgb, dev.list, gray,
+           xy.coords)
+importFrom(graphics, abline, arrows, axis, axis.Date,
+           axis.POSIXct, barplot, box, hist, legend, lines,
+           locator, mtext, par, plot, plot.new,
+           plot.window, points, polygon, rect, segments,
+           strheight, strwidth, symbols, text, title)
+importFrom(utils, browseURL, download.file, find,
+           getFromNamespace, object.size, read.csv, read.table)
 
 S3method(print, arrGrob)
 S3method(ggplot, transcan)
@@ -36,6 +46,7 @@ S3method(label, data.frame)
 S3method('label<-', default)
 S3method('label<-', data.frame)
 S3method('[', labelled)
+S3method('[', ffdflabel)
 S3method(print, labelled)
 S3method(label, Surv)
 S3method(units, default)
@@ -56,6 +67,7 @@ S3method(Quantile,areg.boot)
 S3method(Summary,mChoice)
 S3method(as.character,mChoice)
 
+S3method(as.data.frame,ffdflabel)
 S3method(as.data.frame,impute)
 S3method(as.data.frame,labelled)
 S3method(as.data.frame,roundN)

@@ -4,12 +4,12 @@ tabulr <- function(formula, data=NULL, nolabel=NULL, nofill=NULL, ...) {
   else if(is.list(data)) data <- list2env(data, parent=environment(formula))
 
   ##  f <- as.character(deparse(formula))
-  lab <- function(x, hfill=TRUE) {
+  # lab <- function(x, hfill=TRUE) {
     ## x <- gsub('^ +', '', x)
     ## x <- gsub(' +$', '', x)
-    l <- labelLatex(get(x, envir=data), default=x, double=TRUE, hfill=hfill)
-    paste("Heading('", l, "')*", x, sep='')
-  }
+  #   l <- labelLatex(get(x, envir=data), default=x, double=TRUE, hfill=hfill)
+  #   paste("Heading('", l, "')*", x, sep='')
+  # }
   lab <- function(x) {
     x <- deparse(x)
     if(x == 'trio') return('table_trio')

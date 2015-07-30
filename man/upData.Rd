@@ -214,7 +214,7 @@ dat2
 describe(dat2)
 dat <- dat2    # copy to original name and delete dat2 if OK
 rm(dat2)
-dat3 <- upData(dat, x=x^2, subset = a < 3/7, rename=c(a='x'))
+dat3 <- upData(dat, X=X^2, subset = x < (3/7)^2 - 5, rename=c(x='X'))
 
 # Remove hard to analyze variables from a redundancy analysis of all
 # variables in the data frame

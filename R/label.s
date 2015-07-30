@@ -22,7 +22,7 @@ label.default <- function(x, default=NULL, units=plot, plot=FALSE,
                 plotmath=plot, grid=grid)
 }
 
-label.Surv <- function(x, default=NULL, units=FALSE,
+label.Surv <- function(x, default=NULL, units=plot,
                        plot=FALSE, grid=FALSE,
                        type=c('any', 'time', 'event'), ...)
 {

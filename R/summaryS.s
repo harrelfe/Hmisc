@@ -47,8 +47,8 @@ summaryS <- function(formula, fun=NULL,
     funlabel <- if(is.matrix(w$y)) colnames(w$y)[1]
   }
 
-  g <- function(x) if(is.character(x) || is.factor(x))
-    'categorical' else 'numeric'
+  gg <- function(x) if(is.character(x) || is.factor(x))
+                      'categorical' else 'numeric'
   xlabels <- sapply(X, label)
   xlabels <- ifelse(xlabels == '', names(xlabels), xlabels)
   ylabels <- sapply(Y, label)
@@ -56,7 +56,7 @@ summaryS <- function(formula, fun=NULL,
 
   structure(w, class=c('summaryS', 'data.frame'), formula=formula, fun=fun,
             xnames=names(X), xlabels=xlabels, xunits=sapply(X, units),
-            xtype=sapply(X, g),
+            xtype=sapply(X, gg),
             ynames=namY, ylabels=ylabels, yunits=sapply(Y, units),
             ylim=ylim, funlabel=funlabel)
 }

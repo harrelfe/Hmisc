@@ -993,13 +993,13 @@ inverseFunction <- function(x, y) {
     turns[j] <- approxExtrap(d[l], xd[l], xout=0, na.rm=TRUE)$y
   }
 
-  h <- function(y, xx, yy, turns, xrange, yrange, what, coef) {
+  hh <- function(y, xx, yy, turns, xrange, yrange, what, coef) {
     what <- match.arg(what)
     ## Find number of monotonic intervals containing a given y value
     ylo <- pmin(yrange[,1],yrange[,2])
     yhi <- pmax(yrange[,1],yrange[,2])
-    n <- outer(y, ylo, function(a,b)a >= b) &
-         outer(y, yhi, function(a,b)a <= b)
+    n <- outer(y, ylo, function(a,b) a >= b) &
+         outer(y, yhi, function(a,b) a <= b)
     ## Columns of n indicate whether or not y interval applies
     ni <- nrow(yrange)
     fi <- matrix(NA, nrow=length(y), ncol=ni)
@@ -1025,11 +1025,11 @@ inverseFunction <- function(x, y) {
        if(length(z)==1) z else if(length(z)==0) NA else sample(z, size=1)
        }) else fi
   }
-  formals(h) <- list(y=numeric(0), xx=x, yy=y, turns=turns,
-                     xrange=xrange, yrange=yrange,
-                     what=c('all', 'sample'), coef=numeric(0))
+  formals(hh) <- list(y=numeric(0), xx=x, yy=y, turns=turns,
+                      xrange=xrange, yrange=yrange,
+                      what=c('all', 'sample'), coef=numeric(0))
   ## coef is there for compatibility with areg use
-  h
+  hh
 }
 
 Names2names <- function(x)

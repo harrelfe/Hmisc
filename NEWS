@@ -1,4 +1,4 @@
-Changes in version 3.17-0 (2015-07-30)
+Changes in version 3.17-0 (2015-08-18)
    * format.df (used by latex.default): added space after textless, textgreater
 	 * label: changed default for units to value of plot
 	 * getRs: replaced where argument with guser, grepo, gdir, dir to allow easy fetching of updated functions from Hmisc etc.
@@ -12,6 +12,7 @@ Changes in version 3.17-0 (2015-07-30)
 	 * several functions: used new names when assigning temporary functions
 	 * NAMESPACE: add imports to base functions to avoid new R CMD CHECK warnings
 	 * ffCompress: new function
+	 * knitrSet: changed fig.path default to '' instead of NULL to work with knitr 1.11
 
 
 Changes in version 3.16-0 (2015-04-25)

@@ -1646,7 +1646,8 @@ getRs <- function(file=NULL,
   invisible()
 }
 
-knitrSet <- function(basename=NULL, w=4, h=3, fig.path=basename,
+knitrSet <- function(basename=NULL, w=4, h=3,
+                     fig.path=if(length(basename)) basename else '',
                      fig.align='center', fig.show='hold', fig.pos='htbp',
                      fig.lp=paste('fig', basename, sep=':'),
                      dev=switch(lang, latex='pdf', markdown='png'),

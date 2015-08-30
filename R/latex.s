@@ -1272,9 +1272,10 @@ html.latex <- function(object, file, where=c('cwd', 'tmp'),
       stop('htmltools package not installed')
     
     content = htmltools::HTML(gsub('^.*?<body\\s*>|</body>.*$', '', content))
-    ss <- paste(fibase, '-enclosed.css', sep='')
+    ss  <- paste(fibase, '-enclosed.css', sep='')
+    src <- switch(where, cwd=getwd(), tmp=tempdir())
     d = htmltools::htmlDependency(
-      'TeX4ht', '1.0.0', src = getwd(), stylesheet = ss)
+      'TeX4ht', '1.0.0', src = src, stylesheet = ss)
     htmltools::attachDependencies(content, d)
   }
 

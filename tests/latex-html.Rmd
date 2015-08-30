@@ -15,3 +15,9 @@ w <- latex(summarym, npct='both', middle.bold=TRUE)
 # Use npct='slash' to avoid the use of image files for fractions
 html(w, rmarkdown=TRUE)
 ```
+```{r lrm}
+require(rms)
+getHdata(pbc)
+f <- lrm(spiders ~ rcs(age, 4) + rcs(albumin, 3) + sex, data=pbc)
+print(f, rmarkdown=TRUE)
+```

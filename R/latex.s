@@ -1257,13 +1257,27 @@ html <- function(object, ...) UseMethod('html')
 
 
 html.latex <- function(object, file, where=c('cwd', 'tmp'),
-                       method=c('htlatex', 'hevea'), cleanup=TRUE, ...)
+                       method=c('htlatex', 'hevea'), rmarkdown=FALSE,
+                       cleanup=TRUE, ...)
 {
   where  <- match.arg(where)
   method <- match.arg(method)
   if(where == 'tmp') cleanup <- FALSE
-  if(method == 'htlatex' && ! missing(file) && length(file) && file != '')
-    stop('file may not be given when method="htlatex" unless file=character() or ""')
+  if(rmarkdown && ! missing(file))
+    warning('do not specify file when rmarkdown=TRUE')
+  if(rmarkdown) file <- character(0)
+
+  ehtml = function(content) {   # Thanks to Yihui
+    if(! requireNamespace('htmltools', quietly=TRUE))
+      stop('htmltools package not installed')
+    
+    content = htmltools::HTML(gsub('^.*?<body\\s*>|</body>.*$', '', content))
+    ss <- paste(fibase, '-enclosed.css', sep='')
+    d = htmltools::htmlDependency(
+      'TeX4ht', '1.0.0', src = getwd(), stylesheet = ss)
+    htmltools::attachDependencies(content, d)
+  }
+
   
   fi  <- object$file
   fibase <- gsub('\\.tex', '', fi)
@@ -1293,8 +1307,9 @@ html.latex <- function(object, file, where=c('cwd', 'tmp'),
   if(cleanup && method == 'htlatex')
     unlink(paste(tmp, c('tex', 'tmp','idv','lg','4tc','aux','dvi','log',
                         'xref','4ct'), sep='.'))
-  if(! missing(file) && (length(file) == 0 || file == '')) {
+  if(! missing(file) && (length(file) == 0 || file == '' || file == 'rmd')) {
     w <- readLines(paste(tmp, 'html', sep='.'))
+    if(rmarkdown) return(ehtml(w))
     if(! length(file)) return(paste(w, collapse='\n'))
     cat(w, sep='\n')
     return(invisible())

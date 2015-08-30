@@ -22,7 +22,8 @@ runs \code{html.data.frame}.
 \usage{
 html(object, \dots)
 \method{html}{latex}(object, file, where=c('cwd', 'tmp'),
-  method=c('htlatex', 'hevea'), cleanup=TRUE, ...)
+  method=c('htlatex', 'hevea'),
+  rmarkdown=false, cleanup=TRUE, ...)
 \method{html}{data.frame}(object,
   file=paste(first.word(deparse(substitute(object))),'html',sep='.'),
      append=FALSE, link=NULL, linkCol=1, linkType=c('href','name'), \dots)
@@ -40,7 +41,8 @@ html(object, \dots)
 name of the file to create.  The default file
 name is \code{object.html} where \code{object} is the first word in
 the name of the argument for \code{object}.  For \code{html.latex}
-specify \code{file=''} to print html code to the console, as when using \code{knitr}.
+specify \code{file=''} or \code{file=character(0)} to print html code to
+the console, as when using \code{knitr}. 
 }
 \item{where}{for \code{html}.  Default is to put output files in current
 	working directory.  Specify \code{where='tmp'} to put in a system
@@ -49,6 +51,10 @@ specify \code{file=''} to print html code to the console, as when using \code{kn
 	from LaTeX to html (this is from the \code{tex4ht} package).  Specify
 	\code{method='hevea'} to use system command \code{hevea}, assuming the
 	system package \code{hevea} is installed.}
+\item{rmarkdown}{set to \code{TRUE} if using RMarkdown (usually under
+	\code{knitr} and RStudio).  This causes html to be packaged for
+	RMarkdown and output to go into the console stream.  \code{file} is
+	ignored when \code{rmarkdown=TRUE}.}
 \item{cleanup}{if using \code{method='htlatex'} set to \code{FALSE} if
 	\code{where='cwd'} to	prevent deletion of auxiliary files created by
 	\code{htlatex} that are not needed when using the final \code{html}

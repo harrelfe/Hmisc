@@ -1,4 +1,4 @@
-Changes in version 3.17-0 (2015-08-18)
+Changes in version 3.17-0 (2015-09-01)
    * format.df (used by latex.default): added space after textless, textgreater
 	 * label: changed default for units to value of plot
 	 * getRs: replaced where argument with guser, grepo, gdir, dir to allow easy fetching of updated functions from Hmisc etc.
@@ -13,7 +13,9 @@ Changes in version 3.17-0 (2015-08-18)
 	 * NAMESPACE: add imports to base functions to avoid new R CMD CHECK warnings
 	 * ffCompress: new function
 	 * knitrSet: changed fig.path default to '' instead of NULL to work with knitr 1.11
-
+	 * html.latex: added argument rmarkdown
+	 * htmltools: added to suggests in DESCRIPTION
+	 * tests: new test script latex-html.Rmd for latex -> html under Rmarkdown/knitr/Rstudio
 
 Changes in version 3.16-0 (2015-04-25)
    * html.contents.data.frame: corrected html space character to add semicolon

@@ -2,8 +2,11 @@
 output:
   html_document: default
 ---
-```{r summm}
+```{r setup}
 require(Hmisc)
+knitrSet(lang='markdown')
+```
+```{r summm}
 getHdata(pbc)
 html(latex(describe(pbc)), rmarkdown=TRUE)
 summarym <- summaryM(bili + albumin + stage + protime + sex + age + spiders ~ drug,

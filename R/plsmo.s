@@ -1,15 +1,26 @@
 plsmo <-
-  function(x, y, method=c("lowess", "supsmu", "raw"),
+  function(x, y, method=c("lowess", "supsmu", "raw", "intervals"),
            xlab, ylab, add=FALSE, lty=1 : lc, col=par('col'),
            lwd=par('lwd'), iter=if(length(unique(y)) > 2) 3 else 0,
-           bass=0, f=2 / 3, trim, fun, group=rep(1, length(x)),
-           prefix, xlim, ylim, 
+           bass=0, f=2 / 3, mobs=30, trim, fun, ifun=mean,
+           group=rep(1, length(x)), prefix, xlim, ylim, 
            label.curves=TRUE, datadensity=FALSE, scat1d.opts=NULL,
            lines.=TRUE, subset=TRUE, grid=FALSE, evaluate=NULL, ...)
 {
   gfun <- ordGridFun(grid)
   nam <- as.character(sys.call())[2 : 3]
   method <- match.arg(method)
+  if(method == 'intervals')
+    doint <- function(x, y, m, ifun, fun) {
+      g <- cut2(x, m=m)
+      w <- cut2(x, m=m, onlycuts=TRUE)
+      p <- fun(tapply(y, g, ifun, na.rm=TRUE))
+      seg1 <- list(x1=w[- length(w)], y1=p, x2=w[-1], y2=p)
+      ne <- 2 : (length(w) - 1)
+      seg2 <- list(x1=w[ne], y1=p[-1], x2=w[ne], y2=p[- length(p)])
+      list(x = (w[-length(w)] + w[-1]) / 2, y = p, seg1=seg1, seg2=seg2)
+    }
+  
   if(missing(ylab))
     ylab <- label(y, units=TRUE, plot=TRUE, default=nam[2])
   Y <- as.matrix(y)
@@ -43,29 +54,33 @@ plsmo <-
       ic <- ic + 1
       s <- group == g
       z <- switch(method, 
-                  lowess=lowess(x[s], y[s], iter=iter, f=f),
-                  supsmu=supsmu(x[s], y[s], bass=bass),
-                  raw=approx(x[s], y[s], xout=sort(unique(x[s]))))
+                  lowess = lowess(x[s], y[s], iter=iter, f=f),
+                  supsmu = supsmu(x[s], y[s], bass=bass),
+                  raw    = approx(x[s], y[s], xout=sort(unique(x[s]))),
+                  intervals = doint(x[s], y[s], m=mobs, ifun=ifun,
+                    fun=if(missing(fun)) function(x) x else fun)
+                  )
+      if(method != 'intervals') {
+        if(missing(trim))
+          trim <- if(sum(s) > 200) 10 / sum(s) else 0
       
-      if(missing(trim))
-        trim <- if(sum(s) > 200) 10 / sum(s) else 0
-      
-      if(trim > 0 && trim < 1) {
-        xq <- quantile(x[s], c(trim, 1 - trim))
-        s <- z$x >= xq[1] & z$x <= xq[2]
-        z <- list(x=z$x[s], y=z$y[s])
-      }
-      
-      if(length(evaluate)) {
-        rx   <- range(z$x)
-        xseq <- seq(rx[1], rx[2], length=evaluate)
-        z <- approx(z, xout=xseq)
-      }
-      
-      if(!missing(fun)) {
-        yy <- fun(z$y)
-        s <- !is.infinite(yy) & !is.na(yy)
-        z <- list(x=z$x[s], y=yy[s])
+        if(trim > 0 && trim < 1) {
+          xq <- quantile(x[s], c(trim, 1 - trim))
+          s <- z$x >= xq[1] & z$x <= xq[2]
+          z <- list(x=z$x[s], y=z$y[s])
+        }
+        
+        if(length(evaluate)) {
+          rx   <- range(z$x)
+          xseq <- seq(rx[1], rx[2], length=evaluate)
+          z <- approx(z, xout=xseq)
+        }
+        
+        if(!missing(fun)) {
+          yy <- fun(z$y)
+          s <- !is.infinite(yy) & !is.na(yy)
+          z <- list(x=z$x[s], y=yy[s])
+        }
       }
       
       clev[ic] <- g
@@ -87,7 +102,8 @@ plsmo <-
     if(missing(xlab))
       xlab <- label(x, units=TRUE, plot=TRUE, default=nam[1])
  
-    if(missing(xlim)) xlim <- c(xmin, xmax)
+    if(missing(xlim)) xlim <- if(method == 'intervals')
+                                range(x, na.rm=TRUE) else c(xmin, xmax)
     if(missing(ylim)) ylim <- c(ymin, ymax)
     plot(xmin, ymin, xlim=xlim, ylim=ylim,
          type='n', xlab=xlab, ylab=ylab)
@@ -100,23 +116,34 @@ plsmo <-
   
   lwd <- rep(lwd, length=lc)
 
-  for(i in 1 : lc) {
-    cu <- curves[[i]]
-    s <- cu$x >= xlim[1] & cu$x <= xlim[2]
-    curves[[i]] <- list(x=cu$x[s], y=cu$y[s])
-  }
-  if(lines.)
-    for(i in 1 : lc)
-      gfun$lines(curves[[i]], lty=lty[i], col=col[i], lwd=lwd[i])
-  
-  if(datadensity) {
-    for(i in 1 : nlev) {
-      s <- group == lev[i]
-      x1 <- x[s]
-      for(ii in which(clev == lev[i])) {
-        y.x1 <- approx(curves[[ii]], xout=x1)$y
-        sopts <- c(list(x=x1, y=y.x1, col=col[ii], grid=grid), scat1d.opts)
-        do.call('scat1d', sopts)
+  if(method == 'intervals')
+    for(i in 1 : lc) {
+      cu <- curves[[i]]
+      seg1 <- cu$seg1
+      seg2 <- cu$seg2
+      with(cu$seg1, gfun$segments(x1, y1, x2, y2, col=col[i]))
+      with(cu$seg2, gfun$segments(x1, y1, x2, y2,
+                                  col=adjustcolor(col[i], alpha=.15)))
+    }
+  else {
+    for(i in 1 : lc) {
+      cu <- curves[[i]]
+      s <- cu$x >= xlim[1] & cu$x <= xlim[2]
+      curves[[i]] <- list(x=cu$x[s], y=cu$y[s])
+    }
+    if(lines.)
+      for(i in 1 : lc)
+        gfun$lines(curves[[i]], lty=lty[i], col=col[i], lwd=lwd[i])
+    
+    if(datadensity) {
+      for(i in 1 : nlev) {
+        s <- group == lev[i]
+        x1 <- x[s]
+        for(ii in which(clev == lev[i])) {
+          y.x1 <- approx(curves[[ii]], xout=x1)$y
+          sopts <- c(list(x=x1, y=y.x1, col=col[ii], grid=grid), scat1d.opts)
+          do.call('scat1d', sopts)
+        }
       }
     }
   }

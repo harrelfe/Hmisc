@@ -18,7 +18,9 @@ plsmo <-
       seg1 <- list(x1=w[- length(w)], y1=p, x2=w[-1], y2=p)
       ne <- 2 : (length(w) - 1)
       seg2 <- list(x1=w[ne], y1=p[-1], x2=w[ne], y2=p[- length(p)])
-      list(x = (w[-length(w)] + w[-1]) / 2, y = p, seg1=seg1, seg2=seg2)
+      list(x = (w[-length(w)] + w[-1]) / 2, y = p,
+           xbar = tapply(x, g, mean, na.rm=TRUE),
+           seg1 = seg1, seg2=seg2)
     }
   
   if(missing(ylab))
@@ -118,12 +120,13 @@ plsmo <-
 
   if(method == 'intervals')
     for(i in 1 : lc) {
-      cu <- curves[[i]]
+      cu   <- curves[[i]]
       seg1 <- cu$seg1
       seg2 <- cu$seg2
+      acol <- adjustcolor(col[i], alpha=.15)
+      gfun$points(cu$xbar, cu$y, col=acol, pch=3)
       with(cu$seg1, gfun$segments(x1, y1, x2, y2, col=col[i]))
-      with(cu$seg2, gfun$segments(x1, y1, x2, y2,
-                                  col=adjustcolor(col[i], alpha=.15)))
+      with(cu$seg2, gfun$segments(x1, y1, x2, y2, col=acol))
     }
   else {
     for(i in 1 : lc) {

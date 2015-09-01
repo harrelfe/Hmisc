@@ -28,6 +28,7 @@ Plot smoothed estimates
 	summarizes y, with the default being the mean (proportions for binary
 	y).  The results are plotted as step functions, with vertical
 	discontinuities drawn with a saturation of 0.15 of the original color.
+	A plus sign is drawn at the mean x within each interval.
 	For this approach, the default x-range is the entire raw data range,
 	and \code{trim} and \code{evaluate} are ignored.  For
 	\code{panel.plsmo} it is best to specify \code{type='l'} when using

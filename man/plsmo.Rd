@@ -20,6 +20,19 @@ Plot smoothed estimates
   plotted is the product of the number of groups and the number of
   \code{y} columns.
 
+	\code{method='intervals'} is often used when y is binary, as it may be
+	tricky to specify a reasonable smoothing parameter to \code{lowess} or
+	\code{supsmu} in this case.  The \code{'intervals'} method uses the
+	\code{cut2} function to form intervals of x containing a target of
+	\code{mobs} observations.  For each interval the \code{ifun} function
+	summarizes y, with the default being the mean (proportions for binary
+	y).  The results are plotted as step functions, with vertical
+	discontinuities drawn with a saturation of 0.15 of the original color.
+	For this approach, the default x-range is the entire raw data range,
+	and \code{trim} and \code{evaluate} are ignored.  For
+	\code{panel.plsmo} it is best to specify \code{type='l'} when using
+	\code{'intervals'}. 
+
 \code{panel.plsmo} is a \code{panel} function for \code{trellis} for the
 \code{xyplot} function that uses \code{plsmo} and its options to draw
 one or more nonparametric function estimates on each panel.  This has
@@ -29,7 +42,8 @@ label the curves where they are most separated, (2) the
 \code{datadensity} option will put rug plots on each curve (instead of a
 single rug plot at the bottom of the graph), and (3) when
 \code{panel.plsmo} invokes \code{plsmo} it can use the "super smoother"
-(\code{supsmu} function) instead of \code{lowess}.  \code{panel.plsmo}
+(\code{supsmu} function) instead of \code{lowess}, or pass
+\code{method='intervals'}.  \code{panel.plsmo} 
 senses when a \code{group} variable is specified to \code{xyplot} so
 that it can invoke \code{\link[lattice]{panel.superpose}} instead of
 \code{panel.xyplot}.  Using \code{panel.plsmo} through \code{trellis}
@@ -49,10 +63,10 @@ For \code{ggplot2} graphics the counterparts are
 \code{\link{stat_plsmo}} and \code{\link{histSpikeg}}.
 }
 \usage{
-plsmo(x, y, method=c("lowess","supsmu","raw"), xlab, ylab, 
+plsmo(x, y, method=c("lowess","supsmu","raw","intervals"), xlab, ylab, 
       add=FALSE, lty=1 : lc, col=par("col"), lwd=par("lwd"),
-      iter=if(length(unique(y))>2) 3 else 0, bass=0, f=2/3, trim, 
-      fun, group, prefix, xlim, ylim, 
+      iter=if(length(unique(y))>2) 3 else 0, bass=0, f=2/3, mobs=30, trim, 
+      fun, ifun=mean, group, prefix, xlim, ylim, 
       label.curves=TRUE, datadensity=FALSE, scat1d.opts=NULL,
       lines.=TRUE, subset=TRUE,
       grid=FALSE, evaluate=NULL, \dots)
@@ -77,7 +91,8 @@ vector of x-values, NAs allowed
 vector or matrix of y-values, NAs allowed
 }
 \item{method}{
-"lowess" (the default), "supsmu", or "raw" to not smooth at all
+\code{"lowess"} (the default), \code{"supsmu"}, \code{"raw"} to not
+smooth at all, or \code{"intervals"} to use intervals (see above)
 }
 \item{xlab}{
 x-axis label iff add=F.  Defaults of label(x) or argument name.
@@ -109,6 +124,8 @@ iter parameter if \code{method="lowess"}, default=0 if \code{y} is binary, and 3
 bass parameter if \code{method="supsmu"}, default=0.
 }
 \item{f}{passed to the \code{lowess} function, for \code{method="lowess"}}
+\item{mobs}{for \code{method='intervals'}, the target number of
+            observations per interval}
 \item{trim}{
 only plots smoothed estimates between trim and 1-trim quantiles
 of x.  Default is to use 10th smallest to 10th largest x in the group if the number of observations in the group exceeds 200 (0 otherwise).
@@ -118,6 +135,8 @@ Specify trim=0 to plot over entire range.
 after computing the smoothed estimates, if \code{fun} is given the y-values
 are transformed by \code{fun()}
 }
+\item{ifun}{a summary statistic function to apply to the
+            \code{y}-variable for \code{method='intervals'}.  Default is \code{mean}.}
 \item{group}{
 a variable, either a \code{factor} vector or one that will be converted to
 \code{factor} by \code{plsmo}, that is used to stratify the data so that separate
@@ -221,6 +240,11 @@ xyplot(survival.time ~ age, panel=panel.plsmo)
 
 #Do this for multiple panels
 xyplot(survival.time ~ age | sex, panel=panel.plsmo)
+
+#Repeat this using equal sample size intervals (n=25 each) summarized by
+#the median
+xyplot(survival.time ~ age | sex, panel=panel.plsmo, type='l',
+       method='intervals', mobs=25, ifun=median)
 
 
 #Do this for subgroups of points on each panel, show the data

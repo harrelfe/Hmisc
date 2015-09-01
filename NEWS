@@ -15,7 +15,8 @@ Changes in version 3.17-0 (2015-09-01)
 	 * knitrSet: changed fig.path default to '' instead of NULL to work with knitr 1.11
 	 * html.latex: added argument rmarkdown
 	 * htmltools: added to suggests in DESCRIPTION
-	 * tests: new test script latex-html.Rmd for latex -> html under Rmarkdown/knitr/Rstudio
+	 * tests: new test script latex-html.Rmd for latex -> html under Rmarkdown/knitr/Rstudio, new test for cut2
+	 * plsmo, panel.plsmo: added method='intervals', mobs, ifun arguments
 
 Changes in version 3.16-0 (2015-04-25)
    * html.contents.data.frame: corrected html space character to add semicolon

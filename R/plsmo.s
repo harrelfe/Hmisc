@@ -62,27 +62,31 @@ plsmo <-
                   intervals = doint(x[s], y[s], m=mobs, ifun=ifun,
                     fun=if(missing(fun)) function(x) x else fun)
                   )
-      if(method != 'intervals') {
-        if(missing(trim))
-          trim <- if(sum(s) > 200) 10 / sum(s) else 0
+
+      if(missing(trim))
+        trim <- if(sum(s) > 200) 10 / sum(s) else 0
+
+      if(method == 'intervals') {
+        trim <- 0
+        evaluate <- NULL
+      }
       
-        if(trim > 0 && trim < 1) {
-          xq <- quantile(x[s], c(trim, 1 - trim))
-          s <- z$x >= xq[1] & z$x <= xq[2]
-          z <- list(x=z$x[s], y=z$y[s])
-        }
-        
-        if(length(evaluate)) {
-          rx   <- range(z$x)
-          xseq <- seq(rx[1], rx[2], length=evaluate)
-          z <- approx(z, xout=xseq)
-        }
-        
-        if(!missing(fun)) {
-          yy <- fun(z$y)
-          s <- !is.infinite(yy) & !is.na(yy)
-          z <- list(x=z$x[s], y=yy[s])
-        }
+      if(trim > 0 && trim < 1) {
+        xq <- quantile(x[s], c(trim, 1 - trim))
+        s <- z$x >= xq[1] & z$x <= xq[2]
+        z <- list(x=z$x[s], y=z$y[s])
+      }
+      
+      if(length(evaluate)) {
+        rx   <- range(z$x)
+        xseq <- seq(rx[1], rx[2], length=evaluate)
+        z <- approx(z, xout=xseq)
+      }
+
+      if(!missing(fun)) {
+        yy <- fun(z$y)
+        s <- !is.infinite(yy) & !is.na(yy)
+        z <- list(x=z$x[s], y=yy[s])
       }
       
       clev[ic] <- g

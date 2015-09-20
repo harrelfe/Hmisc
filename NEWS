@@ -1,4 +1,4 @@
-Changes in version 3.17-0 (2015-09-01)
+Changes in version 3.17-0 (2015-09-20)
    * format.df (used by latex.default): added space after textless, textgreater
 	 * label: changed default for units to value of plot
 	 * getRs: replaced where argument with guser, grepo, gdir, dir to allow easy fetching of updated functions from Hmisc etc.

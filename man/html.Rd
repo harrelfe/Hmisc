@@ -23,7 +23,7 @@ runs \code{html.data.frame}.
 html(object, \dots)
 \method{html}{latex}(object, file, where=c('cwd', 'tmp'),
   method=c('htlatex', 'hevea'),
-  rmarkdown=false, cleanup=TRUE, ...)
+  rmarkdown=FALSE, cleanup=TRUE, ...)
 \method{html}{data.frame}(object,
   file=paste(first.word(deparse(substitute(object))),'html',sep='.'),
      append=FALSE, link=NULL, linkCol=1, linkType=c('href','name'), \dots)

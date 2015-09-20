@@ -127,7 +127,7 @@ plsmo <-
       cu   <- curves[[i]]
       seg1 <- cu$seg1
       seg2 <- cu$seg2
-      acol <- adjustcolor(col[i], alpha=.15)
+      acol <- adjustcolor(col[i], alpha.f=.15)
       gfun$points(cu$xbar, cu$y, col=acol, pch=3)
       with(cu$seg1, gfun$segments(x1, y1, x2, y2, col=col[i]))
       with(cu$seg2, gfun$segments(x1, y1, x2, y2, col=acol))

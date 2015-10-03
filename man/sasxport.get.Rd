@@ -30,7 +30,7 @@ printed output to parse dataset labels, assuming that \code{PROC
 CONTENTS} was run on an entire library.
 }
 \usage{
-sasxport.get(file, force.single = TRUE,
+sasxport.get(file, lowernames=TRUE, force.single = TRUE,
              method=c('read.xport','dataload','csv'), formats=NULL, allow=NULL,
              out=NULL, keep=NULL, drop=NULL, as.is=0.5, FUN=NULL)
 sasdsLabels(file)
@@ -43,6 +43,8 @@ sasdsLabels(file)
 \code{file} is the name of the directory containing all the \code{CSV}
 files created by running the \code{exportlib} SAS macro.
 }
+  \item{lowernames}{set to \code{FALSE} to keep from converting SAS
+		variable names to lower case}
   \item{force.single}{set to \code{FALSE} to keep integer-valued
 	variables not exceeding \eqn{2^31-1} in value from being converted to
 	\code{integer} storage mode}

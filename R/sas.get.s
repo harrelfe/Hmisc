@@ -711,7 +711,7 @@ sas.get.macro <-
     " RUN;", " %END;", "%mend sas_get;")
 
 
-sasxport.get <- function(file, force.single=TRUE,
+sasxport.get <- function(file, lowernames=TRUE,force.single=TRUE,
                          method=c('read.xport','dataload','csv'),
                          formats=NULL, allow=NULL, out=NULL,
                          keep=NULL, drop=NULL, as.is=0.5, FUN=NULL) {
@@ -848,12 +848,13 @@ sasxport.get <- function(file, force.single=TRUE,
       next
     }
 
-    nam      <- tolower(makeNames(names(w), allow=allow))
+    chcase <- if(lowernames) tolower else function(x) x
+    nam      <- chcase(makeNames(names(w), allow=allow))
     names(w) <- nam
     dinfo    <- dsinfo[[k]]
     fmt      <- sub('^\\$','',dinfo$format)
     lab      <- dinfo$label
-    ndinfo   <- tolower(makeNames(dinfo$name, allow=allow))
+    ndinfo   <- chcase(makeNames(dinfo$name, allow=allow))
     names(lab) <- names(fmt) <- ndinfo
     for(i in 1:length(w)) {
       changed <- FALSE

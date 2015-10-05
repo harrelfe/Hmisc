@@ -417,7 +417,7 @@ summary.areg.boot <- function(object, conf.int=.95, values, adj.to,
                c(NA, diff.pred-zcrit*sediff),
                c(NA, diff.pred+zcrit*sediff),
                c(NA, diff.pred/sediff),
-               c(NA, 2*(1-pnorm(abs(diff.pred/sediff)))))
+               c(NA, 2 * pnorm(- abs(diff.pred/sediff))))
     cl <- object$cat.levels[[namj]]
     dimnames(r) <- list(x=if(length(cl))cl
                           else format(xv),

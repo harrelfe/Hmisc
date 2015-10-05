@@ -238,7 +238,7 @@ rcorrcens.formula <- function(formula, data=NULL, subset=NULL,
       SE <- u['S.D.']
       aDxy <- abs(Dxy)
       z <- aDxy/SE
-      P <- 2*(1-pnorm(z))
+      P <- 2 * pnorm(- z)
       c(C=u['C Index'], Dxy=Dxy, aDxy=aDxy, SD=SE, Z=z, P=P)
     }
   

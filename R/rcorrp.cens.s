@@ -148,7 +148,7 @@ print.improveProb <- function(x, digits=3, conf.int=.95,  ...)
     zpci <- function(m, se, conf.int)
       {
         z <- qnorm((1+conf.int)/2)
-        cbind(m/se, (1 - pnorm(abs(m/se)))*2, m - z*se, m + z*se)
+        cbind(m/se, 2 * pnorm(- abs(m/se)), m - z*se, m + z*se)
       }
 
     p <- cbind(c(x$nri, x$nri.ev, x$nri.ne),

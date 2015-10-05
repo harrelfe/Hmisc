@@ -370,7 +370,7 @@ Lognorm2 <- function(times, surv)
   mu    <- logb(times[1]) - sigma*z1
 
   g <- function(times, mu, sigma) {
-    1 - pnorm((logb(times)-mu)/sigma)
+    pnorm(- (logb(times) - mu) / sigma)
   }
 
   formals(g) <- list(times=NULL, mu=mu, sigma=sigma)

@@ -461,7 +461,7 @@ print.summaryM <-
            prefix.width=max(nchar(lab)), 
            min.colwidth, formatArgs=NULL, round=NULL,
            prtest=c('P', 'stat', 'df', 'name'), prmsd=FALSE, long=FALSE,
-           pdig=3, eps=0.001, ...)
+           pdig=3, eps=0.001, prob=c(0.25, 0.5, 0.75), prN=FALSE, ...)
 {
   npct   <- match.arg(npct)
   vnames <- match.arg(vnames)
@@ -511,7 +511,7 @@ print.summaryM <-
         nn <- c(nn, rep(NA, nrow(cs) - 1))
       } else cs <- formatCons(stats[[i]], nam, tr, x$group.freq, prmsd,
                               sep, formatArgs, round, prtest,
-                              pdig=pdig, eps=eps)
+                              pdig=pdig, eps=eps, prob=prob, prN=prN)
       
       cstats <- rbind(cstats, cs)
     }
@@ -574,7 +574,8 @@ latex.summaryM <-
            insert.bottom=TRUE, dcolumn=FALSE, formatArgs=NULL, round=NULL,
            prtest=c('P', 'stat', 'df', 'name'), prmsd=FALSE, msdsize=NULL,
            long=FALSE, pdig=3, eps=.001, auxCol=NULL, table.env=TRUE,
-           tabenv1=FALSE, ...)
+           tabenv1=FALSE, prob=c(0.25, 0.5, 0.75), prN=FALSE,
+           legend.bottom=FALSE, ...)
 {
   if(! append) cat('', file=file)
   append <- TRUE
@@ -583,6 +584,10 @@ latex.summaryM <-
   vnames <- match.arg(vnames)
   if(is.logical(prtest) && ! prtest) prtest <- 'none'
   strats <- names(object$results)
+  probdef <- c(0.25, 0.5, 0.75)
+  if(length(prob) != 3) {
+    prob <- probdef
+  }
 
   istr <- 0
   for(strat in strats) {
@@ -659,7 +664,8 @@ latex.summaryM <-
                               latex=TRUE, testUsed=testUsed,
                               middle.bold=middle.bold,
                               outer.size=outer.size, msdsize=msdsize,
-                              pdig=pdig, eps=eps, footnoteTest=gt1.test)
+                              pdig=pdig, eps=eps, footnoteTest=gt1.test,
+                              prob=prob, prN=prN)
       
       cstats <- rbind(cstats, cs)
       if(length(auxc) && nrow(cstats) > 1)
@@ -703,13 +709,21 @@ latex.summaryM <-
     }
     
     legend <- character()
-    if(any(type == 2))
-      legend <- paste("{\\", outer.size, " $a$\\ }{", bld, "$b$\\ }{\\",
-                      outer.size, " $c$\\ } represent the lower quartile $a$, the median $b$, and the upper quartile $c$\\ for continuous variables.",
-                      if(prmsd) '~~$x\\pm s$ represents $\\bar{X}\\pm 1$ SD.'
-                      else '',
-                      sep="")
-
+    if(any(type == 2)) {
+      if(identical(prob, probdef)) {
+        legend <- paste("{\\", outer.size, " $a$\\ }{", bld, "$b$\\ }{\\",
+                        outer.size, " $c$\\ } represent the lower quartile $a$, the median $b$, and the upper quartile $c$\\ for continuous variables.",
+                        sep="")
+      } else {
+        prob <- sprintf("%1.0f\\%%", 100*prob)
+        legend <- paste("{\\", outer.size, " $a$\\ }{", bld, "$b$\\ }{\\",
+                        outer.size, " $c$\\ } represent the ", prob[1], 
+                        " quantile $a$, the ", prob[2]," quantile $b$, and the ",
+                        prob[3]," quantile $c$\\ for continuous variables.",
+                        sep="")
+      }
+      if(prmsd) legend <- paste0(legend, '~~$x\\pm s$ represents $\\bar{X}\\pm 1$ SD.')
+    }
     if(prn)
         legend <- c(legend, '$N$\\ is the number of non--missing values.')
       
@@ -745,16 +759,24 @@ latex.summaryM <-
       legend[1] <- paste('\n', legend[1], sep='')
     laststrat <- strat == strats[length(strats)]
     noib <- is.logical(insert.bottom) && ! insert.bottom
+    finalcaption <- NULL
+    finallegend <- NULL
+    if((! tabenv1 && table.env) || (tabenv1 && istr == 1)) {
+      finalcaption <- caption
+      if(((! tabenv1 && laststrat) || (tabenv1 && istr == 1)) && !legend.bottom) {
+        finalcaption <- paste(finalcaption, paste(legend, collapse=' '), sep='. ')
+      }
+    }
+    if(! noib && laststrat && ! table.env) {
+      finallegend <- legend
+    } else if(legend.bottom) {
+      finallegend <- paste(legend, collapse=' ')
+    }
     w <- latex(cstats, title=title, file=file, append=TRUE,
-               caption=if((! tabenv1 && table.env) || (tabenv1 && istr == 1))
-               paste(caption, if((! tabenv1 && laststrat) ||
-                                 (tabenv1 && istr == 1))
-                                paste(legend, collapse=' '), sep='. '),
-               rowlabel=rowlabel,
+               caption=finalcaption, rowlabel=rowlabel,
                table.env=(! tabenv1 && table.env) || (tabenv1 && istr == 1),
                col.just=col.just, numeric.dollar=FALSE, 
-               insert.bottom=if(! noib && laststrat && ! table.env) legend,
-               rowname=lab, dcolumn=dcolumn,
+               insert.bottom=finallegend, rowname=lab, dcolumn=dcolumn,
                extracolheads=extracolheads, extracolsize=Nsize,
                insert.top=if(strat != '.ALL.') strat,
                ...)

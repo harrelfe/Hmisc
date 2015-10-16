@@ -1580,7 +1580,8 @@ formatCons <- function(stats, nam, tr, group.freq, prmsd, sep='/',
                        formatArgs=NULL, round=NULL, prtest,
                        latex=FALSE, testUsed=character(0),
                        middle.bold=FALSE, outer.size=NULL, msdsize=NULL,
-                       pdig=3, eps=.001, footnoteTest=TRUE)
+                       pdig=3, eps=.001, footnoteTest=TRUE,
+                       prob=c(0.25, 0.5, 0.75), prN=FALSE)
 {
   nw <- if(lg <- length(group.freq)) lg else 1
 
@@ -1588,10 +1589,18 @@ formatCons <- function(stats, nam, tr, group.freq, prmsd, sep='/',
   ns <- ifelse(ns %in% c('Mean','SD','N'), '-1', ns)
   ns <- as.numeric(ns)
   l  <- 1:length(ns)
-  q1  <- l[abs(ns-.25) < .001]
-  med <- l[abs(ns-.5) < .001]
-  q3  <- l[abs(ns-.75) < .001]
-  qu <- stats[,c(q1,med,q3),drop=FALSE]
+  if(length(prob) == 3) {
+    qs <- numeric(3)
+    for(i in seq_along(qs)) {
+      qs[i] <- l[abs(ns-prob[i]) < .001]
+    }
+  } else {
+    q1  <- l[abs(ns-.25) < .001]
+    med <- l[abs(ns-.5) < .001]
+    q3  <- l[abs(ns-.75) < .001]
+    qs <- c(q1, med, q3)
+  }
+  qu <- stats[,qs,drop=FALSE]
   if(prmsd)
     qu <- cbind(qu,stats[,c('Mean','SD'),drop=FALSE])
   if(length(round) && round == 'auto') {
@@ -1605,6 +1614,8 @@ formatCons <- function(stats, nam, tr, group.freq, prmsd, sep='/',
   if(length(round)) qu <- round(qu, round)
   ww <- c(list(qu), formatArgs)
   cqu <- do.call('format', ww)
+  if(prN)
+    cqu <- cbind(cqu,stats[,'N',drop=FALSE])
   cqu[is.na(qu)] <- ''
   if(latex) {
     st <- character(nrow(cqu))
@@ -1624,15 +1635,22 @@ formatCons <- function(stats, nam, tr, group.freq, prmsd, sep='/',
           else
             paste(st[j], '~(', cqu[j,4], '$\\pm$',
                   cqu[j,5],')', sep='')
+      if(prN) {
+        st[j] <- paste0(st[j],"{\\",outer.size," $N=",cqu[j,6],"$}")
+      }
     }
-  }
-  else st <-
-    if(prmsd)
-      apply(cqu, 1,
+  } else {
+    if(prmsd) {
+      st <- apply(cqu, 1,
             function(x,sep) paste(x[1],sep,x[2],sep,x[3],'  ',
                                   x[4],'+/-',x[5],sep=''), sep=sep)
-    else
-      apply(cqu, 1, paste, collapse=sep)
+    } else {
+      st <- apply(cqu[,-ncol(cqu)], 1, paste, collapse=sep)
+    }
+    if(prN) {
+      st <- setNames(sprintf("%s  N=%s", st, cqu[,ncol(cqu)]), names(st))
+    }
+  }
 
   ### if(any(is.na(qu))) st <- ""   # Why was this here?
 

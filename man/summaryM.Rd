@@ -60,7 +60,7 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
       sep = '/', abbreviate.dimnames = FALSE,
       prefix.width = max(nchar(lab)), min.colwidth, formatArgs=NULL, round=NULL,
       prtest = c('P','stat','df','name'), prmsd = FALSE, long = FALSE,
-      pdig = 3, eps = 0.001, \dots)
+      pdig = 3, eps = 0.001, prob = c(0.25, 0.5, 0.75), prN = FALSE, \dots)
 
 \method{plot}{summaryM}(x, vnames = c('labels', 'names'),
      what  = c('proportion', '\%'),
@@ -86,7 +86,8 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
       insert.bottom = TRUE, dcolumn = FALSE, formatArgs=NULL, round=NULL,
       prtest = c('P', 'stat', 'df', 'name'), prmsd = FALSE,
       msdsize = NULL, long = FALSE, pdig = 3, eps = 0.001,
-      auxCol = NULL, table.env=TRUE, tabenv1=FALSE, \dots)
+      auxCol = NULL, table.env=TRUE, tabenv1=FALSE, prob=c(0.25, 0.5, 0.75),
+      prN=FALSE, legend.bottom=FALSE, \dots)
 }
 \arguments{
   \item{formula}{
@@ -192,6 +193,18 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
     default (a 0.95 quantile interval).  Box-percentile plots are drawn
     using all but the outer quantiles.
   }
+  \item{prob}{
+    vector of quantiles to use for summarizing continuous variables.
+    These must be numbers between 0 and 1 inclusive and have previously been
+    included in the \code{quant} argument of \code{summaryM}.  The vector
+    must be of length three.  By default it contains 0.25, 0.5, and 0.75.
+
+    Warning: specifying 0 and 1 as two of the quantiles will result in
+    computing the minimum and maximum of the variable.  As for many random
+    variables the minimum will continue to become smaller as the sample size
+    grows, and the maximum will continue to get larger.  Thus the min and max
+    are not recommended as summary statistics.
+  }
   \item{vnames}{
     By default, tables and plots are usually labeled with variable labels
     (see the \code{label} and \code{sas.get} functions).  To use the shorter
@@ -233,6 +246,10 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
     current (row) variable.  The default is to print these only if any of
     the counts of non-missing values differs from the total number of
     non-missing values of the left-hand-side variable.
+  }
+  \item{prN}{
+    set to \code{TRUE} to print the number of non-missing observations on
+    rows that contain continuous variables.
   }
   \item{npct}{
     specifies which counts are to be printed to the right of percentages.
@@ -374,6 +391,10 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
     set to \code{FALSE} to suppress inclusion of definitions placed at the
     bottom of LaTeX tables.  You can also specify a character string
       containing other text that overrides the automatic text.
+  }
+  \item{legend.bottom}{
+    set to \code{TRUE} to separate the table caption and legend.  This
+    will place table legends at the bottom of LaTeX tables.
   }
   \item{dcolumn}{see \code{latex}}
   }

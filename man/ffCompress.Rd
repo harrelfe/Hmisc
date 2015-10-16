@@ -52,7 +52,7 @@ ffCompress(obj, float=c('single', 'double'), print=FALSE)
 \seealso{\code{\link[Hmisc]{cleanup.import}}}
 \examples{
 \dontrun{
-require(ffbase)
+require(ff)
 require(survival)
 n <- 1e6
 d <- data.frame(x=rnorm(n), y=sample(0:1, n, TRUE),
@@ -83,7 +83,7 @@ d <- upData(d, labels=c(y='Y'), units=c(z='units z'))
 f <- ffCompress(d)
 vmode(f)
 
-load('ras.rda')
+load('ras.rda')   # dataset is not available
 r <- ffCompress(ras)
 vmode(r)
 attr(r, 'label')

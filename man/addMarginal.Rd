@@ -5,9 +5,7 @@
 addMarginal(data, ..., label = "All", margloc=c('last', 'first'))
 }
 \arguments{
-  \item{data}{a data frame \dots one or more variable
-  names, unquoted label a character string specifying the
-  name of the combined category, default is \code{"All"}.}
+  \item{data}{a data frame}
 	\item{\dots}{a list of names of variables to marginalize}
 	\item{label}{category name for added marginal observations}
 	\item{margloc}{location for marginal category within factor variable

@@ -1342,7 +1342,7 @@ Load <- function(object)
   load(file, .GlobalEnv)
 }
 
-Save <- function(object, name=deparse(substitute(object)))
+Save <- function(object, name=deparse(substitute(object)), compress='xz')
 {
   path <- .Options$LoadPath
   if(length(path))
@@ -1350,8 +1350,9 @@ Save <- function(object, name=deparse(substitute(object)))
   
   .FileName <- paste(path, name, '.rda', sep='')
   assign(name, object)
+  if(is.logical(compress) && compress) compress <- 'gzip'
   eval(parse(text=paste('save(', name, ', file="',
-                        .FileName, '", compress=TRUE)', sep='')))
+                        .FileName, '", compress="', compress, '")', sep='')))
 }
 
 getZip <- function(url, password=NULL) {

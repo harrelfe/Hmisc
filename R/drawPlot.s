@@ -226,7 +226,7 @@ drawPlot <- function(..., xlim=c(0,1), ylim=c(0,1), xlab='', ylab='',
   if(any(j)) {
     if(!key)
       labcurve(curves[j], labels=label[j], type=type[j],
-               lty=lty[j], lwd=lwd[j], col=col[j], opts=opts)
+               lty=lty[j], lwd=lwd[j], col.=col[j], opts=opts)
     else {
       x <- unlist(lapply(curves, function(z)z$x))
       y <- unlist(lapply(curves, function(z)z$y))
@@ -378,7 +378,7 @@ plot.drawPlot <- function(x, xlab, ylab, ticks,
                      lty=lty[j], lwd=lwd[j], cex=cex[j], col=col[j])
       else
         labcurve(curves[j], type=type[j],
-                 lty=lty[j], lwd=lwd[j], col=col[j],
+                 lty=lty[j], lwd=lwd[j], col.=col[j],
                  labels=label[j], opts=x$opts)
     }
   }

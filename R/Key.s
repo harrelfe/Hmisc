@@ -23,24 +23,3 @@ environment(sKey) <- new.env()
 
 .setsKey <- function(x)
     environment(sKey)$.tmpfunction <- x
-
-Points <- function(...)
-    .tmpfunction(...)
-environment(Points) <- new.env()
-
-.setPoints <- function(x)
-    environment(Key)$.tmpfunction <- x
-
-Abline <- function(...)
-    .tmpfunction(...)
-environment(Abline) <- new.env()
-
-.setAbline <- function(x)
-    environment(Key)$.tmpfunction <- x
-
-Curve <- function(...)
-    .tmpfunction(...)
-environment(Curve) <- new.env()
-
-.setCurve <- function(x)
-    environment(Key)$.tmpfunction <- x

@@ -73,8 +73,8 @@ enough to hold the key, and draws the key using \code{putKey}.
 lines, step functions, polynomials, Bezier curves, and points, and
 automatically labeling the point groups using \code{labcurve} or
 \code{putKeyEmpty}.  When \code{drawPlot} is invoked it creates
-temporary functions \code{Points}, \code{Curve}, and \code{Abline} in
-the session frame (frame zero).  The user calls these functions inside
+temporary functions \code{Points}, \code{Curve}, and \code{Abline}.
+The user calls these functions inside
 the call to \code{drawPlot} to define groups of points in the order they
 are defined with the mouse.  \code{Abline} is used to call \code{abline}
 and not actually great a group of points. For some curve types, the
@@ -129,12 +129,12 @@ drawPlot(\dots, xlim=c(0,1), ylim=c(0,1), xlab='', ylab='',
          key=FALSE, opts=NULL)
 
 # Points(label=' ', type=c('p','r'),
-#        n, pch=pch.to.use[1], cex=par('cex'),
+#        n, pch=pch.to.use[1], cex=par('cex'), col=par('col'),
 #        rug = c('none','x','y','xy'), ymean)
 
 # Curve(label=' ',
 #       type=c('bezier','polygon','linear','pol','step','gauss'),
-#       n=NULL, lty=1, lwd=par('lwd'), degree=2,
+#       n=NULL, lty=1, lwd=par('lwd'), col=par('col'), degree=2,
 #      evaluation=100, ask=FALSE)
 
 # Abline(\dots)

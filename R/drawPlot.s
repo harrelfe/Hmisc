@@ -15,7 +15,7 @@ drawPlot <- function(..., xlim=c(0,1), ylim=c(0,1), xlab='', ylab='',
         if(label!='')
           paste(' for group ',label), '.',
         if(missing(n))
-          ' Right click when finished.',
+          ' Right click when finished (Esc with RStudio).',
         '\n',sep='')
     
     pts <-
@@ -70,7 +70,7 @@ drawPlot <- function(..., xlim=c(0,1), ylim=c(0,1), xlab='', ylab='',
             paste(' for group ',label),
           '.',
           if(!length(n))
-            ' Right click when finished.',
+            ' Right click when finished (Esc with RStudio).',
           '\n', sep='')
       
       pts <-
@@ -236,9 +236,9 @@ drawPlot <- function(..., xlim=c(0,1), ylim=c(0,1), xlab='', ylab='',
     }
   }
   
-  structure(list(W, xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim,
-                 ticks=ticks, key=key, keyloc=keyloc, opts=opts),
-            class='drawPlot')
+  invisible(structure(list(W, xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim,
+                           ticks=ticks, key=key, keyloc=keyloc, opts=opts),
+                      class='drawPlot'))
 }
 
 

@@ -4,7 +4,7 @@ Changes in version 3.17-1 (2015-11-16)
    * latex.summaryM: added arguments prob, prN, and legend.bottom
    * print.summaryM: added arguments prob and prN
 	 * Save: changed to use compress='xz' by default, and added compress argument
-	 * drawPlot: fixed bug in defining Points and Curve functions; added col argument to Points and Curve; removed helper functions for Points and Curve from Key.s
+	 * drawPlot: fixed bug in defining Points and Curve functions; added col argument to Points and Curve; removed helper functions for Points and Curve from Key.s; returned object invisibly
 
 Changes in version 3.17-0 (2015-09-20)
    * format.df (used by latex.default): added space after textless, textgreater

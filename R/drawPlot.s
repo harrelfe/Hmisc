@@ -46,7 +46,8 @@ drawPlot <- function(..., xlim=c(0,1), ylim=c(0,1), xlab='', ylab='',
   }
   
   Curve <- function(label=' ',
-                    type=c('bezier','polygon','linear','pol','step','gauss'),
+                    type=c('bezier','polygon','linear','pol','loess','step',
+                           'gauss'),
                     n=NULL, lty=1, lwd=par('lwd'), col=par('col'),
                     degree=2, evaluation=100, ask=FALSE) {
     isfun <- is.function(type)
@@ -96,6 +97,12 @@ drawPlot <- function(..., xlim=c(0,1), ylim=c(0,1), xlab='', ylab='',
         cof <- f$coefficients
         y <- cof[1] + x %*% cof[-1]
         pts <- list(x=as.numeric(x[,1]), y=as.numeric(y))
+        if(redraw) lines(pts, lty=lty, lwd=lwd, col=col)
+      }
+
+      if(type == 'loess') {
+        w <- lowess(pts$x, pts$y, f=.25)
+        pts <- approx(w, xout=seq(min(pts$x), max(pts$x), length=evaluation))
         if(redraw) lines(pts, lty=lty, lwd=lwd, col=col)
       }
       

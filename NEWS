@@ -1,10 +1,11 @@
-Changes in version 3.17-1 (2015-11-19)
+Changes in version 3.17-1 (2015-12-02)
    * sasxport.get: added lowernames argument with default equal to the previous behavior (convert varixcable names to lower case)
 	 * biVar, rcorrp.cens, spower, transace: changed 1 - pnorm(z) to pnorm(-z)
    * latex.summaryM: added arguments prob, prN, and legend.bottom
    * print.summaryM: added arguments prob and prN
 	 * Save: changed to use compress='xz' by default, and added compress argument
 	 * drawPlot: fixed bug in defining Points and Curve functions; added col argument to Points and Curve; removed helper functions for Points and Curve from Key.s; returned object invisibly; added type='loess' to Curve()
+	 * upFirst: new function
 
 Changes in version 3.17-0 (2015-09-20)
    * format.df (used by latex.default): added space after textless, textgreater

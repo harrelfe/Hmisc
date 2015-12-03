@@ -1350,7 +1350,7 @@ Save <- function(object, name=deparse(substitute(object)), compress='xz')
   
   .FileName <- paste(path, name, '.rda', sep='')
   assign(name, object)
-  if(is.logical(compress) && compress) compress <- 'gzip'
+  if(is.logical(compress) && compress) compress <- 'xz'
   eval(parse(text=paste('save(', name, ', file="',
                         .FileName, '", compress="', compress, '")', sep='')))
 }

@@ -3,17 +3,17 @@ first.word <- function(x, i=1, expr=substitute(x))
   words <- if(!missing(x)) as.character(x)[1]
     else
       as.character(unlist(expr))[1]
-  
+
   if(i > 1) stop('i > 1 not implemented')
-  
+
   chars <- substring(words, 1 : nchar(words), 1 : nchar(words))
   legal.chars <- c(letters, LETTERS, '.',
                    '0','1','2','3','4','5','6','7','8','9')
   non.legal.chars <- (1:length(chars))[chars %nin% legal.chars]
   if(!any(non.legal.chars)) return(words)
-  
+
   if(non.legal.chars[1] == 1) return(character(0))
-  
+
   substring(words, 1, non.legal.chars[1] - 1)
 }
 
@@ -49,7 +49,7 @@ first.word <- function(x, i=1, expr=substitute(x))
 ## FEH 21May96 - changed default for numeric.dollar to cdot
 ## FEH  5Jun96 - re-written to not rely on as.data.frame,
 ##               converted data frames to matrices the slow way
-##               added matrix.sep 
+##               added matrix.sep
 ##     12Aug99 - allowed # decimal places=NA (no rounding, just use format())
 ##    27May02 - added booktabs FEH
 ## 13Dec02 - added ctable   FEH
@@ -72,16 +72,16 @@ format.df <- function(x,
   cleanLatex <- function(string) {
     if(!is.character(string))
       string <- as.character(string)
-    
+
     ## Find strings not in math mode (surrounded by $)
     s <- gsub("(^[[:space:]]+)|([[:space:]]+$)", "", string)
     k <- !(substring(s, 1, 1) == '$' & substring(s, nchar(s)) == '$')
     k <- k & !is.na(k)
-    
+
     if(!any(k)) return(string)
 
     inn <- c('< =', '> =', '<=', '>=', '<', '>',
-             '\\\\%', '%', 
+             '\\\\%', '%',
              '\\\\&', '&')
     out <- c('<=',
              '>=',
@@ -98,13 +98,13 @@ format.df <- function(x,
 
   if(numeric.dollar && dcolumn)
     stop('cannot have both numeric.dollar=TRUE and dcolumn=TRUE')
-  
+
   if(missing(digits))
     digits <- NULL
-  
+
   if((!length(digits))+(!length(dec))+(!length(rdec))+(!length(cdec)) < 3)
     stop('only one of digits, dec, rdec, cdec may be given')
-  
+
   if(!length(digits) && !length(dec) && !length(rdec) && !length(cdec)) {
     digits <- 15
   }
@@ -113,7 +113,7 @@ format.df <- function(x,
     oldopt <- options(digits=digits)
     on.exit(options(oldopt))
   }
-  
+
   formt <- function(x, decimal.mark='.', nsmall=0,
                     scientific=c(-4,4), digits=NULL, na.blank=FALSE, ...) {
     y <- format(x, nsmall=nsmall, decimal.mark=decimal.mark,
@@ -122,28 +122,28 @@ format.df <- function(x,
     if(na.blank) y <- ifelse(is.na(x), '', y)
     y
   }
-  
+
   dot <- if(cdot && numeric.dollar)
     paste(sl,sl,'cdotp',sl,sl,'!',sep='')
   else '.'
-  
+
   decimal.point <- if(cdot && dcolumn)
     paste(sl,'cdot',sep='')
   else dot
 
   if(is.data.frame(x)) x <- unclass(x)
-  
+
   xtype <- if(is.list(x)) 1 else if(length(dim(x))) 2 else 3
-  
+
   ncx <- if(xtype == 1) length(x) else if(xtype == 2) ncol(x) else 1
-  
+
   nams <- if(xtype == 1) names(x) else if(xtype == 2) dimnames(x)[[2]] else ''
 
   if(!missing(col.just) && (length(col.just) < ncx))
     stop('col.just needs the same number of elements as number of columns')
-  
+
   if(!length(nams)) nams <- rep('', ncx)
-  
+
   nrx <-
     if(xtype == 1) {
       if(length(d <- dim(x[[1]])))
@@ -154,7 +154,7 @@ format.df <- function(x,
       nrow(x)
     else
       length(x)
-  
+
   rnams <-
     if(xtype == 1)
       attr(x,'row.names')
@@ -162,33 +162,33 @@ format.df <- function(x,
       dimnames(x)[[1]]
     else
       names(x)
-  
+
   if(length(dec) + length(rdec) + length(cdec)  ==  0)
     rtype <- 1
-  
+
   if(length(rdec)) {
     rtype <- 2
     dec <- matrix(rdec, nrow=nrx, ncol=ncx)
   }
-  
+
   if(length(dec)) {
     rtype <- 3
     if(length(dec) == 1) cdec <- rep(dec, ncx)
   }
-  
+
   if(length(cdec)) rtype <- 4
-  
+
   cx    <- NULL
   nam   <- NULL
   cjust <- NULL
-  
+
   if(blank.dot) sas.char <- function(x) {
     n.x <- nchar(x)
     blanks.x <-
       sapply(n.x, function(n.x.i) paste(rep(" ", n.x.i), collapse=""))
     ifelse(x == blanks.x, ".", x)
   }
-  
+
   if(math.col.names) {
     nams <- paste('$', nams, '$', sep='')
   } else {
@@ -209,11 +209,11 @@ format.df <- function(x,
         x[,j]
       else
         x
-    
+
     num <- is.numeric(xj) || all(is.na(xj))
     if(testDateTime(xj)) num <- FALSE
-    
-    ## using xtype avoids things like as.matrix changing special characters 
+
+    ## using xtype avoids things like as.matrix changing special characters
     ncxj <- max(1, dim(xj)[2], na.rm=TRUE)
 
     for(k in 1 : ncxj) {
@@ -222,30 +222,30 @@ format.df <- function(x,
           xj[, k]
         else
           xj
-      
+
       names(xk) <- NULL
-      ## gets around bug in format.default when 
+      ## gets around bug in format.default when
       ## nsmall is given and there are NAs
-      
+
       namk <-
         if(ld) {
           dn <- dimnames(xj)[[2]][k]
           if(length(dn) == 0)
             dn <- as.character(k)
-          
+
           if(math.row.names) {
             paste('$', dn, '$', sep='')
           } else {
             cleanLatex(dn)
           }
         } else ''
-      
+
       namk <- paste(nams[j],
                     if(nams[j]!='' && namk!='')
                       matrix.sep
                     else '',
                     namk, sep='')
-      
+
       if(num) {
         cj <-
           if(length(col.just))
@@ -275,29 +275,29 @@ format.df <- function(x,
               formt(round(xk, cdec[j]), decimal.mark=dot, nsmall=cdec[j],
                     digits=digits, scientific=scientific,
                     na.blank=na.blank, ...)
-        
+
         if(na.dot)
           cxk[is.na(xk)] <- '.'  # SAS-specific
-        
+
         if(blank.dot)
           cxk <- sas.char(cxk)
-        
+
         if(numeric.dollar)
           cxk <- paste("$",cxk,"$",sep="")
-        
+
         ## These columns get real minus signs in LaTeX, not hyphens,
         ## but lose alignment unless their col.just="r"
         if(dcolumn | (length(col.just) && col.just[j] == 'c')) {
           cxk <- sedit(cxk, " ", "~")
           if(dcolumn)
             cj <- paste("D{.}{",decimal.point,"}{-1}",sep='')
-        } 
+        }
       } else {   #ended if(num)
         cj <-
           if(length(col.just))
             col.just[j]
           else 'l'
-        
+
         if(inherits(xk, "Date")) {
           cxk <- cleanLatex(format(xk, format=format.Date))
         } else if(inherits(xk, "POSIXt")) {
@@ -307,7 +307,7 @@ format.df <- function(x,
         }
         if(na.blank) cxk <- ifelse(is.na(xk), '', cxk)
       }
-      
+
       cx <- cbind(cx, cxk)
       nam <- c(nam, namk)
       cjust <- c(cjust, cj)
@@ -337,9 +337,9 @@ format.df <- function(x,
 ## F  T  T   \cdot! $		     # LaTeX usage
 ## T  F  F   . ~	      .	    dcolumn  # LaTeX usage
 ## T  T  F   . ~	      \cdot dcolumn  # LaTeX usage
-##        
+##
 ## F  F  F    			     # non-TeX (hyphens in TeX)
-##        
+##
 ## F  T  F   \cdot!		     # TeX errors, hyphens
 ## T  F  T   . ~	   $  .	    dcolumn  # TeX errors
 ## T  T  T   . ~	   $  \cdot dcolumn  # TeX errors
@@ -353,7 +353,7 @@ latex.default <-
            rgroup=NULL, n.rgroup=NULL,
            cgroupTexCmd="bfseries",
            rgroupTexCmd="bfseries",
-           rownamesTexCmd=NULL, 
+           rownamesTexCmd=NULL,
            colnamesTexCmd=NULL,
            cellTexCmds=NULL,
            rowname, cgroup.just=rep("c", length(n.cgroup)),
@@ -374,7 +374,7 @@ latex.default <-
            landscape=FALSE,
            multicol=TRUE, ## to remove multicolumn if no need
            math.row.names=FALSE, math.col.names=FALSE,
-           hyperref=NULL,
+           hyperref=NULL, output.call = FALSE,
            ...)
 {
   if(length(hyperref)) hyperref <- sprintf('\\hyperref[%s]{', hyperref)
@@ -388,7 +388,7 @@ latex.default <-
     rowname <- dimnames(cx)[[1]]
 
   nocolheads <- length(colheads) == 1 && is.logical(colheads) && ! colheads
-  
+
   if (!length(colheads))
     colheads <- dimnames(cx)[[2]]
 
@@ -400,26 +400,26 @@ latex.default <-
     k <- length(cgroup)
     if(! length(n.cgroup))
       n.cgroup <- rep(nc / k, k)
-    
+
     if(sum(n.cgroup) != nc)
       stop("sum of n.cgroup must equal number of columns")
-    
+
     if(length(n.cgroup) != length(cgroup))
       stop("cgroup and n.cgroup must have same lengths")
   }
 
   if(!length(rowname))
     rgroup <- NULL
-  
+
   if(!length(n.rgroup) && length(rgroup))
     n.rgroup <- rep(nr / length(rgroup), length(rgroup))
-  
+
   if(length(n.rgroup) && sum(n.rgroup) != nr)
     stop("sum of n.rgroup must equal number of rows in object")
-  
+
   if(length(rgroup) && length(n.rgroup) && (length(rgroup) != length(n.rgroup)))
     stop("lengths of rgroup and n.rgroup must match")
-  
+
   if (length(rgroup) && rowlabel.just == "l")
     rowname <- paste("~~",rowname,sep="")
 
@@ -432,9 +432,9 @@ latex.default <-
     eog <- paste(sl, "tabularnewline\n", sep='')
   } else {
     eol <- paste(sl,"tabularnewline\n",  sep='')
-    eog <- paste(sl, "tabularnewline\n", sep='')      
+    eog <- paste(sl, "tabularnewline\n", sep='')
   }
-  
+
   if(booktabs) {
     toprule    <- paste(sl, "toprule\n",sep="")
     midrule    <- paste(sl, "midrule\n",sep="")
@@ -449,7 +449,7 @@ latex.default <-
         paste(sl, "hline", sl, "hline\n", sep="")
       else
         paste(sl, "hline\n", sep="")
-    
+
     midrule <- bottomrule <- paste(sl, "hline\n", sep="")
   }
 
@@ -473,7 +473,7 @@ latex.default <-
     msg <- paste(msg, msg1, sep="")
     stop(msg)
   }
-  
+
   ## If there are column groups, add a blank column
   ## of formats between the groups.
   if (length(cgroup) & length(cellTexCmds)) {
@@ -482,7 +482,7 @@ latex.default <-
     new.col <- dim(cx)[2] + 1
     for (i in my.index)
       new.index <- c(new.index, i, new.col)
-    
+
     new.index <- new.index[-length(new.index)]
     cellTexCmds <- cbind(cellTexCmds, "")[, new.index]
   }
@@ -493,13 +493,13 @@ latex.default <-
     ## Fake rownamesTexCmd if it is NULL and if rowname exists.
     if (!length(rownamesTexCmd) & length(rowname))
       rownamesTexCmd <- rep("", nr)
-    
+
     ## Fake cellTexCmds if it is NULL.
     if (!length(cellTexCmds)) {
       cellTexCmds <- rep("", dim(cx)[1] * dim(cx)[2])
       dim(cellTexCmds) <- dim(cx)
     }
-    
+
     ## Create a combined rowname and cell format object.
     rcellTexCmds <- cbind(rownamesTexCmd, cellTexCmds)
     thisDim <- dim(rcellTexCmds)
@@ -514,8 +514,8 @@ latex.default <-
   }
 
   ## ############## END OF CELL AND ROWNAMES FORMATS ###############
-  
-  
+
+
   ##if (!vbar && length(cgroup)) {
   if (length(cgroup)) {
     last.col <- cumsum(n.cgroup)
@@ -523,11 +523,11 @@ latex.default <-
     cgroup.cols <- cbind(first.col,last.col)
     col.subs <- split(seq(length.out=nc),
                       rep.int(seq_along(n.cgroup), times=n.cgroup))
-    
+
     cxi <- list()
     for (i in seq(along=col.subs))
       cxi[[i]] <- cx[,col.subs[[i]],drop=FALSE]
-    
+
     cxx <- cxi[[1]]
     col.justxx      <- col.just[col.subs[[1]]]
     collabel.justxx <- collabel.just[col.subs[[1]]]
@@ -549,9 +549,9 @@ latex.default <-
                              extracolheads[col.subs[[i]]])
       }
     }
-    
+
     cgroup.colsxx <- cgroup.cols + 0:(nrow(cgroup.cols)-1)
-    
+
     cx <- cxx
     col.just <- col.justxx
     collabel.just <- collabel.justxx
@@ -570,7 +570,7 @@ latex.default <-
 
     if(length(extracolheads))
       extracolheads <- c('', extracolheads)
-    
+
     collabel.just <- c(rowlabel.just, collabel.just)
     if (length(cgroup) == 0L)
       colheads <- c(rowlabel, colheads)
@@ -585,7 +585,7 @@ latex.default <-
       cline <- paste(sl, "cline{", cgroup.cols[,1],"-", cgroup.cols[,2], "}",
                      sep="", collapse=" ")
     }
-    
+
     nc <- 1 + nc
   }
 
@@ -593,8 +593,9 @@ latex.default <-
 
   if(!append)
     cat("", file=file)	#start new file
-  
-  cat("%", deparse(sys.call()), "%\n", file=file, append=file!='', sep='')
+
+  if(output.call)
+    cat("%", deparse(sys.call()), "%\n", file=file, append=file!='', sep='')
 
   if(dcolumn) {
     decimal.point <- ifelse(cdot, paste(sl, "cdot", sep=""), ".")
@@ -610,7 +611,7 @@ latex.default <-
       vv2 <- cumsum(n.cgroup)
       tabular.cols[vv2] <- paste(tabular.cols[vv2],vbar,sep="")
     }
-    
+
     tabular.cols <- paste(tabular.cols, collapse="")
   }
 
@@ -630,7 +631,7 @@ latex.default <-
                      if(!longtable)
                        paste(sl, "label{", label, "}", sep=""),
                      "}", sep="")
-    
+
     table.env <- TRUE
   }
 
@@ -650,7 +651,7 @@ latex.default <-
         if(! landscape) paste('pos=', where, ',', sep=''), '',
         if(landscape) 'sideways', '',
         paste(']{', tabular.cols, '}', sep=''), '',
-        if(length(insert.bottom)) 
+        if(length(insert.bottom))
          paste('{',
               paste(sl,'tnote[]{',
                     sedit(insert.bottom,'\\\\',' '),'}',
@@ -660,9 +661,9 @@ latex.default <-
         if(! length(insert.bottom)) '{}', '',
         ## tnote does not allow \\ in its argument
         paste('{', toprule, sep=''), '{')
-    
+
     latex.end <- attr(latex.begin, 'close')
-    
+
   } else if(!longtable) {
     latex.begin <-
       latexBuild(
@@ -685,13 +686,13 @@ latex.default <-
                     if(caption.loc == 'bottom' && length(caption))
                       list('tabular', 'after', caption)
                    ) )
-    
+
     latex.end <- attr(latex.begin, 'close')
 
   } else {           ## longtable, not ctable
     latex.begin <-
       latexBuild(
-        if(! draft.longtable) 
+        if(! draft.longtable)
           paste(sl,"let",sl,"LTmulticolumn=",sl,"multicolumn", sep=""),
           '',
         paste(sl, "setlongtables", sep=""), '',
@@ -706,13 +707,13 @@ latex.default <-
         insert=list(
           if(caption.loc == 'bottom' && length(caption))
            list('longtable', 'after', caption) ) )
-    
+
     latex.end <- attr(latex.begin, 'close')
     if(! length(caption))
       latex.end <- paste(latex.end, '\\addtocounter{table}{-1}', sep='\n')
   }
   cat(latex.begin, file=file, append=file != '')
-  
+
   cgroupheader <- NULL
   if(length(cgroup)) {
     cvbar <- paste(cgroup.just, vbar, sep="")
@@ -723,12 +724,12 @@ latex.default <-
       labs <- paste(sl, cgroupTexCmd, " ", cgroup, sep="")
     else
       labs <- cgroup
-    
+
     if(multicol)
       labs <- paste(slmc, n.cgroup, "}{", cvbar, "}{", labs, "}", sep="")
 
     cgroupheader <- paste(labs, collapse="&")
-    
+
     if (!length(cline)) {
       inr <- as.numeric(length(rowname))
       cline <- paste(sl, "cline{", 1 + inr, "-", nc, "}", sep="")
@@ -760,28 +761,28 @@ latex.default <-
         if(any(heads[[2]] != ''))
           extracolheads <- heads[[2]]
       }
-      
+
       if(multicol)
         colheads <- paste(slmc1, cvbar, "}{", colheads, "}", sep="")
-      
+
       header <- if(length(colheads)) paste(colheads, collapse='&')
       if(length(extracolheads)) {
         extracolheads <- ifelse(extracolheads == ''| extracolsize == '',
                                 extracolheads,
                                 paste('{',sl,extracolsize,' ',
                                       extracolheads,'}',sep=''))
-        
+
         if(multicol)
           extracolheads <- ifelse(extracolheads == '',extracolheads,
                                   paste(slmc1,cvbar,'}{',extracolheads,'}',sep=''))
         else
           extracolheads <- ifelse(extracolheads == '',extracolheads,
                                   paste(extracolheads,sep=''))
-        
+
         header <- if(length(header))
           paste(header, eol, paste(extracolheads, collapse='&'), sep='')
       }
-    
+
       if(length(header)) cat(header, eog, file=file, sep='', append=file!='')
 
       if(ctable)
@@ -809,12 +810,12 @@ latex.default <-
         if(length(insert.bottom.width) == 0) {
             insert.bottom.width = paste0(sl, "linewidth")
         }
-        
-        cat(paste(sl, 'multicolumn{', nc, '}{', "p{",insert.bottom.width,'}}{', 
+
+        cat(paste(sl, 'multicolumn{', nc, '}{', "p{",insert.bottom.width,'}}{',
                   insert.bottom, '}', eol, sep='', collapse='\n'),
                   sep="", file=file, append=file!='')
       }
-    
+
       cat(sl,"endfoot\n", sep="",file=file, append=file!='')
       cat(sl,"label{", label, "}\n", sep="", file=file, append=file!='')
     }
@@ -828,10 +829,10 @@ latex.default <-
         rgroup <- rep("",length(n.rgroup))
       } else {
         if (length(rgroupTexCmd)) {
-          rgroup <- paste("{",sl, rgroupTexCmd, " ", rgroup,"}",sep="") 
-        } else rgroup <- paste("{", rgroup,"}",sep="") 
+          rgroup <- paste("{",sl, rgroupTexCmd, " ", rgroup,"}",sep="")
+        } else rgroup <- paste("{", rgroup,"}",sep="")
       }
-      
+
       seq.rgroup <- seq(along=n.rgroup)
     } else {
       seq.rgroup <- 1
@@ -847,7 +848,7 @@ latex.default <-
           cat(sl, "newpage\n", sep="", file=file, append=file != '')
           linecnt <- 0
         }
-        
+
         cat(rgroup[j], rep("", nc - 1), sep="&", file=file, append=file!='')
         cat(eol, sep="",file=file, append=file!='')
         linecnt <- linecnt + 1
@@ -860,13 +861,13 @@ latex.default <-
         if (! length(n.rgroup)) {
           if(longtable && linecnt > 0 && (linecnt + 1 > lines.page)) {
             cat(sl, "newpage\n", sep="", file=file, append=file!='')
-            linecnt <- 0						
+            linecnt <- 0
           }
         }
 
         ## Loop through the columns of the object
         ## write each value (and it's format if there
-        ## is one). 
+        ## is one).
         if (length(rcellTexCmds)) {
           num.cols <- ncol(cx)
           for (colNum in 1:num.cols) {
@@ -879,13 +880,13 @@ latex.default <-
           ## Original code that writes object to output.
           cat(cx[i,], file=file, sep="&", append=file!='')
         }
-        
+
         cat(if(i == rg.end[j] || (!ctable && !length(n.rgroup)))
               eog
             else if(i < rg.end[j])
               eol,
             sep="", file=file, append=file!='')
-        
+
         linecnt <- linecnt+1
       }  ## End of for loop that writes the object.
 
@@ -901,7 +902,7 @@ latex.default <-
   sty <- c("longtable"[longtable], "here"[here], "dcolumn"[dcolumn],
            "ctable"[ctable], "booktabs"[booktabs],
            if(landscape && !ctable) "lscape")
-  
+
   structure(list(file=file, style=sty), class='latex')
 }
 
@@ -917,7 +918,7 @@ latex.function <- function(object,
 {
   type <- match.arg(type)
   fctxt <- deparse(object, width.cutoff=width.cutoff)
-  if(assignment) fctxt[1] <- paste(title , '<-', fctxt[1]) 
+  if(assignment) fctxt[1] <- paste(title , '<-', fctxt[1])
   environment <- ifelse(type == 'example', "alltt", "verbatim")
   environment <- c(example='alltt', verbatim='verbatim',
                    Sinput=paste('Sinput',size,sep=''))[type]
@@ -935,21 +936,21 @@ latex.function <- function(object,
           "#(.*?$)=>{\\\\rm\\\\scriptsize\\\\#\\1}"
           )
       else c("\t=>    ")
-    
+
     substitute <- strsplit( rxs, "=>" )
     for(line in fctxt) {
       for( subst in substitute ) {
         line <- gsub( subst[1], subst[2], line, perl=TRUE )
       }
-      
+
       line <- paste(line,"\n",sep="")
       cat(line, file=file, append=file!="")
     }
   }
-  
+
   postamble <- paste("\\end{",environment,"}\n", sep="")
   cat(postamble, file=file, append=file!='')
-  
+
   structure(list(file=file, style=if(type == 'example')'alltt'), class='latex')
 }
 
@@ -970,15 +971,15 @@ latexVerbatim <- function(x,
       if(length(size))
         c('\\',size,'\n'),
       '\\begin{verbatim}\n', sep='')
-  
+
   print(x, ...)
   cat('\\end{verbatim}\n}\n',
       if(length(hspace))
         c('\\hspace{',hspace,'}'),
       '{\\makebox[\\textwidth]{\\box0}}\n', sep='')
-  
+
   sink()
- 
+
   structure(list(file=file, style=NULL), class='latex')
 }
 
@@ -994,27 +995,27 @@ latex.list <- function(object,
   nx <-	names(object)
   if (!length(nx))
     nx <- paste(title, "[[", seq(along=object), "]]", sep="")
-  
+
   tmp <- latex(object=object[[1]],
                caption=nx[1], label=nx[1], append=append, title=title,
                file=file, caption.lot=NULL,
                caption.loc=caption.loc, ...)
-  
+
   tmp.sty <- tmp$style
   for (i in seq(along=object)[-1]) {
     tmp <- latex(object=object[[i]],
                  caption=nx[i], label=nx[i], append=file!='', title=title, file=file,
                  caption.lot=NULL, caption.loc=caption.loc, ...)
-    
+
     tmp.sty <- c(tmp.sty, tmp$style)
   }
-  
+
   sty <-
     if(length(tmp.sty))
       unique(tmp.sty)
     else
       NULL
-  
+
   structure(list(file=file, style=sty), class='latex')
 }
 
@@ -1031,14 +1032,14 @@ latexTranslate <- function(object, inn=NULL, out=NULL, pb=FALSE,
                            greek=FALSE, ...)
 {
   text <- object
-  
+
   inn <- c("|",  "%",  "#",   "<=",     "<",  ">=",     ">",  "_", "\\243",
-           "&", inn, 
+           "&", inn,
            if(pb)
              c("[","(","]",")"))
 
   out <- c("$|$","\\%","\\#", "$\\leq$","$<$","$\\geq$","$>$","\\_", "\\pounds",
-           "\\&", out, 
+           "\\&", out,
            if(pb)
              c("$\\left[","$\\left(","\\right]$","\\right)$"))
 
@@ -1062,24 +1063,24 @@ latexTranslate <- function(object, inn=NULL, out=NULL, pb=FALSE,
       if(remain[1] %in% dig ||
          (length(remain) > 1 && remain[1] == '-' && remain[2] %in% dig))
         k[-1] <- k[-1] | remain[-1] %nin% dig
-      
+
       ie <-
         if(any(k))
           is + ((1:length(remain))[k])[1]
         else
           length(x)+1
-      
+
       ##See if math mode already turned on (odd number of $ to left of ^)
       dol <-
         if(sum(x[1:is] == '$') %% 2)
           ''
         else '$'
-      
+
       substring2(text[i],is,ie-1) <- paste(dol,'^{',
                                            substring(text[i],is+1,ie-1),'}',
                                            dol,sep='')  # 25May01
     }
-    
+
     if(greek) {
       gl <- c('alpha','beta','gamma','delta','epsilon','varepsilon','zeta',
               'eta','theta','vartheta','iota','kappa','lambda','mu','nu',
@@ -1092,7 +1093,7 @@ latexTranslate <- function(object, inn=NULL, out=NULL, pb=FALSE,
                         text[i])
     }
   }
-  
+
   sedit(text, 'DOLLARS', '\\$', wild.literal=TRUE)  ## 17Nov00
 }
 
@@ -1102,7 +1103,7 @@ latex <- function(object, ...)
   ## added title= 25May01
   if (!length(class(object)))
     class(object) <- data.class(object)
-  
+
   UseMethod("latex")
 }
 
@@ -1149,13 +1150,13 @@ dvi.latex <- function(object, prlog=FALSE,
 
   if(length(sty))
     sty <- paste('\\usepackage{',sty,'}',sep='')
-  
+
   if(nomargins)
     sty <-  c(sty,
               paste('\\usepackage[paperwidth=',width,
                     'in,paperheight=', height,
                     'in,noheadfoot,margin=0in]{geometry}',sep=''))
-  
+
   ## pre <- tempfile(); post <- tempfile()  # 1dec03
   tmp <- tempfile()
   tmptex <- paste(tmp, 'tex', sep='.')
@@ -1163,20 +1164,20 @@ dvi.latex <- function(object, prlog=FALSE,
   cat('\\documentclass{report}', sty,
       '\\begin{document}\\pagestyle{empty}', infi,
       '\\end{document}\n', file=tmptex, sep='\n')
-  
+
   if (.Platform$OS.type == "unix")
-    sys(paste("cd", shQuote(tempdir()), "&&", optionsCmds("latex"), 
+    sys(paste("cd", shQuote(tempdir()), "&&", optionsCmds("latex"),
               "-interaction=scrollmode", shQuote(tmp)), output = FALSE)
   else ## MS DOS
-    shell(paste("cd", shQuote(tempdir()), "&", optionsCmds("latex"), 
+    shell(paste("cd", shQuote(tempdir()), "&", optionsCmds("latex"),
                 "-interaction=scrollmode", shQuote(tmp)), shell="CMD",
           intern = FALSE)
 
-  
+
   if(prlog)
     cat(scan(paste(tmp,'log',sep='.'),list(''),sep='\n')[[1]],
         sep='\n')
-  
+
   fi <- paste(tmp, getOption("dviExtension", "dvi"), sep='.')
   structure(list(file=fi), class='dvi')
 }
@@ -1200,7 +1201,7 @@ show.dvi <- function(object, width=5.5, height=7)
       paste(viewer, object$file)
     }
 
-  
+
   system(cmd, intern = TRUE, wait=TRUE)
   invisible(NULL)
 }
@@ -1220,14 +1221,14 @@ show.latex <- function(object)
 
     return(invisible())
   }
-  
+
   show.dvi(dvi.latex(object))
 }
 environment(show.latex) <- new.env()
 
 print.dvi <- function(x, ...) show.dvi(x)
 print.latex <- function(x, ...) show.latex(x)
-  
+
 dvi         <- function(object, ...) UseMethod('dvi')
 dvips       <- function(object, ...) UseMethod('dvips')
 dvigv       <- function(object, ...) UseMethod('dvigv')
@@ -1238,7 +1239,7 @@ dvips.dvi   <- function(object, file, ...)
       paste(optionsCmds('dvips'), shQuote(object$file))
     else
       paste(optionsCmds('dvips'),'-o', file, shQuote(object$file))
-  
+
   ## paste(optionsCmds('dvips'),'-f', object$file,' | lpr') else 5dec03
   ## 2 dQuote 26jan04
   invisible(sys(cmd))
@@ -1270,7 +1271,7 @@ html.latex <- function(object, file, where=c('cwd', 'tmp'),
   ehtml = function(content) {   # Thanks to Yihui
     if(! requireNamespace('htmltools', quietly=TRUE))
       stop('htmltools package not installed')
-    
+
     content = htmltools::HTML(gsub('^.*?<body\\s*>|</body>.*$', '', content))
     ss  <- paste(fibase, '-enclosed.css', sep='')
     src <- switch(where, cwd=getwd(), tmp=tempdir())
@@ -1279,11 +1280,11 @@ html.latex <- function(object, file, where=c('cwd', 'tmp'),
     htmltools::attachDependencies(content, d)
   }
 
-  
+
   fi  <- object$file
   fibase <- gsub('\\.tex', '', fi)
   sty <- object$style
-  
+
   if(length(sty))
     sty <- paste('\\usepackage{', unique(sty), '}', sep='')
 
@@ -1298,11 +1299,11 @@ html.latex <- function(object, file, where=c('cwd', 'tmp'),
 
   ## Create system call to convert enclosed latex file to html.
   cmd <-
-    if(missing(file) || ! length(file) || file == '') 
+    if(missing(file) || ! length(file) || file == '')
       paste(optionsCmds(method), shQuote(tmptex))
-    else 
+    else
       paste(optionsCmds(method), '-o', file, shQuote(tmptex))
-    
+
   ## perform system call
   sys(cmd)
   if(cleanup && method == 'htlatex')
@@ -1336,7 +1337,7 @@ html.data.frame <-
            linkType=c('href','name'), ...)
 {
   linkType <- match.arg(linkType)
-  
+
   x   <- as.matrix(object)
   for(i in 1:ncol(x))
     {
@@ -1346,13 +1347,13 @@ html.data.frame <-
     }
   if(length(r <- dimnames(x)[[1]]))
     x <- cbind(Name=as.character(r), x)
-  
+
   cat('<TABLE BORDER>\n', file=file, append=append)
   cat('<tr>', paste('<td><h3>', dimnames(x)[[2]], '</h3></td>',sep=''), '</tr>\n',
       sep='', file=file, append=file!='')
-  
+
   if(length(link)) {
-    if(is.matrix(link)) 
+    if(is.matrix(link))
       x[link!=''] <- paste('<a ',linkType,'="', link[link!=''],'">',
                            x[link!=''],'</a>',sep='') else
     x[,linkCol] <- ifelse(link == '',x[,linkCol],
@@ -1385,10 +1386,10 @@ show.html <- function(object)
   browser <- .Options$help.browser
   if(!length(browser))
     browser <- .Options$browser
-  
+
   if(!length(browser))
     browser <- 'netscape'
-  
+
   sys(paste(browser, object, if(.Platform$OS.type == 'unix') '&'))
   invisible()
 }

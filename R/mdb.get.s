@@ -1,5 +1,5 @@
 mdb.get <- function(file, tables=NULL, lowernames=FALSE, allow=NULL,
-                    dateformat='%m/%d/%y', mdbexportArgs='-b strip', , ...)
+                    dateformat='%m/%d/%y', mdbexportArgs='-b strip', ...)
 {
   rettab <- length(tables) && is.logical(tables)
   if(rettab) tables <- NULL

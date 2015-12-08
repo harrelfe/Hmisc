@@ -1266,6 +1266,7 @@ html.latex <- function(object, file, where=c('cwd', 'tmp'),
   if(rmarkdown && ! missing(file))
     warning('do not specify file when rmarkdown=TRUE')
   if(rmarkdown) file <- character(0)
+  toConsole <- ! missing(file) && (! length(file) || file == '')
 
   ehtml = function(content) {   # Thanks to Yihui
     if(! requireNamespace('htmltools', quietly=TRUE))
@@ -1291,6 +1292,7 @@ html.latex <- function(object, file, where=c('cwd', 'tmp'),
                    tmp = tempfile())
   tmptex <- paste(tmp, 'tex', sep='.')
   infi   <- readLines(fi)
+
   cat('\\documentclass{report}', sty,
       if(method == 'hevea') '\\def\\tabularnewline{\\\\}',
       '\\begin{document}', infi,
@@ -1306,6 +1308,21 @@ html.latex <- function(object, file, where=c('cwd', 'tmp'),
     
   ## perform system call
   sys(cmd)
+
+  if(method == 'hevea' && ! toConsole) {
+    ## Remove 2 bottom lines added by HeVeA
+    infi <- readLines(file)
+    i <- grep('<hr style="height:2"><blockquote class="quote"><em>This document was translated from L<sup>A</sup>T<sub>E</sub>X by', infi)
+    i <- c(i, grep('</em><a href="http://hevea.inria.fr/index.html"><em>H</em><em><span style="font-size:small"><sup>E</sup></span></em><em>V</em><em><span style="font-size:small"><sup>E</sup></span></em><em>A</em></a><em>.</em></blockquote></body>', infi))
+    if(length(i)) {
+      infi <- infi[- i]
+      writeLines(infi, file)
+    }
+    if(cleanup) unlink(paste(gsub('\\.html', '', file), 'haux', sep='.'))
+    return(structure(list(file=file), class='html'))
+    
+  }
+
   if(cleanup && method == 'htlatex')
     unlink(paste(tmp, c('tex', 'tmp','idv','lg','4tc','aux','dvi','log',
                         'xref','4ct'), sep='.'))

@@ -1,6 +1,6 @@
 require(Hmisc)
 ht <- function(x) {
-  base <- gsub('\\.tex', '', x)
+  base <- gsub('\\.tex', '', x$file)
   invisible(html(w, method='hevea', file=paste(base, 'html', sep='.')))
 }
 
@@ -18,7 +18,7 @@ w <- latex(summaryM(age + height + type ~ sex , data=dbase, overall=TRUE,
       msdsize='scriptsize', round=2, digits=2, prtest='P', pdig=2,
       file='/tmp/a.tex',
       label="table:summary")
-h <- ht(w)
+ht(w)
 ## If this were in a knitr document you could have the following after the @
 ## that ends the chunk to also include the LaTeX typeset table (omit the ## )
 ## \input{/tmp/a}
@@ -36,7 +36,7 @@ w <- latex(
   middle.bold=TRUE, msdsize='scriptsize',
   exclude1=FALSE,   digits=2, long=TRUE, prmsd=TRUE, 
   npct="slash")
-h <- ht(w)
+ht(w)
 
 ## Example taken from help file for summaryM
 options(digits=3)
@@ -63,8 +63,8 @@ table(as.character(Symptoms))
 f <- summaryM(age + sex + sbp + Symptoms ~ treatment + country,
               groups='treatment', test=TRUE)
 w <- latex(f, file='/tmp/c.tex', msdsize='scriptsize',
-           npct='slash', middle.bold=TRUE, prmsd=TRUE, append=TRUE)
-h <- ht(w)
+           npct='slash', middle.bold=TRUE, prmsd=TRUE)
+ht(w)
 
 
 getHdata(pbc)
@@ -73,4 +73,4 @@ s5 <- summaryM(bili + albumin + stage + protime + sex +
 w <- latex(s5, npct='both', insert.bottom = "More stuff to add \\ldots",
            middle.bold=TRUE,
            file='/tmp/d.tex')
-h <- ht(w)
+ht(w)

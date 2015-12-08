@@ -1278,7 +1278,6 @@ html.latex <- function(object, file, where=c('cwd', 'tmp'),
       'TeX4ht', '1.0.0', src = src, stylesheet = ss)
     htmltools::attachDependencies(content, d)
   }
-
   
   fi  <- object$file
   fibase <- gsub('\\.tex', '', fi)
@@ -1292,7 +1291,9 @@ html.latex <- function(object, file, where=c('cwd', 'tmp'),
                    tmp = tempfile())
   tmptex <- paste(tmp, 'tex', sep='.')
   infi   <- readLines(fi)
-  cat('\\documentclass{report}', sty, '\\begin{document}', infi,
+  cat('\\documentclass{report}', sty,
+      if(method == 'hevea') '\\def\\tabularnewline{\\\\}',
+      '\\begin{document}', infi,
       '\\end{document}\n', file=tmptex, sep='\n')
   sc <- if(.Platform$OS.type == 'unix') ';' else '&'
 

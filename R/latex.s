@@ -1257,7 +1257,7 @@ html <- function(object, ...) UseMethod('html')
 
 
 html.latex <- function(object, file, where=c('cwd', 'tmp'),
-                       method=c('htlatex', 'hevea'), rmarkdown=FALSE,
+                       method=c('hevea', 'htlatex'), rmarkdown=FALSE,
                        cleanup=TRUE, ...)
 {
   where  <- match.arg(where)

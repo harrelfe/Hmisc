@@ -7,7 +7,7 @@ Changes in version 3.17-1 (2015-12-08)
 	 * drawPlot: fixed bug in defining Points and Curve functions; added col argument to Points and Curve; removed helper functions for Points and Curve from Key.s; returned object invisibly; added type='loess' to Curve()
 	 * upFirst: new function
 	 * mdb.get: added mdbexportArgs argument which among other things allows -b strip to be omitted
-	 * html: for hevea added definition of tabularnewline as \\
+	 * html: for hevea added definition of tabularnewline as \\, changed method to default to hevea
 
 Changes in version 3.17-0 (2015-09-20)
    * format.df (used by latex.default): added space after textless, textgreater

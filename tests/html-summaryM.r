@@ -15,7 +15,7 @@ dbase= data.frame(sex, age, height, type)
 
 ht(summaryM(age + height + type ~ sex , data=dbase, overall=TRUE,
             test=TRUE), 'a',
-   caption="Descriptive Statistics",
+   caption="Cool descriptive statistics",
    label="table:summary")
 
 ## If this were in a knitr document you could have the following after the @

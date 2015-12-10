@@ -1318,7 +1318,11 @@ html.latex <- function(object, file, where=c('cwd', 'tmp'),
       infi <- infi[- i]
       writeLines(infi, file)
     }
-    if(cleanup) unlink(paste(gsub('\\.html', '', file), 'haux', sep='.'))
+    if(cleanup) {
+      bf <- gsub('\\.html', '', file)
+      unlink(c(paste(bf, 'haux', sep='.'),
+               paste(bf, 'enclosed.tex', sep='-')))
+    }
     return(structure(list(file=file), class='html'))
     
   }

@@ -35,7 +35,6 @@ w <- ht(
   exclude1=FALSE)
 
 ## Example taken from help file for summaryM
-options(digits=3)
 set.seed(173)
 sex <- factor(sample(c("m","f"), 500, rep=TRUE))
 country <- factor(sample(c('US', 'Canada'), 500, rep=TRUE))

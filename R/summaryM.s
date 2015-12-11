@@ -172,7 +172,7 @@ summaryM <- function(formula, groups=NULL, data=NULL, subset,
       } else {
         w <- as.numeric(w) == 1 ## multiple choice variables
         ## n[i] <- nrow(w)
-        n[i] <- sum(! is.na(w) & xms == '')
+        n[i] <- sum(! is.na(apply(w, 1, sum)) & xms == '')
         g    <- as.factor(gr)
         ncat <- ncol(w)
         tab <- matrix(NA, nrow=ncat, ncol=length(levels(g)),

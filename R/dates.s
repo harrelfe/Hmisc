@@ -4,7 +4,7 @@ yearDays <- function(time) {
   time$mon[] <- time$mday[] <- time$sec[] <- time$min <- time$hour <- 0
   time$year <- time$year + 1
 
-  return(as.POSIXlt(as.POSIXct(time))$yday)
+  return(as.POSIXlt(as.POSIXct(time))$yday + 1)
 }
 
 monthDays <- function(time) {

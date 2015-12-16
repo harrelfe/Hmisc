@@ -8,7 +8,6 @@ import(Formula)
 # import(grid)
 import(lattice)
 import(ggplot2)
-import(proto)
 ## import(scales)
 
 importFrom(acepack, ace, avas)

@@ -1,4 +1,4 @@
-Changes in version 3.17-1 (2015-12-16)
+Changes in version 3.17-1 (2015-12-17)
    * sasxport.get: added lowernames argument with default equal to the previous behavior (convert varixcable names to lower case)
 	 * biVar, rcorrp.cens, spower, transace: changed 1 - pnorm(z) to pnorm(-z)
    * latex.summaryM: added arguments prob, prN, and legend.bottom
@@ -10,6 +10,7 @@ Changes in version 3.17-1 (2015-12-16)
 	 * html: for hevea added definition of tabularnewline as \\, changed method to default to hevea
 	 * summaryM: fixed calculation of N for mChoice variables
 	 * stat-plsmo.r: re-written by Hadley Wickham (thanks!) to work with new ggplot2
+	 * ggplot.summaryP, ggplot.transcan: added mapping and environment arguments to satisfy rules about generics
 
 Changes in version 3.17-0 (2015-09-20)
    * format.df (used by latex.default): added space after textless, textgreater

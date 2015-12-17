@@ -1242,7 +1242,7 @@ plot.transcan <- function(x, ...)
   }
 }
 
-ggplot.transcan <- function(data, scale=FALSE, ...)
+ggplot.transcan <- function(data, mapping, scale=FALSE, ..., environment)
 {
   x <- data
   trantab  <- x$trantab

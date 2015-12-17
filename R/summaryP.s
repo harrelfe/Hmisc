@@ -220,10 +220,10 @@ plot.summaryP <-
 }
 
 ggplot.summaryP <-
-  function(data, groups=NULL, exclude1=TRUE, xlim=c(0, 1),
+  function(data, mapping, groups=NULL, exclude1=TRUE, xlim=c(0, 1),
            col=NULL, shape=NULL, size=function(n) n ^ (1/4),
            sizerange=NULL, abblen=5,
-           autoarrange=TRUE, addlayer=NULL, ...)
+           autoarrange=TRUE, addlayer=NULL, ..., environment)
 {
   X <- data
   class(X) <- setdiff(class(X), 'summaryP')

@@ -17,6 +17,7 @@
 \alias{reLabelled}
 \alias{label.data.frame}
 \alias{label<-.data.frame}
+\alias{relevel.labelled}
 \alias{combineLabels}
 \title{
   Label Attribute of an Object
@@ -64,7 +65,7 @@
 
   \code{Label} (actually \code{Label.data.frame}) is a function which generates
   S source code that makes the labels in all the variables in a data
-  frame easy to edit. 
+  frame easy to edit.
 
   \code{llist} is like \code{list} except that it preserves the names or
   labels of the component variables in the variables \code{label}
@@ -86,6 +87,8 @@
   \code{data.frame.labelled} is another utility function, that adds a
   class \code{"labelled"} to every variable in a data frame that has a
   \code{"label"} attribute but not a \code{"labelled"} class.
+
+  \code{relevel.labelled} is a method for preserving \code{label}s with the \code{relevel} function.
 
   \code{reLabelled} is used to add a \code{'labelled'} class back to
   variables in data frame that have a 'label' attribute but no 'labelled'
@@ -126,13 +129,15 @@ plotmathTranslate(x)
 
 data.frame.labelled(object)
 
+\method{relevel}{labelled}(x, \dots)
+
 reLabelled(object)
 
 combineLabels(\dots)
 }
 \arguments{
   \item{x}{
-    any object (for \code{plotmathTranslate} is a character string)
+    any object (for \code{plotmathTranslate} is a character string). For \code{relevel} is a \code{factor} variable.
   }
   \item{self}{lgoical, where to interact with the object or its components}
   \item{units}{
@@ -194,7 +199,7 @@ combineLabels(\dots)
   }
   \item{\dots}{
     a list of variables or expressions to be formed into a \code{list}.
-    Ignored for \code{print.labelled}.
+    Ignored for \code{print.labelled}.  For \code{relevel} is the \code{level} (a single character string) to become the new reference (first) category.
   }
   \item{file}{
     the name of a file to which to write S source code.  Default is
@@ -209,7 +214,7 @@ combineLabels(\dots)
   }
 }
 \value{
-  \code{label} returns the label attribute of x, if any; otherwise, "".  
+  \code{label} returns the label attribute of x, if any; otherwise, "".
   \code{label} is used
   most often for the individual variables in data frames.  The function
   \code{sas.get} copies labels over from SAS if they exist.

@@ -10,12 +10,12 @@ label.default <- function(x, default=NULL, units=plot, plot=FALSE,
 {
   if(length(default) > 1)
     stop("the default string cannot be of length greater then one")
-  
+
   at <- attributes(x)
   lab <- at$label
   if(length(default) && (!length(lab) || lab==''))
     lab <- default
-  
+
   un  <- at$units
   labelPlotmath(lab,
                 if(units) un else NULL,
@@ -27,10 +27,10 @@ label.Surv <- function(x, default=NULL, units=plot,
                        type=c('any', 'time', 'event'), ...)
 {
   type <- match.arg(type)
-  
+
   if(length(default) > 1)
     stop("the default string cannot be of length greater then one")
-  
+
   at  <- attributes(x)
   lab <- at$label
   ia  <- at$inputAttributes
@@ -42,9 +42,9 @@ label.Surv <- function(x, default=NULL, units=plot,
     for(lb in poss)
       if(! length(lab) && lb != '') lab <- lb
   }
-  
+
   if(length(default) && (!length(lab) || lab=='')) lab <- default
-  
+
   un  <- NULL
   if(units) {
     un <- at$units
@@ -69,7 +69,7 @@ label.data.frame <- function(x, default=NULL, self=FALSE, ...) {
     } else if(length(default) == 0) {
       default <- list(default)
     }
-    
+
     labels <- mapply(FUN=label, x=x, default=default, MoreArgs=list(self=TRUE), USE.NAMES=FALSE)
     names(labels) <- names(x)
     return(labels)
@@ -80,9 +80,9 @@ labelPlotmath <- function(label, units=NULL, plotmath=TRUE, grid=FALSE,
                           chexpr=FALSE)
 {
   if(!length(label)) label <- ''
-  
+
   if(!length(units) || (length(units)==1 && is.na(units))) units <- ''
-  
+
   g <-
     if(plotmath) function(x, y=NULL, xstyle=NULL, ystyle=NULL)
       {
@@ -96,7 +96,7 @@ labelPlotmath <- function(label, units=NULL, plotmath=TRUE, grid=FALSE,
         }
         if(!length(y))
           return(tryparse(h(plotmathTranslate(x), xstyle), x, chexpr))
-      
+
         w <- paste('list(',h(plotmathTranslate(x), xstyle), ',',
                    h(plotmathTranslate(y), ystyle), ')', sep='')
         tryparse(w, paste(x, y), chexpr)
@@ -113,13 +113,13 @@ labelPlotmath <- function(label, units=NULL, plotmath=TRUE, grid=FALSE,
 plotmathTranslate <- function(x)
 {
   if(length(grep('paste', x))) return(x)
-  
+
   specials <- c(' ','%','_')
   spec <- FALSE
   for(s in specials)
     if(length(grep(s,x)))
       spec <- TRUE
-  
+
   if(spec) x <- paste('paste("',x,'")',sep='')
   else if(substring(x,1,1)=='/') x <- paste('phantom()', x, sep='')
   x
@@ -157,7 +157,7 @@ labelLatex <- function(x=NULL, label='', units='', size='smaller[2]',
   if(is.list(value)) {
     stop("cannot assign a list to be a object label")
   }
-    
+
   if(length(value) != 1L) {
     stop("value must be character vector of length 1")
   }
@@ -178,7 +178,7 @@ labelLatex <- function(x=NULL, label='', units='', size='smaller[2]',
   if(missing(self) && is.list(value)) {
     self <- FALSE
   }
-  
+
   if(self) {
     xc <- class(x)
     xx <- unclass(x)
@@ -210,23 +210,23 @@ labelLatex <- function(x=NULL, label='', units='', size='smaller[2]',
   u <- attr(x,'units')
   if(length(u))
     attr(x,'units') <- NULL   # so won't print twice
-  
+
   cat(attr(x, "label"),
       if(length(u))
         paste('[', u, ']', sep=''),
       "\n")
-  
+
   attr(x, "label") <- NULL
   class(x) <-
     if(length(class(x))==1 && class(x)=='labelled')
       NULL
     else
       class(x)[class(x) != 'labelled']
-  
+
   ## next line works around print bug
   if(!length(attr(x,'class')))
     attr(x,'class') <- NULL
-  
+
   NextMethod("print")
   invisible(x.orig)
 }
@@ -243,17 +243,23 @@ Label.data.frame <- function(object, file='', append=FALSE, ...)
   for(i in 1:length(nn)) {
     lab <- attr(object[[nn[i]]],'label')
     lab <- if(length(lab)==0) '' else lab
-    cat("label(",nn[i],")\t<- '",lab,"'\n", 
+    cat("label(",nn[i],")\t<- '",lab,"'\n",
         append=if(i==1)
         append
         else
         TRUE,
         file=file, sep='')
   }
-  
+
   invisible()
 }
 
+relevel.labelled <- function(x, ...) {
+  lab <- label(x)
+  x <- NextMethod(x)
+  label(x) <- lab
+  x
+}
 
 reLabelled <- function(object)
 {
@@ -267,7 +273,7 @@ reLabelled <- function(object)
         object[[i]] <- x
       }
     }
-  
+
   object
 }
 
@@ -284,7 +290,7 @@ llist <- function(..., labels=TRUE)
           lname[i]
         else
           name[i]
-      
+
       ## R barked at setting vname[i] to NULL
       lab <- vname[i]
       if(labels)
@@ -293,10 +299,10 @@ llist <- function(..., labels=TRUE)
           if(length(lab) == 0)
             lab <- vname[i]
         }
-    
+
       label(dotlist[[i]]) <- lab
     }
-  
+
   names(dotlist) <- vname[1:length(dotlist)]
   dotlist
 }

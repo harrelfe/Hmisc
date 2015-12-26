@@ -1,7 +1,7 @@
-Changes in version 3.17-2 (2016-)
+Changes in version 3.17-2 (2016-01-01)
    * consolidate: A simpler version of assignment form of consolidate, avoids eval/match.call and works with the byte-compiler (thanks: Tomas Kalibera)
    * relevel.labelled: new function (thanks: Max Gordon)
-   
+
 Changes in version 3.17-1 (2015-12-17)
    * sasxport.get: added lowernames argument with default equal to the previous behavior (convert varixcable names to lower case)
 	 * biVar, rcorrp.cens, spower, transace: changed 1 - pnorm(z) to pnorm(-z)

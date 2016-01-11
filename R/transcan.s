@@ -1305,7 +1305,12 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
                         'icoef', 'scale', 'center', 'y.imputed')
   
   for(i in 1:n.impute) {
-    if(used.mice) completed.data <- mice::complete(xtrans, i)
+    if(used.mice) {
+      completed.data <- mice::complete(xtrans, i)
+      for(impvar in names(completed.data))
+        if(length(attr(completed.data[[impvar]], 'contrasts')))
+          attr(completed.data[[impvar]], 'contrasts') <- NULL
+    }
     else {
       completed.data <- data
       imputed.data <-

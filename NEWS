@@ -1,7 +1,8 @@
-Changes in version 3.17-2 (2016-01-11)
+Changes in version 3.17-2 (2016-01-20)
    * consolidate: A simpler version of assignment form of consolidate, avoids eval/match.call and works with the byte-compiler (thanks: Tomas Kalibera)
    * relevel.labelled: new function (thanks: Max Gordon)
 	 * fit.mult.impute: remove contrasts attribute for imputations done by mice
+	 * formatCons: fixed bug when stats contains one row (thanks: Cole Beck)
 
 Changes in version 3.17-1 (2015-12-17)
    * sasxport.get: added lowernames argument with default equal to the previous behavior (convert varixcable names to lower case)

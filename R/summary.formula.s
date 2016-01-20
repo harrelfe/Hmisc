@@ -1636,7 +1636,7 @@ formatCons <- function(stats, nam, tr, group.freq, prmsd, sep='/',
             paste(st[j], '~(', cqu[j,4], '$\\pm$',
                   cqu[j,5],')', sep='')
       if(prN) {
-        st[j] <- paste0(st[j],"{\\",outer.size," $N=",cqu[j,6],"$}")
+        st[j] <- paste0(st[j],"{\\",outer.size," $N=",cqu[j,ncol(cqu)],"$}")
       }
     }
   } else {
@@ -1645,10 +1645,10 @@ formatCons <- function(stats, nam, tr, group.freq, prmsd, sep='/',
             function(x,sep) paste(x[1],sep,x[2],sep,x[3],'  ',
                                   x[4],'+/-',x[5],sep=''), sep=sep)
     } else {
-      st <- apply(cqu[,-ncol(cqu)], 1, paste, collapse=sep)
+      st <- apply(cqu[,seq(3),drop=FALSE], 1, paste, collapse=sep)
     }
     if(prN) {
-      st <- setNames(sprintf("%s  N=%s", st, cqu[,ncol(cqu)]), names(st))
+      st <- setNames(sprintf("%s  N=%s", st, cqu[,ncol(cqu),drop=FALSE]), names(st))
     }
   }
 

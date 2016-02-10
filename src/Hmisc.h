@@ -3,7 +3,6 @@
 
 #include <string.h>
 #include <errno.h>
-#include <S.h>
 #include <R.h>
 #include <Rdefines.h>
 

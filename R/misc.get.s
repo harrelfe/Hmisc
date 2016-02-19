@@ -3,7 +3,8 @@ spss.get <- function(file, lowernames=FALSE,
                      use.value.labels=TRUE,
                      to.data.frame=TRUE,
                      max.value.labels=Inf,
-                     force.single=TRUE, allow=NULL, charfactor=FALSE) {
+                     force.single=TRUE, allow=NULL, charfactor=FALSE,
+                     reencode=NA) {
   if(length(grep('http://', file))) {
     tf <- tempfile()
     download.file(file, tf, mode='wb', quiet=TRUE)
@@ -12,7 +13,8 @@ spss.get <- function(file, lowernames=FALSE,
     
   w <- read.spss(file, use.value.labels=use.value.labels,
                  to.data.frame=to.data.frame,
-                 max.value.labels=max.value.labels)
+                 max.value.labels=max.value.labels,
+                 reencode=reencode)
   
   a   <- attributes(w)
   vl  <- a$variable.labels

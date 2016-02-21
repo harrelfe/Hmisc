@@ -6,6 +6,7 @@ Changes in version 3.17-2 (2016-02-13)
 	 * Hmisc.h: removed reference to S.h
 	 * fit.mult.impute.s: moved source code to separate file, away from transcan.s
 	 * fit.mult.impute: added warning if fitter is lm, which does not use imputation variances for sigma or standard errors
+	 * spss.get: added reencode argument (Thanks: Andreas Osowski)
 
 Changes in version 3.17-1 (2015-12-17)
    * sasxport.get: added lowernames argument with default equal to the previous behavior (convert varixcable names to lower case)

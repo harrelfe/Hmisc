@@ -175,7 +175,7 @@ transcan(x, method=c("canonical","pc"),
 
 \method{plot}{transcan}(x, \dots)
 
-\method{ggplot}{transcan}(data, scale=FALSE, \dots)
+\method{ggplot}{transcan}(data, mapping, scale=FALSE, \dots, environment)
 
 \method{impute}{transcan}(x, var, imputation, name, pos.in, data, 
        list.out=FALSE, pr=TRUE, check=TRUE, \dots)
@@ -498,6 +498,7 @@ invertTabulated(x, y, freq=rep(1,length(x)),
   }
 	\item{scale}{for \code{ggplot.transcan} set \code{scale=TRUE} to
 		scale transformed values to [0,1] before plotting.}
+	\item{mapping,environment}{not used; needed because of rules about generics}
   \item{var}{
     For \code{\link{impute}}, is a variable that was originally a column
     in \code{x}, for which imputated values are to be filled

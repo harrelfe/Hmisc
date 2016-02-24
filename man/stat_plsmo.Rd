@@ -6,7 +6,7 @@
 \usage{
 stat_plsmo(mapping = NULL, data = NULL, geom = "smooth",
   position = "identity", n = 80, fullrange = FALSE, span = 2/3,
-  fun=function(x) x, na.rm = FALSE, ...)
+  fun=function(x) x, na.rm = FALSE, show.legend=NA, inherit.aes=TRUE, ...)
 }
 \arguments{
 \item{mapping,data,geom,position}{see \code{\link[ggplot2]{ggplot}}}
@@ -16,7 +16,8 @@ the data}
 \item{span}{see \code{f} argument to \code{lowess}}
 \item{fun}{a function to transform smoothed \code{y}}
 \item{na.rm}{If \code{FALSE} (the default), removes missing values with
-a warning.  If \code{TRUE} silently removes missing values.}
+	a warning.  If \code{TRUE} silently removes missing values.}
+\item{show.legend,inherit.aes}{see \code{ggplot2}}
 \item{...}{other arguments are passed to smoothing function}
 }
 \value{

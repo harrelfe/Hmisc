@@ -13,7 +13,7 @@
 }
 \usage{
 mdb.get(file, tables=NULL, lowernames=FALSE, allow=NULL,
-        dateformat='\%m/\%d/\%y', ...)
+        dateformat='\%m/\%d/\%y', mdbexportArgs='-b strip', ...)
 }
 \arguments{
   \item{file}{the file name containing the Access database}
@@ -27,13 +27,15 @@ mdb.get(file, tables=NULL, lowernames=FALSE, allow=NULL,
     variable names are converted to periods as with \R before version
     1.9.}
   \item{dateformat}{see \code{\link{cleanup.import}}.  Default is the
-	usual Access format used in the U.S.}
+		usual Access format used in the U.S.}
+	\item{mdbexportArgs}{command line arguments to issue to mdb-export.
+		Set to \code{''} to omit \code{'-b strip'}.}
   \item{\dots}{arguments to pass to \code{csv.get}}
 }
 \details{
   Uses the \code{mdbtools} package executables \code{mdb-tables},
-  \code{mdb-schema}, and \code{mdb-export} (with option \code{-b strip}
-	to drop any binary output).  In Debian/Ubuntu Linux run
+  \code{mdb-schema}, and \code{mdb-export} (with by default option
+	\code{-b strip} to drop any binary output).  In Debian/Ubuntu Linux run
   \code{apt get install mdbtools}.
   \code{cleanup.import} is invoked by \code{csv.get} to transform
   variables and store them as efficiently as possible.

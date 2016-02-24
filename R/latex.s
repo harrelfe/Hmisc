@@ -619,10 +619,10 @@ latex.default <-
     if(! length(insert.top)) return(NULL)
     paste(if(center == 'none') '\n\\vspace{1ex}\n\n',
           paste('\\textbf{', insert.top, '}', sep=''),
-          if(center %in% c('centerline', 'centering')) '\\\\',
-          if(center == 'none') '\n\\vspace{1ex}\n\n', sep='')
+ #         if(center %in% c('centerline', 'centering')) '\\\\',
+          if(center != 'center') '\n\\vspace{1ex}\n\n', sep='')
   }
-
+  
   if(length(caption) && !ctable) {
     caption <- paste(sl, "caption",
                      if(length(caption.lot))
@@ -1254,6 +1254,7 @@ dvips.latex <- function(object, ...) invisible(dvips.dvi(dvi.latex(object),...))
 dvigv.latex <- function(object, ...) invisible(dvigv.dvi(dvi.latex(object),...))
 
 
+
 html <- function(object, ...) UseMethod('html')
 
 
@@ -1395,6 +1396,7 @@ show.html <- function(object)
 }
 
 print.html <- function(x, ...) show.html(x)
+
 
 latexSN <- function(x) {
   x <- format(x)

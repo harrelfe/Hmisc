@@ -5,9 +5,8 @@ consolidate <- function(x, value, protect, ...) {
   UseMethod("consolidate")
 }
 
-'consolidate<-' <- function(x, protect, ..., value)
-  eval.parent(replace(match.call(expand.dots=FALSE), list=1,
-                      values=list(as.name("consolidate"))))
+'consolidate<-' <- function(x, protect=FALSE, ..., value)
+  consolidate(x, value, protect, ...)
 
 consolidate.default <- function(x, value, protect=FALSE, ...) {
   if(missing(x) || is.null(x))

@@ -1,4 +1,5 @@
-# From Sandy Muspratt: http://stackoverflow.com/questions/28652284/how-to-change-color-of-facet-borders-when-using-facet-grid/
+# From Sandy Muspratt: http://stackoverflow.com/questions/28652284
+# See better approach there, test is in ~/r/ggplot2/panel-border.r
 
 colorFacet <- function(g, col=adjustcolor('blue', alpha.f=0.3)) {
 

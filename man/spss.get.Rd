@@ -15,7 +15,7 @@ variables.  By default, underscores in names are converted to periods.
 spss.get(file, lowernames=FALSE, datevars = NULL,
          use.value.labels = TRUE, to.data.frame = TRUE,
          max.value.labels = Inf, force.single=TRUE,
-         allow=NULL, charfactor=FALSE)
+         allow=NULL, charfactor=FALSE, reencode = NA)
 }
 \arguments{
   \item{file}{input SPSS save file.  May be a file on the WWW, indicated
@@ -37,6 +37,7 @@ spss.get(file, lowernames=FALSE, datevars = NULL,
   \item{charfactor}{set to \code{TRUE} to change character variables to
 	factors if they have fewer than n/2 unique values.  Blanks and null
 	strings are converted to \code{NA}s.}
+  \item{reencode}{see \code{\link[foreign]{read.spss}}}
 }
 \value{
   a data frame or list

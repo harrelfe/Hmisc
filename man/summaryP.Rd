@@ -51,9 +51,10 @@ summaryP(formula, data = NULL, subset = NULL,
                     col = trellis.par.get('superpose.symbol')$col,
                     corner=c(0,1)),
          outerlabels=TRUE, autoarrange=TRUE, \dots)
-\method{ggplot}{summaryP}(data, groups=NULL, exclude1=TRUE, xlim=c(0, 1),
-           col=NULL, shape=NULL, size=function(n) n ^ (1/4),
-           sizerange=NULL, abblen=5, autoarrange=TRUE, addlayer=NULL, \dots)
+\method{ggplot}{summaryP}(data, mapping, groups=NULL, exclude1=TRUE,
+           xlim=c(0, 1), col=NULL, shape=NULL, size=function(n) n ^ (1/4),
+           sizerange=NULL, abblen=5, autoarrange=TRUE, addlayer=NULL,
+           \dots, environment)
 \method{latex}{summaryP}(object, groups=NULL, exclude1=TRUE, file='', round=3,
                            size=NULL, append=TRUE, \dots)
 }
@@ -105,6 +106,7 @@ summaryP(formula, data = NULL, subset = NULL,
 	 \code{ggplot}}
  \item{shape}{a vector of plotting symbols to override \code{ggplot}
 	 defaults}
+ \item{mapping, environment}{not used; needed because of rules for generics}
  \item{size}{for \code{ggplot}, a function that transforms denominators
 	into metrics used for the \code{size} aesthetic.  Default is the
 	fourth root function so that the area of symbols is proportional to

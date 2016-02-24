@@ -1,4 +1,17 @@
-Changes in version 3.17-1 (2015-12-02)
+Changes in version 3.17-3 (2016-02-24)
+   * latex.default: added blank lines after textbf with insert.top unless center='center' (was unless 'none')
+
+Changes in version 3.17-2 (2016-02-13)
+   * consolidate: A simpler version of assignment form of consolidate, avoids eval/match.call and works with the byte-compiler (thanks: Tomas Kalibera)
+   * relevel.labelled: new function (thanks: Max Gordon)
+	 * fit.mult.impute: remove contrasts attribute for imputations done by mice
+	 * formatCons: fixed bug when stats contains one row (thanks: Cole Beck)
+	 * Hmisc.h: removed reference to S.h
+	 * fit.mult.impute.s: moved source code to separate file, away from transcan.s
+	 * fit.mult.impute: added warning if fitter is lm, which does not use imputation variances for sigma or standard errors
+	 * spss.get: added reencode argument (Thanks: Andreas Osowski)
+
+Changes in version 3.17-1 (2015-12-17)
    * sasxport.get: added lowernames argument with default equal to the previous behavior (convert varixcable names to lower case)
 	 * biVar, rcorrp.cens, spower, transace: changed 1 - pnorm(z) to pnorm(-z)
    * latex.summaryM: added arguments prob, prN, and legend.bottom
@@ -6,6 +19,11 @@ Changes in version 3.17-1 (2015-12-02)
 	 * Save: changed to use compress='xz' by default, and added compress argument
 	 * drawPlot: fixed bug in defining Points and Curve functions; added col argument to Points and Curve; removed helper functions for Points and Curve from Key.s; returned object invisibly; added type='loess' to Curve()
 	 * upFirst: new function
+	 * mdb.get: added mdbexportArgs argument which among other things allows -b strip to be omitted
+	 * html: for hevea added definition of tabularnewline as \\, changed method to default to hevea
+	 * summaryM: fixed calculation of N for mChoice variables
+	 * stat-plsmo.r: re-written by Hadley Wickham (thanks!) to work with new ggplot2
+	 * ggplot.summaryP, ggplot.transcan: added mapping and environment arguments to satisfy rules about generics
 
 Changes in version 3.17-0 (2015-09-20)
    * format.df (used by latex.default): added space after textless, textgreater

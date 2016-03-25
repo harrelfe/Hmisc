@@ -169,7 +169,7 @@ mgp.axis.labels <- function(value, type=c('xy','x','y','x and y'))
 mgp.axis <-
   function(side, at=NULL, ...,
            mgp=mgp.axis.labels(type=if(side==1 | side==3)'x' else 'y'),
-           axistitle=NULL)
+           axistitle=NULL, cex.axis=par('cex.axis'), cex.lab=par('cex.lab'))
 {
   ## Version of axis() that uses appropriate mgp from mgp.axis.labels and
   ## gets around bug in axis(2, ...) that causes it to assume las=1
@@ -178,12 +178,13 @@ mgp.axis <-
   nr <- mfrow[1]; nc <- mfrow[2]
   w <- list(side=side)
   w <- c(w, list(...))
+  w$cex.axis <- cex.axis
   if(length(at)) w$at <- at
   if(side == 1 || side == 3) {
     w$mgp <- mgp / nr
     w$tcl <- tcl / nr
     if(side==1 && length(axistitle))
-      title(xlab=axistitle, mgp = mgp / min(2.25, nr))
+      title(xlab=axistitle, mgp = mgp / min(2.25, nr), cex.lab=cex.lab)
   } else {
     w$mgp <- mgp / nc
     w$tcl <- tcl / nc
@@ -192,7 +193,7 @@ mgp.axis <-
     w$adj <- if(las == 0) 0.5
     else 1
     if(side == 2 && length(axistitle))
-      title(ylab=axistitle, mgp=mgp / min(2.25, nc))
+      title(ylab=axistitle, mgp=mgp / min(2.25, nc), cex.lab=cex.lab)
   }
   do.call('axis', w)
   invisible()

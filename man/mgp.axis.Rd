@@ -22,7 +22,7 @@ are 2nd value of \code{par('mgp')} to use.  Use
 mgp.axis(side, at = NULL, \dots,
          mgp = mgp.axis.labels(type = if (side == 1 | side == 3) "x"
                                else "y"),
-         axistitle = NULL)
+         axistitle = NULL, cex.axis=par('cex.axis'), cex.lab=par('cex.lab'))
 
 mgp.axis.labels(value,type=c('xy','x','y','x and y'))
 }
@@ -30,7 +30,7 @@ mgp.axis.labels(value,type=c('xy','x','y','x and y'))
 \arguments{
   \item{side,at}{see \code{\link{par}}}
   \item{\dots}{arguments passed through to \code{\link{axis}}}
-  \item{mgp}{see \code{\link{par}}}
+  \item{mgp,cex.axis,cex.lab}{see \code{\link{par}}}
   \item{axistitle}{if specified will cause \code{axistitle} to be drawn
 	on the appropriate axis as a title}
   \item{value}{vector of values to which to set system option

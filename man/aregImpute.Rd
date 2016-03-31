@@ -571,6 +571,44 @@ plot(ss, sds, xlab='Smoothing Parameter', ylab='SD of Imputed Values',
 abline(v=.2,   lty=2)  # default value of fweighted
 abline(h=rmse, lty=2)  # root MSE of residuals from linear regression
 }
+
+# Function to automatically reorder variables for use with aregImpute
+# Modification of function written by Yong Hao Pua
+# Specify nperm=integer to obtain that many formulae with random
+# permutation of order of variables; omit nperm to obtain formula
+# with variables sorted by decreasing numbmer of NAs
+
+reform <- function(formula, data, nperm) {
+  cs <- all.vars(formula)
+  data <- data[, cs]
+  ismiss <- function(x) if(is.character(x)) is.na(x) | x==''  else is.na(x) 
+  m <- sapply(data, ismiss)
+  miss.per.obs <- apply(m, 1, sum)
+  miss.per.var <- apply(m, 2, sum)
+  # Percent of observations with any missings:
+  pm <- ceiling(100 * sum(miss.per.obs > 0) / length(miss.per.obs))
+  nimpute = max(5, pm)
+  cat("Recommended number of imputations:", nimpute, "\n")
+
+  if(missing(nperm)) {
+    j <- order(miss.per.var, decreasing=TRUE) # var with highest NA freq first
+    formula <- as.formula(paste('~', paste(cs[j], collapse=' + ')))
+    }
+  else {
+    formula <- list()
+    # Could add logic to sample() until permutation is different from
+    # all previous permutations
+    for(i in 1 : nperm)
+      formula[[i]] <- as.formula(paste("~", paste(sample(cs), collapse=" + ")))
+    if(nperm == 1) formula <- formula[[1]]
+  }
+formula
+}
+d <- data.frame(x1=rnorm(50), x2=c(rep(NA, 10), runif(40)),
+                x3=c(runif(4), rep(NA, 11), runif(35)))
+reform(~ x1 + x2 + x3, data=d)
+reform(~ x1 + x2 + x3, data=d, nperm=2)
+# Give result or one of the results as the first argument to aregImpute
 }
 \keyword{smooth}
 \keyword{regression}

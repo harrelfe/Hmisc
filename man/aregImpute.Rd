@@ -257,9 +257,10 @@ Maximum number of observations shown for diagnostics.  Default is
 \code{maxn=10}, which limits the number of observations plotted to at most
 the first 10.
 }
-\item{...}{
-other arguments that are ignored
-}}
+\item{nperm}{number of random formula permutations for \code{reformM};
+	omit to sort variables by descending missing count.}
+\item{...}{other arguments that are ignored}
+}
 \value{
 a list of class \code{"aregImpute"} containing the following elements:
 
@@ -315,8 +316,6 @@ their integer codes.  Variables having no missing values will have
 for the last round of imputations, a vector containing the R-squares
 with which each sometimes-missing variable could be predicted from the
 others by \code{ace} or \code{avas}.}
-\item{nperm}{number of random formula permutations for \code{reformM};
-	omit to sort variables by descending missing count.}
 }
 \details{
 The sequence of steps used by the \code{aregImpute} algorithm is the

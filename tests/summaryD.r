@@ -1,3 +1,4 @@
+require(Hmisc)
 set.seed(135)
 maj <- factor(c(rep('North',13),rep('South',13)))
 g <- paste('Category',rep(letters[1:13],2))

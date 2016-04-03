@@ -2,6 +2,7 @@
 \alias{aregImpute}
 \alias{print.aregImpute}
 \alias{plot.aregImpute}
+\alias{reformM}
 \title{
 Multiple Imputation using Additive Regression, Bootstrapping, and
 Predictive Mean Matching
@@ -63,6 +64,16 @@ greater than zero and \code{tlinear} is set to \code{FALSE}) and the
 estimated target variable transformation is non-monotonic, imputed
 values are not unique.  When \code{type='regression'}, a random choice
 of possible inverse values is made.
+
+The \code{reformM} function provides two ways of recreating a formula to
+give to \code{aregImpute} by reordering the variables in the formula.
+This ia a modified version of a function written by Yong Hao Pua.  One
+can specify \code{nperm} to obtain a list of \code{nperm} randomly
+permuted variables.  The list is converted to a single ordinary formula
+if \code{nperm=1}.  If \code{nperm} is omitted, variables are sorted in
+descending order of the number of \code{NA}s.  \code{reformM} also
+prints a recommended number of multiple imputations to use, which is a
+minimum of 5 and the percent of incomplete observations.
 }
 \usage{
 aregImpute(formula, data, subset, n.impute=5, group=NULL,
@@ -75,6 +86,7 @@ aregImpute(formula, data, subset, n.impute=5, group=NULL,
 \method{plot}{aregImpute}(x, nclass=NULL, type=c('ecdf','hist'),
      datadensity=c("hist", "none", "rug", "density"),
      diagnostics=FALSE, maxn=10, \dots)
+reformM(formula, data, nperm)
 }
 \arguments{
 \item{formula}{
@@ -87,7 +99,9 @@ by the identify function (\code{I()}).  It is recommended that
 \code{factor()} or \code{as.factor()} do not appear in the formula but
 instead variables be converted to factors as needed and stored in the
 data frame.  That way imputations for factor variables (done using
-\code{\link{impute.transcan}} for example) will be correct.
+\code{\link{impute.transcan}} for example) will be correct.  Currently
+\code{reformM} does not handle variables that are enclosed in functions
+such as \code{I()}.
 }
 \item{x}{
   an object created by \code{aregImpute}.  For \code{aregImpute}, set
@@ -96,8 +110,7 @@ data frame.  That way imputations for factor variables (done using
   is needed if you want to later do out-of-sample imputation.
   Categorical variables are coded as integers in this matrix.
 }
-\item{data}{
-}
+\item{data}{input raw data}
 \item{subset}{
 These may be also be specified.  You may not specify \code{na.action} as
 \code{na.retain} is always used.
@@ -301,8 +314,10 @@ their integer codes.  Variables having no missing values will have
 \item{rsq}{
 for the last round of imputations, a vector containing the R-squares
 with which each sometimes-missing variable could be predicted from the
-others by \code{ace} or \code{avas}.
-}}
+others by \code{ace} or \code{avas}.}
+\item{nperm}{number of random formula permutations for \code{reformM};
+	omit to sort variables by descending missing count.}
+}
 \details{
 The sequence of steps used by the \code{aregImpute} algorithm is the
 following.
@@ -572,42 +587,10 @@ abline(v=.2,   lty=2)  # default value of fweighted
 abline(h=rmse, lty=2)  # root MSE of residuals from linear regression
 }
 
-# Function to automatically reorder variables for use with aregImpute
-# Modification of function written by Yong Hao Pua
-# Specify nperm=integer to obtain that many formulae with random
-# permutation of order of variables; omit nperm to obtain formula
-# with variables sorted by decreasing numbmer of NAs
-
-reform <- function(formula, data, nperm) {
-  cs <- all.vars(formula)
-  data <- data[, cs]
-  ismiss <- function(x) if(is.character(x)) is.na(x) | x==''  else is.na(x) 
-  m <- sapply(data, ismiss)
-  miss.per.obs <- apply(m, 1, sum)
-  miss.per.var <- apply(m, 2, sum)
-  # Percent of observations with any missings:
-  pm <- ceiling(100 * sum(miss.per.obs > 0) / length(miss.per.obs))
-  nimpute = max(5, pm)
-  cat("Recommended number of imputations:", nimpute, "\n")
-
-  if(missing(nperm)) {
-    j <- order(miss.per.var, decreasing=TRUE) # var with highest NA freq first
-    formula <- as.formula(paste('~', paste(cs[j], collapse=' + ')))
-    }
-  else {
-    formula <- list()
-    # Could add logic to sample() until permutation is different from
-    # all previous permutations
-    for(i in 1 : nperm)
-      formula[[i]] <- as.formula(paste("~", paste(sample(cs), collapse=" + ")))
-    if(nperm == 1) formula <- formula[[1]]
-  }
-formula
-}
 d <- data.frame(x1=rnorm(50), x2=c(rep(NA, 10), runif(40)),
                 x3=c(runif(4), rep(NA, 11), runif(35)))
-reform(~ x1 + x2 + x3, data=d)
-reform(~ x1 + x2 + x3, data=d, nperm=2)
+reformM(~ x1 + x2 + x3, data=d)
+reformM(~ x1 + x2 + x3, data=d, nperm=2)
 # Give result or one of the results as the first argument to aregImpute
 }
 \keyword{smooth}

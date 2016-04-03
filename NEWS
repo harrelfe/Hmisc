@@ -1,9 +1,10 @@
-Changes in version 3.17-3 (2016-03-31)
+Changes in version 3.17-3 (2016-04-03)
    * latex.default: added blank lines after textbf with insert.top unless center='center' (was unless 'none')
    * plot.summaryS: fixed bug were limits were not aligned with columns (thanks: Liping Du)
 	 * mgp.axis: respected par('tcl') but only as extreme as -0.4
 	 * mgp.axis: added cex.axis, cex.lab arguments
-	 * aregImpute: added function in help file for permuting order of variables.  Thanks: Yong Hao Pua
+	 * aregImpute: added reformM function for permuting order of variables.  Thanks: Yong Hao Pua
+	 * latex: fixed rownamesTexCmd error
 
 Changes in version 3.17-2 (2016-02-13)
    * consolidate: A simpler version of assignment form of consolidate, avoids eval/match.call and works with the byte-compiler (thanks: Tomas Kalibera)

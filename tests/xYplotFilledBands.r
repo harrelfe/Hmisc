@@ -2,6 +2,7 @@
 # compute the median and outer quartiles.  The outer quartiles are 
 # displayed using "filled bands"
 
+require(Hmisc)
 set.seed(111)
 dfr <- expand.grid(month=1:12, year=c(1997,1998), reps=1:100)
 month <- dfr$month; year <- dfr$year

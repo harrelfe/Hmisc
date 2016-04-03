@@ -14,7 +14,7 @@ library(rms)
 dd <- datadist(as.data.frame(z)); options(datadist='dd')
 f <- ols(y ~ rcs(x,5), data=z)
 par(mfrow=c(1,2))
-plot(f)
+plot(Predict(f))
 abline(v=c(-.1772,.31375))
 points(z)
 xx <- seq(-1,1,length=1000)
@@ -24,7 +24,7 @@ plot(xx[-1], diff(g(xx)))
 abline(h=0)
 par(mfrow=c(1,1))
 
-plot(f)
+plot(Predict(f))
 turns <- formals(h)$turns
 abline(v=turns)
 

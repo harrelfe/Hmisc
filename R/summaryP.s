@@ -343,6 +343,7 @@ latex.summaryP <- function(object, groups=NULL, exclude1=TRUE, file='', round=3,
                            size=NULL, append=TRUE, ...) {
   class(object) <- 'data.frame'
   rte <- attr(object, 'rows.to.exclude1')
+
   if(exclude1 && length(rte))
     object <- object[- rte, , drop=FALSE]
 
@@ -367,22 +368,38 @@ latex.summaryP <- function(object, groups=NULL, exclude1=TRUE, file='', round=3,
 
   nl <- 0
 
-  slev <- levels(svar)
+  slev  <- levels(svar)
   nslev <- length(slev)
+
   for(i in 1 : nslev) {
     
     if(nslev > 1) cat('\n\\vspace{1ex}\n\n\\textbf{', slev[i],
                       '}\n\\vspace{1ex}\n\n', sep='', file=file, append=TRUE)
-    x <- object[svar == slev[i], colnames(object) != 'stratvar']
+     x <- object[svar == slev[i], colnames(object) != 'stratvar']
+
     if(length(groups)) {
+      ord <- function(v) {
+        v  <- as.character(v)
+        un <- unique(v)
+        vn <- 1 : length(un)
+        names(vn) <- un
+        vn[v]
+      }
+      varn <- ord(x$var)
+      valn <- ord(x$val)
+      
       r <- reshape(x, timevar=groups, direction='wide',
                    idvar=c('var', 'val'))
-      ## reshape does not respect order of levels of factor variables; reorder
+      ## reorder rows to be in original order
+      ir <- order(varn[as.character(r$var)],
+                  valn[as.character(r$val)])
+      r <- r[ir, ]
+      
+      ## reshape does not respect order of levels of factors; reorder columns
       lev <- levels(x[[groups]])
       r <- r[c('var', 'val', paste('y', lev, sep='.'))]
       
       nl  <- length(lev)
-      var <- unique(as.character(r$var))
 
       w <- latex(r[colnames(r) != 'var'],
                  table.env=FALSE, file=file, append=TRUE,

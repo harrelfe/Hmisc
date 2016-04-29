@@ -1,5 +1,7 @@
-Changes in version 3.17-4 (2016-04-06)
+Changes in version 3.17-4 (2016-04-29)
    * latex.summaryP: correctly ordered rows after running reshape because groups was present
+   * rcspline.plot: took confidence limits into account when computing default ylim
+   * bootkm: new test in tests
 
 Changes in version 3.17-3 (2016-04-03)
    * latex.default: added blank lines after textbf with insert.top unless center='center' (was unless 'none')

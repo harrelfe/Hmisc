@@ -39,7 +39,7 @@ structure(W, label=label, labels=lab, class=c('ynbind', 'matrix'))
   x <- NextMethod('[')
   at$labels <- at$labels[cols]
   attributes(x) <- c(attributes(x), at)
-  class(x) <- 'ynbind'
+  if(is.matrix(x)) class(x) <- 'ynbind'
   x
   }
  

@@ -3,6 +3,7 @@ Changes in version 3.17-4 (2016-04-30)
    * rcspline.plot: took confidence limits into account when computing default ylim
    * bootkm: new test in tests
    * [.ynbind: Made it return an unclassed vector if the user was subsetting to a single column.  Upcoming R release fails in table() otherwise.  Thanks: Michael Lawrence <lawrence.michael@gene.com>
+   * Merge: added function (moving from greport package)
 
 Changes in version 3.17-3 (2016-04-03)
    * latex.default: added blank lines after textbf with insert.top unless center='center' (was unless 'none')

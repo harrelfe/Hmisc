@@ -50,6 +50,7 @@ escapeRegex             Escapes any characters that would have special
 event.chart             Flexible Event Chart for Time-to-Event Data
 event.convert           Event Conversion for Time-to-Event Data
 event.history           Produces event.history graph for survival data
+ffCompress              Transform Data Frame Into a Compact 'ff' Object
 find.matches            Find Close Matches
 first.word              First Word in a String or Expression
 format.df               Format a Data Frame or Matrix for LaTeX or HTML
@@ -89,6 +90,7 @@ mApply                  Apply a Function to Rows of a Matrix or Vector
 mChoice                 Methods for Storing and Analyzing Multiple
                         Choice Variables
 mdb.get                 Read Tables in a Microsoft Access Database
+Merge                   Merge Multiple Data Frames or Data Tables
 mgp.axis                Draw Axes With Side-Specific mgp Parameters
 mhgr                    Miscellaneous Functions for Epidemiology
 minor.tick              Minor Tick Marks
@@ -155,7 +157,7 @@ src                     Source a File from the Current Working
 stata.get               Enhanced Importing of STATA Files
 stat_plsmo              Add a lowess smoother without counfidence
                         bands.
-string.bounding.box     Determine Diamentions of Strings
+string.bounding.box     Determine Dimensions of Strings
 string.break.line       Break a String into Many Lines at Newlines
 stringDims              String Dimentions
 subplot                 Embed a new plot within an existing plot
@@ -184,6 +186,7 @@ t.test.cluster          t-test for Clustered Data
 units                   Units Attribute of a Vector
 upData                  Update a Data Frame or Cleanup a Data Frame
                         after Importing
+upFirst                 Change First Letters to Upper Case
 valueTags               Store Discriptive Information About an Object
 varclus                 Variable Clustering
 wtd.mean                Weighted Statistical Estimates

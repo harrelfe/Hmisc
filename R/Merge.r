@@ -22,8 +22,7 @@
 #' all <- Merge(a, b, d)
 
 Merge <- function(..., id, all=TRUE, verbose=TRUE) {
-  if(! requireNamespace('data.table', quietly=TRUE))
-    stop('data.table package not installed')	
+  
   w <- list(...)
   nams <- (as.character(sys.call())[-1])[1 : length(w)]
   m <- length(nams)
@@ -37,11 +36,12 @@ Merge <- function(..., id, all=TRUE, verbose=TRUE) {
     nams[i] <- gsub('(.*)\\$(.*)', '\\2', x)
   }
   d1   <- w[[1]]
-  idt  <- data.table::is.data.table(d1)
-  id   <- if(idt) data.table::key(d1) else all.vars(id)
+  idt  <- is.data.table(d1)
+  id   <- if(idt) key(d1) else all.vars(id)
   m <- length(w)
   va <- n <- nu <- integer(m)
   nin1 <- nnin1 <- rep(NA, m)
+  ## did <- if(idt) subdt(d1, , id, with=FALSE) else d1[id]
   did <- if(idt) d1[, id, with=FALSE] else d1[id]
   idc1 <- unique(as.character(interaction(did)))
   id.union <- id.intersection <- idc1
@@ -57,15 +57,16 @@ Merge <- function(..., id, all=TRUE, verbose=TRUE) {
     uvar <- c(uvar, nd[j])
     lab  <- c(lab,  sapply(d, label)[j])
     un   <- c(un,   sapply(d, units)[j])
-    idt <- data.table::is.data.table(d)
+    idt  <- is.data.table(d)
     M <- if(i == 1) d
     else
       if(idt) d[M]
     else
       merge(M, d, by=id, all.x=TRUE, all.y=all)
-    did <- if(idt) d[, id, with=FALSE] else d[id]
-    idc <- unique(as.character(interaction(did)))
-    di <- dim(d)
+    ## did <- if(idt) subdt(d, , id, with=FALSE) else d[id]
+    did   <- if(idt) d[, id, with=FALSE] else d[id]
+    idc   <- unique(as.character(interaction(did)))
+    di    <- dim(d)
     va[i] <- di[2]
     n [i] <- di[1]
     nu[i] <- length(unique(idc))
@@ -101,7 +102,8 @@ Merge <- function(..., id, all=TRUE, verbose=TRUE) {
   nams  <- c(nams, 'Merged')
   va    <- c(va, ncol(M))
   n     <- c(n, nrow(M))
-  did   <- if(data.table::is.data.table(M)) M[, id, with=FALSE] else M[id]
+  ## did   <- if(is.data.table(M)) subdt(M, , id, with=FALSE) else M[id]
+  did   <- if(is.data.table(M)) M[, id, with=FALSE] else M[id]
   idc   <- unique(as.character(interaction(did)))
   nu    <- c(nu, length(unique(idc)))
   nin1  <- c(nin1,  sum(idc %in%  idc1))

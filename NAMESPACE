@@ -31,6 +31,8 @@ importFrom(graphics, abline, arrows, axis, axis.Date,
            strheight, strwidth, symbols, text, title)
 importFrom(utils, browseURL, download.file, find,
            getFromNamespace, object.size, read.csv, read.table)
+           
+importFrom(data.table, is.data.table, key)
 
 S3method(print, arrGrob)
 S3method(ggplot, transcan)

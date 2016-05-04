@@ -48,14 +48,16 @@ summaryP <- function(formula, data=NULL,
   ylevels.to.exclude1 <- NULL
   for(ny in namY) {
     y <- Y[[ny]]
+    la <- label(y)
+    if(la == '') la <- ny
     tab <- table(y)
     tab <- structure(as.numeric(tab), names=names(tab))
     if(length(tab) == 2)
       ylevels.to.exclude1 <-
-        rbind(ylevels.to.exclude1,
-              data.frame(var=ny, val=names(tab)[which.max(tab)]))
+      rbind(ylevels.to.exclude1,
+            data.frame(var=la, val=names(tab)[which.max(tab)]))
   }
-              
+  
   for(i in 1 : nrow(ux)) {
     j <- rep(TRUE, n)
     if(nX > 0) for(k in 1 : nX) j <- j & (X[[k]] == ux[i, k])

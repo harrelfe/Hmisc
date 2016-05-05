@@ -1027,8 +1027,8 @@ latexTranslate <- function(object, inn=NULL, out=NULL, pb=FALSE,
   
   dig <- c('0','1','2','3','4','5','6','7','8','9')
   
-  not_na_text <- which(!is.na(text))
-  for(i in not_na_text) {
+  ## provide only indices of non-missing values
+  for(i in which(!is.na(text))) {
     lt <- nchar(text[i])
     x <- substring(text[i],1 : lt,1 : lt)
     j <- x == '^'

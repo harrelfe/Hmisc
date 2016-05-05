@@ -1003,26 +1003,32 @@ latexTranslate <- function(object, inn=NULL, out=NULL, pb=FALSE,
                            greek=FALSE, ...)
 {
   text <- object
+  not_na <- !is.na(text)
+  
+  #* If all values are missing, return the original vector
+  #* there is nothing to translate
+  if (!sum(not_na)) return(text)
   
   inn <- c("|",  "%",  "#",   "<=",     "<",  ">=",     ">",  "_", "\\243",
            "&", inn, 
            if(pb)
              c("[","(","]",")"))
-
+  
   out <- c("$|$","\\%","\\#", "$\\leq$","$<$","$\\geq$","$>$","\\_", "\\pounds",
            "\\&", out, 
            if(pb)
              c("$\\left[","$\\left(","\\right]$","\\right)$"))
-
-  text <- sedit(text, '$', 'DOLLARS', wild.literal=TRUE)   ##17Nov00
-  text <- sedit(text, inn, out)
-
+  
+  text[not_na] <- sedit(text[not_na], '$', 'DOLLARS', wild.literal=TRUE)   ##17Nov00
+  text[not_na] <- sedit(text[not_na], inn, out)
+  
   ##See if string contains an ^ - superscript followed by a number
   ## (number condition added 31aug02)
-
+  
   dig <- c('0','1','2','3','4','5','6','7','8','9')
-
-  for(i in 1 : length(text)) {
+  
+  not_na_text <- which(!is.na(text))
+  for(i in not_na_text) {
     lt <- nchar(text[i])
     x <- substring(text[i],1 : lt,1 : lt)
     j <- x == '^'
@@ -1038,14 +1044,14 @@ latexTranslate <- function(object, inn=NULL, out=NULL, pb=FALSE,
       ie <-
         if(any(k))
           is + ((1 : length(remain))[k])[1]
-        else
-          length(x)+1
+      else
+        length(x)+1
       
       ##See if math mode already turned on (odd number of $ to left of ^)
       dol <-
         if(sum(x[1 : is] == '$') %% 2)
           ''
-        else '$'
+      else '$'
       
       substring2(text[i],is,ie-1) <- paste(dol,'^{',
                                            substring(text[i],is+1,ie-1),'}',
@@ -1067,7 +1073,6 @@ latexTranslate <- function(object, inn=NULL, out=NULL, pb=FALSE,
   
   sedit(text, 'DOLLARS', '\\$', wild.literal=TRUE)  ## 17Nov00
 }
-
 
 latex <- function(object, ...)
 {

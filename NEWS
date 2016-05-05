@@ -1,5 +1,6 @@
 Changes in version 3.17-5 (2016-05-03)
    * summaryP: fixed exclude1 logic - was not excluding enough levels (inconsistent use of variable names vs. labels)
+	 * latexTranslate: any NAs in first argument changed to "" before conversion
 
 Changes in version 3.17-4 (2016-05-02)
    * latex.summaryP: correctly ordered rows after running reshape because groups was present

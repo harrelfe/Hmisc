@@ -170,7 +170,8 @@ dvigv(object, \dots)
   \item{object}{
     For \code{latex}, any S object.  For \code{dvi} or \code{dvigv}, an object
     created by \code{latex}.  For \code{latexTranslate} is a vector of
-    character strings to translate.
+    character strings to translate.  Any \code{NA}s are set to blank
+		strings before conversion.
   }
   \item{x}{
     any object to be \code{print}ed verbatim for \code{latexVerbatim}.  For

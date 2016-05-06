@@ -146,7 +146,8 @@ latex(object, \dots)
 
 \method{print}{latex}(x, \dots)
 
-latexTranslate(object, inn=NULL, out=NULL, pb=FALSE, greek=FALSE, \dots)
+latexTranslate(object, inn=NULL, out=NULL, pb=FALSE, greek=FALSE, na='',
+               \dots)
 
 latexSN(x)
 
@@ -478,6 +479,8 @@ dvigv(object, \dots)
   }
   \item{greek}{set to \code{TRUE} to have \code{latexTranslate} put names
     for greek letters in math mode and add backslashes}
+	\item{na}{single character string to translate \code{NA} values to for
+		\code{latexTranslate}}
   \item{hspace}{
     horizontal space, e.g., extra left margin for verbatim text.  Default
     is none.  Use e.g. \code{hspace="10ex"} to add 10 extra spaces to the left

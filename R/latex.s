@@ -1000,9 +1000,9 @@ latex.list <- function(object,
 ## that surrounding  by $$ is OK
 ## latexTranslate is used primarily by summary.formula
 latexTranslate <- function(object, inn=NULL, out=NULL, pb=FALSE,
-                           greek=FALSE, ...)
+                           greek=FALSE, na='', ...)
 {
-  text <- ifelse(is.na(object), '', as.character(object))
+  text <- ifelse(is.na(object), na, as.character(object))
   
   inn <- c("|",  "%",  "#",   "<=",     "<",  ">=",     ">",  "_", "\\243",
            "&", inn, 

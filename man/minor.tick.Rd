@@ -57,7 +57,8 @@ plot(runif(20), runif(20))
 minor.tick()
 
 # Plot with arguments passed to axis()
-plot(c(0,1), c(0,1), type = 'n', axes = F, ann= F) # setting up a plot without axes and annotation
+plot(c(0,1), c(0,1), type = 'n', axes = FALSE, ann = FALSE)
+# setting up a plot without axes and annotation
 points(runif(20), runif(20))                       # plotting data
 axis(1, pos = 0.5, lwd = 2)                        # showing X-axis at Y = 0.5 with formatting
 axis(2, col = 2)                                   # formatted Y-axis

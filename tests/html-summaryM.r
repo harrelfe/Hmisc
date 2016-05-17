@@ -64,4 +64,3 @@ getHdata(pbc)
 s5 <- summaryM(bili + albumin + stage + protime + sex +
                 age + spiders ~ drug, data=pbc)
 ht(s5, 'd', insert.bottom = "More stuff to add \\ldots")
-

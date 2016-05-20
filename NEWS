@@ -1,8 +1,10 @@
-Changes in version 3.17-5 (2016-05-19)
+Changes in version 3.17-5 (2016-05-20)
    * summaryP: fixed exclude1 logic - was not excluding enough levels (inconsistent use of variable names vs. labels)
 	 * latexTranslate: any NAs in first argument changed to "" before conversion
 	 * minor.tick: added arguments to pass through (thanks: vhorvath)
 	 * tests/latexpng.r: test conversion of LaTeX table to png
+	 * latexTabular: made it properly call latexTranslate separately for each column, convert argument to matrix or data frame if a vector
+	 * tests/latexTabular.r: new test
 
 Changes in version 3.17-4 (2016-05-02)
    * latex.summaryP: correctly ordered rows after running reshape because groups was present

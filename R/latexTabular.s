@@ -3,8 +3,14 @@ latexTabular <- function(x, headings=colnames(x),
                          halign=paste(rep('c',ncol(x)),collapse=''),
                          helvetica=TRUE, translate=TRUE, hline=0, ...)
 {
-  x <- latexTranslate(x)
+  if(! (is.matrix(x) || is.data.frame(x))) x <- as.matrix(x)
+  nc <- ncol(x)
+  for(i in 1 : nc)
+    if(is.factor(x[, i]) || is.character(x[, i]))
+      x[, i] <- latexTranslate(x[, i])
+
   if(length(list(...))) x <- format.df(x, ...)
+
   xhalign <- substring(halign, 1:nchar(halign), 1:nchar(halign))
   w <- paste('\\begin{tabular}{', align, '}', sep='')
   if(hline == 2) w <- paste(w, '\\hline', sep='')

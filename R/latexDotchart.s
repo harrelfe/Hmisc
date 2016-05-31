@@ -8,6 +8,7 @@ latexDotchart <-
 {
   txt <- function(x, y, s, size=NULL, just=c('c','l','r'), tt=FALSE) {
     just <- match.arg(just)
+    s <- latexTranslate(s)
     n <- max(length(x), length(y), length(s))
     x <- rep(x, length.out=n)
     y <- rep(y, length.out=n)
@@ -28,17 +29,17 @@ latexDotchart <-
     y2 <- rep(y2, length.out=n)
     z <- character(n)
     for(i in 1:n)
-      z[i] <- if(x1[i]==x2[i])
+      z[i] <- if(x1[i] == x2[i])
         sprintf('\\put(%g,%g){\\line(0,%g){%g}}', x1[i], y1[i],
                 1*(y2[i] >= y1[i]) - 1*(y2[i] < y1[i]), abs(y2[i]-y1[i]))
-    else if(y1[i]==y2[i])
+    else if(y1[i] == y2[i])
       sprintf('\\put(%g,%g){\\line(%g,0){%g}}', x1[i], y1[i],
               1*(x2[i] >= x1[i]) - 1*(x2[i] < x1[i]), abs(x2[i]-x1[i]))
     else
         sprintf('\\drawline(%g,%g)(%g,%g)',
                       x1[i], y1[i], x2[i], y2[i])
     if(color != 'black')
-      z <- c(if(color=='gray') '\\color[gray]{0.8}' else
+      z <- c(if(color == 'gray') '\\color[gray]{0.8}' else
              sprintf('\\color{%s}', color),
              z, '\\color{black}')
     z
@@ -55,12 +56,11 @@ latexDotchart <-
          f('\\%s', size))
   
   ndata <- length(data)
-  if(missing(labels))
-    {
-      if(length(names(data)))
-        labels <- names(data)
-      else labels <- paste("#", seq(along = ndata))
-    }
+  if(missing(labels)) {
+    if(length(names(data)))
+      labels <- names(data)
+    else labels <- paste("#", seq(along = ndata))
+  }
   else labels <- rep(as.character(labels), length = ndata)
 
   if(missing(groups)) {
@@ -70,10 +70,10 @@ latexDotchart <-
       ord <- order(-data)
       data <- data[ord]
       labels  <- labels[ord]
-      if(!missing(auxdata)) auxdata <- auxdata[ord]
+      if(! missing(auxdata)) auxdata <- auxdata[ord]
     }
   } else {
-    if(!sort.) {
+    if(! sort.) {
       ##assume data sorted in groups, but re-number groups
       ##to be as if groups given in order 1,2,3,...
       ug <- unique(as.character(groups))
@@ -88,12 +88,11 @@ latexDotchart <-
     groups  <- groups[ord]
     data    <- data[ord]
     labels  <- labels[ord]
-    if(!missing(auxdata)) auxdata <- auxdata[ord]
+    if(! missing(auxdata)) auxdata <- auxdata[ord]
   }
 
   alldat <- c(data, gdata)
-  if(!missing(auxdata))
-    auxdata <- format(c(auxdata, auxgdata))
+  if(! missing(auxdata)) auxdata <- format(c(auxdata, auxgdata))
   
   alllab <- c(labels, glabels)
   ## set up margins and user coordinates, draw box
@@ -132,16 +131,15 @@ latexDotchart <-
   delt <- ( - (yl[2] - yl[1]))/den
   ypos <- seq(yl[2], by = delt, length = ndata)
 
-  if(!missing(groups))
-    {
-      ypos1 <- ypos + 2 * delt * (if(length(groups)>1)
+  if(! missing(groups)) {
+    ypos1 <- ypos + 2 * delt * (if(length(groups)>1)
                                   cumsum(c(1, diff(groups) > 0))
-      else 1)
-      diff2 <- c(3 * delt, diff(ypos1))
-      ypos2 <- ypos1[abs(diff2 - 3 * delt) < abs(0.001 * delt)] - 
-        delt
-      ypos <- c(ypos1, ypos2) - delt
-    }
+                                else 1)
+    diff2 <- c(3 * delt, diff(ypos1))
+    ypos2 <- ypos1[abs(diff2 - 3 * delt) < abs(0.001 * delt)] - 
+      delt
+    ypos <- c(ypos1, ypos2) - delt
+  }
 
   ##put on labels and data
   ypos <- ypos + delt
@@ -152,27 +150,26 @@ latexDotchart <-
            color=lcolor))
   
   for(i in seq(along = alldat))
-    if(!is.na(alldat[i] + ypos[i]))
+    if(! is.na(alldat[i] + ypos[i]))
       z <- c(z, f('\\put(%g,%g){\\circle*{%g}}',
                   xt(alldat[i]), yt(ypos[i]), dotsize))
                 
-  if(!missing(auxdata))
-    {
-      z <- c(z, txt(w - 0.02, yt(ypos[nongrp]), auxdata,
+  if(! missing(auxdata)) {
+    z <- c(z, txt(w - 0.02, yt(ypos[nongrp]), auxdata,
+                  size=size.labels, just='r'))
+    if(! missing(auxtitle))
+      z <- c(z, txt(w - 0.02, yt(yl[2]) + 0.1, auxtitle,
                     size=size.labels, just='r'))
-      if(!missing(auxtitle))
-        z <- c(z, txt(w - 0.02, yt(yl[2]) + 0.1, auxtitle,
-                      size=size.labels, just='r'))
-    }
+  }
   labng <- alllab[nongrp]
   yposng <- ypos[nongrp]
-
+  
   z <- c(z, txt(margin[1] - 0.05, yt(yposng), labng,
                 size=size.labels, just='r', tt=ttlabels))
-  if(!missing(groups))
+  if(! missing(groups))
     z <- c(z, txt(margin[1] - 0.05, yt(ypos[-nongrp]), alllab[-nongrp],
                   size=size.group.labels, just='r'))
-
+  
   z <- c(z, '\\end{picture}')
   z
 }

@@ -1,4 +1,4 @@
-Changes in version 3.17-5 (2016-06-06)
+Changes in version 3.17-5 (2016-06-18)
    * summaryP: fixed exclude1 logic - was not excluding enough levels (inconsistent use of variable names vs. labels)
 	 * latexTranslate: any NAs in first argument changed to "" before conversion
 	 * minor.tick: added arguments to pass through (thanks: vhorvath)
@@ -6,6 +6,7 @@ Changes in version 3.17-5 (2016-06-06)
 	 * latexTabular: made it properly call latexTranslate separately for each column, convert argument to matrix or data frame if a vector
 	 * tests/latexTabular.r: new test
 	 * latexDotchart: added call to latexTranslate to escape special characters for LaTeX such as underscore and pound sign
+	 * ggfreqScatter: new function
 
 Changes in version 3.17-4 (2016-05-02)
    * latex.summaryP: correctly ordered rows after running reshape because groups was present

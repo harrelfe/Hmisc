@@ -24,5 +24,5 @@ ggfreqScatter <- function(x, y, bins=50, g=10,
       xlab(xlab) + ylab(ylab)
 }
 
-
+utils::globalVariables('fg')
 

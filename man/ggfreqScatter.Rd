@@ -10,7 +10,7 @@ overlapping points are grouped into quantile groups and level of
 transparency is used to provide count information.
 }
 \usage{
-ggplotScatter(x, y, bins=50, g=10,
+ggfreqScatter(x, y, bins=50, g=10,
               xlab=as.character(substitute(x)),
               ylab=as.character(substitute(y)))
 }

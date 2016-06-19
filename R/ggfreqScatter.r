@@ -35,18 +35,21 @@ ggfreqScatter <- function(x, y, bins=50, g=10,
   if(ny) k$y <- as.numeric(as.character(k$y))
   k$fg <- cut2(k$Freq, g=g)
 
-  brn <- sort(unique(k$Freq))
-  if(length(brn) > 15) brn <- unique(quantile(k$Freq, seq(0, g) / g))
+  ufreq <- sort(unique(k$Freq))
+  few <- length(ufreq) <= 15
+  brn <- if(few) ufreq else unique(quantile(k$Freq, seq(0, g) / g))
   w <- if(nsize)
          ggplot(k, aes(x=x, y=y, size=Freq ^ 0.25)) + geom_point(...) +
            scale_size_continuous(breaks=brn ^ 0.25, labels=round(brn)) +
            xlab(xlab) + ylab(ylab) +
            guides(size = guide_legend(title='Frequency'))
        else
-         ggplot(k, aes(x=x, y=y, alpha=fg, color=as.integer(fg))) +
+         ggplot(k, aes(x=x, y=y, alpha=fg,
+                       color=if(few) k$Freq else as.integer(fg))) +
            geom_point(...) +
-           scale_color_gradientn(colors=fcolors, breaks=1 : length(levels(k$fg)),
-                                 labels=levels(k$fg)) +
+           scale_color_gradientn(colors=fcolors,
+                                 breaks=if(few) ufreq else 1 : length(levels(k$fg)),
+                                 labels=if(few) ufreq else levels(k$fg)) +
            guides(alpha = FALSE, 
                   color = guide_legend(title='Frequency')) +
            xlab(xlab) + ylab(ylab)

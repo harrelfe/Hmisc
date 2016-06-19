@@ -7,7 +7,7 @@ where there is a very large number of overlapping values.  This works
 for continuous and categorical \code{x} and \code{y}.  For continuous
 variables it serves the same purpose as hexagonal binning.  Counts for
 overlapping points are grouped into quantile groups and level of
-transparency is used to provide count information.
+transparency and rainbow colors are used to provide count information.
 }
 \usage{
 ggfreqScatter(x, y, bins=50, g=10,

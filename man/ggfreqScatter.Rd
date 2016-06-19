@@ -11,8 +11,14 @@ transparency and rainbow colors are used to provide count information.
 }
 \usage{
 ggfreqScatter(x, y, bins=50, g=10,
-              xlab=as.character(substitute(x)),
-              ylab=as.character(substitute(y)), \dots)
+              xtrans = function(x) x,
+              ytrans = function(y) y,
+              xbreaks = pretty(x, 10),
+              ybreaks = pretty(y, 10),
+              xminor  = NULL, yminor = NULL,
+              xlab = as.character(substitute(x)),
+              ylab = as.character(substitute(y)),
+              fcolors = rainbow(10), \dots)
 }
 \arguments{
 \item{x}{x-variable}
@@ -22,8 +28,16 @@ ggfreqScatter(x, y, bins=50, g=10,
 	2-vector, the first element corresponds to \code{x} and the second to
 	\code{y}.}
 \item{g}{number of quantile groups to make for frequency counts}
-\item{xlab}{x-axis label}
-\item{ylab}{y-axis label}
+\item{xtrans,ytrans}{functions specifying transformations to be made
+	before binning and plotting}
+\item{xbreaks,ybreaks}{vectors of values to label on axis, on original
+	scale}
+\item{xminor,yminor}{values at which to put minor tick marks, on
+	original scale}
+\item{xlab,ylab}{axis labels.  If not specified and variable has a
+	\code{label}, that label will be used.}
+\item{fcolors}{\code{colors} argument to pass to
+	\code{scale_color_gradientn} to color code frequencies}
 \item{\dots}{arguments to pass to \code{geom_point} such as \code{shape}
 	and \code{size}}
 }

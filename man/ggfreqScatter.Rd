@@ -12,16 +12,20 @@ transparency and rainbow colors are used to provide count information.
 \usage{
 ggfreqScatter(x, y, bins=50, g=10,
               xlab=as.character(substitute(x)),
-              ylab=as.character(substitute(y)))
+              ylab=as.character(substitute(y)), \dots)
 }
 \arguments{
 \item{x}{x-variable}
 \item{y}{y-variable}
 \item{bins}{for continuous \code{x} or \code{y} is the number of bins to
-	create by rounding.  Ignored for categorical variables}
+	create by rounding.  Ignored for categorical variables.  If a
+	2-vector, the first element corresponds to \code{x} and the second to
+	\code{y}.}
 \item{g}{number of quantile groups to make for frequency counts}
 \item{xlab}{x-axis label}
 \item{ylab}{y-axis label}
+\item{\dots}{arguments to pass to \code{geom_point} such as \code{shape}
+	and \code{size}}
 }
 \value{a \code{ggplot} object}
 \author{Frank Harrell}

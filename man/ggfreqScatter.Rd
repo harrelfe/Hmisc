@@ -18,7 +18,7 @@ ggfreqScatter(x, y, bins=50, g=10,
               xminor  = NULL, yminor = NULL,
               xlab = as.character(substitute(x)),
               ylab = as.character(substitute(y)),
-              fcolors = rainbow(10), \dots)
+              fcolors = rainbow(10), nsize=FALSE, \dots)
 }
 \arguments{
 \item{x}{x-variable}
@@ -38,6 +38,12 @@ ggfreqScatter(x, y, bins=50, g=10,
 	\code{label}, that label will be used.}
 \item{fcolors}{\code{colors} argument to pass to
 	\code{scale_color_gradientn} to color code frequencies}
+\item{nsize}{set to \code{TRUE} to not vary color or transparency but
+	instead to size the symbols in relation to the number of points.  Best
+	with both \code{x} and \code{y} are discrete.  \code{ggplot2}
+	\code{size} is taken as the fourth root of the frequency.  If there
+	are 15 or unique frequencies all the unique frequencies are used,
+	otherwise \code{g} quantile groups of frequencies are used.}
 \item{\dots}{arguments to pass to \code{geom_point} such as \code{shape}
 	and \code{size}}
 }
@@ -61,8 +67,10 @@ ggfreqScatter(x1, y)
 y1 <- sample(LETTERS[1:10], length(x), TRUE)
 ggfreqScatter(x, y1)
 
-# Both categorical
-ggfreqScatter(x1, y1)
+# Both categorical, larger point symbols, box instead of circle
+ggfreqScatter(x1, y1, shape=15, size=7)
+# Vary box size instead
+ggfreqScatter(x1, y1, nsize=TRUE, shape=15)
 }
 \keyword{hplot}
 \concept{grouping}

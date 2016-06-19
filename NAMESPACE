@@ -22,7 +22,7 @@ importFrom(gridExtra, arrangeGrob)
 ## importFrom(tables, tabular, table_options)
 ## importFrom(ggplot2, geom_segment)
 
-importFrom(grDevices, adjustcolor, col2rgb, dev.list, gray,
+importFrom(grDevices, adjustcolor, col2rgb, dev.list, gray, rainbow,
            xy.coords)
 importFrom(graphics, abline, arrows, axis, axis.Date,
            axis.POSIXct, barplot, box, hist, legend, lines,

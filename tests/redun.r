@@ -1,3 +1,4 @@
+require(Hmisc)
 set.seed(1)
 n <- 100
 x1 <- runif(n)

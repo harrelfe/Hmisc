@@ -12,7 +12,8 @@ latexTabular(x, headings=colnames(x),
              helvetica=TRUE, translate=TRUE, hline=0, \dots)
 }
 \arguments{
-  \item{x}{a matrix or data frame}
+  \item{x}{a matrix or data frame, or a vector that is automatically
+		converted to a matrix}
   \item{headings}{a vector of character strings specifying column
 		headings for \samp{latexTabular}, defaulting to \code{x}'s
 	\code{colnames}}

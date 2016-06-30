@@ -10,15 +10,12 @@ for(i in 1:1) {
   load('z.rda')
   s <-
     read.S(paste('~/projects/consulting/gsk/REDUCE/oct03/data/sass',
-                 ds[i]  sys(paste('dataload fh10sep.xpt z.rda',ds[i]))
+                 ds[i]))
+  sys(paste('dataload fh10sep.xpt z.rda',ds[i]))
   load('z.rda')
   s <-
     read.S(paste('~/projects/consulting/gsk/REDUCE/oct03/data/sass',
                  ds[i],sep='/'))
-  
-,sep='/'))
-  
-
 }
 
   

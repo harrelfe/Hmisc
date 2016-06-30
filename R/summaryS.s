@@ -136,6 +136,19 @@ plot.summaryS <-
     strip.default(which.given, which.panel, var.name, factor.levels=levs, ...)
   }
 
+  ylev <- levels(X$yvar)
+  lims <- if(length(xlim)) xlim else ylims[ylev]
+  ## lims needs to be repeated according to layout
+  vars <- all.vars(form)
+  cond <- vars[- (1 : 2)]
+  if(! all(cond %in% 'yvar') && cond[1] != 'yvar') {
+    ngny <- setdiff(cond, 'yvar')
+    nr <- length(unique(do.call('paste', X[ngny])))
+    lims <- rep(lims, each=nr)
+  }
+  if(length(ylim)) lims <- ylim
+  
+  
   d <- if(ptype == 'xy') {
     pan <- if(! length(datadensity)) function(...) {}
     else
@@ -155,8 +168,7 @@ plot.summaryS <-
                               scat1d.opts))
         }
       }
-    scal <-  list(y=list(relation='free',
-                    limits=if(length(ylim)) ylim else ylims, rot=0))
+    scal <-  list(y=list(relation='free', limits=lims, rot=0))
     xlab <- labelPlotmath(xlabels[xtype == 'numeric'],
                           xunits [xtype == 'numeric'])
     if(! length(groups)) {
@@ -192,17 +204,17 @@ plot.summaryS <-
      yother <- y[, -1, drop=FALSE]
      X$y    <- y[, 1]
    }
-   ylev <- levels(X$yvar)
-   lims <- if(length(xlim)) xlim else ylims[ylev]
-   ## lims needs to be repeated according to layout
-   vars <- all.vars(form)
-   cond <- vars[- (1 : 2)]
-   if(! all(cond %in% 'yvar') && cond[1] != 'yvar') {
-     ngny <- setdiff(cond, 'yvar')
-     nr <- length(unique(do.call('paste', X[ngny])))
-     lims <- rep(lims, each=nr)
-   }
-   if(length(ylim)) lims <- ylim
+   # ylev <- levels(X$yvar)
+   # lims <- if(length(xlim)) xlim else ylims[ylev]
+   # ## lims needs to be repeated according to layout
+   # vars <- all.vars(form)
+   # cond <- vars[- (1 : 2)]
+   # if(! all(cond %in% 'yvar') && cond[1] != 'yvar') {
+   #   ngny <- setdiff(cond, 'yvar')
+   #   nr <- length(unique(do.call('paste', X[ngny])))
+   #   lims <- rep(lims, each=nr)
+   # }
+   # if(length(ylim)) lims <- ylim
    scal <-  list(x=list(relation='free', limits=lims))
    if(ptype == 'xy.special') names(scal) <- 'y'
 
@@ -219,8 +231,8 @@ plot.summaryS <-
        cex  = dot.symbol$cex
        font = dot.symbol$font
        segmnts <- function (x0, y0, x1, y1, ...) 
-         grid.segments(x0, y0, x1, y1, default.units = "native",
-                       gp = gpar(...))
+         grid::grid.segments(x0, y0, x1, y1, default.units = "native",
+                       gp = grid::gpar(...))
        
        if(length(yother)) {
          snames <- colnames(yother)
@@ -268,9 +280,9 @@ plot.summaryS <-
            ## Show selected statistics just under dot lines
            if(length(yText)) {
              xpos <- xpos + llong
-             grid.text(pasted[j], xpos,
+             grid::grid.text(pasted[j], xpos,
                        unit(y[j], 'native') - unit(1.75, 'mm'), just='right',
-                       gp=gpar(cex=cex.values, col=col[i]))
+                       gp=grid::gpar(cex=cex.values, col=col[i]))
            }
          }       
          if(gp) panel.superpose(x, y, groups=as.numeric(groups),
@@ -362,10 +374,10 @@ mbarclPanel <- function(x, y, subscripts, groups=NULL, yother, ...) {
     ymid <- (Y[, 'y1'] + Y[, 'y2']) / 2.
     halfwidthci <- qnorm(0.975) * sqrt(Y[, 'se1']^2 + Y[, 'se2']^2)
     col <- adjustcolor('black', alpha.f=0.7)
-    grid.segments(xu, ymid - 0.5 * halfwidthci,
+    grid::grid.segments(xu, ymid - 0.5 * halfwidthci,
                   xu, ymid + 0.5 * halfwidthci,
                   default.units='native',
-                  gp=gpar(col=col, lwd=1.5))
+                  gp=grid::gpar(col=col, lwd=1.5))
   }
 }
 
@@ -405,14 +417,14 @@ medvPanel <-
     ## Scale density of 0-3 mm
     d <- 3 * d / max(d)
     d <- c(d, d[length(d)])
-    mm <- convertUnit(unit(d, 'mm'), 'mm', typeFrom='dimension')
+    mm <- grid::convertUnit(unit(d, 'mm'), 'mm', typeFrom='dimension')
     kol <- if(n < 5 ) adjustcolor(col, alpha.f=0.2)
      else  if(n < 10) adjustcolor(col, alpha.f=0.4)
      else col
-    grid.polygon(y=unit(c(y, y[1]), 'native'),
+    grid::grid.polygon(y=unit(c(y, y[1]), 'native'),
                  x=if(pos == 'left') unit(x, 'native') - mm
                    else              unit(x, 'native') + mm,
-                 gp=gpar(col=FALSE, fill=kol))
+                 gp=grid::gpar(col=FALSE, fill=kol))
   }
     
 
@@ -460,9 +472,9 @@ medvPanel <-
     ymid <- (Y[, 'y1'] + Y[, 'y2']) / 2.
     halfwidthci <- qnorm(0.975) * sqrt(Y[, 'se1']^2 + Y[, 'se2']^2)
     col <- adjustcolor('black', alpha.f=0.7)
-    grid.segments(xu, ymid - 0.5 * halfwidthci,
+    grid::grid.segments(xu, ymid - 0.5 * halfwidthci,
                   xu, ymid + 0.5 * halfwidthci,
                   default.units='native',
-                  gp=gpar(col=col, lwd=1.5))
+                  gp=grid::gpar(col=col, lwd=1.5))
   }
 }

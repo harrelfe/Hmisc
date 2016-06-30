@@ -1,5 +1,4 @@
 library(rms)
-source('/tmp/hmisc.s')
 set.seed(4)
 n <- c(20000,2000,200)[1]
 x2 <- rnorm(n)
@@ -22,7 +21,7 @@ plsmo(x2, is.na(x1m), datadensity=TRUE)
 dd <- datadist(x2,x1m)
 options(datadist='dd')
 f <- lrm(is.na(x1m) ~ rcs(x2,4))
-plot(f, x2=NA, fun=plogis)
+plot(Predict(f, x2, fun=plogis))
 
 
 d <- data.frame(x1,x1m,x2,y)
@@ -54,8 +53,8 @@ coef(f)
 
 g2 <- g
 g1 <- g
-Ecdf(g1)
-Ecdf(g2, add=TRUE, col='blue')
+plot(g1)
+# Ecdf(g2, add=TRUE, col='blue') ??
 
 # For MARx2, pmm works reasonably well when nk=3, regression doesn't
 # both work well when nk=0
@@ -91,11 +90,11 @@ coef(lm.fit.qr.bare(ry,r))
 cor(ry,r)
 sd(ry)
 sd(r)
-pr <- predict(g,cbind(x1,x2))
+pr  <- predict(g, cbind(x1, x2))
 pr2 <- g$linear.predictors
 describe(pr-pr2)
 Pr <- fitted(f)
-plot(Pr,pr)
+plot(Pr,pr)   # ??
 coef(lm.fit.qr.bare(Pr,pr))
 
 obs.trans <- pr + r

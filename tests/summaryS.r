@@ -22,7 +22,17 @@ d <- upData(d, labels=c(sbp='Systolic BP', dbp='Diastolic BP',
 Png <- function(z) png(paste('/tmp/summaryS', z, '.png', sep=''))
 Png(1)
 s <- summaryS(age + sbp + dbp ~ days + region + treat,  data=d)
+# d2 <- subset(d, region=='Europe')
+# par(mfrow=c(2,1))
+# with(d2, plot(days, dbp, col=as.integer(treat)))
+# ss <- subset(s, region=='Europe' & yvar == 'dbp')
+# dim(ss)
+# with(ss, plot(days, y, col=as.integer(treat)))
+
 # plot(s)   # 3 pages
+plot(s, groups='treat')
+
+Png(1)
 plot(s, groups='treat', datadensity=TRUE,
      scat1d.opts=list(lwd=.5, nhistSpike=0))
 dev.off()

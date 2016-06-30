@@ -37,8 +37,8 @@ w <- aregImpute(~monotone(Y)+monotone(X)+monotone(Zna), n.impute=5,
                 type='regression') 
 
 plot(w)
-ecdf(Zna, add=T, col='red')
-ecdf(Z, add=T, col='green')
+Ecdf(Zna, add=T, col='red')
+Ecdf(Z, add=T, col='green')
 # plot(w$imputed$Zna, Z[is.na(Zna)])  # use if n.impute=1
 # abline(a=0,b=1,lty=2)
 # lm(Z[is.na(Zna)] ~ w$imputed$Zna)
@@ -77,7 +77,7 @@ plsmo(x2, is.na(x1MARx), datadensity=TRUE)
 dd <- datadist(x2,x1MARx)
 options(datadist='dd')
 f <- lrm(is.na(x1MARx) ~ rcs(x2,4))
-plot(f, x2=NA, fun=plogis)
+plot(Predict(f, x2, fun=plogis))
 
 d <- data.frame(y1,x1,x2,x1MCAR, x1MARx,x1MARy,x1MNAR)
 ols(y1~x1+x2)
@@ -97,10 +97,12 @@ f <- fit.mult.impute(y1 ~ x1MARx + x2, ols, xtrans=g, data=d, pr=F)
 
 # MAR on y: 3 approaches; CC, MI with X, MI with X+Y
 f  <- ols(y1~x1MARy+x2)
-Mat.imputation[i,29:32] <- c(coef(f)[2:3], sqrt(diag(Varcov(f)))[2:3])
+if(FALSE) {
+Mat.imputation[i,29:32] <- c(coef(f)[2:3], sqrt(diag(vcov(f)))[2:3])
 g <- aregImpute(~x1MARy + x2, n.impute=5, data=d, pr=F, type='regression')
 f <- fit.mult.impute(y1 ~ x1MARy + x2, ols, xtrans=g, data=d, pr=F)
-Mat.imputation[i,33:36] <- c(coef(f)[2:3], sqrt(diag(Varcov(f)))[2:3])
+Mat.imputation[i,33:36] <- c(coef(f)[2:3], sqrt(diag(vcov(f)))[2:3])
 g <- aregImpute(~y1 + x1MARy + x2, n.impute=5, data=d, pr=F, type='regression')
 f <- fit.mult.impute(y1 ~ x1MARy + x2, ols, xtrans=g, data=d, pr=F)
-Mat.imputation[i,37:40] <- c(coef(f)[2:3], sqrt(diag(Varcov(f)))[2:3])
+Mat.imputation[i,37:40] <- c(coef(f)[2:3], sqrt(diag(vcov(f)))[2:3])
+}

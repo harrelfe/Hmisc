@@ -142,16 +142,14 @@ setParNro <- function(pars)
   invisible(par(pars[i]))
 }
 
-mgp.axis.labels <- function(value,type=c('xy','x','y','x and y'))
+mgp.axis.labels <- function(value, type=c('xy','x','y','x and y'))
 {
   type <- match.arg(type)
   if(missing(value)) {
     value <- .Options$mgp.axis.labels
-    pr <- par(c('mgp','las'))
+    pr <- par(c('mgp', 'las'))
     mgp <- pr$mgp
-    if(!length(value))
-      value <- c(.7, .7)
-    ##value <- c(mgp[2], if(pr$las==1) max(mgp[2],1.3) else mgp[2])
+    if(! length(value)) value <- c(.7, .7)
     return(switch(type, 
                   xy = value, 
                   x = c(mgp[1], value[1], mgp[3]),
@@ -171,30 +169,31 @@ mgp.axis.labels <- function(value,type=c('xy','x','y','x and y'))
 mgp.axis <-
   function(side, at=NULL, ...,
            mgp=mgp.axis.labels(type=if(side==1 | side==3)'x' else 'y'),
-           axistitle=NULL)
+           axistitle=NULL, cex.axis=par('cex.axis'), cex.lab=par('cex.lab'))
 {
   ## Version of axis() that uses appropriate mgp from mgp.axis.labels and
   ## gets around bug in axis(2, ...) that causes it to assume las=1
   mfrow <- par('mfrow')
+  tcl   <- max(par('tcl'), -0.4)
   nr <- mfrow[1]; nc <- mfrow[2]
   w <- list(side=side)
   w <- c(w, list(...))
-  if(length(at))
-    w$at <- at
-  if(side==1 || side==3) {
-    w$mgp <- mgp/nr
-    w$tcl <- -0.4/nr
+  w$cex.axis <- cex.axis
+  if(length(at)) w$at <- at
+  if(side == 1 || side == 3) {
+    w$mgp <- mgp / nr
+    w$tcl <- tcl / nr
     if(side==1 && length(axistitle))
-      title(xlab=axistitle, mgp = mgp / min(2.25, nr))
+      title(xlab=axistitle, mgp = mgp / min(2.25, nr), cex.lab=cex.lab)
   } else {
-    w$mgp <- mgp/nc
-    w$tcl <- -0.4/nc
+    w$mgp <- mgp / nc
+    w$tcl <- tcl / nc
     las <- par('las')
-    w$srt <- 90*(las==0)
-    w$adj <- if(las==0)0.5
+    w$srt <- 90 * (las == 0)
+    w$adj <- if(las == 0) 0.5
     else 1
-    if(side==2 && length(axistitle))
-      title(ylab=axistitle, mgp=mgp/min(2.25,nc))
+    if(side == 2 && length(axistitle))
+      title(ylab=axistitle, mgp=mgp / min(2.25, nc), cex.lab=cex.lab)
   }
   do.call('axis', w)
   invisible()

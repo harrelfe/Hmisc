@@ -7,7 +7,8 @@ ggfreqScatter <- function(x, y, bins=50, g=10,
                           yminor  = NULL,
                           xlab=as.character(substitute(x)),
                           ylab=as.character(substitute(y)),
-                          fcolors=rainbow(10), nsize=FALSE, ...) {
+                          fcolors=colorspace::rainbow_hcl(10),
+                          nsize=FALSE, ...) {
 
   xlab <- if(! missing(xlab)) xlab else if(label(x) != '') label(x, plot=TRUE) else xlab
   ylab <- if(! missing(ylab)) ylab else if(label(y) != '') label(y, plot=TRUE) else ylab

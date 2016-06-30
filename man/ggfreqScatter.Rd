@@ -18,7 +18,7 @@ ggfreqScatter(x, y, bins=50, g=10,
               xminor  = NULL, yminor = NULL,
               xlab = as.character(substitute(x)),
               ylab = as.character(substitute(y)),
-              fcolors = rainbow(10), nsize=FALSE, \dots)
+              fcolors = colorspace::rainbow_hcl(10), nsize=FALSE, \dots)
 }
 \arguments{
 \item{x}{x-variable}

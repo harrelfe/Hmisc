@@ -1,4 +1,4 @@
-Changes in version 3.17-5 (2016-06-30)
+Changes in version 3.18-0 (2016-07-10)
    * summaryP: fixed exclude1 logic - was not excluding enough levels (inconsistent use of variable names vs. labels)
 	 * latexTranslate: any NAs in first argument changed to "" before conversion
 	 * minor.tick: added arguments to pass through (thanks: vhorvath)
@@ -7,6 +7,8 @@ Changes in version 3.17-5 (2016-06-30)
 	 * tests/latexTabular.r: new test
 	 * latexDotchart: added call to latexTranslate to escape special characters for LaTeX such as underscore and pound sign
 	 * ggfreqScatter: new function
+	 * grType: new non-exported service function to sense if plotly is in effect
+	 * plot.describe: new function to make plotly graph for describe objects
 
 Changes in version 3.17-4 (2016-05-02)
    * latex.summaryP: correctly ordered rows after running reshape because groups was present

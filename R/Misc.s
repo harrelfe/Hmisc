@@ -1731,3 +1731,10 @@ knitrSet <- function(basename=NULL, w=4, h=3,
 ## see http://yihui.name/knitr/options#package_options
 
 ## Use caption package options to control caption font size
+
+
+grType <- function() {
+	if('plotly' %nin% installed.packages()[,1]) return('base')
+	if(length(g <- .Options$grType) && g == 'plotly') 'plotly' else 'base'
+	}
+	

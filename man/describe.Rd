@@ -5,6 +5,7 @@
 \alias{describe.matrix}
 \alias{describe.formula}
 \alias{describe.data.frame}
+\alias{plot.describe}
 \alias{print.describe}
 \alias{print.describe.single}
 \alias{[.describe}
@@ -68,6 +69,9 @@ example output see
 Note that the latex method assumes you have the following styles
 installed in your latex installation: setspace and relsize.
 
+The \code{plot} method for \code{describe} objects made from data frames uses
+the \code{plotly} package to make an interactive graphic that can be placed in an html report.  The user must install \code{plotly} and specify \code{options(grType='plotly')} for this to work.
+
 Sample weights may be specified to any of the functions, resulting
 in weighted means, quantiles, and frequency tables.
 
@@ -91,6 +95,8 @@ pp. 557, the term "unique" should really be "distinct".
 \method{latex}{describe.single}(object, title=NULL, condense=TRUE, vname,
       file, append=FALSE, size='small', tabular=TRUE, greek=TRUE,
       lspace=c(0,0), \dots)
+\method{plot}{plot.describe}(x, which=c('continuous', 'categorical'),
+                          n.unique=8, digits=5, ...)
 }
 \arguments{
 \item{x}{
@@ -114,7 +120,7 @@ pp. 557, the term "unique" should really be "distinct".
   up for such variables in the main listing.
 }
 \item{digits}{
-  number of significant digits to print
+  number of significant digits to print.  For \code{plot.describe} is the number of significant digits to put in hover text for \code{plotly} when showing raw variable values.}
 }
 \item{listunique}{
   For a character variable that is not an \code{mChoice} variable, that
@@ -205,6 +211,8 @@ LaTeX text size (\code{"small"}, the default, or \code{"normalsize"}, \code{"tin
   forming the \code{vspace} command) before (first element) and after
   (second element of \code{lspace}) verbatims}
 \item{vname}{unused argument in \code{latex.describe.single}}
+\item{which}{specifies whether to plot numeric continuous variables or categorical variables}
+\item{n.unique}{the minimum number of unique values a numeric variable must have before \code{plot.describe} uses it in a continuous variable plot}
 }
 \value{
 a list containing elements \code{descript}, \code{counts},
@@ -259,6 +267,9 @@ dfr <- data.frame(x=rnorm(400),y=sample(c('male','female'),400,TRUE))
 describe(dfr)
 
 \dontrun{
+options(grType='plotly')
+plot(dfr)
+
 d <- sas.get(".","mydata",special.miss=TRUE,recode=TRUE)
 describe(d)      #describe entire data frame
 attach(d, 1)

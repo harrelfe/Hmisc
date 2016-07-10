@@ -1,5 +1,5 @@
 plot.describe <- function(x, which=c('continuous', 'categorical'),
-                          n.unique=8, digits=5, ...) {
+                          n.unique=10, digits=5, ...) {
   if(grType() != 'plotly')
     stop('must have plotly package installed and specify options(grType="plotly")')
  	
@@ -31,8 +31,8 @@ plot.describe <- function(x, which=c('continuous', 'categorical'),
   lab <- sub('^.*:', '', x$descript)
   text[1] <- paste(c(lab, text[1], zz), collapse='<br>')
   # Note: plotly does not allow html tables as hover text
-
-  list(X=X, count=Y, text=text)
+  m <- rep(as.numeric(x$counts['missing']), length(X))
+  list(X=X, count=Y, text=text, missing=m)
   }
   
   w <- lapply(x, f)
@@ -44,12 +44,21 @@ plot.describe <- function(x, which=c('continuous', 'categorical'),
   
   g <- function(which) unlist(lapply(w, function(x) x[[which]]))
   z <- data.frame(xname=g('xname'), X=g('X'), count=g('count'),
-                  text=g('text'))
+                  text=g('text'), missing=g('missing'))
   
   # Note: plotly does not allow font, color, size changes for hover text
-  plot_ly(z, x=X, y=xname, size=count, text=text, mode='markers',
-          marker=list(symbol='line-ns-open'),
-          type='scatter', hoverinfo='text') %>%
-      layout(xaxis=list(title='', showticklabels=FALSE, zeroline=FALSE, showgrid=FALSE),
-             yaxis=list(title=''))
+  p <- if(any(z$missing > 0))
+       plotly::plot_ly(z, x=X, y=xname, size=count, text=text,
+                       color=missing, mode='markers',
+                       marker=list(symbol='line-ns-open'),
+          type='scatter', hoverinfo='text') else
+       plotly::plot_ly(z, x=X, y=xname, size=count, text=text,
+                       mode='markers',
+                       marker=list(symbol='line-ns-open'),
+          type='scatter', hoverinfo='text')
+  plotly::layout(xaxis=list(title='', showticklabels=FALSE, zeroline=FALSE,
+                 showgrid=FALSE),
+                 yaxis=list(title=''))
 }
+
+utils::globalVariables(c('X', 'count', 'xname'))

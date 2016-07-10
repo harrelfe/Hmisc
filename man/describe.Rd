@@ -11,8 +11,7 @@
 \alias{[.describe}
 \alias{latex.describe}
 \alias{latex.describe.single}
-\title{
-Concise Statistical Description of a Vector, Matrix, Data Frame, or Formula
+\title{Concise Statistical Description of a Vector, Matrix, Data Frame, or Formula
 }
 \description{
 \code{describe} is a generic method that invokes \code{describe.data.frame},
@@ -70,7 +69,7 @@ Note that the latex method assumes you have the following styles
 installed in your latex installation: setspace and relsize.
 
 The \code{plot} method for \code{describe} objects made from data frames uses
-the \code{plotly} package to make an interactive graphic that can be placed in an html report.  The user must install \code{plotly} and specify \code{options(grType='plotly')} for this to work.
+the \code{plotly} package to make an interactive spike histogram graphic that can be placed in an html report.  The user must install \code{plotly} and specify \code{options(grType='plotly')} for this to work.  When the use hovers the mouse over a bin for a raw data value, the actual value will pop-up (formatted using \code{digits}).  When the user hovers over the minimum data value, most of the information calculated by \code{describe} will pop up.  For each variable, the number of missing values is used to assign the color to the histogram, and a legend is drawn.  Color is not used if there are no missing values in any variable.
 
 Sample weights may be specified to any of the functions, resulting
 in weighted means, quantiles, and frequency tables.
@@ -95,8 +94,8 @@ pp. 557, the term "unique" should really be "distinct".
 \method{latex}{describe.single}(object, title=NULL, condense=TRUE, vname,
       file, append=FALSE, size='small', tabular=TRUE, greek=TRUE,
       lspace=c(0,0), \dots)
-\method{plot}{plot.describe}(x, which=c('continuous', 'categorical'),
-                          n.unique=8, digits=5, ...)
+\method{plot}{describe}(x, which=c('continuous', 'categorical'),
+                          n.unique=10, digits=5, \dots)
 }
 \arguments{
 \item{x}{
@@ -121,7 +120,6 @@ pp. 557, the term "unique" should really be "distinct".
 }
 \item{digits}{
   number of significant digits to print.  For \code{plot.describe} is the number of significant digits to put in hover text for \code{plotly} when showing raw variable values.}
-}
 \item{listunique}{
   For a character variable that is not an \code{mChoice} variable, that
   has its longest string length greater than \code{listnchar}, and that
@@ -174,7 +172,7 @@ pp. 557, the term "unique" should really be "distinct".
   \code{"01Jan2000"}.  This is useful for omitting the time
   component.  See the help file for \code{format.POSIXct} or
 \code{format.Date} for more
-  information.  For \code{latex} methods, \dots is ignored.}
+  information.  For \code{latex} and \code{plot} methods, \dots is ignored.}
 \item{file}{
 name of output file (should have a suffix of .tex).  Default name is
 formed from the first word of the \code{descript} element of the

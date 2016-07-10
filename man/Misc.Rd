@@ -2,6 +2,7 @@
 \alias{clowess}
 \alias{confbar}
 \alias{getLatestSource}
+\alias{grType}
 \alias{inverseFunction}
 \alias{james.stein}
 \alias{km.quick}
@@ -35,6 +36,8 @@
   \code{getLatestSource} fetches and \code{source}s the most recent
   source code for functions in packages in the Vanderbilty University
   CVS repository.
+  
+  \code{grType} retrieves the system option \code{grType}, which is forced to be \code{"base"} if the \code{plotly} package is not installed.
 
   \code{inverseFunction} generates a function to find all inverses of a
   monotonic or nonmonotonic function that is tabulated at vectors (x,y),
@@ -144,7 +147,7 @@ confbar(at, est, se, width, q = c(0.7, 0.8, 0.9, 0.95, 0.99),
                             qnorm((1 +  x)/2))))
 getLatestSource(x=NULL, package='Hmisc', recent=NULL, avail=FALSE,
                 type=c('svn','cvs'))
-
+grType()
 inverseFunction(x, y)
 james.stein(y, group)
 km.quick(S, times, q)

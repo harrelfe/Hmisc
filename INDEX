@@ -61,6 +61,7 @@ getHdata                Download and Install Datasets for 'Hmisc',
                         'rms', and Statistical Modeling
 getRs                   Interact with github rscripts Project
 getZip                  Open a Zip File From a URL.
+ggfreqScatter           Frequency Scatterplot
 hdquantile              Harrell-Davis Distribution-Free Quantile
                         Estimator
 histbackback            Back to Back Histograms

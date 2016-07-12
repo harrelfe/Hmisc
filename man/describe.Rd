@@ -95,7 +95,7 @@ pp. 557, the term "unique" should really be "distinct".
       file, append=FALSE, size='small', tabular=TRUE, greek=TRUE,
       lspace=c(0,0), \dots)
 \method{plot}{describe}(x, which=c('continuous', 'binary', 'categorical'),
-                          what=1 : length(x),
+                          what=NULL,
                           sort=c('ascending', 'descending', 'none'),
                           n.unique=10, digits=5, \dots)
 }

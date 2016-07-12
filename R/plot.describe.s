@@ -142,4 +142,4 @@ plot.describe <- function(x, which=c('continuous', 'binary', 'categorical'),
                  yaxis=list(title=''), autosize=TRUE)
 }
 
-###### utils::globalVariables(c('X', 'count', 'xname'))
+utils::globalVariables(c('X', 'Proportion', 'xname'))

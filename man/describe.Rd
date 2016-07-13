@@ -94,7 +94,7 @@ pp. 557, the term "unique" should really be "distinct".
 \method{latex}{describe.single}(object, title=NULL, condense=TRUE, vname,
       file, append=FALSE, size='small', tabular=TRUE, greek=TRUE,
       lspace=c(0,0), \dots)
-\method{plot}{describe}(x, which=c('continuous', 'binary', 'categorical'),
+\method{plot}{describe}(x, which=c('continuous', 'categorical'),
                           what=NULL,
                           sort=c('ascending', 'descending', 'none'),
                           n.unique=10, digits=5, \dots)
@@ -211,12 +211,12 @@ LaTeX text size (\code{"small"}, the default, or \code{"normalsize"}, \code{"tin
   forming the \code{vspace} command) before (first element) and after
   (second element of \code{lspace}) verbatims}
 \item{vname}{unused argument in \code{latex.describe.single}}
-\item{which}{specifies whether to plot numeric continuous, binary, or
-	categorical (with more than 2 levels) variables}
+\item{which}{specifies whether to plot numeric continuous or
+	binary/categorical variables}
 \item{what}{character or numeric vector specifying which variables to
 	plot; default is to plot all}
 \item{sort}{specifies how and whether variables are sorted in order of
-	the proportion of positives when \code{which="binary"}.  Specify
+	the proportion of positives when \code{which="categorical"}.  Specify
 	\code{sort="none"} to leave variables in the order they appear in the
 	original data.}
 \item{n.unique}{the minimum number of unique values a numeric variable

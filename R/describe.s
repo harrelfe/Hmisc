@@ -179,22 +179,24 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
   if(! x.binary) {
     if(inherits(x,'mChoice'))
       z$mChoice <- summary(x, minlength=minlength)
-    else if(n.unique <= listunique && ! isnum && ! is.factor(x) &&
-            max(nchar(x)) > listnchar)
-      values <- tableIgnoreCaseWhiteSpace(x)
-    else if(isnum || n.unique <= 100) {
-      if(isnum && n.unique >= 100) {
-        pret <- pretty(xnum, 100)
-        dist <- pret[2] - pret[1]
-        r    <- range(pret)
-        xnum <- r[1] + dist * round((xnum - r[1]) / dist)
+    else
+      if(n.unique <= listunique && ! isnum && ! is.factor(x) &&
+         max(nchar(x)) > listnchar)
+        values <- tableIgnoreCaseWhiteSpace(x)
+    else
+      if(isnum || n.unique <= 100) {
+        if(isnum && n.unique >= 100) {
+          pret <- pretty(xnum, 100)
+          dist <- pret[2] - pret[1]
+          r    <- range(pret)
+          xnum <- r[1] + dist * round((xnum - r[1]) / dist)
+        }
+        values <- wtd.table(if(isnum) xnum else if(isdat) format(x) else x,
+                            weights, normwt=FALSE, na.rm=FALSE)
+        values <- list(value=values$x, frequency=unname(values$sum.of.weights))
       }
-      values <- wtd.table(if(isnum) xnum else if(isdat) format(x) else x,
-                          weights, normwt=FALSE, na.rm=FALSE)
-      values <- list(value=values$x, frequency=unname(values$sum.of.weights))
-    }
     z$values <- values
-
+    
     if(n.unique >= 5) {
       loandhi <- x.unique[c(1 : 5, (n.unique - 4) : n.unique)]
       extremes <-
@@ -339,7 +341,8 @@ print.describe <- function(x, condense=TRUE, ...)
 print.describe.single <- function(x, condense=TRUE, ...)
 {
   wide <- .Options$width
-  des <- x$descript
+  des  <- x$descript
+  
   if(length(x$units))
     des <- paste(des, ' [', x$units, ']', sep='')
   
@@ -347,7 +350,9 @@ print.describe.single <- function(x, condense=TRUE, ...)
     des <- paste(des, '  Format:', x$format, sep='')
   
   cat(des,'\n')
+  
   print(x$counts, quote=FALSE)
+  
   if(length(x$extremes)) {
     val <- format(x$extremes)
     if(condense) {
@@ -362,19 +367,38 @@ print.describe.single <- function(x, condense=TRUE, ...)
   }
 
   v <- x$values
-  if(length(v) && is.list(v) &&
-     all(names(v) == c('value', 'frequency')) &&
-     length(v$value) <= 20) {
-      val   <- v$value
-      freq  <- v$frequency
-      prop <- round(freq / sum(freq), 3)
+  is.standard <- length(v) && is.list(v) &&
+    all(names(v) == c('value', 'frequency'))
+  if(is.standard && length(v$value) <= 20) {
+    val   <- v$value
+    freq  <- v$frequency
+    prop <- round(freq / sum(freq), 3)
 
-      fval  <- if(is.numeric(val)) format(val) else format(val, justify='right')
+    ## First try condensed output, if not too wide for two lines
+    condensed <- FALSE
+    if(condense) {
+      fval  <- as.character(val)
+      ffreq <- as.character(freq)
+      fprop <- format(prop)
+      lval  <- nchar(fval[1])
+      lfreq <- nchar(ffreq[1])
+      lprop <- nchar(fprop[1])
+      w <- paste(fval, ' (', ffreq, ', ', fprop, ')', sep='')
+      w <- strwrap(paste(w, collapse=', '), width=wide)
+      if(length(w) <= 2) {
+        condensed <- TRUE
+        cat('', w, sep='\n')
+      }
+    }
+    if(! condensed) {
+      fval  <- if(is.numeric(val))
+                 format(val) else format(val, justify='right')
       ffreq <- format(freq)
       fprop <- format(prop)
       lval  <- nchar(fval[1])
       lfreq <- nchar(ffreq[1])
       lprop <- nchar(fprop[1])
+      
       m     <- max(lval, lfreq, lprop)
       ## Right justify entries in each row
       bl    <- '                                         '
@@ -385,34 +409,11 @@ print.describe.single <- function(x, condense=TRUE, ...)
       w <- rbind(Value=fval, Frequency=ffreq, Proportion=fprop)
       colnames(w) <- rep('', ncol(w))
       print(w, quote=FALSE)
+    }
+  } else if(length(v) && ! is.standard) {
+    cat('\n')
+    print(v, quote=FALSE)
   }
-   if(1==2) {
-        cat('\n')
-        val <- paste(names(val),
-                     ifelse(val > 1, paste(' (', val, ')', sep=''), ''),
-                     sep='')
-        cat(strwrap(val, exdent=4), sep='\n')
-      } else if(1==2) {
-        lev <- dimnames(val)[[2]]
-        if(condense && (mean(nchar(lev)) > 10 | length(lev) < 5)) {
-          z <- ''; len <- 0; cat('\n')
-          for(i in 1 : length(lev)) {
-            w <- paste(lev[i], ' (', val[1,i], ', ', val[2,i], '%)', sep='')
-            l <- nchar(w)
-            if(len + l + 2 > wide) {
-              cat(z,'\n'); len <- 0; z <- ''
-            }
-            
-            if(len==0) {
-              z <- w; len <- l
-            } else z <- paste(z, ', ', w, sep=''); len <- len + l + 2
-          }
-          
-          cat(z, '\n')
-        } else {
-          cat('\n'); print(val, quote=FALSE)
-        }
-      }
   
   if(length(x$mChoice)) {cat('\n'); print(x$mChoice, prlabel=FALSE)}
   

@@ -188,5 +188,6 @@ plot.describe <- function(x, which=c('continuous', 'categorical'),
                  yaxis=list(title=''), autosize=TRUE)
 }
 
+## Some of these are for dotchart3.s
 utils::globalVariables(c('X', 'Proportion', 'xname', 'cumy', 'proplev',
-                         'category'))
+                         'category', 'xb'))

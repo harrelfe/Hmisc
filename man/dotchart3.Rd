@@ -147,6 +147,8 @@ dotchartp(cbind(y1, y2), g, groups=maj, auxdata=n, auxtitle='n',
 
 ## Put options(grType='plotly') to have the following use dotchartp
 ## (rlegend will not apply)
+## Add argument auxwhere='hover' to summaryD or dotchartp to put
+## aux info in hover text instead of right margin
 summaryD(y1 ~ maj + g, xlab='Mean')
 summaryD(y1 ~ maj + g, groupsummary=FALSE)
 summaryD(y1 ~ g, fmtvals=function(x) sprintf('\%4.2f', x))

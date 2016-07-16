@@ -106,7 +106,7 @@ plot.describe <- function(x, which=c('continuous', 'categorical'),
     z$cumy <- cumsum(z$y)
 
     p <- if(any(z$missing > 0))
-           plotly::plot_ly(z, x=Proportion, y=cumy, text=text, #y=xnamen
+           plotly::plot_ly(z, x=Proportion, y=cumy, text=text,
                            color=missing, mode='markers',
                            hoverinfo='text',
                            type='scatter', name='')

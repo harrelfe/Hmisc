@@ -1,28 +1,34 @@
 \name{dotchart3}
 \alias{dotchart3}
+\alias{dotchartp}
 \alias{summaryD}
 \title{Enhanced Version of dotchart Function}
 \description{
-This is an adaptation of the R dotchart function that sorts categories
+These are adaptations of the R dotchart function that sorts categories
 top to bottom, adds \code{auxdata} and \code{auxtitle} arguments to put
-extra information in the right margin, and adds arguments \code{cex.labels},
-\code{cex.group.labels}, and \code{groupfont}.  By default, group
-headings are in a larger, bold font.
-\code{dotchart3} also cuts a bit of white space from the top and bottom
-of the chart.  The most significant change, however, is in how \code{x}
-is interpreted.  Columns of \code{x} no longer provide an alternate way
-to define groups.  Instead, they define superpositioned values.  This is
-useful for showing three quartiles, for example.  Going along with this
-change, \code{pch} can now be a vector specifying symbols to use going
-across columns of \code{x}.  \code{x} was changed in this way because to
-put multiple points on a line (e.g., quartiles) and keeping track of
-\code{par()} parameters when \code{dotchart2} was called
-with \code{add=TRUE} was cumbersome.  All the dotchart functions change
-the margins to account for horizontal labels.
+extra information in the right margin, and for \code{dotchart3} adds
+arguments \code{cex.labels}, \code{cex.group.labels}, and
+\code{groupfont}.  By default, group headings are in a larger, bold
+font.  \code{dotchart3} also cuts a bit of white space from the top and
+bottom of the chart.  The most significant change, however, is in how
+\code{x} is interpreted.  Columns of \code{x} no longer provide an
+alternate way to define groups.  Instead, they define superpositioned
+values.  This is useful for showing three quartiles, for example.  Going
+along with this change, for \code{dotchart3} \code{pch} can now be a
+vector specifying symbols to use going across columns of \code{x}.
+\code{x} was changed in this way because to put multiple points on a
+line (e.g., quartiles) and keeping track of \code{par()} parameters when
+\code{dotchart2} was called with \code{add=TRUE} was cumbersome.
+\code{dotchart3} changes the margins to account for horizontal labels.
+
+\code{dotchartp} is a version of \code{dotchart3} for making the chart
+with the \code{plotly} package.
 
 \code{summaryD} creates aggregate data using \code{\link{summarize}} and
 calls \code{dotchart3} with suitable arguments to summarize data by
-major and minor categories.
+major and minor categories.  If \code{options(grType='plotly')} is in
+effect and the \code{plotly} package is installed, \code{summaryD} uses
+\code{dotchartp} instead of \code{dotchart3}.
 }
 \usage{
 dotchart3(x, labels = NULL, groups = NULL, gdata = NULL,
@@ -32,13 +38,20 @@ dotchart3(x, labels = NULL, groups = NULL, gdata = NULL,
           ylab = NULL, auxdata = NULL, auxtitle = NULL, auxgdata=NULL,
           axisat=NULL, axislabels=NULL,
           cex.labels = cex, cex.group.labels = cex.labels * 1.25,
-          cex.auxdata=cex, groupfont = 2, ...)
+          cex.auxdata=cex, groupfont = 2, \dots)
+
+dotchartp(x, labels = NULL, groups = NULL, gdata = NULL,
+            xlim = range(c(x, gdata), na.rm=TRUE),
+            xlab = NULL, ylab = '', auxdata=NULL, auxtitle=NULL,
+            auxgdata=NULL, auxwhere=c('right', 'hover'),
+            axisat=NULL, axislabels=NULL, sort=TRUE, digits=4,
+            \dots) 
 
 summaryD(formula, data=NULL, fun=mean, funm=fun,
          groupsummary=TRUE, auxvar=NULL, auxtitle='',
          vals=length(auxvar) > 0, fmtvals=format,
          cex.auxdata=.7, xlab=v[1], ylab=NULL,
-         gridevery=NULL, gridcol=gray(.95), sort=TRUE, ...)
+         gridevery=NULL, gridcol=gray(.95), sort=TRUE, \dots)
 }
 \arguments{
   \item{x}{a numeric vector or matrix}
@@ -55,13 +68,21 @@ summaryD(formula, data=NULL, fun=mean, funm=fun,
  \item{axisat}{a vector of tick mark locations to pass to \code{axis}.
 	Useful if transforming the data axis}
   \item{axislabels}{a vector of strings specifying axis tick mark
-	labels.  Useful if transforming the data axis}
+		labels.  Useful if transforming the data axis}
+	\item{digits}{number of significant digits for formatting numeric data
+         in hover text for \code{dotchartp}}
   \item{cex.labels}{\code{cex} for labels}
   \item{cex.group.labels}{\code{cex} for group labels}
 	\item{cex.auxdata}{\code{cex} for \code{auxdata}}
   \item{groupfont}{font number for group headings}
+	\item{auxwhere}{for \code{dotchartp} specifies whether \code{auxdata}
+         and \code{auxgdata} are to be placed on the far right of the
+         chart, or should appear as pop-up tooltips when hovering the
+         mouse over the ordinary \code{x} data points on the chart.}
   \item{\dots}{other arguments passed to some of the graphics functions,
-    or to \code{dotchart3} from \code{summaryD}}
+    or to \code{dotchart3} or \code{dotchartp} from \code{summaryD}.
+         The \code{auxwhere='hover'} option is a useful argument to pass
+         from \code{summaryD} to \code{dotchartp}.}
 	\item{formula}{a formula with one variable on the left hand side (the
          variable to compute summary statistics on), and one or two
          variables on the right hand side.  If there are two variables,
@@ -97,7 +118,8 @@ summaryD(formula, data=NULL, fun=mean, funm=fun,
          them in the right margin.  Default is the \code{format}
          function.}
 	\item{gridevery}{specify a positive number to draw very faint vertical
-    grid lines every \code{gridevery} \code{x}-axis units}
+    grid lines every \code{gridevery} \code{x}-axis units; for
+    non-\code{plotly} charts}
 	\item{gridcol}{color for grid lines; default is very faint gray scale}
 	\item{sort}{specify \code{sort=FALSE} to plot data in the original
          order, from top to bottom on the dot chart}
@@ -118,6 +140,13 @@ dotchart3(cbind(y1,y2), g, groups=maj, auxdata=n, auxtitle='n',
 ## Compare with dotchart function (no superpositioning or auxdata allowed):
 ## dotchart(y1, g, groups=maj, xlab='Y')
 
+\dontrun{
+dotchartp(cbind(y1, y2), g, groups=maj, auxdata=n, auxtitle='n',
+          xlab='Y', gdata=cbind(c(0,.1),c(.23,.44)), auxgdata=c(-1,-2))
+}
+
+## Put options(grType='plotly') to have the following use dotchartp
+## (rlegend will not apply)
 summaryD(y1 ~ maj + g, xlab='Mean')
 summaryD(y1 ~ maj + g, groupsummary=FALSE)
 summaryD(y1 ~ g, fmtvals=function(x) sprintf('\%4.2f', x))

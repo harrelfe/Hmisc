@@ -1,4 +1,4 @@
-Changes in version 3.18-0 (2016-07-13)
+Changes in version 3.18-0 (2016-07-15)
    * summaryP: fixed exclude1 logic - was not excluding enough levels (inconsistent use of variable names vs. labels)
 	 * latexTranslate: any NAs in first argument changed to "" before conversion
 	 * minor.tick: added arguments to pass through (thanks: vhorvath)
@@ -10,6 +10,8 @@ Changes in version 3.18-0 (2016-07-13)
 	 * grType: new non-exported service function to sense if plotly is in effect
 	 * plot.describe: new function to make plotly graph for describe objects
 	 * describe: changed output: 3 decimal places for Info, new format for frequency table, separated logic for 10 extreme values from logic for frequency table, significant changes to print.describe
+	 * dotchartp: new version of dotchart3 for plotly charts
+	 * summaryD: modified to use dotchartp if options(grType='plotly') is in effect
 
 Changes in version 3.17-4 (2016-05-02)
    * latex.summaryP: correctly ordered rows after running reshape because groups was present

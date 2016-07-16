@@ -11,21 +11,21 @@ dotchart3 <-
   opar <- par("mai", "mar", "cex", "yaxs")
   on.exit(par(opar))
   par(cex = cex, yaxs = "i")
-  if (!is.numeric(x)) 
+  if (! is.numeric(x)) 
     stop("'x' must be a numeric vector or matrix")
   x    <- as.matrix(x)
   n    <- nrow(x)
   nc   <- ncol(x)
   pch  <- rep(pch,  length=nc)
   
-  if(!length(labels)) labels <- rownames(x)
-  if(!length(labels)) stop('labels not defined')
+  if(! length(labels)) labels <- rownames(x)
+  if(! length(labels)) stop('labels not defined')
   if(length(groups)) groups <- as.factor(groups)
   glabels <- levels(groups)
 
   plot.new()
   linch <- max(strwidth(labels, "inch"), na.rm = TRUE)
-  if (!length(glabels)) {
+  if (! length(glabels)) {
     ginch <- 0
     goffset <- 0
   }
@@ -47,7 +47,7 @@ dotchart3 <-
                                  strwidth(auxgdata, 'inch', cex=cex.auxdata))
     par(mai = nmai)
   }
-  if (!length(groups)) {
+  if (! length(groups)) {
     o      <- n:1L
     y      <- o
     ylim   <- c(.5, n + .5)
@@ -126,14 +126,162 @@ dotchart3 <-
   invisible()
 }
 
+dotchartp <-
+  function (x, labels = NULL, groups = NULL, gdata = NULL,
+            xlim = range(c(x, gdata), na.rm=TRUE),
+            xlab = NULL, ylab = '', auxdata=NULL, auxtitle=NULL,
+            auxgdata=NULL, auxwhere=c('right', 'hover'),
+            axisat=NULL, axislabels=NULL, sort=TRUE, digits=4,
+            ...) 
+{
+  auxwhere <- match.arg(auxwhere)
+  
+  if (! is.numeric(x)) 
+    stop("'x' must be a numeric vector or matrix")
+  x    <- as.matrix(x)
+  n    <- nrow(x)
+  nc   <- ncol(x)
+  if(length(gdata)) {
+    gdata <- as.matrix(gdata)
+    if(ncol(gdata) != nc) stop('gdata must have same columns as x')
+    }
+  
+  if(! length(labels)) labels <- rownames(x)
+  if(! length(labels)) stop('labels not defined')
+  if(! is.factor(labels))
+    labels <- factor(labels, levels=unique(as.character(labels)))
+
+  groups.pres <- length(groups) > 0
+  if(! groups.pres) groups <- rep('', n)
+  if(! is.factor(groups))
+    groups  <- factor(as.character(groups), levels=unique(as.character(groups)))
+  glabels <- levels(groups)
+
+  if(sort) {
+    o <- order(as.integer(groups), as.integer(labels))
+    groups  <- groups[o]
+    x       <- x[o, , drop=FALSE]
+    labels  <- labels[o]
+    if(length(auxdata)) auxdata <- auxdata[o]
+    }
+
+  lgroups <- Lag(as.character(groups))
+  lgroups[1] <- 'NULL'
+  first.in.group <- groups != lgroups
+  y  <- cumsum(1 + 1.5 * first.in.group)
+  yg <- y[first.in.group] - 1
+  ylim <- range(0.5, y + 0.5)
+
+  X <- x[, 1]
+  tly <- y
+  auxd <- NULL
+  auxh <- auxwhere == 'hover'
+  auxt <- if(length(auxtitle) && auxtitle != '')
+            paste(auxtitle, '=', sep='') else ''
+  if(auxh)
+    auxd <- if(length(auxdata)) paste(auxt, auxdata, sep='') else rep('', length(X))
+ 
+  if(length(gdata) || (auxh && length(auxgdata))) {
+    X    <- c(X, if(length(gdata)) gdata[, 1] else rep(NA, length(auxgdata)))
+    tly  <- c(tly, yg)
+    if(auxh) auxd <- c(auxd,
+                       if(length(auxgdata)) paste(auxt, auxgdata, sep='')
+                        else rep('', length(yg)))
+    }
+  nx <- if(nc == 1) '' else colnames(x)[1]
+  ht <- if(nx == '') format(X, digits=digits)
+        else paste(nx, format(X, digits=digits), sep='=')
+  if(auxh && any(auxd != '')) ht <- paste(ht, auxd)
+  d <- data.frame(X, y=tly, ht=ht)
+  
+  p <- plotly::plot_ly(d, x=X, y=y, mode='markers', type='scatter',
+                       text = ht,
+                       hoverinfo = 'text',
+                       name=nx)
+  if(nc > 1)
+    for(i in 2 : nc) {
+      X   <- x[, i]
+      tly <- y
+      if(length(gdata)) {
+        X   <- c(X, gdata[, i])
+        tly <- c(tly, yg)
+        }
+      d <- data.frame(X=X, y=tly,
+                      ht=paste(colnames(x)[i], format(X, digits=digits),
+                               sep='='))
+
+      p <- plotly::add_trace(data=d, x=X, y=y, mode='markers',
+                             text = ht, hoverinfo='text',
+                             name=colnames(x)[i])
+    }
+
+  dx    <- 0.1 * diff(xlim)
+
+  lenaux <- length(auxdata) + length(auxgdata)
+  if(auxwhere == 'right' && lenaux) {
+    yb <- tb <- NULL
+    if(length(auxdata)) {
+      yb <- y
+      tb <- auxdata
+    }
+    if(groups.pres && length(auxgdata)) {
+      yb <- c(yb, yg)
+      tb <- c(tb, auxgdata)
+    }
+    if(length(auxtitle)) {
+      yb <- c(yb, min(yb) - 2)
+      tb <- c(tb, auxtitle)
+    }
+    if(length(auxgdata)) {
+      yb <- c(yb, yg)
+      tb <- c(tb, paste('<b>', auxgdata, '</b>', sep=''))
+      }
+    z <- data.frame(xb=xlim[2] + dx, yb, tb)
+    p <- plotly::add_trace(data=z, x=xb, y=yb, text=tb,
+                           mode='text', textposition='left',
+                           textfont=list(size=10), hoverinfo='none', name='')
+  }
+
+  if(length(axisat)) {tlx <- axisat; ttx <- axislabels}
+  else {
+    tlx  <- pretty(xlim, 10)
+    tlxs <- pretty(xlim, 5)
+    ttx  <- format(tlx)
+    for(j in 1 : length(tlx))
+      if(! any(abs(tlxs - tlx[j]) < 1e-10)) ttx[j] <- ''
+    }
+  
+  tly <-y
+  tty <- as.character(labels)
+  if(groups.pres) {
+    tly <- c(tly, yg)
+    tty <- c(tty, paste('<b>', glabels, '</b>', sep=''))
+  }
+  if(! length(ylab)) ylab <- ''
+  leftmargin <- min(160, (4 * (ylab != '') + max(nchar(tty))) * 6)
+  plotly::layout(xaxis=list(title=xlab,
+                            range=c(xlim[1] - 0.2 * dx,
+                                    xlim[2] + dx * (auxwhere == 'right' &&
+                                                    lenaux > 0)),
+                            zeroline=FALSE,
+                            tickvals=tlx, ticktext=ttx),
+                 yaxis=list(title=ylab, autorange='reversed',
+                            zeroline=FALSE,
+                            tickvals=tly, ticktext=tty),
+                 autosize=TRUE, margin=list(l=leftmargin))
+}
+
 summaryD <- function(formula, data=NULL, fun=mean, funm=fun,
                      groupsummary=TRUE, auxvar=NULL, auxtitle='',
                      vals=length(auxvar) > 0, fmtvals=format,
                      cex.auxdata=.7, xlab=v[1], ylab=NULL,
                      gridevery=NULL, gridcol=gray(.95), sort=TRUE, ...) {
-  if(!missing(fmtvals)) vals <- TRUE
-  if(!length(data)) data <- environment(formula)
-  else data <- list2env(data, parent=environment(formula))
+
+  use.plotly <- grType() == 'plotly'
+
+  if(! missing(fmtvals)) vals <- TRUE
+  data <- if(! length(data)) environment(formula)
+   else                      list2env(data, parent=environment(formula))
   if(length(auxvar) && is.character(auxvar) && missing(auxtitle))
     auxtitle <- auxvar
   v   <- all.vars(formula)
@@ -143,15 +291,23 @@ summaryD <- function(formula, data=NULL, fun=mean, funm=fun,
   y   <-         get(yn,    envir=data)
   x1  <-         get(xn[1], envir=data)
   x2  <- if(two) get(xn[2], envir=data)
-  
-  s   <- summarize(y, if(two) llist(x1, x2) else llist(x1), fun, type='matrix')
-  if(sort) s <- s[order(if(is.matrix(s$y)) s$y[, 1, drop=FALSE] else s$y), ]
+
+  s   <- summarize(y, if(two) llist(x1, x2) else llist(x1), fun,
+                   type='matrix')
+  ## if(is.matrix(s$y)) colnames(s$y) <- colnames(y)
+
+  cx1 <- if(is.factor(s$x1)) as.integer(s$x1)
+         else
+           s$x1
+  yy <- if(is.matrix(s$y)) s$y[, 1, drop=FALSE] else s$y
+  if(sort) s <- if(two) s[order(cx1, yy), ] else s[order(yy), ]
 
   auxd <- function(z) {
     sy <- z$y
     if(length(auxvar)) {
-      if(!is.matrix(sy))
+      if(! is.matrix(sy))
         stop('auxvar is only used when fun returns > 1 statistic')
+
       f <- if(vals) fmtvals(sy[, auxvar])
       sy <- if(is.numeric(auxvar)) sy[, -auxvar, drop=FALSE]
       else
@@ -169,19 +325,39 @@ summaryD <- function(formula, data=NULL, fun=mean, funm=fun,
       z2 <- auxd(s2)
     }
     z  <- auxd(s)
-    dotchart3(z$sy, s$x2, groups=s$x1,
-              auxdata=z$fval, auxtitle=if(vals) auxtitle,
-              cex.auxdata=cex.auxdata,
-              gdata   =if(groupsummary) z2$sy,
-              auxgdata=if(groupsummary) z2$fval,
-              xlab=xlab, ylab=ylab, ...)
+    
+    dc <- if(use.plotly) dotchartp else dotchart3
+
+    ## if already sorted (group variable order first) don't re-sort
+    ## sort causes problems to dotchart3
+
+    res <- if(use.plotly)
+             dotchartp(z$sy, s$x2, groups=s$x1,
+                       auxdata=z$fval, auxtitle=if(vals) auxtitle,
+                       cex.auxdata=cex.auxdata,
+                       gdata   =if(groupsummary) z2$sy,
+                       auxgdata=if(groupsummary) z2$fval,
+                       xlab=xlab, ylab=ylab, sort=! sort, ...)
+           else
+             dotchart3(z$sy, s$x2, groups=s$x1,
+                       auxdata=z$fval, auxtitle=if(vals) auxtitle,
+                       cex.auxdata=cex.auxdata,
+                       gdata   =if(groupsummary) z2$sy,
+                       auxgdata=if(groupsummary) z2$fval,
+                       xlab=xlab, ylab=ylab, ...) 
   }
   else
-    dotchart3(z$sy, s$x1, auxdata=z$fval,
-              auxtitle=if(vals) auxtitle,
-              cex.auxdata=cex.auxdata, xlab=xlab, ylab=ylab, ...)
-  
-  if(length(gridevery)) {
+    res <- if(use.plotly)
+             dotchartp(z$sy, s$x1, auxdata=z$fval,
+                       auxtitle=if(vals) auxtitle,
+                       cex.auxdata=cex.auxdata, xlab=xlab, ylab=ylab,
+                       sort=! sort, ...)
+           else
+             dotchart3(z$sy, s$x1, auxdata=z$fval,
+                       auxtitle=if(vals) auxtitle,
+                       cex.auxdata=cex.auxdata, xlab=xlab, ylab=ylab, ...)
+
+  if(! use.plotly && length(gridevery)) {
     xmin <- par('usr')[1]
     xmin <- ceiling(xmin/gridevery)*gridevery
     xmax <- if(length(xn) == 1) max(s$y, na.rm=TRUE)
@@ -189,4 +365,6 @@ summaryD <- function(formula, data=NULL, fun=mean, funm=fun,
       max(c(s$y, s2$y), na.rm=TRUE)
     abline(v=seq(xmin, xmax, by=gridevery), col=gridcol)
   }
+
+  if(use.plotly) res else invisible(res)
 }

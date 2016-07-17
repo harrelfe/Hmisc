@@ -127,7 +127,8 @@ plot.describe <- function(x, which=c('continuous', 'categorical'),
     tly <- z$cumy[z$y == 2]
     
     return(plotly::layout(xaxis=list(range=c(0,1.15), zeroline=TRUE,
-                                     tickvals=tl, ticktext=tt),
+                                     tickvals=tl, ticktext=tt,
+                                     title='Proportion'),
                           yaxis=list(title='', autorange='reversed',
                                      tickvals=tly, ticktext=un),
                           autosize=FALSE, height=150 + 15 * nrow(z)))

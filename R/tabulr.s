@@ -89,11 +89,11 @@ table_trio <- function(x) {
 
 table_N <- function(x) paste('{\\smaller $n=', length(x), '$}', sep='')
 
-nFm <- function(x, left, right, neg=FALSE, pad=FALSE) {
+nFm <- function(x, left, right, neg=FALSE, pad=FALSE, html=FALSE) {
   tot <- if(right == 0) left + neg else left + right + neg + 1
   fmt <- paste('%', tot, '.', right, 'f', sep='')
   x <- sprintf(fmt, x)
-  if(pad) x <- gsub(' ', '~', x)
+  if(pad) x <- gsub(' ', if(html) '' else '~', x)
   x
 }
 

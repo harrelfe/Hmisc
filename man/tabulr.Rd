@@ -81,7 +81,7 @@ tabulr(formula, data = NULL, nolabel=NULL, nofill=NULL, \dots)
 table_trio(x)
 table_freq(x)
 table_formatpct(num, den)
-nFm(x, left, right, neg=FALSE, pad=FALSE)
+nFm(x, left, right, neg=FALSE, pad=FALSE, html=FALSE)
 table_latexdefs(file='')
 }
 \arguments{
@@ -106,6 +106,8 @@ table_latexdefs(file='')
 		to add one more space to the left of the decimal place}
 	\item{pad}{set to \code{TRUE} to replace blanks with the LaTeX tilde
 		placeholder}
+	\item{html}{set to \code{TRUE} to make \code{pad} use an HTML space
+		character instead of a LaTeX tilde space}
 	\item{file}{location of output of \code{table_latexdefs}}
 }
 \value{\code{tabulr} returns an object of class \code{"tabular"}}

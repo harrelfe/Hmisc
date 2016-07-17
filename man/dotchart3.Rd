@@ -38,7 +38,7 @@ dotchart3(x, labels = NULL, groups = NULL, gdata = NULL,
           ylab = NULL, auxdata = NULL, auxtitle = NULL, auxgdata=NULL,
           axisat=NULL, axislabels=NULL,
           cex.labels = cex, cex.group.labels = cex.labels * 1.25,
-          cex.auxdata=cex, groupfont = 2, \dots)
+          cex.auxdata=cex, groupfont = 2, auxwhere=NULL, \dots)
 
 dotchartp(x, labels = NULL, groups = NULL, gdata = NULL,
             xlim = range(c(x, gdata), na.rm=TRUE),
@@ -78,7 +78,8 @@ summaryD(formula, data=NULL, fun=mean, funm=fun,
 	\item{auxwhere}{for \code{dotchartp} specifies whether \code{auxdata}
          and \code{auxgdata} are to be placed on the far right of the
          chart, or should appear as pop-up tooltips when hovering the
-         mouse over the ordinary \code{x} data points on the chart.}
+         mouse over the ordinary \code{x} data points on the chart.
+         Ignored for \code{dotchart3}.}
   \item{\dots}{other arguments passed to some of the graphics functions,
     or to \code{dotchart3} or \code{dotchartp} from \code{summaryD}.
          The \code{auxwhere='hover'} option is a useful argument to pass
@@ -122,7 +123,11 @@ summaryD(formula, data=NULL, fun=mean, funm=fun,
     non-\code{plotly} charts}
 	\item{gridcol}{color for grid lines; default is very faint gray scale}
 	\item{sort}{specify \code{sort=FALSE} to plot data in the original
-         order, from top to bottom on the dot chart}
+         order, from top to bottom on the dot chart.  For
+         \code{dotchartp}, set \code{sort} to \code{'descending'} to
+         sort in descending order of the first column of \code{x}, or
+         \code{'ascending'} to do the reverse.  These do not make sense
+         of \code{groups} is present.}
 }
 \value{the function returns invisibly}
 \author{Frank Harrell}

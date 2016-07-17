@@ -6,7 +6,7 @@ dotchart3 <-
             xlab = NULL, ylab = NULL, auxdata=NULL, auxtitle=NULL,
             auxgdata=NULL, axisat=NULL, axislabels=NULL,
             cex.labels = cex, cex.group.labels = cex.labels*1.25,
-            cex.auxdata = cex, groupfont=2, ...) 
+            cex.auxdata = cex, groupfont=2, auxwhere=NULL, ...) 
 {
   opar <- par("mai", "mar", "cex", "yaxs")
   on.exit(par(opar))
@@ -157,8 +157,13 @@ dotchartp <-
     groups  <- factor(as.character(groups), levels=unique(as.character(groups)))
   glabels <- levels(groups)
 
-  if(sort) {
-    o <- order(as.integer(groups), as.integer(labels))
+  if(is.character(sort) || sort) {
+    o <- if(is.character(sort)) {
+           if(sort == 'ascending') order(x[, 1])
+           else
+             order(-x[, 1])
+         } else order(as.integer(groups), as.integer(labels))
+    
     groups  <- groups[o]
     x       <- x[o, , drop=FALSE]
     labels  <- labels[o]
@@ -212,7 +217,7 @@ dotchartp <-
 
       p <- plotly::add_trace(data=d, x=X, y=y, mode='markers',
                              text = ht, hoverinfo='text',
-                             name=colnames(x)[i])
+                             name=colnames(x)[i], evaluate=TRUE)
     }
 
   dx    <- 0.1 * diff(xlim)

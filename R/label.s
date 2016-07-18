@@ -6,7 +6,7 @@
 label <- function(x, default=NULL, ...) UseMethod("label")
 
 label.default <- function(x, default=NULL, units=plot, plot=FALSE,
-                          grid=FALSE, ...)
+                          grid=FALSE, html=FALSE, ...)
 {
   if(length(default) > 1)
     stop("the default string cannot be of length greater then one")
@@ -19,11 +19,11 @@ label.default <- function(x, default=NULL, units=plot, plot=FALSE,
   un  <- at$units
   labelPlotmath(lab,
                 if(units) un else NULL,
-                plotmath=plot, grid=grid)
+                plotmath=plot, grid=grid, html=html)
 }
 
 label.Surv <- function(x, default=NULL, units=plot,
-                       plot=FALSE, grid=FALSE,
+                       plot=FALSE, grid=FALSE, html=FALSE,
                        type=c('any', 'time', 'event'), ...)
 {
   type <- match.arg(type)
@@ -55,7 +55,7 @@ label.Surv <- function(x, default=NULL, units=plot,
   }
 
   labelPlotmath(lab, un,
-                plotmath=plot, grid=grid)
+                plotmath=plot, grid=grid, html=html)
 }
 
 
@@ -76,13 +76,15 @@ label.data.frame <- function(x, default=NULL, self=FALSE, ...) {
   }
 }
 
-labelPlotmath <- function(label, units=NULL, plotmath=TRUE, grid=FALSE,
-                          chexpr=FALSE)
+labelPlotmath <- function(label, units=NULL, plotmath=TRUE, html=FALSE,
+                          grid=FALSE, chexpr=FALSE)
 {
   if(!length(label)) label <- ''
 
   if(!length(units) || (length(units)==1 && is.na(units))) units <- ''
 
+  if(html) plotmath <- FALSE
+  
   g <-
     if(plotmath) function(x, y=NULL, xstyle=NULL, ystyle=NULL)
       {
@@ -100,11 +102,17 @@ labelPlotmath <- function(label, units=NULL, plotmath=TRUE, grid=FALSE,
         w <- paste('list(',h(plotmathTranslate(x), xstyle), ',',
                    h(plotmathTranslate(y), ystyle), ')', sep='')
         tryparse(w, paste(x, y), chexpr)
-      } else function(x, y=NULL, ...) if(length(y)) paste(x,y) else x
+      } else if(html) function(x, y=NULL, ...) {
+        if(length(y))
+          paste(x, '&emsp;<span style="font-size:0.8em">', y, '</span>',
+                sep='')
+        else x
+      }
+      else function(x, y=NULL, ...) if(length(y)) paste(x,y) else x
 
   if(units=='') g(label)
   else if(label=='') g(units)
-  else if(plotmath)
+  else if(plotmath || html)
     g(label, units, ystyle='scriptstyle')
   else paste(label,' [',units,']',sep='')
 }

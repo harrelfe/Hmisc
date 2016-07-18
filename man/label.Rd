@@ -99,10 +99,10 @@
 label(x, default=NULL, ...)
 
 \method{label}{default}(x, default=NULL, units=plot, plot=FALSE,
-      grid=FALSE, \dots)
+      grid=FALSE, html=FALSE, \dots)
 
 \method{label}{Surv}(x, default=NULL, units=plot, plot=FALSE,
-      grid=FALSE, type=c('any', 'time', 'event'), \dots)
+      grid=FALSE, html=FALSE, type=c('any', 'time', 'event'), \dots)
 
 \method{label}{data.frame}(x, default=NULL, self=FALSE, \dots)
 
@@ -168,6 +168,8 @@ combineLabels(\dots)
     argument \code{grid} to \code{TRUE} so that \code{labelPlotmath} can
     return an ordinary character string instead of an expression.
   }
+	\item{html}{set to \code{TRUE} to use HTML formatting instead of
+		plotmath expressions for constructing labels with units}
 	\item{type}{for \code{Surv} objects specifies the type of element for
 		which to restrict the search for a label}
   \item{label}{a character string containing a variable's label}

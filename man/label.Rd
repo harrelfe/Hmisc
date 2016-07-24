@@ -112,7 +112,8 @@ label(x, ...) <- value
 
 \method{label}{data.frame}(x, self=TRUE, ...) <- value
 
-labelPlotmath(label, units=NULL, plotmath=TRUE, grid=FALSE, chexpr=FALSE)
+labelPlotmath(label, units=NULL, plotmath=TRUE, html=FALSE, grid=FALSE,
+              chexpr=FALSE)
 
 labelLatex(x=NULL, label='', units='', size='smaller[2]',
            hfill=FALSE, bold=FALSE, default='', double=FALSE)

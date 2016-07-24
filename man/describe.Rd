@@ -94,7 +94,7 @@ pp. 557, the term "unique" should really be "distinct".
 \method{latex}{describe.single}(object, title=NULL, condense=TRUE, vname,
       file, append=FALSE, size='small', tabular=TRUE, greek=TRUE,
       lspace=c(0,0), \dots)
-\method{plot}{describe}(x, which=c('continuous', 'categorical'),
+\method{plot}{describe}(x, which=c('both', 'continuous', 'categorical'),
                           what=NULL,
                           sort=c('ascending', 'descending', 'none'),
                           n.unique=10, digits=5, \dots)
@@ -212,7 +212,10 @@ LaTeX text size (\code{"small"}, the default, or \code{"normalsize"}, \code{"tin
   (second element of \code{lspace}) verbatims}
 \item{vname}{unused argument in \code{latex.describe.single}}
 \item{which}{specifies whether to plot numeric continuous or
-	binary/categorical variables}
+	binary/categorical variables, or both.  When \code{"both"} a list with 
+two elements is created.  Each element is a \code{plotly} object.  If
+there are no variables of a given type, a single \code{plotly} object is
+returned, ready to print.} 
 \item{what}{character or numeric vector specifying which variables to
 	plot; default is to plot all}
 \item{sort}{specifies how and whether variables are sorted in order of
@@ -277,7 +280,11 @@ describe(dfr)
 
 \dontrun{
 options(grType='plotly')
-plot(dfr)
+d <- describe(mydata)
+p <- plot(d)   # create plots for both types of variables
+p[[1]]; p[[2]]
+plotly::subplot(p[[1]], p[[2]], nrows=2)  # plot both in one
+plot(d, which='categorical')    # categorical ones
 
 d <- sas.get(".","mydata",special.miss=TRUE,recode=TRUE)
 describe(d)      #describe entire data frame

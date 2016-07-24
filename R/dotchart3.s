@@ -6,7 +6,8 @@ dotchart3 <-
             xlab = NULL, ylab = NULL, auxdata=NULL, auxtitle=NULL,
             auxgdata=NULL, axisat=NULL, axislabels=NULL,
             cex.labels = cex, cex.group.labels = cex.labels*1.25,
-            cex.auxdata = cex, groupfont=2, auxwhere=NULL, ...) 
+            cex.auxdata = cex, groupfont=2,
+            auxwhere=NULL, height=NULL, width=NULL, ...) 
 {
   opar <- par("mai", "mar", "cex", "yaxs")
   on.exit(par(opar))
@@ -132,6 +133,7 @@ dotchartp <-
             xlab = NULL, ylab = '', auxdata=NULL, auxtitle=NULL,
             auxgdata=NULL, auxwhere=c('right', 'hover'),
             axisat=NULL, axislabels=NULL, sort=TRUE, digits=4,
+            height=NULL, width=NULL, showlegend=TRUE,
             ...) 
 {
   auxwhere <- match.arg(auxwhere)
@@ -198,7 +200,7 @@ dotchartp <-
         else paste(nx, format(X, digits=digits), sep='=')
   if(auxh && any(auxd != '')) ht <- paste(ht, auxd)
   d <- data.frame(X, y=tly, ht=ht)
-  
+
   p <- plotly::plot_ly(d, x=X, y=y, mode='markers', type='scatter',
                        text = ht,
                        hoverinfo = 'text',
@@ -242,7 +244,7 @@ dotchartp <-
       tb <- c(tb, paste('<b>', auxgdata, '</b>', sep=''))
       }
     z <- data.frame(xb=xlim[2] + dx, yb, tb)
-    p <- plotly::add_trace(data=z, x=xb, y=yb, text=tb,
+    p <- plotly::add_trace(data=z, x=xb, y=yb, text=tb, evaluate=TRUE,
                            mode='text', textposition='left',
                            textfont=list(size=10), hoverinfo='none', name='')
   }
@@ -263,17 +265,22 @@ dotchartp <-
     tty <- c(tty, paste('<b>', glabels, '</b>', sep=''))
   }
   if(! length(ylab)) ylab <- ''
-  leftmargin <- min(160, (4 * (ylab != '') + max(nchar(tty))) * 6)
+  leftmargin <- min(280, (4 * (ylab != '') + max(nchar(tty))) * 8) # 6->8
+  leftmargin <- max(leftmargin, 60)
+  rx <- if(auxwhere == 'right' && lenaux > 0) dx else dx/2
+
   plotly::layout(xaxis=list(title=xlab,
                             range=c(xlim[1] - 0.2 * dx,
-                                    xlim[2] + dx * (auxwhere == 'right' &&
-                                                    lenaux > 0)),
+                                    xlim[2] + rx),
                             zeroline=FALSE,
                             tickvals=tlx, ticktext=ttx),
                  yaxis=list(title=ylab, autorange='reversed',
                             zeroline=FALSE,
                             tickvals=tly, ticktext=tty),
-                 autosize=TRUE, margin=list(l=leftmargin))
+                 width=width, height=height,
+                 autosize=(length(width) + length(height)) == 0,
+                 margin=list(l=leftmargin),
+                 showlegend=showlegend)
 }
 
 summaryD <- function(formula, data=NULL, fun=mean, funm=fun,

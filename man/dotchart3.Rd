@@ -38,14 +38,15 @@ dotchart3(x, labels = NULL, groups = NULL, gdata = NULL,
           ylab = NULL, auxdata = NULL, auxtitle = NULL, auxgdata=NULL,
           axisat=NULL, axislabels=NULL,
           cex.labels = cex, cex.group.labels = cex.labels * 1.25,
-          cex.auxdata=cex, groupfont = 2, auxwhere=NULL, \dots)
+          cex.auxdata=cex, groupfont = 2,
+          auxwhere=NULL, height=NULL, width=NULL, \dots)
 
 dotchartp(x, labels = NULL, groups = NULL, gdata = NULL,
             xlim = range(c(x, gdata), na.rm=TRUE),
             xlab = NULL, ylab = '', auxdata=NULL, auxtitle=NULL,
             auxgdata=NULL, auxwhere=c('right', 'hover'),
             axisat=NULL, axislabels=NULL, sort=TRUE, digits=4,
-            \dots) 
+            height=NULL, width=NULL, showlegend=TRUE, \dots) 
 
 summaryD(formula, data=NULL, fun=mean, funm=fun,
          groupsummary=TRUE, auxvar=NULL, auxtitle='',
@@ -84,6 +85,8 @@ summaryD(formula, data=NULL, fun=mean, funm=fun,
     or to \code{dotchart3} or \code{dotchartp} from \code{summaryD}.
          The \code{auxwhere='hover'} option is a useful argument to pass
          from \code{summaryD} to \code{dotchartp}.}
+  \item{showlegend}{set to \code{FALSE} to suppress the \code{plotly}
+         legend with \code{dotchartp}}
 	\item{formula}{a formula with one variable on the left hand side (the
          variable to compute summary statistics on), and one or two
          variables on the right hand side.  If there are two variables,
@@ -128,6 +131,8 @@ summaryD(formula, data=NULL, fun=mean, funm=fun,
          sort in descending order of the first column of \code{x}, or
          \code{'ascending'} to do the reverse.  These do not make sense
          of \code{groups} is present.}
+	\item{height,width}{height and width in pixels for \code{dotchartp} if
+         not using \code{plotly} defaults.  Ignored for \code{dotchart3}.}
 }
 \value{the function returns invisibly}
 \author{Frank Harrell}

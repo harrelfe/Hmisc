@@ -8,6 +8,9 @@ for continuous and categorical \code{x} and \code{y}.  For continuous
 variables it serves the same purpose as hexagonal binning.  Counts for
 overlapping points are grouped into quantile groups and level of
 transparency and rainbow colors are used to provide count information.
+
+The result can also be passed to \code{ggplotly}.  Actual cell
+frequencies are added to the hover text in that case.
 }
 \usage{
 ggfreqScatter(x, y, bins=50, g=10,
@@ -18,7 +21,7 @@ ggfreqScatter(x, y, bins=50, g=10,
               xminor  = NULL, yminor = NULL,
               xlab = as.character(substitute(x)),
               ylab = as.character(substitute(y)),
-              fcolors = colorspace::rainbow_hcl(10), nsize=FALSE, \dots)
+              fcolors = viridis::viridis(10), nsize=FALSE, \dots)
 }
 \arguments{
 \item{x}{x-variable}
@@ -27,7 +30,9 @@ ggfreqScatter(x, y, bins=50, g=10,
 	create by rounding.  Ignored for categorical variables.  If a
 	2-vector, the first element corresponds to \code{x} and the second to
 	\code{y}.}
-\item{g}{number of quantile groups to make for frequency counts}
+\item{g}{number of quantile groups to make for frequency counts.  Use
+	\code{g=0} to use frequencies continuously for color and alpha
+	coding.  This is recommended only when using \code{plotly}.}
 \item{xtrans,ytrans}{functions specifying transformations to be made
 	before binning and plotting}
 \item{xbreaks,ybreaks}{vectors of values to label on axis, on original
@@ -57,7 +62,11 @@ y <- rnorm(1000)
 count <- sample(1:100, 1000, TRUE)
 x <- rep(x, count)
 y <- rep(y, count)
-ggfreqScatter(x, y) + ggtitle("Using Deciles of Frequency Counts, 2500 Bins")
+g <- ggfreqScatter(x, y) +   # might add g=0 if using plotly
+      ggtitle("Using Deciles of Frequency Counts, 2500 Bins")
+g
+# plotly::ggplotly(g, tooltip='label')  # use plotly, hover text = freq. only
+# Plotly makes it somewhat interactive, with hover text tooltips
 
 # Try with x categorical
 x1 <- sample(c('cat', 'dog', 'giraffe'), length(x), TRUE)

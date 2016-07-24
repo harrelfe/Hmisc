@@ -1009,7 +1009,7 @@ html.contents.data.frame <-
                 link=lab, linkCol='Variable', linkType='name', ...)
     cat('<hr>\n', file=file, append=TRUE)
   }
-  out
+  if(file == '') invisible() else out
 }
 
 

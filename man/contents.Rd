@@ -5,9 +5,7 @@
 \alias{html.contents.data.frame}
 \alias{contents.list}
 \alias{print.contents.list}
-\title{
-  Metadata for a Data Frame
-}
+\title{Metadata for a Data Frame}
 \description{
   \code{contents} is a generic method for which \code{contents.data.frame}
   is currently the only method.  \code{contents.data.frame} creates an
@@ -109,7 +107,8 @@ contents(object, \dots)
 }
 \value{
   an object of class \code{"contents.data.frame"} or
-  \code{"contents.list"}
+  \code{"contents.list"}.  For the \code{html} method is an \code{html}
+  object, except when \code{file=""} in which nothing to print is returned.
 }
 
 \author{

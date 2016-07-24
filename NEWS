@@ -1,4 +1,4 @@
-Changes in version 3.18-0 (2016-07-18)
+Changes in version 3.18-0 (2016-07-24)
    * summaryP: fixed exclude1 logic - was not excluding enough levels (inconsistent use of variable names vs. labels)
 	 * latexTranslate: any NAs in first argument changed to "" before conversion
 	 * minor.tick: added arguments to pass through (thanks: vhorvath)
@@ -15,6 +15,7 @@ Changes in version 3.18-0 (2016-07-18)
 	 * nFm: added argument html
 	 * label.default, label.Surv, labelPlotmath: added html argument to implement HTML markup in place of plotmath (for plotly)
 	 * now imports htmlTable, viridis
+	 * html.contents.data.frame: return invisibly if file=''
 
 Changes in version 3.17-4 (2016-05-02)
    * latex.summaryP: correctly ordered rows after running reshape because groups was present

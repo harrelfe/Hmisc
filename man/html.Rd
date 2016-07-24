@@ -5,9 +5,8 @@
 \alias{html.default}
 \alias{show.html}
 \alias{print.html}
-\title{
-Convert an S object to HTML
-}
+\alias{htmlVerbatim}
+\title{Convert an S object to HTML}
 \description{
 \code{html} is a generic function, for which only two methods are currently
 implemented, \code{html.latex} and a rudimentary
@@ -15,15 +14,18 @@ implemented, \code{html.latex} and a rudimentary
 translator by Maranget to create an HTML file from a LaTeX file like
 the one produced by \code{latex}.  The resulting HTML file may be
 displayed using a \code{show} or a \code{print} method.  The browser
-specified in \code{options(browser=)} for R (\code{help.browser} for
-S-Plus) is launched to display the HTML file.   \code{html.default} just
-runs \code{html.data.frame}.
+specified in \code{options(browser=)} for R is launched to display the
+HTML file.   \code{html.default} just runs \code{html.data.frame}.
+
+\code{htmlVerbatim} prints all of its arguments to the console in an
+html verbatim environment, using a specified character size.  This is
+useful for R Markdown with \code{knitr}.
 }
 \usage{
 html(object, \dots)
 \method{html}{latex}(object, file, where=c('cwd', 'tmp'),
   method=c('hevea', 'htlatex'),
-  rmarkdown=FALSE, cleanup=TRUE, ...)
+  rmarkdown=FALSE, cleanup=TRUE, \dots)
 \method{html}{data.frame}(object,
   file=paste(first.word(deparse(substitute(object))),'html',sep='.'),
      append=FALSE, link=NULL, linkCol=1, linkType=c('href','name'), \dots)
@@ -32,6 +34,7 @@ html(object, \dots)
      append=FALSE, link=NULL, linkCol=1, linkType=c('href','name'), \dots)
 \method{print}{html}(x, \dots)
 \method{show}{html}(object)
+htmlVerbatim(\dots, size=0.8)
 }
 \arguments{
 \item{object}{a data frame or an object created by \code{latex}.  For
@@ -71,12 +74,11 @@ the console, as when using \code{knitr}.
 \item{linkCol}{column number of \code{object} to which hyperlinks are
   attached.  Defaults to first column.}
 \item{linkType}{defaults to \code{"href"}}
-\item{\dots}{ignored}
+\item{\dots}{ignored except for \code{htmlVerbatim} - is a list of
+	objects to \code{print()}}
 \item{x}{an object created by \code{html}}
 }
-\section{Side Effects}{
-\code{print} or \code{show} launch a browser
-}
+\section{Side Effects}{\code{print} or \code{show} launch a browser}
 \author{
 Frank E. Harrell, Jr.
 \cr

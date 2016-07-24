@@ -152,3 +152,10 @@ show.html <- function(object)
 }
 
 print.html <- function(x, ...) show.html(x)
+
+htmlVerbatim <- function(..., size=0.8) {
+  cat('<pre style="font-size:', size, 'em">\n', sep='')
+  for(x in list(...)) print(x)
+  cat('</pre>\n')
+}
+

@@ -17,6 +17,8 @@ Changes in version 3.18-0 (2016-07-24)
 	 * now imports htmlTable, viridis
 	 * html.contents.data.frame: return invisibly if file=''
 	 * htmlVerbatim: new function
+	 * html.contents.data.frame: improved html
+	 * html.data.frame: changed column headers from h4 to <strong>
 
 Changes in version 3.17-4 (2016-05-02)
    * latex.summaryP: correctly ordered rows after running reshape because groups was present

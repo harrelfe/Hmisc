@@ -344,10 +344,10 @@ print.describe.single <- function(x, condense=TRUE, ...)
   des  <- x$descript
   
   if(length(x$units))
-    des <- paste(des, ' [', x$units, ']', sep='')
+    des <- paste0(des, ' [', x$units, ']')
   
   if(length(x$format))
-    des <- paste(des, '  Format:', x$format, sep='')
+    des <- paste0(des, '  Format:', x$format)
   
   cat(des,'\n')
   
@@ -383,7 +383,7 @@ print.describe.single <- function(x, condense=TRUE, ...)
       lval  <- nchar(fval[1])
       lfreq <- nchar(ffreq[1])
       lprop <- nchar(fprop[1])
-      w <- paste(fval, ' (', ffreq, ', ', fprop, ')', sep='')
+      w <- paste0(fval, ' (', ffreq, ', ', fprop, ')')
       w <- strwrap(paste(w, collapse=', '), width=wide)
       if(length(w) <= 2) {
         condensed <- TRUE
@@ -402,9 +402,9 @@ print.describe.single <- function(x, condense=TRUE, ...)
       m     <- max(lval, lfreq, lprop)
       ## Right justify entries in each row
       bl    <- '                                         '
-      fval  <- paste(substring(bl, 1, m - lval ), fval,  sep='')
-      ffreq <- paste(substring(bl, 1, m - lfreq), ffreq, sep='')
-      fprop <- paste(substring(bl, 1, m - lprop), fprop, sep='')
+      fval  <- paste0(substring(bl, 1, m - lval ), fval)
+      ffreq <- paste0(substring(bl, 1, m - lfreq), ffreq)
+      fprop <- paste0(substring(bl, 1, m - lprop), fprop)
       
       w <- rbind(Value=fval, Frequency=ffreq, Proportion=fprop)
       colnames(w) <- rep('', ncol(w))
@@ -448,7 +448,7 @@ latex.describe <-
   }
 
   spc <- if(spacing == 0) '' else
-   paste('\\begin{spacing}{', spacing, '}\n', sep='')
+   paste0('\\begin{spacing}{', spacing, '}\n')
   ct(spc, file=file, append=append)
   if(length(at$dimensions)) {
     ct('\\begin{center}\\textbf{', latexTranslate(at$descript), '\\\\',
@@ -485,7 +485,7 @@ latex.describe <-
       ct('\\smallskip\\noindent Variables with all observations missing:\\ \\smallskip\n',
          file=file, append=TRUE)
       mv <- latexTranslate(mv)
-      mv <- paste('\\texttt{',mv,'}',sep='')
+      mv <- paste0('\\texttt{',mv,'}')
       mv <- paste(mv, collapse=', ')
       ct(mv, file=file, append=TRUE)
     }
@@ -542,28 +542,28 @@ latex.describe.single <-
   z   <- latexTranslate(object$descript, '&', '\\&', greek=greek)
   ## If any math mode ($ not preceeded by \) don't put label part in bold
   des <- if(! length(grep('[^\\]\\$', z)))
-    paste('\\textbf{', z, '}', sep='')
+    paste0('\\textbf{', z, '}')
   else {
     ## Get text before : (variable name)
     sp <- strsplit(z, ' : ')[[1]]
     vnm <- sp[1]
     rem <- paste(sp[-1], collapse=':')
-    paste('\\textbf{', vnm, '}: ', rem, sep='')
+    paste0('\\textbf{', vnm, '}: ', rem)
   }
   
   if(length(object$units))
-    des <- paste(des, '{\\smaller[1] [',
-                 latexTranslate(object$units),']}', sep='')
+    des <- paste0(des, '{\\smaller[1] [',
+                 latexTranslate(object$units),']}')
   
   if(length(object$format))
-    des <- paste(des, '{\\smaller~~Format:', latexTranslate(object$format),
-                 '}', sep='')
+    des <- paste0(des, '{\\smaller~~Format:', latexTranslate(object$format),
+                 '}')
   
   desbas <- paste(object$descript,
                   if(length(object$units))
-                  paste(' [', object$units, ']', sep=''),
+                  paste0(' [', object$units, ']'),
                   if(length(object$format))
-                  paste('  Format:', object$format, sep=''))
+                  paste0('  Format:', object$format))
   
   ct('\\noindent', des, sep='', file=file, append=append)
   if(length(intFreq)) {
@@ -625,10 +625,10 @@ latex.describe.single <-
         {
           if(verb) {cat('\\end{verbatim}\n'); verb <- 0}
           cat('\\\\ \\smallskip\n\n')
-          val <- paste('{\\hangafter=1\\hangindent=3ex\\noindent ',
+          val <- paste0('{\\hangafter=1\\hangindent=3ex\\noindent ',
                        latexTranslate(names(val)),
-                       ifelse(val > 1, paste(' (', val, ')', sep=''),''),
-                       '\n\n}\n', sep='')
+                       ifelse(val > 1, paste0(' (', val, ')'),''),
+                       '\n\n}\n')
           cat(val, sep='\n')
           cat('\\smallskip\n')
         }
@@ -650,7 +650,7 @@ latex.describe.single <-
         if(! verb) {vs(); cat('\\begin{verbatim}\n'); verb <- 1}
         z <- ''; len <- 0; cat('\n')
         for(i in 1:length(lev)) {
-          w <- paste(lev[i], ' (', val[1,i], ', ', val[2,i], '%)', sep='')
+          w <- paste0(lev[i], ' (', val[1,i], ', ', val[2,i], '%)')
           l <- nchar(w)
           if(len + l + 2 > wide) {
             cat(z,'\n'); len <- 0; z <- ''
@@ -659,7 +659,7 @@ latex.describe.single <-
           if(len==0) {
             z <- w; len <- l
           } else {
-            z <- paste(z, ', ', w, sep=''); len <- len + l + 2
+            z <- paste0(z, ', ', w); len <- len + l + 2
           }
         }
         
@@ -693,10 +693,10 @@ dataDensityString <- function(x, nint=30)
   r <- range(x)
   x <- floor(nint * (x-r[1])/(r[2]-r[1]))
   x <- pmin(tabulate(x), 37)
-  paste(format(r[1]),' <',
+  paste0(format(r[1]),' <',
         paste(substring(' 1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
                         x+1,x+1), collapse=''),
-        '> ',format(r[2]),sep='')
+        '> ',format(r[2]))
 }
 
 
@@ -862,22 +862,22 @@ html.contents.data.frame <-
   d <- object$dim
   maxnas <- object$maxnas
   if(nshow) {
-    cat('<hr><h2>Data frame:',object$dfname,
-        '</h2>',d[1],
+    cat('<hr><h4>Data frame:',object$dfname,
+        '</h4>',d[1],
         ' observations and ',d[2],
-        ' variables, maximum # NAs:',maxnas, '&nbsp;&nbsp;&nbsp;&nbsp;',
+        ' variables, maximum # NAs:',maxnas, '&emsp;&emsp;',
         sep='', file=file, append=append)
     if(length(object$id)) cat('Unique ', object$id, ':', object$unique.ids,
-                              '&nbsp;&nbsp;&nbsp;&nbsp;',
+                              '&emsp;&emsp;',
                               sep='', file=file, append=TRUE)
     if(length(object$rangevar)) cat(object$rangevar, ' range:', object$range,
-                                    '&nbsp;&nbsp;&nbsp;&nbsp;', sep='', file=file, append=TRUE)
+                                    '&emsp;&emsp;', sep='', file=file, append=TRUE)
     if(length(object$valuesvar))cat(object$valuesvar, ':', object$values,
-                                    '&nbsp;&nbsp;&nbsp;&nbsp;', sep='', file=file, append=TRUE)
+                                    '&emsp;&emsp;', sep='', file=file, append=TRUE)
     cat('<hr>\n', file=file, append=TRUE)
   } else
-    cat('<hr><h2>Data frame:',object$dfname,
-        '</h2>', ' Variables:', d[2], '<hr>\n', sep='',
+    cat('<hr><h4>Data frame:',object$dfname,
+        '</h4>', ' Variables:', d[2], '<hr>\n', sep='',
         file=file, append=append)
   
   cont <- object$contents
@@ -933,7 +933,7 @@ html.contents.data.frame <-
   
   if(prlevels && length(L) > 0) {
     if(levelType=='list') {
-      cat('<h2 align="center">Category Levels</h2>\n', file=file, append=TRUE)
+      cat('<h5>Category Levels</h5>\n', file=file, append=TRUE)
       for(i in fullLevels) {
         l <- L[[i]]
         nami <- Lnames[i]
@@ -941,14 +941,14 @@ html.contents.data.frame <-
         if(sum(reusingLevels))
           for(k in which(reusingLevels))
             if(L[[k]] == nami) w <- c(w, Lnames[k])
-        cat('<a name="levels.',nami,'"><h3>',
-            paste(w, collapse=', '), '</h3>\n', sep='', 
+        cat('<a name="levels.',nami,'"><h6>',
+            paste(w, collapse=', '), '</h6>\n', sep='', 
             file=file, append=TRUE)
-        cat('<ul>\n', file=file, append=TRUE)
+        #cat('<ul>\n', file=file, append=TRUE)
         if(length(l) > maxlevels) l <- c(l[1 : maxlevels], '...')
         for(k in l) cat('<li>', k, '</li>\n', sep='',
                         file=file, append=TRUE)
-        cat('</ul>\n', file=file, append=TRUE)
+        #cat('</ul>\n', file=file, append=TRUE)
       }
     }
     else {  
@@ -957,7 +957,7 @@ html.contents.data.frame <-
       ## together when needed
       evenSplit <- function(x, n) {
         indent <- function(z) if(length(z) == 1) z else
-        c(z[1], paste('&nbsp;&nbsp;&nbsp;', z[-1], sep=''))
+        c(z[1], paste0('&emsp;', z[-1]))
         m <- length(x)
         if(m <= n) return(c(indent(x), rep('',n-m)))
         totalLength <- sum(nchar(x)) + (m-1)*3.5

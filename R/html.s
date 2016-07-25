@@ -106,7 +106,7 @@ html.data.frame <-
     x <- cbind(Name=as.character(r), x)
   
   cat('<TABLE BORDER>\n', file=file, append=append)
-  cat('<tr>', paste('<td><h3>', dimnames(x)[[2]], '</h3></td>',sep=''), '</tr>\n',
+  cat('<tr>', paste0('<td><strong>', dimnames(x)[[2]], '</strong></td>'), '</tr>\n',
       sep='', file=file, append=file!='')
   
   if(length(link)) {
@@ -114,12 +114,12 @@ html.data.frame <-
       x[link!=''] <- paste('<a ',linkType,'="', link[link!=''],'">',
                            x[link!=''],'</a>',sep='') else
     x[,linkCol] <- ifelse(link == '',x[,linkCol],
-                          paste('<a ',linkType,'="',link,'">',
-                                x[,linkCol],'</a>',sep=''))
+                          paste0('<a ',linkType,'="',link,'">',
+                                x[,linkCol],'</a>'))
   }
 
   for(i in 1:nrow(x))
-    cat('<tr>',paste('<td>',x[i,],'</td>',sep=''),'</tr>\n',
+    cat('<tr>',paste0('<td>',x[i,],'</td>'),'</tr>\n',
         sep='', file=file, append=file!='')
 
   cat('</TABLE>\n', file=file, append=file!='')
@@ -128,8 +128,8 @@ html.data.frame <-
 
 
 html.default <- function(object,
-                         file=paste(first.word(deparse(substitute(object))),
-                                    'html',sep='.'),
+                         file=paste0(first.word(deparse(substitute(object))),
+                                    'html'),
                          append=FALSE,
                          link=NULL, linkCol=1, linkType=c('href','name'),
                          ...)

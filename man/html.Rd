@@ -77,6 +77,8 @@ the console, as when using \code{knitr}.
 \item{\dots}{ignored except for \code{htmlVerbatim} - is a list of
 	objects to \code{print()}}
 \item{x}{an object created by \code{html}}
+\item{size}{a number between 0 and 1 representing the character size to
+	be used by \code{htmlVerbatim} in units of \code{em}}
 }
 \section{Side Effects}{\code{print} or \code{show} launch a browser}
 \author{

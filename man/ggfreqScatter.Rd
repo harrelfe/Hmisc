@@ -21,7 +21,7 @@ ggfreqScatter(x, y, bins=50, g=10,
               xminor  = NULL, yminor = NULL,
               xlab = as.character(substitute(x)),
               ylab = as.character(substitute(y)),
-              fcolors = viridis::viridis(10), nsize=FALSE, \dots)
+              fcolors = viridis::viridis(10), nsize=FALSE, html=FALSE, \dots)
 }
 \arguments{
 \item{x}{x-variable}
@@ -49,6 +49,7 @@ ggfreqScatter(x, y, bins=50, g=10,
 	\code{size} is taken as the fourth root of the frequency.  If there
 	are 15 or unique frequencies all the unique frequencies are used,
 	otherwise \code{g} quantile groups of frequencies are used.}
+\item{html}{set to \code{TRUE} to use html in axis labels instead of plotmath}
 \item{\dots}{arguments to pass to \code{geom_point} such as \code{shape}
 	and \code{size}}
 }

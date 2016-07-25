@@ -8,12 +8,12 @@ ggfreqScatter <- function(x, y, bins=50, g=10,
                           xlab=as.character(substitute(x)),
                           ylab=as.character(substitute(y)),
                           fcolors=viridis::viridis(10),
-                          nsize=FALSE, ...) {
+                          nsize=FALSE, html=FALSE, ...) {
 
   xlab <- if(! missing(xlab)) xlab
-          else if(label(x) != '') label(x, plot=TRUE) else xlab
+          else if(label(x) != '') label(x, plot=TRUE, html=html) else xlab
   ylab <- if(! missing(ylab)) ylab
-          else if(label(y) != '') label(y, plot=TRUE) else ylab
+          else if(label(y) != '') label(y, plot=TRUE, html=html) else ylab
 
   nx <- is.numeric(x); ny <- is.numeric(y)
   xbreaks <- if(nx) xbreaks; ybreaks <- if(ny) ybreaks

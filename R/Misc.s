@@ -1667,7 +1667,7 @@ knitrSet <- function(basename=NULL, w=4, h=3,
   ## Default width fills Sweavel boxes when font size is \small and svmono.cls
   ## is in effect (use 65 without svmono)
 
-  if(lang == 'latex') knitr::render_listings()
+  if(TRUE || lang == 'latex') knitr::render_listings()
   if(messages != 'console') {
 	unlink(messages) # Start fresh with each run
 	hook_log = function(x, options) cat(x, file=messages, append=TRUE)
@@ -1715,7 +1715,9 @@ knitrSet <- function(basename=NULL, w=4, h=3,
     aliases=c(h='fig.height', w='fig.width', cap='fig.cap', scap='fig.scap'))
     #eval.after = c('fig.cap','fig.scap'),
     #error=error)  #, keep.source=keep.source (TRUE))
-  knitr::opts_chunk$set(fig.path=fig.path, fig.align=fig.align, w=w, h=h,
+  # See if need to remove dev=dev from below because of plotly graphics
+  knitr::opts_chunk$set(fig.path=fig.path, fig.align=fig.align,
+                        fig.width=w, fig.height=h,
                  fig.show=fig.show, fig.lp=fig.lp, fig.pos=fig.pos,
                  dev=dev, par=TRUE, tidy=tidy, out.width=NULL, cache=cache,
                  echo=echo, error=error, comment='', results=results)

@@ -2,6 +2,8 @@
 ##  attr(x, "label") <- value
 ##  x
 ##}
+## exact=TRUE and [['label']] to prevent matching with a different attribute
+## "labels" (Thanks: Ivan Puzek)
 
 label <- function(x, default=NULL, ...) UseMethod("label")
 
@@ -12,7 +14,7 @@ label.default <- function(x, default=NULL, units=plot, plot=FALSE,
     stop("the default string cannot be of length greater then one")
 
   at <- attributes(x)
-  lab <- at$label
+  lab <- at[['label']]
   if(length(default) && (!length(lab) || lab==''))
     lab <- default
 
@@ -32,7 +34,7 @@ label.Surv <- function(x, default=NULL, units=plot,
     stop("the default string cannot be of length greater then one")
 
   at  <- attributes(x)
-  lab <- at$label
+  lab <- at[['label']]
   ia  <- at$inputAttributes
   if((! length(lab) || lab == '') && length(ia)) {
     poss <- switch(type,
@@ -70,7 +72,8 @@ label.data.frame <- function(x, default=NULL, self=FALSE, ...) {
       default <- list(default)
     }
 
-    labels <- mapply(FUN=label, x=x, default=default, MoreArgs=list(self=TRUE), USE.NAMES=FALSE)
+    labels <- mapply(FUN=label, x=x, default=default,
+                     MoreArgs=list(self=TRUE), USE.NAMES=FALSE)
     names(labels) <- names(x)
     return(labels)
   }
@@ -215,11 +218,11 @@ labelLatex <- function(x=NULL, label='', units='', size='smaller[2]',
 
 "print.labelled"<- function(x, ...) {
   x.orig <- x
-  u <- attr(x,'units')
+  u <- attr(x, 'units', exact=TRUE)
   if(length(u))
     attr(x,'units') <- NULL   # so won't print twice
 
-  cat(attr(x, "label"),
+  cat(attr(x, "label", exact=TRUE),
       if(length(u))
         paste('[', u, ']', sep=''),
       "\n")
@@ -249,7 +252,7 @@ Label.data.frame <- function(object, file='', append=FALSE, ...)
 {
   nn <- names(object)
   for(i in 1:length(nn)) {
-    lab <- attr(object[[nn[i]]],'label')
+    lab <- attr(object[[nn[i]]], 'label', exact=TRUE)
     lab <- if(length(lab)==0) '' else lab
     cat("label(",nn[i],")\t<- '",lab,"'\n",
         append=if(i==1)
@@ -274,7 +277,7 @@ reLabelled <- function(object)
   for(i in 1:length(object))
     {
       x <- object[[i]]
-      lab <- attr(x, 'label')
+      lab <- attr(x, 'label', exact=TRUE)
       cl  <- class(x)
       if(length(lab) && !any(cl=='labelled')) {
         class(x) <- c('labelled',cl)
@@ -303,7 +306,7 @@ llist <- function(..., labels=TRUE)
       lab <- vname[i]
       if(labels)
         {
-          lab <- attr(dotlist[[i]],'label')
+          lab <- attr(dotlist[[i]],'label', exact=TRUE)
           if(length(lab) == 0)
             lab <- vname[i]
         }

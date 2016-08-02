@@ -146,7 +146,7 @@ cleanup.import <-
       if(charfactor && is.character(x)) {
         if(length(unique(x)) < .5*length(x)) {
           x <- sub(' +$', '', x)  # remove trailing blanks
-          x <- factor(x, exclude='')
+          x <- factor(x, exclude=c('', NA))
           modif <- TRUE
         }
       }

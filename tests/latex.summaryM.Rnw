@@ -2,28 +2,29 @@
 % Lauren Samuels <lauren.samuels@vanderbilt.edu>
 % JoAnn Alvarez
 \documentclass{article}
-\usepackage{relsize,setspace} % used by latex(describe( ))
-\usepackage{longtable}
-\usepackage{pdfpages}
+\usepackage{spaper}
+%\usepackage{relsize,setspace} % used by latex(describe( ))
+%\usepackage{longtable}
+%\usepackage{pdfpages}
 \usepackage{hyperref}
-\usepackage{lscape} % for landscape mode tables
-\usepackage{calc,epic,color} % used for latex(..., dotchart=TRUE)
-\usepackage[superscript,nomove]{cite} % use if \cite is used and superscripts wanted
-\usepackage{helvet}
-\usepackage{moreverb}
-\renewcommand{\familydefault}{\sfdefault}
-\newcommand{\R}{{\normalfont\textsf{R}}{}}
+\usepackage{here}
+%\usepackage{lscape} % for landscape mode tables
+%\usepackage{calc,epic,color} % used for latex(..., dotchart=TRUE)
+%\usepackage[superscript,nomove]{cite} % use if \cite is used and superscripts wanted
+%\usepackage{helvet}
+%\usepackage{moreverb}
+%\renewcommand{\familydefault}{\sfdefault}
+%\newcommand{\R}{{\normalfont\textsf{R}}{}}
 
-\textwidth 6.75in % set dimensions before fancyhdr
-\textheight 9.25in
-\topmargin -.875in
-\oddsidemargin -.125in
-\evensidemargin -.125in
-\usepackage{fancyhdr} % this and next line are for fancy headers/footers
+%\textwidth 6.75in % set dimensions before fancyhdr
+%\textheight 9.25in
+%\topmargin -.875in
+%\oddsidemargin -.125in
+%\evensidemargin -.125in
+%\usepackage{fancyhdr} % this and next line are for fancy headers/footers
 \pagestyle{fancy}
 \lhead{\textsc{}} %uncomment to remove left-sided headings
-\setlength{\parindent}{0ex} % don't indent first line of paragraph
-\setlength{\parskip}{2ex} % do skip 2 spaces between paragraphs
+
 
 \title{\textsf{Example illustrating problems with latex.summaryM}}
 \author{Pua Yong Hao\\\smaller\href{mailto:puayonghao@gmail.com}{puayonghao@gmail.com}} 
@@ -34,6 +35,7 @@
 \section{Descriptive Stats}
 <<echo=TRUE, results='hide'>>=
 library(rms)
+knitrSet()
 n <- 500; set.seed(88)
 sex <- factor(sample(c("female","male"), n, TRUE))
 age <- rnorm(n, 50, 10)

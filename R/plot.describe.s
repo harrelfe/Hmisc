@@ -133,6 +133,7 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
                            yaxis=list(title='', autorange='reversed',
                                       tickvals=tly, ticktext=un),
                            autosize=FALSE, height=150 + 15 * nrow(z),
+                           margin  = list(l=max(70, max(nchar(un)) * 6)),
                            evaluate=TRUE)
       P1 <- pcat
       }
@@ -173,10 +174,23 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
       P2 <- NULL
     } else {
     
-      z <- data.frame(xname      = ge('xname'), X=ge('X'),
+      z <- data.frame(xname      = ge('xname'),
+                      X          = ge('X'),
                       Proportion = round(ge('prop'), 4),
                       text       = ge('text'),
                       missing    = ge('missing'))
+      ## Triplicate observations so can control vertical line segments
+      ## plotly provides marker symbol line-ns-open but no symbol line-n-open,
+      ## and relative line sigment sizes are hard to control in plotly using
+      ## mode='markers'
+      if(FALSE) {
+      j <- rep(1 : nrow(z), each=3)
+      zz <- z[j, ]
+      l <- nrow(zz)
+      d$x[seq(3, n, by=3)] <- NA
+      j <- seq(2, n, by=3)
+      d$y[j] <- d$y[j] + d$Proportion[j]
+}
       
       ## Note: plotly does not allow font, color, size changes for hover text
       pcon <- if(any(z$missing > 0))
@@ -190,9 +204,13 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
                                    mode='markers',
                                    marker=list(symbol='line-ns-open'),
                                    type='scatter', hoverinfo='text')
+
+      maxlen <- max(nchar(as.character(z$xname)))
       pcon <- plotly::layout(pcon, xaxis=list(title='', showticklabels=FALSE,
-                                      zeroline=FALSE, showgrid=FALSE),
-                           yaxis=list(title=''), autosize=TRUE, evaluate=TRUE)
+                                              zeroline=FALSE, showgrid=FALSE),
+                             yaxis=list(title=''),
+                             margin=list(l=max(70, maxlen * 6)),
+                             autosize=TRUE, evaluate=TRUE)
       P2 <- pcon
       }
   }

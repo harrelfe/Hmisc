@@ -1,4 +1,3 @@
-## $Id$
 ##note: ars may always be T
 
 summary.formula <-
@@ -151,7 +150,7 @@ summary.formula <-
 
     if(length(name.stats)==0) {
       name.stats <- if(nstats==1) yname
-                    else paste(yname ,1:nstats,sep='')
+                    else paste0(yname , 1 : nstats)
     }
   }
 
@@ -596,17 +595,17 @@ print.summary.formula.response <-
   if(prUnits) {
     atu <- gsub('\\*', ' ', at$units)
     vlabels <- ifelse(atu=='',vlabels,
-                      paste(vlabels,' [',atu,']',sep=''))
+                      paste0(vlabels,' [',atu,']'))
   }
 
   cat(at$ylabel,
       if(ns>1)
-        paste(' by',
+        paste0(' by',
               if(ul) at$strat.label
               else at$strat.name),
       '    N=',at$n,
-      if(at$nmiss) paste(', ',at$nmiss,' Missing',sep=''),
-      '\n\n',sep='')
+      if(at$nmiss) paste0(', ',at$nmiss,' Missing'),
+      '\n\n')
 
   d <- dim(stats)
   
@@ -676,10 +675,9 @@ latex.summary.formula.response <-
   if(ns>1) caption <- paste(caption,' by', if(ul)at$strat.label else 
                             at$strat.name)
   if(ncaption)
-    caption <- paste(caption,
+    caption <- paste0(caption,
                      '~~~~~N=',at$n,
-                     if(at$nmiss) paste(',~',at$nmiss,' Missing',sep=''),
-                     sep='')
+                     if(at$nmiss) paste0(',~',at$nmiss,' Missing'))
 
   dm <- dimnames(stats)
   dm[[1]] <- latexTranslate(dm[[1]], greek=TRUE)
@@ -692,7 +690,7 @@ latex.summary.formula.response <-
   if(prUnits) {
     atvu <- gsub('\\*', ' ', at$vunits)
     vn <- ifelse(atvu=='', vn,
-                 paste(vn,'~\\hfill\\tiny{', atvu, '}',sep=''))
+                 paste0(vn,'~\\hfill\\tiny{', atvu, '}'))
   }
 
   vn <- latexTranslate(vn, greek=TRUE)
@@ -721,9 +719,9 @@ latex.summary.formula.response <-
       for(j in 1 : ntrio) {
         m <- m + 1
         k <- k + 1
-        cstats[[k]] <- paste('{\\scriptsize ', fmt(stats[,m], cdec[k]), '~}',
+        cstats[[k]] <- paste0('{\\scriptsize ', fmt(stats[,m], cdec[k]), '~}',
                              fmt(stats[,m + 1], cdec[k]), ' {\\scriptsize ',
-                             fmt(stats[,m + 2], cdec[k]), '}',sep='')
+                             fmt(stats[,m + 2], cdec[k]), '}')
         m <- m + 2
       }
     }
@@ -785,7 +783,7 @@ plot.summary.formula.response <-
         else at$vname
 
   Units <- at$vunits
-  vn <- ifelse(Units=='', vn, paste(vn, ' [', Units, ']', sep=''))
+  vn <- ifelse(Units=='', vn, paste0(vn, ' [', Units, ']'))
   ## dotchart2 groups argument may not be an R plotmath expression
   vn <- vn[vn!='']
   d  <- dim(stats)
@@ -832,9 +830,9 @@ plot.summary.formula.response <-
       else if(main!='') title(main)
 
       if(ns==1 && subtitles) {
-        title(sub=paste('N=',at$n,sep=''),adj=0,cex=.6)
+        title(sub=paste0('N=', at$n), adj=0, cex=.6)
         if(at$nmiss>0)
-          title(sub=paste('N missing=',at$nmiss,sep=''),cex=.6,adj=1)
+          title(sub=paste0('N missing=', at$nmiss), cex=.6, adj=1)
       }
     }
   }
@@ -883,7 +881,7 @@ plot.summary.formula.reverse <-
   
   ul <- vnames=='labels'
 
-  if(is.logical(prtest) && !prtest) prtest <- 'none'
+  if(is.logical(prtest) && ! prtest) prtest <- 'none'
   test   <- obj$testresults
   if(!length(test)) prtest <- 'none'
 
@@ -1081,9 +1079,9 @@ plot.summary.formula.reverse <-
         Key2 <- function(x=NULL, y=NULL, quant, ...)
           {
             quant <- format(quant)
-            txt <- paste('(',quant[2],',',quant[3],',',quant[4], 
+            txt <- paste0('(',quant[2],',',quant[3],',',quant[4], 
                          ') quantiles shown\nx-axes scaled to (',quant[1],',',
-                         quant[5],') quantiles', sep='')
+                         quant[5],') quantiles')
             if(length(x)) {
               if(is.list(x)) {
                 y <- x$y;
@@ -1356,8 +1354,7 @@ print.summary.formula.reverse <-
   labels <- x$labels
   Units  <- x$units
   test   <- x$testresults
-  if(!length(test))
-    prtest <- 'none'
+  if(! length(test)) prtest <- 'none'
 
   nw     <- if(lg <- length(x$group.freq)) lg else 1
   gnames <- names(x$group.freq)
@@ -1373,9 +1370,9 @@ print.summary.formula.reverse <-
     nam <- if(vnames=="names") nams[i] else labels[i]
 
     if(prUnits && nchar(Units[i]))
-      nam <- paste(nam,' [', gsub('\\*',' ', Units[i]),']',sep='')
+      nam <- paste0(nam,' [', gsub('\\*',' ', Units[i]),']')
 
-    tr <- if(length(test) && all(prtest!='none')) test[[nams[i]]]
+    tr <- if(length(test) && all(prtest != 'none')) test[[nams[i]]]
           else NULL
 
     if(type[i]==1 || type[i]==3) {
@@ -1393,10 +1390,10 @@ print.summary.formula.reverse <-
 
   lab <- dimnames(cstats)[[1]]
   gl <- names(x$group.freq)
-  gl <- if(length(gl)) paste(gl," \n(N=",x$group.freq,")",sep="")
+  gl <- if(length(gl)) paste0(gl," \n(N=",x$group.freq,")")
         else ""
 
-  if(length(test) && !all(prtest=='none'))
+  if(length(test) && ! all(prtest == 'none'))
     gl <- c(gl,
             if(length(prtest)==1 && prtest!='stat')
               if(prtest=='P')'P-value'
@@ -1407,7 +1404,7 @@ print.summary.formula.reverse <-
   spaces <- substring("                                                        ",
                       1, (max(nc)-nc+1)/2)   # center strings
   dc <- dim(cstats)
-  cstats <- paste(spaces, cstats, sep="")
+  cstats <- paste0(spaces, cstats)
   dim(cstats) <- dc
   if(prn) {
     cnn <- format(nn)
@@ -1423,7 +1420,7 @@ print.summary.formula.reverse <-
       if(length(x$group.label))
         paste(" by",x$group.label)
       else
-        paste("  (N=",x$N,")",sep=""),"\n\n", sep="")
+        paste0("  (N=",x$N,")"),"\n\n", sep="")
 
   if(missing(min.colwidth))
     min.colwidth <- max(min(nchar(gl)),min(nc[nc>0]))
@@ -1437,13 +1434,25 @@ print.summary.formula.reverse <-
 formatCats <- function(tab, nam, tr, type, group.freq,
                        what=c('%', 'proportion'),
                        npct, pctdig, exclude1, long, prtest,
-                       latex=FALSE, testUsed=character(0),
+                       latex=FALSE, html=FALSE, testUsed=character(0),
                        npct.size='scriptsize', pdig=3, eps=.001,
-                       footnoteTest=TRUE, dotchart=FALSE)
+                       footnoteTest=TRUE, dotchart=FALSE, mspecs=markupSpecs)
 {
   what   <- match.arg(what)
   gnames <- names(group.freq)
   nr     <- nrow(tab)
+
+  specs <- if(html) mspecs$html else mspecs$latex
+  spc   <- specs$space
+  sspc  <- specs$sspace
+  lspc  <- specs$lspace
+  bold  <- specs$bold
+  frac  <- specs$frac
+
+  if(! is.function(npct.size)) {
+    npctsize <- npct.size
+    npct.size <- function(x) paste0('{\\', npctsize, '}')
+    }
 
   ## If there was a missing column of tab because e.g. the variable was
   ## always NA for one (or more) of the groups, add columns of NAs
@@ -1458,76 +1467,75 @@ formatCats <- function(tab, nam, tr, type, group.freq,
            else group.freq
   pct <- if(ncol(tab) > 1) sweep(tab, 2, denom, FUN='/') else tab / denom
   pct <- pct * (if(what =='%') 100 else 1)
-  cpct <- paste(format(round(pct, pctdig)),
-                if(latex && what == '%')"\\%"
-                else if(what == '%') "%",
-                sep="")
+  cpct <- paste0(format(round(pct, pctdig)),
+                 if(latex && what == '%')"\\%"
+                 else if(what == '%') "%")
 
-  denom.rep <- matrix(rep(format(denom),nr),nrow=nr,byrow=TRUE)
-  if(npct!='none')
-    cpct <- paste(cpct,
-                  if(latex)
-                    switch(npct,
-                           numerator=paste('{\\',npct.size,' (',format(tab),')}',sep=''),
-                           denominator=paste('{\\',npct.size,' of',denom.rep,'}'),
-                           both=paste('{\\', npct.size, ' $\\frac{', format(tab),'}{',
-                             denom.rep,'}$}',sep=''),
-                           slash=paste('~{\\', npct.size, ' ', format(tab),
-                             '\\,/\\,',   #  \, = LaTeX thin space
-                             denom.rep, '}', sep='')
-                           )
-                  else
-                  switch(npct,
-                         numerator=paste('(',format(tab),')',sep=''),
-                         denominator=paste('of',denom.rep),
-                         both=paste(format(tab),'/',denom.rep,sep='')))
+  denom.rep <- matrix(rep(format(denom), nr), nrow=nr, byrow=TRUE)
+  if(npct != 'none')
+    cpct <-
+      paste(cpct,
+            if(latex || html)
+              switch(npct,
+                     numerator=npct.size(paste0(' (', format(tab), ')')),
+                     denominator=npct.size(paste0(' of ', denom.rep)),
+                     both=npct.size(paste0(frac(format(tab),
+                                                denom.rep))),
+                     slash=npct.size(paste0(spc, format(tab),
+                                            sspc, '/', sspc, denom.rep))
+                     )
+            else
+              switch(npct,
+                     numerator   = paste0('(', format(tab), ')'),
+                     denominator = paste('of', denom.rep),
+                     both        = paste0(format(tab),'/', denom.rep))
+            )
   
-  if(latex)
-    cpct <- sedit(cpct,' ','~')
+  if(latex && ! html) cpct <- sedit(cpct, ' ', spc)
 
   dim(cpct) <- dim(pct)
   dimnames(cpct) <- dimnames(pct)
   cpct[is.na(pct)] <- ""
   lev <- dimnames(pct)[[1]]
-  exc <- exclude1 && (nr==2) && (type==1) # type==1 10jul02
+  exc <- exclude1 && (nr == 2) && (type == 1)
   rl <- casefold(dimnames(pct)[[1]])
-  binary <- type==1 && exc &&
-  (all(rl %in% c("0","1"))|all(rl %in% c("false","true"))|
-   all(rl %in% c("absent","present")))
+  binary <- type == 1 && exc &&
+    (all(rl %in% c("0","1")) | all(rl %in% c("false","true")) |
+     all(rl %in% c("absent","present")))
   if(binary) long <- FALSE
-  jstart <- if(exc) 2
-            else 1
+  jstart <- if(exc) 2 else 1
   
-  nw <- if(lg <- length(group.freq)) lg
-        else 1
+  nw <- if(lg <- length(group.freq)) lg else 1
 
   lab <- if(binary) nam
-         else if(long) c(nam, paste('   ',lev[jstart:nr]))
-         else c(paste(nam,':',lev[jstart]),
-                if(nr > jstart) paste('   ',lev[(jstart+1):nr]))
+         else if(long) c(nam, paste(spc, spc, lev[jstart : nr]))
+         else c(paste(nam, ':', lev[jstart]),
+                if(nr > jstart) paste(lspc, lev[(jstart + 1) : nr]))
   
-  cs <- matrix('', nrow=long+(if(exc)nr-1
-                              else nr),
-               ncol=nw + (length(tr) > 0),
-               dimnames=list(lab, c(gnames,
-                                    if(length(tr))''
-                                    else NULL)))
+  cs <- matrix('', nrow=long + (if(exc) nr - 1
+                                else nr),
+               ncol = nw + (length(tr) > 0),
+               dimnames = list(lab, c(gnames,
+                                      if(length(tr))''
+                                      else NULL)))
 
   if(nw==1)
-    cs[(long+1):nrow(cs),1] <- cpct[jstart:nr,]
+    cs[(long + 1) : nrow(cs), 1] <- cpct[jstart : nr, ]
   else
-    cs[(long+1):nrow(cs),1:nw] <- cpct[jstart:nrow(cpct),gnames]
-
+    cs[(long + 1) : nrow(cs), 1 : nw] <- cpct[jstart : nrow(cpct), gnames]
+  
   if(latex && dotchart && ncol(pct) <= 3) {
     locs <- c(3,-3,5,-5,7,-7,9,-9)
     points <- c("\\circle*{4}","\\circle{4}","\\drawline(0,2)(-1.414213562,-1)(1.414213562,-1)(0,2)")
     
-    point.loc <- sapply(jstart:nrow(pct),
-                        function(i) {
-                          paste(ifelse(is.na(pct[i,]), "",
-                                       paste("\\put(", pct[i,], ",0){",points[1:ncol(pct)],"}",sep='')),
-                                collapse='')
-                        })
+    point.loc <-
+      sapply(jstart:nrow(pct),
+             function(i) {
+               paste(ifelse(is.na(pct[i,]), "",
+                            paste0("\\put(", pct[i,], ",0){",
+                                   points[1:ncol(pct)],"}")),
+                     collapse='')
+             })
 
     error.loc <- character(nrow(tab) - exc)
     k <- 0
@@ -1540,10 +1548,9 @@ formatCats <- function(tab, nam, tr, type, group.freq,
           p2prime <- (tab[,j] + 1)/(denom[j] + 2)
           error <- 196 * sqrt(d1 + p2prime * (1 - p2prime)/denom[j])
           bar <- ifelse(is.na(error), "",
-                        paste("\\put(", (pct[,i] + pct[,j])/2 - error, ",",
-                              locs[k],"){\\line(1,0){",error*2,"}}",
-                              sep=''))
-          error.loc <- paste(error.loc, bar, sep='')
+                        paste0("\\put(", (pct[,i] + pct[,j])/2 - error, ",",
+                              locs[k],"){\\line(1,0){",error*2,"}}"))
+          error.loc <- paste0(error.loc, bar)
         }
       }
     }
@@ -1551,24 +1558,25 @@ formatCats <- function(tab, nam, tr, type, group.freq,
     scale <- character(nrow(tab) - exc)
     scale[1] <- "\\multiput(0,2)(25,0){5}{\\color[gray]{0.5}\\line(0,-1){4}}\\put(-5,0){\\makebox(0,0){\\tiny 0}}\\put(108,0){\\makebox(0,0){\\tiny 1}}"
                      
-    cl <- paste("\\setlength\\unitlength{1in/100}\\begin{picture}(100,10)(0,-5)",
+    cl <- paste0("\\setlength\\unitlength{1in/100}\\begin{picture}(100,10)(0,-5)",
                 scale,"\\put(0,0){\\color[gray]{0.5}\\line(1,0){100}}",
                 point.loc, error.loc,
-                "\\end{picture}", sep='')
+                "\\end{picture}")
     cs[(long+1):nrow(cs),ncol(cs)] <- cl
   }
 
   if(length(tr)) {
     ct <- formatTestStats(tr, type==3,
                           if(type==1)1
-                          else 1:nr,
-                          prtest, latex=latex, testUsed=testUsed,
-                          pdig=pdig, eps=eps, footnoteTest=footnoteTest)
+                          else 1 : nr,
+                          prtest, latex=latex, html=html, testUsed=testUsed,
+                          pdig=pdig, eps=eps, footnoteTest=footnoteTest,
+                          mspecs=mspecs)
 
-    if(length(ct)==1)
-      cs[1,ncol(cs)] <- ct
+    if(length(ct) == 1)
+      cs[1, ncol(cs)] <- ct
     else
-      cs[(long+1):nrow(cs),ncol(cs)] <- ct
+      cs[(long + 1) : nrow(cs), ncol(cs)] <- ct
   }
 
   cs
@@ -1578,11 +1586,30 @@ formatCats <- function(tab, nam, tr, type, group.freq,
 ## Function to format subtable for continuous var, for method='reverse'
 formatCons <- function(stats, nam, tr, group.freq, prmsd, sep='/',
                        formatArgs=NULL, round=NULL, prtest,
-                       latex=FALSE, testUsed=character(0),
+                       latex=FALSE, html=FALSE, testUsed=character(0),
                        middle.bold=FALSE, outer.size=NULL, msdsize=NULL,
                        pdig=3, eps=.001, footnoteTest=TRUE,
-                       prob=c(0.25, 0.5, 0.75), prN=FALSE)
+                       prob=c(0.25, 0.5, 0.75), prN=FALSE, mspecs=markupSpecs)
 {
+  specs <- if(html) mspecs$html else mspecs$latex
+  spc     <- specs$space
+  bold    <- if(middle.bold) specs$bold else function(x) x
+  lspc    <- specs$lspace
+  sup     <- specs$sup
+  br      <- specs$br
+  plminus <- specs$plminus
+  math    <- specs$math
+
+  if(! length(msdsize)) msdsize <- function(x) x
+  if(! is.function(msdsize)) {
+    Msdsize <- msdsize
+    msdsize <- function(x) paste0('{\\', Msdsize, '}')
+  }
+  if(! is.function(outer.size)) {
+    Outer.size <- outer.size
+    outer.size <- function(x) paste0('{\\', Outer.size, '}')
+    }
+
   nw <- if(lg <- length(group.freq)) lg else 1
 
   ns <- dimnames(stats)[[2]]
@@ -1592,21 +1619,18 @@ formatCons <- function(stats, nam, tr, group.freq, prmsd, sep='/',
   if(length(prob) == 3) {
     qs <- numeric(3)
     for(i in seq_along(qs)) {
-      qs[i] <- l[abs(ns-prob[i]) < .001]
+      qs[i] <- l[abs(ns - prob[i]) < .001]
     }
   } else {
-    q1  <- l[abs(ns-.25) < .001]
-    med <- l[abs(ns-.5) < .001]
-    q3  <- l[abs(ns-.75) < .001]
+    q1  <- l[abs(ns - .25) < .001]
+    med <- l[abs(ns - .5 ) < .001]
+    q3  <- l[abs(ns - .75) < .001]
     qs <- c(q1, med, q3)
   }
   qu <- stats[,qs,drop=FALSE]
   if(prmsd)
-    qu <- cbind(qu,stats[,c('Mean','SD'),drop=FALSE])
+    qu <- cbind(qu, stats[, c('Mean', 'SD'), drop=FALSE])
   if(length(round) && round == 'auto') {
-    ## r <- max(stats[, 'SD'],
-    ##          diff(range(stats[, colnames(stats) %nin% c('N', 'SD')])),
-    ##          na.rm=TRUE)
     r <- max(abs(stats[, colnames(stats) %nin% c('N', 'SD')]), na.rm=TRUE)
     round <- if(r == 0) 2
      else max(0, min(5, 3 - round(log10(r))))
@@ -1617,38 +1641,37 @@ formatCons <- function(stats, nam, tr, group.freq, prmsd, sep='/',
   if(prN)
     cqu <- cbind(cqu,stats[,'N',drop=FALSE])
   cqu[is.na(qu)] <- ''
-  if(latex) {
+  if(latex || html) {
     st <- character(nrow(cqu))
     names(st) <- dimnames(qu)[[1]]
-    bld <- if(middle.bold) '\\bf '
-           else ''
 
     for(j in 1:nrow(cqu)) {
-      st[j] <- paste("{\\",outer.size," ",cqu[j,1],
-                     "~}{",bld,cqu[j,2],
-                     " }{\\",outer.size," ",cqu[j,3],"} ",sep="")
+      st[j] <-
+        paste0(outer.size(cqu[j, 1]),  ' ',
+               bold(      cqu[j, 2]),  ' ',
+               outer.size(cqu[j, 3]))
+
       if(prmsd)
         st[j] <-
-          if(length(msdsize))
-            paste(st[j], '~{\\',msdsize,'(',cqu[j,4], '$\\pm$',
-                  cqu[j,5],')}', sep='')
-          else
-            paste(st[j], '~(', cqu[j,4], '$\\pm$',
-                  cqu[j,5],')', sep='')
-      if(prN) {
-        st[j] <- paste0(st[j],"{\\",outer.size," $N=",cqu[j,ncol(cqu)],"$}")
-      }
+          paste0(st[j], spc, spc,
+                 msdsize(paste0(spc, '(', cqu[j, 4], plminus,
+                                cqu[j, 5], ')')))
+
+      if(prN)
+        st[j] <-
+          paste0(st[j], outer.size(paste0(spc, math('N=', cqu[j, ncol(cqu)]))))
     }
   } else {
     if(prmsd) {
       st <- apply(cqu, 1,
-            function(x,sep) paste(x[1],sep,x[2],sep,x[3],'  ',
-                                  x[4],'+/-',x[5],sep=''), sep=sep)
+            function(x,sep) paste(x[1], sep, x[2], sep,x[3], '  ',
+                                   x[4], '+/-', x[5], sep=''), sep=sep)
     } else {
       st <- apply(cqu[,seq(3),drop=FALSE], 1, paste, collapse=sep)
     }
     if(prN) {
-      st <- setNames(sprintf("%s  N=%s", st, cqu[,ncol(cqu),drop=FALSE]), names(st))
+      st <- setNames(sprintf("%s  N=%s", st, cqu[, ncol(cqu), drop=FALSE]),
+                     names(st))
     }
   }
 
@@ -1656,15 +1679,15 @@ formatCons <- function(stats, nam, tr, group.freq, prmsd, sep='/',
 
   if(nw==1) yj <- st
   else {
-    yj <- rep('',nw)
+    yj <- rep('', nw)
     names(yj) <- names(group.freq)
     yj[names(st)] <- st
   }
 
   if(length(tr)) {
-    ct <- formatTestStats(tr, prtest=prtest, latex=latex,
+    ct <- formatTestStats(tr, prtest=prtest, latex=latex, html=html,
                           testUsed=testUsed, pdig=pdig, eps=eps,
-                          footnoteTest=footnoteTest)
+                          footnoteTest=footnoteTest, mspecs=mspecs)
     yj <- c(yj, ct)
   }
   matrix(yj, nrow=1, dimnames=list(nam,names(yj)))
@@ -1672,16 +1695,21 @@ formatCons <- function(stats, nam, tr, group.freq, prmsd, sep='/',
 
 
 formatTestStats <- function(tr, multchoice=FALSE,
-                            i=if(multchoice)NA
-                              else 1,
-                            prtest, latex=FALSE,
+                            i=if(multchoice) NA else 1,
+                            prtest, latex=FALSE, html=FALSE,
                             testUsed=character(0),
                             pdig=3, eps=.001,
-                            plotmath=FALSE, footnoteTest=TRUE)
+                            plotmath=FALSE, footnoteTest=TRUE,
+                            mspecs=markupSpecs)
 {
   ## tr=an element of testresults (created by summary.formula method='reverse')
-  if(i > 1 && !multchoice)
-    stop('logic error')
+  ## or summaryM
+  if(i > 1 && ! multchoice) stop('logic error')
+
+  specs <- if(html) mspecs$html else mspecs$latex
+  spc   <- specs$space
+  sup   <- specs$sup
+  math  <- specs$math
   
   pval     <- tr$P[i]
   teststat <- tr$stat[i]
@@ -1692,82 +1720,80 @@ formatTestStats <- function(tr, multchoice=FALSE,
     if(latex && length(testUsed))
       res <-
         if(footnoteTest)
-          rep(paste('$^{',match(testname,testUsed),
-                    '}$',sep=''), length(pval))
+          rep(paste0(sup(match(testname, testUsed))), length(pval))
         else rep('', length(pval))
-
     return(res)
   }
 
   ## Note: multchoice tests always have only one type of d.f.
-  deg <- if(multchoice)tr$df[i]
-         else tr$df
+  deg <- if(multchoice) tr$df[i] else tr$df
   
   dof <- if(multchoice) as.character(deg)
-         else paste(deg,collapse=',')
-  
-  statname <- if(latex) tr$latexstat
+         else paste(deg, collapse=',')
+
+  namefun <- specs[[tr$namefun]]  ## function for typesetting stat name
+  statmarkup <- if(latex) tr$latexstat
               else if(plotmath) tr$plotmathstat
               else tr$statname
   
-  if(length(prtest)>1 && 'stat' %in% prtest && (latex || plotmath)) {
-    ## replace "df" inside statname with actual d.f.
-    if(length(grep('df',statname)))
-      statname <- sedit(statname, 'df',
-                        if(latex || length(deg)==1) dof
-                        else paste('list(',dof,')', sep=''))
+  if(length(prtest) > 1 && 'stat' %in% prtest && (latex || plotmath)) {
+    if(plotmath) {
+      ## replace "df" inside statmarkup with actual d.f.
+      if(length(grep('df', statmarkup)))
+        statmarkup <- sedit(statmarkup, 'df',
+                          if(latex || length(deg)==1) dof
+                          else paste0('list(', dof, ')'))
+    } else  statmarkup <- namefun(deg)
   }
-
-  pval <- format.pval(pval,digits=pdig,eps=eps)
-  plt <- substring(pval,1,1)=='<'
-
-  if(latex) {
-    if(length(prtest)==1) 
-      paste('$',
-            switch(prtest,
-                   P=pval,
-                   stat=format(round(teststat,2)),
-                   df=dof, name=statname),
-            if(footnoteTest && length(testUsed))
-              paste('^{',match(testname,testUsed),
-                    '}',sep=''),'$',sep='')
-    else paste('$',
-               if('stat' %in% prtest)
-                 paste(statname,'=',format(round(teststat,2)),sep=''),
-               if(all(c('stat','P') %in% prtest)) ',~',
-               if('P' %in% prtest)paste('P',ifelse(plt,'','='), pval,
-                                        sep=''),
-               if(footnoteTest && length(testUsed))
-                 paste('^{',match(testname,testUsed),
-                       '}',sep=''),
-               '$')
+  
+  pval <- format.pval(pval, digits=pdig, eps=eps)
+  plt  <- substring(pval,1,1) == '<'
+  
+  if(latex || html) {
+    if(length(prtest) == 1) 
+      paste0(
+        switch(prtest,
+               P    = pval,
+               stat = format(round(teststat, 2)),
+               df   = dof,
+               name = statmarkup),
+        if(footnoteTest && length(testUsed))
+          paste0(sup(match(testname, testUsed)))) 
+    else paste(
+           if('stat' %in% prtest)
+             paste0(statmarkup, '=', format(round(teststat, 2))),
+           if(all(c('stat', 'P') %in% prtest))
+             (if(html) ', ' else paste0(',', spc)),
+           if('P' %in% prtest) paste0('P',ifelse(plt,'','='), pval),
+           if(footnoteTest && length(testUsed))
+             paste0(sup(match(testname, testUsed)))) 
   } else if(plotmath) {
     if(length(prtest)==1)
       parse(text=switch(prtest,
-                        P=ifelse(plt,paste('~P',pval,sep=''),
-                                 paste('~P==',pval,sep='')),
-                        stat=format(round(teststat,2)),
-                        dof=format(dof),
-                        name=statname))
+                        P    = ifelse(plt, paste0('~', 'P', pval),
+                                      paste0('~', 'P==', pval)),
+                        stat = format(round(teststat, 2)),
+                        dof  = format(dof),
+                        name = statmarkup))
     else
       parse(text=paste(if('stat' %in% prtest)
-                         paste('~list(',statname,'==',
-                               format(round(teststat,2)),sep=''),
+                         paste0('~list(',statmarkup,'==',
+                                format(round(teststat,2))),
                        if(all(c('stat','P') %in% prtest)) ', ',
-                       if('P' %in% prtest)paste(ifelse(plt,'~P','~P=='),
-                                                pval,')',sep='')))
+                       if('P' %in% prtest)paste0(ifelse(plt,'~P','~P=='),
+                                                 pval,')')))
   } else {
     if(length(prtest)==1)
       switch(prtest,
-             P=pval,
-             stat=format(round(teststat,2)),
-             df=dof, name=statname)
+             P    = pval,
+             stat = format(round(teststat, 2)),
+             df   = dof,
+             name = statmarkup)
     else
       paste(if('stat' %in% prtest)
-              paste(statname,'=',format(round(teststat,2)),sep=''),
-            if('df' %in% prtest) paste('d.f.=',dof,sep=''),
-            if('P' %in%  prtest)paste('P', ifelse(plt,'','='), pval,
-                                      sep=''))
+              paste0(statmarkup, '=', format(round(teststat, 2))),
+            if('df' %in% prtest) paste0('d.f.=', dof),
+            if('P' %in%  prtest) paste0('P', ifelse(plt,'','='), pval))
   }
 }
 
@@ -1788,9 +1814,9 @@ latex.summary.formula.reverse <-
   x      <- object
   npct   <- match.arg(npct)
   vnames <- match.arg(vnames)
-  what <- match.arg(what)
-  if(is.logical(prtest) && !prtest)
-    prtest <- 'none'
+  what   <- match.arg(what)
+  
+  if(is.logical(prtest) && ! prtest) prtest <- 'none'
 
   stats  <- x$stats
   nv     <- length(stats)
@@ -1806,8 +1832,7 @@ latex.summary.formula.reverse <-
             else 1  #23Nov98
   gnames <- names(x$group.freq)
   test   <- x$testresults
-  if(!length(test))
-    prtest <- 'none'
+  if(! length(test)) prtest <- 'none'
 
   gt1.test <-
     if(all(prtest=='none'))
@@ -1821,11 +1846,11 @@ latex.summary.formula.reverse <-
   }
 
   if(missing(caption))
-    caption <- paste("Descriptive Statistics",
+    caption <- paste0("Descriptive Statistics",
                      if(length(x$group.label))
                        paste(" by",x$group.label)
                      else
-                       paste("  $(N=",x$N,")$",sep=""), sep="")
+                       paste0("  $(N=",x$N,")$"))
     
   bld <- if(middle.bold) '\\bf '
          else ''
@@ -1842,7 +1867,7 @@ latex.summary.formula.reverse <-
            else labels[i]
 
     if(prUnits && nchar(Units[i]) > 0)
-      nam <- paste(nam, '~\\hfill\\tiny{', gsub('\\*',' ', Units[i]),'}',sep='')
+      nam <- paste0(nam, '~\\hfill\\tiny{', gsub('\\*',' ', Units[i]),'}')
 
     tr  <- if(length(test) && all(prtest!='none')) test[[nams[i]]]
            else NULL
@@ -1881,7 +1906,7 @@ latex.summary.formula.reverse <-
   gl  <- latexTranslate(gl, greek=TRUE)
   extracolheads <-
     if(any(gl != " "))
-      c(if(prn)'', paste('$N=',x$group.freq,'$',sep=''))
+      c(if(prn)'', paste0('$N=', x$group.freq, '$'))
     else NULL # 21jan03
 
   if(length(test) && !all(prtest=='none')) {
@@ -1913,16 +1938,15 @@ latex.summary.formula.reverse <-
   else {
     legend <- character()
     if(any(type==2)) {
-      legend <- paste("\\noindent {\\", outer.size, " $a$\\ }{", bld,
+      legend <- paste0("\\noindent {\\", outer.size, " $a$\\ }{", bld,
                       "$b$\\ }{\\", outer.size,
                       " $c$\\ } represent the lower quartile $a$, the median $b$, and the upper quartile $c$\\ for continuous variables.",
                       if(prmsd) '~~$x\\pm s$ represents $\\bar{X}\\pm 1$ SD.'
-                      else '',
-                      sep="")
+                      else '')
     }
     
     if(prn) {
-      legend <- c(legend, '$N$\\ is the number of non--missing values.')
+      legend <- c(legend, '$N$', spc, 'is the number of non--missing values.')
     }
 
     if(any(type==1) && npct=='numerator') {
@@ -1934,16 +1958,17 @@ latex.summary.formula.reverse <-
                  if(length(testUsed)==1)'\\noindent Test used:'
                  else '\\indent Tests used:',
                  if(length(testUsed)==1) paste(testUsed,'test')
-                 else paste(paste('\\textsuperscript{\\normalfont ',1:length(testUsed),'}',testUsed,
-                                  ' test',sep=''),collapse='; '))
+                 else paste(paste0('\\textsuperscript{\\normalfont ',
+                                  1:length(testUsed),'}',testUsed,
+                                  ' test'),collapse='; '))
 
   }
 
   if(length(auxc)) {
     if(length(auxc) != nrow(cstats))
-      stop(paste('length of auxCol (',length(auxCol[[1]]),
-                 ') is not equal to number or variables in table (',
-                 nv,').', sep=''))
+      stop(paste0('length of auxCol (',length(auxCol[[1]]),
+                  ') is not equal to number or variables in table (',
+                  nv,').'))
     auxcc <- format(auxc)
     auxcc[is.na(auxc)] <- ''
     cstats <- cbind(auxcc, cstats)
@@ -2281,7 +2306,7 @@ cumcategory <- function(y)
   lev <- levels(y)
   y <- unclass(y)
   Y <- matrix(NA, nrow=length(y), ncol=length(lev)-1,
-              dimnames=list(NULL,paste('>=',lev[-1],sep='')))
+              dimnames=list(NULL, paste0('>=', lev[-1])))
   storage.mode(Y) <- 'integer'
   for(i in 2:length(lev))
     Y[,i-1] <- 1*(y >= i)
@@ -2361,7 +2386,7 @@ summarize <- function(X, by, FUN, ...,
   if(nc>1 && (nc != ncol(r))) stop('program logic error')
   
   snames <- names(typical.computation)
-  if(! length(snames)) snames <- paste(stat.name, 1 : nc, sep='')
+  if(! length(snames)) snames <- paste0(stat.name, 1 : nc)
 
   if(! keepcolnames) {
     if(length(stat.name) == 1) snames[1] <- stat.name
@@ -2642,12 +2667,14 @@ stripChart <- function(x, xlim, xlab='', pch=1,
 
 conTestkw <- function(group,x) {
   st <- spearman2(group,x)
-  list(P=st['P'], stat=st['F'],
-       df=st[c('df1','df2')],
-       testname=if(st['df1']==1)'Wilcoxon'
-       else 'Kruskal-Wallis',
-       statname='F', latexstat='F_{df}',
-       plotmathstat='F[df]')
+  list(P            = st['P'],
+       stat         = st['F'],
+       df           = st[c('df1','df2')],
+       testname     = if(st['df1']==1)'Wilcoxon' else 'Kruskal-Wallis',
+       statname     = 'F',
+       namefun      = 'fstat',
+       latexstat    = 'F_{df}',
+       plotmathstat = 'F[df]')
 }
 catTestchisq=function(tab) {
   st <-
@@ -2660,16 +2687,23 @@ catTestchisq=function(tab) {
         list(p.value=NA, statistic=NA, parameter=NA)
       else chisq.test(tab, correct=FALSE)
     }
-  list(P=st$p.value, stat=st$statistic,
-       df=st$parameter,
-       testname='Pearson', statname='Chi-square',
-       latexstat='\\chi^{2}_{df}',
-       plotmathstat='chi[df]^2')
+  list(P=st$p.value,
+       stat         = st$statistic,
+       df           = st$parameter,
+       testname     = 'Pearson',
+       statname     = 'Chi-square',
+       namefun      = 'chisq',
+       latexstat    = '\\chi^{2}_{df}',
+       plotmathstat = 'chi[df]^2')
 }
 ordTestpo=function(group, x) {
   f <- rms::lrm(x ~ group)$stats
-  list(P=f['P'], stat=f['Model L.R.'], df=f['d.f.'],
-       testname='Proportional odds likelihood ratio',
-       statname='Chi-square',latexstat='\\chi^{2}_{df}',
-       plotmathstat='chi[df]^2')
+  list(P            = f['P'],
+       stat         = f['Model L.R.'],
+       df           = f['d.f.'],
+       testname     = 'Proportional odds likelihood ratio',
+       statname     = 'Chi-square',
+       namefun      = 'chisq',
+       latexstat    = '\\chi^{2}_{df}',
+       plotmathstat = 'chi[df]^2')
 }

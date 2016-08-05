@@ -71,7 +71,7 @@ hoeffd                  Matrix of Hoeffding's D Statistics
 html                    Convert an S object to HTML
 impute                  Generic Functions and Methods for Imputation
 inc<-                   Increment and Decrement
-knitrSet                knitr Setup
+knitrSet                knitr Setup and plotly Service Function
 labcurve                Label Curves, Make Keys, and Interactively Draw
                         Points and Curves
 label                   Label Attribute of an Object

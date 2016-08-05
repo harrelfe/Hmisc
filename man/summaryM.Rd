@@ -3,6 +3,7 @@
 \alias{print.summaryM}
 \alias{plot.summaryM}
 \alias{latex.summaryM}
+\alias{html.summaryM}
 \title{Summarize Mixed Data Types vs. Groups}
 \description{
   \code{summaryM} summarizes the variables listed in an S formula,
@@ -12,7 +13,10 @@
   groups marked by a single right-hand-side variable.  The summary
   statistics may be passed to \code{print} methods, \code{plot} methods
   for making annotated dot charts and extended box plots, and 
-  \code{latex} methods for typesetting tables using LaTeX. 
+  \code{latex} methods for typesetting tables using LaTeX.  The
+	\code{html} method uses \code{htmlTable::htmlTable} to typeset the
+	table in html, by passing information to the \code{latex} method with
+	\code{html=TRUE}.  This is for use with RMarkdown under RStudio.
   The \code{print} methods use the \code{print.char.matrix} function to
   print boxed tables.
 
@@ -87,7 +91,9 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
       prtest = c('P', 'stat', 'df', 'name'), prmsd = FALSE,
       msdsize = NULL, long = FALSE, pdig = 3, eps = 0.001,
       auxCol = NULL, table.env=TRUE, tabenv1=FALSE, prob=c(0.25, 0.5, 0.75),
-      prN=FALSE, legend.bottom=FALSE, \dots)
+      prN=FALSE, legend.bottom=FALSE, html=FALSE, \dots)
+
+\method{html}{summaryM}(object, \dots)
 }
 \arguments{
   \item{formula}{
@@ -175,11 +181,13 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
     list with the same components as created by \code{conTest}.  By default,
     the Proportional odds likelihood ratio test is done.
   }
-  \item{...}{
+  \item{\dots}{
     For \code{Key} and \code{Key2} these arguments are passed to \code{key},
     \code{text}, or \code{mtitle}.  For \code{print} methods these are
     optional arguments to \code{print.char.matrix}. For \code{latex} methods
-    these are passed to \code{latex.default}. 
+    these are passed to \code{latex.default}.  For \code{html} the
+		arguments are passed the \code{latex.summaryM}, and the arguments
+		may not include \code{file}.
   }
   \item{object}{an object created by \code{summaryM}}
   \item{quant}{
@@ -390,12 +398,14 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
   \item{insert.bottom}{
     set to \code{FALSE} to suppress inclusion of definitions placed at the
     bottom of LaTeX tables.  You can also specify a character string
-      containing other text that overrides the automatic text.
+      containing other text that overrides the automatic text.  At
+    present such text always appears in the main caption for LaTeX.
   }
   \item{legend.bottom}{
     set to \code{TRUE} to separate the table caption and legend.  This
     will place table legends at the bottom of LaTeX tables.
   }
+	\item{html}{set to \code{TRUE} to typeset with html}
   \item{dcolumn}{see \code{latex}}
   }
 \value{

@@ -3,8 +3,6 @@
 \alias{html.latex}
 \alias{html.data.frame}
 \alias{html.default}
-\alias{show.html}
-\alias{print.html}
 \alias{htmlVerbatim}
 \title{Convert an S object to HTML}
 \description{
@@ -12,14 +10,11 @@
 implemented, \code{html.latex} and a rudimentary
 \code{html.data.frame}.  The former uses the \code{HeVeA} LaTeX to HTML 
 translator by Maranget to create an HTML file from a LaTeX file like
-the one produced by \code{latex}.  The resulting HTML file may be
-displayed using a \code{show} or a \code{print} method.  The browser
-specified in \code{options(browser=)} for R is launched to display the
-HTML file.   \code{html.default} just runs \code{html.data.frame}.
-
+the one produced by \code{latex}.  \code{html.default} just runs
+\code{html.data.frame}. 
 \code{htmlVerbatim} prints all of its arguments to the console in an
-html verbatim environment, using a specified character size.  This is
-useful for R Markdown with \code{knitr}.
+html verbatim environment, using a specified percent of the prevailing
+character size.  This is useful for R Markdown with \code{knitr}.
 }
 \usage{
 html(object, \dots)
@@ -33,13 +28,12 @@ html(object, \dots)
      file=paste(first.word(deparse(substitute(object))),'html',sep='.'),
      append=FALSE, link=NULL, linkCol=1, linkType=c('href','name'), \dots)
 \method{print}{html}(x, \dots)
-\method{show}{html}(object)
-htmlVerbatim(\dots, size=0.8)
+htmlVerbatim(\dots, size=75)
 }
 \arguments{
-\item{object}{a data frame or an object created by \code{latex}.  For
-  \code{show} is an object created by \code{html}.  For the generic
-  \code{html} is any object for which an \code{html} method exists.}
+\item{object}{a data frame or an object created by \code{latex}.
+  For the generic \code{html} is any object for which an \code{html}
+	method exists.} 
 \item{file}{
 name of the file to create.  The default file
 name is \code{object.html} where \code{object} is the first word in
@@ -77,10 +71,9 @@ the console, as when using \code{knitr}.
 \item{\dots}{ignored except for \code{htmlVerbatim} - is a list of
 	objects to \code{print()}}
 \item{x}{an object created by \code{html}}
-\item{size}{a number between 0 and 1 representing the character size to
-	be used by \code{htmlVerbatim} in units of \code{em}}
+\item{size}{a number between 0 and 100 representing the percent of the
+	prevailing character size to be used by \code{htmlVerbatim}.}
 }
-\section{Side Effects}{\code{print} or \code{show} launch a browser}
 \author{
 Frank E. Harrell, Jr.
 \cr
@@ -103,7 +96,6 @@ x <- matrix(1:6, nrow=2, dimnames=list(c('a','b'),c('c','d','e')))
 w <- latex(x)
 h <- html(w) # run HeVeA to convert .tex to .html
 h <- html(x) # convert x directly to html
-h            # launch html browser by running print.html
 w <- html(x, link=c('','B'))   # hyperlink first row first col to B
 
 # Assuming system package tex4ht is installed, easily convert advanced

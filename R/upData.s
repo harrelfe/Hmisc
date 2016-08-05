@@ -333,7 +333,7 @@ upData <- function(object, ...,
     if(any(mfact))
       for(i in (1 : length(mfact))[mfact]) {
         x <- sub(' +$', '', object[[i]])  # remove trailing blanks
-        object[[i]] <- factor(x, exclude='')
+        object[[i]] <- factor(x, exclude=c('', NA))
       }
   }
 

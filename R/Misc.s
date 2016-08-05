@@ -1667,7 +1667,7 @@ knitrSet <- function(basename=NULL, w=4, h=3,
   ## Default width fills Sweavel boxes when font size is \small and svmono.cls
   ## is in effect (use 65 without svmono)
 
-  if(TRUE || lang == 'latex') knitr::render_listings()
+  if(lang == 'latex') knitr::render_listings()
   if(messages != 'console') {
 	unlink(messages) # Start fresh with each run
 	hook_log = function(x, options) cat(x, file=messages, append=TRUE)
@@ -1739,4 +1739,24 @@ grType <- function() {
 	if('plotly' %nin% utils::installed.packages()[,1]) return('base')
 	if(length(g <- .Options$grType) && g == 'plotly') 'plotly' else 'base'
 	}
-	
+
+
+## Save a plotly graphic with name foo.png where foo is the name of the
+## current chunk
+## http://stackoverflow.com/questions/33959635/exporting-png-files-from-plotly-in-r
+
+plotlySave <- function(x, ...) {
+  chunkname <- knitr::opts_current$get("label")
+  path      <- knitr::opts_chunk$get('fig.path')
+  if(is.list(x) & ! inherits(x, 'plotly_hash')) {
+    for(w in names(x)) {
+      file <- paste0(path, chunkname, '-', w, '.png')
+      plotly::plotly_IMAGE(x[[w]], format='png', out_file=file, ...)
+    }
+  }
+  else {
+    file <- paste0(path, chunkname, '.png')
+    plotly::plotly_IMAGE(x, format='png', out_file=file, ...)
+    }
+  invisible()
+}

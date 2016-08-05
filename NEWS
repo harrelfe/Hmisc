@@ -1,4 +1,4 @@
-Changes in version 3.18-0 (2016-07-26)
+Changes in version 4.0-0 (2016-08-05)
    * summaryP: fixed exclude1 logic - was not excluding enough levels (inconsistent use of variable names vs. labels)
 	 * latexTranslate: any NAs in first argument changed to "" before conversion
 	 * minor.tick: added arguments to pass through (thanks: vhorvath)
@@ -21,6 +21,14 @@ Changes in version 3.18-0 (2016-07-26)
 	 * html.data.frame: changed column headers from h4 to <strong>
 	 * ggfreqScatter: added html argument
 	 * knitrSet: was ignoring default figure h and w
+	 * html.summaryM: new function using new version of latex.summaryM
+	 * markupSpecs: new list object defining markup elements for latex and html, used by summaryM
+	 * show.html, print.html: removed; conflicted with htmltools/rmarkdown
+	 * label: required exact match on attribute name "label" to not retrieve the "labels" attribute (thanks: Ivan Puzek)
+	 * htmlSN: new function to convert floating point to scientific format usint html
+	 * upData, cleanup.import: fix NA becoming new factor levels (thanks: Beau Bruce)
+	 * htmlTranslate: new function
+	 * plotlySave: new function
 
 Changes in version 3.17-4 (2016-05-02)
    * latex.summaryP: correctly ordered rows after running reshape because groups was present

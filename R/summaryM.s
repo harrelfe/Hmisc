@@ -187,18 +187,21 @@ summaryM <- function(formula, groups=NULL, data=NULL, subset,
           tab[j,] <- tapply(w[,j], g, sum, simplify=TRUE, na.rm=TRUE)
           if(test) {
             tabj <- rbind(table(g)-tab[j,],tab[j,])
-            st <- catTest(tabj)
+            st   <- catTest(tabj)
             pval[j] <- st$P
             stat[j] <- st$stat
             d.f.[j] <- st$df
           }
         }
         if(test)
-          testresults[[i]] <- list(P=pval, stat=stat, df=d.f.,
-                                   testname=st$testname,
-                                   statname=st$statname,
-                                   latexstat=st$latexstat,
-                                   plotmathstat=st$plotmathstat)
+          testresults[[i]] <- list(P=pval,
+                                   stat        = stat,
+                                   df          = d.f.,
+                                   testname    = st$testname,
+                                   namefun     = st$namefun,
+                                   statname    = st$statname,
+                                   latexstat   = st$latexstat,
+                                   plotmathstat= st$plotmathstat)
                                    
         if(overall) tab <- cbind(tab, Combined=apply(tab,1,sum))
         comp[[i]] <- tab
@@ -317,8 +320,8 @@ plot.summaryM <-
           fts <- formatTestStats(test[[varNames[i]]], type[i] == 3,
                                  if(type[i] == 1) 1
                                  else 1 : nr,
-                                 prtest  =prtest,
-                                 plotmath=TRUE,
+                                 prtest  = prtest,
+                                 plotmath= TRUE, html=html,
                                  pdig=pdig, eps=eps)
           
           ftstats <- c(ftstats, fts, 
@@ -406,9 +409,9 @@ plot.summaryM <-
           
           Key2 <- function(x=NULL, y=NULL, quant, ...) {
             quant <- format(quant)
-            txt <- paste('(0.25, 0.5, 0.75) quantiles shown\n',
-                         'x-axes scaled to (',min(quant),',',
-                         max(quant), ') quantiles', sep='')
+            txt <- paste0('(0.25, 0.5, 0.75) quantiles shown\n',
+                          'x-axes scaled to (',min(quant),',',
+                          max(quant), ') quantiles')
             if(length(x)) {
               if(is.list(x)) {
                 y <- x$y;
@@ -498,7 +501,7 @@ print.summaryM <-
       nn <- c(nn, n[i])
       nam <- if(vnames == "names") nams[i] else labels[i]
       if(prUnits && nchar(Units[i]))
-        nam <- paste(nam,' [', gsub('\\*', ' ', Units[i]),']',sep='')
+        nam <- paste0(nam,' [', gsub('\\*', ' ', Units[i]),']')
       
       tr <- if(length(test) && all(prtest != 'none')) test[[nams[i]]]
       else NULL
@@ -518,7 +521,7 @@ print.summaryM <-
     
     lab <- dimnames(cstats)[[1]]
     gl <- names(x$group.freq)
-    gl <- if(length(gl)) paste(gl," \n(N=", x$group.freq, ")", sep="")
+    gl <- if(length(gl)) paste0(gl," \n(N=", x$group.freq, ")")
     else ""
     
     if(length(test) && !all(prtest == 'none'))
@@ -532,7 +535,7 @@ print.summaryM <-
     spaces <- substring("                                                        ",
                         1, (max(nc) - nc + 1) / 2)   ## center strings
     dc <- dim(cstats)
-    cstats <- paste(spaces, cstats, sep="")
+    cstats <- paste0(spaces, cstats)
     dim(cstats) <- dc
     if(prn) {
       cnn <- format(nn)
@@ -550,7 +553,7 @@ print.summaryM <-
         if(length(x$group.label))
         paste(" by", x$group.label)
         else
-        paste("  (N=", x$N,")", sep=""), "\n\n", sep="")
+        paste0("  (N=", x$N,")"), "\n\n", sep="")
     
     if(missing(min.colwidth))
       min.colwidth <- max(min(nchar(gl)), min(nc[nc > 0]))
@@ -567,15 +570,18 @@ latex.summaryM <-
            digits, prn = any(n!=N),
            what=c('proportion', '%'), pctdig=if(what == '%') 0 else 2, 
            npct=c('numerator', 'both', 'denominator', 'slash', 'none'),
-           npct.size='scriptsize', Nsize='scriptsize',
+           npct.size=if(html) mspecs$html$smaller else 'scriptsize',
+           Nsize    =if(html) mspecs$html$smaller else 'scriptsize',
            exclude1=TRUE,  vnames=c("labels","names"), prUnits=TRUE,
-           middle.bold=FALSE, outer.size="scriptsize",
+           middle.bold=FALSE,
+           outer.size=if(html) mspecs$html$smaller else 'scriptsize',
            caption, rowlabel="",
            insert.bottom=TRUE, dcolumn=FALSE, formatArgs=NULL, round=NULL,
-           prtest=c('P', 'stat', 'df', 'name'), prmsd=FALSE, msdsize=NULL,
+           prtest=c('P', 'stat', 'df', 'name'), prmsd=FALSE,
+           msdsize=if(html) function(x) x else NULL,
            long=FALSE, pdig=3, eps=.001, auxCol=NULL, table.env=TRUE,
            tabenv1=FALSE, prob=c(0.25, 0.5, 0.75), prN=FALSE,
-           legend.bottom=FALSE, ...)
+           legend.bottom=FALSE, html=FALSE, mspecs=markupSpecs, ...)
 {
   if(! append) cat('', file=file)
   append <- TRUE
@@ -589,9 +595,35 @@ latex.summaryM <-
     prob <- probdef
   }
 
-  istr <- 0
+  lang  <- if(html) 'html' else 'latex'
+  specs <- mspecs[[lang]]
+  math  <- specs$math
+  spc   <- specs$lspace
+  bold  <- specs$bold
+  sup   <- specs$sup
+  br    <- specs$br
+  plminus <- specs$plminus
+
+  Npct.size <- npct.size; NNsize <- Nsize; Outer.size <- outer.size
+  if(! is.function(npct.size))
+    npct.size <- function(x)  paste0('{\\', Npct.size, ' ', x, '}')
+  if(! is.function(Nsize))
+    Nsize     <- function(x)  paste0('{\\', NNsize,    ' ', x, '}')
+  if(! is.function(outer.size))
+    outer.size <- function(x) paste0('{\\', Outer.size,' ', x, '}')
+
+  ## Add this back if revert to previous chisq function in markupSpecs
+  ## if(html) cat(specs$styles)   ## define html styles such as xscript for chisq
+
+  maxlablen  <- 0
+  istr       <- 0
+  Lab        <- character(0)
+  Cstats     <- NULL
+  n.tspanner <- integer(0)
+
   for(strat in strats) {
-    istr <- istr + 1
+    
+    istr   <- istr + 1
     x <- object$results[[strat]]
     
     stats  <- x$stats
@@ -603,6 +635,7 @@ latex.summaryM <-
     N      <- x$N
     nams   <- names(stats)
     labels <- x$labels
+    maxlablen <- max(maxlablen, nchar(labels))
     Units  <- x$units
     nw     <- if(lg <- length(x$group.freq)) lg else 1
     gnames <- names(x$group.freq)
@@ -621,13 +654,13 @@ latex.summaryM <-
     }
     
     if(missing(caption))
-      caption <- paste("Descriptive Statistics",
+      caption <- paste0("Descriptive Statistics",
                        if(length(x$group.label))
                         paste(" by", x$group.label)
                        else
-                        paste("  $(N=", x$N, ")$", sep=""), sep="")
+                        math(paste0("  (N=", x$N, ")")))
     
-    bld <- if(middle.bold) '\\bf ' else ''
+    if(! middle.bold) bold <- function(x) x
 
     cstats <- NULL
     testUsed <- auxc <- character(0)
@@ -641,9 +674,8 @@ latex.summaryM <-
       else labels[i]
       
       if(prUnits && nchar(Units[i]) > 0)
-        nam <- paste(nam, '~\\hfill\\tiny{', gsub('\\*', ' ', Units[i]),'}',
-                     sep='')
-      
+        nam <- specs$varlabel(nam, Units[i], hfill=TRUE)
+
       tr  <- if(length(test) && all(prtest != 'none')) test[[nams[i]]]
        else NULL
       
@@ -654,14 +686,14 @@ latex.summaryM <-
         cs <- formatCats(stats[[i]], nam, tr, type[i],
                          if(length(x$group.freq)) x$group.freq else x$n[i],
                          what, npct, pctdig, exclude1, long, prtest,
-                         latex=TRUE, testUsed=testUsed,
+                         latex=TRUE, html=html, testUsed=testUsed,
                          npct.size=npct.size,
                          pdig=pdig, eps=eps,
                          footnoteTest=gt1.test)
         nn <- c(nn, rep(NA, nrow(cs) - 1))
       } else cs <- formatCons(stats[[i]], nam, tr, x$group.freq, prmsd,
                               prtest=prtest, formatArgs=formatArgs, round=round,
-                              latex=TRUE, testUsed=testUsed,
+                              latex=TRUE, html=html, testUsed=testUsed,
                               middle.bold=middle.bold,
                               outer.size=outer.size, msdsize=msdsize,
                               pdig=pdig, eps=eps, footnoteTest=gt1.test,
@@ -675,13 +707,16 @@ latex.summaryM <-
     lab <- dimnames(cstats)[[1]]
     gl <- names(x$group.freq)
     if(!length(gl)) gl <- " "
-    
-    lab <- sedit(lab, c(" ", "&"), c("~", "\\&"))
-    lab <- latexTranslate(lab, greek=TRUE)
-    gl  <- latexTranslate(gl,  greek=TRUE)
+
+    if(! html) {
+      lab <- sedit(lab, c(" ", "&"), c("~", "\\&"))
+      lab <- latexTranslate(lab, greek=TRUE)
+      gl  <- latexTranslate(gl,  greek=TRUE)
+      }
+
     extracolheads <-
       if(any(gl != " "))
-        c(if(prn)'', paste('$N=', x$group.freq, '$', sep=''))
+        c(if(prn)'', math(paste0('N=', x$group.freq)))
       else NULL
     
     if(length(test) && !all(prtest == 'none')) {
@@ -693,9 +728,10 @@ latex.summaryM <-
       
       if(length(extracolheads)) extracolheads <- c(extracolheads, '')
     }
-    
-    dimnames(cstats) <- list(NULL, gl) 
+
+    dimnames(cstats) <- list(NULL, gl)
     cstats <- data.frame(cstats, check.names=FALSE, stringsAsFactors=FALSE)
+    if(length(gl) == 1 && gl == '') colnames(cstats) <- ' '   ## override V1
     
     col.just <- rep("c", length(gl))
     if(dcolumn && all(prtest != 'none') &&
@@ -707,64 +743,94 @@ latex.summaryM <-
                            stringsAsFactors=FALSE)
       col.just <- c("r", col.just)
     }
-    
-    legend <- character()
-    if(any(type == 2)) {
-      if(identical(prob, probdef)) {
-        legend <- paste("{\\", outer.size, " $a$\\ }{", bld, "$b$\\ }{\\",
-                        outer.size, " $c$\\ } represent the lower quartile $a$, the median $b$, and the upper quartile $c$\\ for continuous variables.",
-                        sep="")
-      } else {
-        prob <- sprintf("%1.0f\\%%", 100*prob)
-        legend <- paste("{\\", outer.size, " $a$\\ }{", bld, "$b$\\ }{\\",
-                        outer.size, " $c$\\ } represent the ", prob[1], 
-                        " quantile $a$, the ", prob[2]," quantile $b$, and the ",
-                        prob[3]," quantile $c$\\ for continuous variables.",
-                        sep="")
+
+    noib <- is.logical(insert.bottom) && ! insert.bottom
+    defs <- NULL
+    if(is.character(insert.bottom)) defs <- insert.bottom
+    else {
+
+      if(any(type == 2)) {
+        if(identical(prob, probdef))
+          defs <- 
+            paste0(outer.size(math('a')), ' ', bold(math('b')), ' ',
+                   outer.size(math('c')), ' represent the lower quartile ',
+                   math('a'), ', the median ', math('b'),
+                   ', and the upper quartile ', math('c'),
+                   ' for continuous variables.')
+        else {
+          prob <- sprintf("%1.0f\\%%", 100 * prob)
+          defs <- 
+            paste0(outer.size(math('a')), ' ', bold(math('b')), ' ',
+                   outer.size(math('c')), 
+                   ' represent the ', prob[1],
+                   ' quantile ', math('a'), ' the ', prob[2],
+                   ' quantile ', math('b'), ' and the ', prob[3],
+                   ' quantile ', math('c'), ' for continuous variables.')
+        }
+        if(prmsd) defs <-
+                    paste0(defs, spc,
+                           if(html) paste0(math(paste0('x', plminus, ' s')),
+                                           ' represents ', specs$xbar,
+                                           specs$space, plminus, ' 1 SD.')
+                           else
+                             '$x\\pm s$ represents $\\bar{X}\\pm 1$ SD.')
       }
-      if(prmsd) legend <- paste0(legend, '~~$x\\pm s$ represents $\\bar{X}\\pm 1$ SD.')
-    }
-    if(prn)
-        legend <- c(legend, '$N$\\ is the number of non--missing values.')
+      if(prn)
+        defs <- c(defs, if(length(defs)) spc,
+                  paste0(math('N'), ' is the number of non-missing values.'))
       
       if(any(type == 1) && npct == 'numerator')
-        legend <- c(legend, 'Numbers after percents are frequencies.')
+        defs <- c(defs, 'Numbers after percents are frequencies.')
       
-      if(length(testUsed))
-        legend <-c(legend,
+      if(length(testUsed)) {
+        if(html)
+          defs <- c(defs, br,
+                    if(length(testUsed) == 1)'Test used:'
+                    else 'Tests used:', 
+                    if(length(testUsed) == 1) paste(testUsed, 'test')
+                    else paste(paste0(sup(1 : length(testUsed)), ' ',
+                                      testUsed,
+                                      ' test'), collapse='; '), '.')
+        else
+          defs <-c(defs,
                    if(length(testUsed) == 1)'\\noindent Test used:'
                    else '\\indent Tests used:',
                    if(length(testUsed) == 1) paste(testUsed, 'test')
-                   else paste(paste('\\textsuperscript{\\normalfont ',
-                                    1:length(testUsed),'}',testUsed,
-                                    ' test',sep=''),collapse='; '), '.')
-    if(is.character(insert.bottom))
-      legend <- c(legend, insert.bottom)
+                   else paste(paste0('$^{', 1 : length(testUsed),'}$',
+                                     testUsed, ' test'), collapse='; '), '.')
+      }
+    }
+
+    legend <- NULL
+    if(! html) legend <- defs
+    else if(! noib)
+      insert.bottom <- paste(defs, collapse=' ')
 
     if(length(auxc)) {
       if(length(auxc) != nrow(cstats))
-        stop(paste('length of auxCol (',length(auxCol[[1]]),
-                   ') is not equal to number or variables in table (',
-                   nv,').', sep=''))
-      auxcc <- format(auxc)
+        stop(paste0('length of auxCol (',length(auxCol[[1]]),
+                    ') is not equal to number or variables in table (',
+                    nv,').'))
+      auxcc   <- format(auxc)
       auxcc[is.na(auxc)] <- ''
-      cstats <- cbind(auxcc, cstats)
-      nax <- names(auxCol)
-      heads <- get2rowHeads(nax)
+      cstats  <- cbind(auxcc, cstats)
+      nax     <- names(auxCol)
+      heads   <- get2rowHeads(nax)
       names(cstats)[1] <- heads[[1]]
       if(length(col.just)) col.just <- c('r', col.just)
       if(length(extracolheads)) extracolheads <- c(heads[2], extracolheads)
     }
-    if(length(legend) && ! table.env)
-      legend[1] <- paste('\n', legend[1], sep='')
+    if(length(legend) && (html || ! table.env))
+      legend[1] <- paste0('\n', legend[1])
     laststrat <- strat == strats[length(strats)]
-    noib <- is.logical(insert.bottom) && ! insert.bottom
     finalcaption <- NULL
-    finallegend <- NULL
+    finallegend  <- NULL
     if((! tabenv1 && table.env) || (tabenv1 && istr == 1)) {
       finalcaption <- caption
-      if(((! tabenv1 && laststrat) || (tabenv1 && istr == 1)) && !legend.bottom) {
-        finalcaption <- paste(finalcaption, paste(legend, collapse=' '), sep='. ')
+      if(((! tabenv1 && laststrat) || (tabenv1 && istr == 1)) &&
+         !legend.bottom) {
+        finalcaption <- paste(finalcaption, paste(legend, collapse=' '),
+                              sep='. ')
       }
     }
     if(! noib && laststrat && ! table.env) {
@@ -772,17 +838,55 @@ latex.summaryM <-
     } else if(legend.bottom) {
       finallegend <- paste(legend, collapse=' ')
     }
-    w <- latex(cstats, title=title, file=file, append=TRUE,
-               caption=finalcaption, rowlabel=rowlabel,
-               table.env=(! tabenv1 && table.env) || (tabenv1 && istr == 1),
-               col.just=col.just, numeric.dollar=FALSE, 
-               insert.bottom=finallegend, rowname=lab, dcolumn=dcolumn,
-               extracolheads=extracolheads, extracolsize=Nsize,
-               insert.top=if(strat != '.ALL.') strat,
-               ...)
-  if(tabenv1 && istr == 1) cat('\\clearpage\n', file=file, append=TRUE)
-  attr(w, 'legend') <- legend
+
+    if(html) {
+      heads  <- colnames(cstats)
+      if(length(extracolheads)) heads <- paste(heads, extracolheads, sep=br)
+      Cstats <- rbind(Cstats, cstats)
+      Lab    <- c(Lab, lab)
+      n.tspanner <- c(n.tspanner, length(lab))
+    }
+    else {
+      w <- latex(cstats, title=title, file=file, append=TRUE,
+                 caption=finalcaption, rowlabel=rowlabel,
+                 table.env=(! tabenv1 && table.env) || (tabenv1 && istr == 1),
+                 col.just=col.just, numeric.dollar=FALSE, 
+                 insert.bottom=finallegend, rowname=lab, dcolumn=dcolumn,
+                 extracolheads=extracolheads, extracolsize=NNsize,
+                 insert.top=if(strat != '.ALL.') strat,
+                 ...)
+      if(tabenv1 && istr == 1) cat('\\clearpage\n', file=file, append=TRUE)
+      attr(w, 'legend') <- legend
+      }
   }
-  attr(w, 'nstrata') <- istr
-  w
+
+  if(! html) {
+    attr(w, 'nstrata') <- istr
+    return(w)
+  }
+
+  cs <- c(paste0('width:', maxlablen, 'ex;'), rep('padding-left:3ex;', ncol(Cstats)))
+  if(length(strats) > 1) {
+    tspanner <- ifelse(strats == '.ALL', bold('Overall'), strats)
+    w <- htmlTable::htmlTable(Cstats, header=heads,
+                              caption  = paste(finalcaption, finallegend),
+                              rowlabel = rowlabel,
+                              align    = col.just, rnames=Lab,
+                              tspanner=tspanner, n.tspanner=n.tspanner,
+                              tfoot=insert.bottom,
+                              css.cell=cs)
+  }
+  else 
+    w <- htmlTable::htmlTable(Cstats, header=heads,
+                              caption  = paste(finalcaption, finallegend),
+                              rowlabel = rowlabel,
+                              align    = col.just, rnames=lab,
+                              tfoot    = insert.bottom,
+                              css.cell = cs)
+  
+  return(htmltools::HTML(as.character(w)))
 }
+
+
+html.summaryM <- 
+  function(object, ...) latex.summaryM(object, file='', html=TRUE, ...)

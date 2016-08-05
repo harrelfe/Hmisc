@@ -25,6 +25,8 @@
 \alias{ftupwr}
 \alias{get2rowHeads}
 \alias{groupn}
+\alias{htmlSpecs}
+\alias{latexSpecs}
 \alias{importConvertDateTime}
 \alias{is.present}
 \alias{lookupSASContents}

@@ -1231,3 +1231,15 @@ latexSN <- function(x) {
                '\\!\\times\\!10^{*}','\\!\\times\\!10^{*}'))
   x
 }
+
+htmlSN <- function(x) {
+  x <- format(x)
+  x <- sedit(x, c('e+00','e-0*',
+                  'e-*',
+                  'e+0*',
+                  'e+*'),
+             c('',
+               '&times;10<sup>-*</sup>', '&times;10<sup>-*</sup>',
+               '&times;10<sup>*</sup>',  '&times;10<sup>*</sup>'))
+  x
+}

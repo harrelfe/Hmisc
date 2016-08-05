@@ -502,3 +502,35 @@ histSpike <-
   
   invisible(xlim)
 }
+
+histSpikep <- function(p, x, y, z, group=NULL, color=NULL, hovertext=NULL,
+                       colors=NULL,
+                       bottom.align=TRUE, tracename='Proportion', ...) {
+
+  d <- data.frame(x=rep(x, each=3),
+                  y=rep(y, each=3),
+                  z=rep(z, each=3))
+  origcolor <- color
+
+  if(length(group))     d$group     <- rep(group, each=3)
+  if(length(hovertext)) d$hovertext <- rep(hovertext, each=3)
+  if(length(color))     d$color     <- rep(color, each=3)
+  
+  n <- nrow(d)
+  j <- seq(1, n, by=3)
+  if(length(hovertext)) d$hovertext[j] <- ''
+  if(! bottom.align) d$y[j] <- d$y[j] - d$z[j] / 2
+  j <- seq(3, n, by=3)
+  d$x[j] <- NA
+  if(length(hovertext)) d$hovertext[b] <- ''
+  j <- seq(2, n, by=3)
+  d$y[j] <- d$y[j] + d$z[j] / ifelse(bottom.align, 1, 2)
+
+  plotly::add_trace(d, x=x, y=y, color=color, colors=colors, mode='lines',
+                    line=list(..., width=.7),
+                    hoverinfo=if(length(hovertext)) 'text' else 'none',
+                    evaluate=TRUE, name=tracename)
+}
+
+  
+  

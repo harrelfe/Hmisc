@@ -29,6 +29,7 @@ Changes in version 4.0-0 (2016-08-05)
 	 * upData, cleanup.import: fix NA becoming new factor levels (thanks: Beau Bruce)
 	 * htmlTranslate: new function
 	 * plotlySave: new function
+	 * histSpikep: new function
 
 Changes in version 3.17-4 (2016-05-02)
    * latex.summaryP: correctly ordered rows after running reshape because groups was present

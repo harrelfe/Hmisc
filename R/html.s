@@ -185,7 +185,7 @@ markupSpecs <- list(html=list(
 #           '</sub></span>')
                  if(missing(x)) paste0('&chi;<sup>2</sup>')
                  else
-                   paste0("&chi;", markupSpecs$subsup(x, '2')),
+                   paste0("&chi;", markupSpecs$html$subsup(x, '2')),
   fstat    = function(x, ...) paste0('<i>F</i><sub><span style="font-size: 80%;">',
                                      x[1], ',&thinsp;', x[2], '</span></sub>'),
   frac     = function(a, b, ...) paste0('<span style="font-size: 70%;"><sup>',
@@ -279,12 +279,15 @@ htmlTranslate <- function(object, inn=NULL, out=NULL,
                            greek=FALSE, na='', ...)
 {
   text <- ifelse(is.na(object), na, as.character(object))
-  
-  inn <- c("|",  "%",  "#",   "<=",     "<",  ">=",     ">",  "_", "\\243",
-           "&", "\\$", inn, c("[", "(", "]", ")"))
 
-  out <- c("&#124;", "&#37", "&#35;", "&#8804;", "&#60;", "&#8805;", "&#62;", "&#95;",
-           "&pound;", "&amp;", "&dollar;", out, 
+  ## Must translate & first so won't be converted to &amp; when other
+  ## symbols are translated
+  inn <- c("&", "|",  "%",  "#",   "<=",     "<",  ">=",     ">",  "_", "\\243",
+           "\\$", inn, c("[", "(", "]", ")"))
+
+  out <- c("&amp;", "&#124;", "&#37", "&#35;", "&#8804;", "&#60;", "&#8805;",
+           "&#62;", "&#95;",  "&pound;",
+           "&dollar;", out, 
            c("&#91;", "&#40;", "&#93;", "&#41;"))
 
   ##See if string contains an ^ - superscript followed by a number

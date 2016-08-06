@@ -30,6 +30,7 @@ Changes in version 4.0-0 (2016-08-05)
 	 * htmlTranslate: new function
 	 * plotlySave: new function
 	 * histSpikep: new function
+	 * upData: new argument html
 
 Changes in version 3.17-4 (2016-05-02)
    * latex.summaryP: correctly ordered rows after running reshape because groups was present

@@ -56,7 +56,7 @@ cleanup.import(obj, labels, lowernames=FALSE,
 upData(object, \dots, 
        subset, rename, drop, keep, labels, units, levels, force.single=TRUE,
        lowernames=FALSE, caplabels=FALSE, moveUnits=FALSE,
-       charfactor=FALSE, print=TRUE)
+       charfactor=FALSE, print=TRUE, html=FALSE)
 
 dataframeReduce(data, fracmiss=1, maxlevels=NULL,  minprev=0, print=TRUE)
 }
@@ -176,8 +176,9 @@ dataframeReduce(data, fracmiss=1, maxlevels=NULL,  minprev=0, print=TRUE)
     set to \code{TRUE} to look for units of measurements in variable
     labels and move them to a \code{"units"} attribute.  If an expression
     in a label is enclosed in parentheses or brackets it is assumed to be
-    units if \code{moveUnits=TRUE}.
-  }
+    units if \code{moveUnits=TRUE}.}
+  \item{html}{set to \code{TRUE} to print conversion information as html
+		vertabim at 0.6 size}
   \item{fracmiss}{the maximum permissable proportion of \code{NA}s for a
     variable to be kept.  Default is to keep all variables no matter how
     many \code{NA}s are present.}

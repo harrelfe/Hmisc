@@ -22,8 +22,8 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
   fmtlab <- function(x) {
     lab <- sub('^.*:', '', x$descript)
     if(length(x$units))
-      lab <- paste(lab, ' &emsp;<span style="font-size:0.8em">',
-                   x$units, '</span>', sep='')
+      lab <- paste(lab, ' &emsp;<span style="font-size:0.8em"><tt>',
+                   x$units, '</tt></span>', sep='')
     lab
   }
 
@@ -174,41 +174,49 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
       P2 <- NULL
     } else {
     
-      z <- data.frame(xname      = ge('xname'),
+      z <- data.frame(xname      = I(ge('xname')),
                       X          = ge('X'),
                       Proportion = round(ge('prop'), 4),
-                      text       = ge('text'),
+                      text       = I(ge('text')),
                       missing    = ge('missing'))
-      ## Triplicate observations so can control vertical line segments
-      ## plotly provides marker symbol line-ns-open but no symbol line-n-open,
-      ## and relative line sigment sizes are hard to control in plotly using
-      ## mode='markers'
-      if(FALSE) {
-      j <- rep(1 : nrow(z), each=3)
-      zz <- z[j, ]
-      l <- nrow(zz)
-      d$x[seq(3, n, by=3)] <- NA
-      j <- seq(2, n, by=3)
-      d$y[j] <- d$y[j] + d$Proportion[j]
-}
-      
-      ## Note: plotly does not allow font, color, size changes for hover text
-      pcon <- if(any(z$missing > 0))
-             plotly::plot_ly(z, x=X, y=xname, size=Proportion, text=text,
-                             color=missing, mode='markers',
-                             marker=list(symbol='line-ns-open'),
-                             type='scatter', hoverinfo='text')
-           else
-                   plotly::plot_ly(z, x=X, y=xname, size=Proportion,
-                                   text=text,
-                                   mode='markers',
-                                   marker=list(symbol='line-ns-open'),
-                                   type='scatter', hoverinfo='text')
+      z <- z[nrow(z) : 1, ]   # so plotly will keep right ordering
 
-      maxlen <- max(nchar(as.character(z$xname)))
+      unam <- unique(z$xname)
+      z$yy <- match(as.character(z$xname), unam)
+      ## Scale Proportion so that max over all variables is 0.9
+      z$Proportion <- 0.9 * z$Proportion / max(z$Proportion)
+      colors <- c('red','blue','green')
+      ## If don't run plot_ly, hovering will pop up all vertical points
+#      pcon <- if(any(z$missing > 0))
+#                plotly::plot_ly(z, x=X, y=yy, mode='markers',
+#                                color=missing, colors=colors, name='')
+#              else
+#                plotly::plot_ly(z, x=X, y=yy, mode='none', name='')
+
+      pcon <- with(z, histSpikep(NULL, x=X, y=yy, z=Proportion,
+                                 hovertext=text, tracename='',
+                                 color=if(any(missing > 0)) missing,
+                                 colors=colors))
+                                 
+      ## Note: plotly does not allow font, color, size changes for hover text
+#      pcon <- if(any(z$missing > 0))
+#             plotly::plot_ly(z, x=X, y=xname, size=Proportion, text=text,
+#                             color=missing, mode='markers',
+#                             marker=list(symbol='line-ns-open'),
+#                             type='scatter', hoverinfo='text')
+#           else
+#                   plotly::plot_ly(z, x=X, y=xname, size=Proportion,
+#                                   text=text,
+#                                   mode='markers',
+#                                   marker=list(symbol='line-ns-open'),
+#                                   type='scatter', hoverinfo='text')
+
+      maxlen <- max(nchar(as.character(unam)))
       pcon <- plotly::layout(pcon, xaxis=list(title='', showticklabels=FALSE,
                                               zeroline=FALSE, showgrid=FALSE),
-                             yaxis=list(title=''),
+                             yaxis=list(title='',
+                                        tickvals=1 : length(unam),
+                                        ticktext=unam),
                              margin=list(l=max(70, maxlen * 6)),
                              autosize=TRUE, evaluate=TRUE)
       P2 <- pcon

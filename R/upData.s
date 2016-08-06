@@ -170,15 +170,18 @@ upData <- function(object, ...,
                    subset, rename=NULL, drop=NULL, keep=NULL,
                    labels=NULL, units=NULL, levels=NULL,
                    force.single=TRUE, lowernames=FALSE, caplabels=FALSE,
-                   moveUnits=FALSE, charfactor=FALSE, print=TRUE) {
+                   moveUnits=FALSE, charfactor=FALSE, print=TRUE, html=FALSE) {
 
+  if(html) print <- FALSE
+  
   upfirst <- function(txt) gsub("(\\w)(\\w*)", "\\U\\1\\L\\2", txt, perl=TRUE)
 
   if(lowernames) names(object) <- casefold(names(object))
   no   <- names(object)
   nobs <- nrow(object)
-  if(print) cat('Input object size:\t', object.size(object), 'bytes;\t',
-                length(no), 'variables\t', nobs, 'observations\n')
+  out <- paste('Input object size:\t', object.size(object), 'bytes;\t',
+               length(no), 'variables\t', nobs, 'observations\n')
+  if(print) cat(out)
 
   if(! missing(subset)) {
     s <- substitute(subset)
@@ -218,7 +221,7 @@ upData <- function(object, ...,
   if(moveUnits)
     for(i in 1:length(no)) {
       z <- object[[i]]
-      lab <- attr(z,'label')
+      lab <- olab <- attr(z,'label')
       if(!length(lab) || length(attr(z, 'units')))
         next
 
@@ -226,7 +229,6 @@ upData <- function(object, ...,
       brack <- length(grep('\\[.*\\]',lab))
       if(paren + brack == 0) next
 
-      if(print) cat('Label for',no[i],'changed from',lab, 'to ')
       u <- if(paren)regexpr('\\(.*\\)', lab)
            else regexpr('\\[.*\\]', lab)
 
@@ -236,7 +238,10 @@ upData <- function(object, ...,
       if(substring(lab, nchar(lab), nchar(lab)) == ' ')
         lab <- substring(lab, 1, nchar(lab) - 1)
 
-      if(print) cat(lab, '\n\tunits set to ', un, '\n', sep='')
+      out <- c(out, outn <- paste('Label for', no[i], 'changed from',
+                                  olab, 'to',
+                                  lab, '\n\tunits set to', un, '\n'))
+      if(print) cat(outn)
       attr(z,'label') <- lab
       attr(z,'units') <- un
       object[[i]] <- z
@@ -251,7 +256,9 @@ upData <- function(object, ...,
       if(nr[i] %nin% no)
         stop(paste('unknown variable name:',nr[i]))
 
-      if(print) cat('Renamed variable\t', nr[i], '\tto', rename[[i]], '\n')
+      out <- c(out, outn <- paste('Renamed variable\t', nr[i],
+                                  '\tto', rename[[i]], '\n'))
+      if(print) cat(outn)
     }
 
     no[match(nr, no)] <- unlist(rename)
@@ -268,10 +275,13 @@ upData <- function(object, ...,
 
     for(i in 1 : length(z)) {
       v <- vn[i]
-      if(v %in% no && print)
-        cat('Modified variable\t', v, '\n')
+      if(v %in% no) {
+        out <- c(out, outn <- paste0('Modified variable\t', v, '\n'))
+        if(print) cat(outn)
+        }
       else {
-        if(print) cat('Added variable\t\t', v, '\n')
+        out <- c(out, outn <- paste0('Added variable\t\t', v, '\n'))
+        if(print) cat(outn)
         no <- c(no, v)
       }
 
@@ -285,8 +295,11 @@ upData <- function(object, ...,
                         ' is 1; will replicate this value.', sep=''))
         else {
           f <- find(v)
-          if(length(f) && print) cat('Variable', v, 'found in',
-                                  paste(f,collapse=' '), '\n')
+          if(length(f)) {
+            out <- c(out, outn <- paste('Variable', v, 'found in',
+                                        paste(f, collapse=' '), '\n'))
+            if(print) cat(outn)
+            }
           
           stop(paste('length of ', v, ' (', lx, ')\n',
                      'does not match number of rows in object (',
@@ -340,11 +353,14 @@ upData <- function(object, ...,
   if(length(drop)  && length(keep)) stop('cannot specify both drop and keep')
 
   if(length(drop)) {
-    if(print) {
-      if(length(drop) == 1)
-        cat('Dropped variable\t',drop,'\n')
-      else
-        cat('Dropped variables\t', paste(drop,collapse=','), '\n')
+    if(length(drop) == 1) {
+      out <- c(out, outn <- paste0('Dropped variable\t',drop,'\n'))
+      if(print) cat(outn)
+      }
+    else {
+      out <- c(out, outn <- paste0('Dropped variables\t',
+                                   paste(drop, collapse=','), '\n'))
+      if(print) cat(outn)
     }
 
     s <- drop %nin% no
@@ -357,12 +373,15 @@ upData <- function(object, ...,
   }
 
   if(length(keep)) {
-    if(print) {
-      if(length(keep) == 1)
-        cat('Kept variable\t', keep, '\n')
-      else
-        cat('Kept variables\t', paste(keep, collapse=','), '\n')
-    }
+      if(length(keep) == 1) {
+        out <- c(out, outn <- paste0('Kept variable\t', keep, '\n'))
+        if(print) cat(outn)
+        }
+      else {
+        out <- c(out, outn <- paste0('Kept variables\t',
+                                     paste(keep, collapse=','), '\n'))
+        if(print) cat(outn)
+      }
 
     s <- keep %nin% no
     if(any(s))
@@ -418,9 +437,18 @@ upData <- function(object, ...,
       attr(object[[n]], 'units') <- units[[n]]
   }
 
-  if(print) cat('New object size:\t', object.size(object),
-                'bytes;\t', length(no), 'variables\t', nobs, 'observations\n')
-    object
+  out <- c(out, outn <- paste0('New object size:\t',
+                               object.size(object),
+                               ' bytes;\t', length(no), ' variables\t', nobs,
+                               ' observations\n'))
+  if(print) cat(outn)
+  if(html) {
+    cat('<pre style="font-size:60%;">\n')
+    cat(out)
+    cat('</pre>\n')
+  }
+
+  object
   }
 
 dataframeReduce <- function(data, fracmiss=1, maxlevels=NULL,

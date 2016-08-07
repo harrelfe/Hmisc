@@ -262,6 +262,11 @@ latex = list(
 ),
 
 plain = list(
+  space = ' ',
+  lspace = '   ',
+  sspace = ' ',
+  br = '\n',
+  frac = function(a, b, ...) paste0(a, '/', b),
   varlabel = function(label, units='', ...)
     if(units == '') label else  paste0(label, ' [', units, ']'),
   times = 'x'

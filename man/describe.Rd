@@ -68,8 +68,27 @@ example output see
 Note that the latex method assumes you have the following styles
 installed in your latex installation: setspace and relsize.
 
-The \code{plot} method for \code{describe} objects made from data frames uses
-the \code{plotly} package to make an interactive spike histogram graphic that can be placed in an html report.  The user must install \code{plotly} and specify \code{options(grType='plotly')} for this to work.  When the use hovers the mouse over a bin for a raw data value, the actual value will pop-up (formatted using \code{digits}).  When the user hovers over the minimum data value, most of the information calculated by \code{describe} will pop up.  For each variable, the number of missing values is used to assign the color to the histogram, and a legend is drawn.  Color is not used if there are no missing values in any variable.
+The \code{plot} method is for \code{describe} objects run on data
+frames.  It produces spike histograms for a graphic of
+continuous variables and a dot chart for categorical variables, showing
+category proportions.  The graphic format is \code{ggplot2} if the user
+has not set \code{options(grType='plotly')} or has set the \code{grType}
+option to something other than \code{'plotly'}.  Otherwise \code{plotly}
+graphics that are interactive are produced, and these can be placed into
+an Rmarkdown html notebook.  The user must install the \code{plotly}
+package for this to work.  When the use hovers the mouse over a bin for
+a raw data value, the actual value will pop-up (formatted using
+\code{digits}).  When the user hovers over the minimum data value, most
+of the information calculated by \code{describe} will pop up.  For each
+variable, the number of missing values is used to assign the color to
+the histogram or dot chart, and a legend is drawn.  Color is not used if
+there are no missing values in any variable. For categorical variables,
+hovering over the leftmost point for a variable displays details, and
+for all points proportions, numerators, and denominators are displayed
+in the popup.  If both continuous and categorical variables are present
+and \code{which='both'} is specified, the \code{plot} method returns an
+unclassed \code{list} containing two objects, named \code{'Categorical'}
+and \code{'Continuous'}, in that order.
 
 Sample weights may be specified to any of the functions, resulting
 in weighted means, quantiles, and frequency tables.
@@ -121,7 +140,9 @@ pp. 557, the term "unique" should really be "distinct".
   up for such variables in the main listing.
 }
 \item{digits}{
-  number of significant digits to print.  For \code{plot.describe} is the number of significant digits to put in hover text for \code{plotly} when showing raw variable values.}
+  number of significant digits to print.  For \code{plot.describe} is
+	the number of significant digits to put in hover text for
+	\code{plotly} when showing raw variable values.} 
 \item{listunique}{
   For a character variable that is not an \code{mChoice} variable, that
   has its longest string length greater than \code{listnchar}, and that
@@ -213,9 +234,10 @@ LaTeX text size (\code{"small"}, the default, or \code{"normalsize"}, \code{"tin
 \item{vname}{unused argument in \code{latex.describe.single}}
 \item{which}{specifies whether to plot numeric continuous or
 	binary/categorical variables, or both.  When \code{"both"} a list with 
-two elements is created.  Each element is a \code{plotly} object.  If
-there are no variables of a given type, a single \code{plotly} object is
-returned, ready to print.} 
+two elements is created.  Each element is a \code{ggplot2} or
+\code{plotly} object.  If 
+there are no variables of a given type, a single \code{ggplot2} or
+\code{plotly} object is returned, ready to print.} 
 \item{what}{character or numeric vector specifying which variables to
 	plot; default is to plot all}
 \item{sort}{specifies how and whether variables are sorted in order of
@@ -282,7 +304,7 @@ describe(dfr)
 options(grType='plotly')
 d <- describe(mydata)
 p <- plot(d)   # create plots for both types of variables
-p[[1]]; p[[2]]
+p[[1]]; p[[2]] # or p$Categorical; p$Continuous
 plotly::subplot(p[[1]], p[[2]], nrows=2)  # plot both in one
 plot(d, which='categorical')    # categorical ones
 
@@ -352,4 +374,5 @@ describe(relig)  #Has special missing values .D .F .M .R .T
 \keyword{distribution}
 \keyword{robust}
 \keyword{models}
+\keyword{hplot}
 

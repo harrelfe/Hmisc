@@ -317,7 +317,6 @@ plot.summaryM <-
           vnd <- c(vnd, nam)
           vnamd <- c(vnamd, varNames[i])
         }
-        
         if(any(prtest != 'none')) {
           fts <- formatTestStats(test[[varNames[i]]], type[i] == 3,
                                  if(type[i] == 1) 1
@@ -325,13 +324,11 @@ plot.summaryM <-
                                  prtest  = prtest,
                                  plotmath= TRUE, html=html,
                                  pdig=pdig, eps=eps)
-          
           ftstats <- c(ftstats, fts, 
                        if(type[i] == 1 && nr - exc - 1 > 0)
                        rep(expression(''), nr - exc - 1))
         }
       }
-      
       dimnames(z) <- list(lab, dimnames(z)[[2]])
       dotchart3(z, groups=factor(vnd, levels=unique(vnd)), xlab=xlab, xlim=xlim,
                 auxdata=if(!any(prtest == 'none')) ftstats,

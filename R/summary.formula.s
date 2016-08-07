@@ -1728,11 +1728,8 @@ formatTestStats <- function(tr, multchoice=FALSE,
   ## Note: multchoice tests always have only one type of d.f.
   deg <- if(multchoice) tr$df[i] else tr$df
   
-  dof <- if(multchoice) as.character(deg)
-         else paste(deg, collapse=',')
-
-  namefun <- specs[[tr$statname]]  ## function for typesetting stat name
-  ## above was $namefun
+  dof <- if(multchoice) as.character(deg) else paste(deg, collapse=',')
+  namefun <- specs[[tr$namefun]]  ## function for typesetting stat name
   statmarkup <- if(latex) tr$latexstat
               else if(plotmath) tr$plotmathstat
               else tr$statname

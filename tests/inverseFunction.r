@@ -13,21 +13,21 @@ structure(list(x = c(-1.01157732356344, -0.844512148091014, -0.723389895873506,
 library(rms)
 dd <- datadist(as.data.frame(z)); options(datadist='dd')
 f <- ols(y ~ rcs(x,5), data=z)
-par(mfrow=c(1,2))
-plot(Predict(f))
-abline(v=c(-.1772,.31375))
-points(z)
+
+ggplot(Predict(f)) + geom_vline(xintercept=c(-.1772, .31375)) +
+  geom_point(aes(x=x, y=y), data=as.data.frame(z))
+
 xx <- seq(-1,1,length=1000)
 g <- Function(f)
 h <- inverseFunction(xx, g(xx))
 plot(xx[-1], diff(g(xx)))
 abline(h=0)
-par(mfrow=c(1,1))
 
-plot(Predict(f))
+
 turns <- formals(h)$turns
-abline(v=turns)
+plot(Predict(f), abline=list(v=turns))
 
+with(Predict(f), plot(x, yhat, type='l'))
 a <- seq(-1.2,1.2,by=.001)
 w <- h(a)
 for(i in 1:ncol(w)) lines(w[,i], a, col=i+1)

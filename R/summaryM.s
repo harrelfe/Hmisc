@@ -175,8 +175,8 @@ summaryM <- function(formula, groups=NULL, data=NULL, subset,
         n[i] <- sum(! is.na(apply(w, 1, sum)) & xms == '')
         g    <- as.factor(gr)
         ncat <- ncol(w)
-        tab <- matrix(NA, nrow=ncat, ncol=length(levels(g)),
-                      dimnames=list(dimnames(w)[[2]], levels(g)))
+        tab  <- matrix(NA, nrow=ncat, ncol=length(levels(g)),
+                       dimnames=list(dimnames(w)[[2]], levels(g)))
         if(test) {
           pval <- numeric(ncat)
           names(pval) <- dimnames(w)[[2]]

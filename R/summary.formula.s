@@ -323,14 +323,15 @@ summary.formula <-
       
     for(i in 1:nv) {
       w <- X[[resp+i]]
-      if(length(attr(w,"label")))
-        labels[i] <- attr(w,"label")
+      if(length(attr(w, "label")))
+        labels[i] <- attr(w, "label")
 
-      if(length(attr(w,'units')))
-        Units[i]  <- attr(w,'units')
+      if(length(attr(w, 'units')))
+        Units[i]  <- attr(w, 'units')
 
-      if(!inherits(w,'mChoice')) {
-          if(!is.factor(w) && !is.logical(w) && length(unique(w[!is.na(w)])) < continuous) 
+      if(!inherits(w, 'mChoice')) {
+        if(!is.factor(w) && !is.logical(w) &&
+           length(unique(w[! is.na(w)])) < continuous) 
             w <- as.factor(w)
 
           s <- !is.na(w)
@@ -338,7 +339,7 @@ summary.formula <-
           if(na.include && !all(s) && length(levels(w))) {
             w <- na.include(w)
             levels(w)[is.na(levels(w))] <- 'NA'
-            s <- rep(TRUE,length(s))
+            s <- rep(TRUE, length(s))
           }
 
           n[i] <- sum(s)
@@ -409,8 +410,8 @@ summary.formula <-
           n[i] <- nrow(w)
           g    <- as.factor(group)
           ncat <- ncol(w)
-          tab <- matrix(NA, nrow=ncat, ncol=length(levels(g)),
-                        dimnames=list(dimnames(w)[[2]], levels(g)))
+          tab  <- matrix(NA, nrow=ncat, ncol=length(levels(g)),
+                         dimnames=list(dimnames(w)[[2]], levels(g)))
           if(test) {
             pval <- numeric(ncat)
             names(pval) <- dimnames(w)[[2]]
@@ -420,20 +421,22 @@ summary.formula <-
           for(j in 1:ncat) {
             tab[j,] <- tapply(w[,j], g, sum, simplify=TRUE, na.rm=TRUE)
             if(test) {
-              tabj <- rbind(table(g)-tab[j,],tab[j,])
-              st <- catTest(tabj)
+              tabj <- rbind(table(g) - tab[j, ], tab[j, ])
+              st   <- catTest(tabj)
               pval[j] <- st$P
               stat[j] <- st$stat
               d.f.[j] <- st$df
             }
           }
-
           if(test)
-            testresults[[i]] <- list(P=pval, stat=stat, df=d.f.,
-                                     testname=st$testname,
-                                     statname=st$statname,
-                                     latexstat=st$latexstat,
-                                     plotmathstat=st$plotmathstat)
+            testresults[[i]] <- list(P            = pval,
+                                     stat         = stat,
+                                     df           = d.f.,
+                                     testname     = st$testname,
+                                     statname     = st$statname,
+                                     namefun      = st$namefun,
+                                     latexstat    = st$latexstat,
+                                     plotmathstat = st$plotmathstat)
                                    
           if(overall)
             tab <- cbind(tab, Combined=apply(tab,1,sum))
@@ -1729,10 +1732,12 @@ formatTestStats <- function(tr, multchoice=FALSE,
   deg <- if(multchoice) tr$df[i] else tr$df
   
   dof <- if(multchoice) as.character(deg) else paste(deg, collapse=',')
+
   namefun <- specs[[tr$namefun]]  ## function for typesetting stat name
-  statmarkup <- if(latex) tr$latexstat
-              else if(plotmath) tr$plotmathstat
-              else tr$statname
+  statmarkup <-
+    if(latex) tr$latexstat
+    else if(plotmath) tr$plotmathstat
+    else tr$statname
   
   if(length(prtest) > 1 && 'stat' %in% prtest && (latex || plotmath)) {
     if(plotmath) {
@@ -2685,7 +2690,7 @@ catTestchisq=function(tab) {
         list(p.value=NA, statistic=NA, parameter=NA)
       else chisq.test(tab, correct=FALSE)
     }
-  list(P=st$p.value,
+  list(P            = st$p.value,
        stat         = st$statistic,
        df           = st$parameter,
        testname     = 'Pearson',

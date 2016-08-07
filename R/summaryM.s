@@ -239,6 +239,8 @@ plot.summaryM <-
   what    <- match.arg(what)
   which   <- match.arg(which)
   conType <- match.arg(conType)
+
+  html    <- FALSE
   
   ul <- vnames=='labels'
 

@@ -1731,7 +1731,8 @@ formatTestStats <- function(tr, multchoice=FALSE,
   dof <- if(multchoice) as.character(deg)
          else paste(deg, collapse=',')
 
-  namefun <- specs[[tr$namefun]]  ## function for typesetting stat name
+  namefun <- specs[[tr$statname]]  ## function for typesetting stat name
+  ## above was $namefun
   statmarkup <- if(latex) tr$latexstat
               else if(plotmath) tr$plotmathstat
               else tr$statname
@@ -1946,7 +1947,7 @@ latex.summary.formula.reverse <-
     }
     
     if(prn) {
-      legend <- c(legend, '$N$', spc, 'is the number of non--missing values.')
+      legend <- c(legend, '$N$', '~is the number of non--missing values.')
     }
 
     if(any(type==1) && npct=='numerator') {

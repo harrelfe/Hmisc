@@ -128,8 +128,8 @@ html.data.frame <-
 
 
 html.default <- function(object,
-                         file=paste0(first.word(deparse(substitute(object))),
-                                    'html'),
+                         file=paste(first.word(deparse(substitute(object))),
+                                    'html', sep='.'),
                          append=FALSE,
                          link=NULL, linkCol=1, linkType=c('href','name'),
                          ...)
@@ -194,16 +194,18 @@ markupSpecs <- list(html=list(
   subsup   = function(a, b) paste0("<sup><span style='font-size: 70%;'>", b,
                                    "</span></sup><sub style='position: relative; left: -.5em; bottom: -.3em;'><span style='font-size: 70%;'>",
                                    a, "</span></sub>"),
-  varlabel = function(label, units='', hfill=FALSE)
+  varlabel = function(label, units='', hfill=FALSE, ufont='tt') {
+    fontb <- if(ufont == '') '' else paste0('<',  ufont, '>')
+    fonte <- if(ufont == '') '' else paste0('</', ufont, '>')
     if(units=='') label
     else
       if(hfill) paste0("<div style='float: left; text-align: left;'>", label,
-                       "</div><div style='float: right; text-align: right; font-size:80%;'><tt>",
-                       units, "</tt></div>")
+                       "</div><div style='float: right; text-align: right; font-size:80%;'>", fontb,
+                       units, fonte, "</div>")
     else
       paste0(label,
-             '&emsp;<span style="font-size:80%;"><tt>',
-             units, '</tt></span>'),
+             '&emsp;<span style="font-size:80%;">', fontb,
+             units, fonte, '</span>') },
   space    = '&nbsp;',
   lspace   = '&emsp;',
   sspace   = '&thinsp;',
@@ -245,7 +247,7 @@ latex = list(
   frac     = function(a, b, add='$') paste0(add, '\\frac{', a, '}{', b, '}',
                                             add),
   subsup   = function(a, b) paste0('$_{', a, '}^{', b, '}$'),
-  varlabel = function(label, units='', hfill=FALSE) {
+  varlabel = function(label, units='', hfill=FALSE, ...) {
     if(units=='') return(label) else units <- latexTranslate(units)
     if(hfill) paste0(label, '~\\hfill\\texttt{\\smaller[2]',
                      gsub('\\*', ' ', units), '}')

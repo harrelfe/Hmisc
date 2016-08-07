@@ -27,7 +27,6 @@ html(object, \dots)
 \method{html}{default}(object,
      file=paste(first.word(deparse(substitute(object))),'html',sep='.'),
      append=FALSE, link=NULL, linkCol=1, linkType=c('href','name'), \dots)
-\method{print}{html}(x, \dots)
 htmlVerbatim(\dots, size=75)
 }
 \arguments{
@@ -70,7 +69,6 @@ the console, as when using \code{knitr}.
 \item{linkType}{defaults to \code{"href"}}
 \item{\dots}{ignored except for \code{htmlVerbatim} - is a list of
 	objects to \code{print()}}
-\item{x}{an object created by \code{html}}
 \item{size}{a number between 0 and 100 representing the percent of the
 	prevailing character size to be used by \code{htmlVerbatim}.}
 }

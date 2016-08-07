@@ -23,7 +23,8 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
 
   fmtlab <- function(x) {
     lab <- sub('^.*:', '', x$descript)
-    if(length(x$units)) lab <- specs$varlabel(lab, x$units)
+    ## default units font is tt for html; doesn't work inside plotly popup
+    if(length(x$units)) lab <- specs$varlabel(lab, x$units, ufont='')
     lab
   }
 
@@ -302,4 +303,4 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
 
 ## Some of these are for dotchart3.s
 utils::globalVariables(c('X', 'Proportion', 'xname', 'cumy', 'proplev',
-                         'category', 'xb'))
+                         'category', 'xb', 'Missing', 'yy'))

@@ -84,14 +84,19 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
       prn = any(n != N), what=c('proportion', '\%'),
       pctdig = if(what == '\%') 0 else 2,
       npct = c('numerator', 'both', 'denominator', 'slash', 'none'),
-      npct.size = 'scriptsize', Nsize = 'scriptsize', exclude1 = TRUE,
+      npct.size = if(html) mspecs$html$smaller else 'scriptsize',
+      Nsize = if(html) mspecs$html$smaller else 'scriptsize',
+      exclude1 = TRUE,
       vnames=c("labels", "names"), prUnits = TRUE, middle.bold = FALSE,
-      outer.size = "scriptsize", caption, rowlabel = "",
+      outer.size = if(html) mspecs$html$smaller else "scriptsize",
+      caption, rowlabel = "",
       insert.bottom = TRUE, dcolumn = FALSE, formatArgs=NULL, round=NULL,
       prtest = c('P', 'stat', 'df', 'name'), prmsd = FALSE,
-      msdsize = NULL, long = FALSE, pdig = 3, eps = 0.001,
+      msdsize = if(html) function(x) x else NULL,
+      long = FALSE, pdig = 3, eps = 0.001,
       auxCol = NULL, table.env=TRUE, tabenv1=FALSE, prob=c(0.25, 0.5, 0.75),
-      prN=FALSE, legend.bottom=FALSE, html=FALSE, \dots)
+      prN=FALSE, legend.bottom=FALSE, html=FALSE,
+      mspecs=markupSpecs, \dots)
 
 \method{html}{summaryM}(object, \dots)
 }
@@ -406,6 +411,9 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
     will place table legends at the bottom of LaTeX tables.
   }
 	\item{html}{set to \code{TRUE} to typeset with html}
+	\item{mspecs}{list defining markup syntax for various languages,
+    defauls to Hmisc \code{markupSpecs} which the user can use as a
+    starting point for editing}
   \item{dcolumn}{see \code{latex}}
   }
 \value{

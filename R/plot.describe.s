@@ -181,6 +181,7 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
       Y <- v$frequency
       
       text <- paste(format(X, digits=digits), ' (n=', Y, ')', sep='')
+###      X    <- 0.01 + 0.98 * (X - X[1]) / diff(range(X))
       X    <- (X - X[1]) / diff(range(X))
       zz   <- format_counts(s)
       lab  <- fmtlab(x)
@@ -208,8 +209,8 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
                       Proportion = round(ge('prop'), 4),
                       text       = I(ge('text')),
                       Missing    = ge('missing'))
+  save(z, file='/tmp/z.rda')
       z <- z[nrow(z) : 1, ]   # so plotly will keep right ordering
-
       unam <- unique(z$xname)
       z$yy <- match(as.character(z$xname), unam)
       ## Scale Proportion so that max over all variables is 0.9
@@ -238,12 +239,13 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
                      panel.grid.minor.x = element_blank(),
                      panel.grid.minor.y = element_blank(),
                      axis.ticks.x = element_blank())
-  
-             
+
+      ## ggplotly would not hover text at x=0 when height < 300 px
+      curtail <- function(x) min(1000, max(x, 300))
       pcon <- if(! pty) g
               else
                 plotly::ggplotly(g, tooltip='text', width=800,
-                               height=min(1000, 60 + 25 * length(unam)))
+                               height=curtail(60 + 25 * length(unam)))
 
 ## If don't run plot_ly, hovering will pop up all vertical points
 #      pcon <- if(any(z$missing > 0))

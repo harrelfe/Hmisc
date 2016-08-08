@@ -249,10 +249,9 @@ latex = list(
   subsup   = function(a, b) paste0('$_{', a, '}^{', b, '}$'),
   varlabel = function(label, units='', hfill=FALSE, ...) {
     if(units=='') return(label) else units <- latexTranslate(units)
-    if(hfill) paste0(label, '~\\hfill\\texttt{\\smaller[2]',
-                     gsub('\\*', ' ', units), '}')
-    else
-      paste0(label, '{\\smaller [', units, ']}')
+    fill <- if(hfill) '~\\hfill' else '~~~'
+    paste0(label, fill, '\\texttt{\\smaller[2] ',
+           gsub('\\*', ' ', units), '}')
     },
   space    = '~',
   lspace   = '~~',
@@ -270,11 +269,13 @@ plain = list(
   br = '\n',
   frac = function(a, b, ...) paste0(a, '/', b),
   varlabel = function(label, units='', ...)
-    if(units == '') label else  paste0(label, ' [', units, ']'),
+    if(units == '') label else  paste0(label, '  [', units, ']'),
   times = 'x'
 ),
 
 plotmath = list(
+  varlabel = function(label, units='', ...)
+    labelPlotmath(label, units)
   )
 )
 

@@ -82,14 +82,15 @@ label.data.frame <- function(x, default=NULL, self=FALSE, ...) {
 labelPlotmath <- function(label, units=NULL, plotmath=TRUE, html=FALSE,
                           grid=FALSE, chexpr=FALSE)
 {
-  if(!length(label)) label <- ''
+  if(! length(label)) label <- ''
 
-  if(!length(units) || (length(units)==1 && is.na(units))) units <- ''
+  if(! length(units) || (length(units) == 1 && is.na(units))) units <- ''
 
-  if(html) plotmath <- FALSE
+  if(html)       return(markupSpecs$html$varlabel (label, units))
+  if(! plotmath) return(markupSpecs$plain$varlabel(label, units))
   
   g <-
-    if(plotmath) function(x, y=NULL, xstyle=NULL, ystyle=NULL)
+    function(x, y=NULL, xstyle=NULL, ystyle=NULL)
       {
         h <- function(w, style=NULL)
           if(length(style)) sprintf('%s(%s)', style, w) else w
@@ -105,19 +106,12 @@ labelPlotmath <- function(label, units=NULL, plotmath=TRUE, html=FALSE,
         w <- paste('list(',h(plotmathTranslate(x), xstyle), ',',
                    h(plotmathTranslate(y), ystyle), ')', sep='')
         tryparse(w, paste(x, y), chexpr)
-      } else if(html) function(x, y=NULL, ...) {
-        if(length(y))
-          paste(x, '&emsp;<span style="font-size:0.8em">', y, '</span>',
-                sep='')
-        else x
       }
-      else function(x, y=NULL, ...) if(length(y)) paste(x,y) else x
-
+  
   if(units=='') g(label)
-  else if(label=='') g(units)
-  else if(plotmath || html)
-    g(label, units, ystyle='scriptstyle')
-  else paste(label,' [',units,']',sep='')
+  else
+    if(label=='') g(units)
+  else g(label, units, ystyle='scriptstyle')
 }
 
 

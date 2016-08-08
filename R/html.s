@@ -180,6 +180,21 @@ markupSpecs <- list(html=list(
   larger2  = function(x) paste0('<span style="font-size: 156%;">', x,
                                  '</span>'),
   center   = function(x) paste0('<div align=center>', x, '</div>'),
+  subtext  = function(..., color='blue')
+    paste0('<br><font size=1 color="', color, '">',
+           paste(unlist(list(...)), collapse=' '),
+           '</font>'),
+  session  = function(cite=TRUE, loadedOnly=FALSE) {
+    si <- sessionInfo()
+    if(! loadedOnly) si$loadedOnly <- NULL
+    w <- c('<pre>',
+           capture.output(print(si, locale=FALSE)),
+           '</pre>',
+           if(cite) 'To cite R in publication use:',
+           if(cite) capture.output(print(citation(), style='html')))
+    w <- paste0(w, '\n')
+    htmltools::HTML(w)
+    }, 
   chisq    = function(x, ...)
 #    paste0('&chi;<span class="xscript" style="font-size: 75%;"><sup>2</sup><sub>', x,
 #           '</sub></span>')

@@ -33,6 +33,7 @@ Changes in version 4.0-0 (2016-08-08)
 	 * upData: new argument html
 	 * plot.describe: added ggplot2 graphics, improved continuous display using ggplotly
 	 * labelPlotmath: cleaned up by using markupSpecs
+	 * capitalize: fixed bug - did not cap. first letter if other letters after it were upper case (thanks: dchiu911)
 
 Changes in version 3.17-4 (2016-05-02)
    * latex.summaryP: correctly ordered rows after running reshape because groups was present

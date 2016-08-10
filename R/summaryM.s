@@ -779,7 +779,7 @@ latex.summaryM <-
                   paste0(math('N'), ' is the number of non-missing values.'))
       
       if(any(type == 1) && npct == 'numerator')
-        defs <- c(defs, 'Numbers after percents are frequencies.')
+        defs <- c(defs, 'Numbers after proportions are frequencies.')
       
       if(length(testUsed)) {
         if(html)

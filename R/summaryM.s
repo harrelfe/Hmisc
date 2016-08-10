@@ -577,7 +577,7 @@ latex.summaryM <-
            caption, rowlabel="",
            insert.bottom=TRUE, dcolumn=FALSE, formatArgs=NULL, round=NULL,
            prtest=c('P', 'stat', 'df', 'name'), prmsd=FALSE,
-           msdsize=if(html) function(x) x else NULL,
+           msdsize=if(html) function(x) x else NULL, brmsd=FALSE,
            long=FALSE, pdig=3, eps=.001, auxCol=NULL, table.env=TRUE,
            tabenv1=FALSE, prob=c(0.25, 0.5, 0.75), prN=FALSE,
            legend.bottom=FALSE, html=FALSE, mspecs=markupSpecs, ...)
@@ -695,6 +695,7 @@ latex.summaryM <-
                               latex=TRUE, html=html, testUsed=testUsed,
                               middle.bold=middle.bold,
                               outer.size=outer.size, msdsize=msdsize,
+                              brmsd=brmsd,
                               pdig=pdig, eps=eps, footnoteTest=gt1.test,
                               prob=prob, prN=prN)
       
@@ -864,7 +865,8 @@ latex.summaryM <-
     return(w)
   }
 
-  cs <- c(paste0('width:', maxlablen, 'ex;'), rep('padding-left:3ex;', ncol(Cstats)))
+  cs <- c(paste0('width:', maxlablen, 'ex;'),
+          rep('padding-left:3ex;', ncol(Cstats)))
   if(length(strats) > 1) {
     tspanner <- ifelse(strats == '.ALL', bold('Overall'), strats)
     w <- htmlTable::htmlTable(Cstats, header=heads,

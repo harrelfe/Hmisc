@@ -92,7 +92,7 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
       caption, rowlabel = "",
       insert.bottom = TRUE, dcolumn = FALSE, formatArgs=NULL, round=NULL,
       prtest = c('P', 'stat', 'df', 'name'), prmsd = FALSE,
-      msdsize = if(html) function(x) x else NULL,
+      msdsize = if(html) function(x) x else NULL, brmsd=FALSE,
       long = FALSE, pdig = 3, eps = 0.001,
       auxCol = NULL, table.env=TRUE, tabenv1=FALSE, prob=c(0.25, 0.5, 0.75),
       prN=FALSE, legend.bottom=FALSE, html=FALSE,
@@ -314,8 +314,10 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
   \item{msdsize}{
     defaults to \code{NULL} to use the current font size for the mean and
     standard deviation if \code{prmsd} is \code{TRUE}.  Set to a character
-    string to specify an alternate LaTeX font size.
+    string or function to specify an alternate LaTeX font size.
   }
+	\item{brmsd}{set to \code{TRUE} to put the mean and standard deviation
+    on a separate line, for html}
   \item{long}{
     set to \code{TRUE} to print the results for the first category on its own
     line, not on the same line with the variable label

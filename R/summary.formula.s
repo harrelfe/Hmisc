@@ -1591,7 +1591,7 @@ formatCons <- function(stats, nam, tr, group.freq, prmsd, sep='/',
                        formatArgs=NULL, round=NULL, prtest,
                        latex=FALSE, html=FALSE, testUsed=character(0),
                        middle.bold=FALSE, outer.size=NULL, msdsize=NULL,
-                       pdig=3, eps=.001, footnoteTest=TRUE,
+                       brmsd=FALSE, pdig=3, eps=.001, footnoteTest=TRUE,
                        prob=c(0.25, 0.5, 0.75), prN=FALSE, mspecs=markupSpecs)
 {
   specs <- if(html) mspecs$html else mspecs$latex
@@ -1654,12 +1654,13 @@ formatCons <- function(stats, nam, tr, group.freq, prmsd, sep='/',
                bold(      cqu[j, 2]),  ' ',
                outer.size(cqu[j, 3]))
 
-      if(prmsd)
-        st[j] <-
-          paste0(st[j], spc, spc,
-                 msdsize(paste0(spc, '(', cqu[j, 4], plminus,
-                                cqu[j, 5], ')')))
-
+      if(prmsd) {
+        z <- if(brmsd) paste0(br, msdsize(paste0(cqu[j, 4], spc,
+                                                 plminus, spc, cqu[j, 5])))
+             else paste0(spc, spc, msdsize(paste0('(', cqu[j, 4], spc,
+                                                  plminus, cqu[j, 5], ')')))
+        st[j] <- paste0(st[j], z)
+      }
       if(prN)
         st[j] <-
           paste0(st[j], outer.size(paste0(spc, math('N=', cqu[j, ncol(cqu)]))))

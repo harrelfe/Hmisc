@@ -1,4 +1,4 @@
-Changes in version 4.0-0 (2016-08-08)
+Changes in version 4.0-0 (2016-08-11)
    * summaryP: fixed exclude1 logic - was not excluding enough levels (inconsistent use of variable names vs. labels)
 	 * latexTranslate: any NAs in first argument changed to "" before conversion
 	 * minor.tick: added arguments to pass through (thanks: vhorvath)
@@ -34,6 +34,8 @@ Changes in version 4.0-0 (2016-08-08)
 	 * plot.describe: added ggplot2 graphics, improved continuous display using ggplotly
 	 * labelPlotmath: cleaned up by using markupSpecs
 	 * capitalize: fixed bug - did not cap. first letter if other letters after it were upper case (thanks: dchiu911)
+	 * html.summaryM: added brmsd argument to put mean, SD on separate line
+	 * Save: changed default back to use gzip for speed
 
 Changes in version 3.17-4 (2016-05-02)
    * latex.summaryP: correctly ordered rows after running reshape because groups was present

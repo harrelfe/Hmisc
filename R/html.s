@@ -155,9 +155,11 @@ if(FALSE) {
 }
 
 
-htmlVerbatim <- function(..., size = 75) {
+htmlVerbatim <- function(..., size = 75, width = 85) {
   w <- paste0('<pre style="font-size:', size, '%;">')
+  op <- options(width=width)
   for(x in list(...)) w <- c(w, capture.output(print(x)))
+  options(op)
   w <- c(w, '</pre>')
   w <- paste0(w, '\n')
   htmltools::HTML(w)

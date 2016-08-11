@@ -36,6 +36,7 @@ Changes in version 4.0-0 (2016-08-11)
 	 * capitalize: fixed bug - did not cap. first letter if other letters after it were upper case (thanks: dchiu911)
 	 * html.summaryM: added brmsd argument to put mean, SD on separate line
 	 * Save: changed default back to use gzip for speed
+	 * knitrSet: used new knitr way to set aliases for option names
 
 Changes in version 3.17-4 (2016-05-02)
    * latex.summaryP: correctly ordered rows after running reshape because groups was present

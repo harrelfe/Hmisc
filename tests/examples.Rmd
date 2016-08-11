@@ -7,6 +7,8 @@ output:
     toc: yes
     toc_float:
       collapsed: yes
+  html_document:
+    toc: yes
 ---
 # Introduction
 This is a set of reproducible examples put together in an `rmarkdown` notebook using `RStudio` and `knitr`..  When viewing the resulting [html file](http://data.vanderbilt.edu/fh/R/Hmisc/examples.nb.html) you can see all the code, and can download the entire `rmarkdown` script, which is especially helpful for seeing how `knitr` chunks are specified.  Graphics that have a [plotly](http://plot.ly/r) method for them are rendered using `plotly` instead of using defaults such as base graphics, `lattice`, or `ggplot2`.  That way the plots are somewhat interactive, e.g., allow for drill-down for more information without the viewer needing to install `R`.
@@ -18,71 +20,48 @@ Static graphics are in `png` format.
 # Setup
 ```{r setup}
 require(Hmisc)
-knitrSet(lang='markdown')
+knitrSet(lang='markdown', h=5.5, w=7)
+options(grType='plotly') # for certain graphics functions
 mu <- markupSpecs$html   # markupSpecs is in Hmisc
 subtext <- mu$subtext
 code    <- mu$code
 ```
 
-# Data {.tabset}
-## Setup
-```{r t3}
-# results='asis' in the chunk header because html(contents) output html directly
-# getHdata(titanic3)  # Get the dataset from the VU DataSets page
-# For some reason this takes several minutes under RStudio
-load('~/data/teaching/titanic/titanic3.sav')
+# Fetching Data, Modifying Variables, and Printing Data Dictionary
+The `getHdata` function is used to fetch a dataset from the Vanderbilt `DataSets` web site.  `contents` is used to print a data dictionary, run through an `html` method for nicer output.  
+```{r metadata,results='asis'}
+getHdata(pbc)
+# Have upData move units from labels to separate attribute
+pbc <- upData(pbc,
+              fu.yrs = fu.days / 365.25,
+              labels = c(fu.yrs = 'Follow-up Time',
+                         status = 'Death or Liver Transplantation'),
+              units = c(fu.yrs = 'year'),
+              drop  = 'fu.days',
+              moveUnits=TRUE, html=TRUE)
+h <- html(contents(pbc), file='', maxlevels=10, levelType='table')
 ```
-## Data Dictionary
-```{r ddict,results='asis'}
-h <- html(contents(titanic3), file='', maxlevels=10, levelType='table')
-```
-## Descriptive Statistics`r subtext('for the', code('titanic3'), 'dataset')`
-```{r t3d, height=150}
-html(summaryM(age + pclass ~ sex, data=titanic3))
-# Set graphics type so that Hmisc and rms packages use plotly
-# Chunk header height=150 is in pixels
-options(grType='plotly')
-d <- describe(titanic3)
+# Descriptive Statistics Without Stratification
+The `latexVerbatim` function is used to enclose output of `describe` in an html box with a smaller font.
+```{r describe}
+d <- describe(pbc)
+htmlVerbatim(d, size=60)
 plot(d)
 ```
-The following doesn't work because it overlays two different legends
-```{r sub,height=600,eval=FALSE}
-# Try combining two plots into one
-p <- plot(d)
-plotly::subplot(p[[1]], p[[2]],
-                nrows=2, heights=c(.3, .7), which_layout=1)
-```
-# Logistic Regression Model
 
-```{r lrmt, results='asis'}
-dd <- datadist(titanic3); options(datadist='dd')
-f <- lrm(survived ~ rcs(sqrt(age),5) * sex, data=titanic3)
-print(f, md=TRUE)
-latex(f, md=TRUE)
-a <- anova(f)
-html(a)
-plot(a)
+# Stratified Descriptive Statistics
+```{r summaryM,fig.height=6}
+s <- summaryM(bili + albumin + stage + protime + sex + age + spiders +
+              alk.phos + sgot + chol ~ drug, data=pbc,
+							overall=FALSE, test=TRUE)
+plot(s, which='categorical')
+plot(s, which='continuous')
 ```
 
-```{r summary,results='asis'}
-s <- summary(f, age=c(2, 21))
-plot(s, log=TRUE)
-html(s, dec=2)
-```
-
-```{r ggp,results='asis',h=5,w=6}
-ggplot(Predict(f, age, sex), height=500, width=650)
-plot(nomogram(f, fun=plogis, funlabel='Prob(survive)'))
-```
-
-# Survival Plots for `r mu$code('pbc')` Dataset
-```{r pbc,h=6,w=7}
-getHdata(pbc)
-pbc <- upData(pbc, 
-              fu.yrs = fu.days / 365.25,
-              units = c(fu.yrs = 'year'))
-f <- npsurv(Surv(fu.yrs, status) ~ spiders, data=pbc)
-survplotp(f, time.inc=1, times=c(5, 10))
+```{r summaryM3}
+html(s, caption='Baseline characteristics by randomized treatment',
+     exclude1=TRUE, npct='both', digits=3,
+     prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2)
 ```
 
 # Computing Environment

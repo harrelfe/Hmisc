@@ -1711,8 +1711,9 @@ knitrSet <- function(basename=NULL, w=4, h=3,
                    if(any(i)) do.call('spar', pars[i]) else spar()
                  })
   knitr::opts_knit$set(
-    width=width,
-    aliases=c(h='fig.height', w='fig.width', cap='fig.cap', scap='fig.scap'))
+    width=width)
+#    aliases=c(h='fig.height', w='fig.width', cap='fig.cap', scap='fig.scap'))
+
     #eval.after = c('fig.cap','fig.scap'),
     #error=error)  #, keep.source=keep.source (TRUE))
   # See if need to remove dev=dev from below because of plotly graphics
@@ -1729,6 +1730,8 @@ knitrSet <- function(basename=NULL, w=4, h=3,
     gsub('\\{\\\\centering (\\\\includegraphics.+)\n\n\\}', 
          '\\\\centerline{\\1}', res) 
   }) 
+  knitr::set_alias(w = 'fig.width', h = 'fig.height',
+                   cap = 'fig.cap', scap='fig.scap')
 }
 ## see http://yihui.name/knitr/options#package_options
 

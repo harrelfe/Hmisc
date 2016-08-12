@@ -89,7 +89,7 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
       exclude1 = TRUE,
       vnames=c("labels", "names"), prUnits = TRUE, middle.bold = FALSE,
       outer.size = if(html) mspecs$html$smaller else "scriptsize",
-      caption, rowlabel = "",
+      caption, rowlabel = "", rowsep=html.
       insert.bottom = TRUE, dcolumn = FALSE, formatArgs=NULL, round=NULL,
       prtest = c('P', 'stat', 'df', 'name'), prmsd = FALSE,
       msdsize = if(html) function(x) x else NULL, brmsd=FALSE,
@@ -393,9 +393,11 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
       standard output rather than be stored in a  permanent file.
 		}
   \item{append}{specify \code{TRUE} to add code to an existing file}
-  \item{rowlabel}{
-    see \code{latex.default} (under the help file \code{latex})
-  }
+  \item{rowlabel}{see \code{latex.default} (under the help file
+    \code{latex})}
+	\item{rowsep}{if \code{html} is \code{TRUE}, instructs the function to
+    use a horizontal line to separate variables from one another.
+    Recommended if \code{brmsd} is \code{TRUE}.  Ignored for LaTeX.}
   \item{middle.bold}{
     set to \code{TRUE} to have LaTeX use bold face for the middle
     quantile

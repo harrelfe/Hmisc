@@ -5,9 +5,10 @@ latexTabular <- function(x, headings=colnames(x),
 {
   if(! (is.matrix(x) || is.data.frame(x))) x <- as.matrix(x)
   nc <- ncol(x)
-  for(i in 1 : nc)
-    if(is.factor(x[, i]) || is.character(x[, i]))
-      x[, i] <- latexTranslate(x[, i])
+  if(translate)
+    for(i in 1 : nc)
+      if(is.factor(x[, i]) || is.character(x[, i]))
+        x[, i] <- latexTranslate(x[, i])
 
   if(length(list(...))) x <- format.df(x, ...)
 

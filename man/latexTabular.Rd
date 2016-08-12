@@ -25,7 +25,8 @@ latexTabular(x, headings=colnames(x),
 		column headings, defaulting to centered.}
   \item{helvetica}{set to \code{FALSE} to use default LaTeX font in
 		\samp{latexTabular} instead of helvetica.}
-	\item{translate}{set to \code{FALSE} if column headings are already in
+	\item{translate}{set to \code{FALSE} if column headings and table
+		entries are already in
 		LaTeX format, otherwise \code{latexTabular} will run them through
 		\code{latexTranslate}}
 	\item{hline}{set to 1 to put \code{hline} after heading, 2 to also put

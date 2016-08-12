@@ -37,6 +37,7 @@ Changes in version 4.0-0 (2016-08-11)
 	 * html.summaryM: added brmsd argument to put mean, SD on separate line
 	 * Save: changed default back to use gzip for speed
 	 * knitrSet: used new knitr way to set aliases for option names
+	 * latexTabular: made translate argument apply to body of table also
 
 Changes in version 3.17-4 (2016-05-02)
    * latex.summaryP: correctly ordered rows after running reshape because groups was present

@@ -27,7 +27,7 @@ html(object, \dots)
 \method{html}{default}(object,
      file=paste(first.word(deparse(substitute(object))),'html',sep='.'),
      append=FALSE, link=NULL, linkCol=1, linkType=c('href','name'), \dots)
-htmlVerbatim(\dots, size=75, width=85)
+htmlVerbatim(\dots, size=75, width=85, scroll=FALSE)
 }
 \arguments{
 \item{object}{a data frame or an object created by \code{latex}.
@@ -72,6 +72,8 @@ the console, as when using \code{knitr}.
 \item{size}{a number between 0 and 100 representing the percent of the
 	prevailing character size to be used by \code{htmlVerbatim}.}
 \item{width}{width to use in \code{options()} for printing objects}
+\item{scroll}{set to \code{TRUE} to put the html in a scrollable
+	\code{textarea}}
 }
 \author{
 Frank E. Harrell, Jr.

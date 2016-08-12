@@ -416,7 +416,7 @@ print.describe.single <- function(x, condense=TRUE, ...)
   }
   
   if(length(x$mChoice)) {cat('\n'); print(x$mChoice, prlabel=FALSE)}
-  
+ 
   invisible()
 }
 
@@ -617,71 +617,80 @@ latex.describe.single <-
     print(object$counts, quote=FALSE)
   }
 
-  val <- object$values
+  val <- object$extremes
   if(length(val)) {
-    if(! is.matrix(val)) {
-      if(length(val) != 10 || ! all(names(val)==
-                 c("L1","L2","L3","L4","L5","H5","H4","H3","H2","H1")))
-        {
-          if(verb) {cat('\\end{verbatim}\n'); verb <- 0}
-          cat('\\\\ \\smallskip\n\n')
-          val <- paste0('{\\hangafter=1\\hangindent=3ex\\noindent ',
-                       latexTranslate(names(val)),
-                       ifelse(val > 1, paste0(' (', val, ')'),''),
-                       '\n\n}\n')
-          cat(val, sep='\n')
-          cat('\\smallskip\n')
-        }
-      else {
-        if(condense) {
-          low <- paste('lowest :', paste(val[1:5],collapse=' '))
-          hi  <- paste('highest:', paste(val[6:10],collapse=' '))
-          if(! verb) {vs(); cat('\\begin{verbatim}\n'); verb <- 1}
-          cat(low,sep='')
-          if(nchar(low)+nchar(hi)+2 > wide) cat('\n') else cat(', ')
-          cat(hi,'\n')
-        } else {
-          cat('\n'); print(val, quote=FALSE)
-        }
-      }
+    if(! verb) {cat('\\begin{verbatim}\n'); verb <- 1}
+    val <- format(val)
+    if(condense) {
+      low <- paste('lowest :', paste(val[1:5],  collapse=' '))
+      hi  <- paste('highest:', paste(val[6:10], collapse=' '))
+      if(! verb) {vs(); cat('\\begin{verbatim}\n'); verb <- 1}
+      cat(low, sep='')
+      if(nchar(low) + nchar(hi) + 2 > wide) cat('\n') else cat(', ')
+      cat(hi,'\n')
     } else {
-      lev <- dimnames(val)[[2]]
-      if(condense && (mean(nchar(lev))>10 | length(lev) < 5)) {
-        if(! verb) {vs(); cat('\\begin{verbatim}\n'); verb <- 1}
-        z <- ''; len <- 0; cat('\n')
-        for(i in 1:length(lev)) {
-          w <- paste0(lev[i], ' (', val[1,i], ', ', val[2,i], '%)')
-          l <- nchar(w)
-          if(len + l + 2 > wide) {
-            cat(z,'\n'); len <- 0; z <- ''
-          }
-          
-          if(len==0) {
-            z <- w; len <- l
-          } else {
-            z <- paste0(z, ', ', w); len <- len + l + 2
-          }
-        }
-        
-        cat(z, '\n')
-      } else {
-        cat('\n');
-        if(! verb) {vs(); cat('\\begin{verbatim}\n'); verb <- 1}
-        print(val, quote=FALSE)
-      }
+      cat('\n'); print(val, quote=FALSE)
     }
   }
-  if(length(object$mChoice)) {
-    if(! verb) {vs(); cat('\\begin{verbatim}\n'); verb <- 1}
-    print(object$mChoice, prlabel=FALSE)
+
+  v <- object$values
+  if(length(v) && ! verb) {cat('\\begin{verbatim}\n'); verb <- 1}
+  is.standard <- length(v) && is.list(v) &&
+    (all(names(v) == c('value', 'frequency')))
+  if(is.standard && length(v$value) <= 20) {
+    val  <- v$value
+    freq <- v$frequency
+    prop <- round(freq / sum(freq), 3)
+    ## First try condensed output, if not too wide for two lines
+    condensed <- FALSE
+    if(condense) {
+      fval  <- as.character(val)
+      ffreq <- as.character(freq)
+      fprop <- format(prop)
+      lval  <- nchar(fval[1])
+      lfreq <- nchar(ffreq[1])
+      lprop <- nchar(fprop[1])
+      w <- paste0(fval, ' (', ffreq, ', ', fprop, ')')
+      w <- strwrap(paste(w, collapse=', '), width=wide)
+      if(length(w) <= 2) {
+        condensed <- TRUE
+        cat('', w, sep='\n')
+      }
+      else
+        if(! condensed) {
+          fval  <- if(is.numeric(val))
+                     format(val) else format(val, justify='right')
+          ffreq <- format(freq)
+          fprop <- format(prop)
+          lval  <- nchar(fval[1])
+          lfreq <- nchar(ffreq[1])
+          lprop <- nchar(fprop[1])
+          
+          m     <- max(lval, lfreq, lprop)
+          ## Right justify entries in each row
+          bl    <- '                                         '
+          fval  <- paste0(substring(bl, 1, m - lval ), fval)
+          ffreq <- paste0(substring(bl, 1, m - lfreq), ffreq)
+          fprop <- paste0(substring(bl, 1, m - lprop), fprop)
+          
+          w <- rbind(Value=fval, Frequency=ffreq, Proportion=fprop)
+          colnames(w) <- rep('', ncol(w))
+          print(w, quote=FALSE)
+        }
+    } else if(length(v) && ! is.standard) {
+      cat('\n')
+      print(v, quote=FALSE)
+    }
+  
+    if(length(object$mChoice)) {
+      if(! verb) {cat('\\begin{verbatim}\n'); verb <- 1}
+      cat('\n'); print(object$mChoice, prlabel=FALSE)}
   }
-  
+
   if(verb) cat('\\end{verbatim}\n')
-  cat('}\n')
-  if(file != '')
-    sink()
-  
-  invisible(verb)
+  cat('}\n')  ## ends \smaller
+  if(file != '') sink()
+  invisible()
 }
 
 

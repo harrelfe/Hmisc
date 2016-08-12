@@ -574,7 +574,7 @@ latex.summaryM <-
            exclude1=TRUE,  vnames=c("labels","names"), prUnits=TRUE,
            middle.bold=FALSE,
            outer.size=if(html) mspecs$html$smaller else 'scriptsize',
-           caption, rowlabel="",
+           caption, rowlabel="", rowsep=html,
            insert.bottom=TRUE, dcolumn=FALSE, formatArgs=NULL, round=NULL,
            prtest=c('P', 'stat', 'df', 'name'), prmsd=FALSE,
            msdsize=if(html) function(x) x else NULL, brmsd=FALSE,
@@ -664,6 +664,8 @@ latex.summaryM <-
     cstats <- NULL
     testUsed <- auxc <- character(0)
 
+    rows.per.var <- integer(0)
+    
     for(i in 1:nv) {
       if(length(auxCol))
         auxc <- c(auxc, auxCol[[1]][i])
@@ -690,20 +692,24 @@ latex.summaryM <-
                          pdig=pdig, eps=eps,
                          footnoteTest=gt1.test)
         nn <- c(nn, rep(NA, nrow(cs) - 1))
-      } else cs <- formatCons(stats[[i]], nam, tr, x$group.freq, prmsd,
-                              prtest=prtest, formatArgs=formatArgs, round=round,
-                              latex=TRUE, html=html, testUsed=testUsed,
-                              middle.bold=middle.bold,
-                              outer.size=outer.size, msdsize=msdsize,
-                              brmsd=brmsd,
-                              pdig=pdig, eps=eps, footnoteTest=gt1.test,
-                              prob=prob, prN=prN)
+        rows.per.var <- c(rows.per.var, nrow(cs))
+      } else {
+        cs <- formatCons(stats[[i]], nam, tr, x$group.freq, prmsd,
+                         prtest=prtest, formatArgs=formatArgs, round=round,
+                         latex=TRUE, html=html, testUsed=testUsed,
+                         middle.bold=middle.bold,
+                         outer.size=outer.size, msdsize=msdsize,
+                         brmsd=brmsd,
+                         pdig=pdig, eps=eps, footnoteTest=gt1.test,
+                         prob=prob, prN=prN)
+        rows.per.var <- c(rows.per.var, 1)
+        }
       
       cstats <- rbind(cstats, cs)
       if(length(auxc) && nrow(cstats) > 1)
         auxc <- c(auxc, rep(NA, nrow(cs) - 1))
     }
-    
+
     lab <- dimnames(cstats)[[1]]
     gl <- names(x$group.freq)
     if(!length(gl)) gl <- " "
@@ -867,11 +873,13 @@ latex.summaryM <-
 
   cs <- c(paste0('width:', maxlablen, 'ex;'),
           rep('padding-left:3ex;', ncol(Cstats)))
+  prn(rows.per.var, file='/tmp/z')
   if(length(strats) > 1) {
     tspanner <- ifelse(strats == '.ALL', bold('Overall'), strats)
     w <- htmlTable::htmlTable(Cstats, header=heads,
                               caption  = paste(finalcaption, finallegend),
                               rowlabel = rowlabel,
+#                              n.rgroup = if(rowsep) rows.per.var,
                               align    = col.just, rnames=Lab,
                               tspanner=tspanner, n.tspanner=n.tspanner,
                               tfoot=insert.bottom,
@@ -881,6 +889,7 @@ latex.summaryM <-
     w <- htmlTable::htmlTable(Cstats, header=heads,
                               caption  = paste(finalcaption, finallegend),
                               rowlabel = rowlabel,
+ #                             n.rgroup = if(rowsep) rows.per.var,
                               align    = col.just, rnames=lab,
                               tfoot    = insert.bottom,
                               css.cell = cs)

@@ -155,12 +155,17 @@ if(FALSE) {
 }
 
 
-htmlVerbatim <- function(..., size = 75, width = 85) {
-  w <- paste0('<pre style="font-size:', size, '%;">')
+htmlVerbatim <- function(..., size = 75, width = 85, scroll=FALSE) {
+  if(scroll) {
+    nam <- as.character(sys.call()[2])
+    w <- paste0('<textarea class="scrollabletextbox" rows="10" cols="100" style="font-size:', size,
+                '%; font-family:Courier New;" name="', nam, '">')
+    }
+  else w <- paste0('<pre style="font-size:', size, '%;">')
   op <- options(width=width)
   for(x in list(...)) w <- c(w, capture.output(print(x)))
   options(op)
-  w <- c(w, '</pre>')
+  w <- c(w, if(scroll) '</textarea>' else '</pre>')
   w <- paste0(w, '\n')
   htmltools::HTML(w)
 }

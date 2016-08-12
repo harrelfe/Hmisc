@@ -17,6 +17,7 @@ Much of the tabular output produced here was created using `html` methods, which
 
 Static graphics are in `png` format.
 
+
 # Setup
 ```{r setup}
 require(Hmisc)
@@ -28,7 +29,15 @@ code    <- mu$code
 ```
 
 # Fetching Data, Modifying Variables, and Printing Data Dictionary
-The `getHdata` function is used to fetch a dataset from the Vanderbilt `DataSets` web site.  `contents` is used to print a data dictionary, run through an `html` method for nicer output.  
+The `getHdata` function is used to fetch a dataset from the Vanderbilt `DataSets` web site.  `upData` is used to
+
+- create a new variable from an old one
+- add labels to 2 variables
+- add units to the new variable
+- remove the old variable
+- automatically move units of measurements from parenthetical expressions in labels to separate `units` attributed used by `Hmisc` and `rms` functions for table making and graphics
+
+`contents` is used to print a data dictionary, run through an `html` method for nicer output.  
 ```{r metadata,results='asis'}
 getHdata(pbc)
 # Have upData move units from labels to separate attribute
@@ -42,19 +51,29 @@ pbc <- upData(pbc,
 h <- html(contents(pbc), file='', maxlevels=10, levelType='table')
 ```
 # Descriptive Statistics Without Stratification
-The `latexVerbatim` function is used to enclose output of `describe` in an html box with a smaller font.
+The `latexVerbatim` function is used to enclose output of `describe` in an html box with a smaller font (0.8 &times; the usual font size[^1]).  This uses an html `textarea`, i.e., a scrollable box.
+
+[^1]: The default is 75% size.
+
 ```{r describe}
 d <- describe(pbc)
-htmlVerbatim(d, size=60)
+htmlVerbatim(d, size=80, scroll=TRUE)
 plot(d)
 ```
 
 # Stratified Descriptive Statistics
-```{r summaryM,fig.height=6}
+Produce stratified quantiles, means/SD, and proportions by treatment group.  Plot the results before rendering as an advanced html table:
+
+- categorical variables: a single dot chart
+- continuous variables: a series of extended box plots
+
+```{r summaryM,fig.width=6.5,fig.height=5,top=1}
 s <- summaryM(bili + albumin + stage + protime + sex + age + spiders +
               alk.phos + sgot + chol ~ drug, data=pbc,
 							overall=FALSE, test=TRUE)
 plot(s, which='categorical')
+```
+```{r summaryM2,fig.width=6.5,fig.height=5,top=1}
 plot(s, which='continuous')
 ```
 
@@ -64,5 +83,7 @@ html(s, caption='Baseline characteristics by randomized treatment',
      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2)
 ```
 
-# Computing Environment
+# Computing Environment[^2]
 `r mu$session()`
+
+[^2]: `mu` is the part of the `Hmisc` package object `markupSpecs` that is for html.  It includes a function `session` that renders the session environment (including package versions) in html.

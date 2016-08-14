@@ -16,7 +16,8 @@ latexTabular(x, headings=colnames(x),
 		converted to a matrix}
   \item{headings}{a vector of character strings specifying column
 		headings for \samp{latexTabular}, defaulting to \code{x}'s
-	\code{colnames}}
+	\code{colnames}.  To make multi-line headers use the newline character
+	inside elements of \code{headings}.}
   \item{align}{a character strings specifying column
 		alignments for \samp{latexTabular}, defaulting to
 		\code{paste(rep('c',ncol(x)),collapse='')} to center.  You may
@@ -31,6 +32,8 @@ latexTabular(x, headings=colnames(x),
 		\code{latexTranslate}}
 	\item{hline}{set to 1 to put \code{hline} after heading, 2 to also put
 		\code{hline}s before and after heading and at table end}
+	\item{center}{set to \code{TRUE} to enclose the tabular in a LaTeX
+		\code{center} environment}
 	\item{\dots}{if present, \code{x} is run through \code{format.df} with
 		those extra arguments}
   }

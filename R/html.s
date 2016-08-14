@@ -90,39 +90,66 @@ html.data.frame <-
   function(object,
            file=paste(first.word(deparse(substitute(object))),
                       'html',sep='.'),
+           header,
+           align='r', align.header='c', bold.header=TRUE, border=TRUE,
+           size=100, translate=FALSE,
            append=FALSE, link=NULL, linkCol=1,
            linkType=c('href','name'), ...)
 {
   linkType <- match.arg(linkType)
   
-  x   <- as.matrix(object)
-  for(i in 1:ncol(x))
-    {
-      xi <- x[,i]
-      if(is.numeric(object[,i]))
-        x[,i] <- paste('<div align=right>',xi,'</div>',sep='')
-    }
-  if(length(r <- dimnames(x)[[1]]))
-    x <- cbind(Name=as.character(r), x)
+  align <- switch(align,
+                  c='center',
+                  l='left',
+                  r='right')
+  align.header <- switch(align.header,
+                         c='center',
+                         l='left',
+                         r='right')
+  trans <- if(translate) htmlTranslate else function(x) x
   
-  cat('<TABLE BORDER>\n', file=file, append=append)
-  cat('<tr>', paste0('<td><strong>', dimnames(x)[[2]], '</strong></td>'), '</tr>\n',
-      sep='', file=file, append=file!='')
+  x   <- as.matrix(object)
+  for(i in 1:ncol(x)) {
+    xi <- x[,i]
+    if(is.numeric(object[,i]))
+      x[,i] <- paste0('<div align=right>', xi, '</div>')
+  }
+  if(length(r <- rownames(x)))
+    x <- cbind(Name=as.character(r), x)
+
+  sty <- paste0('style="font-size:', size, '%;',
+                if(border) ' border: 1px solid gray;',
+                '"')
+  R <- paste0('<TABLE ', sty, '>')
+  w <- if(bold.header) 'th' else 'td'
+  if(missing(header)) header <- colnames(x)
+  if(length(header)) {
+    head <- trans(header)
+    head <- paste0('<', w, ' style="text-align:', align.header, '">',
+                   head, '</', w, '>')
+    head <- paste0('<tr>', paste(head, collapse=''), '</tr>')
+    R <- c(R, head)
+    }
   
   if(length(link)) {
     if(is.matrix(link)) 
-      x[link!=''] <- paste('<a ',linkType,'="', link[link!=''],'">',
-                           x[link!=''],'</a>',sep='') else
-    x[,linkCol] <- ifelse(link == '',x[,linkCol],
-                          paste0('<a ',linkType,'="',link,'">',
-                                x[,linkCol],'</a>'))
+      x[link != ''] <- paste0('<a ',linkType,'="', link[link!=''],'">',
+                              trans(x[link != '']), '</a>')
+    else
+      x[,linkCol] <- ifelse(link == '', trans(x[, linkCol]),
+                            paste0('<a ',linkType,'="',link,'">',
+                                   trans(x[, linkCol]),'</a>'))
   }
 
-  for(i in 1:nrow(x))
-    cat('<tr>',paste0('<td>',x[i,],'</td>'),'</tr>\n',
-        sep='', file=file, append=file!='')
+  for(i in 1 : nrow(x)) {
+    rowt <- paste0('<td style="text-align:', align, '">', x[i,], '</td>')
+    R <- c(R, paste0('<tr>', paste(rowt, collapse=''), '</tr>'))
+    }
 
-  cat('</TABLE>\n', file=file, append=file!='')
+  R <- c(R, '</TABLE>')
+  if(is.logical(file) && ! file) return(R)
+
+  cat(R, file=file, append=append && file != '', sep='\n')
   structure(list(file=file), class='html')
 }
 
@@ -155,10 +182,12 @@ if(FALSE) {
 }
 
 
-htmlVerbatim <- function(..., size = 75, width = 85, scroll=FALSE) {
+htmlVerbatim <- function(..., size = 75, width = 85,
+                         scroll=FALSE, rows=10, cols=100) {
   if(scroll) {
     nam <- as.character(sys.call()[2])
-    w <- paste0('<textarea class="scrollabletextbox" rows="10" cols="100" style="font-size:', size,
+    w <- paste0('<textarea class="scrollabletextbox" rows=', rows,
+                ' cols=', cols, ' style="font-size:', size,
                 '%; font-family:Courier New;" name="', nam, '">')
     }
   else w <- paste0('<pre style="font-size:', size, '%;">')
@@ -178,6 +207,9 @@ markupSpecs <- list(html=list(
   code     = function(x) paste0('<code style="font-size:0.8em">', x, '</code>'),
   sup      = function(x, ...) paste0('<sup>', x, '</sup>'),
   sub      = function(x, ...) paste0('<sub>', x, '</sub>'),
+  size     = function(x, pct) paste0('<span style="font-size: ', pct,
+                                     '%;">', paste(x, collapse=' '),
+                                     '</span>'),
   smaller  = function(x) paste0('<span style="font-size: 80%;">', x,
                                 '</span>'),
   larger   = function(x) paste0('<span stype="font-size: 125%;">', x,
@@ -201,7 +233,13 @@ markupSpecs <- list(html=list(
            if(cite) capture.output(print(citation(), style='html')))
     w <- paste0(w, '\n')
     htmltools::HTML(w)
-    }, 
+  },
+  scroll   = function(x, size=75, rows=10, cols=100,
+                      font='', name='') {
+    w <- paste0('<div style="width: ', cols, 'ex; overflow: auto; height: ',
+                rows, 'ex;">')
+    c(w, x, '</div>')
+    },
   chisq    = function(x, ...)
 #    paste0('&chi;<span class="xscript" style="font-size: 75%;"><sup>2</sup><sub>', x,
 #           '</sub></span>')
@@ -219,19 +257,24 @@ markupSpecs <- list(html=list(
   varlabel = function(label, units='', hfill=FALSE, ufont='tt') {
     fontb <- if(ufont == '') '' else paste0('<',  ufont, '>')
     fonte <- if(ufont == '') '' else paste0('</', ufont, '>')
+    size  <- if(ufont == 'tt') 100 else 80
     if(units=='') label
     else
       if(hfill) paste0("<div style='float: left; text-align: left;'>", label,
-                       "</div><div style='float: right; text-align: right; font-size:80%;'>", fontb,
+                       "</div><div style='float: right; text-align: right; font-size:' size, '%;'>", fontb,
                        units, fonte, "</div>")
     else
       paste0(label,
-             '&emsp;<span style="font-size:80%;">', fontb,
+             '&emsp;<span style="font-size:', size, '%;">', fontb,
              units, fonte, '</span>') },
   space    = '&nbsp;',
   lspace   = '&emsp;',
   sspace   = '&thinsp;',
+  smallskip= '<br><br>',
+  medskip  = '<br><br><br>',
+  bigskip  = '<br><br><br><br>',
   br       = '<br>',
+  hrule    = '<hr>',
   plminus  = '&plusmn;',
   times    = '&times;',
   xbar     = '<span style="text-decoration: overline">X</span>',
@@ -278,7 +321,11 @@ latex = list(
   space    = '~',
   lspace   = '~~',
   sspace   = '\\,',
+  smallskip= '\\smallskip',
+  medskip  = '\\medskip',
+  bigskip  = '\\bigskip',   
   br       = '\\\\',
+  hrule    = '\\hrule',
   plminus  = '$\\pm$',
   times    = '$\\times$',
   xbar     = '$\\bar{X}$'
@@ -288,11 +335,12 @@ plain = list(
   space = ' ',
   lspace = '   ',
   sspace = ' ',
-  br = '\n',
-  frac = function(a, b, ...) paste0(a, '/', b),
+  br     = '\n',
+  hrule  = '',
+  frac   = function(a, b, ...) paste0(a, '/', b),
   varlabel = function(label, units='', ...)
     if(units == '') label else  paste0(label, '  [', units, ']'),
-  times = 'x'
+  times  = 'x'
 ),
 
 plotmath = list(

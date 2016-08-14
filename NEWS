@@ -1,4 +1,4 @@
-Changes in version 4.0-0 (2016-08-11)
+Changes in version 4.0-0 (2016-08-14)
    * summaryP: fixed exclude1 logic - was not excluding enough levels (inconsistent use of variable names vs. labels)
 	 * latexTranslate: any NAs in first argument changed to "" before conversion
 	 * minor.tick: added arguments to pass through (thanks: vhorvath)
@@ -37,7 +37,9 @@ Changes in version 4.0-0 (2016-08-11)
 	 * html.summaryM: added brmsd argument to put mean, SD on separate line
 	 * Save: changed default back to use gzip for speed
 	 * knitrSet: used new knitr way to set aliases for option names
-	 * latexTabular: made translate argument apply to body of table also
+	 * latexTabular: made translate argument apply to body of table also; implemented multi-line header
+	 * html.data.frame: added several arguments
+	 * describe: added html method
 
 Changes in version 3.17-4 (2016-05-02)
    * latex.summaryP: correctly ordered rows after running reshape because groups was present

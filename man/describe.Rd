@@ -11,8 +11,10 @@
 \alias{[.describe}
 \alias{latex.describe}
 \alias{latex.describe.single}
-\title{Concise Statistical Description of a Vector, Matrix, Data Frame, or Formula
-}
+\alias{html.describe}
+\alias{html.describe.single}
+\title{Concise Statistical Description of a Vector, Matrix, Data Frame,
+	or Formula}
 \description{
 \code{describe} is a generic method that invokes \code{describe.data.frame},
 \code{describe.matrix}, \code{describe.vector}, or
@@ -68,6 +70,10 @@ example output see
 Note that the latex method assumes you have the following styles
 installed in your latex installation: setspace and relsize.
 
+The \code{html} method mimics the LaTeX output except for not including
+the spike histogram.  This is useful in the context of Rmarkdown html
+and html notebook output.
+
 The \code{plot} method is for \code{describe} objects run on data
 frames.  It produces spike histograms for a graphic of
 continuous variables and a dot chart for categorical variables, showing
@@ -113,6 +119,10 @@ pp. 557, the term "unique" should really be "distinct".
 \method{latex}{describe.single}(object, title=NULL, condense=TRUE, vname,
       file, append=FALSE, size='small', tabular=TRUE, greek=TRUE,
       lspace=c(0,0), \dots)
+\method{html}{describe}(object, condense=TRUE, size=75, tabular=TRUE,
+      greek=TRUE, scroll=FALSE, rows=25, cols=100, \dots)
+\method{html}{describe.single}(object, condense=TRUE, vname, size=75,
+      tabular=TRUE, greek=TRUE, \dots)
 \method{plot}{describe}(x, which=c('both', 'continuous', 'categorical'),
                           what=NULL,
                           sort=c('ascending', 'descending', 'none'),
@@ -207,18 +217,19 @@ set to \code{TRUE} to have \code{latex} append text to an existing file
 named \code{file}
 }
 \item{size}{
-LaTeX text size (\code{"small"}, the default, or \code{"normalsize"}, \code{"tiny"},
-\code{"scriptsize"}, etc.) for the \code{describe} output in LaTeX.
+LaTeX text size (\code{"small"}, the default, or \code{"normalsize"},
+\code{"tiny"}, \code{"scriptsize"}, etc.) for the \code{describe} output
+in LaTeX. For html is the percent of the prevailing font size to use for
+the output.
 }
 \item{tabular}{
-  set to \code{FALSE} to use verbatim rather than tabular environment
-  for the summary statistics output.  By default, tabular is used if the
-  output is not too wide.}
-\item{greek}{By default, the \code{latex} methods
-  will change LaTeX names of greek letters that appear in variable
-  labels to appropriate LaTeX symbols in math mode unless
-  \code{greek=FALSE}.  \code{greek=TRUE} is not implemented in S-Plus
-  versions older than 6.2.}
+  set to \code{FALSE} to use verbatim rather than tabular (or html
+	table) environment for the summary statistics output.  By default,
+	tabular is used if the output is not too wide.}
+\item{greek}{By default, the \code{latex} and \code{html} methods
+  will change names of greek letters that appear in variable
+  labels to appropriate LaTeX symbols in math mode, or html symbols,  unless
+  \code{greek=FALSE}.}
 \item{spacing}{By default, the \code{latex} method for \code{describe} run
   on a matrix or data frame uses the \code{setspace} LaTeX package with a
   line spacing of 0.7 so as to no waste space.  Specify \code{spacing=0}
@@ -231,7 +242,12 @@ LaTeX text size (\code{"small"}, the default, or \code{"normalsize"}, \code{"tin
   two-vector specifies space to remove (i.e., the values are negated in
   forming the \code{vspace} command) before (first element) and after
   (second element of \code{lspace}) verbatims}
-\item{vname}{unused argument in \code{latex.describe.single}}
+\item{scroll}{set to \code{TRUE} to create an html scrollable box for
+	the html output}
+\item{rows, cols}{the number of rows or columns to allocate for the
+	scrollable box}
+\item{vname}{unused argument in \code{latex.describe.single}.  For html
+	is used to pass the current variable name}
 \item{which}{specifies whether to plot numeric continuous or
 	binary/categorical variables, or both.  When \code{"both"} a list with 
 two elements is created.  Each element is a \code{ggplot2} or

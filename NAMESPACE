@@ -116,6 +116,8 @@ S3method(hist,data.frame)
 S3method(html,contents.data.frame)
 S3method(html,data.frame)
 S3method(html,default)
+S3method(html,describe)
+S3method(html,describe.single)
 S3method(html,summaryM)
 
 S3method(html,latex)

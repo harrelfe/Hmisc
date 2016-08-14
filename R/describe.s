@@ -525,13 +525,13 @@ latex.describe.single <-
     invisible()
   }
   
-  oldw <- options(width=85)
+  oldw <- options(width=if(size == 'small') 95 else 85)
   on.exit(options(oldw))
   
   wide <- switch(size,
-                 normalsize=66,
-                 small=73,
-                 scriptsize=93,
+                 normalsize = 73,  # was 66
+                 small      = 95,  # was 73
+                 scriptsize =110,  # was 93
                  73)
 
   intFreq <- object$intervalFreq
@@ -585,7 +585,7 @@ latex.describe.single <-
   
   sz <- ''
   if(tabular) {
-    ml <- nchar(paste(object$counts,collapse='  '))
+    ml <- nchar(paste(object$counts, collapse='  '))
     if(ml > 90)
       tabular <- FALSE
     else if(ml > 80)
@@ -692,6 +692,212 @@ latex.describe.single <-
   if(file != '') sink()
   invisible()
 }
+
+html.describe <-
+  function(object, condense=TRUE, size=75,
+           tabular=TRUE, greek=TRUE, scroll=FALSE, rows=25, cols=100, ...)
+{
+  at <- attributes(object)
+
+  m <- markupSpecs$html
+  center <- m$center
+  bold   <- m$bold
+  code   <- m$code
+  br     <- m$br
+  lspace <- m$lspace
+  sskip  <- m$smallskip
+  hrule  <- m$hrule
+  fsize  <- m$size
+
+  R <- character(0)
+  
+  if(length(at$dimensions))
+    R <- center(bold(paste(htmlTranslate(at$descript), sskip,
+                           at$dimensions[2], ' Variables', lspace,
+                           at$dimensions[1],' Observations')))
+
+  if(length(at$naprint)) R <- c(R, '', at$naprint)
+
+  R <- c(R, hrule)
+
+  vnames <- at$names
+  i <- 0
+  for(z in object) {
+    i <- i + 1
+    if(length(z)==0)
+      next
+
+    r <- html.describe.single(z, condense=condense, vname=vnames[i],
+                              tabular=tabular, greek=greek, size=size)
+    R <- c(R, r, hrule)
+  }
+    
+  if(length(mv <- at$missing.vars)) {
+    R <- c(R, sskip, 'Variables with all observations missing:',
+           br, sskip)
+    mv <- paste(code(htmlTranslate(mv)), collapse=', ')
+    R <- c(R, mv)
+  }
+  if(scroll) R <- m$scroll(R, size=size, rows=rows, cols=cols,
+                           name=at$descript)
+  htmltools::HTML(R)
+}
+
+html.describe.single <-
+  function(object, condense=TRUE, vname, size=75,
+           tabular=TRUE, greek=TRUE, ...)
+{
+  m <- markupSpecs$html
+  center <- m$center
+  bold   <- m$bold
+  code   <- m$code
+  br     <- m$br
+  lspace <- m$lspace
+  sskip  <- m$smallskip
+  hrule  <- m$hrule
+  fsize  <- m$size
+  smaller<- m$smaller
+
+  oldw <- options(width=if(size < 90) 95 else 85)
+  on.exit(options(oldw))
+  
+  wide <- if(size >= 90) 73 else if(size >= 75) 95 else 110
+
+  z   <- htmlTranslate(object$descript, greek=greek)
+  des <- if(! length(grep(':', z))) bold(z)
+    else {
+      ## Get text before : (variable name)
+      sp <- strsplit(z, ' : ')[[1]]
+      vnm <- sp[1]
+      rem <- paste(sp[-1], collapse=':')
+      paste0(bold(vnm), ': ', rem)
+    }
+  
+  if(length(object$units))
+    des <- m$varlabel(des, htmlTranslate(object$units))
+  
+  if(length(object$format))
+    des <- paste0(des, lspace,
+                  smaller(paste0('Format:',
+                                 htmlTranslate(object$format))))
+
+  R <- des
+  
+  sz <- size
+  if(tabular) {
+    ml <- nchar(paste(object$counts, collapse='  '))
+    if(ml > 90)
+      tabular <- FALSE
+    else if(ml > 80)
+      sz <- round(.8 * size)
+  }
+
+  if(tabular) {
+    d <- as.data.frame(as.list(object$counts))
+    colnames(d) <- names(object$counts)
+    tab <- html(d, file=FALSE, align='c',
+                align.header='c', bold.header=FALSE, border=FALSE,
+                translate=TRUE, size=sz)
+    R <- c(R, tab)
+  }
+  else
+    R <- c(R, htmlVerbatim(capture.output(print(object$counts, quote=FALSE)),
+                            size=sz))
+
+  val <- object$extremes
+  if(length(val)) {
+    if(condense) {
+      val <- format(val)
+      low <- paste('lowest :', paste(val[1:5],  collapse=' '))
+      hi  <- paste('highest:', paste(val[6:10], collapse=' '))
+      if(nchar(low) + nchar(hi) + 2 > wide) {
+        low <- data.frame(name='lowest:', e1=val[1], e2=val[2], e3=val[3],
+                          e4=val[4], e5=val[5])
+        hi  <- data.frame(name='highest:', e1=val[6], e2=val[7], e3=val[8],
+                          e4=val[9], e5=val[10])
+        tab <- html(rbind(low, hi, make.row.names=FALSE),
+                    header=NULL, border=FALSE, size=size, file=FALSE)
+        R <- c(R, tab)
+        }
+      else
+        R <- c(R, fsize(paste(low, hi, sep=', '), size))
+    }
+    else
+      R <- c(R, htmlVerbatim(paste(capture.output(print(val,
+                                                        quote=FALSE)),
+                                   collapse='\n'), size=size))
+    }
+
+  v <- object$values
+  is.standard <- length(v) && is.list(v) &&
+    (all(names(v) == c('value', 'frequency')))
+  if(is.standard && length(v$value) <= 20) {
+    val  <- v$value
+    freq <- v$frequency
+    prop <- round(freq / sum(freq), 3)
+    ## First try condensed output, if not too wide for two lines
+    condensed <- FALSE
+    if(condense) {
+      fval  <- as.character(val)
+      ffreq <- as.character(freq)
+      fprop <- format(prop)
+      lval  <- nchar(fval[1])
+      lfreq <- nchar(ffreq[1])
+      lprop <- nchar(fprop[1])
+      w <- paste0(fval, ' (', ffreq, ', ', fprop, ')')
+      w <- strwrap(paste(w, collapse=', '), width=wide)
+      if(length(w) <= 2) {
+        condensed <- TRUE
+        R <- c(R, fsize(w, size))
+      }
+      else
+        if(! condensed) {
+          fval  <- if(is.numeric(val))
+                     format(val) else format(val, justify='right')
+          ffreq <- format(freq)
+          fprop <- format(prop)
+          lval  <- nchar(fval[1])
+          lfreq <- nchar(ffreq[1])
+          lprop <- nchar(fprop[1])
+          
+          m     <- max(lval, lfreq, lprop)
+          ## Right justify entries in each row
+          bl    <- '                                         '
+          fval  <- paste0(substring(bl, 1, m - lval ), fval)
+          ffreq <- paste0(substring(bl, 1, m - lfreq), ffreq)
+          fprop <- paste0(substring(bl, 1, m - lprop), fprop)
+          
+          w <- rbind(Value=fval, Frequency=ffreq, Proportion=fprop)
+          colnames(w) <- rep('', ncol(w))
+          R <- c(R, htmlVerbatim(capture.output(print(w, quote=FALSE),
+                                                 size=size)))
+        }
+    }
+    else
+      if(length(v) && ! is.standard)
+        R <- c(R, htmlVerbatim(capture.output(print(v, quote=FALSE)),
+                               size=size))
+    }
+  
+  if(length(object$mChoice))
+    R <- c(R, htmlVerbatim(capture.output(object$mChoice, prlabel=FALSE),
+                           size=size))
+  htmltools::HTML(R)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 dataDensityString <- function(x, nint=30)

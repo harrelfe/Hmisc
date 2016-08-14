@@ -23,7 +23,9 @@ html(object, \dots)
   rmarkdown=FALSE, cleanup=TRUE, \dots)
 \method{html}{data.frame}(object,
   file=paste(first.word(deparse(substitute(object))),'html',sep='.'),
-     append=FALSE, link=NULL, linkCol=1, linkType=c('href','name'), \dots)
+     align='r', align.header='c', bold.header=TRUE, border=TRUE, translate=FALSE,
+     size=100, append=FALSE, link=NULL, linkCol=1,
+     linkType=c('href','name'), \dots) 
 \method{html}{default}(object,
      file=paste(first.word(deparse(substitute(object))),'html',sep='.'),
      append=FALSE, link=NULL, linkCol=1, linkType=c('href','name'), \dots)
@@ -38,7 +40,9 @@ name of the file to create.  The default file
 name is \code{object.html} where \code{object} is the first word in
 the name of the argument for \code{object}.  For \code{html.latex}
 specify \code{file=''} or \code{file=character(0)} to print html code to
-the console, as when using \code{knitr}. 
+the console, as when using \code{knitr}.  For the \code{data.frame}
+method, \code{file} may be set to \code{FALSE} which causes a character
+vector to be returned instead of writing to the
 }
 \item{where}{for \code{html}.  Default is to put output files in current
 	working directory.  Specify \code{where='tmp'} to put in a system
@@ -57,6 +61,20 @@ the console, as when using \code{knitr}.
 	document (only the \code{.css} file is needed in addition to
 	\code{.html}).  If using \code{method='hevea'}, \code{cleanup=TRUE}
 	causes deletion of the generated \code{.haux} file.}
+\item{header}{vector of column names.  Defaults to names in
+	\code{object}.  Set to \code{NULL} to suppress column names.}
+\item{align}{alignment for table columns (all are assumed to have the
+	same).  Specify \code{"c", "r", "l"} for center, right, or left
+	alignment.}
+\item{align.header}{same coding as for \code{align} but pertains to
+	header}
+\item{bold.header}{set to \code{FALSE} to not bold face column headers}
+\item{border}{set to \code{FALSE} to not include table cell borders}
+\item{translate}{set to \code{TRUE} to run header and table cell text
+	through the \code{htmlTranslate} function}
+\item{size}{a number between 0 and 100 representing the percent of the
+	prevailing character size to be used by \code{htmlVerbatim} and the
+	data frame method.}
 \item{append}{set to \code{TRUE} to append to an existing file}
 \item{link}{character vector specifying hyperlink names to attach to
   selected elements of the matrix or data frame.  No hyperlinks are used
@@ -69,8 +87,6 @@ the console, as when using \code{knitr}.
 \item{linkType}{defaults to \code{"href"}}
 \item{\dots}{ignored except for \code{htmlVerbatim} - is a list of
 	objects to \code{print()}}
-\item{size}{a number between 0 and 100 representing the percent of the
-	prevailing character size to be used by \code{htmlVerbatim}.}
 \item{width}{width to use in \code{options()} for printing objects}
 \item{scroll}{set to \code{TRUE} to put the html in a scrollable
 	\code{textarea}}

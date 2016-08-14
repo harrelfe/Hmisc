@@ -22,14 +22,15 @@ html(object, \dots)
   method=c('hevea', 'htlatex'),
   rmarkdown=FALSE, cleanup=TRUE, \dots)
 \method{html}{data.frame}(object,
-  file=paste(first.word(deparse(substitute(object))),'html',sep='.'),
-     align='r', align.header='c', bold.header=TRUE, border=TRUE, translate=FALSE,
-     size=100, append=FALSE, link=NULL, linkCol=1,
+  file=paste(first.word(deparse(substitute(object))),'html',sep='.'), header,
+     align='r', align.header='c', bold.header=TRUE, border=2,
+     size=100, translate=FALSE,
+     append=FALSE, link=NULL, linkCol=1,
      linkType=c('href','name'), \dots) 
 \method{html}{default}(object,
      file=paste(first.word(deparse(substitute(object))),'html',sep='.'),
      append=FALSE, link=NULL, linkCol=1, linkType=c('href','name'), \dots)
-htmlVerbatim(\dots, size=75, width=85, scroll=FALSE)
+htmlVerbatim(\dots, size=75, width=85, scroll=FALSE, rows=10, cols=100)
 }
 \arguments{
 \item{object}{a data frame or an object created by \code{latex}.
@@ -69,7 +70,8 @@ vector to be returned instead of writing to the
 \item{align.header}{same coding as for \code{align} but pertains to
 	header}
 \item{bold.header}{set to \code{FALSE} to not bold face column headers}
-\item{border}{set to \code{FALSE} to not include table cell borders}
+\item{border}{set to 0 to not include table cell borders, 1 to include
+	only outer borders, or 2 (the default) to put borders around cells too}
 \item{translate}{set to \code{TRUE} to run header and table cell text
 	through the \code{htmlTranslate} function}
 \item{size}{a number between 0 and 100 representing the percent of the
@@ -90,6 +92,8 @@ vector to be returned instead of writing to the
 \item{width}{width to use in \code{options()} for printing objects}
 \item{scroll}{set to \code{TRUE} to put the html in a scrollable
 	\code{textarea}}
+\item{rows,cols}{the number of rows and columns to devote to the visable
+	part of the scrollable box}
 }
 \author{
 Frank E. Harrell, Jr.

@@ -51,13 +51,13 @@ pbc <- upData(pbc,
 h <- html(contents(pbc), file='', maxlevels=10, levelType='table')
 ```
 # Descriptive Statistics Without Stratification
-The `latexVerbatim` function is used to enclose output of `describe` in an html box with a smaller font (0.8 &times; the usual font size[^1]).  This uses an html `textarea`, i.e., a scrollable box.
+The html method is used for the `describe` function, and the output is put in a scrollable box.  Other than for the overall title and variable names and labels, the output size used here is 80 (0.8 &times; the usual font size[^1]).  But the graphical display of the descriptives statistics that follows this is probably better.
 
 [^1]: The default is 75% size.
 
 ```{r describe}
 d <- describe(pbc)
-htmlVerbatim(d, size=80, scroll=TRUE)
+html(d, size=80, scroll=TRUE)
 plot(d)
 ```
 
@@ -86,4 +86,4 @@ html(s, caption='Baseline characteristics by randomized treatment',
 # Computing Environment[^2]
 `r mu$session()`
 
-[^2]: `mu` is the part of the `Hmisc` package object `markupSpecs` that is for html.  It includes a function `session` that renders the session environment (including package versions) in html.
+[^2]: `mu` is a copy of the part of the `Hmisc` package object `markupSpecs` that is for html.  It includes a function `session` that renders the session environment (including package versions) in html.

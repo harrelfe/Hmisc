@@ -796,7 +796,7 @@ html.describe.single <-
     d <- as.data.frame(as.list(object$counts))
     colnames(d) <- names(object$counts)
     tab <- html(d, file=FALSE, align='c',
-                align.header='c', bold.header=FALSE, border=FALSE,
+                align.header='c', bold.header=FALSE, border=0,
                 translate=TRUE, size=sz)
     R <- c(R, tab)
   }
@@ -806,21 +806,24 @@ html.describe.single <-
 
   val <- object$extremes
   if(length(val)) {
+    blo <- 'lowest&nbsp;'    # paste0(bold('lowest '), ':')
+    bhi <- 'highest'         # paste0(bold('highest'), ':')
     if(condense) {
       val <- format(val)
-      low <- paste('lowest :', paste(val[1:5],  collapse=' '))
-      hi  <- paste('highest:', paste(val[6:10], collapse=' '))
+      low <- paste(blo, paste(val[1:5],  collapse=' '))
+      hi  <- paste(bhi, paste(val[6:10], collapse=' '))
       if(nchar(low) + nchar(hi) + 2 > wide) {
-        low <- data.frame(name='lowest:', e1=val[1], e2=val[2], e3=val[3],
+        low <- data.frame(name=blo, e1=val[1], e2=val[2], e3=val[3],
                           e4=val[4], e5=val[5])
-        hi  <- data.frame(name='highest:', e1=val[6], e2=val[7], e3=val[8],
+        hi  <- data.frame(name=bhi, e1=val[6], e2=val[7], e3=val[8],
                           e4=val[9], e5=val[10])
         tab <- html(rbind(low, hi, make.row.names=FALSE),
-                    header=NULL, border=FALSE, size=size, file=FALSE)
+                    align='r',
+                    header=NULL, border=0, size=size, file=FALSE)
         R <- c(R, tab)
         }
       else
-        R <- c(R, fsize(paste(low, hi, sep=', '), size))
+        R <- c(R, paste(low, hi, sep=', '))
     }
     else
       R <- c(R, htmlVerbatim(paste(capture.output(print(val,
@@ -848,7 +851,7 @@ html.describe.single <-
       w <- strwrap(paste(w, collapse=', '), width=wide)
       if(length(w) <= 2) {
         condensed <- TRUE
-        R <- c(R, fsize(w, size))
+        R <- c(R, w)
       }
       else
         if(! condensed) {
@@ -882,6 +885,7 @@ html.describe.single <-
   if(length(object$mChoice))
     R <- c(R, htmlVerbatim(capture.output(object$mChoice, prlabel=FALSE),
                            size=size))
+  R <- paste0(R, sep='\n')
   htmltools::HTML(R)
 }
 
@@ -1141,7 +1145,7 @@ html.contents.data.frame <-
     adj <- adj[names(adj) != 'NAs']
   }
   out <- html(cont, file=file, append=TRUE,
-              link=link,
+              link=link, border=2,
               col.just=adj, ...)
   
   cat('<hr>\n', file=file, append=TRUE)
@@ -1209,7 +1213,7 @@ html.contents.data.frame <-
       z <- cbind(Variable=lab, Levels=lev)
       out <- html(z, file=file, append=TRUE,
                   link=ifelse(lab=='','',paste('levels',v,sep='.')),
-                  linkCol='Variable', linkType='name', ...)
+                  linkCol='Variable', linkType='name', border=2,...)
       cat('<hr>\n',file=file,append=TRUE)
     }
   }

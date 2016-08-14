@@ -89,7 +89,7 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
       exclude1 = TRUE,
       vnames=c("labels", "names"), prUnits = TRUE, middle.bold = FALSE,
       outer.size = if(html) mspecs$html$smaller else "scriptsize",
-      caption, rowlabel = "", rowsep=html.
+      caption, rowlabel = "", rowsep=html,
       insert.bottom = TRUE, dcolumn = FALSE, formatArgs=NULL, round=NULL,
       prtest = c('P', 'stat', 'df', 'name'), prmsd = FALSE,
       msdsize = if(html) function(x) x else NULL, brmsd=FALSE,

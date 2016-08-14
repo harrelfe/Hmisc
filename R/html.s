@@ -91,7 +91,7 @@ html.data.frame <-
            file=paste(first.word(deparse(substitute(object))),
                       'html',sep='.'),
            header,
-           align='r', align.header='c', bold.header=TRUE, border=TRUE,
+           align='r', align.header='c', bold.header=TRUE, border=2,
            size=100, translate=FALSE,
            append=FALSE, link=NULL, linkCol=1,
            linkType=c('href','name'), ...)
@@ -111,22 +111,42 @@ html.data.frame <-
   x   <- as.matrix(object)
   for(i in 1:ncol(x)) {
     xi <- x[,i]
-    if(is.numeric(object[,i]))
-      x[,i] <- paste0('<div align=right>', xi, '</div>')
+#    if(is.numeric(object[,i]))
+#      x[,i] <- paste0('<div align=right>', xi, '</div>')
   }
   if(length(r <- rownames(x)))
     x <- cbind(Name=as.character(r), x)
 
-  sty <- paste0('style="font-size:', size, '%;',
-                if(border) ' border: 1px solid gray;',
-                '"')
-  R <- paste0('<TABLE ', sty, '>')
+  b <- c('border: 1px solid gray;', 'border-collapse: collapse;')
+  # Duplicate specifications because can't get any single one to work
+  sty <- c('<!DOCTYPE html>',
+           '<style>',
+           '.hmisctable {',
+           if(border > 0) b,
+           if(border == 0) 'border: none;',
+           'table, th, td {',
+            paste0('font-size: ', size, '%;'),
+            if(border == 2) b,
+            '}',
+           'th {',
+            paste('text-align: ', align.header, ';'),
+            if(border == 2) b,
+            'padding: 1ex;',
+            '}',
+           'td {',
+            paste0('text-align: ', align, ';'),
+            if(border == 2) b,
+            'padding: 1ex;',
+            '}',
+           '}',
+           '</style>')
+          
+  R <- c(sty, '<table class="hmisctable">')
   w <- if(bold.header) 'th' else 'td'
   if(missing(header)) header <- colnames(x)
   if(length(header)) {
     head <- trans(header)
-    head <- paste0('<', w, ' style="text-align:', align.header, '">',
-                   head, '</', w, '>')
+    head <- paste0('<', w, '>', head, '</', w, '>')
     head <- paste0('<tr>', paste(head, collapse=''), '</tr>')
     R <- c(R, head)
     }
@@ -142,11 +162,11 @@ html.data.frame <-
   }
 
   for(i in 1 : nrow(x)) {
-    rowt <- paste0('<td style="text-align:', align, '">', x[i,], '</td>')
+    rowt <- paste0('<td>', x[i, ], '</td>')
     R <- c(R, paste0('<tr>', paste(rowt, collapse=''), '</tr>'))
     }
 
-  R <- c(R, '</TABLE>')
+  R <- c(R, '</table>')
   if(is.logical(file) && ! file) return(R)
 
   cat(R, file=file, append=append && file != '', sep='\n')

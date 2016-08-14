@@ -9,7 +9,7 @@ data frame in a simple \samp{tabular} environment.
 latexTabular(x, headings=colnames(x),
              align =paste(rep('c',ncol(x)),collapse=''),
              halign=paste(rep('c',ncol(x)),collapse=''),
-             helvetica=TRUE, translate=TRUE, hline=0, \dots)
+             helvetica=TRUE, translate=TRUE, hline=0, center=FALSE, \dots)
 }
 \arguments{
   \item{x}{a matrix or data frame, or a vector that is automatically

@@ -23,8 +23,8 @@ html(object, \dots)
   rmarkdown=FALSE, cleanup=TRUE, \dots)
 \method{html}{data.frame}(object,
   file=paste(first.word(deparse(substitute(object))),'html',sep='.'), header,
-     align='r', align.header='c', bold.header=TRUE, border=2,
-     size=100, translate=FALSE,
+     align='r', align.header='c', bold.header=TRUE, col.header='Black',
+     border=2, size=100, translate=FALSE,
      append=FALSE, link=NULL, linkCol=1,
      linkType=c('href','name'), \dots) 
 \method{html}{default}(object,
@@ -71,6 +71,7 @@ writing to the console.
 \item{align.header}{same coding as for \code{align} but pertains to
 	header}
 \item{bold.header}{set to \code{FALSE} to not bold face column headers}
+\item{col.header}{color for column headers}
 \item{border}{set to 0 to not include table cell borders, 1 to include
 	only outer borders, or 2 (the default) to put borders around cells too}
 \item{translate}{set to \code{TRUE} to run header and table cell text

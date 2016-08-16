@@ -91,7 +91,8 @@ html.data.frame <-
            file=paste(first.word(deparse(substitute(object))),
                       'html',sep='.'),
            header,
-           align='r', align.header='c', bold.header=TRUE, border=2,
+           align='r', align.header='c', bold.header=TRUE,
+           col.header='Black', border=2,
            size=100, translate=FALSE,
            append=FALSE, link=NULL, linkCol=1,
            linkType=c('href','name'), ...)
@@ -135,6 +136,7 @@ html.data.frame <-
            'padding: 0 1ex 0 1ex;',   ## top left bottom right
            '}',
            paste0(psn, ' th {'),
+           paste0('color: ', col.header, ';'),
            paste0('text-align: ', align.header, ';'),
            'padding: 0 1ex 0 1ex;',
            if(bold.header) 'font-weight: bold;' else 'font-weight: normal;',
@@ -256,6 +258,13 @@ markupSpecs <- list(html=list(
     w <- paste0(w, '\n')
     htmltools::HTML(w)
   },
+  widescreen = function(width='4000px')
+    htmltools::HTML(paste0('<style>div.main-container {max-width:',
+                           width, ';}</style>')),
+  tocsize = function(width = '20%', maxwidth = '260px', maxheight='85%')
+    htmltools::HTML(paste0('<style>div.tocify {width: ', width,
+                           '; max-width: ', maxwidth, '; max-height: ',
+                           maxheight, ';}</style>')),
   scroll   = function(x, size=75, rows=10, cols=100,
                       font='', name='') {
     w <- paste0('<div style="width: ', cols, 'ex; overflow: auto; height: ',
@@ -274,12 +283,13 @@ markupSpecs <- list(html=list(
                                         a, '</sup>&frasl;<sub>', b,
                                         '</sub></span>'),
   subsup   = function(a, b) paste0("<sup><span style='font-size: 70%;'>", b,
-                                   "</span></sup><sub style='position: relative; left: -.5em; bottom: -.3em;'><span style='font-size: 70%;'>",
+                                   "</span></sup><sub style='position: relative; left: -.4em; bottom: -.4em;'><span style='font-size: 70%;'>",
                                    a, "</span></sub>"),
   varlabel = function(label, units='', hfill=FALSE, ufont='tt') {
     fontb <- if(ufont == '') '' else paste0('<',  ufont, '>')
     fonte <- if(ufont == '') '' else paste0('</', ufont, '>')
-    size  <- if(ufont == 'tt') 100 else 80
+    size  <- 80
+    ## size  <- if(ufont == 'tt') 85 else 80
     if(units=='') label
     else
       if(hfill) paste0("<div style='float: left; text-align: left;'>", label,
@@ -297,11 +307,14 @@ markupSpecs <- list(html=list(
   bigskip  = '<br><br><br><br>',
   br       = '<br>',
   hrule    = '<hr>',
+  hrulethin= '<hr class="thinhr">',
   plminus  = '&plusmn;',
   times    = '&times;',
   xbar     = '<span style="text-decoration: overline">X</span>',
   styles   = '
 <style>
+hr.thinhr { margin-top: 0.15em; margin-bottom: 0.15em; }
+
 span.xscript {
 position: relative;
 }

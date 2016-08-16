@@ -706,15 +706,18 @@ html.describe <-
   br     <- m$br
   lspace <- m$lspace
   sskip  <- m$smallskip
-  hrule  <- m$hrule
+  hrule  <- m$hrulethin
   fsize  <- m$size
 
-  R <- character(0)
+  R <- m$style   ## define thinhr (and others not needed here)
   
   if(length(at$dimensions))
-    R <- center(bold(paste(htmlTranslate(at$descript), sskip,
+    R <- c(R,
+           '<font color="MidnightBlue">',
+           center(bold(paste(htmlTranslate(at$descript), sskip,
                            at$dimensions[2], ' Variables', lspace,
-                           at$dimensions[1],' Observations')))
+                           at$dimensions[1],' Observations'))),
+           '</font>')
 
   if(length(at$naprint)) R <- c(R, '', at$naprint)
 
@@ -754,7 +757,6 @@ html.describe.single <-
   br     <- m$br
   lspace <- m$lspace
   sskip  <- m$smallskip
-  hrule  <- m$hrule
   fsize  <- m$size
   smaller<- m$smaller
 
@@ -796,7 +798,8 @@ html.describe.single <-
     d <- as.data.frame(as.list(object$counts))
     colnames(d) <- names(object$counts)
     tab <- html(d, file=FALSE, align='c',
-                align.header='c', bold.header=FALSE, border=0,
+                align.header='c', bold.header=FALSE,
+                col.header='MidnightBlue', border=0,
                 translate=TRUE, size=sz)
     R <- c(R, tab)
   }
@@ -806,8 +809,8 @@ html.describe.single <-
 
   val <- object$extremes
   if(length(val)) {
-    blo <- 'lowest&nbsp;:'
-    bhi <- 'highest:'
+    blo <- '<font color="MidnightBlue">lowest&nbsp;</font>:'
+    bhi <- '<font color="MidnightBlue">highest:</font>'
     if(condense) {
       val <- format(val)
       low <- paste(blo, paste(val[1:5],  collapse=' '))
@@ -851,7 +854,7 @@ html.describe.single <-
       w <- strwrap(paste(w, collapse=', '), width=wide)
       if(length(w) <= 2) {
         condensed <- TRUE
-        R <- c(R, w)
+        R <- c(R, fsize(w, size))
       }
       else
         if(! condensed) {

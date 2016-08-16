@@ -1706,6 +1706,7 @@ formatTestStats <- function(tr, multchoice=FALSE,
                             plotmath=FALSE, footnoteTest=TRUE,
                             mspecs=markupSpecs)
 {
+
   ## tr=an element of testresults (created by summary.formula method='reverse')
   ## or summaryM
   if(i > 1 && ! multchoice) stop('logic error')
@@ -1763,7 +1764,7 @@ formatTestStats <- function(tr, multchoice=FALSE,
                name = statmarkup),
         if(footnoteTest && length(testUsed))
           paste0(sup(match(testname, testUsed)))) 
-    else paste(
+    else paste0(
            if('stat' %in% prtest)
              paste0(statmarkup, '=', format(round(teststat, 2))),
            if(all(c('stat', 'P') %in% prtest))
@@ -1775,7 +1776,7 @@ formatTestStats <- function(tr, multchoice=FALSE,
     if(length(prtest)==1)
       parse(text=switch(prtest,
                         P    = ifelse(plt, paste0('~', 'P', pval),
-                                      paste0('~', 'P==', pval)),
+                                           paste0('~', 'P==', pval)),
                         stat = format(round(teststat, 2)),
                         dof  = format(dof),
                         name = statmarkup))

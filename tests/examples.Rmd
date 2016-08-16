@@ -11,7 +11,7 @@ output:
     toc: yes
 ---
 # Introduction
-This is a set of reproducible examples put together in an `rmarkdown` notebook using `RStudio` and `knitr`..  When viewing the resulting [html file](http://data.vanderbilt.edu/fh/R/Hmisc/examples.nb.html) you can see all the code, and can download the entire `rmarkdown` script, which is especially helpful for seeing how `knitr` chunks are specified.  Graphics that have a [plotly](http://plot.ly/r) method for them are rendered using `plotly` instead of using defaults such as base graphics, `lattice`, or `ggplot2`.  That way the plots are somewhat interactive, e.g., allow for drill-down for more information without the viewer needing to install `R`.
+This is a set of reproducible examples put together in an `rmarkdown` notebook using `RStudio` and `knitr`.  When viewing the resulting [html file](http://data.vanderbilt.edu/fh/R/Hmisc/examples.nb.html) you can see all the code, and can download the entire `rmarkdown` script, which is especially helpful for seeing how `knitr` chunks are specified.  Graphics that have a [plotly](http://plot.ly/r) method for them are rendered using `plotly` instead of using defaults such as base graphics, `lattice`, or `ggplot2`.  That way the plots are somewhat interactive, e.g., allow for drill-down for more information without the viewer needing to install `R`.
 
 Much of the tabular output produced here was created using `html` methods, which are especially easy to implement with `rmarkdown` and make for output that can be directly opened using word processors.
 
@@ -19,7 +19,7 @@ Static graphics are in `png` format.
 
 
 # Setup
-```{r setup}
+```{r setup,results='hide'}
 require(Hmisc)
 knitrSet(lang='markdown', h=5.5, w=7)
 options(grType='plotly') # for certain graphics functions
@@ -27,6 +27,8 @@ mu <- markupSpecs$html   # markupSpecs is in Hmisc
 subtext <- mu$subtext
 code    <- mu$code
 ```
+The following hidden command (<code>r mu$widescreen()</code>), causes the html notebook to use an entire wide screen.
+`r mu$widescreen()`
 
 # Fetching Data, Modifying Variables, and Printing Data Dictionary
 The `getHdata` function is used to fetch a dataset from the Vanderbilt `DataSets` web site.  `upData` is used to

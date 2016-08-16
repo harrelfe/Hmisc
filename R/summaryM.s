@@ -794,7 +794,7 @@ latex.summaryM <-
                     if(length(testUsed) == 1)'Test used:'
                     else 'Tests used:', 
                     if(length(testUsed) == 1) paste(testUsed, 'test')
-                    else paste(paste0(sup(1 : length(testUsed)), ' ',
+                    else paste(paste0(sup(1 : length(testUsed)),
                                       testUsed,
                                       ' test'), collapse='; '), '.')
         else
@@ -871,9 +871,10 @@ latex.summaryM <-
     return(w)
   }
 
-  cs <- c(paste0('width:', maxlablen, 'ex;'),
-          rep('padding-left:3ex;', ncol(Cstats)))
-  prn(rows.per.var, file='/tmp/z')
+  cs <- c(paste0('width:', round(0.85*maxlablen), 'ex;'),
+          rep('padding: 0 7px 0 7px;', ncol(Cstats)))
+  ## was rep('padding-left:3ex;'...
+
   if(length(strats) > 1) {
     tspanner <- ifelse(strats == '.ALL', bold('Overall'), strats)
     w <- htmlTable::htmlTable(Cstats, header=heads,

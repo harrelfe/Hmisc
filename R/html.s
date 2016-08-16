@@ -118,35 +118,36 @@ html.data.frame <-
     x <- cbind(Name=as.character(r), x)
 
   b <- c('border: 1px solid gray;', 'border-collapse: collapse;')
+  ## Give style a name hmisctablexxx where xxx is a random 6-digit integer
+  ## because if you reuse the same style in the same document, style
+  ## elements will affect tables that preceeded this one
+  sn  <- paste0('hmisctable', floor(runif(1, 100000, 999999)))
+  psn <- paste0('.', sn)
+  
   # Duplicate specifications because can't get any single one to work
-  sty <- c('<!DOCTYPE html>',
-           '<style>',
-           '.hmisctable {',
-           if(border > 0) b,
-           if(border == 0) 'border: none;',
-           'table, th, td {',
-            paste0('font-size: ', size, '%;'),
-            if(border == 2) b,
-            '}',
-           'th {',
-            paste('text-align: ', align.header, ';'),
-            if(border == 2) b,
-            'padding: 1ex;',
-            '}',
-           'td {',
-            paste0('text-align: ', align, ';'),
-            if(border == 2) b,
-            'padding: 1ex;',
-            '}',
+  sty <- c('<style>',
+           paste0(psn, ' {'),
+           if(border == 0) 'border: none;' else b,
+           paste0('font-size: ', size, '%;'),
+           '}',
+           paste0(psn, ' td {'),
+           paste0('text-align: ', align, ';'),
+           'padding: 0 1ex 0 1ex;',   ## top left bottom right
+           '}',
+           paste0(psn, ' th {'),
+           paste0('text-align: ', align.header, ';'),
+           'padding: 0 1ex 0 1ex;',
+           if(bold.header) 'font-weight: bold;' else 'font-weight: normal;',
            '}',
            '</style>')
           
-  R <- c(sty, '<table class="hmisctable">')
-  w <- if(bold.header) 'th' else 'td'
+  R <- c(sty, paste0('<table class="', sn, '"',
+                     if(border == 1) 'border="0"',
+                     if(border == 2) 'border="1"', '>'))
   if(missing(header)) header <- colnames(x)
   if(length(header)) {
     head <- trans(header)
-    head <- paste0('<', w, '>', head, '</', w, '>')
+    head <- paste0('<th>', head, '</th>')
     head <- paste0('<tr>', paste(head, collapse=''), '</tr>')
     R <- c(R, head)
     }
@@ -167,7 +168,8 @@ html.data.frame <-
     }
 
   R <- c(R, '</table>')
-  if(is.logical(file) && ! file) return(R)
+  if(is.logical(file) && ! file)
+    return(htmltools::HTML(paste0(R, '\n')))
 
   cat(R, file=file, append=append && file != '', sep='\n')
   structure(list(file=file), class='html')

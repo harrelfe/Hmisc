@@ -119,9 +119,9 @@ pp. 557, the term "unique" should really be "distinct".
 \method{latex}{describe.single}(object, title=NULL, condense=TRUE, vname,
       file, append=FALSE, size='small', tabular=TRUE, greek=TRUE,
       lspace=c(0,0), \dots)
-\method{html}{describe}(object, condense=TRUE, size=75, tabular=TRUE,
+\method{html}{describe}(object, condense=TRUE, size=85, tabular=TRUE,
       greek=TRUE, scroll=FALSE, rows=25, cols=100, \dots)
-\method{html}{describe.single}(object, condense=TRUE, vname, size=75,
+\method{html}{describe.single}(object, condense=TRUE, vname, size=85,
       tabular=TRUE, greek=TRUE, \dots)
 \method{plot}{describe}(x, which=c('both', 'continuous', 'categorical'),
                           what=NULL,

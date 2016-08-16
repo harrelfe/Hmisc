@@ -43,7 +43,8 @@ the name of the argument for \code{object}.  For \code{html.latex}
 specify \code{file=''} or \code{file=character(0)} to print html code to
 the console, as when using \code{knitr}.  For the \code{data.frame}
 method, \code{file} may be set to \code{FALSE} which causes a character
-vector to be returned instead of writing to the
+vector enclosed in \code{htmltools::HTML} to be returned instead of
+writing to the console. 
 }
 \item{where}{for \code{html}.  Default is to put output files in current
 	working directory.  Specify \code{where='tmp'} to put in a system

@@ -694,7 +694,7 @@ latex.describe.single <-
 }
 
 html.describe <-
-  function(object, condense=TRUE, size=75,
+  function(object, condense=TRUE, size=85,
            tabular=TRUE, greek=TRUE, scroll=FALSE, rows=25, cols=100, ...)
 {
   at <- attributes(object)
@@ -744,7 +744,7 @@ html.describe <-
 }
 
 html.describe.single <-
-  function(object, condense=TRUE, vname, size=75,
+  function(object, condense=TRUE, vname, size=85,
            tabular=TRUE, greek=TRUE, ...)
 {
   m <- markupSpecs$html
@@ -806,8 +806,8 @@ html.describe.single <-
 
   val <- object$extremes
   if(length(val)) {
-    blo <- 'lowest&nbsp;'    # paste0(bold('lowest '), ':')
-    bhi <- 'highest'         # paste0(bold('highest'), ':')
+    blo <- 'lowest&nbsp;:'
+    bhi <- 'highest:'
     if(condense) {
       val <- format(val)
       low <- paste(blo, paste(val[1:5],  collapse=' '))
@@ -823,7 +823,7 @@ html.describe.single <-
         R <- c(R, tab)
         }
       else
-        R <- c(R, paste(low, hi, sep=', '))
+        R <- c(R, fsize(paste(low, hi, sep=', '), size))
     }
     else
       R <- c(R, htmlVerbatim(paste(capture.output(print(val,

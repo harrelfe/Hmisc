@@ -69,7 +69,7 @@ Produce stratified quantiles, means/SD, and proportions by treatment group.  Plo
 - categorical variables: a single dot chart
 - continuous variables: a series of extended box plots
 
-```{r summaryM,fig.width=6.5,fig.height=5,top=1}
+```{r summaryM,fig.width=7,fig.height=5,top=1}
 s <- summaryM(bili + albumin + stage + protime + sex + age + spiders +
               alk.phos + sgot + chol ~ drug, data=pbc,
 							overall=FALSE, test=TRUE)

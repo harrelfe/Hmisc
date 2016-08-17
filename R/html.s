@@ -258,6 +258,25 @@ markupSpecs <- list(html=list(
     w <- paste0(w, '\n')
     htmltools::HTML(w)
   },
+  installcsl = function(cslname) {
+    if(missing(cslname))
+      browseURL('https://www.zotero.org/styles')
+    else
+      if(cslname == 'recommend')
+        cat('Shows URLs:', 'american-medical-association',
+            '',
+            'Does not show URLs:', 'council-of-science-editors', sep='\n')
+    else
+      download.file(paste0('https://raw.githubusercontent.com/citation-style-language/styles/master/',
+                           cslname, '.csl'), paste0(cslname, '.csl'))
+  },
+  citeulikeExport = function(user, tag)
+    browseURL(paste0('http://www.citeulike.org/user/', user, '/tag/', tag)),
+  citeulikeShow = function(user, bibkeys) {
+    keys <- paste(paste0('+', bibkeys), collapse='+OR')
+    browseURL(paste0('http://www.citeulike.org/search/username?q=bibkey%3A',
+                     keys, '&search=Search+library&username=', user))
+    },
   widescreen = function(width='4000px')
     htmltools::HTML(paste0('<style>div.main-container {max-width:',
                            width, ';}</style>')),

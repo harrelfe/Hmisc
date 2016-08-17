@@ -40,6 +40,7 @@ Changes in version 4.0-0 (2016-08-16)
 	 * latexTabular: made translate argument apply to body of table also; implemented multi-line header
 	 * html.data.frame: added several arguments
 	 * describe: added html method
+	 * html markupSpecs object: added bibliographic database utility functions
 
 Changes in version 3.17-4 (2016-05-02)
    * latex.summaryP: correctly ordered rows after running reshape because groups was present

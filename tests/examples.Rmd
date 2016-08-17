@@ -9,9 +9,11 @@ output:
       collapsed: yes
   html_document:
     toc: yes
+bibliography: ~/bib/harrelfe.bib
+csl: american-medical-association.csl
 ---
 # Introduction
-This is a set of reproducible examples put together in an `rmarkdown` notebook using `RStudio` and `knitr`.  When viewing the resulting [html file](http://data.vanderbilt.edu/fh/R/Hmisc/examples.nb.html) you can see all the code, and can download the entire `rmarkdown` script, which is especially helpful for seeing how `knitr` chunks are specified.  Graphics that have a [plotly](http://plot.ly/r) method for them are rendered using `plotly` instead of using defaults such as base graphics, `lattice`, or `ggplot2`.  That way the plots are somewhat interactive, e.g., allow for drill-down for more information without the viewer needing to install `R`.
+This is a set of reproducible examples for the R[@R] `Hmisc` package[@Hmisc], put together in an `rmarkdown` notebook using `RStudio` and `knitr`.  When viewing the resulting [html file](http://data.vanderbilt.edu/fh/R/Hmisc/examples.nb.html) you can see all the code, and can download the entire `rmarkdown` script, which is especially helpful for seeing how `knitr` chunks are specified.  Graphics that have a [plotly](http://plot.ly/r) method for them are rendered using `plotly` instead of using defaults such as base graphics, `lattice`, or `ggplot2`.  That way the plots are somewhat interactive, e.g., allow for drill-down for more information without the viewer needing to install `R`.
 
 Much of the tabular output produced here was created using `html` methods, which are especially easy to implement with `rmarkdown` and make for output that can be directly opened using word processors.
 
@@ -87,5 +89,26 @@ html(s, caption='Baseline characteristics by randomized treatment',
 
 # Computing Environment[^2]
 `r mu$session()`
+
+# Bibliographic File Managament
+## Find and Install `.csl` Files
+```{r findbib,eval=FALSE}
+# Note: mu was defined in an earlier code chunk
+# Only need to install .csl file once.
+mu$installcsl('recommend')   # get list of recommended styles
+mu$installcsl()     # web search of styles meeting your criteria
+# Install a .csl file to your project directory:
+mu$installcsl('american-medical-association')
+```
+## Manage `citeulike` Bibliographic Databases
+```{r citeulike,eval=FALSE}
+# Show full reference information for selected BibTeX keys on
+# your citeulike database
+mu$citeulikeShow('harrelfe', c('cox58reg', 'cox72'))
+# Show and optionally export all articles with a given tag
+mu$citeulikeExport('harrelfe', 'missing-data')
+```
+
+# References
 
 [^2]: `mu` is a copy of the part of the `Hmisc` package object `markupSpecs` that is for html.  It includes a function `session` that renders the session environment (including package versions) in html.

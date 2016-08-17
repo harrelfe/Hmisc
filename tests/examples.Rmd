@@ -26,8 +26,6 @@ require(Hmisc)
 knitrSet(lang='markdown', h=5.5, w=7)
 options(grType='plotly') # for certain graphics functions
 mu <- markupSpecs$html   # markupSpecs is in Hmisc
-subtext <- mu$subtext
-code    <- mu$code
 ```
 The following hidden command (<code>r mu$widescreen()</code>), causes the html notebook to use an entire wide screen.
 `r mu$widescreen()`

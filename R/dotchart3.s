@@ -132,16 +132,19 @@ dotchartp <-
             xlim = range(c(x, gdata), na.rm=TRUE),
             xlab = NULL, ylab = '', auxdata=NULL, auxtitle=NULL,
             auxgdata=NULL, auxwhere=c('right', 'hover'),
-            axisat=NULL, axislabels=NULL, sort=TRUE, digits=4, round=NULL,
+            axisat=NULL, axislabels=NULL, sort=TRUE, digits=4, dec=NULL,
             height=NULL, width=NULL, showlegend=TRUE,
             ...) 
 {
   auxwhere <- match.arg(auxwhere)
 
-  fmt <- if(length(round)) function(x) format(round(x, round))
+  fmt <- if(length(dec)) function(x) format(round(x, dec))
          else
            function(x) format(x, digits=digits)
-  
+
+  mu <- markupSpecs$html
+  lspace <- mu$lspace
+
   if (! is.numeric(x)) 
     stop("'x' must be a numeric vector or matrix")
   x    <- as.matrix(x)
@@ -188,7 +191,7 @@ dotchartp <-
             else ''
   if(auxh)
     auxd <- if(length(auxdata))
-              paste0(auxt, ' ',
+              paste0(auxt,
                      if(is.matrix(auxdata)) auxdata[, 1] else auxdata)
             else rep('', length(X))
   
@@ -197,7 +200,7 @@ dotchartp <-
     tly  <- c(tly, yg)
     if(auxh) auxd <- c(auxd,
                        if(length(auxgdata))
-                         paste0(auxt, ' ',
+                         paste0(auxt, lspace,
                                 if(is.matrix(auxgdata)) auxgdata[, 1]
                                 else auxgdata)
                         else rep('', length(yg)))
@@ -205,7 +208,7 @@ dotchartp <-
   nx <- if(nc == 1) '' else colnames(x)[1]
   ht <- if(nx == '')   fmt(X)
         else paste(nx, '<br>', fmt(X))
-  if(auxh && any(auxd != '')) ht <- paste(ht, ' ', auxd)
+  if(auxh && any(auxd != '')) ht <- paste0(ht, lspace, auxd)
   d <- data.frame(X, y=tly, ht=ht)
 
   p <- plotly::plot_ly(d, x=X, y=y, mode='markers', type='scatter',
@@ -223,7 +226,7 @@ dotchartp <-
       ax <- if(length(auxdata) && is.matrix(auxdata)) auxdata[, i] else ''
       d <- data.frame(X=X, y=tly,
                       ht=paste0(colnames(x)[i], '<br>',
-                                fmt(X), ' ', ax))
+                                fmt(X), lspace, ax))
 
       p <- plotly::add_trace(data=d, x=X, y=y, mode='markers',
                              text = ht, hoverinfo='text',
@@ -273,7 +276,6 @@ dotchartp <-
     tty <- c(tty, paste('<b>', glabels, '</b>', sep=''))
   }
   if(! length(ylab)) ylab <- ''
-  mu <- markupSpecs$html
   tty <- ifelse(nchar(tty) >= 40,  mu$smaller2(tty),
            ifelse(nchar(tty) > 20, mu$smaller(tty),  tty))
   leftmargin <- min(180, max(nchar(tty)) * 6)

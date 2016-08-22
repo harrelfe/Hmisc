@@ -45,7 +45,7 @@ dotchartp(x, labels = NULL, groups = NULL, gdata = NULL,
             xlim = range(c(x, gdata), na.rm=TRUE),
             xlab = NULL, ylab = '', auxdata=NULL, auxtitle=NULL,
             auxgdata=NULL, auxwhere=c('right', 'hover'),
-            axisat=NULL, axislabels=NULL, sort=TRUE, digits=4, round=NULL,
+            axisat=NULL, axislabels=NULL, sort=TRUE, digits=4, dec=NULL,
             height=NULL, width=NULL, showlegend=TRUE, \dots) 
 
 summaryD(formula, data=NULL, fun=mean, funm=fun,
@@ -75,7 +75,7 @@ summaryD(formula, data=NULL, fun=mean, funm=fun,
 		labels.  Useful if transforming the data axis}
 	\item{digits}{number of significant digits for formatting numeric data
     in hover text for \code{dotchartp}}
-	\item{round}{for \code{dotchartp} only, overrides \code{digits} to
+	\item{dec}{for \code{dotchartp} only, overrides \code{digits} to
          specify the argument to \code{round()} for rounding values for
          hover labels}
   \item{cex.labels}{\code{cex} for labels}

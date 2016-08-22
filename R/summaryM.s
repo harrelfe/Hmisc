@@ -1019,7 +1019,7 @@ plotpsummaryM <-
       gcat <- dotchartp(z, groups=factor(vnd, levels=unique(vnd)),
                         xlab=xlab, xlim=xlim,
                         auxdata=Frac, auxwhere='hover',
-                        round=3,
+                        dec=3,
                         height=max(150, min(800, 50 * nrow(z))))
     }
 

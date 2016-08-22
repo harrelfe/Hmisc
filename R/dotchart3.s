@@ -137,7 +137,6 @@ dotchartp <-
             ...) 
 {
   auxwhere <- match.arg(auxwhere)
-
   fmt <- if(length(dec)) function(x) format(round(x, dec))
          else
            function(x) format(x, digits=digits)
@@ -161,26 +160,31 @@ dotchartp <-
   glabels <- levels(groups)
   
   groups.pres <- length(groups) > 0
-  if(is.character(sort) || sort) {
-    o <- if(is.character(sort)) {
-           if(sort == 'ascending') order(x[, 1])
-           else
-             order(-x[, 1])
-         } else order(as.integer(groups)) ###, as.integer(labels))
-    
-    groups  <- groups[o]
-    x       <- x[o, , drop=FALSE]
-    labels  <- labels[o]
-    if(length(auxdata))
-      auxdata <- if(is.matrix(auxdata)) auxdata[o,, drop=FALSE] else auxdata[o]
+  if(! groups.pres) {
+    y <- n : 1
+    ylim <- c(.5, n + .5)
+    } else {
+      if(is.character(sort) || sort) {
+        o <- if(is.character(sort)) {
+               if(sort == 'ascending') order(x[, 1])
+               else
+                 order(-x[, 1])
+             } else order(as.integer(groups)) ###, as.integer(labels))
+        
+        groups  <- groups[o]
+        x       <- x[o, , drop=FALSE]
+        labels  <- labels[o]
+        if(length(auxdata))
+          auxdata <- if(is.matrix(auxdata))
+                       auxdata[o,, drop=FALSE] else auxdata[o]
+      }
+      lgroups <- Lag(as.character(groups))
+      lgroups[1] <- 'NULL'
+      first.in.group <- groups != lgroups
+      y  <- cumsum(1 + 1.5 * first.in.group)
+      yg <- y[first.in.group] - 1
+      ylim <- range(0.5, y + 0.5)
     }
-
-  lgroups <- Lag(as.character(groups))
-  lgroups[1] <- 'NULL'
-  first.in.group <- groups != lgroups
-  y  <- cumsum(1 + 1.5 * first.in.group)
-  yg <- y[first.in.group] - 1
-  ylim <- range(0.5, y + 0.5)
 
   X <- x[, 1]
   tly <- y
@@ -228,7 +232,7 @@ dotchartp <-
                       ht=paste0(colnames(x)[i], '<br>',
                                 fmt(X), lspace, ax))
 
-      p <- plotly::add_trace(data=d, x=X, y=y, mode='markers',
+      p <- plotly::add_trace(p, data=d, x=X, y=y, mode='markers',
                              text = ht, hoverinfo='text',
                              name=colnames(x)[i], evaluate=TRUE)
     }
@@ -255,7 +259,7 @@ dotchartp <-
       tb <- c(tb, paste('<b>', auxgdata, '</b>', sep=''))
       }
     z <- data.frame(xb=xlim[2] + dx, yb, tb)
-    p <- plotly::add_trace(data=z, x=xb, y=yb, text=tb, evaluate=TRUE,
+    p <- plotly::add_trace(p, data=z, x=xb, y=yb, text=tb, evaluate=TRUE,
                            mode='text', textposition='left',
                            textfont=list(size=10), hoverinfo='none', name='')
   }
@@ -278,10 +282,10 @@ dotchartp <-
   if(! length(ylab)) ylab <- ''
   tty <- ifelse(nchar(tty) >= 40,  mu$smaller2(tty),
            ifelse(nchar(tty) > 20, mu$smaller(tty),  tty))
-  leftmargin <- min(180, max(nchar(tty)) * 6)
+  leftmargin <- min(180, max(nchar(tty)) * 8)
   rx <- if(auxwhere == 'right' && lenaux > 0) dx else dx / 2
 
-  plotly::layout(xaxis=list(title=xlab,
+  plotly::layout(p, xaxis=list(title=xlab,
                             range=c(xlim[1] - 0.2 * dx,
                                     xlim[2] + rx),
                             zeroline=FALSE,

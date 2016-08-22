@@ -35,9 +35,8 @@ contents(object, \dots)
     number=FALSE, \dots) 
 \method{html}{contents.data.frame}(object,
            sort=c('none','names','labels','NAs'), prlevels=TRUE, maxlevels=Inf,
-           file=paste('contents',object$dfname,'html',sep='.'),
            levelType=c('list','table'),
-           append=FALSE, number=FALSE, nshow=TRUE, \dots)
+           number=FALSE, nshow=TRUE, \dots)
 \method{contents}{list}(object, dslabels, \dots)
 \method{print}{contents.list}(x,
     sort=c('none','names','labels','NAs','vars'), \dots)
@@ -108,7 +107,7 @@ contents(object, \dots)
 \value{
   an object of class \code{"contents.data.frame"} or
   \code{"contents.list"}.  For the \code{html} method is an \code{html}
-  object, except when \code{file=""} in which nothing to print is returned.
+  character vector object.
 }
 
 \author{
@@ -134,7 +133,6 @@ print(k, sort='names', prlevels=FALSE)
 \dontrun{
 html(k)
 html(contents(dfr))            # same result
-w <- html(k, file='my.html')   # create my.html, don't display
 latex(k$contents)              # latex.default just the main information
 }
 }

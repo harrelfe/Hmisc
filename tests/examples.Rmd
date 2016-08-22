@@ -36,8 +36,8 @@ The `getHdata` function is used to fetch a dataset from the Vanderbilt `DataSets
 - remove the old variable
 - automatically move units of measurements from parenthetical expressions in labels to separate `units` attributed used by `Hmisc` and `rms` functions for table making and graphics
 
-`contents` is used to print a data dictionary, run through an `html` method for nicer output.  
-```{r metadata,results='asis'}
+`contents` is used to print a data dictionary, run through an `html` method for nicer output. 
+```{r metadata}
 getHdata(pbc)
 # Have upData move units from labels to separate attribute
 pbc <- upData(pbc,
@@ -47,7 +47,7 @@ pbc <- upData(pbc,
               units = c(fu.yrs = 'year'),
               drop  = 'fu.days',
               moveUnits=TRUE, html=TRUE)
-h <- html(contents(pbc), file='', maxlevels=10, levelType='table')
+html(contents(pbc), maxlevels=10, levelType='table')
 ```
 # Descriptive Statistics Without Stratification
 The html method is used for the `describe` function, and the output is put in a scrollable box.  Other than for the overall title and variable names and labels, the output size used here is 80 (0.8 &times; the usual font size[^1]).  But the graphical display of the descriptives statistics that follows this is probably better.

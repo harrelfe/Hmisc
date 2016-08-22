@@ -1075,32 +1075,39 @@ print.contents.data.frame <-
 
 html.contents.data.frame <-
   function(object, sort=c('none', 'names', 'labels', 'NAs'), prlevels=TRUE,
-           maxlevels=Inf, file=paste('contents',object$dfname, 'html', sep='.'),
+           maxlevels=Inf,
            levelType=c('list', 'table'),
-           append=FALSE, number=FALSE, nshow=TRUE, ...)
+           number=FALSE, nshow=TRUE, ...)
 {
   sort <- match.arg(sort)
   levelType <- match.arg(levelType)
-  d <- object$dim
+  mu <- markupSpecs$html
+  lspace <- mu$lspace
+  hrule  <- mu$hrule
+  
+  d      <- object$dim
   maxnas <- object$maxnas
+
   if(nshow) {
-    cat('<hr><h4>Data frame:',object$dfname,
-        '</h4>',d[1],
-        ' observations and ',d[2],
-        ' variables, maximum # NAs:',maxnas, '&emsp;&emsp;',
-        sep='', file=file, append=append)
-    if(length(object$id)) cat('Unique ', object$id, ':', object$unique.ids,
-                              '&emsp;&emsp;',
-                              sep='', file=file, append=TRUE)
-    if(length(object$rangevar)) cat(object$rangevar, ' range:', object$range,
-                                    '&emsp;&emsp;', sep='', file=file, append=TRUE)
-    if(length(object$valuesvar))cat(object$valuesvar, ':', object$values,
-                                    '&emsp;&emsp;', sep='', file=file, append=TRUE)
-    cat('<hr>\n', file=file, append=TRUE)
+    R <- paste0(hrule, '<h4>Data frame:', object$dfname,
+                '</h4>', d[1],
+                ' observations and ', d[2],
+                ' variables, maximum # NAs:',maxnas, lspace, lspace)
+
+    if(length(object$id))
+      R <- paste0(R, 'Unique ', object$id, ':', object$unique.ids,
+                  lspace, lspace)
+    if(length(object$rangevar))
+      R <- paste0(R, object$rangevar, ' range:', object$range,
+                  lspace, lspace)
+    if(length(object$valuesvar))
+      R <- paste0(R, object$valuesvar, ':', object$values,
+                  lspace, lspace)
+    R <- c(R, hrule)
+    
   } else
-    cat('<hr><h4>Data frame:',object$dfname,
-        '</h4>', ' Variables:', d[2], '<hr>\n', sep='',
-        file=file, append=append)
+    R <- paste0(hrule, '<h4>Data frame:', object$dfname,
+        '</h4>', ' Variables:', d[2], hrule)
   
   cont <- object$contents
   nam <- row.names(cont)
@@ -1147,15 +1154,14 @@ html.contents.data.frame <-
     link <- link[, colnames(link) != 'NAs', drop=FALSE]
     adj <- adj[names(adj) != 'NAs']
   }
-  out <- html(cont, file=file, append=TRUE,
+  out <- html(cont, file=FALSE,
               link=link, border=2,
               col.just=adj, ...)
-  
-  cat('<hr>\n', file=file, append=TRUE)
-  
+  R <- c(R, as.character(out), hrule)
+    
   if(prlevels && length(L) > 0) {
     if(levelType=='list') {
-      cat('<h5>Category Levels</h5>\n', file=file, append=TRUE)
+      R <- c(R, '<h5>Category Levels</h5>')
       for(i in fullLevels) {
         l <- L[[i]]
         nami <- Lnames[i]
@@ -1163,14 +1169,10 @@ html.contents.data.frame <-
         if(sum(reusingLevels))
           for(k in which(reusingLevels))
             if(L[[k]] == nami) w <- c(w, Lnames[k])
-        cat('<a name="levels.',nami,'"><h6>',
-            paste(w, collapse=', '), '</h6>\n', sep='', 
-            file=file, append=TRUE)
-        #cat('<ul>\n', file=file, append=TRUE)
+        R <- c(R, paste0('<a name="levels.', nami, '"><h6>',
+                         paste(w, collapse=', '), '</h6>'))
         if(length(l) > maxlevels) l <- c(l[1 : maxlevels], '...')
-        for(k in l) cat('<li>', k, '</li>\n', sep='',
-                        file=file, append=TRUE)
-        #cat('</ul>\n', file=file, append=TRUE)
+        for(k in l) R <- c(R,  paste0('<li>', k, '</li>\n'))
       }
     }
     else {  
@@ -1214,10 +1216,10 @@ html.contents.data.frame <-
         lev <- c(lev, l)
       }
       z <- cbind(Variable=lab, Levels=lev)
-      out <- html(z, file=file, append=TRUE,
+      out <- html(z, file=FALSE,
                   link=ifelse(lab=='','',paste('levels',v,sep='.')),
                   linkCol='Variable', linkType='name', border=2,...)
-      cat('<hr>\n',file=file,append=TRUE)
+      R <- c(R, as.character(out), hrule)
     }
   }
   
@@ -1227,11 +1229,11 @@ html.contents.data.frame <-
     names(longlab) <- NULL
     lab <- paste('longlab', nam, sep='.')
     z <- cbind(Variable=nam, 'Long Label'=longlab[i])
-    out <- html(z, file=file, append=TRUE,
+    out <- html(z, file=FALSE,
                 link=lab, linkCol='Variable', linkType='name', ...)
-    cat('<hr>\n', file=file, append=TRUE)
+    R <- c(R, as.character(out), hrule)
   }
-  if(file == '') invisible() else out
+  htmltools::HTML(paste0(R, '\n'))
 }
 
 

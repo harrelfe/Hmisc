@@ -1741,7 +1741,12 @@ knitrSet <- function(basename=NULL, w=4, h=3,
 grType <- function() {
 	if('plotly' %nin% utils::installed.packages()[,1]) return('base')
 	if(length(g <- .Options$grType) && g == 'plotly') 'plotly' else 'base'
-	}
+}
+
+prType <- function() {
+  g <- .Options$prType
+  if(! length(g)) 'plain' else g
+  }
 
 
 ## Save a plotly graphic with name foo.png where foo is the name of the

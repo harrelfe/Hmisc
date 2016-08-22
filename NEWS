@@ -43,6 +43,8 @@ Changes in version 4.0-0 (2016-08-22)
 	 * html markupSpecs object: added bibliographic database utility functions
 	 * bppltp: new service function for extended box plots for plotly
 	 * plot.summaryM: new plotly method
+	 * prType: new service function used to detect user settings for html, latex for print methods
+	 * html.contents.data.frame: removed file and append arguments and output an html character vector instead
 
 Changes in version 3.17-4 (2016-05-02)
    * latex.summaryP: correctly ordered rows after running reshape because groups was present

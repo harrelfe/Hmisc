@@ -45,7 +45,7 @@ dotchartp(x, labels = NULL, groups = NULL, gdata = NULL,
             xlim = range(c(x, gdata), na.rm=TRUE),
             xlab = NULL, ylab = '', auxdata=NULL, auxtitle=NULL,
             auxgdata=NULL, auxwhere=c('right', 'hover'),
-            axisat=NULL, axislabels=NULL, sort=TRUE, digits=4,
+            axisat=NULL, axislabels=NULL, sort=TRUE, digits=4, round=NULL,
             height=NULL, width=NULL, showlegend=TRUE, \dots) 
 
 summaryD(formula, data=NULL, fun=mean, funm=fun,
@@ -61,7 +61,10 @@ summaryD(formula, data=NULL, fun=mean, funm=fun,
   \item{groups,gdata,cex,pch,gpch,bg,color,gcolor,lcolor,xlim,main,xlab,ylab}{see \code{\link{dotchart}}}
   \item{auxdata}{a vector of information to be put in the right margin,
 	in the same order as \code{x}.  May be numeric, character, or a
-	vector of expressions containing \code{\link{plotmath}} markup}
+	vector of expressions containing \code{\link{plotmath}} markup.  For
+         \code{dotchartp}, \code{auxdata} may be a matrix to go along
+         with the numeric x-axis variable, to result in point-specific
+         hover text.}
   \item{auxtitle}{a column heading for \code{auxdata}}
   \item{auxgdata}{similar to \code{auxdata} but corresponding to the
 		\code{gdata} argument.  These usually represent overall sample sizes
@@ -71,7 +74,10 @@ summaryD(formula, data=NULL, fun=mean, funm=fun,
   \item{axislabels}{a vector of strings specifying axis tick mark
 		labels.  Useful if transforming the data axis}
 	\item{digits}{number of significant digits for formatting numeric data
-         in hover text for \code{dotchartp}}
+    in hover text for \code{dotchartp}}
+	\item{round}{for \code{dotchartp} only, overrides \code{digits} to
+         specify the argument to \code{round()} for rounding values for
+         hover labels}
   \item{cex.labels}{\code{cex} for labels}
   \item{cex.group.labels}{\code{cex} for group labels}
 	\item{cex.auxdata}{\code{cex} for \code{auxdata}}

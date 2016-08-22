@@ -222,23 +222,29 @@ summaryM <- function(formula, groups=NULL, data=NULL, subset,
 }
 
 plot.summaryM <-
-  function(x, vnames = c('labels', 'names'), what = c('proportion','%'),
+  function(x, vnames = c('labels', 'names'), 
            which = c('both', 'categorical', 'continuous'),
-           xlim = if(what == 'proportion') c(0,1)
-           else c(0,100), 
-           xlab = if(what == 'proportion') 'Proportion'
-                  else 'Percentage', 
+           vars = NULL,
+           xlim = c(0,1),
+           xlab = 'Proportion',
            pch = c(16, 1, 2, 17, 15, 3, 4, 5, 0), exclude1 = TRUE,
-           main, subtitles = TRUE,
+           main, subtitles = TRUE, ncols=2,
            prtest = c('P', 'stat', 'df', 'name'), pdig = 3, eps = 0.001,
            conType = c('bp', 'dot', 'raw'),
-           cex.means = 0.5, cex=par('cex'), ...)
+           cex.means = 0.5, cex=par('cex'),
+           height=NULL, width=NULL, ...)
 {
   obj <- x
   vnames  <- match.arg(vnames)
-  what    <- match.arg(what)
   which   <- match.arg(which)
   conType <- match.arg(conType)
+
+  if(grType() == 'plotly')
+    return(plotpsummaryM(x, vnames=vnames, which=which, vars=vars,
+                         xlim=xlim,
+                         xlab=xlab, exclude1=exclude1, ncols=ncols,
+                         prtest=prtest, pdig=3, eps=0.001,
+                         height=height, width=width))
 
   html    <- FALSE
   
@@ -266,8 +272,8 @@ plot.summaryM <-
      if(strat != '.ALL.') strat
      else if(nw == 1) ''
      else 
-       paste(if(what=='proportion')'Proportions'
-        else 'Percentages','Stratified by',
+       paste('Proportions',
+             'Stratified by',
              obj$group.label)
 
     pch     <- rep(pch,     length=nw)
@@ -292,8 +298,7 @@ plot.summaryM <-
         denom <- if(type[i] == 1) apply(tab, 2, sum)
         else obj$group.freq
 
-        y <- (if(what=='proportion') 1 else 100) *
-          sweep(tab, 2, denom, FUN='/')
+        y <- sweep(tab, 2, denom, FUN='/')
 
         lev <- dimnames(y)[[1]]
         exc <- exclude1 && (nr == 2)
@@ -901,3 +906,160 @@ latex.summaryM <-
 
 html.summaryM <- 
   function(object, ...) latex.summaryM(object, file='', html=TRUE, ...)
+
+
+plotpsummaryM <-
+  function(x, vnames = c('labels', 'names'), 
+           which = c('both', 'categorical', 'continuous'),
+           vars=NULL, xlim = c(0,1), 
+           xlab = 'Proportion',
+           exclude1 = TRUE, main=NULL, ncols=2,
+           prtest = c('P', 'stat', 'df', 'name'), pdig = 3, eps = 0.001,
+           height=NULL, width=NULL)
+{
+  obj <- x
+  vnames  <- match.arg(vnames)
+  which   <- match.arg(which)
+
+  html    <- TRUE
+  
+  ul <- vnames=='labels'
+
+  if(is.logical(prtest) && !prtest) prtest <- 'none'
+
+  for(strat in names(x$results)) {
+    obj <- x$results[[strat]]
+    test   <- obj$testresults
+    if(!length(test)) prtest <- 'none'
+
+    varNames <- names(obj$stats)
+    vn <- if(ul) obj$labels
+     else varNames
+    
+    Units <- obj$units
+  
+    nw     <- if(lg <- length(obj$group.freq)) lg
+     else 1
+
+    gnames <- names(obj$group.freq) 
+
+    if(! length(main)) main <-
+     if(strat != '.ALL.') strat
+     else if(nw == 1) ''
+     else paste('Proportions', 'Stratified by', obj$group.label)
+
+    lab <- vnd <- z <- Frac <- nmiss <- vnamd <- NULL
+    type  <- obj$type; n <- obj$n
+
+    gcat <- gcon <- NULL
+
+    iv <- which(type %in% c(1, 3))
+    if(length(vars)) iv <- iv[intersect(vars, 1 : length(iv))]
+    if(which != 'continuous' && length(iv)) {
+      ftstats <- NULL
+      for(i in iv) {
+        nam <- vn[i]
+        tab <- obj$stats[[i]]
+        if(nw == 1)
+          tab <- as.matrix(tab)
+        
+        nr <- nrow(tab)
+        denom <- if(type[i] == 1) apply(tab, 2, sum)
+                 else obj$group.freq
+        
+        y <- sweep(tab, 2, denom, FUN='/')
+        frac <- sweep(tab, 2, denom,
+                      FUN=markupSpecs$html$frac, size=95)
+        dim(frac)      <- dim(y)       ## paste loses these
+        dimnames(frac) <- dimnames(y)
+        
+        lev <- dimnames(y)[[1]]
+        exc <- exclude1 && (nr == 2)
+        jstart <- if(exc) 2 else 1
+        
+        rl <- casefold(lev)
+        binary <- type[i] == 1 && exc &&
+          (all(rl %in% c("0", "1")) | all(rl %in% c("false", "true"))|
+           all(rl %in% c("absent", "present")))
+        
+        for(j in jstart : nrow(y)) {
+          if(nw==1) {
+            z    <- rbind(z, y[j,])
+            Frac <- rbind(Frac, frac[j,])
+            }
+          else {
+            yj               <- rep(NA, nw)
+            names(yj)        <- gnames
+            yj[names(y[j,])] <- y[j,]
+            z                <- rbind(z, yj)
+            fj               <- rep('', nw)
+            names(fj)        <- gnames
+            fj[names(frac[j,])] <- frac[j,]
+            Frac             <- rbind(Frac, fj)
+          }
+          
+          lab <- c(lab, if(binary) '' else lev[j])
+          vnd <- c(vnd, nam)
+          vnamd <- c(vnamd, varNames[i])
+        }
+        if(any(prtest != 'none')) {
+          fts <- formatTestStats(test[[varNames[i]]], type[i] == 3,
+                                 if(type[i] == 1) 1 else 1 : nr,
+                                 prtest  = prtest,
+                                 html = html,
+                                 pdig = pdig, eps=eps)
+          ftstats <- c(ftstats, fts, 
+                       if(type[i] == 1 &&  nr - exc - 1 > 0)
+                       rep('', nr - exc - 1))
+        }
+      }
+      dimnames(z) <- dimnames(Frac) <- list(lab, dimnames(z)[[2]])
+      if(! any(prtest == 'none'))
+        Frac[, 1] <- paste0(Frac[, 1], '<br>', ftstats)
+      gcat <- dotchartp(z, groups=factor(vnd, levels=unique(vnd)),
+                        xlab=xlab, xlim=xlim,
+                        auxdata=Frac, auxwhere='hover',
+                        round=3,
+                        height=max(150, min(800, 50 * nrow(z))))
+    }
+
+    iv <- which(type == 2)
+    if(length(vars)) iv <- iv[intersect(vars, 1 : length(iv))]
+    if(which != 'categorical' && length(iv)) {
+      icon <- iv
+      ii   <- 0
+      p <- list()
+      for(i in icon) {
+        ii <- ii + 1
+        nam <- markupSpecs$html$varlabel(vn[i], Units[i])
+        st <- obj$stats[[i]]
+        if(nw==1) st <- as.matrix(st)
+        N <- st[, 'N']
+
+        teststat <- if(all(prtest != 'none'))
+                      formatTestStats(test[[varNames[i]]], prtest=prtest,
+                                      html=TRUE,
+                                      pdig=pdig, eps=eps)
+
+        p[[ii]] <- bppltp(plotly::plot_ly(), st, xlab=nam, teststat=teststat,
+                          showlegend=FALSE)
+
+      }
+      nrows <- ceiling(length(p) / ncols)
+      gcon <- plotly::subplot(p, shareY=TRUE, nrows=nrows,
+                              titleX=TRUE, margin=.1)
+      if(FALSE) {
+        if(! length(height)) height <- min(1000, 275 * nrows)
+        if(! length(width))  width  <- min(900,  400 * ncols)
+        gcon <- plotly::layout(gcon, height=height, width=width)
+        }
+    }
+  }
+  if(! is.null(gcat) && ! is.null(gcon))   # plotly objects have length 0
+    list(Categorical = gcat,
+         Continuous  = gcon)
+  else
+    if(! is.null(gcat)) gcat
+  else gcon
+}
+

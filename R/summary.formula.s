@@ -1740,8 +1740,7 @@ formatTestStats <- function(tr, multchoice=FALSE,
     if(latex) tr$latexstat
     else if(plotmath) tr$plotmathstat
     else tr$statname
-  
-  if(length(prtest) > 1 && 'stat' %in% prtest && (latex || plotmath)) {
+  if(length(prtest) > 1 && 'stat' %in% prtest && (html || latex || plotmath)) {
     if(plotmath) {
       ## replace "df" inside statmarkup with actual d.f.
       if(length(grep('df', statmarkup)))

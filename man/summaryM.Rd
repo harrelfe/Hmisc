@@ -20,6 +20,12 @@
   The \code{print} methods use the \code{print.char.matrix} function to
   print boxed tables.
 
+	The \code{plot} method creates \code{plotly} graphics if
+	\code{options(grType='plotly')}, otherwise base graphics are used.
+	\code{plotly} graphics provide extra information such as which
+	quantile is being displayed when hovering the mouse.  Test statistics
+	are displayed by hovering over the mean.
+
   Continuous variables are described by three quantiles (quartiles by
   default) when printing, or by the following quantiles when plotting
   expended box plots using the \code{\link{bpplt}} function:
@@ -67,16 +73,14 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
       pdig = 3, eps = 0.001, prob = c(0.25, 0.5, 0.75), prN = FALSE, \dots)
 
 \method{plot}{summaryM}(x, vnames = c('labels', 'names'),
-     what  = c('proportion', '\%'),
-     which = c('both', 'categorical', 'continuous'),
-     xlim = if(what == 'proportion') c(0,1)
-            else c(0,100), 
-     xlab = if(what=='proportion') 'Proportion'
-            else 'Percentage', 
+     which = c('both', 'categorical', 'continuous'), vars=NULL,
+     xlim = c(0,1),
+     xlab = 'Proportion',
      pch = c(16, 1, 2, 17, 15, 3, 4, 5, 0), exclude1 = TRUE,
-     main, subtitles = TRUE,
+     main, subtitles = TRUE, ncols=2,
      prtest = c('P', 'stat', 'df', 'name'), pdig = 3, eps = 0.001,
-     conType = c('bp', 'dot', 'raw'), cex.means = 0.5, cex=par('cex'), \dots)
+     conType = c('bp', 'dot', 'raw'), cex.means = 0.5, cex=par('cex'),
+     height=NULL, width=NULL, \dots)
 
 \method{latex}{summaryM}(object, title =
       first.word(deparse(substitute(object))),
@@ -247,7 +251,7 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
     value of the \code{digits} system option.
   }
 	\item{what}{specifies whether proportions or percentages are to be
-      printed, plotted, or LaTeX'd} 
+      printed or LaTeX'd} 
   \item{pctdig}{
     number of digits to the right of the decimal place for printing
     percentages or proportions. The default is zero if \code{what='\%'},
@@ -347,10 +351,11 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
 	\item{tabenv1}{set to \code{TRUE} in the case of stratification when
       you want only the first stratum's table to be in a table
       environment.  This is useful when using \code{hyperref}.}
-  \item{which}{
-	Specifies whether to plot results
-    for categorical variables, continuous variables, or both (the default).
-  }
+  \item{which}{Specifies whether to plot results for categorical variables,
+    continuous variables, or both (the default).}
+	\item{vars}{Subscripts (indexes) of variables to plot for
+    \code{plotly} graphics.  Default is to plot all variables of each
+    type (categorical or continuous).}
   \item{conType}{
     For drawing plots for continuous variables,
 	extended box plots (box-percentile-type plots) are drawn by default,
@@ -366,6 +371,12 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
   \item{cex.means}{
     character size for means in box-percentile plots; default is .5}
   \item{cex}{character size for other plotted items}
+	\item{height,width}{dimensions in pixels for the \code{plotly}
+    \code{subplot} object containing all the extended box plots.  If
+    omitted, \code{plot.summaryM} will set based on the number of
+    continuous variables and \code{ncols}.  At present these options
+    have been disabled to to vertical spacing problem with \code{plotly}
+    graphics.}
   \item{xlim}{
     vector of length two specifying x-axis limits.  This is only used
       for plotting categorical variables.  Limits for continuous
@@ -373,16 +384,14 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
       \code{quant}. 
   }
   \item{xlab}{x-axis label}
-  \item{main}{
-    a main title.  This applies only to the plot
-    for categorical variables.
-  }
+  \item{main}{a main title.  This applies only to the plot for
+    categorical variables.}
   \item{subtitles}{
     set to \code{FALSE} to suppress automatic subtitles
   }
-  \item{caption}{
-    character string containing LaTeX table captions.
-  }
+	\item{ncols}{number of columns for \code{plotly} graphics for extended
+    box plots.  Defaults to 2.  Recommendation is for 1-2.}
+  \item{caption}{character string containing LaTeX table captions.}
   \item{title}{
     name of resulting LaTeX file omitting the \code{.tex} suffix.  Default
     is the name of the \code{summary} object.  If \code{caption} is specied,
@@ -422,12 +431,19 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
   }
 \value{
   a list.  \code{plot.summaryM} returns the number
-  of pages of plots that were made.  The \code{latex} method returns
-      attributes \code{legend} and \code{nstrata}.
+  of pages of plots that were made if using base graphics, or
+  \code{plotly} objects created by \code{plotly::subplot} otherwise.
+	If both categorical and continuous variables were plotted, the
+    returned object is a list with two named elements \code{Categorical}
+    and \code{Continuous} each containing \code{plotly} objects.
+    Otherwise a \code{plotly} object is returned.
+    The \code{latex} method returns attributes \code{legend} and
+    \code{nstrata}.
 }
 \section{Side Effects}{
   \code{plot.summaryM} creates a function \code{Key} and
-  \code{Key2} in frame 0 that will draw legends.
+  \code{Key2} in frame 0 that will draw legends, if base graphics are
+    being used.
 }
 \author{
   Frank Harrell
@@ -440,7 +456,8 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
 }
 \references{
   Harrell FE (2004): Statistical tables and plots using S and LaTeX.
-  Document available from \url{http://biostat.mc.vanderbilt.edu/twiki/pub/Main/StatReport/summary.pdf}.
+  Document available from
+    \url{http://biostat.mc.vanderbilt.edu/twiki/pub/Main/StatReport/summary.pdf}. 
 }
 \seealso{
   \code{\link{mChoice}}, \code{\link{label}}, \code{\link{dotchart3}},
@@ -480,7 +497,7 @@ f <- summaryM(age + sex + sbp + Symptoms ~ treatment, test=TRUE)
 f
 # trio of numbers represent 25th, 50th, 75th percentile
 print(f, long=TRUE)
-plot(f)
+plot(f)    # first specify options(grType='plotly') to use plotly
 plot(f, conType='dot', prtest='P')
 bpplt()    # annotated example showing layout of bp plot
 
@@ -504,7 +521,17 @@ Key2()           # draw legend at lower left corner of plot
                  # oma= above makes this default key fit the page better
 
 options(digits=3)
-w <- latex(s5, npct='both', here=TRUE, file='')     
+w <- latex(s5, npct='both', here=TRUE, file='')
+
+options(grType='plotly')
+pbc <- upData(pbc, moveUnits = TRUE)
+s <- summaryM(bili + albumin + alk.phos + copper + spiders + sex ~
+              drug, data=pbc, test=TRUE)
+html(s)
+a <- plot(s)
+a$Categorical
+a$Continuous
+plot(s, which='con')
 }
 }
 \keyword{category}

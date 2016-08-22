@@ -2,6 +2,7 @@
 \alias{panel.bpplot}
 \alias{bpplotM}
 \alias{bpplt}
+\alias{bppltp}
 \title{
 Box-Percentile Panel Function for Trellis
 }
@@ -40,11 +41,15 @@ and it displays means (by default using dots).
 \code{bpplt} draws horizontal box-percentile plot much like those drawn
 by \code{panel.bpplot} but taking as the starting point a matrix
 containing quantiles summarizing the data.  \code{bpplt} is primarily
-intended to be used internally by \code{plot.summary.formula.reverse}
+intended to be used internally by \code{plot.summary.formula.reverse} or
+\code{plot.summaryM} 
 but when used with no arguments has a general purpose: to draw an
 annotated example box-percentile plot with the default quantiles used
 and with the mean drawn with a solid dot.  This schematic plot is
 rendered nicely in postscript with an image height of 3.5 inches.
+
+\code{bppltp} is like \code{bpplt} but for \code{plotly} graphics, and
+it does not draw an annotated extended box plot example.
 
 \code{bpplotM} uses the \code{lattice} \code{bwplot} function to depict
 multiple numeric continuous variables with varying scales in a single
@@ -67,6 +72,11 @@ bpplt(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
       qref=c(.5,.25,.75), qomit=c(.025,.975),
       pch=16, cex.labels=par('cex'), cex.points=if(prototype)1 else 0.5,
       grid=FALSE)
+
+bppltp(p=plotly::plot_ly(),
+       stats, xlim, xlab='', box.ratio = 1, means=TRUE,
+       qref=c(.5,.25,.75), qomit=c(.025,.975),
+       teststat=NULL, showlegend=TRUE)
 
 bpplotM(formula=NULL, groups=NULL, data=NULL, subset=NULL, na.action=NULL,
         qlim=0.01, xlim=NULL,
@@ -138,7 +148,11 @@ a list containing named arguments (without abbreviations) to pass to
         to override the \code{qlim} calculations with user-specified
         \code{x}-axis limits for selected variables.  Example:
         \code{xlim=list(age=c(20,60))}.
-				}
+			}
+\item{p}{an already-started \code{plotly} object}
+\item{teststat}{an html expression containing a test statistic}
+\item{showlegend}{set to \code{TRUE} to have \code{plotly} include
+        a legend.  Not recommended when plotting more than one variable.}
 \item{formula}{a formula with continuous numeric analysis variables on
         the left hand side and stratification variables on the right.
         The first variable on the right is the one that will vary the

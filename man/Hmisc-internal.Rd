@@ -45,6 +45,7 @@
 \alias{ordGridFun}
 \alias{parGrid}
 \alias{pasteFit}
+\alias{plotpsummaryM}
 \alias{print.substi}
 \alias{print.timePOSIXt}
 \alias{read.xportDataload}

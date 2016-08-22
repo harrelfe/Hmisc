@@ -321,3 +321,135 @@ bpplotM <- function(formula=NULL, groups=NULL, data=NULL, subset=NULL,
     d <- latticeExtra::useOuterStrips(d, strip=strip, strip.left=strip)
   d
 }
+
+bppltp <- function(p=plotly::plot_ly(),
+                   stats, xlim, xlab='', box.ratio = 1, means=TRUE,
+                   qref=c(.5,.25,.75), qomit=c(.025,.975),
+                   teststat=NULL, showlegend=TRUE) {
+
+  ## Do what segments does with broken (by NAs) lines for plotly
+  segm <- function(x0, y0, x1, y1, wquan, quan, group='') {
+    n <- length(x0)
+    m <- 3 * n
+    x <- rep(NA, m)
+    y <- rep(NA, m)
+    z <- rep('', m)
+
+    ## Quantiles other than median are already represented in polygon below
+    quan <- ifelse(wquan == 0.5,
+                   paste0(group, if(group != '') '<br>',
+                          'Q<sub>', wquan, '</sub>=', signif(quan, 4)), '')
+
+    x[seq(1, m, by=3)] <- x0
+    x[seq(2, m, by=3)] <- x1
+    y[seq(1, m, by=3)] <- y0
+    y[seq(2, m, by=3)] <- y1
+    z[seq(1, m, by=3)] <- quan
+    z[seq(2, m, by=3)] <- quan
+    list(x=x, y=y, z=z)
+  }
+
+  ## polygon that closes the loop and adds NA at end so will break from
+  ## any polygons that follow
+  polyg <- function(x, y, qq, group='') {
+    qq <- paste0(group, if(group != '') '<br>',
+                 'Q<sub>', qq, '</sub>=', signif(x, 4))
+    list(x=c(x, x[1], NA),
+         y=c(y, y[1], NA),
+         z=c(qq, qq[1], ''))
+    }
+    
+  Means <- stats[, 'Mean']
+  N     <- stats[, 'N']
+
+  stats <- stats[, colnames(stats) %nin%
+                   c('Mean', 'SD', 'N'), drop=FALSE]
+
+  stats <- stats[, order(as.numeric(colnames(stats))), drop=FALSE]
+
+  groups <- rownames(stats)
+  ng     <- length(groups)
+  qq     <- as.numeric(colnames(stats))
+  probs2 <- qq
+  if(missing(xlim)) xlim <- range(stats)
+  
+  i <- integer(0)
+  for(a in c(.5, qomit))
+    i <- c(i, seq.int(along.with=probs2)[abs(probs2 - a) < 0.001])
+  
+  probs2 <- probs2[-i]
+  probs  <- probs2[seq.int(length.out=floor(length(probs2) / 2))]
+
+  width <- box.ratio / (1 + box.ratio)
+  w <- width / 2
+
+  m  <- length(probs)
+  m2 <- length(probs2)
+  j <- c(1, rep(seq.int(along.with = probs2[c(-1, -m2)]) + 1, each=2), m2)
+  j <- c(j, rev(j))
+
+  z <- c(rep(probs[-m], each=2), probs[m])
+  z <- c(z, rev(z))
+  z <- c(z, -z)
+  k <- max(z, na.rm=TRUE)
+  k <- if(k > .48) .5 else k
+  
+  if(length(qref)) {
+    size.qref <- pmin(qref, 1 - qref)
+    size.qref[qref == .5] <- k
+  }
+
+  leftmargin <- min(280, max(nchar(as.character(groups))) * 8)
+  leftmargin <- max(leftmargin, 60)
+
+  y <- ng + 1
+  X <- Y <- numeric(0)
+  Z <- character(0)
+
+  for(i in 1 : ng) {
+    y <- y - 1
+
+    qref.x <- as.vector(stats[i, match(qref, qq)])
+    qref.y <- rep.int(y, times=length(size.qref))
+    qref.mod <- w * size.qref / k
+
+    ## Form vertical line segments
+    seg <- segm(x0=qref.x, y0=qref.y - qref.mod,
+                x1=qref.x, y1=qref.y + qref.mod,
+                wquan=qref, quan=qref.x, group=groups[i])
+    X <- c(X, seg$x)
+    Y <- c(Y, seg$y)
+    Z <- c(Z, seg$z)
+
+    ## Add polygon
+    jj <- match(probs2, qq)[j]
+    po <- polyg(x=as.vector(t(stats[i, jj])), 
+                y=rep(y, each=length(j)) + w * z / k,
+                qq=qq[jj], group=groups[i])
+    X <- c(X, po$x)
+    Y <- c(Y, po$y)
+    Z <- c(Z, po$z)
+  }
+
+  p <- plotly::add_trace(p, x=X, y=Y, text=Z,
+                         name='Quantiles', mode='lines',
+                         line=list(color='MidnightBlue'),
+                         hoverinfo='text', evaluate=TRUE)
+  if(means) {
+    z <- paste0(groups, '<br>',
+                'Mean=', signif(Means, 4), '<br>N=', N)
+    if(length(teststat)) z <- paste0(z, '<br>', teststat)
+    p <- plotly::add_trace(p, x=Means, y=ng : 1, text=z,
+                           mode='markers', marker=list(color='LightBlue'),
+                           hoverinfo='text',
+                           name='Means', evaluate=TRUE)
+  }
+  p <- plotly::layout(p, autosize=TRUE, evaluate=TRUE,
+                      showlegend=showlegend,
+                      margin=list(l=leftmargin),
+                      xaxis=list(title=xlab, range=xlim),
+                      yaxis=list(zeroline=FALSE, #autorange='reversed',
+                                 tickvals=ng : 1,
+                                 ticktext=groups))
+  p
+}

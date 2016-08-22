@@ -239,7 +239,7 @@ markupSpecs <- list(html=list(
   larger   = function(x) paste0('<span stype="font-size: 125%;">', x,
                                 '</span>'),
   smaller2 = function(x) paste0('<span style="font-size: 64%;">', x,
-                                 '</span'),
+                                 '</span>'),
   larger2  = function(x) paste0('<span style="font-size: 156%;">', x,
                                  '</span>'),
   center   = function(x) paste0('<div align=center>', x, '</div>'),
@@ -258,24 +258,34 @@ markupSpecs <- list(html=list(
     w <- paste0(w, '\n')
     htmltools::HTML(w)
   },
-  installcsl = function(cslname) {
+  installcsl = function(cslname, rec=FALSE) {
+    if(rec) {
+      cat('Shows URLs:', 'american-medical-association',
+                '',
+                'Does not show URLs:', 'council-of-science-editors',
+          'american-medical-association-no-url', sep='\n')
+      return(invisible())
+      }
     if(missing(cslname))
       browseURL('https://www.zotero.org/styles')
-    else
-      if(cslname == 'recommend')
-        cat('Shows URLs:', 'american-medical-association',
-            '',
-            'Does not show URLs:', 'council-of-science-editors', sep='\n')
     else
       download.file(paste0('https://raw.githubusercontent.com/citation-style-language/styles/master/',
                            cslname, '.csl'), paste0(cslname, '.csl'))
   },
-  citeulikeExport = function(user, tag)
-    browseURL(paste0('http://www.citeulike.org/user/', user, '/tag/', tag)),
-  citeulikeShow = function(user, bibkeys) {
-    keys <- paste(paste0('+', bibkeys), collapse='+OR')
-    browseURL(paste0('http://www.citeulike.org/search/username?q=bibkey%3A',
-                     keys, '&search=Search+library&username=', user))
+  citeulikeShow = function(user, bibkeys=NULL, tags=NULL, file=NULL) {
+    if(length(file)) {
+      x <- readLines(file)
+      ## See http://stackoverflow.com/questions/8613237
+      bibkeys <- unlist(regmatches(x, gregexpr("(?<=\\[@).*?(?=\\])",
+                                               x, perl=TRUE)))
+      }
+    if(length(bibkeys)) {
+      keys <- paste(paste0('bibkey%3A+', bibkeys), collapse='+OR+')
+      browseURL(paste0('http://www.citeulike.org/search/username?q=',
+                       keys, '&search=Search+library&username=', user))
+    } else browseURL(paste0('http://www.citeulike.org/user/',
+                            user, '/tag/', tags))
+    invisible(bibkeys)
     },
   widescreen = function(width='4000px')
     htmltools::HTML(paste0('<style>div.main-container {max-width:',
@@ -298,26 +308,22 @@ markupSpecs <- list(html=list(
                    paste0("&chi;", markupSpecs$html$subsup(x, '2')),
   fstat    = function(x, ...) paste0('<i>F</i><sub><span style="font-size: 80%;">',
                                      x[1], ',&thinsp;', x[2], '</span></sub>'),
-  frac     = function(a, b, ...) paste0('<span style="font-size: 70%;"><sup>',
-                                        a, '</sup>&frasl;<sub>', b,
-                                        '</sub></span>'),
+  frac     = function(a, b, size=70, ...)
+    paste0('<span style="font-size: ', size, '%;"><sup>',
+           a, '</sup>&frasl;<sub>', b, '</sub></span>'),
   subsup   = function(a, b) paste0("<sup><span style='font-size: 70%;'>", b,
                                    "</span></sup><sub style='position: relative; left: -.4em; bottom: -.4em;'><span style='font-size: 70%;'>",
                                    a, "</span></sub>"),
-  varlabel = function(label, units='', hfill=FALSE, ufont='tt') {
-    fontb <- if(ufont == '') '' else paste0('<',  ufont, '>')
-    fonte <- if(ufont == '') '' else paste0('</', ufont, '>')
-    size  <- 80
-    ## size  <- if(ufont == 'tt') 85 else 80
+  varlabel = function(label, units='', hfill=FALSE) {
+    size  <- 75
     if(units=='') label
     else
       if(hfill) paste0("<div style='float: left; text-align: left;'>", label,
-                       "</div><div style='float: right; text-align: right; font-size:' size, '%;'>", fontb,
-                       units, fonte, "</div>")
+                       "</div><div style='float: right; text-align: right; font-family: Verdana; font-size:", size, "%;'>", units, "</div>")
     else
       paste0(label,
-             '&emsp;<span style="font-size:', size, '%;">', fontb,
-             units, fonte, '</span>') },
+             "&emsp;<span style='font-family:Verdana; font-size:", size, "%;'>",
+             units, "</span>") },
   space    = '&nbsp;',
   lspace   = '&emsp;',
   sspace   = '&thinsp;',
@@ -363,8 +369,8 @@ latex = list(
                                   else paste0(add, '\\chi^{2}_{', x,    '}', add),
   fstat    = function(x, add='$')
     paste0(add, 'F_{', x[1], ',', x[2], '}', add),
-  frac     = function(a, b, add='$') paste0(add, '\\frac{', a, '}{', b, '}',
-                                            add),
+  frac     = function(a, b, add='$', ...)
+    paste0(add, '\\frac{', a, '}{', b, '}', add),
   subsup   = function(a, b) paste0('$_{', a, '}^{', b, '}$'),
   varlabel = function(label, units='', hfill=FALSE, ...) {
     if(units=='') return(label) else units <- latexTranslate(units)

@@ -132,11 +132,15 @@ dotchartp <-
             xlim = range(c(x, gdata), na.rm=TRUE),
             xlab = NULL, ylab = '', auxdata=NULL, auxtitle=NULL,
             auxgdata=NULL, auxwhere=c('right', 'hover'),
-            axisat=NULL, axislabels=NULL, sort=TRUE, digits=4,
+            axisat=NULL, axislabels=NULL, sort=TRUE, digits=4, round=NULL,
             height=NULL, width=NULL, showlegend=TRUE,
             ...) 
 {
   auxwhere <- match.arg(auxwhere)
+
+  fmt <- if(length(round)) function(x) format(round(x, round))
+         else
+           function(x) format(x, digits=digits)
   
   if (! is.numeric(x)) 
     stop("'x' must be a numeric vector or matrix")
@@ -146,30 +150,26 @@ dotchartp <-
   if(length(gdata)) {
     gdata <- as.matrix(gdata)
     if(ncol(gdata) != nc) stop('gdata must have same columns as x')
-    }
-  
+  }
+
   if(! length(labels)) labels <- rownames(x)
   if(! length(labels)) stop('labels not defined')
-  if(! is.factor(labels))
-    labels <- factor(labels, levels=unique(as.character(labels)))
-
-  groups.pres <- length(groups) > 0
-  if(! groups.pres) groups <- rep('', n)
-  if(! is.factor(groups))
-    groups  <- factor(as.character(groups), levels=unique(as.character(groups)))
+  if(length(groups)) groups <- as.factor(groups)
   glabels <- levels(groups)
-
+  
+  groups.pres <- length(groups) > 0
   if(is.character(sort) || sort) {
     o <- if(is.character(sort)) {
            if(sort == 'ascending') order(x[, 1])
            else
              order(-x[, 1])
-         } else order(as.integer(groups), as.integer(labels))
+         } else order(as.integer(groups)) ###, as.integer(labels))
     
     groups  <- groups[o]
     x       <- x[o, , drop=FALSE]
     labels  <- labels[o]
-    if(length(auxdata)) auxdata <- auxdata[o]
+    if(length(auxdata))
+      auxdata <- if(is.matrix(auxdata)) auxdata[o,, drop=FALSE] else auxdata[o]
     }
 
   lgroups <- Lag(as.character(groups))
@@ -184,21 +184,28 @@ dotchartp <-
   auxd <- NULL
   auxh <- auxwhere == 'hover'
   auxt <- if(length(auxtitle) && auxtitle != '')
-            paste(auxtitle, '=', sep='') else ''
+            ifelse(auxh, paste0(auxtitle, '<br>'), paste0(auxtitle, ':'))
+            else ''
   if(auxh)
-    auxd <- if(length(auxdata)) paste(auxt, auxdata, sep='') else rep('', length(X))
- 
+    auxd <- if(length(auxdata))
+              paste0(auxt, ' ',
+                     if(is.matrix(auxdata)) auxdata[, 1] else auxdata)
+            else rep('', length(X))
+  
   if(length(gdata) || (auxh && length(auxgdata))) {
     X    <- c(X, if(length(gdata)) gdata[, 1] else rep(NA, length(auxgdata)))
     tly  <- c(tly, yg)
     if(auxh) auxd <- c(auxd,
-                       if(length(auxgdata)) paste(auxt, auxgdata, sep='')
+                       if(length(auxgdata))
+                         paste0(auxt, ' ',
+                                if(is.matrix(auxgdata)) auxgdata[, 1]
+                                else auxgdata)
                         else rep('', length(yg)))
     }
   nx <- if(nc == 1) '' else colnames(x)[1]
-  ht <- if(nx == '') format(X, digits=digits)
-        else paste(nx, format(X, digits=digits), sep='=')
-  if(auxh && any(auxd != '')) ht <- paste(ht, auxd)
+  ht <- if(nx == '')   fmt(X)
+        else paste(nx, '<br>', fmt(X))
+  if(auxh && any(auxd != '')) ht <- paste(ht, ' ', auxd)
   d <- data.frame(X, y=tly, ht=ht)
 
   p <- plotly::plot_ly(d, x=X, y=y, mode='markers', type='scatter',
@@ -212,10 +219,11 @@ dotchartp <-
       if(length(gdata)) {
         X   <- c(X, gdata[, i])
         tly <- c(tly, yg)
-        }
+      }
+      ax <- if(length(auxdata) && is.matrix(auxdata)) auxdata[, i] else ''
       d <- data.frame(X=X, y=tly,
-                      ht=paste(colnames(x)[i], format(X, digits=digits),
-                               sep='='))
+                      ht=paste0(colnames(x)[i], '<br>',
+                                fmt(X), ' ', ax))
 
       p <- plotly::add_trace(data=d, x=X, y=y, mode='markers',
                              text = ht, hoverinfo='text',
@@ -265,9 +273,11 @@ dotchartp <-
     tty <- c(tty, paste('<b>', glabels, '</b>', sep=''))
   }
   if(! length(ylab)) ylab <- ''
-  leftmargin <- min(280, (4 * (ylab != '') + max(nchar(tty))) * 8) # 6->8
-  leftmargin <- max(leftmargin, 60)
-  rx <- if(auxwhere == 'right' && lenaux > 0) dx else dx/2
+  mu <- markupSpecs$html
+  tty <- ifelse(nchar(tty) >= 40,  mu$smaller2(tty),
+           ifelse(nchar(tty) > 20, mu$smaller(tty),  tty))
+  leftmargin <- min(180, max(nchar(tty)) * 6)
+  rx <- if(auxwhere == 'right' && lenaux > 0) dx else dx / 2
 
   plotly::layout(xaxis=list(title=xlab,
                             range=c(xlim[1] - 0.2 * dx,
@@ -371,7 +381,7 @@ summaryD <- function(formula, data=NULL, fun=mean, funm=fun,
 
   if(! use.plotly && length(gridevery)) {
     xmin <- par('usr')[1]
-    xmin <- ceiling(xmin/gridevery)*gridevery
+    xmin <- ceiling(xmin / gridevery) * gridevery
     xmax <- if(length(xn) == 1) max(s$y, na.rm=TRUE)
     else
       max(c(s$y, s2$y), na.rm=TRUE)

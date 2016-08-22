@@ -23,8 +23,7 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
 
   fmtlab <- function(x) {
     lab <- sub('^.*:', '', x$descript)
-    ## default units font is tt for html; doesn't work inside plotly popup
-    if(length(x$units)) lab <- specs$varlabel(lab, x$units, ufont='')
+    if(length(x$units)) lab <- specs$varlabel(lab, x$units)
     lab
   }
 
@@ -209,7 +208,6 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
                       Proportion = round(ge('prop'), 4),
                       text       = I(ge('text')),
                       Missing    = ge('missing'))
-  save(z, file='/tmp/z.rda')
       z <- z[nrow(z) : 1, ]   # so plotly will keep right ordering
       unam <- unique(z$xname)
       z$yy <- match(as.character(z$xname), unam)

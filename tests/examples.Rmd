@@ -17,13 +17,10 @@ This is a set of reproducible examples for the R[@R] `Hmisc` package[@Hmisc], pu
 
 Much of the tabular output produced here was created using `html` methods, which are especially easy to implement with `rmarkdown` and make for output that can be directly opened using word processors.
 
-Static graphics are in `png` format.
-
-
 # Setup
 ```{r setup,results='hide'}
 require(Hmisc)
-knitrSet(lang='markdown', h=5.5, w=7)
+#knitrSet(lang='markdown') #, h=5.5, w=7)
 options(grType='plotly') # for certain graphics functions
 mu <- markupSpecs$html   # markupSpecs is in Hmisc
 ```
@@ -69,14 +66,15 @@ Produce stratified quantiles, means/SD, and proportions by treatment group.  Plo
 - categorical variables: a single dot chart
 - continuous variables: a series of extended box plots
 
-```{r summaryM,fig.width=7,fig.height=5,top=1}
+```{r summaryM}
 s <- summaryM(bili + albumin + stage + protime + sex + age + spiders +
               alk.phos + sgot + chol ~ drug, data=pbc,
 							overall=FALSE, test=TRUE)
 plot(s, which='categorical')
 ```
-```{r summaryM2,fig.width=6.5,fig.height=5,top=1}
-plot(s, which='continuous')
+```{r summaryM2}
+plot(s, which='continuous', vars=1 : 4)
+plot(s, which='continuous', vars=5 : 7)
 ```
 
 ```{r summaryM3}
@@ -89,24 +87,37 @@ html(s, caption='Baseline characteristics by randomized treatment',
 `r mu$session()`
 
 # Bibliographic File Managament
-## Find and Install `.csl` Files
+## Find and Install `.csl` Reference Style Files
 ```{r findbib,eval=FALSE}
 # Note: mu was defined in an earlier code chunk
 # Only need to install .csl file once.
-mu$installcsl('recommend')   # get list of recommended styles
+mu$installcsl(rec=TRUE)   # get list of recommended styles
 mu$installcsl()     # web search of styles meeting your criteria
 # Install a .csl file to your project directory:
 mu$installcsl('american-medical-association')
 ```
 ## Manage `citeulike` Bibliographic Databases
+In the following code chunk, adding `cache=TRUE` to the chunk header would result in the code (including the file download) not having to be run each time the report is run.  `eval=FALSE` is set in the code chunk so the code actually isn't run.
 ```{r citeulike,eval=FALSE}
 # Show full reference information for selected BibTeX keys on
 # your citeulike database
-mu$citeulikeShow('harrelfe', c('cox58reg', 'cox72'))
+cu <- mu$citeulikeShow
+cu('harrelfe', c('cox58reg', 'cox72'))
+# Automatically extract all BibTeX keys referenced in this document and
+# show full reference information for them
+# The function invisibly returns the vector of keys found
+cu('harrelfe', file='examples.Rmd')
 # Show and optionally export all articles with a given tag
-mu$citeulikeExport('harrelfe', 'missing-data')
+cu('harrelfe', tags='missing-data')
+# Copy and rename downloaded references to current project directory
+file.copy('~/Downloads/harrelfe-missing-data.bib', 'missing-data.bib',
+          overwrite=TRUE)
 ```
 
 # References
 
 [^2]: `mu` is a copy of the part of the `Hmisc` package object `markupSpecs` that is for html.  It includes a function `session` that renders the session environment (including package versions) in html.
+
+<!---
+To update html notebook on the server: cdatar examples.nb.html Hmisc
+-->

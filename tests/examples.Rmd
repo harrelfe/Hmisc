@@ -15,12 +15,11 @@ csl: american-medical-association.csl
 # Introduction
 This is a set of reproducible examples for the R[@R] `Hmisc` package[@Hmisc], put together in an `rmarkdown` notebook using `RStudio` and `knitr`.  When viewing the resulting [html file](http://data.vanderbilt.edu/fh/R/Hmisc/examples.nb.html) you can see all the code, and can download the entire `rmarkdown` script, which is especially helpful for seeing how `knitr` chunks are specified.  Graphics that have a [plotly](http://plot.ly/r) method for them are rendered using `plotly` instead of using defaults such as base graphics, `lattice`, or `ggplot2`.  That way the plots are somewhat interactive, e.g., allow for drill-down for more information without the viewer needing to install `R`.
 
-Much of the tabular output produced here was created using `html` methods, which are especially easy to implement with `rmarkdown` and make for output that can be directly opened using word processors.
+Much of the tabular output produced here was created using `html` methods, which are especially easy to implement with `rmarkdown` and make for output that can be directly opened using word processors.  Jump to [Computing Environment](#compenv) for a list of packages used here, and their version numbers.
 
-# Setup
+# Setup 
 ```{r setup,results='hide'}
 require(Hmisc)
-#knitrSet(lang='markdown') #, h=5.5, w=7)
 options(grType='plotly') # for certain graphics functions
 mu <- markupSpecs$html   # markupSpecs is in Hmisc
 ```
@@ -37,9 +36,14 @@ The `getHdata` function is used to fetch a dataset from the Vanderbilt `DataSets
 - automatically move units of measurements from parenthetical expressions in labels to separate `units` attributed used by `Hmisc` and `rms` functions for table making and graphics
 
 `contents` is used to print a data dictionary, run through an `html` method for nicer output. 
-```{r metadata}
+```{r metadata,results='asis'}
 getHdata(pbc)
+
+# To put information about the data source in a new browser tab
+# run the following command:
+# browseURL('http://biostat.mc.vanderbilt.edu/wiki/pub/Main/DataSets/pbc.html')
 # Have upData move units from labels to separate attribute
+
 pbc <- upData(pbc,
               fu.yrs = fu.days / 365.25,
               labels = c(fu.yrs = 'Follow-up Time',
@@ -47,6 +51,9 @@ pbc <- upData(pbc,
               units = c(fu.yrs = 'year'),
               drop  = 'fu.days',
               moveUnits=TRUE, html=TRUE)
+# The following can also be done by running this command
+# to put the results in a new browser tab:
+# getHdata(pbc, 'contents')
 html(contents(pbc), maxlevels=10, levelType='table')
 ```
 # Descriptive Statistics Without Stratification
@@ -83,7 +90,7 @@ html(s, caption='Baseline characteristics by randomized treatment',
      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2)
 ```
 
-# Computing Environment[^2]
+# Computing Environment[^2] {#compenv}
 `r mu$session()`
 
 # Bibliographic File Managament

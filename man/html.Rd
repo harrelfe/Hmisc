@@ -15,6 +15,11 @@ the one produced by \code{latex}.  \code{html.default} just runs
 \code{htmlVerbatim} prints all of its arguments to the console in an
 html verbatim environment, using a specified percent of the prevailing
 character size.  This is useful for R Markdown with \code{knitr}.
+
+Most of the html-producing functions in the Hmisc and rms packages
+return a character vector passed through \code{htmltools::HTML} so that
+\code{kintr} will correctly format the result without the need for the
+user putting \code{results='asis'} in the chunk header.
 }
 \usage{
 html(object, \dots)

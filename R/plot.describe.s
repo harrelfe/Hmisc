@@ -54,7 +54,7 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
       category  <- if(type == 'categorical') val else ''
       text <- 
         paste(category, if(type == 'categorical') ' ',
-              round(freq / n, 3), specs$frac(freq, n))
+              round(freq / n, 3), specs$frac(freq, n, size=90))
 
       ## Details about variable for minimum frequency category
       left <- which.min(freq)[1]

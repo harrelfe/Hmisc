@@ -308,21 +308,20 @@ markupSpecs <- list(html=list(
                    paste0("&chi;", markupSpecs$html$subsup(x, '2')),
   fstat    = function(x, ...) paste0('<i>F</i><sub><span style="font-size: 80%;">',
                                      x[1], ',&thinsp;', x[2], '</span></sub>'),
-  frac     = function(a, b, size=70, ...)
+  frac     = function(a, b, size=82, ...)
     paste0('<span style="font-size: ', size, '%;"><sup>',
            a, '</sup>&frasl;<sub>', b, '</sub></span>'),
   subsup   = function(a, b) paste0("<sup><span style='font-size: 70%;'>", b,
                                    "</span></sup><sub style='position: relative; left: -.4em; bottom: -.4em;'><span style='font-size: 70%;'>",
                                    a, "</span></sub>"),
-  varlabel = function(label, units='', hfill=FALSE) {
-    size  <- 75
+  varlabel = function(label, units='', size=75, hfill=FALSE) {
     if(units=='') label
     else
       if(hfill) paste0("<div style='float: left; text-align: left;'>", label,
                        "</div><div style='float: right; text-align: right; font-family: Verdana; font-size:", size, "%;'>", units, "</div>")
     else
       paste0(label,
-             "&emsp;<span style='font-family:Verdana; font-size:", size, "%;'>",
+             "&emsp;<span style='font-family:Verdana;font-size:", size, "%;'>",
              units, "</span>") },
   space    = '&nbsp;',
   lspace   = '&emsp;',

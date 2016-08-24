@@ -780,7 +780,8 @@ latex.summaryM <-
         }
         if(prmsd) defs <-
                     paste0(defs, spc,
-                           if(html) paste0(math(paste0('x', plminus, ' s')),
+                           if(html) paste0(math(paste0('x', specs$space,
+                                                       plminus, ' s')),
                                            ' represents ', specs$xbar,
                                            specs$space, plminus, ' 1 SD.')
                            else
@@ -1031,7 +1032,7 @@ plotpsummaryM <-
       p <- list()
       for(i in icon) {
         ii <- ii + 1
-        nam <- markupSpecs$html$varlabel(vn[i], Units[i])
+        nam <- markupSpecs$html$varlabel(vn[i], Units[i], size=50)
         st <- obj$stats[[i]]
         if(nw==1) st <- as.matrix(st)
         N <- st[, 'N']

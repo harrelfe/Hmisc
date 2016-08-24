@@ -82,18 +82,10 @@ contents(object, \dots)
   \item{nshow}{set to \code{FALSE} to suppress outputting number of
    observations and number of \code{NA}s; useful when these counts
    would unblind information to blinded reviewers}
-  \item{file}{
-    file to which to write the html code.  Default is
-    \code{"conents.dfname.html"} where \code{dfname} is the name of the data
-    frame processed by \code{contents}.
-  }
   \item{levelType}{
     By default, bullet lists of category levels are
     constructed in html.  Set \code{levelType='table'} to put levels in
     html table format.
-  }
-  \item{append}{
-    set to \code{TRUE} to add html code to an existing file
   }
   \item{\dots}{
     arguments passed from \code{html} to \code{format.df},

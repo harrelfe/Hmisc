@@ -178,7 +178,9 @@ dataframeReduce(data, fracmiss=1, maxlevels=NULL,  minprev=0, print=TRUE)
     in a label is enclosed in parentheses or brackets it is assumed to be
     units if \code{moveUnits=TRUE}.}
   \item{html}{set to \code{TRUE} to print conversion information as html
-		vertabim at 0.6 size}
+		vertabim at 0.6 size.  The user will need to put
+		\code{results='asis'} in a \code{knitr} chunk header to properly
+		render this output.}
   \item{fracmiss}{the maximum permissable proportion of \code{NA}s for a
     variable to be kept.  Default is to keep all variables no matter how
     many \code{NA}s are present.}

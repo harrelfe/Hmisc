@@ -448,7 +448,7 @@ bppltp <- function(p=plotly::plot_ly(),
                       showlegend=showlegend,
                       margin=list(l=leftmargin),
                       xaxis=list(title=xlab, range=xlim),
-                      yaxis=list(zeroline=FALSE, #autorange='reversed',
+                      yaxis=list(zeroline=FALSE,
                                  tickvals=ng : 1,
                                  ticktext=groups))
   p

@@ -312,7 +312,7 @@ markupSpecs <- list(html=list(
     paste0('<span style="font-size: ', size, '%;"><sup>',
            a, '</sup>&frasl;<sub>', b, '</sub></span>'),
   subsup   = function(a, b) paste0("<sup><span style='font-size: 70%;'>", b,
-                                   "</span></sup><sub style='position: relative; left: -.4em; bottom: -.4em;'><span style='font-size: 70%;'>",
+                                   "</span></sup><sub style='position: relative; left: -.47em; bottom: -.4em;'><span style='font-size: 70%;'>",
                                    a, "</span></sub>"),
   varlabel = function(label, units='', size=75, hfill=FALSE) {
     if(units=='') label

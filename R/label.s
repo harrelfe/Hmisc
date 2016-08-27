@@ -313,9 +313,11 @@ llist <- function(..., labels=TRUE)
 }
 
 prList <- function(x) {
+  if(! length(names(x))) stop('x must have names')
   for(n in names(x)) {
     y <- x[[n]]
-    if(length(class(y)) == 1 && class(y) == 'list' && length(y) > 1)
+    if(length(names(y)) && length(class(y)) == 1 &&
+       class(y) == 'list' && length(y) > 1)
       for(m in names(y)) {
         cat('\n', n, ': ', m, '\n', sep='')
         print(y[[m]])

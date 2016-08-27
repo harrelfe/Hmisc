@@ -11,6 +11,7 @@
 \alias{Label}
 \alias{Label.data.frame}
 \alias{llist}
+\alias{prList}
 \alias{plotmathTranslate}
 \alias{as.data.frame.labelled}
 \alias{data.frame.labelled}
@@ -76,6 +77,14 @@
   list and pulls the \code{names} from the arguments' expressions for
   non-named arguments.
 
+	\code{prList} prints a list with element names (without the dollar
+	sign as in default list printing) and if an element of the list is an
+	unclassed list with a name, all of those elements are printed, with
+	titles of the form "primary list name : inner list name".  This is
+	especially useful for Rmarkdown html notebooks when a user-written
+	function creates multiple html and graphical outputs to all be printed
+	in a code chunk.
+
   \code{plotmathTranslate} is a simple function that translates certain
   character strings to character strings that can be used as part of \R
   \code{plotmath} expressions.  If the input string has a space or percent
@@ -126,6 +135,8 @@ Label(object, \dots)
 
 llist(\dots, labels=TRUE)
 
+prList(x)
+
 plotmathTranslate(x)
 
 data.frame.labelled(object)
@@ -138,7 +149,9 @@ combineLabels(\dots)
 }
 \arguments{
   \item{x}{
-    any object (for \code{plotmathTranslate} is a character string). For \code{relevel} is a \code{factor} variable.
+    any object (for \code{plotmathTranslate} is a character string). For
+		\code{relevel} is a \code{factor} variable.  For \code{prList} is a
+		named list.
   }
   \item{self}{lgoical, where to interact with the object or its components}
   \item{units}{

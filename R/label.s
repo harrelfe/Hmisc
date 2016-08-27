@@ -312,6 +312,23 @@ llist <- function(..., labels=TRUE)
   dotlist
 }
 
+prList <- function(x) {
+  for(n in names(x)) {
+    y <- x[[n]]
+    if(length(class(y)) == 1 && class(y) == 'list' && length(y) > 1)
+      for(m in names(y)) {
+        cat('\n', n, ': ', m, '\n', sep='')
+        print(y[[m]])
+      }
+      else {
+        cat('\n', n, '\n', sep='')
+        print(x[[n]])
+      }
+    }
+  invisible()
+}
+
+
 combineLabels <- function(...)
   {
     w <- list(...)

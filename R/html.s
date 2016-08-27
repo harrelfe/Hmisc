@@ -399,6 +399,7 @@ plain = list(
   br     = '\n',
   lineskip = function(n) paste(rep('\n', n), collapse=''),
   hrule  = '',
+  code   = function(x) x,
   frac   = function(a, b, ...) paste0(a, '/', b),
   varlabel = function(label, units='', ...)
     if(units == '') label else  paste0(label, '  [', units, ']'),

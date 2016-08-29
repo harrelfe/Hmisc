@@ -18,8 +18,9 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
 {
   oldopt <- options(digits=digits)
   on.exit(options(oldopt))
-  
-  if(! length(weights)) weights <- rep(1,length(x))
+
+  weighted <- length(weights) > 0
+  if(! weighted) weights <- rep(1, length(x))
   
   special.codes <- attr(x, "special.miss")$codes
   labx <- attr(x,"label")
@@ -113,7 +114,7 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
   }
 
   counts <- c(counts, n.unique)
-  lab <- c(lab, "unique")
+  lab <- c(lab, "distinct")
 
   if(isnum) {
     xnum <- unclass(x)
@@ -135,12 +136,19 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
   
   if(isnum) {
     if(isdot) {
-      dd <- sum(weights * xnum)  /sum(weights)
+      dd <- sum(weights * xnum)  / sum(weights)
       fval <- formatDateTime(dd, atx, ! timeUsed)
       counts <- c(counts, fval)
     } else counts <- c(counts, format(sum(weights * x) / sum(weights), ...))
     
     lab <- c(lab, "Mean")
+    if(! weighted) {
+      gmd <- GiniMd(xnum)
+      counts <- c(counts, if(isdot) formatDateTime(gmd, atx, ! timeUsed)
+                          else
+                            format(gmd, ...))
+      lab <- c(lab, "Gmd")
+    }
   } else if(n.unique == 1) {
     counts <- c(counts, format(x.unique))
     lab <- c(lab, "value")
@@ -149,7 +157,7 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
   if(n.unique >= 10 & isnum) {
     q <-
       if(any(weights != 1)) {
-        wtd.quantile(xnum,weights,normwt=FALSE,na.rm=FALSE,
+        wtd.quantile(xnum, weights, normwt=FALSE, na.rm=FALSE,
                      probs=c(.05,.1,.25,.5,.75,.90,.95))
       } else quantile(xnum,c(.05,.1,.25,.5,.75,.90,.95), na.rm=FALSE)
 
@@ -791,7 +799,7 @@ html.describe.single <-
     if(ml > 90)
       tabular <- FALSE
     else if(ml > 80)
-      sz <- round(.8 * size)
+      sz <- round(0.875 * size)
   }
 
   if(tabular) {
@@ -1001,7 +1009,7 @@ print.contents.data.frame <-
   maxnas <- x$maxnas
   cat('\nData frame:', x$dfname, '\t', d[1],' observations and ', d[2],
       ' variables    Maximum # NAs:', maxnas, '\n', sep='')
-  if(length(x$id)) cat('Unique ', x$id, ':', x$unique.ids, '\t', sep='')
+  if(length(x$id)) cat('Distinct ', x$id, ':', x$unique.ids, '\t', sep='')
   if(length(x$rangevar)) cat(x$rangevar, ' range:', x$range, '\t', sep='')
   if(length(x$valuesvar))cat(x$valuesvar, ':', x$values, sep='')
   cat('\n\n')
@@ -1095,7 +1103,7 @@ html.contents.data.frame <-
                 ' variables, maximum # NAs:',maxnas, lspace, lspace)
 
     if(length(object$id))
-      R <- paste0(R, 'Unique ', object$id, ':', object$unique.ids,
+      R <- paste0(R, 'Distinct ', object$id, ':', object$unique.ids,
                   lspace, lspace)
     if(length(object$rangevar))
       R <- paste0(R, object$rangevar, ' range:', object$range,

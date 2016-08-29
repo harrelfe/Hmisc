@@ -23,10 +23,10 @@ function for handling a single variable.
 This function determines whether the variable is character, factor,
 category, binary, discrete numeric, and continuous numeric, and prints
 a concise statistical summary according to each. A numeric variable is
-deemed discrete if it has <= 10 unique values. In this case,
+deemed discrete if it has <= 10 distinct values. In this case,
 quantiles are not printed. A frequency table is printed 
-for any non-binary variable if it has no more than 20 unique
-values.  For any variable with at least 20 unique values, the 5 lowest
+for any non-binary variable if it has no more than 20 distinct
+values.  For any variable with at least 20 distinct values, the 5 lowest
 and highest values are printed.  This behavior can be overriden for long
 character variables with many levels using the \code{listunique}
 parameter, to get a complete tabulation.
@@ -55,12 +55,12 @@ continuous the variable is, and ties are less harmful the more untied
 values there are.  The formula for \code{Info} is one minus the sum of
 the cubes of relative frequencies of values divided by one minus the
 square of the reciprocal of the sample size.  The lowest information
-comes from a variable having only one unique values following by a
+comes from a variable having only one distinct value following by a
 highly skewed binary variable.  \code{Info} is reported to
 two decimal places.
 
 A latex method exists for converting the \code{describe} object to a
-LaTeX file.  For numeric variables having at least 20 unique values,
+LaTeX file.  For numeric variables having at least 20 distinct values,
 \code{describe} saves in its returned object the frequencies of 100
 evenly spaced bins running from minimum observed value to the maximum.
 \code{latex} inserts a spike histogram displaying these frequency counts
@@ -100,7 +100,13 @@ Sample weights may be specified to any of the functions, resulting
 in weighted means, quantiles, and frequency tables.
 
 Note: As discussed in Cox and Longton (2008), Stata Technical Bulletin 8(4)
-pp. 557, the term "unique" should really be "distinct".
+pp. 557, the term "unique" has been replaced with "distinct" in the
+output (but not in parameter names).
+
+When \code{weights} are not used, Gini's mean difference is computed for
+numeric variables.  This is a robust measure of dispersion that is the
+mean absolute difference between any pairs of observations.  In the
+output Gini's difference is labeled \code{Gmd}. 
 }
 \usage{
 \method{describe}{vector}(x, descript, exclude.missing=TRUE, digits=4,
@@ -156,7 +162,7 @@ pp. 557, the term "unique" should really be "distinct".
 \item{listunique}{
   For a character variable that is not an \code{mChoice} variable, that
   has its longest string length greater than \code{listnchar}, and that
-  has no more than \code{listunique} unique values, all values are
+  has no more than \code{listunique} distinct values, all values are
   listed in alphabetic order.  Any value having more than one occurrence
   has the frequency of occurrence after it, in parentheses.  Specify
   \code{listunique} equal to some value at least as large as the number
@@ -260,7 +266,7 @@ there are no variables of a given type, a single \code{ggplot2} or
 	the proportion of positives when \code{which="categorical"}.  Specify
 	\code{sort="none"} to leave variables in the order they appear in the
 	original data.}
-\item{n.unique}{the minimum number of unique values a numeric variable
+\item{n.unique}{the minimum number of distinct values a numeric variable
 	must have before \code{plot.describe} uses it in a continuous variable
 	plot} 
 }
@@ -270,7 +276,7 @@ a list containing elements \code{descript}, \code{counts},
 object was a matrix or a data 
 frame, the list is a list of lists, one list for each variable
 analyzed. \code{latex} returns a standard \code{latex} object.  For numeric
-variables having at least 20 unique values, an additional component
+variables having at least 20 distinct values, an additional component
 \code{intervalFreq}.  This component is a list with two elements, \code{range}
 (containing two values) and \code{count}, a vector of 100 integer frequency
 counts.
@@ -282,7 +288,8 @@ has been set and \code{na.action} is \code{"na.delete"} or
 the response variable are printed separately for missing and non-missing
 values of each predictor.  The default summary function returns
 the number of non-missing response values and the mean of the last
-column of the response values, with a \code{names} attribute of \code{c("N","Mean")}.
+column of the response values, with a \code{names} attribute of
+\code{c("N","Mean")}. 
 When the response is a \code{Surv} object and the mean is used, this will
 result in the crude proportion of events being used to summarize
 the response.  The actual summary function can be designated through
@@ -304,8 +311,12 @@ Vanderbilt University
 \email{f.harrell@vanderbilt.edu}
 }
 \seealso{
-\code{\link{sas.get}}, \code{\link{quantile}}, \code{\link{table}}, \code{\link{summary}},  \code{\link{model.frame.default}},
-\code{\link{naprint}}, \code{\link{lapply}}, \code{\link{tapply}}, \code{\link[survival]{Surv}}, \code{\link{na.delete}}, \code{\link{na.keep}},
+\code{\link{sas.get}}, \code{\link{quantile}}, \code{\link{GiniMd}},
+\code{\link{table}}, \code{\link{summary}},
+\code{\link{model.frame.default}}, 
+\code{\link{naprint}}, \code{\link{lapply}}, \code{\link{tapply}},
+\code{\link[survival]{Surv}}, \code{\link{na.delete}},
+\code{\link{na.keep}}, 
 \code{\link{na.detail.response}}, \code{\link{latex}}
 }
 \examples{
@@ -331,8 +342,8 @@ describe(relig)  #Has special missing values .D .F .M .R .T
                  #attr(relig,"label") is "Religious preference"
 
 #relig : Religious preference  Format:relig
-#    n missing  D  F M R T unique 
-# 4038     263 45 33 7 2 1      8
+#    n missing  D  F M R T distinct 
+# 4038     263 45 33 7 2 1        8
 #
 #0:none (251, 6\%), 1:Jewish (372, 9\%), 2:Catholic (1230, 30\%) 
 #3:Jehovah's Witnes (25, 1\%), 4:Christ Scientist (7, 0\%) 

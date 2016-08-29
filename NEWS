@@ -1,4 +1,4 @@
-Changes in version 4.0-0 (2016-08-27)
+Changes in version 4.0-0 (2016-08-29)
    * summaryP: fixed exclude1 logic - was not excluding enough levels (inconsistent use of variable names vs. labels)
 	 * latexTranslate: any NAs in first argument changed to "" before conversion
 	 * minor.tick: added arguments to pass through (thanks: vhorvath)
@@ -46,6 +46,8 @@ Changes in version 4.0-0 (2016-08-27)
 	 * prType: new service function used to detect user settings for html, latex for print methods
 	 * html.contents.data.frame: removed file and append arguments and output an html character vector instead
 	 * prList: new function
+	 * GiniMd: moved to Hmisc from rms
+	 * describe: added GMD (Gini's mean difference) and relabeled unique to distinct
 
 Changes in version 3.17-4 (2016-05-02)
    * latex.summaryP: correctly ordered rows after running reshape because groups was present

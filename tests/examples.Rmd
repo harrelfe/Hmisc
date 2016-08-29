@@ -35,13 +35,10 @@ The `getHdata` function is used to fetch a dataset from the Vanderbilt `DataSets
 - remove the old variable
 - automatically move units of measurements from parenthetical expressions in labels to separate `units` attributed used by `Hmisc` and `rms` functions for table making and graphics
 
-`contents` is used to print a data dictionary, run through an `html` method for nicer output. 
+`contents` is used to print a data dictionary, run through an `html` method for nicer output.  Information about the data source may be found [here](http://biostat.mc.vanderbilt.edu/wiki/pub/Main/DataSets/pbc.html).
 ```{r metadata,results='asis'}
 getHdata(pbc)
 
-# To put information about the data source in a new browser tab
-# run the following command:
-# browseURL('http://biostat.mc.vanderbilt.edu/wiki/pub/Main/DataSets/pbc.html')
 # Have upData move units from labels to separate attribute
 
 pbc <- upData(pbc,
@@ -64,7 +61,7 @@ The html method is used for the `describe` function, and the output is put in a 
 ```{r describe}
 d <- describe(pbc)
 html(d, size=80, scroll=TRUE)
-plot(d)
+plot(d)   # Use Hmisc::prList(plot(d)) to remove $ from list element labels
 ```
 
 # Stratified Descriptive Statistics

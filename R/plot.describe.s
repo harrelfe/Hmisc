@@ -171,7 +171,7 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
     f <- function(x) {
       s <- x$counts
       v <- x$values
-      if(! (as.numeric(s['unique']) >= n.unique &&
+      if(! (as.numeric(s['distinct']) >= n.unique &&
             length(v) && is.list(v) &&
             all(names(v) == c('value', 'frequency')) &&
             is.numeric(v$value)) )

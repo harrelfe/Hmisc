@@ -1032,7 +1032,7 @@ plotpsummaryM <-
       p <- list()
       for(i in icon) {
         ii <- ii + 1
-        nam <- markupSpecs$html$varlabel(vn[i], Units[i], size=50)
+        nam <- markupSpecs$html$varlabel(vn[i], Units[i], size=73)
         st <- obj$stats[[i]]
         if(nw==1) st <- as.matrix(st)
         N <- st[, 'N']

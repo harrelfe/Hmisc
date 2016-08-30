@@ -48,6 +48,7 @@ Changes in version 4.0-0 (2016-08-29)
 	 * prList: new function
 	 * GiniMd: moved to Hmisc from rms
 	 * describe: added GMD (Gini's mean difference) and relabeled unique to distinct
+	 * latex.summaryM: added Needspace{2.7in} before 2nd and later strata
 
 Changes in version 3.17-4 (2016-05-02)
    * latex.summaryP: correctly ordered rows after running reshape because groups was present

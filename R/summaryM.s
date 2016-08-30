@@ -868,6 +868,9 @@ latex.summaryM <-
                  insert.top=if(strat != '.ALL.') strat,
                  ...)
       if(tabenv1 && istr == 1) cat('\\clearpage\n', file=file, append=TRUE)
+      else if(istr < length(strats))
+        cat('\\Needspace{2.7in}\n', file=file, append=TRUE)
+      ## trieds to avoid page break in middle of stratum
       attr(w, 'legend') <- legend
       }
   }

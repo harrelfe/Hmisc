@@ -931,9 +931,23 @@ plotpsummaryM <-
 
   if(is.logical(prtest) && !prtest) prtest <- 'none'
 
-  for(strat in names(x$results)) {
-    obj <- x$results[[strat]]
-    test   <- obj$testresults
+  stratnames  <- names(x$results)
+  nstrat      <- length(stratnames)
+  gcat        <- vector('list', nstrat)
+  names(gcat) <- stratnames
+
+  ## Create annotations to simulate strata titles for dot charts
+  if(nstrat > 1) {
+    annotations <- list()
+    xx <- (1 : nstrat) / (nstrat + 1)
+    for(i in 1 : nstrat)
+      annotations[[i]] <- list(x=xx[i], y=1.05, text=stratnames[i],
+                               xref='paper', yref='paper', showarrow=FALSE)
+    }
+
+    for(strat in stratnames) {
+    obj  <- x$results[[strat]]
+    test <- obj$testresults
     if(!length(test)) prtest <- 'none'
 
     varNames <- names(obj$stats)
@@ -955,7 +969,7 @@ plotpsummaryM <-
     lab <- vnd <- z <- Frac <- nmiss <- vnamd <- NULL
     type  <- obj$type; n <- obj$n
 
-    gcat <- gcon <- NULL
+    gcon <- NULL
 
     iv <- which(type %in% c(1, 3))
     if(length(vars)) iv <- iv[intersect(vars, 1 : length(iv))]
@@ -1020,16 +1034,21 @@ plotpsummaryM <-
       dimnames(z) <- dimnames(Frac) <- list(lab, dimnames(z)[[2]])
       if(! any(prtest == 'none'))
         Frac[, 1] <- paste0(Frac[, 1], '<br>', ftstats)
-      gcat <- dotchartp(z, groups=factor(vnd, levels=unique(vnd)),
-                        xlab=xlab, xlim=xlim,
-                        auxdata=Frac, auxwhere='hover',
-                        dec=3,
-                        height=max(150, min(800, 50 * nrow(z))))
+
+      xless(z)  ####
+      gcat[[strat]] <-
+        dotchartp(z, groups=factor(vnd, levels=unique(vnd)),
+                  xlab=xlab, xlim=xlim,
+                  auxdata=Frac, auxwhere='hover',
+                  dec=3,
+                  height=max(150, min(800, 50 * nrow(z))),
+                  layoutattr=FALSE && nstrat > 1)   #### ????
     }
 
     iv <- which(type == 2)
     if(length(vars)) iv <- iv[intersect(vars, 1 : length(iv))]
     if(which != 'categorical' && length(iv)) {
+      if(nstrat > 1) warning('only plots last stratum for continuous variables')
       icon <- iv
       ii   <- 0
       p <- list()
@@ -1059,6 +1078,28 @@ plotpsummaryM <-
         }
     }
   }
+  if(! is.null(gcat)) {    # plotly objects have length 0
+    gcat <- if(nstrat == 1) gcat[[1]]
+            else
+              plotly::subplot(gcat, shareY=TRUE,
+                            titleX=TRUE, nrows=1, margin=.1)
+#            else {
+#              lo <- attr(gcat[[1]], 'layout')
+#              gcat <- plotly::subplot(gcat, shareY=TRUE,
+#                                      titleX=TRUE, nrows=1, margin=.1)
+#              ann <- list()
+#              for(i in 1 : nstrat)
+#                ann[[i]] <- list(x= i / (nstrat + 1), y=1.05,
+#                                 text=stratnames[i], showarrow=FALSE,
+#                                 xref='paper', yref='paper')
+#              lo$xaxis1 <- lo$xaxis
+#              lo$xaxis1$title <- 'this is it'
+#              lo$axis2 <- lo$axis1
+#              lo <- c(lo, ann)
+#              do.call(plotly::layout, lo)
+#            }
+  }
+  
   if(! is.null(gcat) && ! is.null(gcon))   # plotly objects have length 0
     list(Categorical = gcat,
          Continuous  = gcon)

@@ -290,14 +290,18 @@ ggplot.summaryP <-
   ratioN <- rN[2] / rN[1]
   if(diff(rN) < 10 | (ratioN < 1.2)) size <- NULL
 
-  k <- 'ggplot(X, aes(x=freq / denom, y=val'
+  ## plotly hover label
+  X$hov <- paste0(round(X$freq / X$denom, 3), '&emsp;',
+                  markupSpecs$html$frac(X$freq, X$denom, size=90))
+  if(length(groups)) X$hov <- paste0(X[[groups]], '<br>', X$hov)
+  k <- 'ggplot(X, aes(x=freq / denom, y=val, text=hov'
   if(length(groups)) k <- paste(k, sprintf(', color=%s, shape=%s',
                                            groups, groups))
   k <- paste(k, '))')
   
   if(length(size)) {
     k <- paste(k,
-               if(length(size)) 'geom_point(aes(size = N))' else
+               if(length(size)) 'geom_point(aes(size = N, label=hov))' else
                 'geom_point()',
                sep=' + ')
     Ns <- X$denom
@@ -375,7 +379,7 @@ latex.summaryP <- function(object, groups=NULL, exclude1=TRUE, file='', round=3,
 
   for(i in 1 : nslev) {
     
-    if(nslev > 1) cat('\n\\vspace{1ex}\n\n\\textbf{', slev[i],
+    if(nslev > 1) cat('\n\\vspace{1ex}\n\\begin{minipage}{\\linewidth}\n\\textbf{', slev[i],
                       '}\n\\vspace{1ex}\n\n', sep='', file=file, append=TRUE)
      x <- object[svar == slev[i], colnames(object) != 'stratvar']
 
@@ -418,6 +422,7 @@ latex.summaryP <- function(object, groups=NULL, exclude1=TRUE, file='', round=3,
                  rgroup=levels(x$var), n.rgroup=as.vector(table(x$var)),
                  size=size, colheads=c(' ', ' '), center='none')
     }
+    if(nslev > 1) cat('\\end{minipage}\n', file=file, append=TRUE)
   }
   attr(w, 'ngrouplevels') <- nl
   attr(w, 'nstrata') <- nslev

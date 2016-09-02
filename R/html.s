@@ -225,7 +225,10 @@ htmlVerbatim <- function(..., size = 75, width = 85,
 
 
 markupSpecs <- list(html=list(
-  bold     = function(x) paste0('<strong>', x, '</strong>'),
+  ## <span> needed for text in plotly graphics
+  bold     = function(x, span=TRUE)
+    if(span) paste0('<span style="font-weight:bold">', x, '</span>')
+      else   paste0('<strong>', x, '</strong>'),
   italics  = function(x) paste0('<i>', x, '</i>'),
   math     = function(x) paste0('<i>', x, '</i>'),
   code     = function(x) paste0('<code style="font-size:0.8em">', x, '</code>'),

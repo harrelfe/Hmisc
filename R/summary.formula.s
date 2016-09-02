@@ -1445,7 +1445,8 @@ formatCats <- function(tab, nam, tr, type, group.freq,
   gnames <- names(group.freq)
   nr     <- nrow(tab)
 
-  specs <- if(html) mspecs$html else mspecs$latex
+  lang  <- if(html) 'html' else if(latex) 'latex' else 'plain'
+  specs <- mspecs[[lang]]
   spc   <- specs$space
   sspc  <- specs$sspace
   lspc  <- specs$lspace

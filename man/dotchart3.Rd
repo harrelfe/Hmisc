@@ -42,11 +42,11 @@ dotchart3(x, labels = NULL, groups = NULL, gdata = NULL,
           auxwhere=NULL, height=NULL, width=NULL, \dots)
 
 dotchartp(x, labels = NULL, groups = NULL, gdata = NULL,
-            xlim = range(c(x, gdata), na.rm=TRUE),
+            xlim = range(c(x, gdata), na.rm=TRUE), main=NULL,
             xlab = NULL, ylab = '', auxdata=NULL, auxtitle=NULL,
             auxgdata=NULL, auxwhere=c('right', 'hover'),
             axisat=NULL, axislabels=NULL, sort=TRUE, digits=4, dec=NULL,
-            height=NULL, width=NULL, showlegend=TRUE, \dots) 
+            height=NULL, width=NULL, layoutattr=FALSE, showlegend=TRUE, \dots) 
 
 summaryD(formula, data=NULL, fun=mean, funm=fun,
          groupsummary=TRUE, auxvar=NULL, auxtitle='',
@@ -91,6 +91,13 @@ summaryD(formula, data=NULL, fun=mean, funm=fun,
     or to \code{dotchart3} or \code{dotchartp} from \code{summaryD}.
          The \code{auxwhere='hover'} option is a useful argument to pass
          from \code{summaryD} to \code{dotchartp}.}
+  \item{layoutattr}{set to \code{TRUE} to put \code{plotly::layout}
+         information in a list as an attribute \code{layout} of the
+         returned \code{plotly} object instead of running the
+         \code{plotly} object through the \code{layout} function.  This
+         is useful if running \code{dotchartp} multiple times to later
+         put together using \code{plotly::subplot} and only then running
+         the result through \code{plotly::layout}.}
   \item{showlegend}{set to \code{FALSE} to suppress the \code{plotly}
          legend with \code{dotchartp}}
 	\item{formula}{a formula with one variable on the left hand side (the

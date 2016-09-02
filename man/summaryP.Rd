@@ -31,7 +31,9 @@
 	Variable names that are too long to fit in panel strips are renamed
 	(1), (2), etc. and an attribute \code{"fnvar"} is added to the result;
 	this attribute is a character string defining the abbreviations,
-	useful in a figure caption.
+	useful in a figure caption.  The \code{ggplot2} object has
+	\code{label}s for points plotted, used by \code{plotly::ggplotly} as
+	hover text (see example).
 
 	The \code{latex} method produces one or more LaTeX \code{tabular}s
 	containing a table representation of the result, with optional
@@ -183,6 +185,11 @@ s <- summaryP(race + sex + ynbind(x1, x2, x3, x4, x5, x6, x7, label='Exclusions'
 # add exclude1=FALSE below to include female category
 plot(s, groups='treat')
 ggplot(s, groups='treat')
+
+## For plotly interactive graphic:
+## require(plotly)
+## g <- ggplot(s, groups='treat')
+## ggplotly(g, tooltip='text')
 
 plot(s, val ~ freq | region * var, groups='treat', outerlabels=FALSE)
 # Much better looking if omit outerlabels=FALSE; see output at

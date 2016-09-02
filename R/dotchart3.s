@@ -129,11 +129,11 @@ dotchart3 <-
 
 dotchartp <-
   function (x, labels = NULL, groups = NULL, gdata = NULL,
-            xlim = range(c(x, gdata), na.rm=TRUE),
+            xlim = range(c(x, gdata), na.rm=TRUE), main=NULL,
             xlab = NULL, ylab = '', auxdata=NULL, auxtitle=NULL,
             auxgdata=NULL, auxwhere=c('right', 'hover'),
             axisat=NULL, axislabels=NULL, sort=TRUE, digits=4, dec=NULL,
-            height=NULL, width=NULL, showlegend=TRUE,
+            height=NULL, width=NULL, layoutattr=FALSE, showlegend=TRUE,
             ...) 
 {
   auxwhere <- match.arg(auxwhere)
@@ -285,7 +285,27 @@ dotchartp <-
   leftmargin <- min(180, max(nchar(tty)) * 8)
   rx <- if(auxwhere == 'right' && lenaux > 0) dx else dx / 2
 
-  plotly::layout(p, xaxis=list(title=xlab,
+  lo <- list(title=main,
+             xaxis=list(title=xlab,
+                        range=c(xlim[1] - 0.2 * dx,
+                                xlim[2] + rx),
+                        zeroline=FALSE,
+                        tickvals=tlx, ticktext=ttx),
+             yaxis=list(title=ylab, autorange='reversed',
+                        zeroline=FALSE,
+                        tickvals=tly, ticktext=tty),
+             width=width, height=height,
+             autosize=(length(width) + length(height)) == 0,
+             margin=list(l=leftmargin, t=200),
+             showlegend=showlegend)
+
+  if(layoutattr) {
+    attr(p, 'layout') <- lo
+    return(p)
+  }
+  plotly::layout(p,
+                 title=main,
+                 xaxis=list(title=xlab,
                             range=c(xlim[1] - 0.2 * dx,
                                     xlim[2] + rx),
                             zeroline=FALSE,

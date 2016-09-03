@@ -22,6 +22,7 @@ Much of the tabular output produced here was created using `html` methods, which
 require(Hmisc)
 options(grType='plotly') # for certain graphics functions
 mu <- markupSpecs$html   # markupSpecs is in Hmisc
+cap <- mu$cap            # function to output html caption
 ```
 The following hidden command (<code>r mu$widescreen()</code>), causes the html notebook to use an entire wide screen.
 `r mu$widescreen()`
@@ -62,6 +63,7 @@ The html method is used for the `describe` function, and the output is put in a 
 d <- describe(pbc)
 html(d, size=80, scroll=TRUE)
 plot(d)   # Use Hmisc::prList(plot(d)) to remove $ from list element labels
+cap('Graphical output for <code>describe</code> function')
 ```
 
 # Stratified Descriptive Statistics
@@ -75,10 +77,14 @@ s <- summaryM(bili + albumin + stage + protime + sex + age + spiders +
               alk.phos + sgot + chol ~ drug, data=pbc,
 							overall=FALSE, test=TRUE)
 plot(s, which='categorical')
+# Above: Proportions and chi-square test for categorical variables
 ```
 ```{r summaryM2}
 plot(s, which='continuous', vars=1 : 4)
+cap('Extended box plots for first 4 continuous predictors')
 plot(s, which='continuous', vars=5 : 7)
+cap('Extended box plots for remaining continuous predictors')
+
 ```
 
 ```{r summaryM3}
@@ -94,7 +100,7 @@ s <- summaryP(stage + sex + spiders ~ drug, data=pbc)
 plot(s, groups='drug')
 s <- summaryP(stage + sex + spiders ~ drug, data=pbcm)
 plot(s, marginVal='All', marginLabel='All Treatment Groups')
-
+cap('Proportions (large symbols) and proportions stratified by treatment (small symbols)')
 ```
 
 # Computing Environment[^2] {#compenv}

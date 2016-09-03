@@ -250,6 +250,9 @@ markupSpecs <- list(html=list(
     paste0('<br><font size=1 color="', color, '">',
            paste(unlist(list(...)), collapse=' '),
            '</font>'),
+  cap      = function(x)
+    htmltools::HTML(paste0(markupSpecs$html$size(x, 85), '<br>')),
+                                        # fig. caption
   session  = function(cite=TRUE, loadedOnly=FALSE) {
     si <- sessionInfo()
     if(! loadedOnly) si$loadedOnly <- NULL

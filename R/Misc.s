@@ -1675,6 +1675,13 @@ knitrSet <- function(basename=NULL, w=4, h=3,
   }
   else knitr::opts_chunk$set(message=FALSE, warning=FALSE)
   if(length(size)) knitr::opts_chunk$set(size = size)
+  ## For htmlcap see http://stackoverflow.com/questions/15010732
+  if(FALSE && lang == 'markdown')  # causes collisions in html and plotly output
+    knitr::knit_hooks$set(htmlcap = function(before, options, envir) {
+      if(! before)
+        paste0('<p class="caption"><span style="font-size: 75%;">',
+               options$htmlcap, "</span></p>")
+      })
   
   if(length(decinline)) {
     rnd <- function(x, dec) if(!is.numeric(x)) x else round(x, dec)

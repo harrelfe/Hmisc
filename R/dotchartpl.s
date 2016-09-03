@@ -13,11 +13,12 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
   grouppres <- length(group) > 0
   multpres  <- length(mult)  > 0
 
-  cols <- if(! is.function(col)) col
-          else
-            if(grouppres) col(length(unique(as.character(group))))
-          else
-            col[1]
+  cols <- if(length(col)) {
+            if(! is.function(col)) col
+            else
+              if(grouppres) col(length(unique(as.character(group))))
+            else
+              col(1) }
 
   ht <- htext
   if(length(num))
@@ -97,10 +98,13 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
                            evaluate=TRUE)
     }
   leftmargin <- min(140, max(nchar(ytnb)) * 7)
-  plotly::layout(p, xaxis=list(title=xlab,
-                               range=if(length(xlim)) xlim else range(x),
-                             zeroline=FALSE),
-                 yaxis=list(title='', zeroline=FALSE, tickvals=yl, ticktext=yt),
+  plotly::layout(p,
+                 xaxis=list(title=xlab,
+                            range=if(length(xlim)) xlim else range(x),
+                            zeroline=FALSE),
+                 yaxis=list(title='',
+                            range=c(min(Y) - 0.2, 0.2),
+                            zeroline=FALSE, tickvals=yl, ticktext=yt),
                  margin=list(l=leftmargin),
                  height=150 + 15 * lines, width=width, colors=cols)
   }

@@ -1035,7 +1035,6 @@ plotpsummaryM <-
       if(! any(prtest == 'none'))
         Frac[, 1] <- paste0(Frac[, 1], '<br>', ftstats)
 
-      xless(z)  ####
       gcat[[strat]] <-
         dotchartp(z, groups=factor(vnd, levels=unique(vnd)),
                   xlab=xlab, xlim=xlim,

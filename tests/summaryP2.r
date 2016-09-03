@@ -19,3 +19,16 @@ s <- summaryP(race + sex + smoking + hypertension ~
 ## add exclude1=FALSE to include female category
 ggplot(s, groups='treat', exclude1=TRUE, abblen=12)
 ggplot(s, groups='region')
+
+## plotly graphic
+source('~/R/Hmisc/R/summaryP.s')
+options(grType='plotly')
+plot(s, groups='treat', marginVal='All', marginLabel='All Regions',
+     xlim=c(0,1))
+
+## Make sure plotly graphic works with simpler cases
+
+s <- summaryP(race + sex + smoking + hypertension ~
+                treat,  data=dm)
+plot(s)
+

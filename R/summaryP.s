@@ -102,9 +102,10 @@ summaryP <- function(formula, data=NULL,
         no <- as.numeric(sum(tab))
         if(sort) lev <- reorder(lev, (mfreq[[ny]])[lev])
         Lev <- c(Lev, as.character(lev))
-        z <- data.frame(var=la, val=lev,
-                        freq=as.numeric(tab),
-                        denom=no)
+        z <- data.frame(var   = unname(la),
+                        val   = lev,
+                        freq  = as.numeric(tab),
+                        denom = no)
       }
       ## Add current X subset settings
       if(nX > 0) for(k in 1: nX) z[[names(ux)[k]]] <- ux[i, k]
@@ -131,13 +132,15 @@ summaryP <- function(formula, data=NULL,
 }
 
 plot.summaryP <-
-  function(x, formula=NULL, groups=NULL, exclude1=TRUE,
-           xlim=c(-.05, 1.05), text.at=NULL,
+  function(x, formula=NULL, groups=NULL,
+           marginVal=NULL, marginLabel=marginVal,
+           exclude1=TRUE, xlim=c(-.05, 1.05), text.at=NULL,
            cex.values=0.5,
            key=list(columns=length(groupslevels),
              x=.75, y=-.04, cex=.9,
              col=trellis.par.get('superpose.symbol')$col, corner=c(0,1)),
-           outerlabels=TRUE, autoarrange=TRUE, ...)
+           outerlabels=TRUE, autoarrange=TRUE, col=colorspace::rainbow_hcl,
+           ...)
 {
   X <- x
   at   <- attributes(x)
@@ -158,6 +161,32 @@ plot.summaryP <-
     nlev <- sapply(X[condvar], numu)
     condvar <- condvar[order(nlev)]
   }
+
+  if(grType() == 'plotly') {
+    condvar <- setdiff(condvar, 'var')
+    if(length(condvar) > 1)
+      stop('with options(grType="plotly") does not handle > 1 stratification variable')
+    if(length(condvar) == 1 && length(marginVal)) {
+      X$Big <- X[[condvar]] == marginVal
+      if(marginLabel != marginVal)
+        X[[condvar]] <- ifelse(X$Big, marginLabel, as.character(X[[condvar]]))
+      }
+    p <-
+      with(X,
+           dotchartpl(freq / denom,
+                      major = var,
+                      minor = val,
+                      group = if(length(groups))      X[[groups]],
+                      mult  = if(length(condvar) > 0) X[[condvar]],
+                      big   = if(length(condvar) > 0 && length(marginVal)) Big,
+                      num = freq,
+                      denom = denom,
+                      xlim  = xlim,
+                      col   = col)
+           )
+    return(p)
+    }
+  
   form <- if(length(formula)) formula
   else as.formula(
     paste('val ~ freq',

@@ -1041,7 +1041,7 @@ plotpsummaryM <-
                   auxdata=Frac, auxwhere='hover',
                   dec=3,
                   height=max(150, min(800, 50 * nrow(z))),
-                  layoutattr=FALSE && nstrat > 1)   #### ????
+                  layoutattr=FALSE && nstrat > 1)
     }
 
     iv <- which(type == 2)

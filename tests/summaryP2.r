@@ -21,7 +21,7 @@ ggplot(s, groups='treat', exclude1=TRUE, abblen=12)
 ggplot(s, groups='region')
 
 ## plotly graphic
-source('~/R/Hmisc/R/summaryP.s')
+source('~/R/Hmisc/R/summaryP.s');source('~/R/Hmisc/R/dotchartpl.s')
 options(grType='plotly')
 plot(s, groups='treat', marginVal='All', marginLabel='All Regions',
      xlim=c(0,1))
@@ -31,4 +31,6 @@ plot(s, groups='treat', marginVal='All', marginLabel='All Regions',
 s <- summaryP(race + sex + smoking + hypertension ~
                 treat,  data=dm)
 plot(s)
-
+plot(s, groups='treat')
+s <- summaryP(race + sex + smoking + hypertension ~ 1, data=dm)
+plot(s)

@@ -86,6 +86,16 @@ html(s, caption='Baseline characteristics by randomized treatment',
      exclude1=TRUE, npct='both', digits=3,
      prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2)
 ```
+The following is a better way to display proportions, for categorical variables.  If computing marginal statistics by running the dataset through the `Hmisc` `addMarginal` function, the `plot` method with `options(grType='plotly')` is especially useful.
+
+```{r summaryM4}
+pbcm <- addMarginal(pbc, drug)
+s <- summaryP(stage + sex + spiders ~ drug, data=pbc)
+plot(s, groups='drug')
+s <- summaryP(stage + sex + spiders ~ drug, data=pbcm)
+plot(s, marginVal='All', marginLabel='All Treatment Groups')
+
+```
 
 # Computing Environment[^2] {#compenv}
 `r mu$session()`

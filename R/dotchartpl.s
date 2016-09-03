@@ -2,7 +2,7 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
                        big=NULL, htext=NULL,
                        num=NULL, denom=NULL,
                        xlim=NULL, xlab='Proportion',
-                       width=600,
+                       width=800,
                        col=colorspace::rainbow_hcl
                        ) {
 
@@ -97,7 +97,7 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
                            hoverinfo='text',
                            evaluate=TRUE)
     }
-  leftmargin <- min(140, max(nchar(ytnb)) * 7)
+  leftmargin <- min(225, max(nchar(ytnb)) * 8)
   plotly::layout(p,
                  xaxis=list(title=xlab,
                             range=if(length(xlim)) xlim else range(x),

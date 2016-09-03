@@ -160,10 +160,8 @@ dotchartp <-
   glabels <- levels(groups)
   
   groups.pres <- length(groups) > 0
-  if(! groups.pres) {
-    y <- n : 1
-    ylim <- c(.5, n + .5)
-    } else {
+  if(! groups.pres) y <- n : 1
+    else {
       if(is.character(sort) || sort) {
         o <- if(is.character(sort)) {
                if(sort == 'ascending') order(x[, 1])
@@ -183,7 +181,8 @@ dotchartp <-
       first.in.group <- groups != lgroups
       y  <- cumsum(1 + 1.5 * first.in.group)
       yg <- y[first.in.group] - 1
-      ylim <- range(0.5, y + 0.5)
+      y  <- -y
+      yg <- -yg
     }
 
   X <- x[, 1]
@@ -285,13 +284,14 @@ dotchartp <-
   leftmargin <- min(180, max(nchar(tty)) * 8)
   rx <- if(auxwhere == 'right' && lenaux > 0) dx else dx / 2
 
+  ylim <- c(min(y) - .15, max(y) + 1)
   lo <- list(title=main,
              xaxis=list(title=xlab,
                         range=c(xlim[1] - 0.2 * dx,
                                 xlim[2] + rx),
                         zeroline=FALSE,
                         tickvals=tlx, ticktext=ttx),
-             yaxis=list(title=ylab, autorange='reversed',
+             yaxis=list(title=ylab, range=ylim,
                         zeroline=FALSE,
                         tickvals=tly, ticktext=tty),
              width=width, height=height,
@@ -310,7 +310,7 @@ dotchartp <-
                                     xlim[2] + rx),
                             zeroline=FALSE,
                             tickvals=tlx, ticktext=ttx),
-                 yaxis=list(title=ylab, autorange='reversed',
+                 yaxis=list(title=ylab, range=ylim,
                             zeroline=FALSE,
                             tickvals=tly, ticktext=tty),
                  width=width, height=height,

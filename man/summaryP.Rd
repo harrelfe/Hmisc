@@ -55,8 +55,8 @@
 summaryP(formula, data = NULL, subset = NULL,
          na.action = na.retain, sort=TRUE,
          asna = c("unknown", "unspecified"), \dots)
-\method{plot}{summaryP}(x, formula, groups=NULL,
-         marginVal=NULL, marginLabel=NULL,
+\method{plot}{summaryP}(x, formula=NULL, groups=NULL,
+         marginVal=NULL, marginLabel=marginVal,
          exclude1=TRUE,  xlim = c(-.05, 1.05),
          text.at=NULL, cex.values = 0.5,
          key = list(columns = length(groupslevels), x = 0.75,

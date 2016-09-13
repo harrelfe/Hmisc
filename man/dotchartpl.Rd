@@ -24,8 +24,8 @@
 \usage{
 dotchartpl(x, major, minor=NULL, group=NULL, mult=NULL,
            big=NULL, htext=NULL, num=NULL, denom=NULL,
-           xlim=NULL, xlab='Proportion',
-           col=colorspace::rainbow_hcl, width=800)
+           xlim=NULL, xlab='Proportion', width=800,
+           col=colorspace::rainbow_hcl)
 }
 \arguments{
   \item{x}{a numeric vector used for values on the \code{x}-axis}

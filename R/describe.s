@@ -717,7 +717,7 @@ html.describe <-
   hrule  <- m$hrulethin
   fsize  <- m$size
 
-  R <- m$style   ## define thinhr (and others not needed here)
+  R <- m$style()   ## define thinhr (and others not needed here)
   
   if(length(at$dimensions))
     R <- c(R,
@@ -749,6 +749,7 @@ html.describe <-
     mv <- paste(code(htmlTranslate(mv)), collapse=', ')
     R <- c(R, mv)
   }
+
   if(scroll) R <- m$scroll(R, size=size, rows=rows, cols=cols,
                            name=at$descript)
   htmltools::HTML(R)
@@ -896,8 +897,9 @@ html.describe.single <-
   if(length(object$mChoice))
     R <- c(R, htmlVerbatim(capture.output(object$mChoice, prlabel=FALSE),
                            size=size))
-  R <- paste0(R, sep='\n')
-  htmltools::HTML(R)
+  R
+#  R <- paste0(R, sep='\n')
+#  htmltools::HTML(R)
 }
 
 

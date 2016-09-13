@@ -250,9 +250,10 @@ markupSpecs <- list(html=list(
     paste0('<br><font size=1 color="', color, '">',
            paste(unlist(list(...)), collapse=' '),
            '</font>'),
-  cap      = function(x)
-    htmltools::HTML(paste0(markupSpecs$html$size(x, 85), '<br>')),
-                                        # fig. caption
+  cap      = function(...)  # figure caption formatting
+    paste0('<span style="font-family:Verdana;font-size:10px;">Figure: </span><span style="font-family:Verdana;font-size:12px;color:MidnightBlue;">',
+                           paste(unlist(list(...)), collapse=' '),
+                           '</span>'),
   session  = function(cite=TRUE, loadedOnly=FALSE) {
     si <- sessionInfo()
     if(! loadedOnly) si$loadedOnly <- NULL
@@ -342,8 +343,14 @@ markupSpecs <- list(html=list(
   plminus  = '&plusmn;',
   times    = '&times;',
   xbar     = '<span style="text-decoration: overline">X</span>',
-  styles   = '
+  styles   = function(...) htmltools::HTML('
 <style>
+fcap {
+ font-family: Verdana;
+ font-size: 12px;
+ color: MidnightBlue
+ }
+
 hr.thinhr { margin-top: 0.15em; margin-bottom: 0.15em; }
 
 span.xscript {
@@ -355,7 +362,7 @@ left: 0.1em;
 bottom: -1ex;
 }
 </style>
-'
+')
 
 ),
 

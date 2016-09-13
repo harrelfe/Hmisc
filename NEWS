@@ -1,4 +1,4 @@
-Changes in version 4.0-0 (2016-09-03)
+Changes in version 4.0-0 (2016-09-13)
    * summaryP: fixed exclude1 logic - was not excluding enough levels (inconsistent use of variable names vs. labels)
 	 * latexTranslate: any NAs in first argument changed to "" before conversion
 	 * minor.tick: added arguments to pass through (thanks: vhorvath)

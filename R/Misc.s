@@ -1485,7 +1485,6 @@ makeSteps <- function(x, y)
   else list(x = x[c(1, 2, 2)], y = y[c(1, 1, 2)])
 }
 
-#latexBuild <- function(..., afterEndtabular=NULL, beforeEndtable=NULL, sep='') {
 latexBuild <- function(..., insert=NULL, sep='') {
   w <- list(...)
   l <- length(w)
@@ -1509,7 +1508,7 @@ latexBuild <- function(..., insert=NULL, sep='') {
         for(ins in insert)
           if(length(ins) &&
              ins[[1]] == y && ins[[2]] == 'before')
-            w <- c(w, '\n\n', ins[[3]])
+            w <- c(w, '\n', ins[[3]])
       w <- c(w,
              if(y == '(') ')'
              else if(y == '{') '}'
@@ -1519,7 +1518,7 @@ latexBuild <- function(..., insert=NULL, sep='') {
         for(ins in insert)
           if(length(ins) &&
              ins[[1]] == y && ins[[2]] == 'after')
-            w <- c(w, '\n\n', ins[[3]])
+            w <- c(w, '\n', ins[[3]])
     }
     paste(w, collapse=sep)
   }

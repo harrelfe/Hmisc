@@ -75,7 +75,7 @@ latexNeedle <- function(y, col='black', href=0.5, name, w=.05, h=.15,
     }
     x <- x + w
   }
-  
+
   ct('\\end{picture}',
      if(length(tab)) '}{%\n',
      tab,

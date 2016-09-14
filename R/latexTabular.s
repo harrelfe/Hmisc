@@ -42,6 +42,7 @@ latexTabular <- function(x, headings=colnames(x),
   v <- paste(v, collapse='\n')
 #  v <- paste(paste0(v, '\\\\'), if(hline == 2) '\\hline'), collapse='\n')
   if(length(headings)) v <- paste(H, v, sep='\n')
-  paste(w, v, '\\end{tabular}', if(center) '\\end{center}',
-        if(helvetica)'}', sep='\n')
+  paste0(w, '\n', v, '\n\\end{tabular}',
+         if(center) '\n\\end{center}',
+         if(helvetica) '}')
 }

@@ -5,6 +5,7 @@ date: '`r Sys.Date()`'
 output:
   html_notebook:
     toc: yes
+    toc_depth: 3
     toc_float:
       collapsed: yes
   html_document:
@@ -69,14 +70,19 @@ The html method is used for the `describe` function, and the output is put in a 
 
 [^1]: The default is 75% size.
 
-```{r describe}
+```{r describe,results='asis'}
 d <- describe(pbc)
 html(d, size=80, scroll=TRUE)
 # prList is in Hmisc; useful for plotting or printing a list of objects
 # Can just use plot(d) if don't care about the mess
 # If using html output these 2 images would not be rendered no matter what
 p <- plot(d)
-prList(p)
+# Just to show that HTML formatting can be used.  The use of HTML here
+# is the only reason results='asis' was needed in the chunk header
+#names(p) <- paste0('### ', names(p), mu$lspace,
+#                   mu$smaller(mu$italics('produced by plot.describe')))
+source('~/R/Hmisc/R/label.s')
+prList(p, htmlfig=2)
 ```
 You can also re-form multiple `plotly` graphs into a [single HTML object](http://stackoverflow.com/questions/35193612):
 ```{r plotlym}

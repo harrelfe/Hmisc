@@ -312,19 +312,29 @@ llist <- function(..., labels=TRUE)
   dotlist
 }
 
-prList <- function(x) {
+prList <- function(x, htmlfig=0, after=FALSE) {
   if(! length(names(x))) stop('x must have names')
+  mu <- markupSpecs$html
+  g <- if(htmlfig == 0) function(x) x
+       else
+         if(htmlfig == 1) function(x) mu$cap(x)
+       else
+         function(x) paste0('\n### ', mu$cap(x))
   for(n in names(x)) {
     y <- x[[n]]
     if(length(names(y)) && length(class(y)) == 1 &&
        class(y) == 'list' && length(y) > 1)
       for(m in names(y)) {
-        cat('\n', n, ': ', m, '\n', sep='')
+        if(! after) 
+          cat('\n', g(paste0(n, ': ', m)), '\n', sep='')
         print(y[[m]])
+        if(after) cat('\n', g(paste0(n, ': ', m)), '\n', sep='')
       }
       else {
-        cat('\n', n, '\n', sep='')
+        if(! after)
+          cat('\n', g(n), '\n', sep='')
         print(x[[n]])
+        if(after) cat('\n', g(n), '\n', sep='')
       }
     }
   invisible()

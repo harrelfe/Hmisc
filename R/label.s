@@ -312,35 +312,62 @@ llist <- function(..., labels=TRUE)
   dotlist
 }
 
-prList <- function(x, htmlfig=0, after=FALSE) {
+prList <- function(x, lcap=NULL, htmlfig=0, after=FALSE) {
   if(! length(names(x))) stop('x must have names')
+  if(length(lcap) && (length(lcap) != length(x)))
+    stop('if given, lcap must have same length as x')
   mu <- markupSpecs$html
-  g <- if(htmlfig == 0) function(x) x
+  g <- if(htmlfig == 0) function(x, X=NULL) paste(x, X)
        else
-         if(htmlfig == 1) function(x) mu$cap(x)
+         if(htmlfig == 1) function(x, X=NULL) paste(mu$cap(x), mu$lcap(X))
        else
-         function(x) paste0('\n### ', mu$cap(x))
+         function(x, X=NULL)
+           paste0('\n### ', mu$cap(x),
+                  if(length(X) && X != '') paste0('\n', mu$lcap(X)))
+  i <- 0
   for(n in names(x)) {
+    i <- i + 1
     y <- x[[n]]
     if(length(names(y)) && length(class(y)) == 1 &&
-       class(y) == 'list' && length(y) > 1)
+       class(y) == 'list' && length(y) > 1) {
       for(m in names(y)) {
         if(! after) 
           cat('\n', g(paste0(n, ': ', m)), '\n', sep='')
         print(y[[m]])
         if(after) cat('\n', g(paste0(n, ': ', m)), '\n', sep='')
       }
-      else {
-        if(! after)
-          cat('\n', g(n), '\n', sep='')
-        print(x[[n]])
-        if(after) cat('\n', g(n), '\n', sep='')
-      }
+      if(length(lcap) && lcap[i] != '') cat(mu$lcap(lcap[i]))
     }
+    else {
+      if(! after)
+        cat('\n', g(n, if(length(lcap)) lcap[i]), '\n', sep='')
+      print(x[[n]])
+      if(after) cat('\n', g(n, if(length(lcap)) lcap[i]), '\n', sep='')
+    }
+  }
   invisible()
 }
 
+putHfig <- function(x, ..., scap=NULL, subsub=TRUE) {
+  mu <- markupSpecs$html
+  lcap <- unlist(list(...))
+  if(! length(lcap) && ! length(scap)) {
+    print(x)
+    return(invisible())
+  }
+  if(length(lcap)) lcap <- paste(lcap, collapse=' ')
+  if(! length(scap)) {
+    scap <- lcap
+    lcap <- NULL
+  }
+  scap <- mu$cap(scap)
+  if(subsub) scap <- paste0('\n### ', scap)
+  cat(scap, '\n')
+  if(length(lcap)) cat(mu$lcap(lcap), '\n')
+  invisible()
+  }
 
+  
 combineLabels <- function(...)
   {
     w <- list(...)

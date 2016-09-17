@@ -9,7 +9,6 @@ output:
     toc_float:
       collapsed: yes
   html_document:
-    fig_caption: yes
     toc: yes
     toc_depth: 3
     toc_float:
@@ -25,7 +24,7 @@ Much of the tabular output produced here was created using `html` methods, which
 # Setup 
 ```{r setup,results='hide'}
 require(Hmisc)
-# Use the following if rendering with html output instead of notebook
+# Use the following require() if rendering with html output instead of notebook
 # require(plotly)
 # Use the folowing with html output instead of notebook
 # knitrSet(lang='markdown', h=4.5, cache=TRUE)
@@ -33,9 +32,16 @@ require(Hmisc)
 # knitrSet redirects all messages to messages.txt
 options(grType='plotly') # for certain graphics functions
 mu <- markupSpecs$html   # markupSpecs is in Hmisc
-cap <- mu$cap            # function to output html caption
+cap  <- mu$cap           # function to output html caption
+lcap <- mu$lcap          # for continuation for long caption
 ```
-The following hidden command (<code>r mu$widescreen()</code>), causes the html notebook to use an entire wide screen.
+The following (<code>r mu$styles()</code>) defines HTML styles and javascript functions, such as <code>ffig, smg</code> and the function for expanding and collapsing text as done by the <code>expcoll</code> function. 
+`r mu$styles()`
+
+Example using <code>expcoll</code>.  Unfortunately this interacts with the table of contents.
+`r mu$expcoll('short text', 'much longer text')`
+
+The following (<code>r mu$widescreen()</code>) causes the html notebook to use an entire wide screen.
 `r mu$widescreen()`
 
 # Fetching Data, Modifying Variables, and Printing Data Dictionary
@@ -73,6 +79,7 @@ The html method is used for the `describe` function, and the output is put in a 
 ```{r describe,results='asis'}
 d <- describe(pbc)
 html(d, size=80, scroll=TRUE)
+
 # prList is in Hmisc; useful for plotting or printing a list of objects
 # Can just use plot(d) if don't care about the mess
 # If using html output these 2 images would not be rendered no matter what
@@ -81,14 +88,18 @@ p <- plot(d)
 # HTML-typeset as a figure caption and to put the sub-sub section
 # marker ### in front of the caption.  htmlfig is the only reason
 # results='asis' was needed in the chunk header
-prList(p, htmlfig=2)
+# We define a long caption for one of the plots, which does not appear
+# in the table of contents
+prList(p, lcap=c('', 'These are spike histograms'), htmlfig=2)
 ```
 You can also re-form multiple `plotly` graphs into a [single HTML object](http://stackoverflow.com/questions/35193612):
+
+<hr>
+### <smg>Figure:</smg> <fcap>Two <code>plotly</code> graphics combined into one</fcap>
+<fcap>This used the <code>htmltools tagList</code> function.</fcap>
 ```{r plotlym}
 htmltools::tagList(lapply(p, plotly::as.widget))
 ```
-
-### `r cap('Graphical output for <code>describe</code> function')`
 
 # Stratified Descriptive Statistics
 Produce stratified quantiles, means/SD, and proportions by treatment group.  Plot the results before rendering as an advanced html table:
@@ -96,6 +107,8 @@ Produce stratified quantiles, means/SD, and proportions by treatment group.  Plo
 - categorical variables: a single dot chart
 - continuous variables: a series of extended box plots
 
+<hr>
+### `r cap('Proportions and', mu$chisq(), 'tests for categorical variables')`
 ```{r summaryM}
 s <- summaryM(bili + albumin + stage + protime + sex + age + spiders +
               alk.phos + sgot + chol ~ drug, data=pbc,
@@ -103,17 +116,17 @@ s <- summaryM(bili + albumin + stage + protime + sex + age + spiders +
 plot(s, which='categorical')
 ```
 
-### `r cap('Proportions and', mu$chisq(), 'tests for categorical variables')`
+<hr>
+### `r cap('Extended box plots for the first 4 continuous predictors')`
 ```{r summaryM2}
 plot(s, which='continuous', vars=1 : 4)
 ```
 
-### `r cap('Extended box plots for the first 4 continuous predictors')`
+<hr>
+### `r cap('Extended box plots for the remaining continuous predictors')`
 ```{r summaryM3}
 plot(s, which='continuous', vars=5 : 7)
 ```
-
-### `r cap('Extended box plots for the remaining continuous predictors')`
 
 ```{r summaryM4}
 html(s, caption='Baseline characteristics by randomized treatment',
@@ -122,6 +135,9 @@ html(s, caption='Baseline characteristics by randomized treatment',
 ```
 The following is a better way to display proportions, for categorical variables.  If computing marginal statistics by running the dataset through the `Hmisc` `addMarginal` function, the `plot` method with `options(grType='plotly')` is especially useful.
 
+<hr>
+### `r cap('Proportions stratified by treatment')`
+`r lcap('Second graph following has proportions (large symbols) and proportions stratified by treatment (small symbols)')`
 ```{r summaryM5}
 pbcm <- addMarginal(pbc, drug)
 s <- summaryP(stage + sex + spiders ~ drug, data=pbc)
@@ -129,8 +145,6 @@ plot(s, groups='drug')
 s <- summaryP(stage + sex + spiders ~ drug, data=pbcm)
 plot(s, marginVal='All', marginLabel='All Treatment Groups')
 ```
-
-### `r cap('Proportions (large symbols) and proportions stratified by treatment (small symbols)')`
 
 # Computing Environment[^2] {#compenv}
 `r mu$session()`

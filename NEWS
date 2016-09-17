@@ -1,4 +1,4 @@
-Changes in version 4.0-0 (2016-09-13)
+Changes in version 4.0-0 (2016-09-17)
    * summaryP: fixed exclude1 logic - was not excluding enough levels (inconsistent use of variable names vs. labels)
 	 * latexTranslate: any NAs in first argument changed to "" before conversion
 	 * minor.tick: added arguments to pass through (thanks: vhorvath)
@@ -53,6 +53,7 @@ Changes in version 4.0-0 (2016-09-13)
 	 * latex.summaryP: fixed bad linebreak at strata boundaries
 	 * dotchartpl: new plotly dot chart function especially for summaryP
 	 * plot.summaryP: new plotly method using dotchartpl when options(grType='plotly')
+	 * putHfig: new function to render graphics with captions in HTML reports
 
 Changes in version 3.17-4 (2016-05-02)
    * latex.summaryP: correctly ordered rows after running reshape because groups was present

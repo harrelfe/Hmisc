@@ -87,6 +87,14 @@
 	object, and the \code{htmlfig} option provides more capabilities when
 	making html reports.
 
+	\code{putHfig} is similar to \code{prList} but for a single graphical
+	object that is rendered with a \code{print} method, making it easy to
+	specify long captions, and short captions for the table of contents in
+	HTML documents.
+	Table of contents entries are generated with the short caption, which
+	is taken as the long caption if there is none.  One can optionally not
+	make a table of contents entry.
+
   \code{plotmathTranslate} is a simple function that translates certain
   character strings to character strings that can be used as part of \R
   \code{plotmath} expressions.  If the input string has a space or percent
@@ -137,7 +145,9 @@ Label(object, \dots)
 
 llist(\dots, labels=TRUE)
 
-prList(x, htmlfig=0, after=FALSE)
+prList(x, lcap=NULL, htmlfig=0, after=FALSE)
+
+putHfig(x, \dots, scap=NULL, subsub=TRUE)
 
 plotmathTranslate(x)
 
@@ -153,7 +163,9 @@ combineLabels(\dots)
   \item{x}{
     any object (for \code{plotmathTranslate} is a character string). For
 		\code{relevel} is a \code{factor} variable.  For \code{prList} is a
-		named list.
+		named list.  For \code{putHfig} is a graphical object for which a
+		\code{print} method will render the graphic (e.g., a \code{ggplot2}
+		or \code{plotly} object).
   }
   \item{self}{lgoical, where to interact with the object or its components}
   \item{units}{
@@ -217,7 +229,10 @@ combineLabels(\dots)
   }
   \item{\dots}{
     a list of variables or expressions to be formed into a \code{list}.
-    Ignored for \code{print.labelled}.  For \code{relevel} is the \code{level} (a single character string) to become the new reference (first) category.
+    Ignored for \code{print.labelled}.  For \code{relevel} is the
+		\code{level} (a single character string) to become the new reference
+		(first) category.  For \code{putHfig} represents one or more
+		character strings that are pasted together, separated by a blank.
   }
   \item{file}{
     the name of a file to which to write S source code.  Default is
@@ -230,13 +245,21 @@ combineLabels(\dots)
     set to \code{FALSE} to make \code{llist} ignore the variables'
 		\code{label} attribute and  use the variables' names.
   }
+	\item{lcap}{an optional vector of character strings corresponding to
+		elements in \code{x} for \code{prList}.  These contain long captions
+		that do not appear in the table of contents but which are printed
+		right after the short caption in the body, in the same font.}
 	\item{htmlfig}{for \code{prList} set to \code{1} to use HTML markup by
-		running the object names through \code{markupSpecs$html$cap) for
+		running the object names through \code{markupSpecs$html$cap} for
 			figure captions.  Set \code{htmlfig=2} to also preface the figure
 			caption with \code{"### "} so that it will appear in the table of
 			contents.}
 	\item{after}{set to \code{TRUE} to have \code{prList} put names after
 		the printed object instead of before}
+	\item{scap}{a character string specifying the short (or possibly only)
+		caption.}
+	\item{subsub}{set to \code{FALSE} to suppress \code{"### "} from being
+		placed in front of the short caption.
 }
 \value{
   \code{label} returns the label attribute of x, if any; otherwise, "".

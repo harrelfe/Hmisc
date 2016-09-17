@@ -250,10 +250,27 @@ markupSpecs <- list(html=list(
     paste0('<br><font size=1 color="', color, '">',
            paste(unlist(list(...)), collapse=' '),
            '</font>'),
-  cap      = function(...)  # figure caption formatting
+
+  cap      = function(...) { # figure caption formatting
+    lcap <- paste(unlist(list(...)), collapse=' ')
     paste0('<span style="font-family:Verdana;font-size:10px;">Figure: </span><span style="font-family:Verdana;font-size:12px;color:MidnightBlue;">',
-                           paste(unlist(list(...)), collapse=' '),
-                           '</span>'),
+             lcap, '</span>')
+  },
+  
+  lcap     = function(...) # for continuation of figure caption
+    paste0('<span style="font-family:Verdana;font-size:12px;color:MidnightBlue;">',
+           paste(unlist(list(...)), collapse=' '), '</span>'),
+
+  expcoll = function(vis, invis) {
+      id <- floor(runif(1, 100000, 999999))  # unique html id
+      paste0('<a href="#"', id, '" id="', id,
+             '_earrows" class="earrows" onclick="expand_collapse(\'',
+             id, '\');">&#9660;</a>',
+             vis, '<div id="', id,
+             '" style="display:none;">',
+             invis, '</div>')
+    },
+  
   session  = function(cite=TRUE, loadedOnly=FALSE) {
     si <- sessionInfo()
     if(! loadedOnly) si$loadedOnly <- NULL
@@ -344,12 +361,36 @@ markupSpecs <- list(html=list(
   times    = '&times;',
   xbar     = '<span style="text-decoration: overline">X</span>',
   styles   = function(...) htmltools::HTML('
+<script type="text/javascript">
+<!--
+    function expand_collapse(id) {
+       var e = document.getElementById(id);
+       var f = document.getElementById(id+"_earrows");
+       if(e.style.display == \'none\'){
+          e.style.display = \'block\';
+          f.innerHTML = \'&#9650\';
+       }
+       else {
+          e.style.display = \'none\';
+          f.innerHTML = \'&#9660\';
+       }
+    }
+//-->
+</script>
 <style>
+.earrows {color:silver;font-size:11px;}
+
 fcap {
  font-family: Verdana;
  font-size: 12px;
  color: MidnightBlue
  }
+
+smg {
+ font-family: Verdana;
+ font-size: 10px;
+ color: &#808080;
+}
 
 hr.thinhr { margin-top: 0.15em; margin-bottom: 0.15em; }
 
@@ -424,6 +465,8 @@ plotmath = list(
     labelPlotmath(label, units)
   )
 )
+
+## For expand_collapse see http://dickervasti.com/wiki-style-text-expand-collapse-no-jquery.htm#01000
 
 ## Function to translate several expressions to html form.
 ## Arguments inn and out specify additional input and translated

@@ -82,3 +82,23 @@ latexNeedle <- function(y, col='black', href=0.5, name, w=.05, h=.15,
      if(length(tab)) '}',
      '}%\n')
 }
+
+pngNeedle <- function(y, col='black', href=0.5, w=6, h=18,
+                      file=tempfile(fileext='.png', tmpdir=dir),
+                      dir='/tmp') {
+
+  k <- length(y)
+  col <- rep(col, length=k)
+
+  png(file, width=1 + k * w, height=h)
+  par(mar=rep(0,4))
+  plot.new()
+  par(usr=c(0, 1, 0, 1))
+  href <- c(0, href, 1)
+  abline(h=href, col=gray(0.8))
+  
+  x <- seq(0.025, 0.975, length=k)
+  for(i in 1 : k) lines(c(x[i], x[i]), c(0, y[i]), col=col[i], lwd=3.5)
+  dev.off()
+  invisible(file)
+  }

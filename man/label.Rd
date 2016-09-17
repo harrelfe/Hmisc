@@ -12,6 +12,7 @@
 \alias{Label.data.frame}
 \alias{llist}
 \alias{prList}
+\alias{putHfig}
 \alias{plotmathTranslate}
 \alias{as.data.frame.labelled}
 \alias{data.frame.labelled}

@@ -147,7 +147,7 @@ llist(\dots, labels=TRUE)
 
 prList(x, lcap=NULL, htmlfig=0, after=FALSE)
 
-putHfig(x, \dots, scap=NULL, subsub=TRUE)
+putHfig(x, \dots, scap=NULL, subsub=TRUE, hr=TRUE)
 
 plotmathTranslate(x)
 
@@ -259,7 +259,9 @@ combineLabels(\dots)
 	\item{scap}{a character string specifying the short (or possibly only)
 		caption.}
 	\item{subsub}{set to \code{FALSE} to suppress \code{"### "} from being
-		placed in front of the short caption.
+		placed in front of the short caption.}
+	\item{hr}{applies if a caption is present.  Specify \code{FALSE} to
+		not put a horizontal line before the caption and figure.}
 }
 \value{
   \code{label} returns the label attribute of x, if any; otherwise, "".

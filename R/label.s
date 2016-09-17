@@ -348,11 +348,11 @@ prList <- function(x, lcap=NULL, htmlfig=0, after=FALSE) {
   invisible()
 }
 
-putHfig <- function(x, ..., scap=NULL, subsub=TRUE) {
+putHfig <- function(x, ..., scap=NULL, subsub=TRUE, hr=TRUE) {
   mu <- markupSpecs$html
   lcap <- unlist(list(...))
   if(! length(lcap) && ! length(scap)) {
-    print(x)
+    suppressWarnings(print(x))  # because of # colors in pallette warning
     return(invisible())
   }
   if(length(lcap)) lcap <- paste(lcap, collapse=' ')
@@ -362,8 +362,10 @@ putHfig <- function(x, ..., scap=NULL, subsub=TRUE) {
   }
   scap <- mu$cap(scap)
   if(subsub) scap <- paste0('\n### ', scap)
-  cat(scap, '\n')
-  if(length(lcap)) cat(mu$lcap(lcap), '\n')
+  if(hr) cat(mu$hrule, '\n', sep='')
+  cat(scap, '\n', sep='')
+  if(length(lcap)) cat(mu$lcap(lcap), '\n', sep='')
+  suppressWarnings(print(x))
   invisible()
   }
 

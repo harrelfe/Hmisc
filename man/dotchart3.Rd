@@ -143,9 +143,11 @@ summaryD(formula, data=NULL, fun=mean, funm=fun,
          \code{dotchartp}, set \code{sort} to \code{'descending'} to
          sort in descending order of the first column of \code{x}, or
          \code{'ascending'} to do the reverse.  These do not make sense
-         of \code{groups} is present.}
+         if \code{groups} is present.}
 	\item{height,width}{height and width in pixels for \code{dotchartp} if
-         not using \code{plotly} defaults.  Ignored for \code{dotchart3}.}
+         not using \code{plotly} defaults.  Ignored for
+         \code{dotchart3}.  If set to \code{"auto"} the height is
+         computed using \code{Hmisc::plotlyHeightDotchart}.}
 }
 \value{the function returns invisibly}
 \author{Frank Harrell}

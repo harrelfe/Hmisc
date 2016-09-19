@@ -374,9 +374,10 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
 	\item{height,width}{dimensions in pixels for the \code{plotly}
     \code{subplot} object containing all the extended box plots.  If
     omitted, \code{plot.summaryM} will set based on the number of
-    continuous variables and \code{ncols}.  At present these options
-    have been disabled to to vertical spacing problem with \code{plotly}
-    graphics.}
+    continuous variables and \code{ncols} or for dot charts it will use
+    \code{Hmisc::plotlyHeightDotchart}.  At present \code{height} is
+    ignored for extended box plots due to vertical spacing problem with
+    \code{plotly} graphics.}
   \item{xlim}{
     vector of length two specifying x-axis limits.  This is only used
       for plotting categorical variables.  Limits for continuous

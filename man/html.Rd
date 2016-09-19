@@ -28,8 +28,9 @@ html(object, \dots)
   rmarkdown=FALSE, cleanup=TRUE, \dots)
 \method{html}{data.frame}(object,
   file=paste(first.word(deparse(substitute(object))),'html',sep='.'), header,
-     align='r', align.header='c', bold.header=TRUE, col.header='Black',
-     border=2, size=100, translate=FALSE,
+     caption=NULL, rownames=TRUE, align='r', align.header='c',
+     bold.header=TRUE, col.header='Black',
+     border=2, width=NULL, size=100, translate=FALSE,
      append=FALSE, link=NULL, linkCol=1,
      linkType=c('href','name'), \dots) 
 \method{html}{default}(object,
@@ -70,8 +71,12 @@ writing to the console.
 	causes deletion of the generated \code{.haux} file.}
 \item{header}{vector of column names.  Defaults to names in
 	\code{object}.  Set to \code{NULL} to suppress column names.}
+\item{caption}{a character string to be used as a caption before the
+	table}
+\item{rownames}{set to \code{FALSE} to ignore row names even if they are
+	present}
 \item{align}{alignment for table columns (all are assumed to have the
-	same).  Specify \code{"c", "r", "l"} for center, right, or left
+	same if is a scalar).  Specify \code{"c", "r", "l"} for center, right, or left
 	alignment.}
 \item{align.header}{same coding as for \code{align} but pertains to
 	header}
@@ -81,6 +86,8 @@ writing to the console.
 	only outer borders, or 2 (the default) to put borders around cells too}
 \item{translate}{set to \code{TRUE} to run header and table cell text
 	through the \code{htmlTranslate} function}
+\item{width}{optional table width for \code{html.data.frame}.  For full
+	page width use \code{width="100\%"}.}
 \item{size}{a number between 0 and 100 representing the percent of the
 	prevailing character size to be used by \code{htmlVerbatim} and the
 	data frame method.}

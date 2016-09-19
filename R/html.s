@@ -90,23 +90,20 @@ html.data.frame <-
   function(object,
            file=paste(first.word(deparse(substitute(object))),
                       'html',sep='.'),
-           header,
+           header, caption=NULL, rownames=FALSE,
            align='r', align.header='c', bold.header=TRUE,
            col.header='Black', border=2,
-           size=100, translate=FALSE,
+           width=NULL, size=100, translate=FALSE,
            append=FALSE, link=NULL, linkCol=1,
            linkType=c('href','name'), ...)
 {
   linkType <- match.arg(linkType)
-  
-  align <- switch(align,
-                  c='center',
-                  l='left',
-                  r='right')
-  align.header <- switch(align.header,
-                         c='center',
-                         l='left',
-                         r='right')
+  mu <- markupSpecs$html
+
+  tr <- c(c='center', l='left', r='right')
+  align        <- tr[align]
+  align.header <- tr[align.header]
+
   trans <- if(translate) htmlTranslate else function(x) x
   
   x   <- as.matrix(object)
@@ -115,7 +112,7 @@ html.data.frame <-
 #    if(is.numeric(object[,i]))
 #      x[,i] <- paste0('<div align=right>', xi, '</div>')
   }
-  if(length(r <- rownames(x)))
+  if(rownames && length(r <- rownames(x)))
     x <- cbind(Name=as.character(r), x)
 
   b <- c('border: 1px solid gray;', 'border-collapse: collapse;')
@@ -125,14 +122,15 @@ html.data.frame <-
   sn  <- paste0('hmisctable', floor(runif(1, 100000, 999999)))
   psn <- paste0('.', sn)
   
-  # Duplicate specifications because can't get any single one to work
+  ## Duplicate specifications because can't get any single one to work
+  lua <- length(unique(align))
   sty <- c('<style>',
            paste0(psn, ' {'),
            if(border == 0) 'border: none;' else b,
            paste0('font-size: ', size, '%;'),
            '}',
            paste0(psn, ' td {'),
-           paste0('text-align: ', align, ';'),
+           if(lua == 1) paste0('text-align: ', align, ';'),
            'padding: 0 1ex 0 1ex;',   ## top left bottom right
            '}',
            paste0(psn, ' th {'),
@@ -144,8 +142,13 @@ html.data.frame <-
            '</style>')
           
   R <- c(sty, paste0('<table class="', sn, '"',
-                     if(border == 1) 'border="0"',
-                     if(border == 2) 'border="1"', '>'))
+                     if(length(width) == 1)
+                       paste0(' width="', width, '"'),
+                     if(border == 1) ' border="0"',
+                     if(border == 2) ' border="1"', '>'))
+
+  if(length(caption))
+    R <- c(R, paste0('<caption>', mu$lcap(caption), '</caption>'))
   if(missing(header)) header <- colnames(x)
   if(length(header)) {
     head <- trans(header)
@@ -165,7 +168,10 @@ html.data.frame <-
   }
 
   for(i in 1 : nrow(x)) {
-    rowt <- paste0('<td>', x[i, ], '</td>')
+    rowt <- if(lua == 1) paste0('<td>', x[i, ], '</td>')
+            else
+              paste0('<td style="text-align:', align, ';">',
+                    x[i, ], '</td>')
     R <- c(R, paste0('<tr>', paste(rowt, collapse=''), '</tr>'))
     }
 
@@ -261,6 +267,20 @@ markupSpecs <- list(html=list(
     paste0('<span style="font-family:Verdana;font-size:12px;color:MidnightBlue;">',
            paste(unlist(list(...)), collapse=' '), '</span>'),
 
+  tcap      = function(..., scap=NULL, subsub=TRUE) { # table caption formatting
+    mu <- markupSpecs$html
+    lcap <- paste(unlist(list(...)), collapse=' ')
+    if(! subsub) return(mu$lcap(lcap))
+    r <- if(subsub) '### ' else ''
+    if(! length(scap)) {
+      scap <- lcap
+      lcap <- NULL
+    }
+    r <- paste0(r, '<span style="font-family:Verdana;font-size:10px;">Table: </span><span style="font-family:Verdana;font-size:12px;color:MidnightBlue;">',
+                scap, '</span>')
+    if(length(lcap)) r <- paste0(r, '\n', mu$lcap(lcap), '\n')
+    r
+  },
   expcoll = function(vis, invis) {
       id <- floor(runif(1, 100000, 999999))  # unique html id
       paste0('<a href="#"', id, '" id="', id,

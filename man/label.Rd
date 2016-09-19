@@ -148,7 +148,7 @@ llist(\dots, labels=TRUE)
 
 prList(x, lcap=NULL, htmlfig=0, after=FALSE)
 
-putHfig(x, \dots, scap=NULL, subsub=TRUE, hr=TRUE)
+putHfig(x, \dots, scap=NULL, extra=NULL, subsub=TRUE, hr=TRUE)
 
 plotmathTranslate(x)
 
@@ -259,6 +259,11 @@ combineLabels(\dots)
 		the printed object instead of before}
 	\item{scap}{a character string specifying the short (or possibly only)
 		caption.}
+	\item{extra}{an optional vector of character strings.  When present
+		the long caption will be put in the first column of an HTML table
+		and the elements of \code{extra} in subsequent columns.  This allows
+		extra information to appear in the long caption in a way that is
+		right-justified to the right of the flowing caption text.}
 	\item{subsub}{set to \code{FALSE} to suppress \code{"### "} from being
 		placed in front of the short caption.}
 	\item{hr}{applies if a caption is present.  Specify \code{FALSE} to

@@ -212,6 +212,7 @@ dotchartp <-
   ht <- if(nx == '')   fmt(X)
         else paste(nx, '<br>', fmt(X))
   if(auxh && any(auxd != '')) ht <- paste0(ht, lspace, auxd)
+
   d <- data.frame(X, y=tly, ht=ht)
 
   p <- plotly::plot_ly(d, x=X, y=y, mode='markers', type='scatter',
@@ -294,7 +295,8 @@ dotchartp <-
              yaxis=list(title=ylab, range=ylim,
                         zeroline=FALSE,
                         tickvals=tly, ticktext=tty),
-             width=width, height=height,
+             width=width,
+             height=if(height == 'auto') plotlyHeightDotchart(n) else height,
              autosize=(length(width) + length(height)) == 0,
              margin=list(l=leftmargin, t=200),
              showlegend=showlegend)
@@ -348,7 +350,7 @@ summaryD <- function(formula, data=NULL, fun=mean, funm=fun,
          else
            s$x1
   yy <- if(is.matrix(s$y)) s$y[, 1, drop=FALSE] else s$y
-  if(sort) s <- if(two) s[order(cx1, yy), ] else s[order(yy), ]
+  if(sort) s <- if(two) s[order(cx1, - yy), ] else s[order(- yy), ]
 
   auxd <- function(z) {
     sy <- z$y
@@ -374,8 +376,6 @@ summaryD <- function(formula, data=NULL, fun=mean, funm=fun,
     }
     z  <- auxd(s)
     
-    dc <- if(use.plotly) dotchartp else dotchart3
-
     ## if already sorted (group variable order first) don't re-sort
     ## sort causes problems to dotchart3
 
@@ -385,7 +385,8 @@ summaryD <- function(formula, data=NULL, fun=mean, funm=fun,
                        cex.auxdata=cex.auxdata,
                        gdata   =if(groupsummary) z2$sy,
                        auxgdata=if(groupsummary) z2$fval,
-                       xlab=xlab, ylab=ylab, sort=! sort, ...)
+                       xlab=xlab, ylab=ylab,
+                       sort=FALSE, ...)
            else
              dotchart3(z$sy, s$x2, groups=s$x1,
                        auxdata=z$fval, auxtitle=if(vals) auxtitle,
@@ -399,7 +400,7 @@ summaryD <- function(formula, data=NULL, fun=mean, funm=fun,
              dotchartp(z$sy, s$x1, auxdata=z$fval,
                        auxtitle=if(vals) auxtitle,
                        cex.auxdata=cex.auxdata, xlab=xlab, ylab=ylab,
-                       sort=! sort, ...)
+                       sort=FALSE, ...)
            else
              dotchart3(z$sy, s$x1, auxdata=z$fval,
                        auxtitle=if(vals) auxtitle,

@@ -160,7 +160,8 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
                                         title='Proportion'),
                              yaxis=list(title='', autorange='reversed',
                                         tickvals=tly, ticktext=un),
-                             autosize=FALSE, height=150 + 15 * nrow(z),
+                             autosize=FALSE,
+                             height=plotlyHeightDotchart(nrow(z)),
                              margin  = list(l=max(70, max(nchar(un)) * 6)),
                              evaluate=TRUE)
       }

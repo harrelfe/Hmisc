@@ -133,7 +133,7 @@ dotchartp <-
             xlab = NULL, ylab = '', auxdata=NULL, auxtitle=NULL,
             auxgdata=NULL, auxwhere=c('right', 'hover'),
             axisat=NULL, axislabels=NULL, sort=TRUE, digits=4, dec=NULL,
-            height=NULL, width=NULL, layoutattr=FALSE, showlegend=TRUE,
+            height=NULL, width=700, layoutattr=FALSE, showlegend=TRUE,
             ...) 
 {
   auxwhere <- match.arg(auxwhere)
@@ -285,7 +285,7 @@ dotchartp <-
   leftmargin <- min(180, max(nchar(tty)) * 8)
   rx <- if(auxwhere == 'right' && lenaux > 0) dx else dx / 2
 
-  ylim <- c(min(y) - .15, max(y) + 1)
+  ylim <- c(min(y) - .15, max(y) + 1.5)
   lo <- list(title=main,
              xaxis=list(title=xlab,
                         range=c(xlim[1] - 0.2 * dx,
@@ -296,29 +296,33 @@ dotchartp <-
                         zeroline=FALSE,
                         tickvals=tly, ticktext=tty),
              width=width,
-             height=if(height == 'auto') plotlyHeightDotchart(n) else height,
+             height=if(length(height) && height == 'auto')
+                      plotlyHeightDotchart(n) else height,
              autosize=(length(width) + length(height)) == 0,
-             margin=list(l=leftmargin, t=200),
+             margin=list(l=leftmargin, t=5),
              showlegend=showlegend)
 
   if(layoutattr) {
     attr(p, 'layout') <- lo
     return(p)
   }
+
   plotly::layout(p,
-                 title=main,
-                 xaxis=list(title=xlab,
+                 title = main,
+                 xaxis = list(title=xlab,
                             range=c(xlim[1] - 0.2 * dx,
                                     xlim[2] + rx),
                             zeroline=FALSE,
                             tickvals=tlx, ticktext=ttx),
-                 yaxis=list(title=ylab, range=ylim,
+                 yaxis = list(title=ylab, range=ylim,
                             zeroline=FALSE,
                             tickvals=tly, ticktext=tty),
-                 width=width, height=height,
-                 autosize=(length(width) + length(height)) == 0,
-                 margin=list(l=leftmargin),
-                 showlegend=showlegend)
+                 width = width,
+                 height= if(length(height) && height == 'auto')
+                          plotlyHeightDotchart(n) else height,
+                 # autosize=(length(width) + length(height)) == 0,
+                 margin = list(l=leftmargin, t=5),
+                 showlegend = showlegend)
 }
 
 summaryD <- function(formula, data=NULL, fun=mean, funm=fun,

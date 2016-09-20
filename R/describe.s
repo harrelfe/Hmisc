@@ -1164,7 +1164,7 @@ html.contents.data.frame <-
     link <- link[, colnames(link) != 'NAs', drop=FALSE]
     adj <- adj[names(adj) != 'NAs']
   }
-  out <- html(cont, file=FALSE,
+  out <- html(cont, file=FALSE, rownames=TRUE,
               link=link, border=2,
               col.just=adj, ...)
   R <- c(R, as.character(out), hrule)

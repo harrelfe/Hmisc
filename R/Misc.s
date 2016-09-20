@@ -1780,5 +1780,5 @@ plotlySave <- function(x, ...) {
 ## Needed height in pixels for a plotly dot chart given the number of
 ## rows in the chart
 
-plotlyHeightDotchart <- function(rows)
-  min(800, max(150, 15 * rows))
+plotlyHeightDotchart <- function(rows) 
+  min(800, max(200, 25 * rows))

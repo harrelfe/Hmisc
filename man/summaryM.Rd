@@ -80,7 +80,7 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
      main, subtitles = TRUE, ncols=2,
      prtest = c('P', 'stat', 'df', 'name'), pdig = 3, eps = 0.001,
      conType = c('bp', 'dot', 'raw'), cex.means = 0.5, cex=par('cex'),
-     height=NULL, width=NULL, \dots)
+     height='auto', width=700, \dots)
 
 \method{latex}{summaryM}(object, title =
       first.word(deparse(substitute(object))),
@@ -373,7 +373,8 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
   \item{cex}{character size for other plotted items}
 	\item{height,width}{dimensions in pixels for the \code{plotly}
     \code{subplot} object containing all the extended box plots.  If
-    omitted, \code{plot.summaryM} will set based on the number of
+    \code{height="auto"}, \code{plot.summaryM} will set \code{height}
+    based on the number of 
     continuous variables and \code{ncols} or for dot charts it will use
     \code{Hmisc::plotlyHeightDotchart}.  At present \code{height} is
     ignored for extended box plots due to vertical spacing problem with

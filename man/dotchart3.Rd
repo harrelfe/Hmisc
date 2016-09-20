@@ -46,7 +46,7 @@ dotchartp(x, labels = NULL, groups = NULL, gdata = NULL,
             xlab = NULL, ylab = '', auxdata=NULL, auxtitle=NULL,
             auxgdata=NULL, auxwhere=c('right', 'hover'),
             axisat=NULL, axislabels=NULL, sort=TRUE, digits=4, dec=NULL,
-            height=NULL, width=NULL, layoutattr=FALSE, showlegend=TRUE, \dots) 
+            height=NULL, width=700, layoutattr=FALSE, showlegend=TRUE, \dots) 
 
 summaryD(formula, data=NULL, fun=mean, funm=fun,
          groupsummary=TRUE, auxvar=NULL, auxtitle='',

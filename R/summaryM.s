@@ -232,7 +232,7 @@ plot.summaryM <-
            prtest = c('P', 'stat', 'df', 'name'), pdig = 3, eps = 0.001,
            conType = c('bp', 'dot', 'raw'),
            cex.means = 0.5, cex=par('cex'),
-           height=NULL, width=NULL, ...)
+           height='auto', width=700, ...)
 {
   obj <- x
   vnames  <- match.arg(vnames)
@@ -1040,8 +1040,9 @@ plotpsummaryM <-
                   xlab=xlab, xlim=xlim,
                   auxdata=Frac, auxwhere='hover',
                   dec=3,
-                  height=if(height == 'auto')
+                  height=if(length(height) && height == 'auto')
                            plotlyHeightDotchart(nrow(z)) else height,
+                  width=width,
                   layoutattr=FALSE && nstrat > 1)
     }
 

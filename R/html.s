@@ -107,11 +107,11 @@ html.data.frame <-
   trans <- if(translate) htmlTranslate else function(x) x
   
   x   <- as.matrix(object)
-  for(i in 1:ncol(x)) {
-    xi <- x[,i]
+#  for(i in 1:ncol(x)) {
+#    xi <- x[,i]
 #    if(is.numeric(object[,i]))
 #      x[,i] <- paste0('<div align=right>', xi, '</div>')
-  }
+#  }
   if(rownames && length(r <- rownames(x)))
     x <- cbind(Name=as.character(r), x)
 
@@ -156,15 +156,19 @@ html.data.frame <-
     head <- paste0('<tr>', paste(head, collapse=''), '</tr>')
     R <- c(R, head)
     }
-  
+
   if(length(link)) {
-    if(is.matrix(link)) 
-      x[link != ''] <- paste0('<a ',linkType,'="', link[link!=''],'">',
-                              trans(x[link != '']), '</a>')
+    if(is.matrix(link))
+      for(j in 1 : ncol(x))
+        x[, j] <- ifelse(link[, j] == '', x[, j],
+                         paste0('<a ', linkType, '="', link[, j], '">',
+                              trans(x[, j]), '</a>'))
+#      x[link != ''] <- paste('<a ',linkType,'="', link[link!=''],'">',
+#                              trans(x[link != '']), '</a>', sep='')
     else
       x[,linkCol] <- ifelse(link == '', trans(x[, linkCol]),
-                            paste0('<a ',linkType,'="',link,'">',
-                                   trans(x[, linkCol]),'</a>'))
+                            paste0('<a ',linkType, '="', link, '">',
+                                   trans(x[, linkCol]), '</a>'))
   }
 
   for(i in 1 : nrow(x)) {

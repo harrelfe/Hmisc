@@ -132,6 +132,7 @@ dotchartp <-
             xlim = range(c(x, gdata), na.rm=TRUE), main=NULL,
             xlab = NULL, ylab = '', auxdata=NULL, auxtitle=NULL,
             auxgdata=NULL, auxwhere=c('right', 'hover'),
+            symbol='circle',
             axisat=NULL, axislabels=NULL, sort=TRUE, digits=4, dec=NULL,
             height=NULL, width=700, layoutattr=FALSE, showlegend=TRUE,
             ...) 
@@ -149,6 +150,9 @@ dotchartp <-
   x    <- as.matrix(x)
   n    <- nrow(x)
   nc   <- ncol(x)
+
+  symbol <- rep(symbol, length=nc)
+  
   if(length(gdata)) {
     gdata <- as.matrix(gdata)
     if(ncol(gdata) != nc) stop('gdata must have same columns as x')
@@ -190,7 +194,8 @@ dotchartp <-
   auxd <- NULL
   auxh <- auxwhere == 'hover'
   auxt <- if(length(auxtitle) && auxtitle != '')
-            ifelse(auxh, paste0(auxtitle, '<br>'), paste0(auxtitle, ':'))
+#            ifelse(auxh, paste0(auxtitle, '<br>'), paste0(auxtitle, ':'))
+  paste0(auxtitle, ':')
             else ''
   if(auxh)
     auxd <- if(length(auxdata))
@@ -203,7 +208,7 @@ dotchartp <-
     tly  <- c(tly, yg)
     if(auxh) auxd <- c(auxd,
                        if(length(auxgdata))
-                         paste0(auxt, lspace,
+                         paste0(auxt,  # was lspace after auxt,
                                 if(is.matrix(auxgdata)) auxgdata[, 1]
                                 else auxgdata)
                         else rep('', length(yg)))
@@ -211,11 +216,12 @@ dotchartp <-
   nx <- if(nc == 1) '' else colnames(x)[1]
   ht <- if(nx == '')   fmt(X)
         else paste(nx, '<br>', fmt(X))
-  if(auxh && any(auxd != '')) ht <- paste0(ht, lspace, auxd)
+  if(auxh && any(auxd != '')) ht <- paste0(ht, '<br>', auxd) # <br> was lspace
 
   d <- data.frame(X, y=tly, ht=ht)
 
   p <- plotly::plot_ly(d, x=X, y=y, mode='markers', type='scatter',
+                       marker=list(symbol=symbol[1]),
                        text = ht,
                        hoverinfo = 'text',
                        name=nx)
@@ -233,6 +239,7 @@ dotchartp <-
                                 fmt(X), lspace, ax))
 
       p <- plotly::add_trace(p, data=d, x=X, y=y, mode='markers',
+                             marker=list(symbol=symbol[i]),
                              text = ht, hoverinfo='text',
                              name=colnames(x)[i], evaluate=TRUE)
     }

@@ -167,7 +167,8 @@ dotchart3(cbind(y1,y2), g, groups=maj, auxdata=n, auxtitle='n',
 
 \dontrun{
 dotchartp(cbind(y1, y2), g, groups=maj, auxdata=n, auxtitle='n',
-          xlab='Y', gdata=cbind(c(0,.1),c(.23,.44)), auxgdata=c(-1,-2))
+          xlab='Y', gdata=cbind(c(0,.1), c(.23,.44)), auxgdata=c(-1,-2),
+          symbol=c('circle', 'line-ns-open'))
 }
 
 ## Put options(grType='plotly') to have the following use dotchartp

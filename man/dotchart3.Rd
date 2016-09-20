@@ -45,12 +45,16 @@ dotchartp(x, labels = NULL, groups = NULL, gdata = NULL,
             xlim = range(c(x, gdata), na.rm=TRUE), main=NULL,
             xlab = NULL, ylab = '', auxdata=NULL, auxtitle=NULL,
             auxgdata=NULL, auxwhere=c('right', 'hover'),
+            symbol='circle', col=colorspace::rainbow_hcl,
             axisat=NULL, axislabels=NULL, sort=TRUE, digits=4, dec=NULL,
             height=NULL, width=700, layoutattr=FALSE, showlegend=TRUE, \dots) 
 
 summaryD(formula, data=NULL, fun=mean, funm=fun,
          groupsummary=TRUE, auxvar=NULL, auxtitle='',
+         auxwhere=c('hover', 'right'),
          vals=length(auxvar) > 0, fmtvals=format,
+         symbol=if(use.plotly) 'circle' else 21,
+         col=if(use.plotly) colorspace::rainbow_hcl else 1:10,
          cex.auxdata=.7, xlab=v[1], ylab=NULL,
          gridevery=NULL, gridcol=gray(.95), sort=TRUE, \dots)
 }
@@ -82,7 +86,8 @@ summaryD(formula, data=NULL, fun=mean, funm=fun,
   \item{cex.group.labels}{\code{cex} for group labels}
 	\item{cex.auxdata}{\code{cex} for \code{auxdata}}
   \item{groupfont}{font number for group headings}
-	\item{auxwhere}{for \code{dotchartp} specifies whether \code{auxdata}
+	\item{auxwhere}{for \code{summaryD} and \code{dotchartp} specifies
+         whether \code{auxdata} 
          and \code{auxgdata} are to be placed on the far right of the
          chart, or should appear as pop-up tooltips when hovering the
          mouse over the ordinary \code{x} data points on the chart.
@@ -134,7 +139,14 @@ summaryD(formula, data=NULL, fun=mean, funm=fun,
 	\item{fmtvals}{an optional function to format values before putting
          them in the right margin.  Default is the \code{format}
          function.}
-	\item{gridevery}{specify a positive number to draw very faint vertical
+  \item{symbol}{a scalar or vector of \code{pch} values for ordinary
+         graphics or a character vector or scalar of \code{plotly}
+         symbols.   These correspond to columns of \code{x} or elements
+         produced by \code{fun}.}
+  \item{col}{a function or vector of colors to assign to multiple points
+         plotted in one line. If a function it will be evaluated with an
+         argument equal to the number of groups/columns.}
+ 	\item{gridevery}{specify a positive number to draw very faint vertical
     grid lines every \code{gridevery} \code{x}-axis units; for
     non-\code{plotly} charts}
 	\item{gridcol}{color for grid lines; default is very faint gray scale}

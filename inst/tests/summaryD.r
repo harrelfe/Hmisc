@@ -19,10 +19,18 @@ summaryD(y1 ~ maj, fun=function(y) c(mean(y), n=length(y)),
          auxvar='n')
 dev.off()
 
+# options(grType='plotly')
+sym <- if(grType() == 'plotly') c('circle', 'line-ns-open') else c(21, 3)
+h <- function(x) c(mean=mean(x), median=median(x), N=length(x))
+summaryD(Y  ~ maj + g, fun=h, auxvar='N', symbol=sym,
+         col=rep(colorspace::rainbow_hcl(1), 2))
+
+
 png('/tmp/summaryD2.png', width=300, height=100)
 # Or: pdf('/tmp/z.pdf', width=3.5, height=1.25)
 spar()
 summaryD(y1 ~ maj, fmtvals=function(x) round(x,4),
          xlab=labelPlotmath('Velocity', 'm/s'))
 dev.off()
+
 

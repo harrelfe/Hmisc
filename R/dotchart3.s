@@ -132,12 +132,13 @@ dotchartp <-
             xlim = range(c(x, gdata), na.rm=TRUE), main=NULL,
             xlab = NULL, ylab = '', auxdata=NULL, auxtitle=NULL,
             auxgdata=NULL, auxwhere=c('right', 'hover'),
-            symbol='circle',
+            symbol='circle', col=colorspace::rainbow_hcl,
             axisat=NULL, axislabels=NULL, sort=TRUE, digits=4, dec=NULL,
             height=NULL, width=700, layoutattr=FALSE, showlegend=TRUE,
             ...) 
 {
   auxwhere <- match.arg(auxwhere)
+  
   fmt <- if(length(dec)) function(x) format(round(x, dec))
          else
            function(x) format(x, digits=digits)
@@ -152,6 +153,11 @@ dotchartp <-
   nc   <- ncol(x)
 
   symbol <- rep(symbol, length=nc)
+  col <- if(length(col)) {
+           if(! is.function(col)) col
+           else col(ncol(x))
+         }
+  col    <- rep(col,    length=nc)
   
   if(length(gdata)) {
     gdata <- as.matrix(gdata)
@@ -221,7 +227,7 @@ dotchartp <-
   d <- data.frame(X, y=tly, ht=ht)
 
   p <- plotly::plot_ly(d, x=X, y=y, mode='markers', type='scatter',
-                       marker=list(symbol=symbol[1]),
+                       marker=list(symbol=symbol[1], color=col[1]),
                        text = ht,
                        hoverinfo = 'text',
                        name=nx)
@@ -239,7 +245,7 @@ dotchartp <-
                                 fmt(X), lspace, ax))
 
       p <- plotly::add_trace(p, data=d, x=X, y=y, mode='markers',
-                             marker=list(symbol=symbol[i]),
+                             marker=list(symbol=symbol[i], color=col[i]),
                              text = ht, hoverinfo='text',
                              name=colnames(x)[i], evaluate=TRUE)
     }
@@ -334,11 +340,15 @@ dotchartp <-
 
 summaryD <- function(formula, data=NULL, fun=mean, funm=fun,
                      groupsummary=TRUE, auxvar=NULL, auxtitle='',
+                     auxwhere=c('hover', 'right'),
                      vals=length(auxvar) > 0, fmtvals=format,
+                     symbol=if(use.plotly) 'circle' else 21,
+                     col=if(use.plotly) colorspace::rainbow_hcl else 1:10,
                      cex.auxdata=.7, xlab=v[1], ylab=NULL,
                      gridevery=NULL, gridcol=gray(.95), sort=TRUE, ...) {
 
   use.plotly <- grType() == 'plotly'
+  auxwhere <- match.arg(auxwhere)
 
   if(! missing(fmtvals)) vals <- TRUE
   data <- if(! length(data)) environment(formula)
@@ -354,7 +364,7 @@ summaryD <- function(formula, data=NULL, fun=mean, funm=fun,
   x2  <- if(two) get(xn[2], envir=data)
 
   s   <- summarize(y, if(two) llist(x1, x2) else llist(x1), fun,
-                   type='matrix')
+                   type='matrix', keepcolnames=TRUE)
   ## if(is.matrix(s$y)) colnames(s$y) <- colnames(y)
 
   cx1 <- if(is.factor(s$x1)) as.integer(s$x1)
@@ -382,21 +392,29 @@ summaryD <- function(formula, data=NULL, fun=mean, funm=fun,
   z <- auxd(s)
   if(two) {
     if(groupsummary) {
-      s2 <- summarize(y, llist(x1), funm, type='matrix')
+      s2 <- summarize(y, llist(x1), funm, type='matrix', keepcolnames=TRUE)
       z2 <- auxd(s2)
     }
     z  <- auxd(s)
-    
+
+    col <- if(length(col)) {
+             if(! is.function(col)) col
+             else
+               col(ncol(z$sy))
+             }
+
+
     ## if already sorted (group variable order first) don't re-sort
     ## sort causes problems to dotchart3
 
     res <- if(use.plotly)
              dotchartp(z$sy, s$x2, groups=s$x1,
                        auxdata=z$fval, auxtitle=if(vals) auxtitle,
+                       auxwhere=auxwhere,
                        cex.auxdata=cex.auxdata,
                        gdata   =if(groupsummary) z2$sy,
                        auxgdata=if(groupsummary) z2$fval,
-                       xlab=xlab, ylab=ylab,
+                       xlab=xlab, ylab=ylab, symbol=symbol, col=col,
                        sort=FALSE, ...)
            else
              dotchart3(z$sy, s$x2, groups=s$x1,
@@ -404,17 +422,19 @@ summaryD <- function(formula, data=NULL, fun=mean, funm=fun,
                        cex.auxdata=cex.auxdata,
                        gdata   =if(groupsummary) z2$sy,
                        auxgdata=if(groupsummary) z2$fval,
-                       xlab=xlab, ylab=ylab, ...) 
+                       xlab=xlab, ylab=ylab, pch=symbol, ...) 
   }
   else
     res <- if(use.plotly)
              dotchartp(z$sy, s$x1, auxdata=z$fval,
                        auxtitle=if(vals) auxtitle,
+                       auxwhere=auxwhere,
                        cex.auxdata=cex.auxdata, xlab=xlab, ylab=ylab,
+                       symbol=symbol,
                        sort=FALSE, ...)
            else
              dotchart3(z$sy, s$x1, auxdata=z$fval,
-                       auxtitle=if(vals) auxtitle,
+                       auxtitle=if(vals) auxtitle, pch=symbol,
                        cex.auxdata=cex.auxdata, xlab=xlab, ylab=ylab, ...)
 
   if(! use.plotly && length(gridevery)) {

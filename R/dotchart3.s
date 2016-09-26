@@ -133,6 +133,7 @@ dotchartp <-
             xlab = NULL, ylab = '', auxdata=NULL, auxtitle=NULL,
             auxgdata=NULL, auxwhere=c('right', 'hover'),
             symbol='circle', col=colorspace::rainbow_hcl,
+            legendgroup=NULL,
             axisat=NULL, axislabels=NULL, sort=TRUE, digits=4, dec=NULL,
             height=NULL, width=700, layoutattr=FALSE, showlegend=TRUE,
             ...) 
@@ -230,7 +231,8 @@ dotchartp <-
                        marker=list(symbol=symbol[1], color=col[1]),
                        text = ht,
                        hoverinfo = 'text',
-                       name=nx)
+                       name=nx,
+                       legendgroup=if(length(legendgroup)) legendgroup[1])
   if(nc > 1)
     for(i in 2 : nc) {
       X   <- x[, i]
@@ -247,6 +249,7 @@ dotchartp <-
       p <- plotly::add_trace(p, data=d, x=X, y=y, mode='markers',
                              marker=list(symbol=symbol[i], color=col[i]),
                              text = ht, hoverinfo='text',
+                             legendgroup=if(length(legendgroup)) legendgroup[i],
                              name=colnames(x)[i], evaluate=TRUE)
     }
 
@@ -295,7 +298,7 @@ dotchartp <-
   if(! length(ylab)) ylab <- ''
   tty <- ifelse(nchar(tty) >= 40,  mu$smaller2(tty),
            ifelse(nchar(tty) > 20, mu$smaller(tty),  tty))
-  leftmargin <- min(180, max(nchar(tty)) * 8)
+  leftmargin <- plotlyParm$lrmargin(tty)
   rx <- if(auxwhere == 'right' && lenaux > 0) dx else dx / 2
 
   ylim <- c(min(y) - .15, max(y) + 1.5)
@@ -310,7 +313,7 @@ dotchartp <-
                         tickvals=tly, ticktext=tty),
              width=width,
              height=if(length(height) && height == 'auto')
-                      plotlyHeightDotchart(n) else height,
+                      plotlyParm$heightDotchart(n) else height,
              autosize=(length(width) + length(height)) == 0,
              margin=list(l=leftmargin, t=5),
              showlegend=showlegend)
@@ -319,7 +322,6 @@ dotchartp <-
     attr(p, 'layout') <- lo
     return(p)
   }
-
   plotly::layout(p,
                  title = main,
                  xaxis = list(title=xlab,
@@ -332,10 +334,10 @@ dotchartp <-
                             tickvals=tly, ticktext=tty),
                  width = width,
                  height= if(length(height) && height == 'auto')
-                          plotlyHeightDotchart(n) else height,
+                          plotlyParm$heightDotchart(n) else height,
                  # autosize=(length(width) + length(height)) == 0,
                  margin = list(l=leftmargin, t=5),
-                 showlegend = showlegend)
+                 legendgroup=legendgroup, showlegend = showlegend)
 }
 
 summaryD <- function(formula, data=NULL, fun=mean, funm=fun,
@@ -344,6 +346,7 @@ summaryD <- function(formula, data=NULL, fun=mean, funm=fun,
                      vals=length(auxvar) > 0, fmtvals=format,
                      symbol=if(use.plotly) 'circle' else 21,
                      col=if(use.plotly) colorspace::rainbow_hcl else 1:10,
+                     legendgroup=NULL,
                      cex.auxdata=.7, xlab=v[1], ylab=NULL,
                      gridevery=NULL, gridcol=gray(.95), sort=TRUE, ...) {
 
@@ -400,7 +403,7 @@ summaryD <- function(formula, data=NULL, fun=mean, funm=fun,
     col <- if(length(col)) {
              if(! is.function(col)) col
              else
-               col(ncol(z$sy))
+               col(if(is.matrix(z$sy)) ncol(z$sy) else 1)
              }
 
 
@@ -415,7 +418,7 @@ summaryD <- function(formula, data=NULL, fun=mean, funm=fun,
                        gdata   =if(groupsummary) z2$sy,
                        auxgdata=if(groupsummary) z2$fval,
                        xlab=xlab, ylab=ylab, symbol=symbol, col=col,
-                       sort=FALSE, ...)
+                       legendgroup=legendgroup, sort=FALSE, ...)
            else
              dotchart3(z$sy, s$x2, groups=s$x1,
                        auxdata=z$fval, auxtitle=if(vals) auxtitle,
@@ -430,7 +433,7 @@ summaryD <- function(formula, data=NULL, fun=mean, funm=fun,
                        auxtitle=if(vals) auxtitle,
                        auxwhere=auxwhere,
                        cex.auxdata=cex.auxdata, xlab=xlab, ylab=ylab,
-                       symbol=symbol,
+                       symbol=symbol, col=col, legendgroup=legendgroup,
                        sort=FALSE, ...)
            else
              dotchart3(z$sy, s$x1, auxdata=z$fval,

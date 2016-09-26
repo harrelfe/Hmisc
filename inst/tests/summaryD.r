@@ -21,9 +21,11 @@ dev.off()
 
 # options(grType='plotly')
 sym <- if(grType() == 'plotly') c('circle', 'line-ns-open') else c(21, 3)
-h <- function(x) c(mean=mean(x), median=median(x), N=length(x))
-summaryD(Y  ~ maj + g, fun=h, auxvar='N', symbol=sym,
-         col=rep(colorspace::rainbow_hcl(1), 2))
+h <- function(x) c(mean=mean(x), Q1=unname(quantile(x, .25)),
+                 Q3=unname(quantile(x, .75)), N=length(x))
+summaryD(Y  ~ maj + g, fun=h, auxvar='N', symbol=sym[c(1,2,2)],
+         col=colorspace::rainbow_hcl(2)[c(1,2,2)],
+         legendgroup=c('Mean', 'Quartiles', 'Quartiles'))
 
 
 png('/tmp/summaryD2.png', width=300, height=100)

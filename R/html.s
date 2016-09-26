@@ -271,28 +271,24 @@ markupSpecs <- list(html=list(
     paste0('<span style="font-family:Verdana;font-size:12px;color:MidnightBlue;">',
            paste(unlist(list(...)), collapse=' '), '</span>'),
 
-  tcap      = function(..., scap=NULL, subsub=TRUE) { # table caption formatting
-    mu <- markupSpecs$html
+  tcap      = function(...) { # table caption formatting
     lcap <- paste(unlist(list(...)), collapse=' ')
-    if(! subsub) return(mu$lcap(lcap))
-    r <- if(subsub) '### ' else ''
-    if(! length(scap)) {
-      scap <- lcap
-      lcap <- NULL
-    }
-    r <- paste0(r, '<span style="font-family:Verdana;font-size:10px;">Table: </span><span style="font-family:Verdana;font-size:12px;color:MidnightBlue;">',
-                scap, '</span>')
-    if(length(lcap)) r <- paste0(r, '\n', mu$lcap(lcap), '\n')
-    r
+    paste0('<span style="font-family:Verdana;font-size:10px;">Table: </span><span style="font-family:Verdana;font-size:12px;color:MidnightBlue;">',
+             lcap, '</span>')
   },
+  
+  ltcap     = function(...) # for continuation of table caption
+    paste0('<span style="font-family:Verdana;font-size:12px;color:MidnightBlue;">',
+           paste(unlist(list(...)), collapse=' '), '</span>'),
+
   expcoll = function(vis, invis) {
       id <- floor(runif(1, 100000, 999999))  # unique html id
-      paste0('<a href="#"', id, '" id="', id,
+      paste0('<a href="#', id, '" id="', id,
              '_earrows" class="earrows" onclick="expand_collapse(\'',
              id, '\');">&#9660;</a>',
-             vis, '<div id="', id,
+             vis, '<span id="', id,
              '" style="display:none;">',
-             invis, '</div>')
+             invis, '</span>')
     },
   
   session  = function(cite=TRUE, loadedOnly=FALSE) {

@@ -97,7 +97,7 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
                            hoverinfo='text',
                            evaluate=TRUE)
     }
-  leftmargin <- min(225, max(nchar(ytnb)) * 8)
+  leftmargin <- plotlyParm$lrmargin(ytnb)
   plotly::layout(p,
                  xaxis=list(title=xlab,
                             range=if(length(xlim)) xlim else range(x),
@@ -106,5 +106,6 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
                             range=c(min(Y) - 0.2, 0.2),
                             zeroline=FALSE, tickvals=yl, ticktext=yt),
                  margin=list(l=leftmargin),
-                 height=plotlyHeightDotchart(lines), width=width, colors=cols)
+                 height=plotlyParm$heightDotchart(lines), width=width,
+                 colors=cols)
   }

@@ -13,7 +13,7 @@
 \alias{makeSteps}
 \alias{nomiss}
 \alias{outerText}
-\alias{plotlyHeightDotchart}
+\alias{plotlyParm}
 \alias{sepUnitsTrans}
 \alias{strgraphwrap}
 \alias{trap.rule}
@@ -110,8 +110,8 @@
   strings in the right margin.  Placement depends on
   \code{par('mar')[4]}
 
-	\code{plotlyHeightDotchart} comes the needed height in pixels for a
-	\code{plotly} dot chart, given the number of rows in the chart.
+	\code{plotlyParm} is a list of functions useful for specifying
+	parameters to \code{plotly} graphics.
 
   \code{sepUnitsTrans} converts character vectors containing values such
   as \code{c("3 days","3day","4month","2 years","2weeks","7")} to
@@ -170,7 +170,7 @@ lm.fit.qr.bare(x, y, tolerance, intercept=TRUE, xpxi=FALSE, singzero=FALSE)
 matxv(a, b, kint=1, bmat=FALSE)
 nomiss(x)
 outerText(string, y, cex=par('cex'), \dots)
-plotlyHeightDotchart(rows)
+plotlyParm
 sepUnitsTrans(x, conversion=c(day=1, month=365.25/12, year=365.25, week=7),
               round=FALSE, digits=0)
 strgraphwrap(x, width = 0.9 * getOption("width"),
@@ -234,7 +234,6 @@ xless(x, \dots, title)
 	left, top, right.}
   \item{str}{a character string vector}
   \item{string}{a character string vector}
-	\item{rows}{an integer}
   \item{ticks}{set to \code{TRUE} to draw lines between rectangles}
   \item{times}{a numeric vector of times}
   \item{title}{a character string to title a window or plot}

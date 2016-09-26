@@ -1041,7 +1041,7 @@ plotpsummaryM <-
                   auxdata=Frac, auxwhere='hover',
                   dec=3,
                   height=if(length(height) && height == 'auto')
-                           plotlyHeightDotchart(nrow(z)) else height,
+                           plotlyParm$heightDotchart(nrow(z)) else height,
                   width=width,
                   layoutattr=FALSE && nstrat > 1)
     }

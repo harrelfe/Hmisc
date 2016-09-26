@@ -1,4 +1,4 @@
-Changes in version 4.0-0 (2016-09-21)
+Changes in version 4.0-0 (2016-09-26)
    * summaryP: fixed exclude1 logic - was not excluding enough levels (inconsistent use of variable names vs. labels)
 	 * latexTranslate: any NAs in first argument changed to "" before conversion
 	 * minor.tick: added arguments to pass through (thanks: vhorvath)
@@ -56,7 +56,7 @@ Changes in version 4.0-0 (2016-09-21)
 	 * putHfig: new function to render graphics with captions in HTML reports
 	 * pngNeedle: new function, like latexNeedle but useful with HTML reports
 	 * html.data.frame: added width and caption arguments
-	 * plotlyHeightDotchart: new function for automatically computing height of plotly dotcharts
+	 * plotlyParm: list object with plotly helper functions
 	 * summaryD, dotchartp: added symbol and col arguments
 
 Changes in version 3.17-4 (2016-05-02)

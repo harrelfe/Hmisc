@@ -1777,8 +1777,31 @@ plotlySave <- function(x, ...) {
   invisible()
 }
 
-## Needed height in pixels for a plotly dot chart given the number of
-## rows in the chart
+## Miscellaneous functions helpful for plotly specifications
 
-plotlyHeightDotchart <- function(rows) 
-  min(800, max(200, 25 * rows))
+plotlyParm = list(
+  ## Needed height in pixels for a plotly dot chart given the number of
+  ## rows in the chart
+  heightDotchart = function(rows) min(800, max(200, 25 * rows)),
+
+  ## Colors for unordered categories
+  colUnorder = function(n=5, col=colorspace::rainbow_hcl) {
+    if(! is.function(col)) rep(col, length=n)
+    else col(n)
+  },
+
+  ## Colors for ordered levels
+  colOrdered = function(n=5, col=viridis::viridis) {
+    if(! is.function(col)) rep(col, length=n)
+    else col(n)
+  },
+
+  ## Margin to leave enough room for long labels on left or right as
+  ## in dotcharts
+  lrmargin = function(x, mult=7) {
+    if(is.character(x)) x <- max(nchar(x))
+    min(190, max(70, x * mult))
+    }
+ 
+  )
+

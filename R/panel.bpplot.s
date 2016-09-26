@@ -399,8 +399,7 @@ bppltp <- function(p=plotly::plot_ly(),
     size.qref[qref == .5] <- k
   }
 
-  leftmargin <- min(280, max(nchar(as.character(groups))) * 8)
-  leftmargin <- max(leftmargin, 60)
+  leftmargin <- plotlyParm$lrmargin(as.character(groups))
 
   y <- ng + 1
   X <- Y <- numeric(0)

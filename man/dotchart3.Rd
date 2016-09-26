@@ -46,6 +46,7 @@ dotchartp(x, labels = NULL, groups = NULL, gdata = NULL,
             xlab = NULL, ylab = '', auxdata=NULL, auxtitle=NULL,
             auxgdata=NULL, auxwhere=c('right', 'hover'),
             symbol='circle', col=colorspace::rainbow_hcl,
+            legendgroup=NULL,
             axisat=NULL, axislabels=NULL, sort=TRUE, digits=4, dec=NULL,
             height=NULL, width=700, layoutattr=FALSE, showlegend=TRUE, \dots) 
 
@@ -55,6 +56,7 @@ summaryD(formula, data=NULL, fun=mean, funm=fun,
          vals=length(auxvar) > 0, fmtvals=format,
          symbol=if(use.plotly) 'circle' else 21,
          col=if(use.plotly) colorspace::rainbow_hcl else 1:10,
+         legendgroup=NULL,
          cex.auxdata=.7, xlab=v[1], ylab=NULL,
          gridevery=NULL, gridcol=gray(.95), sort=TRUE, \dots)
 }
@@ -146,6 +148,8 @@ summaryD(formula, data=NULL, fun=mean, funm=fun,
   \item{col}{a function or vector of colors to assign to multiple points
          plotted in one line. If a function it will be evaluated with an
          argument equal to the number of groups/columns.}
+  \item{legendgroup}{see \code{plotly} documentation; corresponds to
+         column names/\code{fun} output for \code{plotly} graphs only}
  	\item{gridevery}{specify a positive number to draw very faint vertical
     grid lines every \code{gridevery} \code{x}-axis units; for
     non-\code{plotly} charts}

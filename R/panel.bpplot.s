@@ -322,7 +322,7 @@ bpplotM <- function(formula=NULL, groups=NULL, data=NULL, subset=NULL,
   d
 }
 
-bppltp <- function(p=plotly::plot_ly(type='scatter', mode='lines'),
+bppltp <- function(p=plotly::plot_ly(),
                    stats, xlim, xlab='', box.ratio = 1, means=TRUE,
                    qref=c(.5,.25,.75), qomit=c(.025,.975),
                    teststat=NULL, showlegend=TRUE) {
@@ -339,7 +339,7 @@ bppltp <- function(p=plotly::plot_ly(type='scatter', mode='lines'),
     quan <- ifelse(wquan == 0.5,
                    paste0(group, if(group != '') '<br>',
                           'Q<sub>', wquan, '</sub>=', signif(quan, 4)), '')
-
+    return(list(x0=x0, y0=y0, x1=x1, y1=y1, z=quan))
     x[seq(1, m, by=3)] <- x0
     x[seq(2, m, by=3)] <- x1
     y[seq(1, m, by=3)] <- y0
@@ -358,7 +358,7 @@ bppltp <- function(p=plotly::plot_ly(type='scatter', mode='lines'),
          y=c(y, y[1], NA),
          z=c(qq, qq[1], ''))
 #    list(x=c(x, x[1]), y=c(y, y[1]), z=c(qq, qq[1]))
-    }
+  }
     
   Means <- stats[, 'Mean']
   N     <- stats[, 'N']
@@ -405,7 +405,9 @@ bppltp <- function(p=plotly::plot_ly(type='scatter', mode='lines'),
   y <- ng + 1
   X <- Y <- numeric(0)
   Z <- character(0)
-#  X <- Y <- X0 <- X1 <- Y0 <- Y1 <- numeric(0)
+  X0 <- X1 <- Y0 <- Y1 <- numeric(0)
+  Zs <- character(0)
+
 #  Z <- Zs <- character(0)
 
   for(i in 1 : ng) {
@@ -419,14 +421,14 @@ bppltp <- function(p=plotly::plot_ly(type='scatter', mode='lines'),
     seg <- segm(x0=qref.x, y0=qref.y - qref.mod,
                 x1=qref.x, y1=qref.y + qref.mod,
                 wquan=qref, quan=qref.x, group=groups[i])
-    X <- c(X, seg$x)
-    Y <- c(Y, seg$y)
-    Z <- c(Z, seg$z)
-#    X0 <- c(X0, seg$x0)
-#    X1 <- c(X1, seg$x1)
-#    Y0 <- c(Y0, seg$y0)
-#    Y1 <- c(Y1, seg$y1)
-#    Zs <- c(Zs, seg$z)
+#    X <- c(X, seg$x)
+#    Y <- c(Y, seg$y)
+#    Z <- c(Z, seg$z)
+    X0 <- c(X0, seg$x0)
+    X1 <- c(X1, seg$x1)
+    Y0 <- c(Y0, seg$y0)
+    Y1 <- c(Y1, seg$y1)
+    Zs <- c(Zs, seg$z)
 
     ## Add polygon
     jj <- match(probs2, qq)[j]
@@ -446,8 +448,16 @@ bppltp <- function(p=plotly::plot_ly(type='scatter', mode='lines'),
 #                        line=list(color='MidnightBlue'),
 #                            hoverinfo='text')
 
-  p <- plotly::add_lines(p, x=~X, y=~Y, text=~Z, name='Quantiles',
-                         color=I('LightGray'), hoverinfo='text')
+  p <- plotly::add_markers(p, x=~X, y=~Y, text=~Z, hoverinfo='text',
+                           marker=list(symbol='asterisk'))
+  p <- plotly::add_polygons(p, x=~X, y=~Y, color=I('LightGray'),
+                            mode='markers', showlegend=FALSE)
+  p <- plotly::add_segments(p, x=~X0, y=~Y0, xend=~X1, yend=~Y1,
+                            text=~Zs, hoverinfo='text',
+                            color=I('LightGreen'))
+  
+#  p <- plotly::add_lines(p, x=~X, y=~Y, text=~Z, name='Quantiles',
+#                         color=I('LightGray'), hoverinfo='text')
   
   if(means) {
     z <- paste0(groups, '<br>',

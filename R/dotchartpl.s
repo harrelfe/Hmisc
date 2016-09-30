@@ -106,6 +106,6 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
                             range=c(min(Y) - 0.2, 0.2),
                             zeroline=FALSE, tickvals=yl, ticktext=yt),
                  margin=list(l=leftmargin),
-                 height=plotlyParm$heightDotchart(lines), width=width,
-                 colors=cols)
+                 height=plotlyParm$heightDotchart(lines), width=width)
+#                 colors=cols)
   }

@@ -333,7 +333,7 @@ prList <- function(x, lcap=NULL, htmlfig=0, after=FALSE) {
       for(m in names(y)) {
         if(! after) 
           cat('\n', g(paste0(n, ': ', m)), '\n', sep='')
-        print(y[[m]])
+        suppressWarnings(print(y[[m]]))   # for plotly warnings
         if(after) cat('\n', g(paste0(n, ': ', m)), '\n', sep='')
       }
       if(length(lcap) && lcap[i] != '') cat(mu$lcap(lcap[i]))
@@ -341,7 +341,7 @@ prList <- function(x, lcap=NULL, htmlfig=0, after=FALSE) {
     else {
       if(! after)
         cat('\n', g(n, if(length(lcap)) lcap[i]), '\n', sep='')
-      print(x[[n]])
+      suppressWarnings(print(x[[n]]))
       if(after) cat('\n', g(n, if(length(lcap)) lcap[i]), '\n', sep='')
     }
   }

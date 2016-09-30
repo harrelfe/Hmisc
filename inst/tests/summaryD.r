@@ -12,10 +12,10 @@ summaryD(y1 ~ maj + g, xlab='Mean', auxtitle='', fmtvals=f)
 summaryD(y1 ~ maj + g, groupsummary=FALSE)
 summaryD(y1 ~ g, fmtvals=f, auxtitle='')
 Y <- cbind(y1, y2)
-summaryD(Y  ~ maj + g, fun=function(y) y[1,], pch=c(1,17))
+summaryD(Y  ~ maj + g, fun=function(y) y[1,], symbol=c(1,17))
 rlegend(.1, 26, c('y1','y2'), pch=c(1,17))
 
-summaryD(y1 ~ maj, fun=function(y) c(mean(y), n=length(y)),
+summaryD(y1 ~ maj, fun=function(y) c(Mean=mean(y), n=length(y)),
          auxvar='n')
 dev.off()
 

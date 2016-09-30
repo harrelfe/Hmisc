@@ -528,12 +528,11 @@ histSpikep <- function(p, x, y, z, group=NULL, color=NULL, hovertext=NULL,
   j <- seq(2, n, by=3)
   d$y[j] <- d$y[j] + d$z[j] / ifelse(bottom.align, 1, 2)
 
-  plotly::plot_ly(d, x=x, y=y, mode='lines',
+  plotly::plot_ly(d, x=~ x, y=~ y, mode='lines', type='scatter',
 #                  color=d$color,# colors=colors,
                   line=list(color=d$color, width=1.4),  # ...
-                  text=hovertext,
+                  text=~ hovertext,
                   hoverinfo=if(length(hovertext)) 'text' else 'none')
-#                  evaluate=TRUE) #, name=tracename)
 
 #  plotly::add_trace(p, data=d, x=x, y=y, mode='lines',
 #                    color=color, colors=colors,

@@ -1065,7 +1065,7 @@ plotpsummaryM <-
                                       html=TRUE,
                                       pdig=pdig, eps=eps)
 
-        p[[ii]] <- bppltp(plotly::plot_ly(), st, xlab=nam, teststat=teststat,
+        p[[ii]] <- bppltp(stats=st, xlab=nam, teststat=teststat,
                           showlegend=FALSE)
 
       }

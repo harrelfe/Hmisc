@@ -58,15 +58,14 @@ pngNeedle(y, col='black', href=0.5, w=6, h=18,
   \item{extra}{extra space in inches to set aside to the right of and
 		above the series of boxes or frame}
   \item{file}{name of file to which to write LaTeX code.  Default is the
-    console.} 
+    console.  Also used as base file name for png graphic.  Default for
+          that is from \code{tempfile}.}
   \item{append}{set to \code{FALSE} to write over \code{file}}
 	\item{col}{a vector of colors corresponding to positions in \code{y}.
     \code{col} is repeated if too short.}
 	\item{href}{values of \code{y} (0-1) for which horizontal grayscale
     reference lines are drawn for \code{latexNeedle}.  Set to
     \code{NULL} to not draw any.}
-	\item{file}{base file name for png graphic.  Default is from
-    \code{tempfile}.}
 	\item{dir}{directory in which to place png graphic}
 }
 \author{Frank Harrell}

@@ -28,7 +28,7 @@ html(object, \dots)
   rmarkdown=FALSE, cleanup=TRUE, \dots)
 \method{html}{data.frame}(object,
   file=paste(first.word(deparse(substitute(object))),'html',sep='.'), header,
-     caption=NULL, rownames=TRUE, align='r', align.header='c',
+     caption=NULL, rownames=FALSE, align='r', align.header='c',
      bold.header=TRUE, col.header='Black',
      border=2, width=NULL, size=100, translate=FALSE,
      append=FALSE, link=NULL, linkCol=1,
@@ -87,7 +87,8 @@ writing to the console.
 \item{translate}{set to \code{TRUE} to run header and table cell text
 	through the \code{htmlTranslate} function}
 \item{width}{optional table width for \code{html.data.frame}.  For full
-	page width use \code{width="100\%"}.}
+	page width use \code{width="100\%"}, for use in \code{options()} for
+	printing objects.}
 \item{size}{a number between 0 and 100 representing the percent of the
 	prevailing character size to be used by \code{htmlVerbatim} and the
 	data frame method.}
@@ -103,7 +104,6 @@ writing to the console.
 \item{linkType}{defaults to \code{"href"}}
 \item{\dots}{ignored except for \code{htmlVerbatim} - is a list of
 	objects to \code{print()}}
-\item{width}{width to use in \code{options()} for printing objects}
 \item{scroll}{set to \code{TRUE} to put the html in a scrollable
 	\code{textarea}}
 \item{rows,cols}{the number of rows and columns to devote to the visable

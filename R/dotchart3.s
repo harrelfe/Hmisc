@@ -227,9 +227,9 @@ dotchartp <-
 
   d <- data.frame(X, y=tly, ht=ht)
 
-  p <- plotly::plot_ly(d, x=X, y=y, mode='markers', type='scatter',
+  p <- plotly::plot_ly(d, x=~ X, y=~ y, mode='markers', type='scatter',
                        marker=list(symbol=symbol[1], color=col[1]),
-                       text = ht,
+                       text = ~ ht,
                        hoverinfo = 'text',
                        name=nx,
                        legendgroup=if(length(legendgroup)) legendgroup[1])
@@ -246,11 +246,11 @@ dotchartp <-
                       ht=paste0(colnames(x)[i], '<br>',
                                 fmt(X), lspace, ax))
 
-      p <- plotly::add_trace(p, data=d, x=X, y=y, mode='markers',
+      p <- plotly::add_markers(p, data=d, x=~ X, y=~ y, #mode='markers',
                              marker=list(symbol=symbol[i], color=col[i]),
-                             text = ht, hoverinfo='text',
+                             text = ~ ht, hoverinfo='text',
                              legendgroup=if(length(legendgroup)) legendgroup[i],
-                             name=colnames(x)[i], evaluate=TRUE)
+                             name=colnames(x)[i])
     }
 
   dx    <- 0.1 * diff(xlim)
@@ -275,9 +275,9 @@ dotchartp <-
       tb <- c(tb, paste('<b>', auxgdata, '</b>', sep=''))
       }
     z <- data.frame(xb=xlim[2] + dx, yb, tb)
-    p <- plotly::add_trace(p, data=z, x=xb, y=yb, text=tb, evaluate=TRUE,
-                           mode='text', textposition='left',
-                           textfont=list(size=10), hoverinfo='none', name='')
+    p <- plotly::add_text(p, data=z, x=~ xb, y=~ yb, text=~ tb,  # mode='text',
+                          textposition='left',
+                          textfont=list(size=10), hoverinfo='none', name='')
   }
 
   if(length(axisat)) {tlx <- axisat; ttx <- axislabels}

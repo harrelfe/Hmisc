@@ -322,7 +322,7 @@ bpplotM <- function(formula=NULL, groups=NULL, data=NULL, subset=NULL,
   d
 }
 
-bppltp <- function(p=plotly::plot_ly(),
+bppltp <- function(p=plotly::plot_ly(type='scatter', mode='lines'),
                    stats, xlim, xlab='', box.ratio = 1, means=TRUE,
                    qref=c(.5,.25,.75), qomit=c(.025,.975),
                    teststat=NULL, showlegend=TRUE) {
@@ -357,6 +357,7 @@ bppltp <- function(p=plotly::plot_ly(),
     list(x=c(x, x[1], NA),
          y=c(y, y[1], NA),
          z=c(qq, qq[1], ''))
+#    list(x=c(x, x[1]), y=c(y, y[1]), z=c(qq, qq[1]))
     }
     
   Means <- stats[, 'Mean']
@@ -404,6 +405,8 @@ bppltp <- function(p=plotly::plot_ly(),
   y <- ng + 1
   X <- Y <- numeric(0)
   Z <- character(0)
+#  X <- Y <- X0 <- X1 <- Y0 <- Y1 <- numeric(0)
+#  Z <- Zs <- character(0)
 
   for(i in 1 : ng) {
     y <- y - 1
@@ -419,6 +422,11 @@ bppltp <- function(p=plotly::plot_ly(),
     X <- c(X, seg$x)
     Y <- c(Y, seg$y)
     Z <- c(Z, seg$z)
+#    X0 <- c(X0, seg$x0)
+#    X1 <- c(X1, seg$x1)
+#    Y0 <- c(Y0, seg$y0)
+#    Y1 <- c(Y1, seg$y1)
+#    Zs <- c(Zs, seg$z)
 
     ## Add polygon
     jj <- match(probs2, qq)[j]
@@ -430,25 +438,32 @@ bppltp <- function(p=plotly::plot_ly(),
     Z <- c(Z, po$z)
   }
 
-  p <- plotly::add_trace(p, x=X, y=Y, text=Z,
-                         name='Quantiles', mode='lines',
-                         line=list(color='MidnightBlue'),
-                         hoverinfo='text', evaluate=TRUE)
+ # p <- plotly::add_segments(p, x=~X0, y=~X0, xend=~X1, yend=~Y1, name='seg')
+
+#  p <- plotly::add_polygons(p, x=~ X, y=~ Y, text=~ Z,
+#                            name='Quantiles', mode='lines',
+#                            color=I('LightGray'),
+#                        line=list(color='MidnightBlue'),
+#                            hoverinfo='text')
+
+  p <- plotly::add_lines(p, x=~X, y=~Y, text=~Z, name='Quantiles',
+                         color=I('LightGray'), hoverinfo='text')
+  
   if(means) {
     z <- paste0(groups, '<br>',
                 'Mean=', signif(Means, 4), '<br>N=', N)
     if(length(teststat)) z <- paste0(z, '<br>', teststat)
-    p <- plotly::add_trace(p, x=Means, y=ng : 1, text=z,
-                           mode='markers', marker=list(color='LightBlue'),
+    p <- plotly::add_markers(p, x=~ Means, y=~ ng : 1, text=~ z, mode='markers',
+                           marker=list(color='LightBlue'),
                            hoverinfo='text',
-                           name='Means', evaluate=TRUE)
+                           name='Means')
   }
-  p <- plotly::layout(p, autosize=TRUE, evaluate=TRUE,
-                      showlegend=showlegend,
-                      margin=list(l=leftmargin),
-                      xaxis=list(title=xlab, range=xlim),
-                      yaxis=list(zeroline=FALSE,
-                                 tickvals=ng : 1,
-                                 ticktext=groups))
-  p
+  plotly::layout(p, autosize=TRUE,
+                 showlegend=showlegend,
+                 margin=list(l=leftmargin),
+                 xaxis=list(title=xlab, range=xlim),
+                 yaxis=list(zeroline=FALSE,
+                            title='',
+                            tickvals=ng : 1,
+                            ticktext=groups))
 }

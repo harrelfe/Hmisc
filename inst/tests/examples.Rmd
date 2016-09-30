@@ -39,8 +39,8 @@ lcap <- mu$lcap          # for continuation for long caption
 The following (<code>r mu$styles()</code>) defines HTML styles and javascript functions, such as <code>ffig, smg</code> and the function for expanding and collapsing text as done by the <code>expcoll</code> function. 
 `r mu$styles()`
 
-Example using <code>expcoll</code>.  Unfortunately clicking the expand/collapse arrow scrolls the file back to the top.
-`r mu$expcoll('short text', 'much longer text')`
+Example using <code>expcoll</code>.  Click on the down arrow to expand; it turns to an up arrow which can be clicked to contract.
+`r mu$expcoll('Example table', html(data.frame(x1=runif(10), x2=letters[1:10]),file=FALSE))`
 
 The following (<code>r mu$widescreen()</code>) causes the html notebook to use an entire wide screen.
 `r mu$widescreen()`
@@ -96,7 +96,7 @@ prList(p, lcap=c('', 'These are spike histograms'), htmlfig=2)
 You can also re-form multiple `plotly` graphs into a [single HTML object](http://stackoverflow.com/questions/35193612).  Here we use the `putHfig` function to render the result, with a caption and a short caption for the table of contents.  This approach requires you to put <code>results='asis'</code> in the chunk header.  By default <code>putHfig</code> puts a horizontal line before the caption and figure.
 
 ```{r plotlym,results='asis'}
-x <- htmltools::tagList(lapply(p, plotly::as.widget))
+x <- htmltools::tagList(p)  #lapply(p, plotly::as.widget))
 putHfig(x, 'This used the <code>htmltools tagList</code> function.',
         scap='Two <code>plotly</code> graphics combined into one')
 ```

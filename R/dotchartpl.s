@@ -82,8 +82,8 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
   d  <- data.frame(X, Y, Group, Htext, Big)
   if(any(d$Big)) {
     db <- subset(d, Big)
-    p <- plotly::plot_ly(data=db, x=X, y=Y, color=Group, text=Htext,
-                         mode='markers', colors=cols,
+    p <- plotly::plot_ly(data=db, x=~ X, y=~ Y, color=~ Group, text=~ Htext,
+                         type='scatter', mode='markers', colors=cols,
                          hoverinfo='text')
   }
   else
@@ -91,11 +91,11 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
     
   if(any(! d$Big)) {
     dnb <- subset(d, ! Big)
-    p <- plotly::add_trace(p, data=dnb, x=X, y=Y, color=Group, text=Htext,
-                           mode='markers', colors=cols,
-                           marker=list(opacity=0.45, size=4),
-                           hoverinfo='text',
-                           evaluate=TRUE)
+    p <- plotly::add_markers(p, data=dnb, x=~ X, y=~ Y,
+                             color=~ Group, text=~ Htext,
+                             colors=cols,  # mode='markers'
+                             marker=list(opacity=0.45, size=4),
+                             hoverinfo='text')
     }
   leftmargin <- plotlyParm$lrmargin(ytnb)
   plotly::layout(p,

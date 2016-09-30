@@ -26,7 +26,7 @@ importFrom(htmltools, HTML)
 ## importFrom(ggplot2, geom_segment)
 
 importFrom(grDevices, adjustcolor, col2rgb, dev.list, gray, rainbow,
-           xy.coords)
+           xy.coords, png, dev.off)
 importFrom(graphics, abline, arrows, axis, axis.Date,
            axis.POSIXct, barplot, box, hist, legend, lines,
            locator, mtext, par, plot, plot.new,

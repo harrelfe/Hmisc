@@ -345,16 +345,17 @@ markupSpecs <- list(html=list(
     c(w, x, '</div>')
     },
   chisq    = function(x, ...)
-#    paste0('&chi;<span class="xscript" style="font-size: 75%;"><sup>2</sup><sub>', x,
+#    paste0('\u03C7&<span class="xscript" style="font-size: 75%;"><sup>2</sup><sub>', x,
 #           '</sub></span>')
-                 if(missing(x)) paste0('&chi;<sup>2</sup>')
+                 if(missing(x)) paste0('\u03C7<sup>2</sup>')
                  else
-                   paste0("&chi;", markupSpecs$html$subsup(x, '2')),
+                   paste0("\u03C7", markupSpecs$html$subsup(x, '2')),
   fstat    = function(x, ...) paste0('<i>F</i><sub><span style="font-size: 80%;">',
-                                     x[1], ',&thinsp;', x[2], '</span></sub>'),
+                                     x[1], '\u2009', x[2], '</span></sub>'),
+  ## \u2009 is thin space
   frac     = function(a, b, size=82, ...)
     paste0('<span style="font-size: ', size, '%;"><sup>',
-           a, '</sup>&frasl;<sub>', b, '</sub></span>'),
+           a, '</sup>\u2044<sub>', b, '</sub></span>'),   # \u2044 is html &frasl
   subsup   = function(a, b) paste0("<sup><span style='font-size: 70%;'>", b,
                                    "</span></sup><sub style='position: relative; left: -.47em; bottom: -.4em;'><span style='font-size: 70%;'>",
                                    a, "</span></sub>"),
@@ -365,11 +366,11 @@ markupSpecs <- list(html=list(
                        "</div><div style='float: right; text-align: right; font-family: Verdana; font-size:", size, "%;'>", units, "</div>")
     else
       paste0(label,
-             "&emsp;<span style='font-family:Verdana;font-size:", size, "%;'>",
-             units, "</span>") },
-  space    = '&nbsp;',
-  lspace   = '&emsp;',
-  sspace   = '&thinsp;',
+             "\u2003<span style='font-family:Verdana;font-size:", size, "%;'>",
+             units, "</span>") },   # \2003 is &emsp;
+  space    = '\u00A0',    # html &nbsp;
+  lspace   = '\u2003',
+  sspace   = '\u2009',    # html &thinsp
   smallskip= '<br><br>',
   medskip  = '<br><br><br>',
   bigskip  = '<br><br><br><br>',
@@ -377,8 +378,8 @@ markupSpecs <- list(html=list(
   br       = '<br>',
   hrule    = '<hr>',
   hrulethin= '<hr class="thinhr">',
-  plminus  = '&plusmn;',
-  times    = '&times;',
+  plminus  = '\u00B1',    # &plminus
+  times    = '\u00D7',         # &times
   xbar     = '<span style="text-decoration: overline">X</span>',
   styles   = function(...) htmltools::HTML('
 <script type="text/javascript">
@@ -423,7 +424,14 @@ left: 0.1em;
 bottom: -1ex;
 }
 </style>
-')
+'),
+
+## The following is to create html file so that can copy and paste unicode chars
+## To do actual conversions best to use http://www.endmemo.com/unicode/unicodeconverter.php
+unicodeshow = function(x, surr=TRUE, append=FALSE) {
+  if(surr) x <- paste0('&', x, ';')
+  cat('<meta charset="utf-8">', paste(x, collapse=''), '<br>', file='/tmp/z.html', append=append)
+}
 
 ),
 
@@ -502,10 +510,15 @@ htmlTranslate <- function(object, inn=NULL, out=NULL,
   inn <- c("&", "|",  "%",  "#",   "<=",     "<",  ">=",     ">",  "_", "\\243",
            "\\$", inn, c("[", "(", "]", ")"))
 
-  out <- c("&amp;", "&#124;", "&#37", "&#35;", "&#8804;", "&#60;", "&#8805;",
-           "&#62;", "&#95;",  "&pound;",
-           "&dollar;", out, 
-           c("&#91;", "&#40;", "&#93;", "&#41;"))
+
+#  out <- c("&amp;", "&#124;", "&#37", "&#35;", "&#8804;", "&#60;", "&#8805;",
+#           "&#62;", "&#95;",  "&pound;",
+#           "&dollar;", out, 
+#           c("&#91;", "&#40;", "&#93;", "&#41;"))
+#  markupSpecs$html$unicodeshow(out, surr=FALSE)
+  out1 <- substring('\u27\u26\u7C\u25\u23\u2264\u3C\u2265\u3E\u5F\uA3\u24', 1:11, 1:11)
+  out2 <- substring('[(])', 1:4, 1:4)
+  out <- c(out1, out, out2)
 
   ##See if string contains an ^ - superscript followed by a number
 
@@ -531,20 +544,24 @@ htmlTranslate <- function(object, inn=NULL, out=NULL,
         paste0('BEGINSUP', substring(text[i], is + 1, ie - 1), 'ENDSUP')
     }
     text[i] <- sedit(text[i], c(inn, '^', 'BEGINSUP', 'ENDSUP'),
-                     c(out, '&#94;', '<sup>', '</sup>'), wild.literal=TRUE)
+                     c(out, '\u5E', '<sup>', '</sup>'), wild.literal=TRUE)   # \u5E is ^
 
     if(greek) {
       gl <- c('alpha','beta','gamma','delta','epsilon','varepsilon',
               'zeta', 'eta',
               'theta','vartheta','iota','kappa','lambda','mu','nu',
               'xi','pi','varpi','rho','varrho','sigma','varsigma','tau',
-              'upsilon','phi','carphi','chi','psi','omega','Gamma','Delta',
+              'upsilon','phi','chi','psi','omega','Gamma','Delta',
               'Theta','Lambda','Xi','Pi','Sigma','Upsilon','Phi','Psi','Omega')
+ #     markkupSpecs$html$unicodeshow(gl, append=TRUE)
       ## See http://stackoverflow.com/questions/22888646/making-gsub-only-replace-entire-words
-      for(w in gl)
-        text[i] <- gsub(paste0('\\<', w, '\\>'),
-                        paste0('&', w, ';'), text[i])
+      for(j in 1 : length(gl)) 
+        text[i] <- gsub(paste0('\\<', gl[j], '\\>'),
+                        substring('\u3B1\u3B2\u3B3\u3B4\u3B5\u3F5\u3B6\u3B7\u3B8\u3D1\u3B9\u3BA\u3BB\u3BC\u3BD\u3BE\u3C0\u3D6\u3C1\u3F1\u3C3\u3C2\u3C4\u3C5\u3C6\u3C7\u3C8\u3C9\u393\u394\u398\u39B\u39E\u3A0\u3A3\u3A5\u3A6\u3A8\u3A9', j, j),
+                        text[i])
     }
   }
   text
 }
+
+## markupSpecs$html$unicodeshow(c('#9660', 'chi', 'thinsp', 'frasl', 'emsp', 'plusmn', 'times'), append=TRUE)

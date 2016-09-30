@@ -134,8 +134,8 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
       {
         z$proplev <- 1.15
         pcat <- if(any(z$Missing > 0))
-                plotly::plot_ly(z, x=Proportion, y=cumy, text=text,
-                             color=Missing, mode='markers',
+                plotly::plot_ly(z, x = ~ Proportion, y= ~ cumy, text= ~ text,
+                             color=~ Missing, mode='markers',
                              hoverinfo='text',
                              type='scatter', name='')
            else
@@ -144,10 +144,12 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
                              type='scatter', name='')
       
 ###      z$proplev <- 1.15
-      pcat <- plotly::add_trace(data=z, x=proplev, y=cumy, text=category,
-                                mode='text', textposition='left',
-                                textfont=list(size=9), hoverinfo='none',
-                                name='Levels', evaluate=TRUE)
+        pcat <-
+          plotly::add_trace(pcat,
+                            data=z, x=~ proplev, y=~ cumy, text=~ category,
+                            mode='text', textposition='left',
+                            textfont=list(size=9), hoverinfo='none',
+                            name='Levels')
       
       tl <- seq(0, 1, by=0.05)
       ## X tick mark labels for multiples of 0.1
@@ -162,8 +164,7 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
                                         tickvals=tly, ticktext=un),
                              autosize=FALSE,
                              height=plotlyParm$heightDotchart(nrow(z)),
-                             margin=list(l=plotlyParm$lrmargin(un)),
-                             evaluate=TRUE)
+                             margin=list(l=plotlyParm$lrmargin(un)))
       }
     }
   }

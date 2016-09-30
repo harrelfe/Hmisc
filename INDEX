@@ -42,6 +42,8 @@ describe                Concise Statistical Description of a Vector,
 discrete                Discrete Vector tools
 dotchart2               Enhanced Dot Chart
 dotchart3               Enhanced Version of dotchart Function
+dotchartpl              Enhanced Version of dotchart Function for
+                        plotly
 Ecdf                    Empirical Cumulative Distribution Plot
 equalBins               Multicolumn Formating
 errbar                  Plot Error Bars
@@ -62,6 +64,7 @@ getHdata                Download and Install Datasets for 'Hmisc',
 getRs                   Interact with github rscripts Project
 getZip                  Open a Zip File From a URL.
 ggfreqScatter           Frequency Scatterplot
+GiniMd                  Gini's Mean Difference
 hdquantile              Harrell-Davis Distribution-Free Quantile
                         Estimator
 histbackback            Back to Back Histograms

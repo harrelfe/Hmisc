@@ -349,40 +349,61 @@ prList <- function(x, lcap=NULL, htmlfig=0, after=FALSE) {
 }
 
 putHfig <- function(x, ..., scap=NULL, extra=NULL, subsub=TRUE, hr=TRUE,
-                    table=FALSE, file='', append=FALSE) {
+                    table=FALSE, file='', append=FALSE,
+                    expcoll=NULL) {
+  ec <- length(expcoll) > 0
+  if(ec && ! table)
+    stop('expcoll can only be specified for tables, not figures')
+  
   mu <- markupSpecs$html
+  
   lcap <- unlist(list(...))
+  if(length(lcap)) lcap <- paste(lcap, collapse=' ')
+  
   if(! length(lcap) && ! length(scap)) {
-    if(table) cat(x, file=file, append=append, sep='\n')
+    if(ec) {
+      if(hr) x <- c(mu$hrule, x)
+      x <- mu$expcoll(paste(expcoll, collapse=' '),
+                      paste(x, collapse='\n'))
+      cat(x, file=file, append=append, sep='\n')
+      return(invisible())
+    }
+    if(hr) cat(mu$hrule, '\n', sep='', file=file, append=append)
+    if(table) cat(x, file=file, append=append || hr, sep='\n')
     else suppressWarnings(print(x))  # because of # colors in pallette warning
     return(invisible())
   }
-  if(length(lcap)) lcap <- paste(lcap, collapse=' ')
   if(! length(scap)) {
     scap <- lcap
     lcap <- NULL
   }
   scap <- if(table) mu$tcap(scap) else mu$cap(scap)
   if(subsub) scap <- paste0('\n### ', scap)
-  if(hr) cat(mu$hrule, '\n', sep='', file=file, append=append)
-  cat(scap, '\n', sep='', file=file, append=append | hr)
+  if(hr && ! ec) cat(mu$hrule, '\n', sep='', file=file, append=append)
+  if(! ec) cat(scap, '\n', sep='', file=file, append=append | hr)
   if(length(lcap)) {
     lcap <- if(table) mu$ltcap(lcap) else mu$lcap(lcap)
     if(length(extra))
       lcap <- paste0(
-      '<TABLE width="100%" BORDER="0" CELLPADDING="3" CELLSPACING="3">',
-      '<TR><TD>', lcap, '</TD>',
-      paste(paste0('<TD style="text-align:right;padding: 0 1ex 0 1ex;">',
-                   extra, '</TD>'), collapse=''),
-      '</TR></TABLE>')
-    cat(lcap, '\n', sep='', file=file, append=TRUE)
+        '<TABLE width="100%" BORDER="0" CELLPADDING="3" CELLSPACING="3">',
+        '<TR><TD>', lcap, '</TD>',
+        paste(paste0('<TD style="text-align:right;padding: 0 1ex 0 1ex;">',
+                     extra, '</TD>'), collapse=''),
+        '</TR></TABLE>')
+    if(ec) x <- c(lcap, x)
+    else
+      cat(lcap, '\n', sep='', file=file, append=TRUE)
   }
+  if(ec)
+    x <- mu$expcoll(paste(expcoll, collapse=' '),
+                    paste(c(if(hr) mu$hrule, scap, x), collapse='\n'))
+
 if(table) cat(x, sep='\n', file=file, append=TRUE)
 else
   suppressWarnings(print(x))
-  invisible()
-  }
-  
+invisible()
+}
+
   
 combineLabels <- function(...)
   {

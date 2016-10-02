@@ -95,7 +95,9 @@
 	Table of contents entries are generated with the short caption, which
 	is taken as the long caption if there is none.  One can optionally not
 	make a table of contents entry.  If argument \code{table=TRUE} table
-	captions will be produced instead.
+	captions will be produced instead.  Using \code{expcoll},
+	\code{markupSpecs} \code{html} function \code{expcoll} will be used to
+	make tables expand upon clicking an arrow rather than always appear.
 
   \code{plotmathTranslate} is a simple function that translates certain
   character strings to character strings that can be used as part of \R
@@ -150,7 +152,7 @@ llist(\dots, labels=TRUE)
 prList(x, lcap=NULL, htmlfig=0, after=FALSE)
 
 putHfig(x, \dots, scap=NULL, extra=NULL, subsub=TRUE, hr=TRUE,
-        table=FALSE, file='', append=FALSE)
+        table=FALSE, file='', append=FALSE, expcoll=NULL)
 
 plotmathTranslate(x)
 
@@ -273,6 +275,9 @@ combineLabels(\dots)
 		not put a horizontal line before the caption and figure.}
 	\item{table}{set to \code{TRUE} to produce table captions instead of
 		figure captions}
+	\item{expcoll}{character string to be visible, with a clickable arrow
+		following to allow initial hiding of a table and its captions.
+		Cannot be used with \code{table=FALSE}.}
 }
 \value{
   \code{label} returns the label attribute of x, if any; otherwise, "".

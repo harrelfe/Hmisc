@@ -937,13 +937,13 @@ plotpsummaryM <-
   names(gcat) <- stratnames
 
   ## Create annotations to simulate strata titles for dot charts
-  if(nstrat > 1) {
-    annotations <- list()
-    xx <- (1 : nstrat) / (nstrat + 1)
-    for(i in 1 : nstrat)
-      annotations[[i]] <- list(x=xx[i], y=1.05, text=stratnames[i],
-                               xref='paper', yref='paper', showarrow=FALSE)
-    }
+#  if(nstrat > 1) {
+#    annotations <- list()
+#    xx <- (1 : nstrat) / (nstrat + 1)
+#    for(i in 1 : nstrat)
+#      annotations[[i]] <- list(x=xx[i], y=1.05, text=stratnames[i],
+#                               xref='paper', yref='paper', showarrow=FALSE)
+#    }
 
     for(strat in stratnames) {
     obj  <- x$results[[strat]]

@@ -76,3 +76,35 @@ test(table.env=FALSE, colheads=FALSE)
 
 cat('\\end{document}\n', file=file, append=TRUE)
 # Run pdflatex /tmp/z
+
+
+## From Sam Zhao <Sam.Zhao@agriculture.gov.au>
+library(Hmisc)
+ 
+my.table <- matrix(1:81, nrow=9)
+n.col <- 9
+n.row <- 9
+ 
+#for(i in 1:9){
+cell.format <- matrix(rep("", n.col*n.row), nrow=n.row,  ncol = n.col)
+cell.format[c(1,4,7),] <- "color{blue}"
+cell.format[,6] <- "color{blue}"
+cell.format[c(2,3,5,6,8,9),9] <- "color{red}"
+ 
+ 
+w <- latex(my.table,
+           file="/tmp/z.tex",
+           numeric.dollar = T,
+           title = "",
+           where="h",
+           rowname = " ",
+           ctable=TRUE,
+           cellTexCmds = cell.format,
+           rgroup = c("RGrour1", "RGrour2","RGrour3"),
+                                        #n.rgroup = c(3,3,3),
+           n.rgroup = c(3,3,3),
+           cgroup = c("", "Cgroup1","Cgroup2","Cgroup3"),
+           n.cgroup = c(1,2,4,2),
+           caption = "The Example Table Using Hmisc on R 3.3.1.",
+           label = "tab:comp-csp-results-large-small-imp"
+           )

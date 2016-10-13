@@ -38,6 +38,10 @@
   take place, and \code{force.single} is set to a default of
   \code{FALSE}, as StatTransfer already does conversion to integer.
 
+	Variables having labels but not classed \code{"labelled"} (e.g., data
+	imported using the \code{haven} package) have that class added to them
+	by \code{upData}.
+
   The \code{dataframeReduce} function removes variables from a data frame
   that are problematic for certain analyses.  Variables can be removed
   because the fraction of missing values exceeds a threshold, because they
@@ -86,8 +90,8 @@ dataframeReduce(data, fracmiss=1, maxlevels=NULL,  minprev=0, print=TRUE)
     a character vector the same length as the number of variables in
     \code{obj}.  These character values are taken to be variable labels in the
     same order of variables in \code{obj}.
-    For \code{upData}, \code{labels} is a named list or named vector with variables
-    in no specific order.
+    For \code{upData}, \code{labels} is a named list or named vector
+		with variables in no specific order.
   }
   \item{lowernames}{
     set this to \code{TRUE} to change variable names to lower case.

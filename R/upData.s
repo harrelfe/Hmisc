@@ -13,18 +13,17 @@ cleanup.import <-
   dimobj <- dim(obj)
   nv <- length(nam)
 
-  if(!missing(sasdict))
-    {
-      sasvname <- makeNames(sasdict$NAME)
-      if(any(w <- nam %nin% sasvname))
-        stop(paste('The following variables are not in sasdict:',
-                   paste(nam[w],collapse=' ')))
-      
-      saslabel <- structure(as.character(sasdict$LABEL), 
-                            names=as.character(sasvname))
-      labels <- saslabel[nam]
-      names(labels) <- NULL
-    }
+  if(!missing(sasdict)) {
+    sasvname <- makeNames(sasdict$NAME)
+    if(any(w <- nam %nin% sasvname))
+      stop(paste('The following variables are not in sasdict:',
+                 paste(nam[w],collapse=' ')))
+    
+    saslabel <- structure(as.character(sasdict$LABEL), 
+                          names=as.character(sasvname))
+    labels <- saslabel[nam]
+    names(labels) <- NULL
+  }
 	
   if(length(labels) && length(labels) != dimobj[2])
     stop('length of labels does not match number of variables')
@@ -35,32 +34,28 @@ cleanup.import <-
   if(print)
     cat(dimobj[2],'variables; Processing variable:')
 
-  for(i in 1:dimobj[2])
-    {
-      if(print) cat(i,'')
+  for(i in 1:dimobj[2]) {
+    if(print) cat(i,'')
 
-      x <- obj[[i]];
-      modif <- FALSE
-      if(length(dim(x)))
-        next
+    x <- obj[[i]]
+    modif <- FALSE
+    if(length(dim(x)))
+      next
       
-      if(rmnames)
-        {
-          if(length(attr(x,'names')))
-            {
-              attr(x,'names') <- NULL
-              modif <- TRUE
-            } else if(length(attr(x,'.Names')))
-              {
-                attr(x,'.Names') <- NULL
-                modif <- TRUE
-              }
-        }
-      
-      if(length(attr(x,'Csingle'))) {
-        attr(x,'Csingle') <- NULL
+    if(rmnames) {
+      if(length(attr(x,'names'))) {
+        attr(x,'names') <- NULL
+        modif <- TRUE
+      } else if(length(attr(x,'.Names'))) {
+        attr(x,'.Names') <- NULL
         modif <- TRUE
       }
+    }
+    
+    if(length(attr(x,'Csingle'))) {
+      attr(x,'Csingle') <- NULL
+      modif <- TRUE
+    }
     
     if(length(c(datevars,datetimevars)) &&
        nam[i] %in% c(datevars,datetimevars) &&
@@ -83,11 +78,16 @@ cleanup.import <-
         if(dateformat %nin% c('%F','%y-%m-%d','%m/%d/%y','%m/%d/%Y'))
           stop('fixdates only supported for dateformat %F %y-%m-%d %m/%d/%y %m/%d/%Y')
         
-        x <- switch(dateformat,
-                    '%F'      =gsub('^([0-9]{2})-([0-9]{1,2})-([0-9]{1,2})', '20\\1-\\2-\\3',x),
-                    '%y-%m-%d'=gsub('^[0-9]{2}([0-9]{2})-([0-9]{1,2})-([0-9]{1,2})', '\\1-\\2-\\3',x),
-                    '%m/%d/%y'=gsub('^([0-9]{1,2})/([0-9]{1,2})/[0-9]{2}([0-9]{2})', '\\1/\\2/\\3',x),
-                    '%m/%d/%Y'=gsub('^([0-9]{1,2})/([0-9]{1,2})/([0-9]{2})$','\\1/\\2/20\\3',x))
+        x <-
+          switch(dateformat,
+                 '%F'      =gsub('^([0-9]{2})-([0-9]{1,2})-([0-9]{1,2})',
+                                 '20\\1-\\2-\\3',x),
+                 '%y-%m-%d'=gsub('^[0-9]{2}([0-9]{2})-([0-9]{1,2})-([0-9]{1,2})',
+                                 '\\1-\\2-\\3',x),
+                 '%m/%d/%y'=gsub('^([0-9]{1,2})/([0-9]{1,2})/[0-9]{2}([0-9]{2})',
+                                 '\\1/\\2/\\3',x),
+                 '%m/%d/%Y'=gsub('^([0-9]{1,2})/([0-9]{1,2})/([0-9]{2})$',
+                                 '\\1/\\2/20\\3',x))
       }
       x <- if(length(xt) && requireNamespace("chron", quietly = TRUE)) {
         cform <- if(dateformat=='%F') 'y-m-d'
@@ -111,49 +111,49 @@ cleanup.import <-
           modif <- TRUE
         }
       }
+    
+    if(storage.mode(x) == 'double') {
+      xu <- unclass(x)
+      j <- is.infinite(xu) | is.nan(xu) | abs(xu) > big
+      if(any(j,na.rm=TRUE)) {
+        x[j] <- NA
+        modif <- TRUE
+        if(print)
+          cat('\n')
+        
+        cat(sum(j,na.rm=TRUE),'infinite values set to NA for variable',
+            nam[i],'\n')
+      }
       
-      if(storage.mode(x) == 'double') {
-        xu <- unclass(x)
-        j <- is.infinite(xu) | is.nan(xu) | abs(xu) > big
-        if(any(j,na.rm=TRUE)) {
-          x[j] <- NA
+      isdate <- testDateTime(x)
+      if(force.single && !isdate) {
+        allna <- all(is.na(x))
+        if(allna) {
+          storage.mode(x) <- 'integer'
           modif <- TRUE
-          if(print)
-            cat('\n')
-          
-          cat(sum(j,na.rm=TRUE),'infinite values set to NA for variable',
-              nam[i],'\n')
         }
         
-        isdate <- testDateTime(x)
-        if(force.single && !isdate) {
-          allna <- all(is.na(x))
-          if(allna) {
+        if(!allna) {
+          notfractional <- !any(floor(x) != x, na.rm=TRUE)
+          if(max(abs(x),na.rm=TRUE) <= (2^31-1) && notfractional) {
             storage.mode(x) <- 'integer'
             modif <- TRUE
           }
-          
-          if(!allna) {
-            notfractional <- !any(floor(x) != x, na.rm=TRUE)
-            if(max(abs(x),na.rm=TRUE) <= (2^31-1) && notfractional) {
-              storage.mode(x) <- 'integer'
-              modif <- TRUE
-            }
-          }
         }
       }
-      
-      if(charfactor && is.character(x)) {
-        if(length(unique(x)) < .5*length(x)) {
-          x <- sub(' +$', '', x)  # remove trailing blanks
-          x <- factor(x, exclude=c('', NA))
-          modif <- TRUE
-        }
-      }
-      
-      if(modif) obj[[i]] <- x
-      NULL
     }
+    
+    if(charfactor && is.character(x)) {
+      if(length(unique(x)) < .5*length(x)) {
+        x <- sub(' +$', '', x)  # remove trailing blanks
+        x <- factor(x, exclude=c('', NA))
+        modif <- TRUE
+      }
+    }
+    
+    if(modif) obj[[i]] <- x
+    NULL
+  }
   
   if(print) cat('\n')
   if(!missing(sasdict)) {
@@ -194,6 +194,22 @@ upData <- function(object, ...,
     
   rnames <- row.names(object)
 
+  g <- function(x)
+    c(sm       = storage.mode(x),
+      labclass = inherits(x, 'labelled'),
+      labpres  = length(la <- attr(x, 'label')) && la != '',
+      lowuc    = is.character(x) && length(unique(x)) < length(z) / 2)
+
+  vinfo <- sapply(object, g)
+
+  ## Variables with labels but not classed as 'labelled' will not
+  ## keep labels upon subscripting. Examples: variables imported
+  ## using the haven package
+  
+  j <- which(vinfo['labpres', ] == 'TRUE' & vinfo['labclass', ] == 'FALSE')
+  if(length(j))
+    for(i in j) class(object[[i]]) <- c('labelled', class(object[[i]]))
+
 
   ## The following is targeted at R workspaces exported from StatTransfer
   al <- attr(object, 'var.labels')
@@ -204,7 +220,8 @@ upData <- function(object, ...,
     attr(object, 'var.labels') <- NULL
     if(missing(force.single)) force.single <- FALSE
   } else if(caplabels) {
-    for(i in 1:length(no))
+#    for(i in 1:length(no))
+    for(i in which(vinfo['labpres', ] == 'TRUE'))
       if(length(la <- attr(object[[i]], 'label')))
         attr(object[[i]], 'label') <- upfirst(la)
   }
@@ -319,7 +336,8 @@ upData <- function(object, ...,
   }
 
   if(force.single) {
-    sm <- sapply(object, storage.mode)
+    ## sm <- sapply(object, storage.mode)
+    sm <- vinfo['sm', ]
     if(any(sm == 'double'))
       for(i in 1 : length(sm)) {
         if(sm[i] == 'double') {
@@ -338,13 +356,14 @@ upData <- function(object, ...,
   }
   
   if(charfactor) {
-    g <- function(z) {
-      if(!is.character(z)) return(FALSE)
-      length(unique(z)) < .5 * length(z)
-    }
-    mfact <- sapply(object, g)
+#    g <- function(z) {
+#      if(!is.character(z)) return(FALSE)
+#      length(unique(z)) < .5 * length(z)
+#    }
+#    mfact <- sapply(object, g)
+    mfact <- as.logical(vinfo['lowuc', ])
     if(any(mfact))
-      for(i in (1 : length(mfact))[mfact]) {
+      for(i in which(mfact)) {
         x <- sub(' +$', '', object[[i]])  # remove trailing blanks
         object[[i]] <- factor(x, exclude=c('', NA))
       }

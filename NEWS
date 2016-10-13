@@ -58,6 +58,7 @@ Changes in version 4.0-0 (2016-09-29)
 	 * html.data.frame: added width and caption arguments
 	 * plotlyParm: list object with plotly helper functions
 	 * summaryD, dotchartp: added symbol and col arguments
+	 * upData: improved efficiency, added labelled class to variables without it but having labels (e.g., data imported using haven package)
 
 Changes in version 3.17-4 (2016-05-02)
    * latex.summaryP: correctly ordered rows after running reshape because groups was present

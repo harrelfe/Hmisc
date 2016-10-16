@@ -1720,8 +1720,7 @@ knitrSet <- function(basename=NULL, w=4, h=3,
                  })
   knitr::opts_knit$set(
     width=width)
-#    aliases=c(h='fig.height', w='fig.width', cap='fig.cap', scap='fig.scap'))
-
+    #aliases=c(h='fig.height', w='fig.width', cap='fig.cap', scap='fig.scap'))
     #eval.after = c('fig.cap','fig.scap'),
     #error=error)  #, keep.source=keep.source (TRUE))
   # See if need to remove dev=dev from below because of plotly graphics

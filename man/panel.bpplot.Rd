@@ -73,7 +73,7 @@ bpplt(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
       pch=16, cex.labels=par('cex'), cex.points=if(prototype)1 else 0.5,
       grid=FALSE)
 
-bppltp(p=plotly::plot_ly(type='scatter', mode='lines'),
+bppltp(p=plotly::plot_ly(),
        stats, xlim, xlab='', box.ratio = 1, means=TRUE,
        qref=c(.5,.25,.75), qomit=c(.025,.975),
        teststat=NULL, showlegend=TRUE)

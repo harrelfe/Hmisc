@@ -45,10 +45,12 @@ s <- summaryM(race + sex + x1 + x2 ~ treat + region, data=d)
 options(grType='plotly')
 plot(s)
 
-plot(summaryP(race + sex ~ region, data=d, exclude1=FALSE), col='green')
+options(grType='base')
+
+plot(s <- summaryP(race + sex ~ region, data=d, exclude1=FALSE), col='green')
 
 # Make your own plot using data frame created by summaryP
-dotplot(val ~ freq | region * var, groups=treat, data=s,
+dotplot(val ~ freq | region * var, data=s,   # was groups=treat
         xlim=c(0,1), scales=list(y='free', rot=0), xlab='Fraction',
         panel=function(x, y, subscripts, ...) {
           denom <- s$denom[subscripts]

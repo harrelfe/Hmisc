@@ -1,4 +1,4 @@
-Changes in version 4.0-0 (2016-10-25)
+Changes in version 4.0-0 (2016-10-27)
    * summaryP: fixed exclude1 logic - was not excluding enough levels (inconsistent use of variable names vs. labels)
 	 * latexTranslate: any NAs in first argument changed to "" before conversion
 	 * minor.tick: added arguments to pass through (thanks: vhorvath)
@@ -59,7 +59,7 @@ Changes in version 4.0-0 (2016-10-25)
 	 * plotlyParm: list object with plotly helper functions
 	 * summaryD, dotchartp: added symbol and col arguments
 	 * upData: improved efficiency, added labelled class to variables without it but having labels (e.g., data imported using haven package)
-	 * gbayesMixPost: mixed error in posterior odds of the mixing parameter that resulted in incorrect posterior probabilities when the variance of the statistic was appreciable
+	 * gbayesMixPost: mixed error in posterior odds of the mixing parameter that resulted in incorrect posterior probabilities when the variance of the statistic was appreciable; added option to compute posterior mean
 
 Changes in version 3.17-4 (2016-05-02)
    * latex.summaryP: correctly ordered rows after running reshape because groups was present

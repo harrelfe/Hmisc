@@ -58,7 +58,8 @@ is the normal critical value corresponding to 1 - \code{alpha}/2.
 statistic that is Gaussian given \code{delta} when no data have yet been
 observed and when the prior is a mixture of two Gaussians.
 
-\code{gbayesMixPost} derives the posterior density or cdf of \code{delta} given
+\code{gbayesMixPost} derives the posterior density, cdf, or posterior
+mean of \code{delta} given 
 the statistic \code{x}, when the prior for \code{delta} is a mixture of two
 Gaussians and when \code{x} is Gaussian given \code{delta}.
 
@@ -91,7 +92,7 @@ gbayesMixPredNoData(mix=NA, d0=NA, v0=NA, d1=NA, v1=NA,
                     what=c('density','cdf'))
 
 gbayesMixPost(x=NA, v=NA, mix=1, d0=NA, v0=NA, d1=NA, v1=NA,
-              what=c('density','cdf'))
+              what=c('density','cdf','postmean'))
 
 gbayesMixPowerNP(pcdf, delta, v, delta.w=0, mix, interval,
                  nsim=0, alpha=0.05)

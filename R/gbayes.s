@@ -117,7 +117,7 @@ gbayesMixPredNoData <- function(mix=NA, d0=NA, v0=NA, d1=NA, v1=NA,
 }
 
 gbayesMixPost <- function(x=NA, v=NA, mix=1, d0=NA, v0=NA, d1=NA,
-                          v1=NA, what=c('density','cdf')) {
+                          v1=NA, what=c('density','cdf','postmean')) {
   what <- match.arg(what)
   g <- function(delta, x, v, mix=1, 
                 d0, v0, d1, v1, dist) {
@@ -138,17 +138,23 @@ gbayesMixPost <- function(x=NA, v=NA, mix=1, d0=NA, v0=NA, d1=NA,
                             dnorm(x, d1, sqrt(v + v1))
         post.odds <- prior.odds * likelihood.ratio
         mixp <- post.odds / (1 + post.odds)
-        
-           mixp * dist(delta, (d0 / v0 + x / v) * pv0, sqrt(pv0)) +
-        (1-mixp)* dist(delta, (d1 / v1 + x / v) * pv1, sqrt(pv1))
+
+        if(what == 'postmean')
+           mixp  * (d0 / v0 + x / v) * pv0 +
+        (1-mixp) * (d1 / v1 + x / v) * pv1
+        else
+             mixp * dist(delta, (d0 / v0 + x / v) * pv0, sqrt(pv0)) +
+          (1-mixp)* dist(delta, (d1 / v1 + x / v) * pv1, sqrt(pv1))
     }
   }
 
-  formals(g) <- list(delta=numeric(0), x=x, v=v, mix=mix, d0=d0, v0=v0,
+  formals(g) <- list(delta=numeric(0), x=x, v=v, mix=mix,
+                     d0=d0, v0=v0,
                      d1=d1, v1=v1,
                      dist=switch(what,
-                                 density=dnorm,
-                                 cdf=pnorm))
+                                 density = dnorm,
+                                 cdf     = pnorm,
+                                 postmean= NULL))
   g
 }
 

@@ -123,12 +123,16 @@ gbayesMixPost <- function(x=NA, v=NA, mix=1, d0=NA, v0=NA, d1=NA,
                 d0, v0, d1, v1, dist) {
     if(mix == 1) {
       pv <- 1 / (1 / v0 + 1 / v)
-      dist(delta, (d0 / v0 + x / v) * pv, sqrt(pv))
+      if(what == 'postmean') d0 / v0 + x / v
+      else
+        dist(delta, (d0 / v0 + x / v) * pv, sqrt(pv))
     }
     else
       if(mix == 0) {
         pv <- 1 / (1 / v1 + 1 / v)
-        dist(delta, (d1 / v1 + x / v) * pv, sqrt(pv))
+        if(what == 'postmean') d1 / v1 + x / v
+        else
+          dist(delta, (d1 / v1 + x / v) * pv, sqrt(pv))
       } else {
         prior.odds <- mix / (1 - mix)
         pv0 <- 1 / (1 / v0 + 1 / v)

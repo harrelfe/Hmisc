@@ -198,7 +198,7 @@ upData <- function(object, ...,
     c(sm       = storage.mode(x),
       labclass = inherits(x, 'labelled'),
       labpres  = length(la <- attr(x, 'label')) && la != '',
-      lowuc    = is.character(x) && length(unique(x)) < length(z) / 2)
+      lowuc    = is.character(x) && length(unique(x)) < length(x) / 2)
 
   vinfo <- sapply(object, g)
 

@@ -596,7 +596,7 @@ print.summary.formula.response <-
 
   vlabels <- at$labels
   if(prUnits) {
-    atu <- gsub('\\*', ' ', at$units)
+    atu <- gsub('*', ' ', at$units, fixed=TRUE)
     vlabels <- ifelse(atu=='',vlabels,
                       paste0(vlabels,' [',atu,']'))
   }
@@ -691,7 +691,7 @@ latex.summary.formula.response <-
         else at$vname
 
   if(prUnits) {
-    atvu <- gsub('\\*', ' ', at$vunits)
+    atvu <- gsub('*', ' ', at$vunits, fixed=TRUE)
     vn <- ifelse(atvu=='', vn,
                  paste0(vn,'~\\hfill\\tiny{', atvu, '}'))
   }
@@ -1373,7 +1373,7 @@ print.summary.formula.reverse <-
     nam <- if(vnames=="names") nams[i] else labels[i]
 
     if(prUnits && nchar(Units[i]))
-      nam <- paste0(nam,' [', gsub('\\*',' ', Units[i]),']')
+      nam <- paste0(nam,' [', gsub('*',' ', Units[i], fixed=TRUE),']')
 
     tr <- if(length(test) && all(prtest != 'none')) test[[nams[i]]]
           else NULL
@@ -1444,7 +1444,7 @@ formatCats <- function(tab, nam, tr, type, group.freq,
   what   <- match.arg(what)
   gnames <- names(group.freq)
   nr     <- nrow(tab)
-
+  
   specs <- mspecs[[lang]]
   spc   <- specs$space
   sspc  <- if(lang == 'plain') '' else specs$sspace
@@ -1452,12 +1452,12 @@ formatCats <- function(tab, nam, tr, type, group.freq,
   bold  <- specs$bold
   frac  <- specs$frac
 
-  if(lang != 'latex') npct.size <- function(x) x
-  else {
-    if(! is.function(npct.size)) {
-      npctsize <- npct.size
-      npct.size <- function(x) paste0('{\\', npctsize, '}')
-    }
+  if(lang != 'latex' && ! is.function(npct.size))
+    npct.size <- function(x) x
+  else if(! is.function(npct.size)) {
+    npctsize <- npct.size
+    npct.size <- function(x) paste0('{\\', npctsize, '}')
+  }
 
   ## If there was a missing column of tab because e.g. the variable was
   ## always NA for one (or more) of the groups, add columns of NAs
@@ -1742,7 +1742,7 @@ formatTestStats <- function(tr, multchoice=FALSE,
       ## replace "df" inside statmarkup with actual d.f.
       if(length(grep('df', statmarkup)))
         statmarkup <- sedit(statmarkup, 'df',
-                          if(lang == 'latex' || length(deg)==1) dof
+                          if(lang == 'latex' || length(deg) == 1) dof
                           else paste0('list(', dof, ')'))
     } else  statmarkup <- namefun(deg)
   }
@@ -1769,7 +1769,7 @@ formatTestStats <- function(tr, multchoice=FALSE,
            if(footnoteTest && length(testUsed))
              paste0(sup(match(testname, testUsed)))) 
   } else if(plotmath) {
-    if(length(prtest)==1)
+    if(length(prtest) == 1)
       parse(text=switch(prtest,
                         P    = ifelse(plt, paste0('~', 'P', pval),
                                            paste0('~', 'P==', pval)),
@@ -1868,7 +1868,8 @@ latex.summary.formula.reverse <-
            else labels[i]
 
     if(prUnits && nchar(Units[i]) > 0)
-      nam <- paste0(nam, '~\\hfill\\tiny{', gsub('\\*',' ', Units[i]),'}')
+      nam <- paste0(nam, '~\\hfill\\tiny{',
+                    gsub('*',' ', Units[i], fixed=TRUE),'}')
 
     tr  <- if(length(test) && all(prtest!='none')) test[[nams[i]]]
            else NULL
@@ -2671,7 +2672,7 @@ conTestkw <- function(group,x) {
   list(P            = st['P'],
        stat         = st['F'],
        df           = st[c('df1','df2')],
-       testname     = if(st['df1']==1)'Wilcoxon' else 'Kruskal-Wallis',
+       testname     = if(st['df1'] == 1) 'Wilcoxon' else 'Kruskal-Wallis',
        statname     = 'F',
        namefun      = 'fstat',
        latexstat    = 'F_{df}',

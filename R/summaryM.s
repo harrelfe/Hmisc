@@ -701,7 +701,7 @@ latex.summaryM <-
       } else {
         cs <- formatCons(stats[[i]], nam, tr, x$group.freq, prmsd,
                          prtest=prtest, formatArgs=formatArgs, round=round,
-                         lang='latex', testUsed=testUsed,
+                         lang=lang, testUsed=testUsed,
                          middle.bold=middle.bold,
                          outer.size=outer.size, msdsize=msdsize,
                          brmsd=brmsd,

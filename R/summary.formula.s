@@ -965,20 +965,20 @@ plot.summary.formula.reverse <-
       if(any(prtest != 'none')) {
         fts <- formatTestStats(test[[varNames[i]]], type[i]==3,
                                if(type[i]==1)1
-                               else 1:nr,
+                               else 1 : nr,
                                prtest=prtest,
                                plotmath=TRUE,
                                pdig=pdig, eps=eps)
 
         ftstats <- c(ftstats, fts, 
-                     if(type[i]==1 && nr-exc-1 > 0)
+                     if(type[i] == 1 && nr - exc - 1 > 0)
                        rep(expression(''),
-                           nr-exc-1))
+                           nr - exc - 1))
       }
     }
 
     dimnames(z) <- list(lab, dimnames(z)[[2]])
-    for(i in 1:nw) {
+    for(i in 1 : nw) {
       zi <- z[,i]
       if(any(prtest == 'none') || i > 1)
         dotchart2(zi, groups=vnd, xlab=xlab, xlim=xlim, 
@@ -1437,7 +1437,7 @@ print.summary.formula.reverse <-
 formatCats <- function(tab, nam, tr, type, group.freq,
                        what=c('%', 'proportion'),
                        npct, pctdig, exclude1, long, prtest,
-                       latex=FALSE, html=FALSE, testUsed=character(0),
+                       lang='plain', testUsed=character(0),
                        npct.size='scriptsize', pdig=3, eps=.001,
                        footnoteTest=TRUE, dotchart=FALSE, mspecs=markupSpecs)
 {
@@ -1445,17 +1445,18 @@ formatCats <- function(tab, nam, tr, type, group.freq,
   gnames <- names(group.freq)
   nr     <- nrow(tab)
 
-  lang  <- if(html) 'html' else if(latex) 'latex' else 'plain'
   specs <- mspecs[[lang]]
   spc   <- specs$space
-  sspc  <- specs$sspace
+  sspc  <- if(lang == 'plain') '' else specs$sspace
   lspc  <- specs$lspace
   bold  <- specs$bold
   frac  <- specs$frac
 
-  if(! is.function(npct.size)) {
-    npctsize <- npct.size
-    npct.size <- function(x) paste0('{\\', npctsize, '}')
+  if(lang != 'latex') npct.size <- function(x) x
+  else {
+    if(! is.function(npct.size)) {
+      npctsize <- npct.size
+      npct.size <- function(x) paste0('{\\', npctsize, '}')
     }
 
   ## If there was a missing column of tab because e.g. the variable was
@@ -1472,30 +1473,23 @@ formatCats <- function(tab, nam, tr, type, group.freq,
   pct <- if(ncol(tab) > 1) sweep(tab, 2, denom, FUN='/') else tab / denom
   pct <- pct * (if(what =='%') 100 else 1)
   cpct <- paste0(format(round(pct, pctdig)),
-                 if(latex && what == '%')"\\%"
+                 if(lang == 'latex' && what == '%') '\\%'
                  else if(what == '%') "%")
 
   denom.rep <- matrix(rep(format(denom), nr), nrow=nr, byrow=TRUE)
   if(npct != 'none')
     cpct <-
       paste(cpct,
-            if(latex || html)
-              switch(npct,
-                     numerator=npct.size(paste0(' (', format(tab), ')')),
-                     denominator=npct.size(paste0(' of ', denom.rep)),
-                     both=npct.size(paste0(frac(format(tab),
-                                                denom.rep))),
-                     slash=npct.size(paste0(spc, format(tab),
-                                            sspc, '/', sspc, denom.rep))
-                     )
-            else
-              switch(npct,
-                     numerator   = paste0('(', format(tab), ')'),
-                     denominator = paste('of', denom.rep),
-                     both        = paste0(format(tab),'/', denom.rep))
-            )
+            switch(npct,
+                   numerator   = npct.size(paste0(' (', format(tab), ')')),
+                   denominator = npct.size(paste0(' of ', denom.rep)),
+                   both        = npct.size(paste0(frac(format(tab),
+                                                       denom.rep))),
+                   slash       = npct.size(paste0(spc, format(tab),
+                                                  sspc, '/', sspc, denom.rep))
+                   ) )
   
-  if(latex && ! html) cpct <- sedit(cpct, ' ', spc)
+  if(lang == 'latex') cpct <- sedit(cpct, ' ', spc)
 
   dim(cpct) <- dim(pct)
   dimnames(cpct) <- dimnames(pct)
@@ -1520,7 +1514,7 @@ formatCats <- function(tab, nam, tr, type, group.freq,
                                 else nr),
                ncol = nw + (length(tr) > 0),
                dimnames = list(lab, c(gnames,
-                                      if(length(tr))''
+                                      if(length(tr)) ''
                                       else NULL)))
 
   if(nw==1)
@@ -1528,7 +1522,7 @@ formatCats <- function(tab, nam, tr, type, group.freq,
   else
     cs[(long + 1) : nrow(cs), 1 : nw] <- cpct[jstart : nrow(cpct), gnames]
   
-  if(latex && dotchart && ncol(pct) <= 3) {
+  if(lang == 'latex' && dotchart && ncol(pct) <= 3) {
     locs <- c(3,-3,5,-5,7,-7,9,-9)
     points <- c("\\circle*{4}","\\circle{4}","\\drawline(0,2)(-1.414213562,-1)(1.414213562,-1)(0,2)")
     
@@ -1566,14 +1560,14 @@ formatCats <- function(tab, nam, tr, type, group.freq,
                 scale,"\\put(0,0){\\color[gray]{0.5}\\line(1,0){100}}",
                 point.loc, error.loc,
                 "\\end{picture}")
-    cs[(long+1):nrow(cs),ncol(cs)] <- cl
+    cs[(long + 1) : nrow(cs), ncol(cs)] <- cl
   }
 
   if(length(tr)) {
-    ct <- formatTestStats(tr, type==3,
-                          if(type==1)1
+    ct <- formatTestStats(tr, type == 3,
+                          if(type == 1) 1
                           else 1 : nr,
-                          prtest, latex=latex, html=html, testUsed=testUsed,
+                          prtest, lang=lang, testUsed=testUsed,
                           pdig=pdig, eps=eps, footnoteTest=footnoteTest,
                           mspecs=mspecs)
 
@@ -1590,12 +1584,12 @@ formatCats <- function(tab, nam, tr, type, group.freq,
 ## Function to format subtable for continuous var, for method='reverse'
 formatCons <- function(stats, nam, tr, group.freq, prmsd, sep='/',
                        formatArgs=NULL, round=NULL, prtest,
-                       latex=FALSE, html=FALSE, testUsed=character(0),
+                       lang='plain', testUsed=character(0),
                        middle.bold=FALSE, outer.size=NULL, msdsize=NULL,
                        brmsd=FALSE, pdig=3, eps=.001, footnoteTest=TRUE,
                        prob=c(0.25, 0.5, 0.75), prN=FALSE, mspecs=markupSpecs)
 {
-  specs <- if(html) mspecs$html else mspecs$latex
+  specs   <- mspecs[[lang]]
   spc     <- specs$space
   bold    <- if(middle.bold) specs$bold else function(x) x
   lspc    <- specs$lspace
@@ -1604,11 +1598,12 @@ formatCons <- function(stats, nam, tr, group.freq, prmsd, sep='/',
   plminus <- specs$plminus
   math    <- specs$math
 
-  if(! length(msdsize)) msdsize <- function(x) x
+  if(lang != 'latex' || ! length(msdsize)) msdsize <- function(x) x
   if(! is.function(msdsize)) {
     Msdsize <- msdsize
     msdsize <- function(x) paste0('{\\', Msdsize, '}')
   }
+  if(lang != 'latex') outer.size <- function(x) x
   if(! is.function(outer.size)) {
     Outer.size <- outer.size
     outer.size <- function(x) paste0('{\\', Outer.size, '}')
@@ -1645,7 +1640,7 @@ formatCons <- function(stats, nam, tr, group.freq, prmsd, sep='/',
   if(prN)
     cqu <- cbind(cqu,stats[,'N',drop=FALSE])
   cqu[is.na(qu)] <- ''
-  if(latex || html) {
+  if(lang != 'plain') {
     st <- character(nrow(cqu))
     names(st) <- dimnames(qu)[[1]]
 
@@ -1690,7 +1685,7 @@ formatCons <- function(stats, nam, tr, group.freq, prmsd, sep='/',
   }
 
   if(length(tr)) {
-    ct <- formatTestStats(tr, prtest=prtest, latex=latex, html=html,
+    ct <- formatTestStats(tr, prtest=prtest, lang=lang,
                           testUsed=testUsed, pdig=pdig, eps=eps,
                           footnoteTest=footnoteTest, mspecs=mspecs)
     yj <- c(yj, ct)
@@ -1701,7 +1696,7 @@ formatCons <- function(stats, nam, tr, group.freq, prmsd, sep='/',
 
 formatTestStats <- function(tr, multchoice=FALSE,
                             i=if(multchoice) NA else 1,
-                            prtest, latex=FALSE, html=FALSE,
+                            prtest, lang='plain',
                             testUsed=character(0),
                             pdig=3, eps=.001,
                             plotmath=FALSE, footnoteTest=TRUE,
@@ -1712,7 +1707,7 @@ formatTestStats <- function(tr, multchoice=FALSE,
   ## or summaryM
   if(i > 1 && ! multchoice) stop('logic error')
 
-  specs <- if(html) mspecs$html else mspecs$latex
+  specs <- mspecs[[lang]]
   spc   <- specs$space
   sup   <- specs$sup
   math  <- specs$math
@@ -1723,7 +1718,7 @@ formatTestStats <- function(tr, multchoice=FALSE,
 
   if(any(is.na(pval)) || any(is.na(teststat))) {
     res <- rep('', length(pval))
-    if(latex && length(testUsed))
+    if(lang == 'latex' && length(testUsed))
       res <-
         if(footnoteTest)
           rep(paste0(sup(match(testname, testUsed))), length(pval))
@@ -1738,15 +1733,16 @@ formatTestStats <- function(tr, multchoice=FALSE,
 
   namefun <- specs[[tr$namefun]]  ## function for typesetting stat name
   statmarkup <-
-    if(latex) tr$latexstat
+    if(lang == 'latex') tr$latexstat
     else if(plotmath) tr$plotmathstat
     else tr$statname
-  if(length(prtest) > 1 && 'stat' %in% prtest && (html || latex || plotmath)) {
+  if(length(prtest) > 1 && 'stat' %in% prtest &&
+     (lang != 'plain' || plotmath)) {
     if(plotmath) {
       ## replace "df" inside statmarkup with actual d.f.
       if(length(grep('df', statmarkup)))
         statmarkup <- sedit(statmarkup, 'df',
-                          if(latex || length(deg)==1) dof
+                          if(lang == 'latex' || length(deg)==1) dof
                           else paste0('list(', dof, ')'))
     } else  statmarkup <- namefun(deg)
   }
@@ -1754,7 +1750,7 @@ formatTestStats <- function(tr, multchoice=FALSE,
   pval <- format.pval(pval, digits=pdig, eps=eps)
   plt  <- substring(pval,1,1) == '<'
   
-  if(latex || html) {
+  if(lang != 'plain') {
     if(length(prtest) == 1) 
       paste0(
         switch(prtest,
@@ -1768,7 +1764,7 @@ formatTestStats <- function(tr, multchoice=FALSE,
            if('stat' %in% prtest)
              paste0(statmarkup, '=', format(round(teststat, 2))),
            if(all(c('stat', 'P') %in% prtest))
-             (if(html) ', ' else paste0(',', spc)),
+             (if(lang == 'html') ', ' else paste0(',', spc)),
            if('P' %in% prtest) paste0('P',ifelse(plt,'','='), pval),
            if(footnoteTest && length(testUsed))
              paste0(sup(match(testname, testUsed)))) 
@@ -1884,14 +1880,14 @@ latex.summary.formula.reverse <-
       cs <- formatCats(stats[[i]], nam, tr, type[i],
                        if(length(x$group.freq)) x$group.freq else x$n[i],
                        what, npct, pctdig, exclude1, long, prtest,
-                       latex=TRUE, testUsed=testUsed,
+                       lang='latex', testUsed=testUsed,
                        npct.size=npct.size,
                        pdig=pdig, eps=eps,
                        footnoteTest=gt1.test, dotchart=dotchart)
       nn <- c(nn, rep(NA, nrow(cs)-1))
     } else cs <- formatCons(stats[[i]], nam, tr, x$group.freq, prmsd,
                             prtest=prtest, formatArgs=formatArgs, round=round,
-                            latex=TRUE, testUsed=testUsed,
+                            lang='latex', testUsed=testUsed,
                             middle.bold=middle.bold,
                             outer.size=outer.size, msdsize=msdsize,
                             pdig=pdig, eps=eps, footnoteTest=gt1.test)

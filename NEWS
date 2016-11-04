@@ -1,3 +1,8 @@
+Changes in version 4.0-1 (2016-11-02)
+   * gbayes: new test file, fixed bug in posterior mean when mix=0,1 in gbayesMixPost
+	 * ggfreqScatter: added prfreq and cuts arguments
+	 * latex.summary.formula.reverse, latex.summaryM, html.summaryM: fixed bug with backslash added before % for html, improved typesetting language logic
+
 Changes in version 4.0-0 (2016-10-31)
    * summaryP: fixed exclude1 logic - was not excluding enough levels (inconsistent use of variable names vs. labels)
 	 * latexTranslate: any NAs in first argument changed to "" before conversion

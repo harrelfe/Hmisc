@@ -327,7 +327,7 @@ plot.summaryM <-
                                  if(type[i] == 1) 1
                                  else 1 : nr,
                                  prtest  = prtest,
-                                 plotmath= TRUE, html=html,
+                                 plotmath= TRUE,
                                  pdig=pdig, eps=eps)
           ftstats <- c(ftstats, fts, 
                        if(type[i] == 1 && nr - exc - 1 > 0)
@@ -599,13 +599,13 @@ latex.summaryM <-
     prob <- probdef
   }
 
-  lang  <- if(html) 'html' else 'latex'
-  specs <- mspecs[[lang]]
-  math  <- specs$math
-  spc   <- specs$lspace
-  bold  <- specs$bold
-  sup   <- specs$sup
-  br    <- specs$br
+  lang    <- if(html) 'html' else 'latex'
+  specs   <- mspecs[[lang]]
+  math    <- specs$math
+  spc     <- specs$lspace
+  bold    <- specs$bold
+  sup     <- specs$sup
+  br      <- specs$br
   plminus <- specs$plminus
 
   Npct.size <- npct.size; NNsize <- Nsize; Outer.size <- outer.size
@@ -692,7 +692,7 @@ latex.summaryM <-
         cs <- formatCats(stats[[i]], nam, tr, type[i],
                          if(length(x$group.freq)) x$group.freq else x$n[i],
                          what, npct, pctdig, exclude1, long, prtest,
-                         latex=TRUE, html=html, testUsed=testUsed,
+                         lang=lang, testUsed=testUsed,
                          npct.size=npct.size,
                          pdig=pdig, eps=eps,
                          footnoteTest=gt1.test)
@@ -701,7 +701,7 @@ latex.summaryM <-
       } else {
         cs <- formatCons(stats[[i]], nam, tr, x$group.freq, prmsd,
                          prtest=prtest, formatArgs=formatArgs, round=round,
-                         latex=TRUE, html=html, testUsed=testUsed,
+                         lang='latex', testUsed=testUsed,
                          middle.bold=middle.bold,
                          outer.size=outer.size, msdsize=msdsize,
                          brmsd=brmsd,
@@ -1024,7 +1024,7 @@ plotpsummaryM <-
           fts <- formatTestStats(test[[varNames[i]]], type[i] == 3,
                                  if(type[i] == 1) 1 else 1 : nr,
                                  prtest  = prtest,
-                                 html = html,
+                                 lang = 'html',
                                  pdig = pdig, eps=eps)
           ftstats <- c(ftstats, fts, 
                        if(type[i] == 1 &&  nr - exc - 1 > 0)
@@ -1062,7 +1062,7 @@ plotpsummaryM <-
 
         teststat <- if(all(prtest != 'none'))
                       formatTestStats(test[[varNames[i]]], prtest=prtest,
-                                      html=TRUE,
+                                      lang='html',
                                       pdig=pdig, eps=eps)
 
         p[[ii]] <- bppltp(stats=st, xlab=nam, teststat=teststat,

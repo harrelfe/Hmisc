@@ -1,4 +1,4 @@
-ggfreqScatter <- function(x, y, bins=50, g=10,
+ggfreqScatter <- function(x, y, bins=50, g=10, cuts=NULL,
                           xtrans  = function(x) x,
                           ytrans  = function(y) y,
                           xbreaks = pretty(x, 10),
@@ -8,7 +8,7 @@ ggfreqScatter <- function(x, y, bins=50, g=10,
                           xlab=as.character(substitute(x)),
                           ylab=as.character(substitute(y)),
                           fcolors=viridis::viridis(10),
-                          nsize=FALSE, html=FALSE, ...) {
+                          nsize=FALSE, html=FALSE, prfreq=FALSE, ...) {
 
   xlab <- if(! missing(xlab)) xlab
           else if(label(x) != '') label(x, plot=TRUE, html=html) else xlab
@@ -36,6 +36,7 @@ ggfreqScatter <- function(x, y, bins=50, g=10,
   k <- subset(as.data.frame(table(x, y)), Freq > 0)
   if(nx) k$x <- as.numeric(as.character(k$x))
   if(ny) k$y <- as.numeric(as.character(k$y))
+  if(prfreq) print(table(k$Freq))
 
   if(g == 0) {
     w <-  if(nsize)
@@ -55,7 +56,7 @@ ggfreqScatter <- function(x, y, bins=50, g=10,
     return(w)
   }
   
-  k$fg <- cut2(k$Freq, g=g)
+  k$fg <- if(length(cuts)) cut2(k$Freq, cuts=cuts) else cut2(k$Freq, g=g)
 
   ufreq <- sort(unique(k$Freq))
   few <- length(ufreq) <= 15

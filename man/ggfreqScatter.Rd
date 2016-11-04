@@ -13,7 +13,7 @@ The result can also be passed to \code{ggplotly}.  Actual cell
 frequencies are added to the hover text in that case.
 }
 \usage{
-ggfreqScatter(x, y, bins=50, g=10,
+ggfreqScatter(x, y, bins=50, g=10, cuts=NULL,
               xtrans = function(x) x,
               ytrans = function(y) y,
               xbreaks = pretty(x, 10),
@@ -21,7 +21,8 @@ ggfreqScatter(x, y, bins=50, g=10,
               xminor  = NULL, yminor = NULL,
               xlab = as.character(substitute(x)),
               ylab = as.character(substitute(y)),
-              fcolors = viridis::viridis(10), nsize=FALSE, html=FALSE, \dots)
+              fcolors = viridis::viridis(10), nsize=FALSE,
+              html=FALSE, prfreq=FALSE, \dots)
 }
 \arguments{
 \item{x}{x-variable}
@@ -33,6 +34,8 @@ ggfreqScatter(x, y, bins=50, g=10,
 \item{g}{number of quantile groups to make for frequency counts.  Use
 	\code{g=0} to use frequencies continuously for color and alpha
 	coding.  This is recommended only when using \code{plotly}.}
+\item{cuts}{instead of using \code{g}, specify \code{cuts} to provide
+	the vector of cuts for categorizing frequencies for assignment to colors}
 \item{xtrans,ytrans}{functions specifying transformations to be made
 	before binning and plotting}
 \item{xbreaks,ybreaks}{vectors of values to label on axis, on original
@@ -49,7 +52,10 @@ ggfreqScatter(x, y, bins=50, g=10,
 	\code{size} is taken as the fourth root of the frequency.  If there
 	are 15 or unique frequencies all the unique frequencies are used,
 	otherwise \code{g} quantile groups of frequencies are used.}
-\item{html}{set to \code{TRUE} to use html in axis labels instead of plotmath}
+\item{html}{set to \code{TRUE} to use html in axis labels instead of
+	plotmath}
+\item{prfreq}{set to \code{TRUE} to print the frequency distributions of
+	the binned coordinate frequencies}
 \item{\dots}{arguments to pass to \code{geom_point} such as \code{shape}
 	and \code{size}}
 }

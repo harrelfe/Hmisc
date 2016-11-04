@@ -542,7 +542,7 @@ latex.describe.single <-
                  scriptsize =110,  # was 93
                  73)
 
-  intFreq <- object$intervalFreq
+  Values <- object$values
 
   ## Put graph on its own line if length of label > 3.5 inches
   ## For normalsize there are 66 characters per 4.8 in. standard width
@@ -574,17 +574,19 @@ latex.describe.single <-
                   paste0('  Format:', object$format))
   
   ct('\\noindent', des, sep='', file=file, append=append)
-  if(length(intFreq)) {
-    counts <- intFreq$count
+  if(length(Values) && length(Values$frequency)) {
+    counts <- Values$frequency
     maxcounts <- max(counts)
     ## \mbox{~~~} makes \hfill work
-    ct(if(nchar(desbas)/(wide/4.8) > (4.8-1.5))' \\\\ \\mbox{~~~} \n',
+    ct(if(nchar(desbas)/(wide / 4.8) > (4.8 - 1.5))' \\\\ \\mbox{~~~} \n',
        '\\setlength{\\unitlength}{0.001in}\\hfill',
        '\\begin{picture}(1.5,.1)(1500,0)',
        '\\linethickness{0.6pt}\n', sep='', file=file, append=TRUE)
-    for(i in (1:100)[counts > 0]) {
-      ct('\\put(',round(1000*(i-1)*1.5/100),',0){\\line(0,1){',
-         max(1,round(1000*counts[i]/maxcounts*.1)),'}}\n',
+    lco <- length(counts)
+    ## Todo: may need to label limits used since are pretty()'d versions
+    for(i in (1 : lco)[counts > 0]) {
+      ct('\\put(',round(1000 * (i - 1) * 1.5 / lco),',0){\\line(0,1){',
+         max(1, round(1000 * counts[i] / maxcounts * .1)), '}}\n',
          sep='', file=file, append=TRUE)
     }
     

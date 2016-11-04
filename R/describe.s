@@ -574,7 +574,8 @@ latex.describe.single <-
                   paste0('  Format:', object$format))
   
   ct('\\noindent', des, sep='', file=file, append=append)
-  if(length(Values) && length(Values$frequency)) {
+  lco <- if(length(Values)) length(Values$frequency) else 0
+  if(lco > 2) {
     counts <- Values$frequency
     maxcounts <- max(counts)
     ## \mbox{~~~} makes \hfill work
@@ -582,7 +583,6 @@ latex.describe.single <-
        '\\setlength{\\unitlength}{0.001in}\\hfill',
        '\\begin{picture}(1.5,.1)(1500,0)',
        '\\linethickness{0.6pt}\n', sep='', file=file, append=TRUE)
-    lco <- length(counts)
     ## Todo: may need to label limits used since are pretty()'d versions
     for(i in (1 : lco)[counts > 0]) {
       ct('\\put(',round(1000 * (i - 1) * 1.5 / lco),',0){\\line(0,1){',

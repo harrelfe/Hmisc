@@ -1,8 +1,9 @@
-Changes in version 4.0-1 (2016-11-04)
+Changes in version 4.0-1 (2016-11-11)
    * gbayes: new test file, fixed bug in posterior mean when mix=0,1 in gbayesMixPost
 	 * ggfreqScatter: added prfreq and cuts arguments
 	 * latex.summary.formula.reverse, latex.summaryM, html.summaryM: fixed bug with backslash added before % for html, improved typesetting language logic
 	 * latex.describe: fixed bug that prevented spike histogram from appearing
+	 * ggplot.summaryP: moved text out of aes in geom_point, left in main aes
 
 Changes in version 4.0-0 (2016-10-31)
    * summaryP: fixed exclude1 logic - was not excluding enough levels (inconsistent use of variable names vs. labels)

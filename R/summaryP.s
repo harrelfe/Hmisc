@@ -330,7 +330,7 @@ ggplot.summaryP <-
   
   if(length(size)) {
     k <- paste(k,
-               if(length(size)) 'geom_point(aes(size = N, label=hov))' else
+               if(length(size)) 'geom_point(aes(size = N))' else
                 'geom_point()',
                sep=' + ')
     Ns <- X$denom

@@ -448,13 +448,14 @@ bppltp <- function(p=plotly::plot_ly(),
 #                        line=list(color='MidnightBlue'),
 #                            hoverinfo='text')
 
+  dat <- data.frame(X, Y, Z, X0, Y0, X1, Y1, Zs)
   p <- plotly::add_markers(p, x=~X, y=~Y, text=~Z, hoverinfo='text',
-                           marker=list(symbol='asterisk'))
+                           marker=list(symbol='asterisk'), data=dat)
   p <- plotly::add_polygons(p, x=~X, y=~Y, color=I('LightGray'),
-                            mode='markers', showlegend=FALSE)
+                            mode='markers', showlegend=FALSE, data=dat)
   p <- plotly::add_segments(p, x=~X0, y=~Y0, xend=~X1, yend=~Y1,
                             text=~Zs, hoverinfo='text',
-                            color=I('LightGreen'))
+                            color=I('LightGreen'), data=dat)
   
 #  p <- plotly::add_lines(p, x=~X, y=~Y, text=~Z, name='Quantiles',
 #                         color=I('LightGray'), hoverinfo='text')
@@ -463,10 +464,11 @@ bppltp <- function(p=plotly::plot_ly(),
     z <- paste0(groups, '<br>',
                 'Mean=', signif(Means, 4), '<br>N=', N)
     if(length(teststat)) z <- paste0(z, '<br>', teststat)
-    p <- plotly::add_markers(p, x=~ Means, y=~ ng : 1, text=~ z, mode='markers',
+    dam <- data.frame(Means, y=ng : 1, z)
+    p <- plotly::add_markers(p, x=~ Means, y=~ y, text=~ z, mode='markers',
                            marker=list(color='LightBlue'),
                            hoverinfo='text',
-                           name='Means')
+                           name='Means', data=dam)
   }
   plotly::layout(p, autosize=TRUE,
                  showlegend=showlegend,

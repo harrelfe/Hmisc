@@ -232,7 +232,11 @@ dotchartp <-
                        text = ~ ht,
                        hoverinfo = 'text',
                        name=nx,
-                       legendgroup=if(length(legendgroup)) legendgroup[1])
+                       legendgroup=if(length(legendgroup)) legendgroup[1],
+                       width = width,
+                       height= if(length(height) && height == 'auto')
+                                 plotlyParm$heightDotchart(n) else height)
+
   if(nc > 1)
     for(i in 2 : nc) {
       X   <- x[, i]
@@ -311,9 +315,9 @@ dotchartp <-
              yaxis=list(title=ylab, range=ylim,
                         zeroline=FALSE,
                         tickvals=tly, ticktext=tty),
-             width=width,
-             height=if(length(height) && height == 'auto')
-                      plotlyParm$heightDotchart(n) else height,
+#             width=width,
+#             height=if(length(height) && height == 'auto')
+#                      plotlyParm$heightDotchart(n) else height,
              autosize=(length(width) + length(height)) == 0,
              margin=list(l=leftmargin, t=5),
              showlegend=showlegend)
@@ -332,9 +336,9 @@ dotchartp <-
                  yaxis = list(title=ylab, range=ylim,
                             zeroline=FALSE,
                             tickvals=tly, ticktext=tty),
-                 width = width,
-                 height= if(length(height) && height == 'auto')
-                          plotlyParm$heightDotchart(n) else height,
+ #                width = width,
+ #                height= if(length(height) && height == 'auto')
+ #                         plotlyParm$heightDotchart(n) else height,
                  # autosize=(length(width) + length(height)) == 0,
                  margin = list(l=leftmargin, t=5),
                  legendgroup=legendgroup, showlegend = showlegend)

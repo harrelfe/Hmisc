@@ -136,11 +136,13 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
                 plotly::plot_ly(z, x = ~ Proportion, y= ~ cumy, text= ~ text,
                              color=~ Missing, mode='markers',
                              hoverinfo='text',
-                             type='scatter', name='')
+                             type='scatter', name='',
+                             height=plotlyParm$heightDotchart(nrow(z)))
            else
              plotly::plot_ly(z, x=Proportion, y=cumy, text=text,
                              mode='markers', hoverinfo='text',
-                             type='scatter', name='')
+                             type='scatter', name='',
+                             height=plotlyParm$heightDotchart(nrow(z)))
       
 ###      z$proplev <- 1.15
         pcat <-
@@ -161,8 +163,7 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
                                         title='Proportion'),
                              yaxis=list(title='', autorange='reversed',
                                         tickvals=tly, ticktext=un),
-                             autosize=FALSE,
-                             height=plotlyParm$heightDotchart(nrow(z)),
+#                             autosize=FALSE,
                              margin=list(l=plotlyParm$lrmargin(un)))
       }
     }

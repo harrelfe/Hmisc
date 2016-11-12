@@ -1076,6 +1076,7 @@ plotpsummaryM <-
         if(! length(height)) height <- min(1000, 275 * nrows)
         if(! length(width))  width  <- min(900,  400 * ncols)
         gcon <- plotly::layout(gcon, height=height, width=width)
+        ## and note: height and width are now arguments to plot_ly
         }
     }
   }

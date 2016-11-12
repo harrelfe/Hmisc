@@ -84,7 +84,8 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
     db <- subset(d, Big)
     p <- plotly::plot_ly(data=db, x=~ X, y=~ Y, color=~ Group, text=~ Htext,
                          type='scatter', mode='markers', colors=cols,
-                         hoverinfo='text')
+                         hoverinfo='text',
+                         height=plotlyParm$heightDotchart(lines), width=width)
   }
   else
     p <- plotly::plot_ly()
@@ -105,7 +106,6 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
                  yaxis=list(title='',
                             range=c(min(Y) - 0.2, 0.2),
                             zeroline=FALSE, tickvals=yl, ticktext=yt),
-                 margin=list(l=leftmargin),
-                 height=plotlyParm$heightDotchart(lines), width=width)
+                 margin=list(l=leftmargin))
 #                 colors=cols)
   }

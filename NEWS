@@ -1,4 +1,4 @@
-Changes in version 4.0-1 (2016-11-12)
+Changes in version 4.0-1 (2016-11-13)
    * gbayes: new test file, fixed bug in posterior mean when mix=0,1 in gbayesMixPost
 	 * ggfreqScatter: added prfreq and cuts arguments
 	 * latex.summary.formula.reverse, latex.summaryM, html.summaryM: fixed bug with backslash added before % for html, improved typesetting language logic
@@ -7,6 +7,7 @@ Changes in version 4.0-1 (2016-11-12)
 	 * plot.describe, plot.summaryP: put text aes in ggplot(), increased ggplotly height to allow popups for top continuous variables in plot.describe
 	 * dotchartp, dotchartpl, plot.describe: moved height and width from plotly::layout to plot_ly because of changes in plotly 4.5.6
 	 * bppltp: added data= to plot::add_* because plotly was evaluating using the wrong copy of x,y, etc.
+	 * plot.summary.formula.reverse, plot.summaryM: removed subtitles argument since not used
 
 Changes in version 4.0-0 (2016-10-31)
    * summaryP: fixed exclude1 logic - was not excluding enough levels (inconsistent use of variable names vs. labels)

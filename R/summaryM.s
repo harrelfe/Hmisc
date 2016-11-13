@@ -228,7 +228,7 @@ plot.summaryM <-
            xlim = c(0,1),
            xlab = 'Proportion',
            pch = c(16, 1, 2, 17, 15, 3, 4, 5, 0), exclude1 = TRUE,
-           main, subtitles = TRUE, ncols=2,
+           main, ncols=2,
            prtest = c('P', 'stat', 'df', 'name'), pdig = 3, eps = 0.001,
            conType = c('bp', 'dot', 'raw'),
            cex.means = 0.5, cex=par('cex'),

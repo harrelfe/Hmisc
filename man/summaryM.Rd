@@ -77,7 +77,7 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
      xlim = c(0,1),
      xlab = 'Proportion',
      pch = c(16, 1, 2, 17, 15, 3, 4, 5, 0), exclude1 = TRUE,
-     main, subtitles = TRUE, ncols=2,
+     main, ncols=2,
      prtest = c('P', 'stat', 'df', 'name'), pdig = 3, eps = 0.001,
      conType = c('bp', 'dot', 'raw'), cex.means = 0.5, cex=par('cex'),
      height='auto', width=700, \dots)
@@ -388,9 +388,6 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
   \item{xlab}{x-axis label}
   \item{main}{a main title.  This applies only to the plot for
     categorical variables.}
-  \item{subtitles}{
-    set to \code{FALSE} to suppress automatic subtitles
-  }
 	\item{ncols}{number of columns for \code{plotly} graphics for extended
     box plots.  Defaults to 2.  Recommendation is for 1-2.}
   \item{caption}{character string containing LaTeX table captions.}

@@ -125,7 +125,7 @@
      xlab = if(what=='proportion') 'Proportion'
             else 'Percentage', 
      pch = c(16, 1, 2, 17, 15, 3, 4, 5, 0), exclude1 = TRUE,
-     dotfont = 1, main, subtitles = TRUE,
+     dotfont = 1, main,
      prtest = c('P', 'stat', 'df', 'name'), pdig = 3, eps = 0.001,
      conType = c('dot', 'bp', 'raw'), cex.means = 0.5, \dots)
 

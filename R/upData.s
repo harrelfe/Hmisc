@@ -219,12 +219,12 @@ upData <- function(object, ...,
       if(al[i] != '') label(object[[i]]) <- al[i]
     attr(object, 'var.labels') <- NULL
     if(missing(force.single)) force.single <- FALSE
-  } else if(caplabels) {
-#    for(i in 1:length(no))
-    for(i in which(vinfo['labpres', ] == 'TRUE'))
-      if(length(la <- attr(object[[i]], 'label')))
-        attr(object[[i]], 'label') <- upfirst(la)
-  }
+  } else
+    if(caplabels) {
+      for(i in which(vinfo['labpres', ] == 'TRUE'))
+        if(length(la <- attr(object[[i]], 'label')))
+          attr(object[[i]], 'label') <- upfirst(la)
+    }
   al <- attr(object, 'label.table')
   if(length(al)) {
     for(i in 1 : length(no)) {
@@ -266,7 +266,7 @@ upData <- function(object, ...,
 
   if(length(rename)) {
     nr <- names(rename)
-    if(length(nr)==0 || any(nr==''))
+    if(length(nr) == 0 || any(nr == ''))
       stop('the list or vector specified in rename must specify variable names')
 
     for(i in 1 : length(rename)) {
@@ -291,18 +291,20 @@ upData <- function(object, ...,
       stop('variables must all have names')
 
     for(i in 1 : length(z)) {
+      x <- eval(z[[i]], object, parent.frame())
       v <- vn[i]
       if(v %in% no) {
         out <- c(out, outn <- paste0('Modified variable\t', v, '\n'))
         if(print) cat(outn)
+        vinfo[, v] <- g(x)
         }
       else {
         out <- c(out, outn <- paste0('Added variable\t\t', v, '\n'))
         if(print) cat(outn)
         no <- c(no, v)
+        vinfo <- cbind(vinfo, g(x))
+        colnames(vinfo)[ncol(vinfo)] <- v
       }
-
-      x <- eval(z[[i]], object, parent.frame())
       d <- dim(x)
       lx <- if(length(d))d[1] else length(x)
 
@@ -338,8 +340,9 @@ upData <- function(object, ...,
   if(force.single) {
     ## sm <- sapply(object, storage.mode)
     sm <- vinfo['sm', ]
-    if(any(sm == 'double'))
-      for(i in 1 : length(sm)) {
+    ii <- which(sm == 'double')
+    if(length(ii))
+      for(i in ii) {
         if(sm[i] == 'double') {
           x <- object[[i]]
           if(testDateTime(x) || is.matrix(x))
@@ -356,11 +359,6 @@ upData <- function(object, ...,
   }
   
   if(charfactor) {
-#    g <- function(z) {
-#      if(!is.character(z)) return(FALSE)
-#      length(unique(z)) < .5 * length(z)
-#    }
-#    mfact <- sapply(object, g)
     mfact <- as.logical(vinfo['lowuc', ])
     if(any(mfact))
       for(i in which(mfact)) {

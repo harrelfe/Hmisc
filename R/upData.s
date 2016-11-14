@@ -278,7 +278,8 @@ upData <- function(object, ...,
       if(print) cat(outn)
     }
 
-    no[match(nr, no)] <- unlist(rename)
+    no[match(nr, no)] <- colnames(vinfo)[match(nr, colnames(vinfo))] <-
+      unlist(rename)
     names(object) <- no
   }
 

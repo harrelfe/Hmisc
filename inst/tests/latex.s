@@ -108,3 +108,35 @@ w <- latex(my.table,
            caption = "The Example Table Using Hmisc on R 3.3.1.",
            label = "tab:comp-csp-results-large-small-imp"
            )
+
+## From Gary Napier
+require(Hmisc)
+require(htmlTable)
+x <- rnorm(12, 0, 1)
+y <- rnorm(12, 0, 1)
+Sa_2 <- data.frame(Mean = x, SD = y)
+Om_2 <- data.frame(Mean = x, SD = y)
+Nu <- data.frame(Mean = x, SD = y)
+Param_names <- c("Sa_2", "Om_2", "Nu")
+Group <- rep(c("Ctrl", "Pat"), 6)
+Analyses_names <- sprintf("A%s", 1:6)
+Mean_sd <- cbind(Sa_2, Om_2, Nu)
+Mean_sd <- signif(Mean_sd, digit = 2)
+
+## Works perfectly
+h <- htmlTable(Mean_sd, 
+          rnames = Group, 
+          rgroup =Analyses_names, 
+          n.rgroup = rep(2, 6), 
+          cgroup = Param_names, 
+          n.cgroup = c(2, 2, 2))
+cat(h, sep='\n', file='/tmp/z.html')
+
+# Does not print column spanners (Param_names) or rownames (Group_names)
+w <- latex(Mean_sd, file = '/tmp/z.tex',
+      title  = '',
+      rowname = Group,    # he originally had rnames=Group
+      rgroup = Analyses_names, 
+      n.rgroup = rep(2, 6),
+      cgroup = Param_names,   # he originally had cnames=Param_names
+      n.cgroup = c(2, 2, 2))

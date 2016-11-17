@@ -650,7 +650,7 @@ latex.default <-
         paste(sl, "begin{tabular}{", tabular.cols, "}\n", toprule, sep=""),
          'tabular',
         insert=list(if(! table.env && length(insert.bottom))
-                      list('tabular', 'after', insert.bottom),
+                      list('tabular', 'after', paste('\\par', insert.bottom)),
                     if(table.env)
                       list('table',   'before', insert.bottom),
                     if(caption.loc == 'bottom' && length(caption))

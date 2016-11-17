@@ -155,3 +155,9 @@ Symptoms <- mChoice(symptom1, symptom2, symptom3, label='Primary Symptoms')
 
 f <- summary(treatment ~ age + sex + Symptoms, method="reverse", test=TRUE)
 w <- latex(f, file='/tmp/z.tex')
+
+## https://github.com/harrelfe/Hmisc/issues/60
+require(Hmisc)
+d <- data.frame(x=1:2, y=2:1)
+w <- latex(d, file='/tmp/z.tex', insert.bottom='Bottom text',
+           table.env=FALSE)

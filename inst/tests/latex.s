@@ -132,7 +132,6 @@ h <- htmlTable(Mean_sd,
           n.cgroup = c(2, 2, 2))
 cat(h, sep='\n', file='/tmp/z.html')
 
-# Does not print column spanners (Param_names) or rownames (Group_names)
 w <- latex(Mean_sd, file = '/tmp/z.tex',
       title  = '',
       rowname = Group,    # he originally had rnames=Group
@@ -140,3 +139,19 @@ w <- latex(Mean_sd, file = '/tmp/z.tex',
       n.rgroup = rep(2, 6),
       cgroup = Param_names,   # he originally had cnames=Param_names
       n.cgroup = c(2, 2, 2))
+
+## From Niclas https://github.com/harrelfe/Hmisc/issues/59
+require(Hmisc)
+options(digits=3)
+set.seed(173)
+sex <- factor(sample(c("m","f"), 500, rep=TRUE))
+age <- rnorm(500, 50, 5)
+treatment <- factor(sample(c("Drug","Placebo"), 500, rep=TRUE))
+symp <- c('Headache','Stomach Ache','Hangnail','Muscle Ache','Depressed')
+symptom1 <- sample(symp, 500,TRUE)
+symptom2 <- sample(symp, 500,TRUE)
+symptom3 <- sample(symp, 500,TRUE)
+Symptoms <- mChoice(symptom1, symptom2, symptom3, label='Primary Symptoms')
+
+f <- summary(treatment ~ age + sex + Symptoms, method="reverse", test=TRUE)
+w <- latex(f, file='/tmp/z.tex')

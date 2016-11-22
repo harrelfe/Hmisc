@@ -345,7 +345,7 @@ latex.default <-
            landscape=FALSE,
            multicol=TRUE, ## to remove multicolumn if no need
            math.row.names=FALSE, math.col.names=FALSE,
-           hyperref=NULL,
+           hyperref=NULL, comment = TRUE,
            ...)
 {
   if(length(hyperref)) hyperref <- sprintf('\\hyperref[%s]{', hyperref)
@@ -564,8 +564,9 @@ latex.default <-
   vbar <- ifelse(vbar, "|", "")
 
   if(! append) cat("", file=file)	#start new file
-  
-  cat("%", deparse(sys.call()), "%\n", file=file, append=file != '', sep='')
+
+  if (comment)
+    cat("%", deparse(sys.call()), "%\n", file=file, append=file != '', sep='')
 
   if(dcolumn) {
     decimal.point <- ifelse(cdot, paste(sl, "cdot", sep=""), ".")

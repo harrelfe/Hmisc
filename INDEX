@@ -68,6 +68,8 @@ GiniMd                  Gini's Mean Difference
 hdquantile              Harrell-Davis Distribution-Free Quantile
                         Estimator
 histbackback            Back to Back Histograms
+histboxp                Use plotly to Draw Stratified Spike Histogram
+                        and Box Plot Statistics
 hist.data.frame         Histograms for Variables in a Data Frame
 HmiscOverview           Overview of Hmisc Library
 hoeffd                  Matrix of Hoeffding's D Statistics

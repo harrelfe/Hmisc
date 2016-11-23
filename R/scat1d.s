@@ -640,7 +640,7 @@ histboxp <- function(p=plotly::plot_ly(height=height),
 
   p <- plotly::add_markers(p, mode='markers', data=dq1,
                            x = ~ Median,
-                           y = ~ y - yoff - 0.03,
+                           y = ~ y - yoff,
                            text = ~ txt,
                            hoverinfo = 'text',
                            marker = list(symbol='line-ns-open',

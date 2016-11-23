@@ -459,7 +459,7 @@ D-70597 Stuttgart Germany\cr
   \code{\link{plsmo}}, \code{\link{lowess}}, \code{\link{stripplot}},
   \code{\link{hist.data.frame}},\code{\link{Ecdf}}, \code{\link{hist}},
   \code{\link[lattice]{histogram}}, \code{\link{table}},
-  \code{\link{density}}, \code{\link{stat_plsmo}}
+  \code{\link{density}}, \code{\link{stat_plsmo}}, \code{\link{histboxp}}
 }
 \examples{
 plot(x <- rnorm(50), y <- 3*x + rnorm(50)/2 )

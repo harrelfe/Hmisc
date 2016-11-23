@@ -542,5 +542,158 @@ histSpikep <- function(p, x, y, z, group=NULL, color=NULL, hovertext=NULL,
 #                    evaluate=TRUE, name=tracename)
 }
 
+histboxp <- function(p=plotly::plot_ly(height=height),
+                     x, group=NULL, xlab=NULL,
+                     gmd=TRUE, sd=FALSE, bins=100) {
+
+  if(! length(xlab)) xlab <- label(x, html=TRUE, plot=TRUE,
+                                   default=deparse(substitute(x)))
+
+  if(! length(group)) group <- rep(1, length(x))
+  if(length(x) != length(group)) stop('x and group must be same length')
+
+  distinct <- unique(x)
+  distinct <- distinct[! is.na(distinct)]
+  xmin     <- min(distinct)
+  xr       <- x
+  if(length(distinct) > bins) {
+    pret <- pretty(x, bins)
+    dist <- pret[2] - pret[1]
+    r    <- range(pret)
+    xr   <- r[1] + dist * round((x - r[1]) / dist)
+    }
+
+  mu <- markupSpecs$html
   
+  y <- 0
+  dh <- dm <- dq1 <- dq2 <- dq3 <- dgmd <- dsd <- levs <- NULL
+
+  group <- as.factor(group)
+  mis   <- is.na(x)
+  for(g in levels(group)) {
+    i <- group == g
+    miss <- sum(mis[i])
+    if(miss > 0) i <- i & ! mis
+    if(! any(i)) next
+    levs <- c(levs, g)
+    u     <- x[i]
+    ur    <- xr[i]
+    tab   <- as.data.frame(table(ur))
+    z     <- as.numeric(as.character(tab$ur))
+    prop  <- tab$Freq / length(ur)
+    y <- y - 1
+    dh <- rbind(dh, data.frame(x=z, prop=prop, freq=tab$Freq,
+                      txt=paste0(format(z), '<br>', round(prop, 3),
+                                 '<br>n=', tab$Freq),
+                      y=y))
+
+    dm <- rbind(dm, data.frame(Mean=mean(u), n=length(u), miss=miss, y=y))
+
+    if(gmd) {
+      Gmd <- GiniMd(u)
+      dgmd <- rbind(dgmd, data.frame(Gmd, x=xmin,
+                                     txt=paste0('Gini mean difference:',
+                                                format(Gmd, digits=5)),
+                                     y=y))
+    }
+
+    if(sd) {
+      Sd  <- sd(u)
+      dsd <- rbind(dsd, data.frame(sd=Sd, x=xmin,
+                                   txt=paste0('SD:', format(Sd, digits=5)),
+                                   y=y))
+      }
+
+    probs <- c(0.05, 0.25, 0.5, 0.75, 0.95)
+    qu  <- quantile(u, probs)
+    nam <- paste0('Q', mu$sub(probs))
+    txt <- paste0(nam, ':', format(qu, digits=5))
+    dq1 <- rbind(dq1, data.frame(Median=qu[3], txt=txt[3], y=y))
+    dq2 <- rbind(dq2, data.frame(quartiles=qu[c(2,4)], txt=txt[c(2,4)], y=y))
+    dq3 <- rbind(dq3, data.frame(outer=qu[c(1,5)], txt=txt[c(1,5)], y=y))
+  }
+
+  ng <- length(levs)
+  height <- plotlyParm$heightDotchart(ng) + 50 * (gmd & sd)
+
+  dh$prop <- 0.8 * dh$prop / max(dh$prop)
+  p <- plotly::add_segments(p, data=dh,
+                            x = ~ x,
+                            y = ~ y,
+                            xend = ~ x,
+                            yend = ~ y + prop,
+                            text = ~ txt,
+                            hoverinfo = 'text',
+                            color = I('black'),
+                            name  = 'Histogram')
+
+  dm$txt <- with(dm, paste0('Mean:', format(Mean, digits=5), '<br>n=', n,
+                            '<br>', miss, ' missing'))
+
+  yoff <- 0.09
+
+  p <- plotly::add_markers(p, data=dm, mode='markers', color=I('black'),
+                           x = ~ Mean, y = ~ y - yoff,
+                           text = ~ txt,
+                           hoverinfo = 'text',
+                           name = 'Mean')
+
+  p <- plotly::add_markers(p, mode='markers', data=dq1,
+                           x = ~ Median,
+                           y = ~ y - yoff - 0.03,
+                           text = ~ txt,
+                           hoverinfo = 'text',
+                           marker = list(symbol='line-ns-open',
+                                         color='black', size=8),
+                           name = 'Median')
   
+  p <- plotly::add_markers(p, mode='markers', data=dq2,
+                           x = ~ quartiles,
+                           y = ~ y - yoff,
+                           text = ~ txt,
+                           hoverinfo = 'text',
+                           marker = list(symbol='line-ns-open',
+                                         color='blue', size=6),
+                           name = 'Quartiles')
+  
+  p <- plotly::add_markers(p, mode='markers', data=dq3,
+                           x = ~ outer,
+                           y = ~ y - yoff,
+                           text = ~ txt,
+                           hoverinfo = 'text',
+                           marker = list(symbol='line-ns-open',
+                                         color='red', size=4),
+                           name = '0.05, 0.95<br>Quantiles')
+
+  if(gmd)
+    p <- plotly::add_segments(p, data=dgmd,
+                              x = ~ x,
+                              y = ~ y - 0.19,
+                              xend = ~ x + Gmd,
+                              yend = ~ y - 0.19,
+                              text = ~ txt,
+                              hoverinfo = 'text',
+                              color = I('light gray'),
+                              name = paste0('Gini ', mu$overbar('|\u394|')),
+                              visible='legendonly')
+                              
+  if(sd)
+    p <- plotly::add_segments(p, data=dsd,
+                              x = ~ x,
+                              y = ~ y - 0.23,
+                              xend = ~ x + sd,
+                              yend = ~ y - 0.23,
+                              text = ~ txt,
+                              hoverinfo = 'text',
+                              color = I('light blue'),
+                              name = 'SD',
+                              visible='legendonly')
+  
+  p <- plotly::layout(p,
+                      margin = list(l=plotlyParm$lrmargin(levs)),
+                      xaxis = list(title=xlab),
+                      yaxis = list(title='',
+                                   tickvals= - (1 : ng),
+                                   ticktext = levs))
+  p
+}

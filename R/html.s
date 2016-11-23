@@ -381,6 +381,8 @@ markupSpecs <- list(html=list(
   plminus  = '\u00B1',    # &plminus
   times    = '\u00D7',         # &times
   xbar     = '<span style="text-decoration: overline">X</span>',
+  overbar  = function(x) paste0('<span style="text-decoration: overline">',
+                                x, '</span>'),
   styles   = function(...) htmltools::HTML('
 <script type="text/javascript">
 <!--
@@ -471,7 +473,8 @@ latex = list(
   hrule    = '\\hrule',
   plminus  = '$\\pm$',
   times    = '$\\times$',
-  xbar     = '$\\bar{X}$'
+  xbar     = '$\\bar{X}$',
+  overbar  = function(x) paste0('$\\overline{', x, '}$')
 ),
 
 plain = list(

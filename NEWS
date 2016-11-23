@@ -1,4 +1,4 @@
-Changes in version 4.0-1 (2016-11-17)
+Changes in version 4.0-1 (2016-11-23)
    * gbayes: new test file, fixed bug in posterior mean when mix=0,1 in gbayesMixPost
 	 * ggfreqScatter: added prfreq and cuts arguments
 	 * latex.summary.formula.reverse, latex.summaryM, html.summaryM: fixed bug with backslash added before % for html, improved typesetting language logic
@@ -11,6 +11,7 @@ Changes in version 4.0-1 (2016-11-17)
 	 * upData: fixed bug when converting existing variable to factor; was not recognizing new storage model and tried to run floor()
 	 * latex.summary.formula.reverse: fixed bug where outer quantiles and frequencies were not being rendered
 	 * latex.default: put \par in front of insert.bottom if table.env is FALSE, so that text is not put to the side of the table
+	 * histboxp: new function for plotly stratified spike histograms with box plot statistics also depicted
 
 Changes in version 4.0-0 (2016-10-31)
    * summaryP: fixed exclude1 logic - was not excluding enough levels (inconsistent use of variable names vs. labels)

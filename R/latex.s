@@ -181,7 +181,7 @@ format.df <- function(x,
       sapply(n.x, function(n.x.i) paste(rep(" ", n.x.i), collapse=""))
     ifelse(x == blanks.x, ".", x)
   }
-  
+
   nams <- if(math.col.names) paste('$', nams, '$', sep='')
    else if(already.math.col.names) nams else cleanLatex(nams)
 

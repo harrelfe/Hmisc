@@ -127,7 +127,8 @@ latex(object, \dots)
     center=c('center','centering','centerline','none'),
     landscape=FALSE,
     multicol=TRUE,
-    math.row.names=FALSE, math.col.names=FALSE,
+    math.row.names=FALSE, already.math.row.names=FALSE,
+    math.col.names=FALSE, already.math.col.names=FALSE,
     hyperref=NULL,
     \dots) # x is a matrix or data.frame
 
@@ -350,9 +351,13 @@ dvigv(object, \dots)
   \item{math.row.names}{
     logical, set true to place dollar signs around the row names.
   }
+	\item{already.math.row.names}{set to \code{TRUE} to prevent any math
+		mode changes to row names}
   \item{math.col.names}{
     logical, set true to place dollar signs around the column names.
   }
+	\item{already.math.col.names}{set to \code{TRUE} to prevent any math
+		mode changes to column names}
 	\item{hyperref}{if \code{table.env=TRUE} is a character string used to
   	generate a LaTeX \code{hyperref} enclosure}
   \item{cdot}{see \code{\link{format.df}}}

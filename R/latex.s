@@ -61,8 +61,12 @@ format.df <- function(x,
                       numeric.dollar=! dcolumn, na.blank=FALSE,
                       na.dot=FALSE, blank.dot=FALSE, col.just=NULL,
                       cdot=FALSE, dcolumn=FALSE, matrix.sep=' ',
-                      scientific=c(-4,4), math.row.names=FALSE,
-                      math.col.names=FALSE, double.slash=FALSE,
+                      scientific=c(-4,4),
+                      math.row.names=FALSE,
+                      already.math.row.names=FALSE,
+                      math.col.names=FALSE,
+                      already.math.col.names=FALSE,
+                      double.slash=FALSE,
                       format.Date='%m/%d/%Y',
                       format.POSIXt="%m/%d/%Y %H:%M:%OS", ...)
 {
@@ -179,10 +183,10 @@ format.df <- function(x,
   }
   
   nams <- if(math.col.names) paste('$', nams, '$', sep='')
-   else cleanLatex(nams)
+   else if(already.math.col.names) nams else cleanLatex(nams)
 
   rnams <- if(math.row.names) paste('$', rnams, '$', sep='')
-   else cleanLatex(rnams)
+   else if(already.math.row.names) rnams else cleanLatex(rnams)
 
   for(j in 1 : ncx) {
     xj <- if(xtype == 1) x[[j]] else if(xtype == 2) x[,j] else x
@@ -209,9 +213,7 @@ format.df <- function(x,
           
           if(math.row.names) {
             paste('$', dn, '$', sep='')
-          } else {
-            cleanLatex(dn)
-          }
+          } else if(already.math.row.names) dn else cleanLatex(dn)
         } else ''
       
       namk <- paste(nams[j],
@@ -344,7 +346,10 @@ latex.default <-
            center=c('center','centering','centerline','none'),
            landscape=FALSE,
            multicol=TRUE, ## to remove multicolumn if no need
-           math.row.names=FALSE, math.col.names=FALSE,
+           math.row.names=FALSE,
+           already.math.row.names=FALSE,
+           math.col.names=FALSE,
+           already.math.col.names=FALSE,
            hyperref=NULL,
            ...)
 {
@@ -353,7 +358,10 @@ latex.default <-
   caption.loc <- match.arg(caption.loc)
   cx <- format.df(object, dcolumn=dcolumn, na.blank=na.blank,
                   numeric.dollar=numeric.dollar, cdot=cdot,
-                  math.row.names=math.row.names, math.col.names=math.col.names,
+                  math.row.names=math.row.names,
+                  already.math.row.names=already.math.row.names,
+                  math.col.names=math.col.names,
+                  already.math.col.names=already.math.col.names,
                   double.slash=double.slash, ...)
 
   if(missing(rowname)) rowname <- dimnames(cx)[[1]]
@@ -443,6 +451,19 @@ latex.default <-
     stop(msg)
   }
   
+  ## If there are column groups, add a blank column
+  ## of formats between the groups.
+  if (length(cgroup) & length(cellTexCmds)) {
+    my.index <- split(1 : NCOL(cellTexCmds), rep(cumsum(n.cgroup),
+                                                 times=n.cgroup))
+    new.index <- NULL
+    new.col <- dim(cx)[2] + 1
+    for (i in my.index) new.index <- c(new.index, i, new.col)
+    
+    new.index <- new.index[-length(new.index)]
+    cellTexCmds <- cbind(cellTexCmds, "")[, new.index]
+  }
+
   if (length(cellTexCmds) | length(rownamesTexCmd)) {
     ## LaTeX commands have been specified for either the rownames or
     ## the cells.

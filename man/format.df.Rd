@@ -17,7 +17,8 @@ format.df(x, digits, dec=NULL, rdec=NULL, cdec=NULL,
           numeric.dollar=!dcolumn, na.blank=FALSE, na.dot=FALSE,
           blank.dot=FALSE, col.just=NULL, cdot=FALSE,
           dcolumn=FALSE, matrix.sep=' ', scientific=c(-4,4),
-          math.row.names=FALSE, math.col.names=FALSE,
+          math.row.names=FALSE, already.math.row.names=FALSE,
+          math.col.names=FALSE, already.math.col.names=FALSE,
           double.slash=FALSE, format.Date="\%m/\%d/\%Y",
           format.POSIXt="\%m/\%d/\%Y \%H:\%M:\%OS", \dots)
 }
@@ -86,9 +87,13 @@ format.df(x, digits, dec=NULL, rdec=NULL, cdec=NULL,
   \item{math.row.names}{
     logical, set true to place dollar signs around the row names.
   }
+	\item{already.math.row.names}{set to \code{TRUE} to prevent any math
+		mode changes to row names}
   \item{math.col.names}{
     logical, set true to place dollar signs around the column names.
   }
+	\item{already.math.col.names}{set to \code{TRUE} to prevent any math
+		mode changes to column names}
   \item{na.dot}{
     Set to \code{TRUE} to use periods rather than \code{NA} for missing
     numeric values. 

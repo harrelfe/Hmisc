@@ -12,6 +12,8 @@ Changes in version 4.0-1 (2016-11-23)
 	 * latex.summary.formula.reverse: fixed bug where outer quantiles and frequencies were not being rendered
 	 * latex.default: put \par in front of insert.bottom if table.env is FALSE, so that text is not put to the side of the table
 	 * histboxp: new function for plotly stratified spike histograms with box plot statistics also depicted
+	 * format.df, latex.default: added arguments already.math.row.names, already.math.col.names that if TRUE prevent any math mode changes
+	 * latex.default: fixed problem with duplication of columns in the cellT...exCmds array (thanks: Thomas Dupont)
 
 Changes in version 4.0-0 (2016-10-31)
    * summaryP: fixed exclude1 logic - was not excluding enough levels (inconsistent use of variable names vs. labels)

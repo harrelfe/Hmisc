@@ -2679,7 +2679,7 @@ conTestkw <- function(group,x) {
 }
 catTestchisq=function(tab) {
   st <-
-    if(!is.matrix(tab) || nrow(tab) < 2 | ncol(tab) < 2)
+    if(!is.matrix(tab) || nrow(tab) < 2 || ncol(tab) < 2)
       list(p.value=NA, statistic=NA, parameter=NA)
     else {
       rowcounts <- tab %*% rep(1, ncol(tab))

@@ -1,4 +1,4 @@
-Changes in version 4.0-1 (2016-11-25)
+Changes in version 4.0-1 (2016-11-27)
    * gbayes: new test file, fixed bug in posterior mean when mix=0,1 in gbayesMixPost
 	 * ggfreqScatter: added prfreq and cuts arguments
 	 * latex.summary.formula.reverse, latex.summaryM, html.summaryM: fixed bug with backslash added before % for html, improved typesetting language logic
@@ -15,6 +15,12 @@ Changes in version 4.0-1 (2016-11-25)
 	 * format.df, latex.default: added arguments already.math.row.names, already.math.col.names that if TRUE prevent any math mode changes
 	 * latex.default: fixed problem with duplication of columns in the cellT...exCmds array (thanks: Thomas Dupont)
 	 * tests/summaryM-customtest: new test (see https://github.com/harrelfe/Hmisc/issues/61)
+	 * describe: improved logic for deciding when and how to show frequency table, changed condense argument
+	 * htmlVerbatim: added propts and omit1b arguments
+	 * latexNeedle, pngNeedle: added x argument
+	 * latex.describe: allowed for unequally-spaced x in spike histograms
+	 * html.describe: added spike histograms
+	 * base64: new IMPORTS in DESCRIPTION
 
 Changes in version 4.0-0 (2016-10-31)
    * summaryP: fixed exclude1 logic - was not excluding enough levels (inconsistent use of variable names vs. labels)

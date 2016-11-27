@@ -40,7 +40,7 @@ latexTherm(y, name, w = 0.075, h = 0.15, spacefactor = 1/2, extra = 0.07,
 latexNeedle(y, col='black', href=0.5, name, w=.05, h=.15,
             extra=0, file = "", append=TRUE)
 
-pngNeedle(y, col='black', href=0.5, w=6, h=18,
+pngNeedle(y, col='black', href=0.5, lwd=3.5, w=6, h=18,
           file=tempfile(fileext='.png', tmpdir=dir),
           dir='/tmp')
 }
@@ -64,8 +64,10 @@ pngNeedle(y, col='black', href=0.5, w=6, h=18,
 	\item{col}{a vector of colors corresponding to positions in \code{y}.
     \code{col} is repeated if too short.}
 	\item{href}{values of \code{y} (0-1) for which horizontal grayscale
-    reference lines are drawn for \code{latexNeedle}.  Set to
-    \code{NULL} to not draw any.}
+    reference lines are drawn for \code{latexNeedle} and
+          \code{pngNeedle}.  Set to 
+					\code{NULL} to not draw any reference lines}
+  \item{lwd}{line width of needles for \code{pngNeedle}}
 	\item{dir}{directory in which to place png graphic}
 }
 \author{Frank Harrell}

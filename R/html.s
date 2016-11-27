@@ -217,7 +217,8 @@ if(FALSE) {
 
 
 htmlVerbatim <- function(..., size = 75, width = 85,
-                         scroll=FALSE, rows=10, cols=100) {
+                         scroll=FALSE, rows=10, cols=100,
+                         propts=NULL, omit1b=FALSE) {
   if(scroll) {
     nam <- as.character(sys.call()[2])
     w <- paste0('<textarea class="scrollabletextbox" rows=', rows,
@@ -226,7 +227,12 @@ htmlVerbatim <- function(..., size = 75, width = 85,
     }
   else w <- paste0('<pre style="font-size:', size, '%;">')
   op <- options(width=width)
-  for(x in list(...)) w <- c(w, capture.output(print(x)))
+  propts <- c(propts, list(quote=FALSE))
+  for(x in list(...)) {
+    z <- capture.output(do.call('print', c(list(x), propts)))
+    if(omit1b && gsub(' ', '', z[1]) == '') z <- z[-1]
+    w <- c(w, z)
+    }
   options(op)
   w <- c(w, if(scroll) '</textarea>' else '</pre>')
   w <- paste0(w, '\n')
@@ -256,6 +262,8 @@ markupSpecs <- list(html=list(
   larger2  = function(x) paste0('<span style="font-size: 156%;">', x,
                                  '</span>'),
   center   = function(x) paste0('<div align=center>', x, '</div>'),
+  color    = function(x, col) paste0('<font color="', col, '">', x,
+                                     '</font>'),
   subtext  = function(..., color='blue')
     paste0('<br><font size=1 color="', color, '">',
            paste(unlist(list(...)), collapse=' '),
@@ -368,6 +376,9 @@ markupSpecs <- list(html=list(
       paste0(label,
              "\u2003<span style='font-family:Verdana;font-size:", size, "%;'>",
              units, "</span>") },   # \2003 is &emsp;
+  rightAlign  = function(x)
+    paste0("<div style='float: right; text-align: right;'>",
+           x, "</div>"),
   space    = '\u00A0',    # html &nbsp;
   lspace   = '\u2003',
   sspace   = '\u2009',    # html &thinsp
@@ -383,6 +394,7 @@ markupSpecs <- list(html=list(
   xbar     = '<span style="text-decoration: overline">X</span>',
   overbar  = function(x) paste0('<span style="text-decoration: overline">',
                                 x, '</span>'),
+  unicode  = '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />',
   styles   = function(...) htmltools::HTML('
 <script type="text/javascript">
 <!--
@@ -449,6 +461,12 @@ latex = list(
   smaller2 = function(x) paste0('{\\smaller[2]{',  x, '}' ),
   larger2  = function(x) paste0('{\\smaller[-2]{', x, '}' ),
   center   = function(x) paste0('\\centerline{', x,   '}' ),
+  color    = function(x, col) {
+    colcmd <- if(col == 'MidnightBlue') '\\textcolor[rgb]{0.1,0.1,0.44}'
+              else
+                paste0('\\textcolor{', col, '}')
+    paste0(colcmd, '{', x, '}')
+    },
   chisq    = function(x, add='$') if(missing(x)) paste0(add, '\\chi^{2}', add)
                                   else paste0(add, '\\chi^{2}_{', x,    '}', add),
   fstat    = function(x, add='$')
@@ -488,7 +506,8 @@ plain = list(
   frac   = function(a, b, ...) paste0(a, '/', b),
   varlabel = function(label, units='', ...)
     if(units == '') label else  paste0(label, '  [', units, ']'),
-  times  = 'x'
+  times  = 'x',
+  color = function(x, ...) x
 ),
 
 plotmath = list(

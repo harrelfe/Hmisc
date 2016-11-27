@@ -165,7 +165,8 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
     a function of two arguments (grouping variable and a continuous
     variable) that returns a list with components \code{P} (the computed
     P-value), \code{stat} (the test statistic, either chi-square or F),
-    \code{df} (degrees of freedom), \code{testname} (test name), \code{statname}
+    \code{df} (degrees of freedom), \code{testname} (test name),
+		\code{namefun} (\code{"chisq", "fstat"}), \code{statname}
     (statistic name), an optional component \code{latexstat} (LaTeX
     representation of \code{statname}), an optional component
     \code{plotmathstat} (for R - the \code{plotmath} representation of

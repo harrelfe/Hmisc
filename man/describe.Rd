@@ -26,10 +26,10 @@ a concise statistical summary according to each. A numeric variable is
 deemed discrete if it has <= 10 distinct values. In this case,
 quantiles are not printed. A frequency table is printed 
 for any non-binary variable if it has no more than 20 distinct
-values.  For any variable with at least 20 distinct values, the 5 lowest
-and highest values are printed.  This behavior can be overriden for long
-character variables with many levels using the \code{listunique}
-parameter, to get a complete tabulation.
+values.  For any variable for which the frequency table is not printed,
+the 5 lowest and highest values are printed.  This behavior can be
+overriden for long character variables with many levels using the
+\code{listunique} parameter, to get a complete tabulation.
 
 \code{describe} is especially useful for
 describing data frames created by \code{*.get}, as labels, formats,

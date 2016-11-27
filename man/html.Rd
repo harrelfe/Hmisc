@@ -36,7 +36,8 @@ html(object, \dots)
 \method{html}{default}(object,
      file=paste(first.word(deparse(substitute(object))),'html',sep='.'),
      append=FALSE, link=NULL, linkCol=1, linkType=c('href','name'), \dots)
-htmlVerbatim(\dots, size=75, width=85, scroll=FALSE, rows=10, cols=100)
+htmlVerbatim(\dots, size=75, width=85, scroll=FALSE, rows=10, cols=100,
+             propts=NULL, omit1b=FALSE)
 }
 \arguments{
 \item{object}{a data frame or an object created by \code{latex}.
@@ -108,6 +109,10 @@ writing to the console.
 	\code{textarea}}
 \item{rows,cols}{the number of rows and columns to devote to the visable
 	part of the scrollable box}
+\item{propts}{options, besides \code{quote=FALSE} to pass to the
+	\code{print} method, for \code{htmlVerbatim}}
+\item{omit1b}{for \code{htmlVerbatim} if \code{TRUE} causes an initial
+	line of output that is all blank to be deleted}
 }
 \author{
 Frank E. Harrell, Jr.

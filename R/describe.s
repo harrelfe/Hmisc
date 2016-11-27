@@ -321,7 +321,8 @@ describe.formula <- function(x, descript, data, subset, na.action,
 na.retain <- function(d) d
 
 
-print.describe <- function(x, condense=TRUE, ...)
+print.describe <-
+  function(x, ...)
 {
   at <- attributes(x)
   if(length(at$dimensions)) {
@@ -334,71 +335,101 @@ print.describe <- function(x, condense=TRUE, ...)
     for(z in x) {
       if(length(z)==0)
         next
-      print.describe.single(z, condense=condense)
+      print.describe.single(z, ...)
       cat(w, '\n', sep='')
     }
     if(length(at$missing.vars)) {
       cat('\nVariables with all observations missing:\n\n')
       print(at$missing.vars, quote=FALSE)
     }
-  } else print.describe.single(x, condense=condense)
+  } else print.describe.single(x, ...)
   
   invisible()
 }
 
-print.describe.single <- function(x, condense=TRUE, ...)
+## Function to format part of describe.single output after description & counts
+## verb=1 means verbatim mode open
+formatdescribeSingle <-
+  function(x, condense=c('extremes', 'frequencies', 'both', 'none'),
+           lang=c('plain', 'latex', 'html'), verb=0, lspace=c(0, 0),
+           size=85, ...)
 {
-  wide <- .Options$width
-  des  <- x$descript
-  
-  if(length(x$units))
-    des <- paste0(des, ' [', x$units, ']')
-  
-  if(length(x$format))
-    des <- paste0(des, '  Format:', x$format)
-  
-  cat(des,'\n')
-  
-  print(x$counts, quote=FALSE)
-  
-  if(length(x$extremes)) {
-    val <- format(x$extremes)
-    if(condense) {
-      low <- paste('lowest :', paste(val[1: 5], collapse=' '))
-      hi  <- paste('highest:', paste(val[6:10], collapse=' '))
-      cat('\n',low,sep='')
-      if(nchar(low) + nchar(hi) + 2 > wide) cat('\n') else cat(', ')
-      cat(hi,'\n')
-    } else {
-      cat('\n'); print(val, quote=FALSE)
+  condense <- match.arg(condense)
+  lang     <- match.arg(lang)
+  wide     <- .Options$width
+  specs    <- markupSpecs[[lang]]
+  bv       <- function() {
+    if(lang == 'latex' && ! verb) '\\begin{verbatim}' else character()
     }
+  vs       <- if(lang == 'latex' && lspace[2] != 0)
+                function() cat('\\vspace{', -lspace[2], 'ex}\n',
+                               sep='') else function() {}
+
+  vbtm <- if(lang == 'html')
+            function(x, omit1b=FALSE, ...)
+              htmlVerbatim(x, size=size, omit1b=omit1b, ...)
+          else
+            function(x, omit1b=NULL) capture.output(print(x, quote=FALSE, ...))
+
+  R <- character(0)
+  
+  v <- x$values
+  
+  is.standard <- length(v) && is.list(v) &&
+                 all(names(v) == c('value', 'frequency'))
+  val.wide    <- sum(nchar(as.character(v$value))) > 200
+  val.few     <- length(v$value) && (length(v$value) <= 20)
+  print.freq  <- is.standard && val.few && ! val.wide
+  print.ext   <- length(x$extremes) && ! print.freq
+
+  if(print.ext) {
+    val  <- format(x$extremes)
+    w    <- nchar(paste(val, collapse=' '))
+    R <- c(R, bv()); verb <- 1
+    if(condense %in% c('extremes', 'both')) {
+      if(lang == 'html') {
+        fsize <- specs$size
+        mnb <- function(x) specs$color(x, col='MidnightBlue')
+        spc <- specs$space
+        blo <- paste0(mnb('lowest'), spc, ':')
+        bhi <- paste0(mnb('highest'),     ':')
+        if(w + 2 <= wide) {
+          low <- paste(blo, paste(val[1: 5], collapse=' '))
+          hi  <- paste(bhi, paste(val[6:10], collapse=' '))
+          R <- c(R, fsize(paste(low, ', ', hi), size))
+        } else {
+          low <- data.frame(name=blo, e1=val[1], e2=val[2], e3=val[3],
+                            e4=val[4], e5=val[5])
+          hi  <- data.frame(name=bhi, e1=val[6], e2=val[7], e3=val[8],
+                            e4=val[9], e5=val[10])
+          tab <- html(rbind(low, hi, make.row.names=FALSE),
+                      align='r',
+                      header=NULL, border=0, size=size, file=FALSE)
+          R <- c(R, tab)
+        }
+      }  # end lang='html'
+      else {  # lang='plain' or 'latex'
+        low <- paste('lowest :', paste(val[1: 5], collapse=' '))
+        hi  <- paste('highest:', paste(val[6:10], collapse=' '))
+        R <- c(R,
+               if(w + 2 <= wide)
+                    c('', paste0(low, ', ', hi))
+               else c('', low, hi) )
+      }
+    }   # end condense applicable to extremes
+    else
+      R <- c(R, if(lang != 'html') '', vbtm(val))
   }
 
-  v <- x$values
-  is.standard <- length(v) && is.list(v) &&
-    all(names(v) == c('value', 'frequency'))
-  if(is.standard && length(v$value) <= 20) {
+  if(print.freq) {
+    R <- c(R, bv()); verb <- 1
     val   <- v$value
     freq  <- v$frequency
     prop <- round(freq / sum(freq), 3)
 
-    ## First try condensed output, if not too wide for two lines
-    condensed <- FALSE
-    if(condense) {
-      fval  <- as.character(val)
-      ffreq <- as.character(freq)
-      fprop <- format(prop)
-      lval  <- nchar(fval[1])
-      lfreq <- nchar(ffreq[1])
-      lprop <- nchar(fprop[1])
-      w <- paste0(fval, ' (', ffreq, ', ', fprop, ')')
-      w <- strwrap(paste(w, collapse=', '), width=wide)
-      if(length(w) <= 2) {
-        condensed <- TRUE
-        cat('', w, sep='\n')
-      }
-    }
-    if(! condensed) {
+    ## First try table output, if will fit in no more than 2 sets of 4 lines
+    condensed <- TRUE
+    if(condense %nin% c('frequencies', 'both')) {
       fval  <- if(is.numeric(val))
                  format(val) else format(val, justify='right')
       ffreq <- format(freq)
@@ -416,15 +447,55 @@ print.describe.single <- function(x, condense=TRUE, ...)
       
       w <- rbind(Value=fval, Frequency=ffreq, Proportion=fprop)
       colnames(w) <- rep('', ncol(w))
-      print(w, quote=FALSE)
+      out <- capture.output(print(w, quote=FALSE))
+      if(length(out) <= 8) {
+        R <- c(R, vbtm(w, omit1b=TRUE))
+        condensed <- FALSE
+        }
+    }   # end condense frequencies (or both)
+
+    if(condensed) {
+      fval  <- as.character(val)
+      ffreq <- as.character(freq)
+      fprop <- format(prop)
+      lval  <- nchar(fval[1])
+      lfreq <- nchar(ffreq[1])
+      lprop <- nchar(fprop[1])
+      w <- paste0(fval, ' (', ffreq, ', ', fprop, ')')
+      w <- strwrap(paste(w, collapse=', '), width=wide)
+      R <- c(R, '', w)
     }
-  } else if(length(v) && ! is.standard) {
-    cat('\n')
-    print(v, quote=FALSE)
-  }
+  } else if(length(v) && ! is.standard)
+    R <- c(R, '', vbtm(v))
   
-  if(length(x$mChoice)) {cat('\n'); print(x$mChoice, prlabel=FALSE)}
- 
+  if(length(x$mChoice)) {
+    R <- c(R, bv()); verb <- 1
+    R <- c(R, '', vbtm(x$mChoice, prlabel=FALSE))
+  }
+
+  if(lang == 'latex' && verb) R <- c(R, '\\end{verbatim}')
+  R
+}
+
+
+print.describe.single <-
+  function(x, ...)
+{
+  wide <- .Options$width
+  des  <- x$descript
+  
+  if(length(x$units))
+    des <- paste0(des, ' [', x$units, ']')
+  
+  if(length(x$format))
+    des <- paste0(des, '  Format:', x$format)
+  
+  cat(des,'\n')
+  
+  print(x$counts, quote=FALSE)
+
+  R <- formatdescribeSingle(x, lang='plain', ...)
+  cat(R, sep='\n')
   invisible()
 }
 
@@ -440,7 +511,7 @@ print.describe.single <- function(x, condense=TRUE, ...)
 
 
 latex.describe <-
-  function(object, title=NULL, condense=TRUE,
+  function(object, title=NULL,
            file=paste('describe',
              first.word(expr=attr(object, 'descript')),
              'tex', sep='.'),
@@ -448,8 +519,7 @@ latex.describe <-
            tabular=TRUE, greek=TRUE, spacing=0.7, lspace=c(0,0), ...)
 {
   at <- attributes(object)
-  ct <- function(..., file, append=FALSE)
-  {
+  ct <- function(..., file, append=FALSE) {
     if(file=='') cat(...)
     else cat(..., file=file, append=append)
     invisible()
@@ -481,10 +551,10 @@ latex.describe <-
                    c("L1","L2","L3","L4","L5","H5","H4","H3","H2","H1"))
       if(! potentiallyLong) cat('\\vbox{', file=file, append=TRUE)
 
-      latex.describe.single(z, condense=condense, vname=vnames[i],
+      latex.describe.single(z, vname=vnames[i],
                             file=file, append=TRUE,
                             tabular=tabular, greek=greek,
-                            lspace=lspace)
+                            lspace=lspace, ...)
       ct('\\smallskip\\hrule\\smallskip\n', file=file, append=TRUE)
       if(! potentiallyLong) cat('}\n', file=file, append=TRUE)
     }
@@ -509,9 +579,8 @@ latex.describe <-
     if(! potentiallyLong) cat('\\vbox{', file=file, append=TRUE)
     latex.describe.single(object,
                           vname=first.word(expr=at$descript),
-                          condense=condense,
                           file=file, append=TRUE, size=size,
-                          tabular=tabular, lspace=lspace)
+                          tabular=tabular, lspace=lspace, ...)
     if(! potentiallyLong) cat('}\n', file=file, append=TRUE)
     spc <- if(spacing == 0) '\n' else '\\end{spacing}\n'
     ct(spc, file=file, append=TRUE)
@@ -578,14 +647,22 @@ latex.describe.single <-
   if(lco > 2) {
     counts <- Values$frequency
     maxcounts <- max(counts)
+    ## Scale distinct values to range from 1 : lco
+    va <- Values$value
+    if(! is.numeric(va)) va <- 1 : lco
+    else {
+      rang <- range(va)
+      va <- 1 + (lco - 1) * (va - rang[1]) / diff(rang)
+      }
     ## \mbox{~~~} makes \hfill work
     ct(if(nchar(desbas)/(wide / 4.8) > (4.8 - 1.5))' \\\\ \\mbox{~~~} \n',
        '\\setlength{\\unitlength}{0.001in}\\hfill',
        '\\begin{picture}(1.5,.1)(1500,0)',
        '\\linethickness{0.6pt}\n', sep='', file=file, append=TRUE)
     ## Todo: may need to label limits used since are pretty()'d versions
-    for(i in (1 : lco)[counts > 0]) {
-      ct('\\put(',round(1000 * (i - 1) * 1.5 / lco),',0){\\line(0,1){',
+    for(i in 1 : lco) {
+      ct('\\put(',
+         round(1000 * (va[i] - 1) * 1.5 / lco),',0){\\line(0,1){',
          max(1, round(1000 * counts[i] / maxcounts * .1)), '}}\n',
          sep='', file=file, append=TRUE)
     }
@@ -627,84 +704,16 @@ latex.describe.single <-
     print(object$counts, quote=FALSE)
   }
 
-  val <- object$extremes
-  if(length(val)) {
-    if(! verb) {cat('\\begin{verbatim}\n'); verb <- 1}
-    val <- format(val)
-    if(condense) {
-      low <- paste('lowest :', paste(val[1:5],  collapse=' '))
-      hi  <- paste('highest:', paste(val[6:10], collapse=' '))
-      if(! verb) {vs(); cat('\\begin{verbatim}\n'); verb <- 1}
-      cat(low, sep='')
-      if(nchar(low) + nchar(hi) + 2 > wide) cat('\n') else cat(', ')
-      cat(hi,'\n')
-    } else {
-      cat('\n'); print(val, quote=FALSE)
-    }
-  }
-
-  v <- object$values
-  if(length(v) && ! verb) {cat('\\begin{verbatim}\n'); verb <- 1}
-  is.standard <- length(v) && is.list(v) &&
-    (all(names(v) == c('value', 'frequency')))
-  if(is.standard && length(v$value) <= 20) {
-    val  <- v$value
-    freq <- v$frequency
-    prop <- round(freq / sum(freq), 3)
-    ## First try condensed output, if not too wide for two lines
-    condensed <- FALSE
-    if(condense) {
-      fval  <- as.character(val)
-      ffreq <- as.character(freq)
-      fprop <- format(prop)
-      lval  <- nchar(fval[1])
-      lfreq <- nchar(ffreq[1])
-      lprop <- nchar(fprop[1])
-      w <- paste0(fval, ' (', ffreq, ', ', fprop, ')')
-      w <- strwrap(paste(w, collapse=', '), width=wide)
-      if(length(w) <= 2) {
-        condensed <- TRUE
-        cat('', w, sep='\n')
-      }
-      else
-        if(! condensed) {
-          fval  <- if(is.numeric(val))
-                     format(val) else format(val, justify='right')
-          ffreq <- format(freq)
-          fprop <- format(prop)
-          lval  <- nchar(fval[1])
-          lfreq <- nchar(ffreq[1])
-          lprop <- nchar(fprop[1])
-          
-          m     <- max(lval, lfreq, lprop)
-          ## Right justify entries in each row
-          bl    <- '                                         '
-          fval  <- paste0(substring(bl, 1, m - lval ), fval)
-          ffreq <- paste0(substring(bl, 1, m - lfreq), ffreq)
-          fprop <- paste0(substring(bl, 1, m - lprop), fprop)
-          
-          w <- rbind(Value=fval, Frequency=ffreq, Proportion=fprop)
-          colnames(w) <- rep('', ncol(w))
-          print(w, quote=FALSE)
-        }
-    } else if(length(v) && ! is.standard) {
-      cat('\n')
-      print(v, quote=FALSE)
-    }
-  
-    if(length(object$mChoice)) {
-      if(! verb) {cat('\\begin{verbatim}\n'); verb <- 1}
-      cat('\n'); print(object$mChoice, prlabel=FALSE)}
-  }
-
-  if(verb) cat('\\end{verbatim}\n')
+  R <- formatdescribeSingle(object, lang='latex', verb=verb,
+                            lspace=lspace, ...)
+  cat(R, sep='\n')
   cat('}\n')  ## ends \smaller
   if(file != '') sink()
   invisible()
 }
 
 html.describe <-
-  function(object, condense=TRUE, size=85,
+  function(object, size=85,
            tabular=TRUE, greek=TRUE, scroll=FALSE, rows=25, cols=100, ...)
 {
   at <- attributes(object)
@@ -718,16 +727,15 @@ html.describe <-
   sskip  <- m$smallskip
   hrule  <- m$hrulethin
   fsize  <- m$size
+  mnb    <- function(x) m$color(x, 'MidnightBlue')
 
-  R <- m$style()   ## define thinhr (and others not needed here)
+  R <- c(m$unicode, m$style())   ## define thinhr (and others not needed here)
   
   if(length(at$dimensions))
     R <- c(R,
-           '<font color="MidnightBlue">',
-           center(bold(paste(htmlTranslate(at$descript), sskip,
+           mnb(center(bold(paste(htmlTranslate(at$descript), sskip,
                            at$dimensions[2], ' Variables', lspace,
-                           at$dimensions[1],' Observations'))),
-           '</font>')
+                           at$dimensions[1],' Observations')))))
 
   if(length(at$naprint)) R <- c(R, '', at$naprint)
 
@@ -740,8 +748,8 @@ html.describe <-
     if(length(z)==0)
       next
 
-    r <- html.describe.single(z, condense=condense, vname=vnames[i],
-                              tabular=tabular, greek=greek, size=size)
+    r <- html.describe.single(z, vname=vnames[i],
+                              tabular=tabular, greek=greek, size=size, ...)
     R <- c(R, r, hrule)
   }
     
@@ -758,7 +766,7 @@ html.describe <-
 }
 
 html.describe.single <-
-  function(object, condense=TRUE, vname, size=85,
+  function(object, vname, size=85,
            tabular=TRUE, greek=TRUE, ...)
 {
   m <- markupSpecs$html
@@ -794,6 +802,25 @@ html.describe.single <-
                   smaller(paste0('Format:',
                                  htmlTranslate(object$format))))
 
+  Values <- object$values
+  lco <- if(length(Values)) length(Values$frequency) else 0
+  if(lco > 2) {
+    counts <- Values$frequency
+    maxcounts <- max(counts)
+    counts <- counts / maxcounts
+    ## Scale distinct values to range from 1 : lco
+    va <- Values$value
+    if(! is.numeric(va)) va <- 1 : lco
+    else {
+      rang <- range(va)
+      va <- 1 + (lco - 1) * (va - rang[1]) / diff(rang)
+      }
+
+    des <- paste0(des,
+                  m$rightAlign(base64::img(pngNeedle(counts,
+                                                     x=va, w=3, h=13, lwd=2))))
+  }
+
   R <- des
   
   sz <- size
@@ -815,108 +842,12 @@ html.describe.single <-
     R <- c(R, tab)
   }
   else
-    R <- c(R, htmlVerbatim(capture.output(print(object$counts, quote=FALSE)),
-                            size=sz))
+    R <- c(R, htmlVerbatim(object$counts, size=sz))
 
-  val <- object$extremes
-  if(length(val)) {
-    blo <- '<font color="MidnightBlue">lowest&nbsp;</font>:'
-    bhi <- '<font color="MidnightBlue">highest:</font>'
-    if(condense) {
-      val <- format(val)
-      low <- paste(blo, paste(val[1:5],  collapse=' '))
-      hi  <- paste(bhi, paste(val[6:10], collapse=' '))
-      if(nchar(low) + nchar(hi) + 2 > wide) {
-        low <- data.frame(name=blo, e1=val[1], e2=val[2], e3=val[3],
-                          e4=val[4], e5=val[5])
-        hi  <- data.frame(name=bhi, e1=val[6], e2=val[7], e3=val[8],
-                          e4=val[9], e5=val[10])
-        tab <- html(rbind(low, hi, make.row.names=FALSE),
-                    align='r',
-                    header=NULL, border=0, size=size, file=FALSE)
-        R <- c(R, tab)
-        }
-      else
-        R <- c(R, fsize(paste(low, hi, sep=', '), size))
-    }
-    else
-      R <- c(R, htmlVerbatim(paste(capture.output(print(val,
-                                                        quote=FALSE)),
-                                   collapse='\n'), size=size))
-    }
-
-  v <- object$values
-  is.standard <- length(v) && is.list(v) &&
-    (all(names(v) == c('value', 'frequency')))
-  if(is.standard && length(v$value) <= 20) {
-    val  <- v$value
-    freq <- v$frequency
-    prop <- round(freq / sum(freq), 3)
-    ## First try condensed output, if not too wide for two lines
-    condensed <- FALSE
-    if(condense) {
-      fval  <- as.character(val)
-      ffreq <- as.character(freq)
-      fprop <- format(prop)
-      lval  <- nchar(fval[1])
-      lfreq <- nchar(ffreq[1])
-      lprop <- nchar(fprop[1])
-      w <- paste0(fval, ' (', ffreq, ', ', fprop, ')')
-      w <- strwrap(paste(w, collapse=', '), width=wide)
-      if(length(w) <= 2) {
-        condensed <- TRUE
-        R <- c(R, fsize(w, size))
-      }
-      else
-        if(! condensed) {
-          fval  <- if(is.numeric(val))
-                     format(val) else format(val, justify='right')
-          ffreq <- format(freq)
-          fprop <- format(prop)
-          lval  <- nchar(fval[1])
-          lfreq <- nchar(ffreq[1])
-          lprop <- nchar(fprop[1])
-          
-          m     <- max(lval, lfreq, lprop)
-          ## Right justify entries in each row
-          bl    <- '                                         '
-          fval  <- paste0(substring(bl, 1, m - lval ), fval)
-          ffreq <- paste0(substring(bl, 1, m - lfreq), ffreq)
-          fprop <- paste0(substring(bl, 1, m - lprop), fprop)
-          
-          w <- rbind(Value=fval, Frequency=ffreq, Proportion=fprop)
-          colnames(w) <- rep('', ncol(w))
-          R <- c(R, htmlVerbatim(capture.output(print(w, quote=FALSE),
-                                                 size=size)))
-        }
-    }
-    else
-      if(length(v) && ! is.standard)
-        R <- c(R, htmlVerbatim(capture.output(print(v, quote=FALSE)),
-                               size=size))
-    }
   
-  if(length(object$mChoice))
-    R <- c(R, htmlVerbatim(capture.output(object$mChoice, prlabel=FALSE),
-                           size=size))
+  R <- c(R, formatdescribeSingle(object, lang='html', ...))
   R
-#  R <- paste0(R, sep='\n')
-#  htmltools::HTML(R)
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 dataDensityString <- function(x, nint=30)

@@ -303,7 +303,8 @@ ordTestpo(group, x)
     variable) that returns a list with components \code{P} (the computed
     P-value), \code{stat} (the test statistic, either chi-square or F),
     \code{df} (degrees of freedom), \code{testname} (test name), \code{statname}
-    (statistic name), an optional component \code{latexstat} (LaTeX
+    (statistic name), \code{namefun} (\code{"chisq", "fstat"}), an
+    optional component \code{latexstat} (LaTeX 
     representation of \code{statname}), an optional component
     \code{plotmathstat} (for R - the \code{plotmath} representation of
     \code{statname}, as a character string),  and an

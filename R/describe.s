@@ -815,10 +815,10 @@ html.describe.single <-
       rang <- range(va)
       va <- 1 + (lco - 1) * (va - rang[1]) / diff(rang)
       }
-
+    w <- if(lco >= 50) 150 / lco else 3
     des <- paste0(des,
                   m$rightAlign(base64::img(pngNeedle(counts,
-                                                     x=va, w=3, h=13, lwd=2))))
+                                                     x=va, w=w, h=13, lwd=2))))
   }
 
   R <- des

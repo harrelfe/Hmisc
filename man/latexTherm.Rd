@@ -37,16 +37,18 @@ small png graphics.  The full graphics file name is returned invisibly.
 latexTherm(y, name, w = 0.075, h = 0.15, spacefactor = 1/2, extra = 0.07,
            file = "", append = TRUE)
 
-latexNeedle(y, col='black', href=0.5, name, w=.05, h=.15,
+latexNeedle(y, x=NULL, col='black', href=0.5, name, w=.05, h=.15,
             extra=0, file = "", append=TRUE)
 
-pngNeedle(y, col='black', href=0.5, lwd=3.5, w=6, h=18,
+pngNeedle(y, x=NULL, col='black', href=0.5, lwd=3.5, w=6, h=18,
           file=tempfile(fileext='.png', tmpdir=dir),
           dir='/tmp')
 }
 \arguments{
   \item{y}{a vector of 0-1 scaled values.  Boxes and their frames are
 		omitted for \code{NA} elements}
+	\item{x}{a vector corresponding to \code{y} giving x-coordinates.
+          Scaled accordingly, or defaults to equally-spaced values.}
   \item{name}{name of LaTeX macro variable to be defined}
   \item{w}{width of a single box (thermometer) in inches.  For
     \code{latexNeedle} and \code{pngNeedle} is the spacing between

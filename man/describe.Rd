@@ -13,6 +13,7 @@
 \alias{latex.describe.single}
 \alias{html.describe}
 \alias{html.describe.single}
+\alias{formatdescribeSingle}
 \title{Concise Statistical Description of a Vector, Matrix, Data Frame,
 	or Formula}
 \description{
@@ -106,7 +107,11 @@ output (but not in parameter names).
 When \code{weights} are not used, Gini's mean difference is computed for
 numeric variables.  This is a robust measure of dispersion that is the
 mean absolute difference between any pairs of observations.  In the
-output Gini's difference is labeled \code{Gmd}. 
+output Gini's difference is labeled \code{Gmd}.
+
+\code{formatdescribeSingle} is a service function for \code{latex},
+\code{html}, and \code{print} methods for single variables that is not
+intended to be called by the user.
 }
 \usage{
 \method{describe}{vector}(x, descript, exclude.missing=TRUE, digits=4,
@@ -117,18 +122,21 @@ output Gini's difference is labeled \code{Gmd}.
     digits=4, \dots)
 \method{describe}{formula}(x, descript, data, subset, na.action,
     digits=4, weights, \dots)
-\method{print}{describe}(x, condense=TRUE, \dots)
-\method{latex}{describe}(object, title=NULL, condense=TRUE, 
+\method{print}{describe}(x, \dots)
+\method{latex}{describe}(object, title=NULL,
       file=paste('describe',first.word(expr=attr(object,'descript')),'tex',sep='.'),
       append=FALSE, size='small', tabular=TRUE, greek=TRUE,
       spacing=0.7, lspace=c(0,0), \dots)
-\method{latex}{describe.single}(object, title=NULL, condense=TRUE, vname,
+\method{latex}{describe.single}(object, title=NULL, vname,
       file, append=FALSE, size='small', tabular=TRUE, greek=TRUE,
       lspace=c(0,0), \dots)
-\method{html}{describe}(object, condense=TRUE, size=85, tabular=TRUE,
+\method{html}{describe}(object, size=85, tabular=TRUE,
       greek=TRUE, scroll=FALSE, rows=25, cols=100, \dots)
-\method{html}{describe.single}(object, condense=TRUE, vname, size=85,
+\method{html}{describe.single}(object, vname, size=85,
       tabular=TRUE, greek=TRUE, \dots)
+formatdescribeSingle(x, condense=c('extremes', 'frequencies', 'both', 'none'),
+           lang=c('plain', 'latex', 'html'), verb=0, lspace=c(0, 0),
+           size=85, \dots)
 \method{plot}{describe}(x, which=c('both', 'continuous', 'categorical'),
                           what=NULL,
                           sort=c('ascending', 'descending', 'none'),
@@ -141,7 +149,8 @@ output Gini's difference is labeled \code{Gmd}.
   function is automatically invoked.  For a matrix, \code{describe.matrix} is
   called.  For a formula, describe.data.frame(model.frame(x))
   is invoked. The formula may or may not have a response variable.  For
-  \code{print} or \code{latex}, \code{x} is an object created by
+  \code{print}, \code{latex}, \code{html}, or
+	\code{formatdescribeSingle}, \code{x} is an object created by
   \code{describe}.
 }
 \item{descript}{
@@ -189,10 +198,6 @@ output Gini's difference is labeled \code{Gmd}.
 }
 \item{object}{a result of \code{describe}}
 \item{title}{unused}
-\item{condense}{
-  default isTRUE to condense the output with regard to the 5 lowest and
-  highest values and the frequency table
-}
 \item{data}{
 }
 \item{subset}{
@@ -210,8 +215,12 @@ output Gini's difference is labeled \code{Gmd}.
   \code{describe(d,format='\%d\%b\%y')} will print date/time variables as
   \code{"01Jan2000"}.  This is useful for omitting the time
   component.  See the help file for \code{format.POSIXct} or
-\code{format.Date} for more
-  information.  For \code{latex} and \code{plot} methods, \dots is ignored.}
+  \code{format.Date} for more
+  information.  For \code{plot} methods, \dots is ignored.
+  For \code{html} and \code{latex} methods, \dots is used to pass
+	optional arguments to \code{formatdescribeSingle}, especially the
+	\code{condense} argument.
+	}
 \item{file}{
 name of output file (should have a suffix of .tex).  Default name is
 formed from the first word of the \code{descript} element of the
@@ -268,7 +277,12 @@ there are no variables of a given type, a single \code{ggplot2} or
 	original data.}
 \item{n.unique}{the minimum number of distinct values a numeric variable
 	must have before \code{plot.describe} uses it in a continuous variable
-	plot} 
+	plot}
+\item{condense}{specifies whether to condense the output with regard to
+  the 5 lowest and highest values (\code{"extremes"}) and the frequency table
+}
+\item{lang}{specifies the markup language}
+\item{verb}{set to 1 if a verbatim environment is already in effect for LaTeX}
 }
 \value{
 a list containing elements \code{descript}, \code{counts},

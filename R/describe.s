@@ -592,7 +592,7 @@ latex.describe <-
 
 
 latex.describe.single <-
-  function(object, title=NULL, condense=TRUE, vname,
+  function(object, title=NULL, vname,
            file, append=FALSE, size='small',
            tabular=TRUE, greek=TRUE, lspace=c(0,0), ...)
 {

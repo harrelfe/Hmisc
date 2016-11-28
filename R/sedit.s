@@ -1,19 +1,19 @@
 sedit <- function(text, from, to, test=NULL, wild.literal=FALSE)
 {
   to <- rep(to, length=length(from))
-  for(i in 1:length(text)) {
+  for(i in seq_along(text)) {
     s <- text[i]
     if(length(s))
       for(j in 1:length(from)) {
         old <- from[j]
         front <- back <- FALSE
         if(!wild.literal) {
-          if(substring(old,1,1)=='^') {
+          if(substring(old,1,1) == '^') {
             front <- TRUE;
             old <- substring(old,2)
           }
 
-          if(substring(old,nchar(old))=='$') { 
+          if(substring(old,nchar(old)) == '$') { 
             back <- TRUE; old <- substring(old, 1, nchar(old)-1)
           }
         }
@@ -25,7 +25,7 @@ sedit <- function(text, from, to, test=NULL, wild.literal=FALSE)
           next
 
         ex.old <- substring(old, 1:lold, 1:lold)
-        if(!wild.literal && any(ex.old=='*')) 
+        if(!wild.literal && any(ex.old == '*')) 
           s <- replace.substring.wild(s, old, new, test=test, front=front, back=back)
         else {
           l.s <- nchar(s)
@@ -38,7 +38,7 @@ sedit <- function(text, from, to, test=NULL, wild.literal=FALSE)
             ie <- l.s
 
           ss <- substring(s, is, ie)
-          k <- ss==old
+          k <- ss == old
           if(!any(k))
             next
 
@@ -56,7 +56,7 @@ sedit <- function(text, from, to, test=NULL, wild.literal=FALSE)
 
 substring.location <- function(text, string, restrict)
 {
-  if(length(text)>1)
+  if(length(text) > 1)
     stop('only works with a single character string')
   
   l.text <- nchar(text)
@@ -64,15 +64,15 @@ substring.location <- function(text, string, restrict)
   if(l.string > l.text)
     return(list(first=0,last=0))
   
-  if(l.string==l.text)
-    return(if(text==string)
+  if(l.string == l.text)
+    return(if(text == string)
              list(first=1,last=l.text)
            else 
              list(first=0,last=0))
 
   is <- 1:(l.text-l.string+1)
   ss <- substring(text, is, is+l.string-1)
-  k <- ss==string
+  k <- ss == string
   if(!any(k))
     return(list(first=0,last=0))
   
@@ -80,7 +80,7 @@ substring.location <- function(text, string, restrict)
   if(!missing(restrict))
     k <- k[k>=restrict[1] & k<=restrict[2]]
   
-  if(length(k)==0)
+  if(length(k) == 0)
     return(list(first=0,last=0))
   
   list(first=k, last=k+l.string-1)
@@ -102,7 +102,7 @@ substring2 <- function(text, first, last=100000L)
 
   lf <- length(first)
 
-  if(length(text)==1 && lf > 1) {
+  if(length(text) == 1 && lf > 1) {
     if(missing(last))
       last <- nchar(text)
 
@@ -136,12 +136,12 @@ replace.substring.wild <- function(text, old, new, test=NULL,
     stop('only works with a single character string')
 
   if(missing(front) && missing(back)) {
-    if(substring(old,1,1)=='^') {
+    if(substring(old,1,1) == '^') {
       front <- TRUE;
       old <- substring(old,2)
     }
 
-    if(substring(old, nchar(old))=='$') {
+    if(substring(old, nchar(old)) == '$') {
       back <- TRUE
       old <- substring(old, 1, nchar(old)-1)
     }
@@ -153,18 +153,18 @@ replace.substring.wild <- function(text, old, new, test=NULL,
   if(length(star.old$first)>1)
     stop('does not handle > 1 * in old')
   
-  if(sum(star.old$first)==0)
+  if(sum(star.old$first) == 0)
     stop('no * in old')
   
   star.new <- substring.location(new,'*')
   if(length(star.new$first)>1)
     stop('cannot have > 1 * in new')
 
-  if(old=='*' && (front | back)) {
+  if(old == '*' && (front | back)) {
     if(front && back)
       stop('may not specify both front and back (or ^ and $) with old=*')
     
-    if(length(test)==0)
+    if(length(test) == 0)
       stop('must specify test= with old=^* or *$')
     
     et <- nchar(text)
@@ -182,10 +182,10 @@ replace.substring.wild <- function(text, old, new, test=NULL,
     
     st <- (st[qual])[1]
     en <- (en[qual])[1]
-    text.before <- if(st==1)''
+    text.before <- if(st == 1)''
                    else substring(text, 1, st-1)
     
-    text.after  <- if(en==et)''
+    text.after  <- if(en == et)''
                    else substring(text, en+1, et)
     
     text.star   <- substring(text, st, en)
@@ -194,56 +194,56 @@ replace.substring.wild <- function(text, old, new, test=NULL,
         substring(new, 1, star.new$first-1)
       else ''
 
-    new.after.star <- if(star.new$last==length(new))''
+    new.after.star <- if(star.new$last == length(new))''
                       else substring(new, star.new$last+1)
 
     return(paste(text.before, new.before.star, text.star, new.after.star,
                  text.after, sep=''))
   }
 
-  old.before.star <- if(star.old$first==1)''
+  old.before.star <- if(star.old$first == 1)''
                      else substring(old, 1, star.old$first-1)
   
-  old.after.star  <- if(star.old$last==nchar(old))''
+  old.after.star  <- if(star.old$last == nchar(old))''
                      else substring(old, star.old$first+1)
 
-  if(old.before.star=='')
+  if(old.before.star == '')
     loc.before <- list(first=0, last=0)
   else {
     loc.before <- substring.location(text, old.before.star)
     loc.before <- list(first=loc.before$first[1], last=loc.before$last[1])
   }
 
-  if(sum(loc.before$first+loc.before$last)==0)
+  if(sum(loc.before$first+loc.before$last) == 0)
     return(text)
 
-  loc.after <- if(old.after.star=='') list(first=0, last=0)
+  loc.after <- if(old.after.star == '') list(first=0, last=0)
                else {
                  la <- substring.location(text, old.after.star, 
                                           restrict=c(loc.before$last+1,1e10))
                  lastpos <- length(la$first)
                  la <- list(first=la$first[lastpos], last=la$last[lastpos])
-                 if(la$first+la$last==0)
+                 if(la$first+la$last == 0)
                    return(text)
 
                  la
                }
 
   loc.star <- list(first=loc.before$last+1, 
-                   last=if(loc.after$first==0) nchar(text)
+                   last=if(loc.after$first == 0) nchar(text)
                         else loc.after$first-1)
   
   star.text <- substring(text, loc.star$first, loc.star$last)
   if(length(test) && !test(star.text))
     return(text)
 
-  if(star.new$first==0)
+  if(star.new$first == 0)
     return(paste(if(loc.before$first>1)substring(text,1,loc.before$first-1),
                  new, sep=''))
 
-  new.before.star <- if(star.new$first==1)''
+  new.before.star <- if(star.new$first == 1)''
                      else substring(new, 1, star.new$first-1)
-  new.after.star  <- if(star.new$last==nchar(new)) ''
+  new.after.star  <- if(star.new$last == nchar(new)) ''
                      else substring(new, star.new$first+1)
 
   paste(if(loc.before$first>1)substring(text,1,loc.before$first-1),

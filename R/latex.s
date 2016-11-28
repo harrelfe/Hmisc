@@ -1030,7 +1030,7 @@ latexTranslate <- function(object, inn=NULL, out=NULL, pb=FALSE,
 
   dig <- c('0','1','2','3','4','5','6','7','8','9')
 
-  for(i in 1 : length(text)) {
+  for(i in seq_along(text)) {
     lt <- nchar(text[i])
     x <- substring(text[i], 1 : lt, 1 : lt)
     j <- x == '^'
@@ -1038,7 +1038,6 @@ latexTranslate <- function(object, inn=NULL, out=NULL, pb=FALSE,
       is <- ((1 : lt)[j])[1]  #get first ^
       remain <- x[-(1 : is)]
       k <- remain %in% c(' ',',',')',']','\\','$')
-      ## Following 3 lines 31aug02
       if(remain[1] %in% dig ||
          (length(remain) > 1 && remain[1] == '-' && remain[2] %in% dig))
         k[-1] <- k[-1] | remain[-1] %nin% dig

@@ -78,10 +78,14 @@ ggfreqScatter <- function(x, y, bins=50, g=10, cuts=NULL,
                   color = guide_legend(title='Frequency')) +
            xlab(xlab) + ylab(ylab)
 
-  if(nx) w <- w + scale_x_continuous(breaks=xtrans(xbreaks), labels=xbreaks,
-                                     minor_breaks=if(length(xminor)) xtrans(xminor))
-  if(ny) w <- w + scale_y_continuous(breaks=ytrans(ybreaks), labels=ybreaks,
-                                     minor_breaks=if(length(yminor)) ytrans(yminor))
+  if(nx) w <- w + scale_x_continuous(breaks=xtrans(xbreaks),
+                                     labels=format(xbreaks),
+                                     minor_breaks=if(length(xminor))
+                                                    xtrans(xminor))
+  if(ny) w <- w + scale_y_continuous(breaks=ytrans(ybreaks),
+                                     labels=format(ybreaks),
+                                     minor_breaks=if(length(yminor))
+                                                    ytrans(yminor))
   w
 }
 

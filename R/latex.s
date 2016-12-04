@@ -945,7 +945,7 @@ latexVerbatim <- function(x,
     on.exit(options(old))
   }
 
-  sink(file, append=append)
+  if(file != '') sink(file, append=append)
   cat('\\setbox0=\\vbox{\n',
       if(length(size))
         c('\\',size,'\n'),
@@ -956,9 +956,9 @@ latexVerbatim <- function(x,
       if(length(hspace))
         c('\\hspace{',hspace,'}'),
       '{\\makebox[\\textwidth]{\\box0}}\n', sep='')
-  
+
+  if(file == '') return(invisible())
   sink()
- 
   structure(list(file=file, style=NULL), class='latex')
 }
 

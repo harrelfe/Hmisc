@@ -1,92 +1,95 @@
+Changes in version 4.0-2 (2016-12-09)
+   * pngNeedle: fixed bug in html.describe under Windows by not specifying /tmp as the temporary file directory - https://github.com/harrelfe/Hmisc/issues/63
+
 Changes in version 4.0-1 (2016-12-04)
    * gbayes: new test file, fixed bug in posterior mean when mix=0,1 in gbayesMixPost
-	 * ggfreqScatter: added prfreq and cuts arguments
-	 * latex.summary.formula.reverse, latex.summaryM, html.summaryM: fixed bug with backslash added before % for html, improved typesetting language logic
-	 * latex.describe: fixed bug that prevented spike histogram from appearing
-	 * ggplot.summaryP: moved text out of aes in geom_point, left in main aes
-	 * plot.describe, plot.summaryP: put text aes in ggplot(), increased ggplotly height to allow popups for top continuous variables in plot.describe
-	 * dotchartp, dotchartpl, plot.describe: moved height and width from plotly::layout to plot_ly because of changes in plotly 4.5.6
-	 * bppltp: added data= to plot::add_* because plotly was evaluating using the wrong copy of x,y, etc.
-	 * plot.summary.formula.reverse, plot.summaryM: removed subtitles argument since not used
-	 * upData: fixed bug when converting existing variable to factor; was not recognizing new storage model and tried to run floor()
-	 * latex.summary.formula.reverse: fixed bug where outer quantiles and frequencies were not being rendered
-	 * latex.default: put \par in front of insert.bottom if table.env is FALSE, so that text is not put to the side of the table
-	 * histboxp: new function for plotly stratified spike histograms with box plot statistics also depicted
-	 * format.df, latex.default: added arguments already.math.row.names, already.math.col.names that if TRUE prevent any math mode changes
-	 * latex.default: fixed problem with duplication of columns in the cellT...exCmds array (thanks: Thomas Dupont)
-	 * tests/summaryM-customtest: new test (see https://github.com/harrelfe/Hmisc/issues/61)
-	 * describe: improved logic for deciding when and how to show frequency table, changed condense argument
-	 * htmlVerbatim: added propts and omit1b arguments
-	 * latexNeedle, pngNeedle: added x argument
-	 * latex.describe: allowed for unequally-spaced x in spike histograms
-	 * html.describe: added spike histograms
-	 * base64: new IMPORTS in DESCRIPTION
-	 * sedit, latexTranslate: changed 1 : length(text) to seq_along(text). Thanks: Greg Snow
-	 * ggfreqScatter: better formatting of axis tick mark labels
-	 * latexVerbatim: implemented file=''
+   * ggfreqScatter: added prfreq and cuts arguments
+   * latex.summary.formula.reverse, latex.summaryM, html.summaryM: fixed bug with backslash added before % for html, improved typesetting language logic
+   * latex.describe: fixed bug that prevented spike histogram from appearing
+   * ggplot.summaryP: moved text out of aes in geom_point, left in main aes
+   * plot.describe, plot.summaryP: put text aes in ggplot(), increased ggplotly height to allow popups for top continuous variables in plot.describe
+   * dotchartp, dotchartpl, plot.describe: moved height and width from plotly::layout to plot_ly because of changes in plotly 4.5.6
+   * bppltp: added data= to plot::add_* because plotly was evaluating using the wrong copy of x,y, etc.
+   * plot.summary.formula.reverse, plot.summaryM: removed subtitles argument since not used
+   * upData: fixed bug when converting existing variable to factor; was not recognizing new storage model and tried to run floor()
+   * latex.summary.formula.reverse: fixed bug where outer quantiles and frequencies were not being rendered
+   * latex.default: put \par in front of insert.bottom if table.env is FALSE, so that text is not put to the side of the table
+   * histboxp: new function for plotly stratified spike histograms with box plot statistics also depicted
+   * format.df, latex.default: added arguments already.math.row.names, already.math.col.names that if TRUE prevent any math mode changes
+   * latex.default: fixed problem with duplication of columns in the cellT...exCmds array (thanks: Thomas Dupont)
+   * tests/summaryM-customtest: new test (see https://github.com/harrelfe/Hmisc/issues/61)
+   * describe: improved logic for deciding when and how to show frequency table, changed condense argument
+   * htmlVerbatim: added propts and omit1b arguments
+   * latexNeedle, pngNeedle: added x argument
+   * latex.describe: allowed for unequally-spaced x in spike histograms
+   * html.describe: added spike histograms
+   * base64: new IMPORTS in DESCRIPTION
+   * sedit, latexTranslate: changed 1 : length(text) to seq_along(text). Thanks: Greg Snow
+   * ggfreqScatter: better formatting of axis tick mark labels
+   * latexVerbatim: implemented file=''
 
 Changes in version 4.0-0 (2016-10-31)
    * summaryP: fixed exclude1 logic - was not excluding enough levels (inconsistent use of variable names vs. labels)
-	 * latexTranslate: any NAs in first argument changed to "" before conversion
-	 * minor.tick: added arguments to pass through (thanks: vhorvath)
-	 * tests/latexpng.r: test conversion of LaTeX table to png
-	 * latexTabular: made it properly call latexTranslate separately for each column, convert argument to matrix or data frame if a vector
-	 * tests/latexTabular.r: new test
-	 * latexDotchart: added call to latexTranslate to escape special characters for LaTeX such as underscore and pound sign
-	 * ggfreqScatter: new function
-	 * grType: new non-exported service function to sense if plotly is in effect
-	 * plot.describe: new function to make plotly graph for describe objects
-	 * describe: changed output: 3 decimal places for Info, new format for frequency table, separated logic for 10 extreme values from logic for frequency table, significant changes to print.describe
-	 * dotchartp: new version of dotchart3 for plotly charts
-	 * summaryD: modified to use dotchartp if options(grType='plotly') is in effect
-	 * nFm: added argument html
-	 * label.default, label.Surv, labelPlotmath: added html argument to implement HTML markup in place of plotmath (for plotly)
-	 * now imports htmlTable, viridis
-	 * html.contents.data.frame: return invisibly if file=''
-	 * htmlVerbatim: new function
-	 * html.contents.data.frame: improved html
-	 * html.data.frame: changed column headers from h4 to <strong>
-	 * ggfreqScatter: added html argument
-	 * knitrSet: was ignoring default figure h and w
-	 * html.summaryM: new function using new version of latex.summaryM
-	 * markupSpecs: new list object defining markup elements for latex and html, used by summaryM
-	 * show.html, print.html: removed; conflicted with htmltools/rmarkdown
-	 * label: required exact match on attribute name "label" to not retrieve the "labels" attribute (thanks: Ivan Puzek)
-	 * htmlSN: new function to convert floating point to scientific format usint html
-	 * upData, cleanup.import: fix NA becoming new factor levels (thanks: Beau Bruce)
-	 * htmlTranslate: new function
-	 * plotlySave: new function
-	 * histSpikep: new function
-	 * upData: new argument html
-	 * plot.describe: added ggplot2 graphics, improved continuous display using ggplotly
-	 * labelPlotmath: cleaned up by using markupSpecs
-	 * capitalize: fixed bug - did not cap. first letter if other letters after it were upper case (thanks: dchiu911)
-	 * html.summaryM: added brmsd argument to put mean, SD on separate line
-	 * Save: changed default back to use gzip for speed
-	 * knitrSet: used new knitr way to set aliases for option names
-	 * latexTabular: made translate argument apply to body of table also; implemented multi-line header
-	 * html.data.frame: added several arguments
-	 * describe: added html method
-	 * html markupSpecs object: added bibliographic database utility functions
-	 * bppltp: new service function for extended box plots for plotly
-	 * plot.summaryM: new plotly method
-	 * prType: new service function used to detect user settings for html, latex for print methods
-	 * html.contents.data.frame: removed file and append arguments and output an html character vector instead
-	 * prList: new function
-	 * GiniMd: moved to Hmisc from rms
-	 * describe: added GMD (Gini's mean difference) and relabeled unique to distinct
-	 * latex.summaryM: added Needspace{2.7in} before 2nd and later strata
-	 * ggplot.summaryP: added point labels for use with plotly as hover text
-	 * latex.summaryP: fixed bad linebreak at strata boundaries
-	 * dotchartpl: new plotly dot chart function especially for summaryP
-	 * plot.summaryP: new plotly method using dotchartpl when options(grType='plotly')
-	 * putHfig: new function to render graphics with captions in HTML reports
-	 * pngNeedle: new function, like latexNeedle but useful with HTML reports
-	 * html.data.frame: added width and caption arguments
-	 * plotlyParm: list object with plotly helper functions
-	 * summaryD, dotchartp: added symbol and col arguments
-	 * upData: improved efficiency, added labelled class to variables without it but having labels (e.g., data imported using haven package)
-	 * gbayesMixPost: mixed error in posterior odds of the mixing parameter that resulted in incorrect posterior probabilities when the variance of the statistic was appreciable; added option to compute posterior mean
+   * latexTranslate: any NAs in first argument changed to "" before conversion
+   * minor.tick: added arguments to pass through (thanks: vhorvath)
+   * tests/latexpng.r: test conversion of LaTeX table to png
+   * latexTabular: made it properly call latexTranslate separately for each column, convert argument to matrix or data frame if a vector
+   * tests/latexTabular.r: new test
+   * latexDotchart: added call to latexTranslate to escape special characters for LaTeX such as underscore and pound sign
+   * ggfreqScatter: new function
+   * grType: new non-exported service function to sense if plotly is in effect
+   * plot.describe: new function to make plotly graph for describe objects
+   * describe: changed output: 3 decimal places for Info, new format for frequency table, separated logic for 10 extreme values from logic for frequency table, significant changes to print.describe
+   * dotchartp: new version of dotchart3 for plotly charts
+   * summaryD: modified to use dotchartp if options(grType='plotly') is in effect
+   * nFm: added argument html
+   * label.default, label.Surv, labelPlotmath: added html argument to implement HTML markup in place of plotmath (for plotly)
+   * now imports htmlTable, viridis
+   * html.contents.data.frame: return invisibly if file=''
+   * htmlVerbatim: new function
+   * html.contents.data.frame: improved html
+   * html.data.frame: changed column headers from h4 to <strong>
+   * ggfreqScatter: added html argument
+   * knitrSet: was ignoring default figure h and w
+   * html.summaryM: new function using new version of latex.summaryM
+   * markupSpecs: new list object defining markup elements for latex and html, used by summaryM
+   * show.html, print.html: removed; conflicted with htmltools/rmarkdown
+   * label: required exact match on attribute name "label" to not retrieve the "labels" attribute (thanks: Ivan Puzek)
+   * htmlSN: new function to convert floating point to scientific format usint html
+   * upData, cleanup.import: fix NA becoming new factor levels (thanks: Beau Bruce)
+   * htmlTranslate: new function
+   * plotlySave: new function
+   * histSpikep: new function
+   * upData: new argument html
+   * plot.describe: added ggplot2 graphics, improved continuous display using ggplotly
+   * labelPlotmath: cleaned up by using markupSpecs
+   * capitalize: fixed bug - did not cap. first letter if other letters after it were upper case (thanks: dchiu911)
+   * html.summaryM: added brmsd argument to put mean, SD on separate line
+   * Save: changed default back to use gzip for speed
+   * knitrSet: used new knitr way to set aliases for option names
+   * latexTabular: made translate argument apply to body of table also; implemented multi-line header
+   * html.data.frame: added several arguments
+   * describe: added html method
+   * html markupSpecs object: added bibliographic database utility functions
+   * bppltp: new service function for extended box plots for plotly
+   * plot.summaryM: new plotly method
+   * prType: new service function used to detect user settings for html, latex for print methods
+   * html.contents.data.frame: removed file and append arguments and output an html character vector instead
+   * prList: new function
+   * GiniMd: moved to Hmisc from rms
+   * describe: added GMD (Gini's mean difference) and relabeled unique to distinct
+   * latex.summaryM: added Needspace{2.7in} before 2nd and later strata
+   * ggplot.summaryP: added point labels for use with plotly as hover text
+   * latex.summaryP: fixed bad linebreak at strata boundaries
+   * dotchartpl: new plotly dot chart function especially for summaryP
+   * plot.summaryP: new plotly method using dotchartpl when options(grType='plotly')
+   * putHfig: new function to render graphics with captions in HTML reports
+   * pngNeedle: new function, like latexNeedle but useful with HTML reports
+   * html.data.frame: added width and caption arguments
+   * plotlyParm: list object with plotly helper functions
+   * summaryD, dotchartp: added symbol and col arguments
+   * upData: improved efficiency, added labelled class to variables without it but having labels (e.g., data imported using haven package)
+   * gbayesMixPost: mixed error in posterior odds of the mixing parameter that resulted in incorrect posterior probabilities when the variance of the statistic was appreciable; added option to compute posterior mean
 
 Changes in version 3.17-4 (2016-05-02)
    * latex.summaryP: correctly ordered rows after running reshape because groups was present
@@ -99,10 +102,10 @@ Changes in version 3.17-4 (2016-05-02)
 Changes in version 3.17-3 (2016-04-03)
    * latex.default: added blank lines after textbf with insert.top unless center='center' (was unless 'none')
    * plot.summaryS: fixed bug were limits were not aligned with columns (thanks: Liping Du)
-	 * mgp.axis: respected par('tcl') but only as extreme as -0.4
-	 * mgp.axis: added cex.axis, cex.lab arguments
-	 * aregImpute: added reformM function for permuting order of variables.  Thanks: Yong Hao Pua
-	 * latex: fixed rownamesTexCmd error
+   * mgp.axis: respected par('tcl') but only as extreme as -0.4
+   * mgp.axis: added cex.axis, cex.lab arguments
+   * aregImpute: added reformM function for permuting order of variables.  Thanks: Yong Hao Pua
+   * latex: fixed rownamesTexCmd error
 
 Changes in version 3.17-2 (2016-02-13)
    * consolidate: A simpler version of assignment form of consolidate, avoids eval/match.call and works with the byte-compiler (thanks: Tomas Kalibera)

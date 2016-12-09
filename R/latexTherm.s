@@ -88,8 +88,7 @@ latexNeedle <- function(y, x=NULL, col='black', href=0.5, name, w=.05, h=.15,
 }
 
 pngNeedle <- function(y, x=NULL, col='black', href=0.5, lwd=3.5, w=6, h=18,
-                      file=tempfile(fileext='.png', tmpdir=dir),
-                      dir='/tmp') {
+                      file=tempfile(fileext='.png') {
 
   k <- length(y)
   col <- rep(col, length=k)

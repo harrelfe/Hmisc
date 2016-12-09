@@ -41,8 +41,7 @@ latexNeedle(y, x=NULL, col='black', href=0.5, name, w=.05, h=.15,
             extra=0, file = "", append=TRUE)
 
 pngNeedle(y, x=NULL, col='black', href=0.5, lwd=3.5, w=6, h=18,
-          file=tempfile(fileext='.png', tmpdir=dir),
-          dir='/tmp')
+          file=tempfile(fileext='.png'))
 }
 \arguments{
   \item{y}{a vector of 0-1 scaled values.  Boxes and their frames are
@@ -70,7 +69,6 @@ pngNeedle(y, x=NULL, col='black', href=0.5, lwd=3.5, w=6, h=18,
           \code{pngNeedle}.  Set to 
 					\code{NULL} to not draw any reference lines}
   \item{lwd}{line width of needles for \code{pngNeedle}}
-	\item{dir}{directory in which to place png graphic}
 }
 \author{Frank Harrell}
 \examples{

@@ -56,7 +56,7 @@ The `getHdata` function is used to fetch a dataset from the Vanderbilt `DataSets
 - automatically move units of measurements from parenthetical expressions in labels to separate `units` attributed used by `Hmisc` and `rms` functions for table making and graphics
 
 `contents` is used to print a data dictionary, run through an `html` method for nicer output.  Information about the data source may be found [here](http://biostat.mc.vanderbilt.edu/wiki/pub/Main/DataSets/pbc.html).
-```{r metadata}
+```{r metadata,results='asis'}
 getHdata(pbc)
 
 # Have upData move units from labels to separate attribute
@@ -78,7 +78,7 @@ The html method is used for the `describe` function, and the output is put in a 
 
 [^1]: The default is 75% size.
 
-```{r describe}
+```{r describe,results='asis'}
 # did have results='asis' above
 d <- describe(pbc)
 html(d, size=80, scroll=TRUE)

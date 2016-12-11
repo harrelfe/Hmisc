@@ -819,8 +819,9 @@ html.describe.single <-
       }
     w <- if(lco >= 50) 150 / lco else 3
     des <- paste0(des,
-                  m$rightAlign(base64::img(pngNeedle(counts,
-                                                     x=va, w=w, h=13, lwd=2, file=pngfile))))
+                  m$rightAlign(tobase64image(pngNeedle(counts,
+                                                       x=va, w=w, h=13, lwd=2,
+                                                       file=pngfile))))
   }
 
   R <- des

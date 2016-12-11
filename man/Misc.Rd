@@ -16,6 +16,7 @@
 \alias{plotlyParm}
 \alias{sepUnitsTrans}
 \alias{strgraphwrap}
+\alias{tobase64image}
 \alias{trap.rule}
 \alias{trellis.strip.blank}
 \alias{unPaste}
@@ -126,7 +127,11 @@
 
   \code{strgraphwrap} is like \code{strwrap} but is for the current
   graphics environment.
-  
+
+	\code{tobase64image} is a function written by Dirk Eddelbuettel that
+  uses the \code{base64enc} package to convert a png graphic file to
+  base64 encoding to include as an inline image in an html file.
+	
   \code{trap.rule} computes the area under a curve using the trapezoidal
   rule, assuming \code{x} is sorted.
 
@@ -176,6 +181,7 @@ sepUnitsTrans(x, conversion=c(day=1, month=365.25/12, year=365.25, week=7),
 strgraphwrap(x, width = 0.9 * getOption("width"),
              indent = 0, exdent = 0,
              prefix = "", simplify = TRUE, units='user', cex=NULL)
+tobase64image(file, Rd = FALSE, alt = "image")
 trap.rule(x, y)
 trellis.strip.blank()
 unPaste(str, sep="/")
@@ -186,6 +192,7 @@ xless(x, \dots, title)
 }
 \arguments{
   \item{a}{a numeric matrix or vector}
+	\item{alt,Rd}{see \code{base64::img}}
   \item{at}{x-coordinate for vertical confidence intervals, y-coordinate
 	for horizontal}
   \item{avail}{set to \code{TRUE} to have \code{getLatestSource} return
@@ -199,6 +206,7 @@ xless(x, \dots, title)
   \item{digits}{number of digits used for \code{round}}
   \item{est}{vector of point estimates for confidence limits}
   \item{f}{a scaling constant}
+	\item{file}{a file name}
   \item{fun}{function to transform scale}
   \item{group}{a categorical grouping variable}
 	\item{insert}{a list of 3-element lists for \code{latexBuild}.

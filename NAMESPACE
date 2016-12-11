@@ -11,7 +11,7 @@ import(ggplot2)
 ## import(scales)
 
 importFrom(acepack, ace, avas)
-importFrom(base64, img)
+importFrom(base64enc, base64encode)
 importFrom(latticeExtra, useOuterStrips, resizePanels)
 importFrom(cluster, clara)
 importFrom(foreign, read.dta, lookup.xport, read.spss, read.xport)

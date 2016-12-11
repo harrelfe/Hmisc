@@ -676,7 +676,7 @@ histboxp <- function(p=plotly::plot_ly(height=height),
                               color = I('light gray'),
                               name = paste0('Gini ',
                                        mu$overbar(paste0('|',
-                                                    htmlGreek('Delta'), '|')),
+                                                    htmlGreek('Delta'), '|'))),
                               visible='legendonly')
                               
   if(sd)

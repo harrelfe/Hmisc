@@ -239,6 +239,52 @@ htmlVerbatim <- function(..., size = 75, width = 85,
   htmltools::HTML(w)
 }
 
+htmlGreek <- function(x, mult=FALSE, unicode=FALSE) {
+  orig <- c('alpha','beta','gamma','delta','epsilon','varepsilon',
+            'zeta', 'eta',
+            'theta','vartheta','iota','kappa','lambda','mu','nu',
+            'xi','pi','varpi','rho','varrho','sigma','varsigma','tau',
+            'upsilon','phi','chi','psi','omega','Gamma','Delta',
+            'Theta','Lambda','Xi','Pi','Sigma','Upsilon','Phi','Psi','Omega')
+  
+  l <- length(orig)
+  
+  new <- if(unicode)
+           substring('\u3B1\u3B2\u3B3\u3B4\u3B5\u3F5\u3B6\u3B7\u3B8\u3D1\u3B9\u3BA\u3BB\u3BC\u3BD\u3BE\u3C0\u3D6\u3C1\u3F1\u3C3\u3C2\u3C4\u3C5\u3C6\u3C7\u3C8\u3C9\u393\u394\u398\u39B\u39E\u3A0\u3A3\u3A5\u3A6\u3A8\u3A9',
+                     1 : l, 1 : l)
+         else
+           paste0('&#',
+         c(945,946,947,948,949,1013,950,951,952,977,953,954,955,956,957,958,
+           960,982,961,1009,963,962,964,965,966,967,968,969,915,916,920,923,
+           926,928,931,933,934,936,937),
+         ';')
+  names(new) <- orig
+
+  if(mult) {
+    for(j in 1 : l) x <- gsub(paste0('\\<', orig[j], '\\>'), new[j], x)
+    return(x)
+  }
+  if(! all(x %in% orig)) stop(paste0('illegal Greek letter name:', x))
+  new[x]
+}
+
+htmlSpecial <- function(x, unicode=FALSE) {
+  orig <- c('nbsp', 'thinsp', 'emsp', 'ensp', 'plusmn', 'times', 'caret',
+            'frasl', 'half')
+  
+  l <- length(orig)
+  
+  new <- if(unicode)
+           substring('\u00A0\u2009\u2003\u2002\u00B1\u00D7\u005E\u2044\u00BD', 
+                     1 : l, 1 : l)
+         else
+           paste0('&#', c(160,8201,8195,8194,177,215,94,8260,189), ';')
+  names(new) <- orig
+
+  if(! all(x %in% orig)) stop(paste0('illegal character name:', x))
+  new[x]
+}
+
 
 markupSpecs <- list(html=list(
   ## <span> needed for text in plotly graphics
@@ -583,50 +629,5 @@ htmlTranslate <- function(object, inn=NULL, out=NULL,
   text
 }
 
-htmlGreek <- function(x, mult=FALSE, unicode=FALSE) {
-  orig <- c('alpha','beta','gamma','delta','epsilon','varepsilon',
-            'zeta', 'eta',
-            'theta','vartheta','iota','kappa','lambda','mu','nu',
-            'xi','pi','varpi','rho','varrho','sigma','varsigma','tau',
-            'upsilon','phi','chi','psi','omega','Gamma','Delta',
-            'Theta','Lambda','Xi','Pi','Sigma','Upsilon','Phi','Psi','Omega')
-  
-  l <- length(orig)
-  
-  new <- if(unicode)
-           substring('\u3B1\u3B2\u3B3\u3B4\u3B5\u3F5\u3B6\u3B7\u3B8\u3D1\u3B9\u3BA\u3BB\u3BC\u3BD\u3BE\u3C0\u3D6\u3C1\u3F1\u3C3\u3C2\u3C4\u3C5\u3C6\u3C7\u3C8\u3C9\u393\u394\u398\u39B\u39E\u3A0\u3A3\u3A5\u3A6\u3A8\u3A9',
-                     1 : l, 1 : l)
-         else
-           paste0('&#',
-         c(945,946,947,948,949,1013,950,951,952,977,953,954,955,956,957,958,
-           960,982,961,1009,963,962,964,965,966,967,968,969,915,916,920,923,
-           926,928,931,933,934,936,937),
-         ';')
-  names(new) <- orig
-
-  if(mult) {
-    for(j in 1 : l) x <- gsub(paste0('\\<', orig[j], '\\>'), new[j], x)
-    return(x)
-  }
-  if(any(x %nin% orig)) stop(paste0('illegal Greek letter name:', x))
-  new[x]
-}
-
-htmlSpecial <- function(x, unicode=FALSE) {
-  orig <- c('nbsp', 'thinsp', 'emsp', 'ensp', 'plusmn', 'times', 'caret',
-            'frasl', 'half')
-  
-  l <- length(orig)
-  
-  new <- if(unicode)
-           substring('\u00A0\u2009\u2003\u2002\u00B1\u00D7\u005E\u2044\u00BD', 
-                     1 : l, 1 : l)
-         else
-           paste0('&#', c(160,8201,8195,8194,177,215,94,8260,189), ';')
-  names(new) <- orig
-
-  if(any(x %nin% orig)) stop(paste0('illegal character name:', x))
-  new[x]
-}
 
 ## markupSpecs$html$unicodeshow(c('#9660', 'chi', 'thinsp', 'frasl', 'emsp', 'plusmn', 'times'), append=TRUE)

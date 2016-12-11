@@ -1,5 +1,8 @@
-Changes in version 4.0-2 (2016-12-09)
-   * pngNeedle: fixed bug in html.describe under Windows by not specifying /tmp as the temporary file directory - https://github.com/harrelfe/Hmisc/issues/63
+Changes in version 4.0-2 (2016-12-11)
+   * pngNeedle: fixed bug in html.describe under Windows by not specifying /tmp as the temporary file directory - https://github.com/harrelfe/Hmisc/issues/63; used tempdir() instead of tempfile()
+   * html.describe.single: reuse the same temporary file for intermediate png output for spike histograms
+	 * htmlGreek, htmlSpecial: new internal functions
+	 * htmlTranslate: added unicode argument, default FALSE, use htmlGreek
 
 Changes in version 4.0-1 (2016-12-04)
    * gbayes: new test file, fixed bug in posterior mean when mix=0,1 in gbayesMixPost

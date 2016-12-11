@@ -25,6 +25,8 @@
 \alias{ftupwr}
 \alias{get2rowHeads}
 \alias{groupn}
+\alias{htmlGreek}
+\alias{htmlSpecial}
 \alias{markupSpecs}
 \alias{importConvertDateTime}
 \alias{is.present}

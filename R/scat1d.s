@@ -674,7 +674,9 @@ histboxp <- function(p=plotly::plot_ly(height=height),
                               text = ~ txt,
                               hoverinfo = 'text',
                               color = I('light gray'),
-                              name = paste0('Gini ', mu$overbar('|\u394|')),
+                              name = paste0('Gini ',
+                                       mu$overbar(paste0('|',
+                                                    htmlGreek('Delta'), '|')),
                               visible='legendonly')
                               
   if(sd)

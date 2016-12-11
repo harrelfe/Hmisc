@@ -355,15 +355,16 @@ markupSpecs <- list(html=list(
   chisq    = function(x, ...)
 #    paste0('\u03C7&<span class="xscript" style="font-size: 75%;"><sup>2</sup><sub>', x,
 #           '</sub></span>')
-                 if(missing(x)) paste0('\u03C7<sup>2</sup>')
+                 if(missing(x)) paste0(htmlGreek('chi'), '<sup>2</sup>')
                  else
-                   paste0("\u03C7", markupSpecs$html$subsup(x, '2')),
+                   paste0(htmlGreek('chi'), markupSpecs$html$subsup(x, '2')),
   fstat    = function(x, ...) paste0('<i>F</i><sub><span style="font-size: 80%;">',
-                                     x[1], '\u2009', x[2], '</span></sub>'),
-  ## \u2009 is thin space
+                                     x[1], htmlSpecial('thinsp'),
+                                     x[2], '</span></sub>'),
   frac     = function(a, b, size=82, ...)
     paste0('<span style="font-size: ', size, '%;"><sup>',
-           a, '</sup>\u2044<sub>', b, '</sub></span>'),   # \u2044 is html &frasl
+           a, '</sup>', htmlSpecial('frasl'), '<sub>', b, '</sub></span>'),
+  half     = function(...) htmlSpecial('half'),
   subsup   = function(a, b) paste0("<sup><span style='font-size: 70%;'>", b,
                                    "</span></sup><sub style='position: relative; left: -.47em; bottom: -.4em;'><span style='font-size: 70%;'>",
                                    a, "</span></sub>"),
@@ -373,15 +374,15 @@ markupSpecs <- list(html=list(
       if(hfill) paste0("<div style='float: left; text-align: left;'>", label,
                        "</div><div style='float: right; text-align: right; font-family: Verdana; font-size:", size, "%;'>", units, "</div>")
     else
-      paste0(label,
-             "\u2003<span style='font-family:Verdana;font-size:", size, "%;'>",
-             units, "</span>") },   # \2003 is &emsp;
+      paste0(label, htmlSpecial('emsp'),
+             "<span style='font-family:Verdana;font-size:", size, "%;'>",
+             units, "</span>") },
   rightAlign  = function(x)
     paste0("<div style='float: right; text-align: right;'>",
            x, "</div>"),
-  space    = '\u00A0',    # html &nbsp;
-  lspace   = '\u2003',
-  sspace   = '\u2009',    # html &thinsp
+  space    = htmlSpecial('nbsp'), 
+  lspace   = htmlSpecial('emsp'),
+  sspace   = htmlSpecial('thinsp'),
   smallskip= '<br><br>',
   medskip  = '<br><br><br>',
   bigskip  = '<br><br><br><br>',
@@ -389,8 +390,8 @@ markupSpecs <- list(html=list(
   br       = '<br>',
   hrule    = '<hr>',
   hrulethin= '<hr class="thinhr">',
-  plminus  = '\u00B1',    # &plminus
-  times    = '\u00D7',         # &times
+  plminus  = htmlSpecial('plusmn'),
+  times    = htmlSpecial('times'),
   xbar     = '<span style="text-decoration: overline">X</span>',
   overbar  = function(x) paste0('<span style="text-decoration: overline">',
                                 x, '</span>'),
@@ -473,6 +474,7 @@ latex = list(
     paste0(add, 'F_{', x[1], ',', x[2], '}', add),
   frac     = function(a, b, add='$', ...)
     paste0(add, '\\frac{', a, '}{', b, '}', add),
+  half     = function(add='$') paste0(add, '\\frac(1}{2}', add),
   subsup   = function(a, b) paste0('$_{', a, '}^{', b, '}$'),
   varlabel = function(label, units='', hfill=FALSE, ...) {
     if(units=='') return(label) else units <- latexTranslate(units)
@@ -503,7 +505,11 @@ plain = list(
   lineskip = function(n) paste(rep('\n', n), collapse=''),
   hrule  = '',
   code   = function(x) x,
+  chisq  = function(x, ...) if(missing(x)) 'chi-square'
+                            else
+                              paste0('chi-square(', x, ')'),
   frac   = function(a, b, ...) paste0(a, '/', b),
+  half   = function(...) '1/2',
   varlabel = function(label, units='', ...)
     if(units == '') label else  paste0(label, '  [', units, ']'),
   times  = 'x',
@@ -523,7 +529,7 @@ plotmath = list(
 ## strings over the usual defaults.
 
 htmlTranslate <- function(object, inn=NULL, out=NULL,
-                           greek=FALSE, na='', ...)
+                           greek=FALSE, na='', unicode=FALSE, ...)
 {
   text <- ifelse(is.na(object), na, as.character(object))
 
@@ -532,15 +538,17 @@ htmlTranslate <- function(object, inn=NULL, out=NULL,
   inn <- c("&", "|",  "%",  "#",   "<=",     "<",  ">=",     ">",  "_", "\\243",
            "\\$", inn, c("[", "(", "]", ")"))
 
+  w <- if(unicode)
+         substring('\u27\u26\u7C\u25\u23\u2264\u3C\u2265\u3E\u5F\uA3\u24',
+                   1:11, 1:11)
+       else
+         c("&#38;", "&#124;", "&#37",   "&#35;", "&#8804;", "&#60;", "&#8805;",
+           "&#62;", "&#95;",  "&#164;", "&#36;")
 
-#  out <- c("&amp;", "&#124;", "&#37", "&#35;", "&#8804;", "&#60;", "&#8805;",
-#           "&#62;", "&#95;",  "&pound;",
-#           "&dollar;", out, 
-#           c("&#91;", "&#40;", "&#93;", "&#41;"))
-#  markupSpecs$html$unicodeshow(out, surr=FALSE)
-  out1 <- substring('\u27\u26\u7C\u25\u23\u2264\u3C\u2265\u3E\u5F\uA3\u24', 1:11, 1:11)
-  out2 <- substring('[(])', 1:4, 1:4)
-  out <- c(out1, out, out2)
+  ## htmlarrows.com
+  ##  markupSpecs$html$unicodeshow(out, surr=FALSE)
+
+  out <- c(w, out, c('[', '(', ']', ')'))
 
   ##See if string contains an ^ - superscript followed by a number
 
@@ -566,24 +574,59 @@ htmlTranslate <- function(object, inn=NULL, out=NULL,
         paste0('BEGINSUP', substring(text[i], is + 1, ie - 1), 'ENDSUP')
     }
     text[i] <- sedit(text[i], c(inn, '^', 'BEGINSUP', 'ENDSUP'),
-                     c(out, '\u5E', '<sup>', '</sup>'), wild.literal=TRUE)   # \u5E is ^
+                     c(out,
+                       htmlSpecial('caret', unicode=unicode),
+                       '<sup>', '</sup>'), wild.literal=TRUE)
 
-    if(greek) {
-      gl <- c('alpha','beta','gamma','delta','epsilon','varepsilon',
-              'zeta', 'eta',
-              'theta','vartheta','iota','kappa','lambda','mu','nu',
-              'xi','pi','varpi','rho','varrho','sigma','varsigma','tau',
-              'upsilon','phi','chi','psi','omega','Gamma','Delta',
-              'Theta','Lambda','Xi','Pi','Sigma','Upsilon','Phi','Psi','Omega')
- #     markkupSpecs$html$unicodeshow(gl, append=TRUE)
-      ## See http://stackoverflow.com/questions/22888646/making-gsub-only-replace-entire-words
-      for(j in 1 : length(gl)) 
-        text[i] <- gsub(paste0('\\<', gl[j], '\\>'),
-                        substring('\u3B1\u3B2\u3B3\u3B4\u3B5\u3F5\u3B6\u3B7\u3B8\u3D1\u3B9\u3BA\u3BB\u3BC\u3BD\u3BE\u3C0\u3D6\u3C1\u3F1\u3C3\u3C2\u3C4\u3C5\u3C6\u3C7\u3C8\u3C9\u393\u394\u398\u39B\u39E\u3A0\u3A3\u3A5\u3A6\u3A8\u3A9', j, j),
-                        text[i])
-    }
+    if(greek) text[i] <- htmlGreek(text[i], unicode=unicode, mult=TRUE)
   }
   text
+}
+
+htmlGreek <- function(x, mult=FALSE, unicode=FALSE) {
+  orig <- c('alpha','beta','gamma','delta','epsilon','varepsilon',
+            'zeta', 'eta',
+            'theta','vartheta','iota','kappa','lambda','mu','nu',
+            'xi','pi','varpi','rho','varrho','sigma','varsigma','tau',
+            'upsilon','phi','chi','psi','omega','Gamma','Delta',
+            'Theta','Lambda','Xi','Pi','Sigma','Upsilon','Phi','Psi','Omega')
+  
+  l <- length(orig)
+  
+  new <- if(unicode)
+           substring('\u3B1\u3B2\u3B3\u3B4\u3B5\u3F5\u3B6\u3B7\u3B8\u3D1\u3B9\u3BA\u3BB\u3BC\u3BD\u3BE\u3C0\u3D6\u3C1\u3F1\u3C3\u3C2\u3C4\u3C5\u3C6\u3C7\u3C8\u3C9\u393\u394\u398\u39B\u39E\u3A0\u3A3\u3A5\u3A6\u3A8\u3A9',
+                     1 : l, 1 : l)
+         else
+           paste0('&#',
+         c(945,946,947,948,949,1013,950,951,952,977,953,954,955,956,957,958,
+           960,982,961,1009,963,962,964,965,966,967,968,969,915,916,920,923,
+           926,928,931,933,934,936,937),
+         ';')
+  names(new) <- orig
+
+  if(mult) {
+    for(j in 1 : l) x <- gsub(paste0('\\<', orig[j], '\\>'), new[j], x)
+    return(x)
+  }
+  if(any(x %nin% orig)) stop(paste0('illegal Greek letter name:', x))
+  new[x]
+}
+
+htmlSpecial <- function(x, unicode=FALSE) {
+  orig <- c('nbsp', 'thinsp', 'emsp', 'ensp', 'plusmn', 'times', 'caret',
+            'frasl', 'half')
+  
+  l <- length(orig)
+  
+  new <- if(unicode)
+           substring('\u00A0\u2009\u2003\u2002\u00B1\u00D7\u005E\u2044\u00BD', 
+                     1 : l, 1 : l)
+         else
+           paste0('&#', c(160,8201,8195,8194,177,215,94,8260,189), ';')
+  names(new) <- orig
+
+  if(any(x %nin% orig)) stop(paste0('illegal character name:', x))
+  new[x]
 }
 
 ## markupSpecs$html$unicodeshow(c('#9660', 'chi', 'thinsp', 'frasl', 'emsp', 'plusmn', 'times'), append=TRUE)

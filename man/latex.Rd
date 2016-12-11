@@ -156,7 +156,8 @@ latex(object, \dots)
 latexTranslate(object, inn=NULL, out=NULL, pb=FALSE, greek=FALSE, na='',
                \dots)
 
-htmlTranslate(object, inn=NULL, out=NULL, greek=FALSE, na='', \dots)
+htmlTranslate(object, inn=NULL, out=NULL, greek=FALSE, na='',
+              unicode=FALSE, \dots)
 
 latexSN(x)
 
@@ -498,6 +499,8 @@ dvigv(object, \dots)
 	characters, ignoring "modes".}
 	\item{na}{single character string to translate \code{NA} values to for
 		\code{latexTranslate} and \code{htmlTranslate}}
+	\item{unicode}{set to \code{TRUE} to use HTML unicode characters
+		otherwise the ampersand pound number format will be used}
   \item{hspace}{
     horizontal space, e.g., extra left margin for verbatim text.  Default
     is none.  Use e.g. \code{hspace="10ex"} to add 10 extra spaces to the left

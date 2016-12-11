@@ -779,6 +779,8 @@ html.describe.single <-
   fsize  <- m$size
   smaller<- m$smaller
 
+  pngfile <- paste(tempdir(), 'needle1234567890a.png', sep='/')
+
   oldw <- options(width=if(size < 90) 95 else 85)
   on.exit(options(oldw))
   
@@ -818,7 +820,7 @@ html.describe.single <-
     w <- if(lco >= 50) 150 / lco else 3
     des <- paste0(des,
                   m$rightAlign(base64::img(pngNeedle(counts,
-                                                     x=va, w=w, h=13, lwd=2))))
+                                                     x=va, w=w, h=13, lwd=2, file=pngfile))))
   }
 
   R <- des

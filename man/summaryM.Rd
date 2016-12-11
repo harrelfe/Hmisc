@@ -425,7 +425,7 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
   }
 	\item{html}{set to \code{TRUE} to typeset with html}
 	\item{mspecs}{list defining markup syntax for various languages,
-    defauls to Hmisc \code{markupSpecs} which the user can use as a
+    defaults to Hmisc \code{markupSpecs} which the user can use as a
     starting point for editing}
   \item{dcolumn}{see \code{latex}}
   }

@@ -5,12 +5,7 @@ spss.get <- function(file, lowernames=FALSE,
                      max.value.labels=Inf,
                      force.single=TRUE, allow=NULL, charfactor=FALSE,
                      reencode=NA) {
-  if(length(grep('http://', file))) {
-    tf <- tempfile()
-    download.file(file, tf, mode='wb', quiet=TRUE)
-    file <- tf
-  }
-    
+
   w <- read.spss(file, use.value.labels=use.value.labels,
                  to.data.frame=to.data.frame,
                  max.value.labels=max.value.labels,
@@ -178,13 +173,6 @@ stata.get <- function(file, lowernames=FALSE,
     }
     
     return(attribs)
-  }
-  
-  ## If file is a url download and set file = to temp file name
-  if(length(grep('^http://', file))){
-    tf <- tempfile()
-    download.file(file, tf, mode='wb', quiet=TRUE)
-    file <- tf
   }
   
   ## Read the stata file into w

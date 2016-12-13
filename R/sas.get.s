@@ -719,9 +719,6 @@ sasxport.get <- function(file, lowernames=TRUE,force.single=TRUE,
   if(length(out) && method!='csv')
     stop('out only applies to method="csv"')
   
-##  if(method != 'csv')
-##    require('foreign') || stop('foreign package is not installed')
-
   rootsoftware <- if(method=='dataload')'dataload'
   else 'sas'
 
@@ -731,7 +728,9 @@ sasxport.get <- function(file, lowernames=TRUE,force.single=TRUE,
   sastimeform     <- toupper(c("hhmm","hour","mmss","time"))
   sasdatetimeform <- toupper(c("datetime","tod"))
 
-  if(length(grep('http://', file))) {
+  ## Note: unlike read.spss, read.dta, SAS xport reading functions do not
+  ## support URLs.  And thanks to Kurt Hornik for https
+  if(grepl("^https?://", file)) {
     tf <- tempfile()
     download.file(file, tf, mode='wb', quiet=TRUE)
     file <- tf

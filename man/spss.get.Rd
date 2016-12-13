@@ -19,7 +19,7 @@ spss.get(file, lowernames=FALSE, datevars = NULL,
 }
 \arguments{
   \item{file}{input SPSS save file.  May be a file on the WWW, indicated
-  by \code{file} starting with \code{'http://'}.}
+  by \code{file} starting with \code{'http://'} or \code{'https://'}.}
   \item{lowernames}{set to \code{TRUE} to convert variable names to
 	lower case}
   \item{datevars}{vector of variable names containing dates to be

@@ -730,7 +730,7 @@ sasxport.get <- function(file, lowernames=TRUE,force.single=TRUE,
 
   ## Note: unlike read.spss, read.dta, SAS xport reading functions do not
   ## support URLs.  And thanks to Kurt Hornik for https
-  if(grepl("^https?://", file)) {
+  if(grepl("^https?://", tolower(file))) {
     tf <- tempfile()
     download.file(file, tf, mode='wb', quiet=TRUE)
     file <- tf

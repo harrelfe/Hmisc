@@ -1361,12 +1361,12 @@ getZip <- function(url, password=NULL) {
   ## Password is 'foo'
   ## url may also be a local file
   ## Note: to make password-protected zip file z.zip, do zip -e z myfile
-  if(toupper(substring(url, 1, 7)) == 'HTTP://') {
+  if(grepl("^https?://", tolower(url))) {
     f <- tempfile()
     download.file(url, f)
   } else f <- url
   cmd <- if(length(password))
-    paste('unzip -p -P', password) else 'unzip -p'
+           paste('unzip -p -P', password) else 'unzip -p'
   pipe(paste(cmd, f))
 }
 
@@ -1528,7 +1528,6 @@ latexBuild <- function(..., insert=NULL, sep='') {
 getRs <- function(file=NULL,
                   guser='harrelfe', grepo='rscripts',
                   gdir='raw/master', dir=NULL,
-                  where='https://github.com/harrelfe/rscripts/raw/master',
                   browse=c('local', 'browser'), cats=FALSE,
                   put=c('rstudio', 'source')) {
   

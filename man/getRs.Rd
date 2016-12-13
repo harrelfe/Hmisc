@@ -12,8 +12,7 @@
 }
 \usage{
 getRs(file=NULL, guser='harrelfe', grepo='rscripts', gdir='raw/master',
-      dir=NULL, where='https://github.com/harrelfe/rscripts/raw/master',
-      browse=c('local', 'browser'), cats=FALSE,
+      dir=NULL, browse=c('local', 'browser'), cats=FALSE,
       put=c('rstudio', 'source'))
 }
 \arguments{
@@ -24,7 +23,6 @@ getRs(file=NULL, guser='harrelfe', grepo='rscripts', gdir='raw/master',
 	\item{grepo}{Github repository name, default is \code{'rscripts'}}
 	\item{gdir}{Github directory under which to find retrievable files}
 	\item{dir}{directory under \code{grepo} in which to find files}
-	\item{where}{base URL in Github for raw rendering of code text}
   \item{browse}{When showing the rscripts contents directory, the
       default is to list in tabular form in the console.  Specify
       \code{browse='browser'} to open the online contents in a web

@@ -451,19 +451,6 @@ latex.default <-
     stop(msg)
   }
   
-  ## If there are column groups, add a blank column
-  ## of formats between the groups.
-  if (length(cgroup) & length(cellTexCmds)) {
-    my.index <- split(1 : NCOL(cellTexCmds), rep(cumsum(n.cgroup),
-                                                 times=n.cgroup))
-    new.index <- NULL
-    new.col <- dim(cx)[2] + 1
-    for (i in my.index) new.index <- c(new.index, i, new.col)
-    
-    new.index <- new.index[-length(new.index)]
-    cellTexCmds <- cbind(cellTexCmds, "")[, new.index]
-  }
-
   if (length(cellTexCmds) | length(rownamesTexCmd)) {
     ## LaTeX commands have been specified for either the rownames or
     ## the cells.

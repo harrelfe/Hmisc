@@ -1,4 +1,4 @@
-Changes in version 4.0-2 (2016-12-13)
+Changes in version 4.0-2 (2016-12-15)
    * pngNeedle: fixed bug in html.describe under Windows by not specifying /tmp as the temporary file directory - https://github.com/harrelfe/Hmisc/issues/63; used tempdir() instead of tempfile()
    * html.describe.single: reuse the same temporary file for intermediate png output for spike histograms
    * htmlGreek, htmlSpecial: new internal functions
@@ -7,7 +7,8 @@ Changes in version 4.0-2 (2016-12-13)
    * Changed IMPORTS: base64 to base64enc
    * spss.get, stata.get: made use of foreign package files' ability to use URLs as the file argument
    * sasxport.get, getZip: allowed for https (thanks: Kurt Hornik)
-	 * getRs: removed unused where argument
+   * getRs: removed unused where argument
+   * latex: revert changes that removed fix to column duplication in cellTexCmds
 
 Changes in version 4.0-1 (2016-12-04)
    * gbayes: new test file, fixed bug in posterior mean when mix=0,1 in gbayesMixPost

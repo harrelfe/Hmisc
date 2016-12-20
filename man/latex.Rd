@@ -129,7 +129,7 @@ latex(object, \dots)
     multicol=TRUE,
     math.row.names=FALSE, already.math.row.names=FALSE,
     math.col.names=FALSE, already.math.col.names=FALSE,
-    hyperref=NULL,
+    hyperref=NULL, continued='continued',
     \dots) # x is a matrix or data.frame
 
 \method{latex}{function}(
@@ -361,6 +361,8 @@ dvigv(object, \dots)
 		mode changes to column names}
 	\item{hyperref}{if \code{table.env=TRUE} is a character string used to
   	generate a LaTeX \code{hyperref} enclosure}
+	\item{continued}{a character string used to indicate pages after the
+		first when making a long table}
   \item{cdot}{see \code{\link{format.df}}}
   \item{longtable}{
     Set to \code{TRUE} to use David Carlisle's LaTeX \code{longtable} style, allowing

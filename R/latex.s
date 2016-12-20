@@ -350,7 +350,7 @@ latex.default <-
            already.math.row.names=FALSE,
            math.col.names=FALSE,
            already.math.col.names=FALSE,
-           hyperref=NULL,
+           hyperref=NULL, continued='continued',
            ...)
 {
   if(length(hyperref)) hyperref <- sprintf('\\hyperref[%s]{', hyperref)
@@ -763,7 +763,7 @@ latex.default <-
           file=file,append=file != '')
     else {
       cat(sl,"endfirsthead", sep="",file=file, append=file != '')
-      cat(sl,"caption[]{\\em (continued)} ", eol,
+      cat(sl,"caption[]{\\em (", continued, ")} ", eol,
           sep="",file=file, append=file != '')
       cat(midrule, sep="",file=file, append=file != '')
       if(length(cgroupheader))

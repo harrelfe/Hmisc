@@ -139,12 +139,11 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
                              type='scatter', name='',
                              height=plotlyParm$heightDotchart(nrow(z)))
            else
-             plotly::plot_ly(z, x=Proportion, y=cumy, text=text,
+             plotly::plot_ly(z, x=~ Proportion, y=~ cumy, text=~ text,
                              mode='markers', hoverinfo='text',
                              type='scatter', name='',
                              height=plotlyParm$heightDotchart(nrow(z)))
       
-###      z$proplev <- 1.15
         pcat <-
           plotly::add_trace(pcat,
                             data=z, x=~ proplev, y=~ cumy, text=~ category,
@@ -163,7 +162,6 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
                                         title='Proportion'),
                              yaxis=list(title='', autorange='reversed',
                                         tickvals=tly, ticktext=un),
-#                             autosize=FALSE,
                              margin=list(l=plotlyParm$lrmargin(un)))
       }
     }
@@ -182,7 +180,6 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
       Y <- v$frequency
       
       text <- paste(format(X, digits=digits), ' (n=', Y, ')', sep='')
-###      X    <- 0.01 + 0.98 * (X - X[1]) / diff(range(X))
       X    <- (X - X[1]) / diff(range(X))
       zz   <- format_counts(s)
       lab  <- fmtlab(x)

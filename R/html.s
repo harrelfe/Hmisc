@@ -315,9 +315,12 @@ markupSpecs <- list(html=list(
            paste(unlist(list(...)), collapse=' '),
            '</font>'),
 
-  cap      = function(...) { # figure caption formatting
+  cap      = function(..., symbol='&#8735;') { # figure caption formatting
+  ## alternative: symbol='Figure:'; default is right angle
+  ## use symbol='&#9638;' for grid graph paper symbol
     lcap <- paste(unlist(list(...)), collapse=' ')
-    paste0('<span style="font-family:Verdana;font-size:10px;">Figure: </span><span style="font-family:Verdana;font-size:12px;color:MidnightBlue;">',
+    paste0('<span style="font-family:Verdana;font-size:10px;">', symbol,
+           ' </span><span style="font-family:Verdana;font-size:12px;color:MidnightBlue;">',
              lcap, '</span>')
   },
   
@@ -325,9 +328,11 @@ markupSpecs <- list(html=list(
     paste0('<span style="font-family:Verdana;font-size:12px;color:MidnightBlue;">',
            paste(unlist(list(...)), collapse=' '), '</span>'),
 
-  tcap      = function(...) { # table caption formatting
+  tcap      = function(..., symbol='&#9707;') { # table caption formatting
+    # alt: symbol='Table:'; default is white square w/vertical bisecting line
     lcap <- paste(unlist(list(...)), collapse=' ')
-    paste0('<span style="font-family:Verdana;font-size:10px;">Table: </span><span style="font-family:Verdana;font-size:12px;color:MidnightBlue;">',
+    paste0('<span style="font-family:Verdana;font-size:10px;">', symbol,
+           ' </span><span style="font-family:Verdana;font-size:12px;color:MidnightBlue;">',
              lcap, '</span>')
   },
   

@@ -503,7 +503,8 @@ histSpike <-
   invisible(xlim)
 }
 
-histSpikep <- function(p, x, y, z, group=NULL, color=NULL, hovertext=NULL,
+if(FALSE)
+  histSpikep <- function(p, x, y, z, group=NULL, color=NULL, hovertext=NULL,
                        colors=NULL,
                        bottom.align=TRUE, tracename='Proportion', ...) {
 

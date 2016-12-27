@@ -1,9 +1,9 @@
-histSpikeg <- function(formula=NULL, predictions=NULL, data,
+histSpikeg <- function(formula=NULL, predictions=NULL, data, plotly=NULL,
                        lowess=FALSE, xlim=NULL, ylim=NULL,
                        side=1, nint=100,
                        frac=function(f) 0.01 + 0.02*sqrt(f-1) /
                          sqrt(max(f,2)-1),
-                       span=3/4, histcol='black') {
+                       span=3/4, histcol='black', showlegend=TRUE) {
 
   ## Raw data in data, predicted curves are in predictions
   ## If predictions is not given, side (1 or 3) is used
@@ -36,19 +36,22 @@ histSpikeg <- function(formula=NULL, predictions=NULL, data,
     data[[X]] <- x1
   }
   p  <- predictions
-  xr <- NULL
-  if(length(p))   xr <- range(p[[X]],    na.rm=TRUE)
-  else if(lowess) xr <- range(data[[X]], na.rm=TRUE)
+#  xr <- NULL
+
+#  if(length(p))   xr <- range(p[[X]],    na.rm=TRUE)
+#  else if(lowess) xr <- range(data[[X]], na.rm=TRUE)
+  xr <- xlim
 
   if(length(xv) == 1) {
-    tab    <- as.data.frame(do.call(table, data[X]))
+    tab      <- as.data.frame(do.call(table, data[X]))
     tab[[X]] <- as.numeric(as.character(tab[[X]]))
     if(length(xr)) tab    <- tab[tab[[X]] >= xr[1] & tab[[X]] <= xr[2], ]
     if(lowess) {
       p <- as.data.frame(lows(data[[X]], yval, iter, span))
       names(p) <- c(X, yv)
-      }
-    if(length(p)) tab$.yy. <- approx(p[[X]], p[[yv]], xout=tab[[X]])$y
+    }
+
+    if(length(p)) tab$.yy. <- approxExtrap(p[[X]], p[[yv]], xout=tab[[X]])$y
   } else {  ## grouping variable(s) present
     tab <- as.data.frame(do.call(table, data[xv]))
     tab <- subset(tab, Freq > 0)
@@ -66,7 +69,7 @@ histSpikeg <- function(formula=NULL, predictions=NULL, data,
           i <- i & (tab[[gv[l]]] == currgroup)
           j <- j & (p[[gv[l]]]   == currgroup)
         }   ## now all grouping variables intersected
-        tab$.yy.[i] <- approx(p[[X]][j], p[[yv]][j], xout=tab[[X]][i])$y
+        tab$.yy.[i] <- approxExtrap(p[[X]][j], p[[yv]][j], xout=tab[[X]][i])$y
       }
     } ## end if(! lowess)
     else {  # lowess; need to compute p
@@ -83,7 +86,7 @@ histSpikeg <- function(formula=NULL, predictions=NULL, data,
         Sm <- sm; names(Sm) <- c(X, yv)
         Uk <- U[k, , drop=FALSE]; row.names(Uk) <- NULL
         p <- rbind(p, data.frame(Uk, Sm))
-        tab$.yy.[i] <- approx(sm, xout=tab[[X]][i])$y
+        tab$.yy.[i] <- approxExtrap(sm, xout=tab[[X]][i])$y
       }
     } ## end lowess
   }  ## end grouping variables present
@@ -101,9 +104,37 @@ histSpikeg <- function(formula=NULL, predictions=NULL, data,
   else if(side == 1) rep(ylim[1], n) else rep(ylim[2], n)
 
   tab$.yhi. <- if(length(p)) tab$.yy. + tab$.rf.
-  else if(side == 1) ylim[1] + tab$.rf. else ylim[2] - tab$.rf.
-
+               else if(side == 1) ylim[1] + tab$.rf. else ylim[2] - tab$.rf.
   hcol <- if(histcol == 'default') '' else sprintf(', col="%s"', histcol)
+
+  P <- plotly
+  if(! is.null(P)) {
+    tab$.xx. <- tab[[X]]
+    
+## Got NA/NaN argument, numerical expression has 8 elements
+## when using add_segments
+#    P <- plotly:add_segments(P, data=tab,
+#                             x=~ .xx.,  xend=~ .xx.,
+#                             y=~ .ylo., yend=~ .yhi.,
+#                             hoverinfo='none',
+#                             name='Histogram', legendgroup='Histogram')
+    n <- 3 * nrow(tab)
+    .xx. <- .yy. <- rep(NA, n)
+    .xx.[seq(1, n, by=3)] <- tab[[X]]
+    .xx.[seq(2, n, by=3)] <- tab[[X]]
+    .yy.[seq(1, n, by=3)] <- tab$.ylo.
+    .yy.[seq(2, n, by=3)] <- tab$.yhi.
+    P <- plotly::add_lines(P, data=data.frame(.xx., .yy.),
+                           x=~.xx., y=~.yy.,
+                           line=list(color=histcol, width=1.4),
+                           hoverinfo='none', showlegend=showlegend,
+                           name='Histogram', legendgroup='Histogram')
+    if(lowess)
+      P <- plotly::add_lines(P, data=p, x=f, y=af(yv),
+                             hoverinfo='none', showlegend=showlegend,
+                             name='loess', legendgroup='loess')
+    return(P)
+  }
   
   res <- eval(parse(text=sprintf('ggplot2::geom_segment(data=tab,
                         aes(x=%s, xend=%s,

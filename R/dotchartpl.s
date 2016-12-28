@@ -1,6 +1,7 @@
 dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
                        big=NULL, htext=NULL,
                        num=NULL, denom=NULL,
+                       lower=NULL, upper=NULL,
                        xlim=NULL, xlab='Proportion',
                        width=800,
                        col=colorspace::rainbow_hcl
@@ -12,6 +13,7 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
   minorpres <- length(minor) > 0
   grouppres <- length(group) > 0
   multpres  <- length(mult)  > 0
+  limspres  <- length(lower) * length(upper) > 0
 
   cols <- if(length(col)) {
             if(! is.function(col)) col
@@ -38,14 +40,14 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
   if(! length(big)) big <- rep(TRUE, n)
 
   w <- c(length(x), length(major), length(minor), length(group),
-         length(mult), length(big), length(htext))
+         length(mult), length(big), length(htext), length(lower), length(upper))
   w <- w[w > 0]
   if(diff(range(w)) > 0)
-    stop('x, major, minor, group, mult, big, htext must all have same length when used')
+    stop('x, major, minor, group, mult, big, htext, lower, upper must all have same length when used')
 
   y <- 1
-  X <- Y <- numeric(0)
-  Group <- Htext <- character(0)
+  X <- Y <- Lower <- Upper <- numeric(0)
+  Group <- Htext <- Htextl <- character(0)
   Big <- logical(0)
   
   yl <- numeric(0); yt <- ytnb <- character(0)
@@ -67,6 +69,12 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
       m     <- length(j)
       X     <- c(X, x[j])
       Y     <- c(Y, ifelse(big[j], y, y - .14))
+      if(limspres) {
+        Lower  <- c(Lower, lower[j])
+        Upper  <- c(Upper, upper[j])
+        Htextl <- paste0('[', format(lower[j], digits=4), ', ',
+                              format(upper[j], digits=4), ']')
+        }
       Group <- c(Group, group[j])
       Big   <- c(Big, big[j])
       Htext <- c(Htext, ht[j])
@@ -80,23 +88,43 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
   } # end ma in lmajor
 
   d  <- data.frame(X, Y, Group, Htext, Big)
+  if(limspres) {
+    d$Lower  <- Lower
+    d$Upper  <- Upper
+    d$Htextl <- Htextl
+    }
+
   if(any(d$Big)) {
     db <- subset(d, Big)
-    p <- plotly::plot_ly(data=db, x=~ X, y=~ Y, color=~ Group, text=~ Htext,
-                         type='scatter', mode='markers', colors=cols,
-                         hoverinfo='text',
+    p <- plotly::plot_ly(data=db,
                          height=plotlyParm$heightDotchart(lines), width=width)
+    if(limspres)
+      p <- plotly::add_segments(p, x=~ Lower, xend=~ Upper,
+                                   y=~ Y,     yend=~ Y,
+                                   color=~ Group, text= ~Htextl,
+                                   color=cols, hoverinfo='text')
+
+    p <- plotly::add_markers(p, x=~ X, y=~ Y,
+                                color=~ Group, text=~ Htext,
+                                colors=cols, hoverinfo='text')
   }
   else
     p <- plotly::plot_ly()
     
   if(any(! d$Big)) {
     dnb <- subset(d, ! Big)
+    if(limspres)
+      p <- plotly::add_segments(p, data=dnb,
+                                x=~ Lower, xend=~ Upper,
+                                y=~ Y,     yend=~ Y,
+                                color=~ Group, text=~ Htextl,
+                                color=cols, hoverinfo='text')
+
     p <- plotly::add_markers(p, data=dnb, x=~ X, y=~ Y,
-                             color=~ Group, text=~ Htext,
-                             colors=cols,  # mode='markers'
-                             marker=list(opacity=0.45, size=4),
-                             hoverinfo='text')
+                                color=~ Group, text=~ Htext,
+                                colors=cols,
+                                marker=list(opacity=0.45, size=4),
+                                hoverinfo='text')
     }
   leftmargin <- plotlyParm$lrmargin(ytnb)
   plotly::layout(p,
@@ -107,5 +135,4 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
                             range=c(min(Y) - 0.2, 0.2),
                             zeroline=FALSE, tickvals=yl, ticktext=yt),
                  margin=list(l=leftmargin))
-#                 colors=cols)
   }

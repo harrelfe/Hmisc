@@ -24,6 +24,7 @@
 \usage{
 dotchartpl(x, major, minor=NULL, group=NULL, mult=NULL,
            big=NULL, htext=NULL, num=NULL, denom=NULL,
+           lower=NULL, upper=NULL,
            xlim=NULL, xlab='Proportion', width=800,
            col=colorspace::rainbow_hcl)
 }
@@ -45,6 +46,8 @@ dotchartpl(x, major, minor=NULL, group=NULL, mult=NULL,
 		\code{num} is given, \code{x} is automatically added to hover text,
 		rounded to 3 digits after the decimal point.}
 	\item{denom}{like \code{num} but for denominators}
+	\item{lower}{lower limits for optional error bars}
+	\item{upper}{upper limits for optional error bars}
 	\item{xlim}{\code{x}-axis limits}
 	\item{xlab}{\code{x}-axis label}
 	\item{col}{a function or vector of colors to assign to \code{group}.
@@ -66,9 +69,13 @@ n <- nrow(d)
 d$x <- (1 : nrow(d)) + runif(n)
 d$num <- round(100*runif(n))
 d$denom <- d$num + round(100*runif(n))
+d$lower <- d$x - runif(n)
+d$upper <- d$x + runif(n)
 
+# numerators and denominators are meaningless in this example
 with(d,
- dotchartpl(x, major, minor, group, city, big=city==0, num=num, denom=denom))
+ dotchartpl(x, major, minor, group, city, lower=lower, upper=upper,
+            big=city==0, num=num, denom=denom, xlab='x'))
 
 n <- 500
 set.seed(1)

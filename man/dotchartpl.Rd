@@ -25,7 +25,9 @@
 dotchartpl(x, major, minor=NULL, group=NULL, mult=NULL,
            big=NULL, htext=NULL, num=NULL, denom=NULL,
            lower=NULL, upper=NULL,
-           xlim=NULL, xlab='Proportion', width=800,
+           xlim=NULL, xlab='Proportion',
+           tracename=NULL, limitstracename=NULL,
+           width=800,
            col=colorspace::rainbow_hcl)
 }
 \arguments{
@@ -50,6 +52,9 @@ dotchartpl(x, major, minor=NULL, group=NULL, mult=NULL,
 	\item{upper}{upper limits for optional error bars}
 	\item{xlim}{\code{x}-axis limits}
 	\item{xlab}{\code{x}-axis label}
+	\item{tracenane}{\code{plotly} trace name if \code{group} is not used}
+	\item{limitstracename}{\code{plotly} trace name for \code{lower} and
+		\code{upper} if \code{group} is not used}
 	\item{col}{a function or vector of colors to assign to \code{group}.
 	If a function it will be evaluated with an argument equal to the
 	number of distinct groups.}

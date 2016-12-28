@@ -3,6 +3,7 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
                        num=NULL, denom=NULL,
                        lower=NULL, upper=NULL,
                        xlim=NULL, xlab='Proportion',
+                       tracename=NULL, limitstracename=NULL,
                        width=800,
                        col=colorspace::rainbow_hcl
                        ) {
@@ -10,7 +11,8 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
   mu   <- markupSpecs$html
   bold <- mu$bold
 
-  if(! length(xlim)) xlim <- range(c(x, lower, upper, na.rm=TRUE))
+  if(! length(xlim)) xlim <- c(min(c(x, lower), na.rm=TRUE),
+                               max(c(x, upper), na.rm=TRUE))
   
   minorpres <- length(minor) > 0
   grouppres <- length(group) > 0
@@ -112,7 +114,8 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
       else   plotly::add_segments(p, x=~ Lower, xend=~ Upper,
                                      y=~ Y,     yend=~ Y,
                                      text= ~Htextl,
-                                     color=I('lightgray'), hoverinfo='text')
+                                     color=I('lightgray'), hoverinfo='text',
+                                     name=limitstracename)
 
     p <- if(grouppres)
            plotly::add_markers(p, x=~ X, y=~ Y,
@@ -120,7 +123,7 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
                                colors=cols, hoverinfo='text')
    else   plotly::add_markers(p, x=~ X, y=~ Y,
                               text=~ Htext, color=I('black'),
-                              hoverinfo='text')
+                              hoverinfo='text', name=tracename)
   }
   else
     p <- plotly::plot_ly()
@@ -138,7 +141,8 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
                                   x=~ Lower, xend=~ Upper,
                                   y=~ Y,     yend=~ Y,
                                   text=~ Htextl,
-                                  color=I('lightgray'), hoverinfo='text') 
+                                  color=I('lightgray'), hoverinfo='text',
+                                  name=limitstracename)
 
     p <- if(grouppres)
            plotly::add_markers(p, data=dnb, x=~ X, y=~ Y,
@@ -149,7 +153,8 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
     else   plotly::add_markers(p, data=dnb, x=~ X, y=~ Y,
                                text=~ Htext,
                                marker=list(opacity=0.45, size=4),
-                               color=I('black'), hoverinfo='text')
+                               color=I('black'), hoverinfo='text',
+                               name=tracename)
     }
   leftmargin <- plotlyParm$lrmargin(ytnb)
   plotly::layout(p,

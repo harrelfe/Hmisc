@@ -9,6 +9,8 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
 
   mu   <- markupSpecs$html
   bold <- mu$bold
+
+  if(! length(xlim)) xlim <- range(c(x, lower, upper, na.rm=TRUE))
   
   minorpres <- length(minor) > 0
   grouppres <- length(group) > 0
@@ -21,6 +23,7 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
               if(grouppres) col(length(unique(as.character(group))))
             else
               col(1) }
+  if(! length(col) && ! grouppres) col <- 'black'
 
   ht <- htext
   if(length(num))
@@ -88,25 +91,36 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
   } # end ma in lmajor
 
   d  <- data.frame(X, Y, Group, Htext, Big)
+
   if(limspres) {
     d$Lower  <- Lower
     d$Upper  <- Upper
     d$Htextl <- Htextl
     }
 
+  if(! grouppres) d$Group <- NULL  ####
   if(any(d$Big)) {
     db <- subset(d, Big)
     p <- plotly::plot_ly(data=db,
                          height=plotlyParm$heightDotchart(lines), width=width)
     if(limspres)
-      p <- plotly::add_segments(p, x=~ Lower, xend=~ Upper,
-                                   y=~ Y,     yend=~ Y,
-                                   color=~ Group, text= ~Htextl,
-                                   color=cols, hoverinfo='text')
+      p <- if(grouppres)
+             plotly::add_segments(p, x=~ Lower, xend=~ Upper,
+                                     y=~ Y,     yend=~ Y,
+                                     color=~ Group, text= ~Htextl,
+                                     colors=cols, hoverinfo='text')
+      else   plotly::add_segments(p, x=~ Lower, xend=~ Upper,
+                                     y=~ Y,     yend=~ Y,
+                                     text= ~Htextl,
+                                     color=I('lightgray'), hoverinfo='text')
 
-    p <- plotly::add_markers(p, x=~ X, y=~ Y,
-                                color=~ Group, text=~ Htext,
-                                colors=cols, hoverinfo='text')
+    p <- if(grouppres)
+           plotly::add_markers(p, x=~ X, y=~ Y,
+                               color=~ Group, text=~ Htext,
+                               colors=cols, hoverinfo='text')
+   else   plotly::add_markers(p, x=~ X, y=~ Y,
+                              text=~ Htext, color=I('black'),
+                              hoverinfo='text')
   }
   else
     p <- plotly::plot_ly()
@@ -114,22 +128,33 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
   if(any(! d$Big)) {
     dnb <- subset(d, ! Big)
     if(limspres)
-      p <- plotly::add_segments(p, data=dnb,
-                                x=~ Lower, xend=~ Upper,
-                                y=~ Y,     yend=~ Y,
-                                color=~ Group, text=~ Htextl,
-                                color=cols, hoverinfo='text')
+      p <- if(grouppres)
+             plotly::add_segments(p, data=dnb,
+                                  x=~ Lower, xend=~ Upper,
+                                  y=~ Y,     yend=~ Y,
+                                  color=~ Group, text=~ Htextl,
+                                  colors=cols, hoverinfo='text')
+       else  plotly::add_segments(p, data=dnb,
+                                  x=~ Lower, xend=~ Upper,
+                                  y=~ Y,     yend=~ Y,
+                                  text=~ Htextl,
+                                  color=I('lightgray'), hoverinfo='text') 
 
-    p <- plotly::add_markers(p, data=dnb, x=~ X, y=~ Y,
-                                color=~ Group, text=~ Htext,
-                                colors=cols,
-                                marker=list(opacity=0.45, size=4),
-                                hoverinfo='text')
+    p <- if(grouppres)
+           plotly::add_markers(p, data=dnb, x=~ X, y=~ Y,
+                               color=~ Group, text=~ Htext,
+                               colors=cols,
+                               marker=list(opacity=0.45, size=4),
+                               hoverinfo='text')
+    else   plotly::add_markers(p, data=dnb, x=~ X, y=~ Y,
+                               text=~ Htext,
+                               marker=list(opacity=0.45, size=4),
+                               color=I('black'), hoverinfo='text')
     }
   leftmargin <- plotlyParm$lrmargin(ytnb)
   plotly::layout(p,
                  xaxis=list(title=xlab,
-                            range=if(length(xlim)) xlim else range(x),
+                            range=xlim,
                             zeroline=FALSE),
                  yaxis=list(title='',
                             range=c(min(Y) - 0.2, 0.2),

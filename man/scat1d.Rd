@@ -402,12 +402,6 @@ histSpikeg(formula=NULL, predictions=NULL, data, plotly=NULL,
  }
 \item{showlegend}{set to \code{FALSE} too have the added \code{plotly}
            traces not have entries in the plot legend}
-\item{p}{an existing \code{plotly} object}
-\item{color}{an optional grouping variable to be assigned to the color
-  attribute for lines}
-\item{colors}{a vector of colors to be used by the \code{color}
-           variable; can also be the name of a color set as used in
-           \code{plotly}.}
 }
 \value{
   \code{histSpike} returns the actual range of \code{x} used in its binning

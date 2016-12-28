@@ -129,10 +129,12 @@ histSpikeg <- function(formula=NULL, predictions=NULL, data, plotly=NULL,
                            line=list(color=histcol, width=1.4),
                            hoverinfo='none', showlegend=showlegend,
                            name='Histogram', legendgroup='Histogram')
-    if(lowess)
-      P <- plotly::add_lines(P, data=p, x=f, y=af(yv),
+    if(lowess) {
+      af <- function(x) as.formula(paste('~', x))
+      P <- plotly::add_lines(P, data=p, x=af(X), y=af(yv),
                              hoverinfo='none', showlegend=showlegend,
                              name='loess', legendgroup='loess')
+      }
     return(P)
   }
   

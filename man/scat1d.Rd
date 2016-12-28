@@ -130,9 +130,6 @@ histSpikeg(formula=NULL, predictions=NULL, data, plotly=NULL,
            side=1, nint=100,
            frac=function(f) 0.01 + 0.02*sqrt(f-1)/sqrt(max(f,2)-1),
            span=3/4, histcol='black', showlegend=TRUE)
-
-histSpikep(p, x, y, z, group=NULL, color=NULL, hovertext=NULL,
-           colors=NULL, bottom.align=TRUE, tracename='Proportion', \dots)
 }
 \arguments{
   \item{x}{

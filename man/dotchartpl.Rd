@@ -52,7 +52,7 @@ dotchartpl(x, major, minor=NULL, group=NULL, mult=NULL,
 	\item{upper}{upper limits for optional error bars}
 	\item{xlim}{\code{x}-axis limits}
 	\item{xlab}{\code{x}-axis label}
-	\item{tracenane}{\code{plotly} trace name if \code{group} is not used}
+	\item{tracename}{\code{plotly} trace name if \code{group} is not used}
 	\item{limitstracename}{\code{plotly} trace name for \code{lower} and
 		\code{upper} if \code{group} is not used}
 	\item{col}{a function or vector of colors to assign to \code{group}.

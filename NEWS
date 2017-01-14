@@ -1,3 +1,5 @@
+Changes in version 4.0-3 (2017-02-01)
+   * bpplot: added plotopts argument
 Changes in version 4.0-2 (2016-12-30)
    * pngNeedle: fixed bug in html.describe under Windows by not specifying /tmp as the temporary file directory - https://github.com/harrelfe/Hmisc/issues/63; used tempdir() instead of tempfile()
    * html.describe.single: reuse the same temporary file for intermediate png output for spike histograms

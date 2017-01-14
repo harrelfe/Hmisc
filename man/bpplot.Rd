@@ -9,7 +9,7 @@ list of vectors.
 }
 \usage{
 bpplot(\dots, name=TRUE, main="Box-Percentile Plot", 
-       xlab="", ylab="", srtx=0)
+       xlab="", ylab="", srtx=0, plotopts=NULL)
 }
 \arguments{
 \item{...}{
@@ -33,9 +33,9 @@ x axis label.
 \item{ylab}{
 y axis label.
 }
-\item{srtx}{
-rotation angle for x-axis labels.  Default is zero.
-}}
+\item{srtx}{rotation angle for x-axis labels.  Default is zero.}
+\item{plotopts}{a list of other parameters to send to \code{plot}}
+}
 \value{
 There are no returned values
 }

@@ -3,7 +3,7 @@
 ## names -> name, added srtx
 bpplot <- function(..., name = TRUE,
                    main = "Box-Percentile Plot", 
-                   xlab = "", ylab = "", srtx=0)
+                   xlab = "", ylab = "", srtx=0, plotopts=NULL)
 {
   all.x <- list(...)  ## FH 30Jun97
   nam <- character(0)   ## FH
@@ -19,14 +19,15 @@ bpplot <- function(..., name = TRUE,
   ymin <- min(sapply(all.x, min, na.rm=TRUE))
   xmax <- max(centers) + 0.5
   xmin <- -0.5
-  plot(c(xmin, xmax), c(ymin, ymax), type = "n", main = main,
-       xlab = '', ylab = ylab, xaxt = "n")
-  for(i in 1:n) {
+  pargs <- c(list(c(xmin, xmax), c(ymin, ymax), type = "n", main = main,
+                  xlab = '', ylab = ylab, xaxt = "n"), plotopts)
+  do.call("plot", pargs)
+  for(i in 1 : n) {
     plot.values <- bpx(all.x[[i]], centers[i])
-    lines(plot.values$x1, plot.values$y1)
-    lines(plot.values$x2, plot.values$y2)
-    lines(plot.values$q1.x, plot.values$q1.y)
-    lines(plot.values$q3.x, plot.values$q3.y)
+    lines(plot.values$x1,    plot.values$y1)
+    lines(plot.values$x2,    plot.values$y2)
+    lines(plot.values$q1.x,  plot.values$q1.y)
+    lines(plot.values$q3.x,  plot.values$q3.y)
     lines(plot.values$med.x, plot.values$med.y)
   }
 

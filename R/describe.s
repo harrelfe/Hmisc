@@ -193,8 +193,8 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
         values <- tableIgnoreCaseWhiteSpace(x)
     else
       if(isnum || n.unique <= 100) {
-        if(isnum && n.unique >= 100) {
-          pret <- pretty(xnum, 100)
+        if(isnum) {
+          pret <- pretty(xnum, if(n.unique >= 100) 100 else 500)
           dist <- pret[2] - pret[1]
           r    <- range(pret)
           xnum <- r[1] + dist * round((xnum - r[1]) / dist)

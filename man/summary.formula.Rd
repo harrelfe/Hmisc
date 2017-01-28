@@ -498,9 +498,9 @@ ordTestpo(group, x)
   }
   \item{which}{
     For \code{method="response"} specifies the sequential number or a vector of
-    subscripts of response variables to plot.  If you had any \code{stratify}
-    variables, these are counted as if multiple response variables were
-    analyzed.  For \code{method="reverse"} specifies whether to plot results
+    subscripts of statistics to plot.  If you had any \code{stratify}
+    variables, these are counted as if more statistics were computed.
+  For \code{method="reverse"} specifies whether to plot results 
     for categorical variables, continuous variables, or both (the default).
   }
   \item{conType}{

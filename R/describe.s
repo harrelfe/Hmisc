@@ -194,10 +194,13 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
     else
       if(isnum || n.unique <= 100) {
         if(isnum) {
-          pret <- pretty(xnum, if(n.unique >= 100) 100 else 500)
-          dist <- pret[2] - pret[1]
-          r    <- range(pret)
-          xnum <- r[1] + dist * round((xnum - r[1]) / dist)
+          if(n.unique >= 100 ||
+             min(diff(sort(unique(xnum)))) < diff(range(xnum)) / 500) {
+            pret <- pretty(xnum, if(n.unique >= 100) 100 else 500)
+            dist <- pret[2] - pret[1]
+            r    <- range(pret)
+            xnum <- r[1] + dist * round((xnum - r[1]) / dist)
+          }
         }
         values <- wtd.table(if(isnum) xnum else if(isdat) format(x) else x,
                             weights, normwt=FALSE, na.rm=FALSE)

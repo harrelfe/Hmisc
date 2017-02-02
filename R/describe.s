@@ -380,7 +380,8 @@ formatdescribeSingle <-
   
   is.standard <- length(v) && is.list(v) &&
                  all(names(v) == c('value', 'frequency'))
-  val.wide    <- sum(nchar(as.character(v$value))) > 200
+
+  val.wide    <- length(v$value) && sum(nchar(as.character(v$value))) > 200
   val.few     <- length(v$value) && (length(v$value) <= 20)
   print.freq  <- is.standard && val.few && ! val.wide
   print.ext   <- length(x$extremes) && ! print.freq

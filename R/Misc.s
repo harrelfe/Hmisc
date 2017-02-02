@@ -244,6 +244,7 @@ all.is.numeric <- function(x, what=c('test','vector'),
   x <- sub('[[:space:]]+$', '', x)
   x <- sub('^[[:space:]]+', '', x)
   xs <- x[x %nin% c('',extras)]
+  if(! length(xs)) return(if(what == 'test') FALSE else x)
   isnum <- suppressWarnings(!any(is.na(as.numeric(xs))))
   if(what=='test')
     isnum

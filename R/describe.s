@@ -553,14 +553,15 @@ latex.describe <-
         length(val) && ! is.matrix(val) &&
            length(val) != 10 || ! all(names(val)==
                    c("L1","L2","L3","L4","L5","H5","H4","H3","H2","H1"))
-      if(! potentiallyLong) cat('\\vbox{', file=file, append=TRUE)
+      dovbox <- TRUE     # was ! potentiallyLong
+      if(dovbox) cat('\\vbox{', file=file, append=TRUE)
 
       latex.describe.single(z, vname=vnames[i],
                             file=file, append=TRUE,
                             tabular=tabular, greek=greek,
                             lspace=lspace, ...)
       ct('\\smallskip\\hrule\\smallskip\n', file=file, append=TRUE)
-      if(! potentiallyLong) cat('}\n', file=file, append=TRUE)
+      if(dovbox) cat('}\n', file=file, append=TRUE)
     }
     
     if(length(mv <- at$missing.vars)) {
@@ -580,12 +581,13 @@ latex.describe <-
       length(val) && ! is.matrix(val) &&
         length(val) != 10 || ! all(names(val)==
                 c("L1","L2","L3","L4","L5","H5","H4","H3","H2","H1"))
-    if(! potentiallyLong) cat('\\vbox{', file=file, append=TRUE)
+    dovbox <- TRUE   # was ! potentiallyLong
+    if(dovbox) cat('\\vbox{', file=file, append=TRUE)
     latex.describe.single(object,
                           vname=first.word(expr=at$descript),
                           file=file, append=TRUE, size=size,
                           tabular=tabular, lspace=lspace, ...)
-    if(! potentiallyLong) cat('}\n', file=file, append=TRUE)
+    if(dovbox) cat('}\n', file=file, append=TRUE)
     spc <- if(spacing == 0) '\n' else '\\end{spacing}\n'
     ct(spc, file=file, append=TRUE)
   }

@@ -695,10 +695,10 @@ histboxp <- function(p=plotly::plot_ly(height=height),
                               color = I('light blue'),
                               name = 'SD',
                               visible='legendonly')
-  
+
   p <- plotly::layout(p,
                       margin = list(l=plotlyParm$lrmargin(levs)),
-                      xaxis = list(title=xlab),
+                      xaxis = list(title=xlab, zeroline=FALSE),
                       yaxis = list(title='',
                                    tickvals= - (1 : ng),
                                    ticktext = levs))

@@ -156,6 +156,15 @@ putHfig(plot(s, marginVal='All', marginLabel='All Treatment Groups'),
 				scap='Proportions with and without stratification by treatment')
 ```
 
+# Better Demonstration of Boxplot Replacement
+```{r support}
+getHdata(support2)
+p <- with(support2, histboxp(x=meanbp, group=dzgroup, sd=TRUE,
+                             bins=200))
+putHfig(p, "Spike histograms, means, quantiles, Gini's mean difference, and SD for MAP stratified by diagnosis",
+       scap="Stratified spike histograms and quantiles for MAP")
+```
+
 # Computing Environment[^2] {#compenv}
 `r mu$session()`
 

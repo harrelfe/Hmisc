@@ -69,7 +69,9 @@ y <- rnorm(1000)
 count <- sample(1:100, 1000, TRUE)
 x <- rep(x, count)
 y <- rep(y, count)
+# color=alpha=NULL below makes loess smooth over all points
 g <- ggfreqScatter(x, y) +   # might add g=0 if using plotly
+      geom_smooth(aes(color=NULL, alpha=NULL), se=FALSE) +
       ggtitle("Using Deciles of Frequency Counts, 2500 Bins")
 g
 # plotly::ggplotly(g, tooltip='label')  # use plotly, hover text = freq. only

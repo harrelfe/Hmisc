@@ -145,11 +145,13 @@ summaryM <- function(formula, groups=NULL, data=NULL, subset,
           type[i] <- 1
         } else {
           sfn <- function(x, quant) {
-            o <- options(digits=10)
-            ## So won't lose precision in quantile names
-            on.exit(options(o))
-            c(quantile(x,quant), Mean=mean(x), SD=sqrt(var(x)),
-              N=sum(!is.na(x)))
+            ## Won't lose precision in quantile names with digits=15
+            y <- c(quantile(x,quant), Mean=mean(x), SD=sqrt(var(x)),
+                   N=sum(!is.na(x)))
+            names(y) <-
+              c(paste0(formatC(100 * quant, format='fg', width=1, digits=15),
+                       '%'), 'Mean', 'SD', 'N')
+            y
           }
 
           qu <- tapply(w, g, sfn, simplify=TRUE, quants)

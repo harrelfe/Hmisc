@@ -216,7 +216,8 @@ panel.plsmo <- function(x, y, subscripts, groups=NULL, type='b',
     
     if(ng > 1) {
       Key <- function(x=NULL, y=NULL, lev, cex, col, font, pch){
-        oldpar <- par(usr=c(0, 1, 0, 1), xpd=NA)
+		oldpar <- par('usr', 'xpd')
+        par(usr=c(0, 1, 0, 1), xpd=NA)
         on.exit(par(oldpar))
         if(is.list(x)) {
           y <- x[[2]]

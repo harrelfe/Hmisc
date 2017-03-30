@@ -2,7 +2,8 @@
 ## Author: Bill Dunlap <bill@STAT.WASHINGTON.EDU>
 zoom <- function(fun, ...) {
   on.exit(par(oldpar))
-  oldpar <- par(err = -1)
+  oldpar <- par('err')
+  par(err = -1)
   fun(...)
   while(TRUE) {
     cat("Click mouse over corners of zoom area: ")

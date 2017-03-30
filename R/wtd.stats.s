@@ -90,8 +90,9 @@ wtd.Ecdf <- function(x, weights=NULL,
          'i/n'        ={a <- b <- 0})
 
   if(!length(weights)) {
-    ##.Options$digits <- 7  ## to get good resolution for names(table(x))6Aug00
-    oldopt <- options(digits=7)
+    ##.Options$digits <- 7  ## to get good resolution for names(table(x))
+    oldopt <- options('digits')
+    options(digits=7)
     on.exit(options(oldopt))
     cumu <- table(x)    ## R does not give names for cumsum
     isdate <- testDateTime(x)  ## 31aug02

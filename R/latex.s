@@ -113,7 +113,8 @@ format.df <- function(x,
   }
 
   if(length(digits)) {
-    oldopt <- options(digits=digits)
+	oldopt <- options('digits')
+    options(digits=digits)
     on.exit(options(oldopt))
   }
   
@@ -928,7 +929,8 @@ latexVerbatim <- function(x,
                           length=.Options$length, ...)
 {
   if(! missing(width) || ! missing(length)) {
-    old <- options(width=width, length=length)
+	old <- options('width', 'length')
+    options(width=width, length=length)
     on.exit(options(old))
   }
 

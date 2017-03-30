@@ -378,7 +378,8 @@ summary.formula <-
           } else {
             sfn <- function(x, quant)
             {
-              o <- options(digits=10)
+			  o <- options('digits')
+              options(digits=15)
               ## so won't lose precision in quantile names
               on.exit(options(o))
               c(quantile(x,quant), Mean=mean(x), SD=sqrt(var(x)))
@@ -840,7 +841,8 @@ plot.summary.formula.response <-
 
   if(superposeStrata) { ##set up for Key()
     Key1 <- function(x=NULL, y=NULL, lev, pch) {
-      oldpar <- par(usr=c(0,1,0,1),xpd=NA)
+      oldpar <- par('usr', 'xpd')
+      par(usr=c(0,1,0,1),xpd=NA)
       on.exit(par(oldpar))
       if(is.list(x)) {
         y <- x$y;
@@ -1002,7 +1004,8 @@ plot.summary.formula.reverse <-
       .setKey(Key1)
     } else { ##set up for key() if > 1 column
       Key3 <- function(x=NULL, y=NULL, lev, pch) {
-        oldpar <- par(usr=c(0,1,0,1),xpd=NA)
+		oldpar <- par('usr', 'xpd')
+        par(usr=c(0,1,0,1),xpd=NA)
         on.exit(par(oldpar))
         if(is.list(x)) {
           y <- x$y;
@@ -1361,7 +1364,8 @@ print.summary.formula.reverse <-
   gnames <- names(x$group.freq)
 
   if(!missing(digits)) {
-    oldopt <- options(digits=digits)
+	oldopt <- options('digits')
+    options(digits=digits)
     on.exit(options(oldopt))
   }
 
@@ -1840,7 +1844,8 @@ latex.summary.formula.reverse <-
       length(unique(sapply(test, function(a)a$testname))) > 1
 
   if(!missing(digits)) {
-    oldopt <- options(digits=digits)
+	oldopt <- options('digits')
+    options(digits=digits)
     on.exit(options(oldopt))
   }
 
@@ -2394,7 +2399,8 @@ summarize <- function(X, by, FUN, ...,
     else if(length(stat.name))    snames <- stat.name
   }
   
-  oldopt <- options(warn = -1)
+  oldopt <- options('warn')
+  options(warn = -1)
   on.exit(options(oldopt))
   notna <- rep(TRUE, length(ans[[1]]))
   for(i in 1:length(by)) {

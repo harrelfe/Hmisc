@@ -128,7 +128,8 @@ print.t.test.cluster <- function(x, digits, ...)
 {
   ##   if(!missing(digits)).Options$digits <- digits      6Aug00
   if(!missing(digits)) {
-    oldopt <- options(digits=digits)
+	oldopt <- options('digits')
+    options(digits=digits)
     on.exit(options(oldopt))
   }
 

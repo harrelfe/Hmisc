@@ -674,7 +674,8 @@ Dotplot <-
   
   if(!missing(subset)) subset <- eval(substitute(subset),data)
   
-  dul <- options(drop.unused.levels=FALSE)   ## for empty cells
+  dul <- options('drop.unused.levels')
+  options(drop.unused.levels=FALSE)   ## for empty cells
   on.exit(options(dul))                      ## across some panels
   
   do.call("xyplot", c(list(x = formula, data=data, prepanel=prepanel,

@@ -165,7 +165,8 @@ Ecdf.data.frame <- function(x, group=rep(1, nrows),
     automf <- TRUE
   }
   
-  oldmf <- par(mfrow=mf)
+  oldmf <- par('mfrow')
+  par(mfrow=mf)
   on.exit(par(oldmf))
   
   nam <- names(x)
@@ -382,7 +383,8 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
   if(ng > 1) { ##set up for key() if points plotted
     .Key <- function(x=0, y=1, lev, col, lty, lwd, ...)
       {
-        oldpar <- par(usr=c(0,1,0,1),xpd=NA)
+		oldpar <- par('usr', 'xpd')
+        par(usr=c(0,1,0,1),xpd=NA)
         
         ## Even though par('usr') shows 0,1,0,1 after lattice draws
         ## its plot, it still needs resetting

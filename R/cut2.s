@@ -19,7 +19,8 @@ cut2 <- function(x, cuts, m=150, g, levels.mean=FALSE, digits, minmax=TRUE,
   if(missing(digits))
     digits <- if(levels.mean) 5 else 3
   
-  oldopt <- options(digits=digits)
+  oldopt <- options('digits')
+  options(digits=digits)
   on.exit(options(oldopt))
 
   xlab <- attr(x, 'label')

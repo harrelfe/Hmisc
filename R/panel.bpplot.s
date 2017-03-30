@@ -180,7 +180,8 @@ bpplt <- function(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
   mxlab <- .3+max(strwidth(groups, units='inches', cex=cex.labels))
 
   mai[2] <- mxlab
-  opar <- par(mai=mai)
+  opar <- options('mai')
+  par(mai=mai)
   on.exit(par(opar))
 
   plot.window(xlim=xlim, ylim=c(0.5,length(groups) + 0.5))

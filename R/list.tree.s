@@ -5,7 +5,8 @@ list.tree <- function(struct,depth=-1, numbers=FALSE, maxlen=22,
   if(depth==0)
     return()
   
-  opts <- options(digits=5)
+  opts <- options('digits')
+  options(digits=5)
   on.exit(options(opts))
   if (missing(name.of))
     name.of <- deparse(substitute(struct))

@@ -482,7 +482,8 @@ plot.areg.boot <- function(x, ylim, boot=TRUE,
       else if(k<=16) c(4,4)
       else c(4,5)
 
-    oldmfrow <- par(mfrow=mf,err=-1)
+    oldmfrow <- par('mfrow', 'err')
+    par(mfrow=mf, err=-1)
     on.exit(par(oldmfrow))
   }
 

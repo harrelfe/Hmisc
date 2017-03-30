@@ -16,7 +16,8 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
                             listunique=0, listnchar=12,
                             weights=NULL, normwt=FALSE, minlength=NULL, ...)
 {
-  oldopt <- options(digits=digits)
+  oldopt <- options('digits')
+  options(digits=digits)
   on.exit(options(oldopt))
 
   weighted <- length(weights) > 0
@@ -608,7 +609,8 @@ latex.describe.single <-
     invisible()
   }
   
-  oldw <- options(width=if(size == 'small') 95 else 85)
+  oldw <- options('width')
+  options(width=if(size == 'small') 95 else 85)
   on.exit(options(oldw))
   
   wide <- switch(size,
@@ -787,7 +789,8 @@ html.describe.single <-
 
   pngfile <- paste(tempdir(), 'needle1234567890a.png', sep='/')
 
-  oldw <- options(width=if(size < 90) 95 else 85)
+  oldw <- options('width')
+  options(width=if(size < 90) 95 else 85)
   on.exit(options(oldw))
   
   wide <- if(size >= 90) 73 else if(size >= 75) 95 else 110

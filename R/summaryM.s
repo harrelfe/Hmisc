@@ -353,7 +353,8 @@ plot.summaryM <-
         .setKey(Key1)
       } else { ##set up for key() if > 1 column
         Key3 <- function(x=NULL, y=NULL, lev, pch) {
-          oldpar <- par(usr=c(0, 1, 0, 1), xpd=NA)
+		  oldpar <- par('usr', 'xpd')
+          par(usr=c(0, 1, 0, 1), xpd=NA)
           on.exit(par(oldpar))
           if(is.list(x)) {
             y <- x$y
@@ -498,7 +499,8 @@ print.summaryM <-
     gnames <- names(x$group.freq)
 
     if(!missing(digits)) {
-      oldopt <- options(digits=digits)
+	  oldopt <- options('digits')
+      options(digits=digits)
       on.exit(options(oldopt))
     }
     
@@ -655,7 +657,8 @@ latex.summaryM <-
         length(unique(sapply(test,function(a)a$testname))) > 1
 
     if(!missing(digits)) {
-      oldopt <- options(digits=digits)
+	  oldopt <- options('digits')
+      options(digits=digits)
       on.exit(options(oldopt))
     }
     

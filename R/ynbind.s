@@ -71,8 +71,10 @@ structure(W, label=label, labels=lab, class=c('pBlock', 'matrix'))
   d <- dim(x)
   at <- attributes(x)[c('label', 'labels')]
   x <- NextMethod('[')
-  at$labels <- at$labels[cols]
-  attributes(x) <- c(attributes(x), at)
-  class(x) <- 'pBlock'
+  if (is.matrix(x)) {
+    at$labels <- at$labels[cols]
+    attributes(x) <- c(attributes(x), at)
+    class(x) <- 'pBlock'
+  }
   x
   }

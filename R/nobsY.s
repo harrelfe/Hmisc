@@ -75,31 +75,45 @@ nobsY <- function(formula, group=NULL,
   structure(list(nobs=nobs, nobsg=nobsg, id=idv, formula=forig))
 }
 
-addMarginal <- function(data, ..., label='All', margloc=c('last', 'first')) {
+addMarginal <- function(data, ..., label='All',
+                        margloc=c('last', 'first'), nested) {
+  nested <- as.character(substitute(nested))
+  if(length(nested) && nested == '') nested <- NULL
   vars <- as.character(sys.call())[- (1 : 2)]
   vars <- intersect(vars, names(data))
   data$.marginal. <- ''
   margloc <- match.arg(margloc)
+  if(length(nested) && (nested %nin% names(data)))
+    stop(paste('Variable', nested, 'is not in data'))
 
   labs <- sapply(data, function(x) {
     la <- attr(x, 'label')
     if(! length(la)) la <- ''
-    la })
+    la
+  } )
+  
   un <- sapply(data, function(x) {
     u <- attr(x, 'units')
     if(! length(u)) u <- ''
-    u })
+    u
+  } )
 
   levs <- vector('list', length(vars))
   names(levs) <- vars
-  for(v in vars) {
+  for(v in setdiff(vars, nested)) {
     d <- data
     d$.marginal. <- ifelse(d$.marginal. == '', v,
                            paste(d$.marginal., v, sep=','))
     levs[[v]] <- levels(as.factor(d[[v]]))
     levs[[v]] <- if(margloc == 'last') c(levs[[v]], label)
-                 else c(label, levs[[v]])
+                 else                  c(label,     levs[[v]])
     d[[v]] <- label
+    if(length(nested)) {
+      levs[[nested]] <- levels(as.factor(d[[nested]]))
+      levs[[nested]] <- if(margloc == 'last') c(levs[[nested]], label)
+                        else                  c(label,          levs[[nested]])
+      d[[nested]] <- label
+      }
     data <- if(margloc == 'last') rbind(data, d) else rbind(d, data)
   }
   for(v in vars) data[[v]] <- factor(data[[v]], levs[[v]])

@@ -359,6 +359,9 @@ putHfig <- function(x, ..., scap=NULL, extra=NULL, subsub=TRUE, hr=TRUE,
   
   lcap <- unlist(list(...))
   if(length(lcap)) lcap <- paste(lcap, collapse=' ')
+
+  if(ec && length(lcap))
+    stop('does not work when lcap is specified because of interaction with markdown sub-subheadings')
   
   if(! length(lcap) && ! length(scap)) {
     if(ec) {

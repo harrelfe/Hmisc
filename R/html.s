@@ -342,7 +342,7 @@ markupSpecs <- list(html=list(
 
   expcoll = function(vis, invis) {
       id <- floor(runif(1, 100000, 999999))  # unique html id
-      paste0('<a href="#', id, '" id="', id,
+      paste0('<br><a href="#', id, '" id="', id,
              '_earrows" class="earrows" onclick="expand_collapse(\'',
              id, '\');">&#9660;</a>',
              vis, '<span id="', id,

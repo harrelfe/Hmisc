@@ -100,7 +100,7 @@ labelPlotmath <- function(label, units=NULL, plotmath=TRUE, html=FALSE,
           if(is.character(p)) original else
              if(chexpr) sprintf('expression(%s)', z) else p
         }
-        if(!length(y))
+        if(! length(y))
           return(tryparse(h(plotmathTranslate(x), xstyle), x, chexpr))
 
         w <- paste('list(',h(plotmathTranslate(x), xstyle), ',',
@@ -124,6 +124,9 @@ plotmathTranslate <- function(x)
   for(s in specials)
     if(length(grep(s,x)))
       spec <- TRUE
+  ## If x is not a legal expression, also put in paste()
+  if(! spec && is.character(try(parse(text=x), silent=TRUE)))
+    spec <- TRUE
 
   if(spec) x <- paste('paste("',x,'")',sep='')
   else if(substring(x,1,1)=='/') x <- paste('phantom()', x, sep='')

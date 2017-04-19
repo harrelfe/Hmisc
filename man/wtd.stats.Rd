@@ -95,7 +95,8 @@ set to \code{FALSE} to suppress checking for NAs
 	default) then the usual unbiased estimate (using Bessel's correction)
 	is returned, if \code{'ML'} then it is the maximum likelihood estimate
 	for a Gaussian distribution. In the case of the latter, the
-	\code{normwt} argument has no effect.}
+	\code{normwt} argument has no effect.  Uses \code{stats:cov.wt} for
+	both methods.}
 \item{probs}{
 a vector of quantiles to compute.  Default is 0 (min), .25, .5, .75, 1
 (max).

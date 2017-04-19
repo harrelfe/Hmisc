@@ -12,3 +12,11 @@ wtd.mean(PerCapita[Group=="B"], weights=W[Group=="B"])
 
 g <- function(y) wtd.mean(y[,1],y[,2])
 summarize(cbind(PerCapita, W), llist(Group), g, stat.name='y')
+
+
+## davharris https://github.com/harrelfe/Hmisc/issues/69
+
+x <- c(3.7,3.3,3.5,2.8)
+wt <- c(5,  5,  4,  1)/15
+wtd.mean(x, wt)
+wtd.var(x, wt)

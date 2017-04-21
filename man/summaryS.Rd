@@ -185,6 +185,14 @@ pan <- function(...)
 plot(s, groups='treat', panel=pan, paneldoesgroups=TRUE,
      scat1d.opts=list(lwd=.7), cex.strip=.8)
 
+# Repeat using intervals instead of nonparametric smoother
+pan <- function(...)  # really need mobs > 96 to est. proportion
+  panel.plsmo(..., type='l', label.curves=max(which.packet()) == 1,
+              method='intervals', mobs=5)
+
+plot(s, groups='treat', panel=pan, paneldoesgroups=TRUE, xlim=c(0, 150))
+
+
 # Demonstrate dot charts of summary statistics
 s <- summaryS(age + sbp + dbp ~ region + treat, data=d, fun=mean)
 plot(s)

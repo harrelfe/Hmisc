@@ -243,9 +243,12 @@ xyplot(survival.time ~ age, panel=panel.plsmo)
 xyplot(survival.time ~ age | sex, panel=panel.plsmo)
 
 #Repeat this using equal sample size intervals (n=25 each) summarized by
-#the median
+#the median, then a proportion (mean of binary y)
 xyplot(survival.time ~ age | sex, panel=panel.plsmo, type='l',
        method='intervals', mobs=25, ifun=median)
+ybinary <- ifelse(runif(length(sex)) < 0.5, 1, 0)
+xyplot(ybinary ~ age, groups=sex, panel=panel.plsmo, type='l',
+       method='intervals', mobs=75, ifun=mean, xlim=c(0, 120))
 
 
 #Do this for subgroups of points on each panel, show the data

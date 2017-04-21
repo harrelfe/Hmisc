@@ -1,4 +1,4 @@
-Changes in version 4.0-3 (2017-04-17)
+Changes in version 4.0-3 (2017-04-21)
    * bpplot: added plotopts argument
    * describe, histboxp: improved logic to still slighty round numeric variables with fewer than 100 distinct values, in case some values are really close, when computing frequency distribution (for spike histograms in plot.describe)
    * all.is.numeric: fixed to handle case where all values are " "; makes describe work
@@ -11,7 +11,9 @@ Changes in version 4.0-3 (2017-04-17)
    * addMarginal: added nested argument
    * putHfig: now throw error if lcap is given with expcoll because of interaction with divs in markdown sub-subheading
    * plotmathTranslate: improved to put any non-legal expression inside paste()
-	 * wtd.var: was returning Inf for fractional weights with method='unbiased'; chaged to use stats:cov.wt for both methods - https://github.com/harrelfe/Hmisc/issues/69
+   * wtd.var: was returning Inf for fractional weights with method='unbiased'; chaged to use stats:cov.wt for both methods - https://github.com/harrelfe/Hmisc/issues/69
+   * plsmo, summaryS: new example in help files
+   * plot.summaryS: separated xlim and ylim to fix bug where xlim was ignored
    	 
 Changes in version 4.0-2 (2016-12-30)
    * pngNeedle: fixed bug in html.describe under Windows by not specifying /tmp as the temporary file directory - https://github.com/harrelfe/Hmisc/issues/63; used tempdir() instead of tempfile()

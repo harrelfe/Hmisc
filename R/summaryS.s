@@ -137,7 +137,8 @@ plot.summaryS <-
   }
 
   ylev <- levels(X$yvar)
-  lims <- if(length(xlim)) xlim else ylims[ylev]
+  ## lims <- if(length(xlim)) xlim else ylims[ylev]
+  lims <- ylims[ylev]
   ## lims needs to be repeated according to layout
   vars <- all.vars(form)
   cond <- vars[- (1 : 2)]
@@ -169,6 +170,8 @@ plot.summaryS <-
         }
       }
     scal <-  list(y=list(relation='free', limits=lims, rot=0))
+    if(length(xlim)) scal$x <- list(limits=xlim)
+
     xlab <- labelPlotmath(xlabels[xtype == 'numeric'],
                           xunits [xtype == 'numeric'])
     if(! length(groups)) {
@@ -215,7 +218,7 @@ plot.summaryS <-
    #   lims <- rep(lims, each=nr)
    # }
    # if(length(ylim)) lims <- ylim
-   scal <-  list(x=list(relation='free', limits=lims))
+   scal <-  list(x=list(relation='free', limits=xlim))   # limits=lims))
    if(ptype == 'xy.special') names(scal) <- 'y'
 
    if(ptype == 'dot') {

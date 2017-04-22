@@ -14,6 +14,7 @@ Changes in version 4.0-3 (2017-04-21)
    * wtd.var: was returning Inf for fractional weights with method='unbiased'; chaged to use stats:cov.wt for both methods - https://github.com/harrelfe/Hmisc/issues/69
    * plsmo, summaryS: new example in help files
    * plot.summaryS: separated xlim and ylim to fix bug where xlim was ignored
+   * plsmo: stop on error if no. observations not large enough for m with method='intervals'
    	 
 Changes in version 4.0-2 (2016-12-30)
    * pngNeedle: fixed bug in html.describe under Windows by not specifying /tmp as the temporary file directory - https://github.com/harrelfe/Hmisc/issues/63; used tempdir() instead of tempfile()

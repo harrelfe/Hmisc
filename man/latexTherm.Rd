@@ -88,7 +88,7 @@ without extra:\\ltc END\\\\\nThird with extra:\\ltcc END\\\\
 All data = zero, frame only:\\ltd\\\\
 \\end{document}\n')
 w <- pngNeedle(c(.2, .5, .7))
-cat(base64::img(w))  # can insert this directly into an html file
+cat(tobase64image(w))  # can insert this directly into an html file
 }}
 \keyword{utilities}
 \keyword{interface}

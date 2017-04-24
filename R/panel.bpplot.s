@@ -180,7 +180,7 @@ bpplt <- function(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
   mxlab <- .3+max(strwidth(groups, units='inches', cex=cex.labels))
 
   mai[2] <- mxlab
-  opar <- options('mai')
+  opar <- par('mai')
   par(mai=mai)
   on.exit(par(opar))
 

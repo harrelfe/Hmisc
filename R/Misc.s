@@ -863,18 +863,17 @@ whichClosest <- function(x, w)
   ## w: vector of values for which to lookup closest matches in x
   ## Returns: subscripts in x corresponding to w
   ## Assumes no NAs in x or w
-  .Fortran("wclosest",as.double(w),as.double(x),
+  .Fortran(F_wclosest,as.double(w),as.double(x),
            length(w),length(x),
-           j=integer(length(w)),PACKAGE="Hmisc")$j
+           j=integer(length(w)))$j
 }
 
 whichClosePW <- function(x, w, f=0.2) {
   lx <- length(x)
   lw <- length(w)
-  .Fortran("wclosepw",as.double(w),as.double(x),
+  .Fortran(F_wclosepw,as.double(w),as.double(x),
            as.double(runif(lw)),as.double(f),
-           lw, lx, double(lx), j=integer(lw),
-           PACKAGE="Hmisc")$j
+           lw, lx, double(lx), j=integer(lw))$j
 }              
 
 whichClosek <- function(x, w, k) {
@@ -1265,8 +1264,8 @@ if(weights)
 
   nq <- length(ps)
   ## Get all n leave-out-one quantile estimates
-  S <- matrix(.Fortran("jacklins", x, w, as.integer(n), as.integer(nq),
-                       res=double(n*nq), PACKAGE='Hmisc')$res, ncol=nq)
+  S <- matrix(.Fortran(F_jacklins, x, w, as.integer(n), as.integer(nq),
+                       res=double(n*nq))$res, ncol=nq)
 
   se <- l * sqrt(diag(var(S))/n)
 

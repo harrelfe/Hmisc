@@ -961,10 +961,10 @@ largest.empty <- function(x, y,
 
   if(method %in% c('area','maxdim')) {
     a <- 
-      .Fortran('largrec', x, y, n,
+      .Fortran(F_largrec, x, y, n,
                xlim, ylim, 
                width, height, numbins, itype,
-               rx=double(2), ry=double(2), PACKAGE="Hmisc")
+               rx=double(2), ry=double(2))
     x <- a$rx
     if(any(x > 1e29)) {
       warning('no empty rectangle was large enough')
@@ -1032,10 +1032,10 @@ largest.empty <- function(x, y,
     d <- sort(c(xlim, x))
     D <- diff(d)
     m <- which.max(D)
-    a <- .Fortran('maxempr', xlim, ylim, x, y, n,
+    a <- .Fortran(F_maxempr, xlim, ylim, x, y, n,
                   as.double(width), as.double(height),
                   as.double(c(D[m], d[m], d[m+1])),
-                  area=double(1), rect=double(4), PACKAGE='Hmisc')
+                  area=double(1), rect=double(4))
     x <- a$rect[c(1,3)]
     y <- a$rect[c(2,4)]
     if(diff(x) < width || diff(y) < height) {

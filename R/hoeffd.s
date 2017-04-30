@@ -46,10 +46,9 @@ hoeffd <- function(x, y)
   if(n<5) stop("must have >4 observations")
 
   h <-
-      .Fortran("hoeffd", x, n, p, hmatrix=double(p*p), aad=double(p*p),
+      .Fortran(F_hoeffd, x, n, p, hmatrix=double(p*p), aad=double(p*p),
                maxad=double(p*p), npair=integer(p*p),
-               double(n), double(n),  double(n), double(n), double(n), 
-               PACKAGE="Hmisc")
+               double(n), double(n),  double(n), double(n), double(n))
   
   nam <- dimnames(x)[[2]]
   npair <- matrix(h$npair, ncol=p)

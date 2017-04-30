@@ -1,5 +1,5 @@
 exportPattern("^([^.]|\\..+\\.)")
-useDynLib(Hmisc)
+useDynLib(Hmisc, .registration=TRUE, .fixes="F_")
 
 import(methods)
 import(stats)

@@ -14,10 +14,10 @@ rcorr <- function(x, y, type=c("pearson","spearman"))
   if(n < 5) stop("must have >4 observations")
   
   h <-
-      .Fortran("rcorr", x, n, p, itype=as.integer(1+(type=="spearman")),
+      .Fortran(F_rcorr, x, n, p, itype=as.integer(1+(type=="spearman")),
                hmatrix=double(p*p),   npair=integer(p*p),
                double(n), double(n),  double(n), double(n),
-               double(n), integer(n), PACKAGE="Hmisc")
+               double(n), integer(n))
   
   npair <- matrix(h$npair, ncol=p)
   h <- matrix(h$hmatrix, ncol=p)

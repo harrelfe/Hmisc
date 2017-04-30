@@ -116,9 +116,9 @@ if(FALSE) rcorrs <- function(x, y, weights=rep(1,length(y)),
   #storage.mode(event) <- "logical"
 
   ## wcidxy doesn't exist yet
-  z <- .Fortran("wcidxy",as.single(x),as.single(y),as.integer(weights),as.integer(n),
-                nrel=double(1),nconc=double(1),nuncert=double(1),
-                c.index=double(1),gamma=double(1),sd=double(1),as.logical(outx))
+##  z <- .Fortran(F_wcidxy,as.single(x),as.single(y),as.integer(weights),as.integer(n),
+#                nrel=double(1),nconc=double(1),nuncert=double(1),
+#                c.index=double(1),gamma=double(1),sd=double(1),as.logical(outx))
   r <- c(z$c.index,z$gamma,z$sd,n,z$nrel,z$nconc,z$nuncert)
   names(r) <- c("C Index","Dxy","S.D.","n","missing","uncensored",
                 "Relevant Pairs",	"Concordant","Uncertain")

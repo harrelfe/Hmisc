@@ -71,6 +71,18 @@
 \alias{responseSummary}
 \alias{combine}
 \alias{combine<-}
+\alias{F_cidxcn}
+\alias{F_cidxcp}
+\alias{F_do_mchoice_match}
+\alias{F_do_nstr}
+\alias{F_hoeffd}
+\alias{F_jacklins}
+\alias{F_largrec}
+\alias{F_maxempr}
+\alias{F_rcorr}
+\alias{F_wclosepw}
+\alias{F_wclosest}
+
 \description{Internal Hmisc functions.}
 \details{These are not to be called by the user or are undocumented.}
 \keyword{internal}

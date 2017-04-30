@@ -32,10 +32,9 @@ rcorr.cens <- function(x, S, outx=FALSE) {
   storage.mode(event) <- "logical"
 
   z <-
-    .Fortran("cidxcn",x,y,event,length(x),nrel=double(1),nconc=double(1),
+    .Fortran(F_cidxcn,x,y,event,length(x),nrel=double(1),nconc=double(1),
              nuncert=double(1),
-             c.index=double(1),gamma=double(1),sd=double(1),as.logical(outx),
-             PACKAGE="Hmisc")
+             c.index=double(1),gamma=double(1),sd=double(1),as.logical(outx))
   r <- c(z$c.index,z$gamma,z$sd,n,nmiss,ne,z$nrel,z$nconc,z$nuncert)
   names(r) <- c("C Index","Dxy","S.D.","n","missing","uncensored",
                 "Relevant Pairs",

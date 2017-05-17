@@ -648,7 +648,7 @@ latex.default <-
         insert=list(if(! table.env && length(insert.bottom))
                       list('tabular', 'after', paste('\\par', insert.bottom)),
                     if(table.env)
-                      list('table',   'before', insert.bottom),
+                      list('table',   'before', paste(insert.bottom, collapse = ' ')),
                     if(caption.loc == 'bottom' && length(caption))
                       list('tabular', 'after', caption)
                    ) )

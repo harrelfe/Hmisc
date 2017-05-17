@@ -1907,8 +1907,7 @@ latex.summary.formula.reverse <-
   if(!length(gl))
     gl <- " "
 
-  lab <- sedit(lab,c(" ","&"),c("~","\\&"))
-  lab <- latexTranslate(lab, greek=TRUE)
+  lab <- latexTranslate(lab, c(" "), c("~"), greek=TRUE)
   gl  <- latexTranslate(gl, greek=TRUE)
   extracolheads <-
     if(any(gl != " "))

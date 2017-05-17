@@ -725,8 +725,7 @@ latex.summaryM <-
     if(!length(gl)) gl <- " "
 
     if(! html) {
-      lab <- sedit(lab, c(" ", "&"), c("~", "\\&"))
-      lab <- latexTranslate(lab, greek=TRUE)
+      lab <- latexTranslate(lab, c(" "), c("~"), greek=TRUE)
       gl  <- latexTranslate(gl,  greek=TRUE)
       }
 

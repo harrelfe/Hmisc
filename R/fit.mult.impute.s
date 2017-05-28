@@ -129,6 +129,7 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
   tau  <- (1 + 1/n.impute)*B/U
   missingInfo <- tau/(1+tau)
   dfmi <- (n.impute - 1)*((1 + 1/tau)^2)
+  ## Same as dfmi <- (n.impute - 1) * (1 + U / (B * (1 + 1 / n.impute))) ^ 2
 
   if(length(fitcomp))
     for(ncomp in fitcomp)

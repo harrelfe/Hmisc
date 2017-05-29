@@ -2,6 +2,7 @@ Changes in version 4.0-4 (2017-05-28)
    * latex.default: insert spaces between multiple entries in bottom index in latex tables (thanks: ecortens https://github.com/harrelfe/Hmisc/pull/73)
    * latex.summary.formula.reverse,latex.summaryM: fix double replacement of ampersand (Thanks: Evan Cortens https://github.com/harrelfe/Hmisc/pull/72)
    * fit.mult.impute: verified dfmi formula, added comment
+   * dotchartpl: added refgroup, sortdiff, conf.int arguments to allow inclusion of difference in two proportions across levels of the group variable
 
 Changes in version 4.0-3 (2017-04-30)
    * bpplot: added plotopts argument

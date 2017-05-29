@@ -20,11 +20,23 @@
 	When viewing graphics that used \code{mult} and \code{big}, the user
 	can click on the legends for the small points for \code{group}s to
 	vanish the finely stratified estimates.
+
+	When \code{group} is used by \code{mult} and \code{big} are not, and
+	when the \code{group} variable has exactly two distinct values, you
+	can specify \code{refgroup} to get the difference between two
+	proportions in addition to the individual proportions.  The individual
+	proportions are plotted, but confidence intervals for the difference
+	are shown in hover text and half-width confidence intervals for the
+	difference, centered at the midpoint of the proportions, are shown.
+	These have the property of intersecting the two proportions if and
+	only if there is no significant difference at the \code{1 - conf.int}
+	level.
 	}
 \usage{
 dotchartpl(x, major, minor=NULL, group=NULL, mult=NULL,
            big=NULL, htext=NULL, num=NULL, denom=NULL,
            lower=NULL, upper=NULL,
+           refgroup=NULL, sortdiff=TRUE, conf.int=0.95,
            xlim=NULL, xlab='Proportion',
            tracename=NULL, limitstracename=NULL,
            width=800,
@@ -50,6 +62,17 @@ dotchartpl(x, major, minor=NULL, group=NULL, mult=NULL,
 	\item{denom}{like \code{num} but for denominators}
 	\item{lower}{lower limits for optional error bars}
 	\item{upper}{upper limits for optional error bars}
+	\item{refgroup}{if \code{group} is specified and there are exactly two
+	groups, specify the character string for the reference group in
+	computing difference in proportions.  For example if
+	\code{refgroup='A'} and the \code{group} levels are \code{'A','B'},
+	you will get B - A.}
+  \item{sortdiff}{\code{minor} categories are sorted by descending
+	values of the difference in proportions when \code{refgroup} is used,
+	unless you specify \code{sortdiff=FALSE}}
+  \item{conf.int}{confidence level for computing confidence intervals
+	for the difference in two proportions.  Specify \code{conf.int=FALSE}
+	to suppress confidence intervals.}
 	\item{xlim}{\code{x}-axis limits}
 	\item{xlab}{\code{x}-axis label}
 	\item{tracename}{\code{plotly} trace name if \code{group} is not used}

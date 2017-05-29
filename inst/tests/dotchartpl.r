@@ -62,11 +62,11 @@ ae <-
                                                                                                                                                                                                                        20L, 61L, 33L, 68L, 10L, 82L, 23L, 90L, 76L, 95L)), .Names = c("RAND", 
                                                                                                                                                                                                                                                                                       "PREF", "SAE"), class = "data.frame", row.names = c(NA, 
                                                                                                                                                                                                                                                                                                                                           -66L))
-ae$major <- rep('', nrow(ae))
+
 ae$n <- ifelse(ae$RAND == 'a', 212, 188)
 ae$p <- ae$SAE / ae$n
 # ae <- subset(ae, p >= 0.05)
-with(ae, dotchartpl(p, num=SAE, denom=n, major=major, minor=PREF, group=RAND, refgroup='a'))
+with(ae, dotchartpl(p, num=SAE, denom=n, minor=PREF, group=RAND, refgroup='a'))
 
 
 n <- 500

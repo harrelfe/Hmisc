@@ -94,16 +94,23 @@ d <- expand.grid(major=c('Alabama', 'Alaska', 'Arkansas'),
                  group=c('Female', 'Male'),
                  city=0:2)
 n <- nrow(d)
-d$x <- (1 : nrow(d)) + runif(n)
-d$num <- round(100*runif(n))
+d$num   <- round(100*runif(n))
 d$denom <- d$num + round(100*runif(n))
+d$x     <- d$num / d$denom
 d$lower <- d$x - runif(n)
 d$upper <- d$x + runif(n)
 
-# numerators and denominators are meaningless in this example
 with(d,
  dotchartpl(x, major, minor, group, city, lower=lower, upper=upper,
             big=city==0, num=num, denom=denom, xlab='x'))
+
+# Show half-width confidence intervals for Female - Male differences
+# after subsetting the data to have only one record per
+# state/region/group
+d <- subset(d, city == 0)
+with(d,
+ dotchartpl(x, major, minor, group, num=num, denom=denom, refgroup='Male')
+)
 
 n <- 500
 set.seed(1)

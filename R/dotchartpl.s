@@ -1,4 +1,4 @@
-dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
+dotchartpl <- function(x, major=NULL, minor=NULL, group=NULL, mult=NULL,
                        big=NULL, htext=NULL,
                        num=NULL, denom=NULL,
                        lower=NULL, upper=NULL,
@@ -14,16 +14,18 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
 
   if(! length(xlim)) xlim <- c(min(c(x, lower), na.rm=TRUE),
                                max(c(x, upper), na.rm=TRUE))
-  
+
+  majorpres <- length(major) > 0
+  major <- if(majorpres) as.character(major) else rep('', length(x))
   minorpres <- length(minor) > 0
   grouppres <- length(group) > 0
   multpres  <- length(mult)  > 0
   limspres  <- length(lower) * length(upper) > 0
   rgpres    <- length(refgroup) > 0
 
-  if(length(major)) major <- as.character(major)
   if(minorpres)     minor <- as.character(minor)
   if(grouppres)     group <- as.character(group)
+  if(multpres)      mult  <- as.character(mult)
   ugroup <- if(grouppres) unique(group)
 
   if(rgpres) {
@@ -56,8 +58,8 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
     xa <- tapply(1 : length(x), llist(major, minor), g, wcat=refgroup)
     xb <- tapply(1 : length(x), llist(major, minor), g, wcat=altgroup)
 
-    ## Bug in x[cbind()] if one dimension has length 1 (major is constant)
-    if(length(unique(major)) == 1) {
+    ## Bug in x[cbind()] if major is constant
+    if(! majorpres) {
       xa <- xa[, minor]
       xb <- xb[, minor]
     }
@@ -86,16 +88,17 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
     ht <- paste0(ht, if(length(htext)) mu$lspace,
                  round(x, 3), mu$lspace,
                  mu$frac(num, denom, size=95))
-                ht <- paste0(ht, if(length(ht)) '<br>', as.character(major))
-  if(minorpres) ht <- paste0(ht, ': ',   as.character(minor))
+  ht <- paste0(ht, if(length(ht)) '<br>',
+               if(majorpres) paste0(major, ': '))
+  if(minorpres) ht <- paste0(ht, minor)
   if(grouppres) ht <- paste0(ht, '<br>', group)
-  if(multpres)  ht <- paste0(ht, '<br>', as.character(mult))
+  if(multpres)  ht <- paste0(ht, '<br>', mult)
 
   n <- length(x)
 
-  minor <- if(minorpres) as.character(minor) else rep('', n)
+  minor <- if(minorpres) minor else rep('', n)
   group <- if(grouppres) group else rep('', n)
-  mult  <- if(multpres)  as.character(mult)  else rep('', n)
+  mult  <- if(multpres)  mult  else rep('', n)
   if(! length(big)) big <- rep(TRUE, n)
 
   w <- c(length(x), length(major), length(minor), length(group),
@@ -145,10 +148,10 @@ dotchartpl <- function(x, major, minor=NULL, group=NULL, mult=NULL,
                                    htmlTranslate('>='), ' ', altgroup)))
         Ydiff <- c(Ydiff, y)
 
-        htd <- as.character(ma)
-        if(minorpres) htd <- paste0(htd, ': ',   as.character(mi))
+        htd <- if(majorpres) paste0(ma, ': ') else ''
+        if(minorpres) htd <- paste0(htd, mi)
   
-        htd   <- paste0(htd, '<br>', altgroup, ' - ', refgroup, ':',
+        htd   <- paste0(htd, '<br>', altgroup, ' - ', refgroup, ': ',
                         round(diff, 3))
 
         if(! is.logical(conf.int) && length(num) && length(denom)) {

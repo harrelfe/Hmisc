@@ -57,7 +57,7 @@ summaryP(formula, data = NULL, subset = NULL,
          asna = c("unknown", "unspecified"), \dots)
 \method{plot}{summaryP}(x, formula=NULL, groups=NULL,
          marginVal=NULL, marginLabel=marginVal,
-         exclude1=TRUE,  xlim = c(-.05, 1.05),
+         refgroup=NULL, exclude1=TRUE,  xlim = c(-.05, 1.05),
          text.at=NULL, cex.values = 0.5,
          key = list(columns = length(groupslevels), x = 0.75,
                     y = -0.04, cex = 0.9,
@@ -102,6 +102,11 @@ summaryP(formula, data = NULL, subset = NULL,
 	were computed over all \code{region}s, one may specify
 	\code{marginVal="All", marginLabel="All Regions"}.  \code{marginLabel}
 	is only used for formatting graphical output.}
+  \item{refgroup}{used when doing a \code{plotly} chart and a two-level
+	 group variable was used, resulting in the half-width confidence
+  	interval for the difference in two proportions to be shown, and the
+		actual confidence limits and the difference added to hover text.  See
+	\code{dotchartpl} for more details.}
   \item{exclude1}{By default, \code{ggplot}, \code{plot}, and
 	\code{latex} methods for \code{summaryP} remove redundant entries 
 		from tables for variables with only two levels.  For example, if you
@@ -155,7 +160,8 @@ summaryP(formula, data = NULL, subset = NULL,
 	here).  The default \code{abblen=5} is good for labels plotted
 	vertically.  If labels are rotated using \code{theme} a better value
 	would be 12.}
- \item{\dots}{ignored}
+ \item{\dots}{used only for \code{plotly} graphics and these arguments
+	are passed to \code{dotchartpl}}}
  \item{object}{an object produced by \code{summaryP}}
  \item{file}{file name, defaults to writing to console}
  \item{round}{number of digits to the right of the decimal place for
@@ -220,7 +226,11 @@ plot(s, val ~ freq | region * var, groups='treat', outerlabels=FALSE)
 
 ## For nice plotly interactive graphic:
 ## options(grType='plotly')
-## plot(s, groups='treat')
+## s <- summaryP(race + sex + ynbind(x1, x2, x3, x4, x5, x6, x7,
+##                                   label='Exclusions') ~
+##               treat, data=subset(d, region='Europe'))
+##
+## plot(s, groups='treat', refgroup='A')  # refgroup='A' does B-A differences
 
 
 # Make a chart where there is a block of variables that

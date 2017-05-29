@@ -133,7 +133,7 @@ summaryP <- function(formula, data=NULL,
 
 plot.summaryP <-
   function(x, formula=NULL, groups=NULL,
-           marginVal=NULL, marginLabel=marginVal,
+           marginVal=NULL, marginLabel=marginVal, refgroup=NULL,
            exclude1=TRUE, xlim=c(-.05, 1.05), text.at=NULL,
            cex.values=0.5,
            key=list(columns=length(groupslevels),
@@ -179,10 +179,12 @@ plot.summaryP <-
                       group = if(length(groups))      X[[groups]],
                       mult  = if(length(condvar) > 0) X[[condvar]],
                       big   = if(length(condvar) > 0 && length(marginVal)) Big,
-                      num = freq,
+                      num   = freq,
                       denom = denom,
+                      refgroup = refgroup,
                       xlim  = xlim,
-                      col   = col)
+                      col   = col,
+                      ...)
            )
     return(p)
     }

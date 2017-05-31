@@ -37,7 +37,7 @@ dotchartpl(x, major, minor=NULL, group=NULL, mult=NULL,
            big=NULL, htext=NULL, num=NULL, denom=NULL,
            lower=NULL, upper=NULL,
            refgroup=NULL, sortdiff=TRUE, conf.int=0.95,
-           xlim=NULL, xlab='Proportion',
+           minkeep=NA, xlim=NULL, xlab='Proportion',
            tracename=NULL, limitstracename=NULL,
            width=800,
            col=colorspace::rainbow_hcl)
@@ -73,6 +73,9 @@ dotchartpl(x, major, minor=NULL, group=NULL, mult=NULL,
   \item{conf.int}{confidence level for computing confidence intervals
 	for the difference in two proportions.  Specify \code{conf.int=FALSE}
 	to suppress confidence intervals.}
+  \item{minkeep}{if \code{refgroup} and \code{minkeep} are both given,
+		observations that are at or above \code{minkeep} for at least one of
+		the groups are retained.  The defaults to to keep all observations.}
 	\item{xlim}{\code{x}-axis limits}
 	\item{xlab}{\code{x}-axis label}
 	\item{tracename}{\code{plotly} trace name if \code{group} is not used}

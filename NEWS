@@ -1,9 +1,10 @@
-Changes in version 4.0-4 (2017-05-29)
+Changes in version 4.0-4 (2017-05-30)
    * latex.default: insert spaces between multiple entries in bottom index in latex tables (thanks: ecortens https://github.com/harrelfe/Hmisc/pull/73)
    * latex.summary.formula.reverse,latex.summaryM: fix double replacement of ampersand (Thanks: Evan Cortens https://github.com/harrelfe/Hmisc/pull/72)
    * fit.mult.impute: verified dfmi formula, added comment
    * dotchartpl: added refgroup, sortdiff, conf.int arguments to allow inclusion of difference in two proportions across levels of the group variable
    * plot.summaryP: for plotly, added refgroup to pass to dotchartpl so that differences in proportions can be handled; also passed ... arguments
+   * dotchartpl: added minkeep argument (used by hreport eReport)
 
 Changes in version 4.0-3 (2017-04-30)
    * bpplot: added plotopts argument

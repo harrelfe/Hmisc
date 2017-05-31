@@ -161,7 +161,7 @@ summaryP(formula, data = NULL, subset = NULL,
 	vertically.  If labels are rotated using \code{theme} a better value
 	would be 12.}
  \item{\dots}{used only for \code{plotly} graphics and these arguments
-	are passed to \code{dotchartpl}}}
+	are passed to \code{dotchartpl}}
  \item{object}{an object produced by \code{summaryP}}
  \item{file}{file name, defaults to writing to console}
  \item{round}{number of digits to the right of the decimal place for

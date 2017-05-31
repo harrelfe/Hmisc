@@ -3,6 +3,7 @@ dotchartpl <- function(x, major=NULL, minor=NULL, group=NULL, mult=NULL,
                        num=NULL, denom=NULL,
                        lower=NULL, upper=NULL,
                        refgroup=NULL, sortdiff=TRUE, conf.int=0.95,
+                       minkeep=NULL,
                        xlim=NULL, xlab='Proportion',
                        tracename=NULL, limitstracename=NULL,
                        width=800,
@@ -47,8 +48,8 @@ dotchartpl <- function(x, major=NULL, minor=NULL, group=NULL, mult=NULL,
               col(1) }
   if(! length(col) && ! grouppres) col <- 'black'
 
-  if(rgpres && sortdiff && minorpres) {
-    ## Sort minor categories by descending order of between-group differences
+  if(rgpres && (sortdiff || length(minkeep)) && minorpres) {
+    ## For each major x minor subgroup, hold on to x for both groups
 
     g <- function(i, wcat) {
       gr <- group[i]
@@ -66,9 +67,17 @@ dotchartpl <- function(x, major=NULL, minor=NULL, group=NULL, mult=NULL,
     else {
       xa <- xa[cbind(major, minor)]
       xb <- xb[cbind(major, minor)]
-      }
+    }
+
+    j <- if(length(minkeep))
+           which(! is.na(xa + xb) & (xa >= minkeep | xb >= minkeep))
+         else
+           1 : length(x)
+
+    ## Sort minor categories by descending order of between-group differences
 
     i <- order(major, ifelse(is.na(xa + xb), -Inf, - (xb - xa)))
+    i <- intersect(i, j)
     x     <- x[i]
     major <- major[i]
     minor <- minor[i]

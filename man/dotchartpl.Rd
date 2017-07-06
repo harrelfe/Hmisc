@@ -86,7 +86,11 @@ dotchartpl(x, major, minor=NULL, group=NULL, mult=NULL,
 	number of distinct groups.}
 	\item{width}{width of plot in pixels}
 	}
-\value{a \code{plotly} object}
+\value{a \code{plotly} object.  An attribute \code{levelsRemoved} is
+	added if \code{minkeep} is used and any categories were omitted from
+	the plot as a result.  This is a character vector with categories
+	removed.  If \code{major} is present, the strings are of the form
+	\code{major:minor}}
 \author{Frank Harrell}
 \seealso{\code{\link{dotchartp}}}
 \examples{

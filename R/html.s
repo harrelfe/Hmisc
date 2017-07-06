@@ -348,7 +348,36 @@ markupSpecs <- list(html=list(
              vis, '<span id="', id,
              '" style="display:none;">',
              invis, '</span>')
-    },
+  },
+
+  uncover = function(before, options, envir) {
+    ## https://stackoverflow.com/questions/44866287
+    ## usage: knitrSet(lang='markdown')  # issues knit_hooks$set(uncover=uncover)
+    ##        <script>
+    ##        function uncover(id) {
+    ##            var x = document.getElementById(id);
+    ##            x.style.display = 'block';
+    ##        }
+    ##        </script>
+    ##
+    ##        ```{r, uncover=TRUE, label='text for button', id='script'}
+    ##        1 + 1
+    ##        ```
+
+        if (before) {
+          id <- options$id
+          label <- options$label
+          if(! length(label)) label <- 'Uncover'
+          button_string <- paste0("<button onclick=\"uncover('", 
+                                  id, "')\">", label, "</button>")
+          div_string <- paste0("<div id = '", id, 
+                               "', style = 'display:none'>")
+          paste0(button_string, "\n", div_string)
+        }
+        else {
+          "</div>"
+        }
+  },
   
   session  = function(cite=TRUE, loadedOnly=FALSE) {
     si <- sessionInfo()

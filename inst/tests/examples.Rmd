@@ -43,6 +43,20 @@ Here is an example using <code>expcoll</code>.  Click on the down arrow to expan
 
 `r mu$expcoll('Example table<br>', html(data.frame(x1=runif(10), x2=letters[1:10]),file=FALSE))`
 
+Here is an example using a `knitr` hook function `markupSpec$html$uncover` which is communicated to `knitr` by `knitrSet`.
+
+<script>
+function uncover(id) {
+    var x = document.getElementById(id);
+    x.style.display = 'block';
+}
+</script>
+
+```{r, uncover=TRUE, label='Press Here', id='script'}
+1 + 1
+```
+
+
 The following (<code>r mu$widescreen()</code>) causes the html notebook to use an entire wide screen.
 `r mu$widescreen()`
 

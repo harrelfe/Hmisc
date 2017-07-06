@@ -48,6 +48,8 @@ dotchartpl <- function(x, major=NULL, minor=NULL, group=NULL, mult=NULL,
               col(1) }
   if(! length(col) && ! grouppres) col <- 'black'
 
+  levelsRemoved <- character(0)
+  
   if(rgpres && (sortdiff || length(minkeep)) && minorpres) {
     ## For each major x minor subgroup, hold on to x for both groups
 
@@ -69,10 +71,14 @@ dotchartpl <- function(x, major=NULL, minor=NULL, group=NULL, mult=NULL,
       xb <- xb[cbind(major, minor)]
     }
 
-    j <- if(length(minkeep))
-           which(! is.na(xa + xb) & (xa >= minkeep | xb >= minkeep))
-         else
-           1 : length(x)
+    if(length(minkeep)) {
+      w <- if(majorpres) paste0(major, ':', minor) else minor
+      levelsRemoved <- unique(w[! is.na(xa + xb) &
+                                xa < minkeep & xb < minkeep])
+      j <- which(! is.na(xa + xb) & (xa >= minkeep | xb >= minkeep))
+    }
+    else
+      j <- 1 : length(x)
 
     ## Sort minor categories by descending order of between-group differences
 
@@ -288,7 +294,7 @@ dotchartpl <- function(x, major=NULL, minor=NULL, group=NULL, mult=NULL,
                                name=tracename)
     }
   leftmargin <- plotlyParm$lrmargin(ytnb)
-  plotly::layout(p,
+  p <- plotly::layout(p,
                  xaxis=list(title=xlab,
                             range=xlim,
                             zeroline=FALSE),
@@ -298,4 +304,7 @@ dotchartpl <- function(x, major=NULL, minor=NULL, group=NULL, mult=NULL,
                  margin=list(l=leftmargin),
                  legend=list(traceorder=if(length(difflower))
                                           'reversed' else 'normal'))
+
+  attr(p, 'levelsRemoved') <- levelsRemoved
+  p
   }

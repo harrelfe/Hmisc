@@ -1728,6 +1728,9 @@ knitrSet <- function(basename=NULL, w=4, h=3,
                  fig.show=fig.show, fig.lp=fig.lp, fig.pos=fig.pos,
                  dev=dev, par=TRUE, tidy=tidy, out.width=NULL, cache=cache,
                  echo=echo, error=error, comment='', results=results)
+  
+  if(lang == 'markdown') knitr::knit_hooks$set(uncover=markupSpecs$html$uncover)
+  
   hook_chunk = knitr::knit_hooks$get('chunk')
   ## centering will not allow too-wide figures to go into left margin
   if(lang == 'latex') knitr::knit_hooks$set(chunk = function(x, options) { 

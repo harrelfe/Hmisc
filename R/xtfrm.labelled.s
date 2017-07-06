@@ -3,7 +3,7 @@ xtfrm.labelled <- function(x) {
   if (length(newclass) == 0) {
     class(x) <- NULL
   } else {
-    class(x) <- newclass
+    oldClass(x) <- newclass
   }
   xtfrm(x)
 }

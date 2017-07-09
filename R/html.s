@@ -301,7 +301,7 @@ markupSpecs <- list(html=list(
                                      '</span>'),
   smaller  = function(x) paste0('<span style="font-size: 80%;">', x,
                                 '</span>'),
-  larger   = function(x) paste0('<span stype="font-size: 125%;">', x,
+  larger   = function(x) paste0('<span style="font-size: 125%;">', x,
                                 '</span>'),
   smaller2 = function(x) paste0('<span style="font-size: 64%;">', x,
                                  '</span>'),

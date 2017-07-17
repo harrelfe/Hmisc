@@ -1644,7 +1644,7 @@ getRs <- function(file=NULL,
   invisible()
 }
 
-knitrSet <- function(basename=NULL, w=4, h=3,
+knitrSet <- function(basename=NULL, w=4, h=3, wo=NULL, ho=NULL,
                      fig.path=if(length(basename)) basename else '',
                      fig.align='center', fig.show='hold', fig.pos='htbp',
                      fig.lp=paste('fig', basename, sep=':'),
@@ -1725,9 +1725,11 @@ knitrSet <- function(basename=NULL, w=4, h=3,
   # See if need to remove dev=dev from below because of plotly graphics
   knitr::opts_chunk$set(fig.path=fig.path, fig.align=fig.align,
                         fig.width=w, fig.height=h,
-                 fig.show=fig.show, fig.lp=fig.lp, fig.pos=fig.pos,
-                 dev=dev, par=TRUE, tidy=tidy, out.width=NULL, cache=cache,
-                 echo=echo, error=error, comment='', results=results)
+                        out.width=wo,out.height=ho,
+                        fig.show=fig.show, fig.lp=fig.lp, fig.pos=fig.pos,
+                        dev=dev, par=TRUE, tidy=tidy, out.width=NULL,
+                        cache=cache,
+                        echo=echo, error=error, comment='', results=results)
   
   if(lang == 'markdown') knitr::knit_hooks$set(uncover=markupSpecs$html$uncover)
   
@@ -1740,6 +1742,7 @@ knitrSet <- function(basename=NULL, w=4, h=3,
          '\\\\centerline{\\1}', res) 
   }) 
   knitr::set_alias(w = 'fig.width', h = 'fig.height',
+                   wo= 'out.width', ho= 'out.height',
                    cap = 'fig.cap', scap='fig.scap')
 }
 ## see http://yihui.name/knitr/options#package_options

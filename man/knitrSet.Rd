@@ -10,7 +10,9 @@
 	top margin), \code{left} (extra left margin), \code{rt} (extra right
 	margin), \code{lwd}, \code{mgp}, \code{las}, \code{tcl}, \code{axes},
 	\code{xpd}, \code{h} (usually \code{fig.height} in knitr),
-	\code{w} (usually \code{fig.width} in knitr), \code{cap} (character
+	\code{w} (usually \code{fig.width} in knitr), \code{wo}
+	(\code{out.width} in knitr), \code{ho} (\code{out.height} in knitr),
+	\code{cap} (character
 	string containing figure caption), \code{scap} (character string
 	containing short figure caption for table of figures).
 
@@ -23,7 +25,7 @@
 	found in one's profile settings.
 }
 \usage{
-knitrSet(basename=NULL, w=4, h=3,
+knitrSet(basename=NULL, w=4, h=3, wo=NULL, ho=NULL,
          fig.path=if(length(basename)) basename else '',
          fig.align='center', fig.show='hold', fig.pos='htbp',
          fig.lp=paste('fig', basename, sep=':'),
@@ -39,6 +41,8 @@ plotlySave(x, \dots)
   \item{basename}{base name to be added in front of graphics file
 		names. \code{basename} is followed by a minus sign.}
 	\item{w,h}{default figure width and height in inches}
+	\item{wo,ho}{default figure rendering width and height, in integer
+		pixels or percent as a character string, e.g. \code{'40\%'}}
 	\item{fig.path}{path for figures.  To put figures in a subdirectory
 		specify e.g. \code{fig.path='folder/'}.}
 	\item{fig.align,fig.show,fig.pos,fig.lp,tidy,cache,echo,results,error,size}{see knitr documentation} 

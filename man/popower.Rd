@@ -3,6 +3,7 @@
 \alias{posamsize}
 \alias{print.popower}
 \alias{print.posamsize}
+\alias{pomodm}
 \title{Power and Sample Size for Ordinal Response}
 \description{
 \code{popower} computes the power for a two-tailed two sample comparison
@@ -15,18 +16,22 @@ is continuous.  \code{print} methods exist for both functions.  Any of the
 input arguments may be vectors, in which case a vector of powers or
 sample sizes is returned.  These functions use the methods of
 Whitehead (1993).
+
+\code{pomodm} is a function that assists in translating odds ratios to
+differences in mean or median on the original scale.
 }
 \usage{
 popower(p, odds.ratio, n, n1, n2, alpha=0.05)
 \method{print}{popower}(x, \dots)
 posamsize(p, odds.ratio, fraction=.5, alpha=0.05, power=0.8)
 \method{print}{posamsize}(x, \dots)
+pomodm(x=NULL, p, odds.ratio=1)
 }
 \arguments{
 \item{p}{
 a vector of marginal cell probabilities which must add up to one.
-The \code{i}th element specifies the probability that a patient will be in response level
-\code{i}, averaged over the two treatment groups.
+The \code{i}th element specifies the probability that a patient will be
+in response level \code{i}, averaged over the two treatment groups.
 }
 \item{odds.ratio}{
 the odds ratio to be able to detect.  It doesn't
@@ -34,7 +39,8 @@ matter which group is in the numerator.
 }
 \item{n}{
 total sample size for \code{popower}.  You must specify either \code{n} or
-\code{n1} and \code{n2}.  If you specify \code{n}, \code{n1} and \code{n2} are set to \code{n/2}.
+\code{n1} and \code{n2}.  If you specify \code{n}, \code{n1} and
+\code{n2} are set to \code{n/2}. 
 }
 \item{n1}{
 for \code{popower}, the number of subjects in treatment group 1
@@ -45,7 +51,13 @@ for \code{popower}, the number of subjects in group 2
 \item{alpha}{
 type I error
 }
-\item{x}{an object created by \code{popower} or \code{posamsize}}
+\item{x}{an object created by \code{popower} or \code{posamsize}, or a
+	vector of data values given to \code{pomodm} that corresponds to the
+	vector \code{p} of probabilities.  If \code{x} is omitted for
+	\code{pomodm}, the \code{odds.ratio} will be applied and the new
+	vector of individual probabilities will be returned.  Otherwise if
+	\code{x} is given to \code{pomodm}, a 2-vector with the mean and
+	median \code{x} after applying the odds ratio is returned.}
 \item{fraction}{
 for \code{posamsize}, the fraction of subjects that will be allocated to group 1
 }
@@ -102,6 +114,16 @@ popower(p, or, n)   # 0.67
 # Continuous scale with final level have prob. 0.1
 p <- c(rep(1 / n, 0.9 * n), 0.1)
 popower(p, or, n)   # 0.843
+
+# Compute the mean and median x after shifting the probability
+# distribution by an odds ratio under the proportional odds model
+x <- 1 : 5
+p <- c(.05, .2, .2, .3, .25)
+# For comparison make up a sample that looks like this
+X <- rep(1 : 5, 20 * p)
+c(mean=mean(X), median=median(X))
+pomodm(x, p, odds.ratio=1)  # still have to figure out the right median
+pomodm(x, p, odds.ratio=0.5)
 }
 \keyword{htest}
 \keyword{category}

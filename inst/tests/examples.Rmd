@@ -8,6 +8,7 @@ output:
     toc_depth: 3
     toc_float:
       collapsed: yes
+    fig_caption: yes
   html_document:
     toc: yes
     toc_depth: 3
@@ -177,6 +178,19 @@ p <- with(support2, histboxp(x=meanbp, group=dzgroup, sd=TRUE,
                              bins=200))
 putHfig(p, "Spike histograms, means, quantiles, Gini's mean difference, and SD for MAP stratified by diagnosis",
        scap="Stratified spike histograms and quantiles for MAP")
+```
+# Example of Ordinary Figure Captions
+As explained in https://stackoverflow.com/questions/45018397 one can place captions under figures using ordinary `knitr` capabilities, and one can change the size of captions.  The following example defines a `CSS` style to make captions small (here `0.6em`), and produces a plot with a caption.  Unlike using `putHfig` this caption does not also appear in the table of contents.  *However* figure captions appear to work only in html reports, not in html notebooks.
+
+<style>
+p.caption {
+  font-size: 0.6em;
+}
+</style>
+
+```{r simplecap,cap='This is a simple figure caption'}
+# Note: in the chunk header cap is an alias for fig.cap defined by knitrSet
+plot(runif(10))
 ```
 
 # Computing Environment[^2] {#compenv}

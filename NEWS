@@ -9,6 +9,7 @@ Changes in version 4.0-4 (2017-07-09)
    * knitrSet: when lang='markdown' sets up hook option uncover
    * knitrSet: added aliases ho for out.height, wo for out.width, added knitrSet arguments ho, wo
    * wtd.var: replaced with fixed verion by Benjamin Tyner <btyner@gmail.com>
+   * inst/tests/example.Rmd: added example with simple caption and font size change for caption
 
 Changes in version 4.0-3 (2017-04-30)
    * bpplot: added plotopts argument

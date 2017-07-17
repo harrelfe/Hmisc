@@ -14,15 +14,16 @@ wtd.mean <- function(x, weights=NULL, normwt='ignored', na.rm=TRUE)
 
 wtd.var <- function(x, weights=NULL, normwt=FALSE, na.rm=TRUE,
                     method = c('unbiased', 'ML'))
+  ## By Benjamin Tyner <btyner@gmail.com> 2017-0-12
 {
   method <- match.arg(method)
-  if(! length(weights)) {
-    if(na.rm) x <- x[! is.na(x)]
+  if(!length(weights)) {
+    if(na.rm) x <- x[!is.na(x)]
     return(var(x))
   }
-
+  
   if(na.rm) {
-    s       <- ! is.na(x + weights)
+    s       <- !is.na(x + weights)
     x       <- x[s]
     weights <- weights[s]
   }
@@ -30,9 +31,17 @@ wtd.var <- function(x, weights=NULL, normwt=FALSE, na.rm=TRUE,
   if(normwt)
     weights <- weights * length(x) / sum(weights)
 
-  as.numeric(stats::cov.wt(cbind(x), weights, method = method)$cov)
-}
+  if(normwt || method == 'ML')
+    return(as.numeric(stats::cov.wt(cbind(x), weights, method = method)$cov))
 
+  # the remainder is for the special case of unbiased frequency weights
+  sw  <- sum(weights)
+  if(sw <= 1)
+      warning("only one effective observation; variance estimate undefined")
+  
+  xbar <- sum(weights * x) / sw
+  sum(weights*((x - xbar)^2)) / (sw - 1)
+}
 
 wtd.quantile <- function(x, weights=NULL, probs=c(0, .25, .5, .75, 1), 
                          type=c('quantile','(i-1)/(n-1)','i/(n+1)','i/n'), 

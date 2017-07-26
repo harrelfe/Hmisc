@@ -83,7 +83,6 @@ pomodm <- function(x=NULL, p, odds.ratio=1) {
 
   ## Convert individual probabilities under the odds ratio
   p <- pmod(p, odds.ratio)
-  prn(p)
   if(! length(x)) return(p)
 
   ## Compute mean and weighted median

@@ -1802,9 +1802,9 @@ plotlyParm = list(
 
   ## Margin to leave enough room for long labels on left or right as
   ## in dotcharts
-  lrmargin = function(x, mult=7) {
+  lrmargin = function(x, wmax=190, mult=7) {
     if(is.character(x)) x <- max(nchar(x))
-    min(190, max(70, x * mult))
+    min(wmax, max(70, x * mult))
     }
  
   )

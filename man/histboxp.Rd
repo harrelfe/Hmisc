@@ -18,7 +18,7 @@ easily seen.
 }
 \usage{
 histboxp(p = plotly::plot_ly(height=height), x, group = NULL,
-         xlab=NULL, gmd=TRUE, sd=FALSE, bins = 100)
+         xlab=NULL, gmd=TRUE, sd=FALSE, bins = 100, mult=7)
 }
 \arguments{
   \item{p}{\code{plotly} graphics object if already begun}
@@ -32,6 +32,7 @@ histboxp(p = plotly::plot_ly(height=height), x, group = NULL,
   \item{bins}{number of equal-width bins to use for spike histogram.  If
 		the number of distinct values of \code{x} is less than \code{bins},
 		the actual values of \code{x} are used.}
+	\item{wmax,mult}{tweaks for margin to allocate}
 }
 \value{a \code{plotly} object}
 \author{Frank Harrell}

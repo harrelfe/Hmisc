@@ -545,7 +545,7 @@ if(FALSE)
 
 histboxp <- function(p=plotly::plot_ly(height=height),
                      x, group=NULL, xlab=NULL,
-                     gmd=TRUE, sd=FALSE, bins=100) {
+                     gmd=TRUE, sd=FALSE, bins=100, wmax=190, mult=7) {
 
   if(! length(xlab)) xlab <- label(x, html=TRUE, plot=TRUE,
                                    default=deparse(substitute(x)))
@@ -697,7 +697,8 @@ histboxp <- function(p=plotly::plot_ly(height=height),
                               visible='legendonly')
 
   p <- plotly::layout(p,
-                      margin = list(l=plotlyParm$lrmargin(levs)),
+                      margin = list(l=plotlyParm$lrmargin(levs,
+                                                          wmax=wmax, mult=mult)),
                       xaxis = list(title=xlab, zeroline=FALSE),
                       yaxis = list(title='',
                                    tickvals= - (1 : ng),

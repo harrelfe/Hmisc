@@ -132,7 +132,7 @@ intended to be called by the user.
       lspace=c(0,0), \dots)
 \method{html}{describe}(object, size=85, tabular=TRUE,
       greek=TRUE, scroll=FALSE, rows=25, cols=100, \dots)
-\method{html}{describe.single}(object, vname, size=85,
+\method{html}{describe.single}(object, size=85,
       tabular=TRUE, greek=TRUE, \dots)
 formatdescribeSingle(x, condense=c('extremes', 'frequencies', 'both', 'none'),
            lang=c('plain', 'latex', 'html'), verb=0, lspace=c(0, 0),
@@ -261,8 +261,7 @@ the output.
 	the html output}
 \item{rows, cols}{the number of rows or columns to allocate for the
 	scrollable box}
-\item{vname}{unused argument in \code{latex.describe.single}.  For html
-	is used to pass the current variable name}
+\item{vname}{unused argument in \code{latex.describe.single}}
 \item{which}{specifies whether to plot numeric continuous or
 	binary/categorical variables, or both.  When \code{"both"} a list with 
 two elements is created.  Each element is a \code{ggplot2} or

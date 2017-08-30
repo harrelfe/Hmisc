@@ -92,3 +92,48 @@ pomodm <- function(x=NULL, p, odds.ratio=1) {
   xmed  <- (xmed1 + xmed2) / 2
   c(mean=xbar, median=xmed)
   }
+
+simRegOrd <- function(n, nsim=1000, delta=0, odds.ratio=1, sigma,
+                      p=NULL, x=NULL, X=x, Eyx, alpha=0.05, pr=FALSE) {
+  if(length(x) && (length(x) != n))
+    stop('x must be omitted or have length n')
+
+  if((n %% 2) != 0) stop('n must be an even integer')
+  
+  treat <- c(rep(0, n / 2), rep(1, n / 2))
+  X <- cbind(X, treat)
+
+  betas <- se <- rep(NA, nsim)
+  if(length(p)) {
+    p1 <- pomodm(p=p, odds.ratio=odds.ratio)
+    yordinal <- 0 : (length(p) - 1)
+  }
+
+  xb <- delta * treat + (if(length(x)) Eyx(x) else 0)
+
+  for(i in 1 : nsim) {
+    if(pr) cat('Iteration', i, '\r')
+    y <- xb + rnorm(n, mean=0, sd=sigma)
+    if(length(p)) {
+      ## Override y with length(p) - 1 ordinal categories
+      yo <- ifelse(treat == 0,
+                   sample(yordinal, n, prob=p,  replace=TRUE),
+                   sample(yordinal, n, prob=p1, replace=TRUE))
+      ymax <- max(y)
+      y <- ifelse(yo == 0, y, ceiling(ymax) + yo)
+    }
+
+    f <- rms::orm.fit(X, y, maxit=20)
+    if(! f$fail) {
+      betas[i] <- coef(f)[length(coef(f))]   ## coef of treatment
+      k        <- nrow(f$var)
+      se[i]    <- sqrt(f$var[k, k])
+      }
+  }
+  if(pr) cat('\n')
+
+  pvals <- 1 - pchisq((betas / se) ^ 2, 1)
+  power <- mean(pvals < alpha, na.rm=TRUE)
+  list(n=n, delta=delta, sigma=sigma, power=power, betas=betas, se=se,
+       pvals=pvals)
+}

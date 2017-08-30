@@ -152,6 +152,8 @@ show.pch                Display Colors, Plotting Symbols, and Symbol
                         Numeric Equivalents
 showPsfrag              Display image from psfrag LaTeX strings
 simplifyDims            List Simplification
+simRegOrd               Simulate Power for Adjusted Ordinal Regression
+                        Two-Sample Test
 smean.sd                Compute Summary Statistics on a Vector
 solvet                  solve Function with tol argument
 somers2                 Somers' Dxy Rank Correlation

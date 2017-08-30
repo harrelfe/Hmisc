@@ -33,11 +33,11 @@
 	level.
 	}
 \usage{
-dotchartpl(x, major, minor=NULL, group=NULL, mult=NULL,
+dotchartpl(x, major=NULL, minor=NULL, group=NULL, mult=NULL,
            big=NULL, htext=NULL, num=NULL, denom=NULL,
            lower=NULL, upper=NULL,
            refgroup=NULL, sortdiff=TRUE, conf.int=0.95,
-           minkeep=NA, xlim=NULL, xlab='Proportion',
+           minkeep=NULL, xlim=NULL, xlab='Proportion',
            tracename=NULL, limitstracename=NULL,
            width=800,
            col=colorspace::rainbow_hcl)

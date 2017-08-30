@@ -88,7 +88,7 @@ Julious SA, Campbell MJ (1996): Letter to the Editor.  Stat in Med 15:
 1065--1066.  Shows accuracy of formula for binary response case.
 }
 \seealso{
-\code{\link{bpower}}, \code{\link{cpower}}
+\code{\link{simRegOrd}}, \code{\link{bpower}}, \code{\link{cpower}}
 }
 \examples{
 # For a study of back pain (none, mild, moderate, severe) here are the

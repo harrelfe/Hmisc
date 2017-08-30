@@ -18,7 +18,7 @@ easily seen.
 }
 \usage{
 histboxp(p = plotly::plot_ly(height=height), x, group = NULL,
-         xlab=NULL, gmd=TRUE, sd=FALSE, bins = 100, mult=7)
+         xlab=NULL, gmd=TRUE, sd=FALSE, bins = 100, wmax=190, mult=7)
 }
 \arguments{
   \item{p}{\code{plotly} graphics object if already begun}

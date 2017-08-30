@@ -246,3 +246,23 @@ S3method(vcov,default)
 
 S3method(vcov,fit.mult.impute)
 S3method(xtfrm,labelled)
+
+S3method('[',Cbind)
+S3method('[',describe)
+S3method('[',discrete)
+S3method('[',impute)
+S3method('[',mChoice)
+S3method('[',pBlock)
+S3method('[',roundN)
+S3method('[',special.miss)
+S3method('[',substi)
+S3method('[',summary.formula.response)
+S3method('[',transcan)
+S3method('[',ynbind)
+S3method('[[',discrete)
+S3method('[<-',discrete)
+
+
+
+
+

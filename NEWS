@@ -13,6 +13,7 @@ Changes in version 4.0-4 (2017-08-20)
    * pomodm: new function to work with popower/posamsize to assist translating odds ratios to means and medians for proportional odds model
    * histboxp: added wmax, mult arguments to tweak margin set-aside
    * describe: fixed bug in html.describe when there is only one variable
+   * simRegOrd: new function to simulate covariate-adjusted ordinal model two-sample test power
 
 Changes in version 4.0-3 (2017-04-30)
    * bpplot: added plotopts argument

@@ -432,29 +432,33 @@ markupSpecs <- list(html=list(
                 rows, 'ex;">')
     c(w, x, '</div>')
     },
-  chisq    = function(x, ...)
+  chisq    = function(x, ..., unicode=FALSE)
 #    paste0('\u03C7&<span class="xscript" style="font-size: 75%;"><sup>2</sup><sub>', x,
 #           '</sub></span>')
-                 if(missing(x)) paste0(htmlGreek('chi'), '<sup>2</sup>')
+    if(missing(x)) paste0(htmlGreek('chi', unicode=unicode),
+                          '<sup>2</sup>')
                  else
-                   paste0(htmlGreek('chi'), markupSpecs$html$subsup(x, '2')),
-  fstat    = function(x, ...) paste0('<i>F</i><sub><span style="font-size: 80%;">',
-                                     x[1], htmlSpecial('thinsp'),
+                   paste0(htmlGreek('chi', unicode=unicode),
+                          markupSpecs$html$subsup(x, '2')),
+  fstat    = function(x, ..., unicode=FALSE)
+    paste0('<i>F</i><sub><span style="font-size: 80%;">',
+                                     x[1], htmlSpecial('thinsp', unicode=unicode),
                                      x[2], '</span></sub>'),
-  frac     = function(a, b, size=82, ...)
+  frac     = function(a, b, size=82, ..., unicode=FALSE)
     paste0('<span style="font-size: ', size, '%;"><sup>',
-           a, '</sup>', htmlSpecial('frasl'), '<sub>', b, '</sub></span>'),
-  half     = function(...) htmlSpecial('half'),
+           a, '</sup>', htmlSpecial('frasl', unicode=unicode),
+           '<sub>', b, '</sub></span>'),
+  half     = function(..., unicode=FALSE) htmlSpecial('half', unicode=unicode),
   subsup   = function(a, b) paste0("<sup><span style='font-size: 70%;'>", b,
                                    "</span></sup><sub style='position: relative; left: -.47em; bottom: -.4em;'><span style='font-size: 70%;'>",
                                    a, "</span></sub>"),
-  varlabel = function(label, units='', size=75, hfill=FALSE) {
+  varlabel = function(label, units='', size=75, hfill=FALSE, unicode=FALSE) {
     if(units=='') label
     else
       if(hfill) paste0("<div style='float: left; text-align: left;'>", label,
                        "</div><div style='float: right; text-align: right; font-family: Verdana; font-size:", size, "%;'>", units, "</div>")
     else
-      paste0(label, htmlSpecial('emsp'),
+      paste0(label, htmlSpecial('emsp', unicode=unicode),
              "<span style='font-family:Verdana;font-size:", size, "%;'>",
              units, "</span>") },
   rightAlign  = function(x)

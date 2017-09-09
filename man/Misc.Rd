@@ -4,6 +4,7 @@
 \alias{getLatestSource}
 \alias{grType}
 \alias{prType}
+\alias{htmlSpecialType}
 \alias{inverseFunction}
 \alias{james.stein}
 \alias{km.quick}
@@ -47,7 +48,15 @@
 	\code{prType} retrieves the system option \code{prType}, which is
 	set to \code{"plain"} if the option is not set.  \code{print} methods
 	that allow for markdown/html/latex can be automatically invoked by
-	setting \code{options(prType="html")} or \code{options(prType='latex')}.
+	setting \code{options(prType="html")} or
+	\code{options(prType='latex')}.
+
+	\code{htmlSpecialType} retrieves the system option
+	\code{htmlSpecialType}, which is set to \code{"unicode"} if the option
+	is not set.  \code{htmlSpecialType='unicode'} cause html-generating
+	functions in \code{Hmisc} and \code{rms} to use unicode for special
+	characters, and \code{htmlSpecialType='&'} uses the older ampersand
+	3-digit format. 
 
   \code{inverseFunction} generates a function to find all inverses of a
   monotonic or nonmonotonic function that is tabulated at vectors (x,y),
@@ -167,6 +176,7 @@ getLatestSource(x=NULL, package='Hmisc', recent=NULL, avail=FALSE,
                 type=c('svn','cvs'))
 grType()
 prType()
+htmlSpecialType()
 inverseFunction(x, y)
 james.stein(y, group)
 km.quick(S, times, q)

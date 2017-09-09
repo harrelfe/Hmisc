@@ -1,4 +1,4 @@
-Changes in version 4.0-4 (2017-09-08)
+Changes in version 4.0-4 (2017-09-09)
    * latex.default: insert spaces between multiple entries in bottom index in latex tables (thanks: ecortens https://github.com/harrelfe/Hmisc/pull/73)
    * latex.summary.formula.reverse,latex.summaryM: fix double replacement of ampersand (Thanks: Evan Cortens https://github.com/harrelfe/Hmisc/pull/72)
    * fit.mult.impute: verified dfmi formula, added comment
@@ -15,7 +15,8 @@ Changes in version 4.0-4 (2017-09-08)
    * describe: fixed bug in html.describe when there is only one variable
    * simRegOrd: new function to simulate covariate-adjusted ordinal model two-sample test power
    * html: added unicode argument for functions calling htmlSpecial, htmlGreek
-
+   * htmlSpecialType: new function to check options('htmlSpecialType') and use as a default '&' for special symbols
+	 
 Changes in version 4.0-3 (2017-04-30)
    * bpplot: added plotopts argument
    * describe, histboxp: improved logic to still slighty round numeric variables with fewer than 100 distinct values, in case some values are really close, when computing frequency distribution (for spike histograms in plot.describe)

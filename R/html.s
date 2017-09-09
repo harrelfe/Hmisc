@@ -239,7 +239,7 @@ htmlVerbatim <- function(..., size = 75, width = 85,
   htmltools::HTML(w)
 }
 
-htmlGreek <- function(x, mult=FALSE, unicode=FALSE) {
+htmlGreek <- function(x, mult=FALSE, code=htmlSpecialType()) {
   orig <- c('alpha','beta','gamma','delta','epsilon','varepsilon',
             'zeta', 'eta',
             'theta','vartheta','iota','kappa','lambda','mu','nu',
@@ -249,7 +249,7 @@ htmlGreek <- function(x, mult=FALSE, unicode=FALSE) {
   
   l <- length(orig)
   
-  new <- if(unicode)
+  new <- if(code == 'unicode')
            substring('\u3B1\u3B2\u3B3\u3B4\u3B5\u3F5\u3B6\u3B7\u3B8\u3D1\u3B9\u3BA\u3BB\u3BC\u3BD\u3BE\u3C0\u3D6\u3C1\u3F1\u3C3\u3C2\u3C4\u3C5\u3C6\u3C7\u3C8\u3C9\u393\u394\u398\u39B\u39E\u3A0\u3A3\u3A5\u3A6\u3A8\u3A9',
                      1 : l, 1 : l)
          else
@@ -268,13 +268,13 @@ htmlGreek <- function(x, mult=FALSE, unicode=FALSE) {
   new[x]
 }
 
-htmlSpecial <- function(x, unicode=FALSE) {
+htmlSpecial <- function(x, code=htmlSpecialType()) {
   orig <- c('nbsp', 'thinsp', 'emsp', 'ensp', 'plusmn', 'times', 'caret',
             'frasl', 'half')
   
   l <- length(orig)
   
-  new <- if(unicode)
+  new <- if(code == 'unicode')
            substring('\u00A0\u2009\u2003\u2002\u00B1\u00D7\u005E\u2044\u00BD', 
                      1 : l, 1 : l)
          else
@@ -432,33 +432,33 @@ markupSpecs <- list(html=list(
                 rows, 'ex;">')
     c(w, x, '</div>')
     },
-  chisq    = function(x, ..., unicode=FALSE)
+  chisq    = function(x, ...)
 #    paste0('\u03C7&<span class="xscript" style="font-size: 75%;"><sup>2</sup><sub>', x,
 #           '</sub></span>')
-    if(missing(x)) paste0(htmlGreek('chi', unicode=unicode),
+    if(missing(x)) paste0(htmlGreek('chi'),
                           '<sup>2</sup>')
                  else
-                   paste0(htmlGreek('chi', unicode=unicode),
+                   paste0(htmlGreek('chi'),
                           markupSpecs$html$subsup(x, '2')),
-  fstat    = function(x, ..., unicode=FALSE)
+  fstat    = function(x, ...)
     paste0('<i>F</i><sub><span style="font-size: 80%;">',
-                                     x[1], htmlSpecial('thinsp', unicode=unicode),
+                                     x[1], htmlSpecial('thinsp'),
                                      x[2], '</span></sub>'),
-  frac     = function(a, b, size=82, ..., unicode=FALSE)
+  frac     = function(a, b, size=82, ...)
     paste0('<span style="font-size: ', size, '%;"><sup>',
-           a, '</sup>', htmlSpecial('frasl', unicode=unicode),
+           a, '</sup>', htmlSpecial('frasl'),
            '<sub>', b, '</sub></span>'),
-  half     = function(..., unicode=FALSE) htmlSpecial('half', unicode=unicode),
+  half     = function(...) htmlSpecial('half'),
   subsup   = function(a, b) paste0("<sup><span style='font-size: 70%;'>", b,
                                    "</span></sup><sub style='position: relative; left: -.47em; bottom: -.4em;'><span style='font-size: 70%;'>",
                                    a, "</span></sub>"),
-  varlabel = function(label, units='', size=75, hfill=FALSE, unicode=FALSE) {
+  varlabel = function(label, units='', size=75, hfill=FALSE) {
     if(units=='') label
     else
       if(hfill) paste0("<div style='float: left; text-align: left;'>", label,
                        "</div><div style='float: right; text-align: right; font-family: Verdana; font-size:", size, "%;'>", units, "</div>")
     else
-      paste0(label, htmlSpecial('emsp', unicode=unicode),
+      paste0(label, htmlSpecial('emsp'),
              "<span style='font-family:Verdana;font-size:", size, "%;'>",
              units, "</span>") },
   rightAlign  = function(x)
@@ -613,7 +613,7 @@ plotmath = list(
 ## strings over the usual defaults.
 
 htmlTranslate <- function(object, inn=NULL, out=NULL,
-                           greek=FALSE, na='', unicode=FALSE, ...)
+                           greek=FALSE, na='', code=htmlSpecialType(), ...)
 {
   text <- ifelse(is.na(object), na, as.character(object))
 
@@ -622,7 +622,7 @@ htmlTranslate <- function(object, inn=NULL, out=NULL,
   inn <- c("&", "|",  "%",  "#",   "<=",     "<",  ">=",     ">",  "_", "\\243",
            "\\$", inn, c("[", "(", "]", ")"))
 
-  w <- if(unicode)
+  w <- if(code == 'unicode')
          substring('\u27\u26\u7C\u25\u23\u2264\u3C\u2265\u3E\u5F\uA3\u24',
                    1:11, 1:11)
        else
@@ -659,10 +659,10 @@ htmlTranslate <- function(object, inn=NULL, out=NULL,
     }
     text[i] <- sedit(text[i], c(inn, '^', 'BEGINSUP', 'ENDSUP'),
                      c(out,
-                       htmlSpecial('caret', unicode=unicode),
+                       htmlSpecial('caret', code=code),
                        '<sup>', '</sup>'), wild.literal=TRUE)
 
-    if(greek) text[i] <- htmlGreek(text[i], unicode=unicode, mult=TRUE)
+    if(greek) text[i] <- htmlGreek(text[i], code=code, mult=TRUE)
   }
   text
 }

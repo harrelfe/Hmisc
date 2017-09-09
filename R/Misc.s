@@ -1758,7 +1758,12 @@ grType <- function() {
 prType <- function() {
   g <- .Options$prType
   if(! length(g)) 'plain' else g
-  }
+}
+
+htmlSpecialType <- function() {
+	if(length(g <- .Options$htmlSpecialType) && g == '&') '&' else 'unicode'
+}
+
 
 
 ## Save a plotly graphic with name foo.png where foo is the name of the

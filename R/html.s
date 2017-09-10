@@ -269,19 +269,32 @@ htmlGreek <- function(x, mult=FALSE, code=htmlSpecialType()) {
 }
 
 htmlSpecial <- function(x, code=htmlSpecialType()) {
-  orig <- c('nbsp', 'thinsp', 'emsp', 'ensp', 'plusmn', 'times', 'caret',
-            'frasl', 'half')
-  
-  l <- length(orig)
-  
-  new <- if(code == 'unicode')
-           substring('\u00A0\u2009\u2003\u2002\u00B1\u00D7\u005E\u2044\u00BD', 
-                     1 : l, 1 : l)
-         else
-           paste0('&#', c(160,8201,8195,8194,177,215,94,8260,189), ';')
-  names(new) <- orig
 
-  if(! all(x %in% orig)) stop(paste0('illegal character name:', x))
+  z <- c(nbsp   = '160\u00A0',
+         thinsp = '8201\u2009',
+         emsp   = '8195\u2003',
+         ensp   = '8194\u2002',
+         plusmn = '177\u00B1',
+         times  = '215\u00D7',
+         caret  = '94\u005E',
+         frasl  = '8260\u2044',
+         half   = '189\u00BD',
+         angrt  = '8735\u221F',
+         squarecrosshatch        = '9638\u2586',
+         whitesquareverticalline = '9707\u25EB',
+         blackdowntriangle       = '9660\u25BC',
+         mediumsmallwhitecircle  = '9900\u26AC',
+         combiningcircumflexaccent = '770\u005E',
+         part   = '8706\u2202')
+
+  u <- substring(z, nchar(z), nchar(z))
+  n <- substring(z, 1, nchar(z) - 1)
+  
+  new <- if(code == 'unicode') u else paste0('&#', n, ';')
+  names(new) <- names(z)
+
+  if(! all(x %in% names(z))) stop(paste0('illegal character name:',
+                                     x[x %nin% names(z)]))
   new[x]
 }
 
@@ -315,9 +328,9 @@ markupSpecs <- list(html=list(
            paste(unlist(list(...)), collapse=' '),
            '</font>'),
 
-  cap      = function(..., symbol='&#8735;') { # figure caption formatting
+  cap      = function(..., symbol=htmlSpecial('angrt')) { # figure caption formatting
   ## alternative: symbol='Figure:'; default is right angle
-  ## use symbol='&#9638;' for grid graph paper symbol
+  ## use symbol=htmlSpecial('squarecrosshatch') for grid graph paper symbol
     lcap <- paste(unlist(list(...)), collapse=' ')
     paste0('<span style="font-family:Verdana;font-size:10px;">', symbol,
            ' </span><span style="font-family:Verdana;font-size:12px;color:MidnightBlue;">',
@@ -328,7 +341,7 @@ markupSpecs <- list(html=list(
     paste0('<span style="font-family:Verdana;font-size:12px;color:MidnightBlue;">',
            paste(unlist(list(...)), collapse=' '), '</span>'),
 
-  tcap      = function(..., symbol='&#9707;') { # table caption formatting
+  tcap      = function(..., symbol=htmlSpecial('whitesquareverticalline')) { # table caption formatting
     # alt: symbol='Table:'; default is white square w/vertical bisecting line
     lcap <- paste(unlist(list(...)), collapse=' ')
     paste0('<span style="font-family:Verdana;font-size:10px;">', symbol,
@@ -344,7 +357,7 @@ markupSpecs <- list(html=list(
       id <- floor(runif(1, 100000, 999999))  # unique html id
       paste0('<br><a href="#', id, '" id="', id,
              '_earrows" class="earrows" onclick="expand_collapse(\'',
-             id, '\');">&#9660;</a>',
+             id, '\');">', htmlSpecial('blackdowntriangle'), '</a>',
              vis, '<span id="', id,
              '" style="display:none;">',
              invis, '</span>')

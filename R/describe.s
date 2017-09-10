@@ -1073,7 +1073,8 @@ html.contents.data.frame <-
   nam <- row.names(cont)
   if(number) {
     rn <- paste(format(1:d[2]), row.names(cont))
-    rn <- sedit(rn, ' ', '&#XA0;&#XA0;')
+    nbsp <- htmlSpecial('nbsp')
+    rn <- sedit(rn, ' ', paste0(nbsp, nbsp))
       row.names(cont) <- rn
   }
 

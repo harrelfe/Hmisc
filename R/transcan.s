@@ -849,7 +849,11 @@ impute.transcan <-
            ! all(is.na(v[sub])))
           stop(paste('variable',nam,
                      'does not have same missing values as were present when transcan was run'))
-      v[sub] <- if(is.factor(v)) levels(v)[as.integer(i)] else i
+      v[sub] <- if(is.factor(v)) levels(v)[as.integer(i)]
+                else
+                  if(is.logical(v)) i == 1
+                else
+                  i
       ## Note: if v was empty before, new v would have arbitrary length
       ## Avoid problem by requiring all variables to be in data
       attr(v,'imputed') <- sub

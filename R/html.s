@@ -636,11 +636,11 @@ htmlTranslate <- function(object, inn=NULL, out=NULL,
            "\\$", inn, c("[", "(", "]", ")"))
 
   w <- if(code == 'unicode')
-         substring('\u27\u26\u7C\u25\u23\u2264\u3C\u2265\u3E\u5F\uA3\u24',
+         substring('\u26\u7C\u25\u23\u2264\u3C\u2265\u3E\u5F\uA3\u24',
                    1:11, 1:11)
        else
          c("&#38;", "&#124;", "&#37",   "&#35;", "&#8804;", "&#60;", "&#8805;",
-           "&#62;", "&#95;",  "&#164;", "&#36;")
+           "&#62;", "&#95;",  "&#163;", "&#36;")  # 163 was 164
 
   ## htmlarrows.com
   ##  markupSpecs$html$unicodeshow(out, surr=FALSE)

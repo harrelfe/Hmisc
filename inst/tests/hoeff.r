@@ -1,6 +1,6 @@
 require(Hmisc)
-.Fortran('jrank', as.double(1:5), as.double(1:5), 5L,
-         double(5), double(5), double(5))
+if(FALSE) .Fortran('jrank', as.double(1:5), as.double(1:5), 5L,
+                   double(5), double(5), double(5))
 hoeffd(1:6, c(1,3,2,4,5,6))
 y <- 1:20; y[3] <- 17; y[17] <- 3
 hoeffd(1:20, y)$D

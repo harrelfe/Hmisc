@@ -38,7 +38,7 @@ errbar <-
 
       plot(NA, NA, xlab=ylab, ylab='',
            xlim=ylim, ylim=c(1, n+1),
-           axes=FALSE, ...)
+           axes=FALSE, main=main, sub=sub, ...)
       axis(1)
     
       w <-

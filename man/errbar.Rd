@@ -34,10 +34,10 @@ errbar(x, y, yplus, yminus, cap=0.015, main = NULL,
     in units of the width of the plot.  Defaults to \code{0.015}.
   }
   \item{main}{
-    a main title for the plot, see also \code{\link{title}}.
+    a main title for the plot, passed to \code{plot}, see also \code{\link{title}}.
   }
   \item{sub}{
-    a sub title for the plot.
+    a sub title for the plot, passed to \code{plot}
   }
   \item{xlab}{
     optional x-axis labels if \code{add=FALSE}.

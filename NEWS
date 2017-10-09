@@ -19,7 +19,8 @@ Changes in version 4.0-4 (2017-10-08)
    * htmlSpecial: added new characters, cleaned up code
    * impute.transcan: if original variable was logical, convert 0/1 imputations to FALSE/TRUE; design matrix column names were problematic with fit.mult.impute in this case
    * impute.transcan: converted character variables on input dataset to factor so can replace NAs with imputed codes
-   * htmlTranslate: fixed bug when unicode was in effect: characters were shifted
+   * htmlTranslate: fixed bug when unicode was in effect: characters were shifted;fixed &# code for pound sign
+   * errbar: properly passed arguments main and sub to plot
 	 
 Changes in version 4.0-3 (2017-04-30)
    * bpplot: added plotopts argument

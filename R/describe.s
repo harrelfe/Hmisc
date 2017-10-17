@@ -396,8 +396,8 @@ formatdescribeSingle <-
         fsize <- specs$size
         mnb <- function(x) specs$color(x, col=color)
         spc <- specs$space
-        blo <- paste0(mnb('lowest'), spc, ':')
-        bhi <- paste0(mnb('highest'),     ':')
+        blo <- mnb('lowest:')
+        bhi <- mnb('highest:')
         if(w + 2 <= wide) {
           low <- paste(blo, paste(val[1: 5], collapse=' '))
           hi  <- paste(bhi, paste(val[6:10], collapse=' '))
@@ -414,7 +414,7 @@ formatdescribeSingle <-
         }
       }  # end lang='html'
       else {  # lang='plain' or 'latex'
-        low <- paste('lowest :', paste(val[1: 5], collapse=' '))
+        low <- paste('lowest:',  paste(val[1: 5], collapse=' '))
         hi  <- paste('highest:', paste(val[6:10], collapse=' '))
         R <- c(R,
                if(w + 2 <= wide)
@@ -757,7 +757,7 @@ html.describe <-
         next
       
       r <- html.describe.single(z, ## vname=vnames[i],
-                                tabular=tabular, greek=greek, size=size, ...)
+                                tabular=tabular, greek=greek, size=size, color=color, ...)
       R <- c(R, r, hrule)
     }
     
@@ -773,7 +773,7 @@ html.describe <-
   }
   else
     R <- c(R, html.describe.single(object, tabular=tabular,
-                                   greek=greek, size=size, ...))
+                                   greek=greek, size=size, color = color, ...))
   
   htmltools::HTML(R)
 }
@@ -862,7 +862,7 @@ html.describe.single <-
     R <- c(R, htmlVerbatim(object$counts, size=sz))
 
   
-  R <- c(R, formatdescribeSingle(object, lang='html', ...))
+  R <- c(R, formatdescribeSingle(object, lang='html', color = color, ...))
   R
 }
 

@@ -356,7 +356,7 @@ print.describe <-
 formatdescribeSingle <-
   function(x, condense=c('extremes', 'frequencies', 'both', 'none'),
            lang=c('plain', 'latex', 'html'), verb=0, lspace=c(0, 0),
-           size=85, ...)
+           size=85, color='MidnightBlue', ...)
 {
   condense <- match.arg(condense)
   lang     <- match.arg(lang)
@@ -394,7 +394,7 @@ formatdescribeSingle <-
     if(condense %in% c('extremes', 'both')) {
       if(lang == 'html') {
         fsize <- specs$size
-        mnb <- function(x) specs$color(x, col='MidnightBlue')
+        mnb <- function(x) specs$color(x, col=color)
         spc <- specs$space
         blo <- paste0(mnb('lowest'), spc, ':')
         bhi <- paste0(mnb('highest'),     ':')
@@ -722,7 +722,7 @@ latex.describe.single <-
 
 html.describe <-
   function(object, size=85,
-           tabular=TRUE, greek=TRUE, scroll=FALSE, rows=25, cols=100, ...)
+           tabular=TRUE, greek=TRUE, scroll=FALSE, rows=25, cols=100, color='MidnightBlue', ...)
 {
   at <- attributes(object)
 
@@ -735,7 +735,7 @@ html.describe <-
   sskip  <- m$smallskip
   hrule  <- m$hrulethin
   fsize  <- m$size
-  mnb    <- function(x) m$color(x, 'MidnightBlue')
+  mnb    <- function(x) m$color(x,  color)
 
   R <- c(m$unicode, m$style())   ## define thinhr (and others not needed here)
   
@@ -780,7 +780,7 @@ html.describe <-
 
 html.describe.single <-
   function(object, size=85,
-           tabular=TRUE, greek=TRUE, ...)
+           tabular=TRUE, greek=TRUE, color='MidnightBlue', ...)
 {
   m <- markupSpecs$html
   center <- m$center
@@ -854,7 +854,7 @@ html.describe.single <-
     colnames(d) <- names(object$counts)
     tab <- html(d, file=FALSE, align='c',
                 align.header='c', bold.header=FALSE,
-                col.header='MidnightBlue', border=0,
+                col.header=color, border=0,
                 translate=TRUE, size=sz)
     R <- c(R, tab)
   }

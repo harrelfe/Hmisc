@@ -396,8 +396,8 @@ formatdescribeSingle <-
         fsize <- specs$size
         mnb <- function(x) specs$color(x, col=color)
         spc <- specs$space
-        blo <- mnb('lowest:')
-        bhi <- mnb('highest:')
+        blo <- paste0(spc,  mnb('lowest:'))
+        bhi <- paste0(     mnb('highest:'))
         if(w + 2 <= wide) {
           low <- paste(blo, paste(val[1: 5], collapse=' '))
           hi  <- paste(bhi, paste(val[6:10], collapse=' '))
@@ -414,7 +414,7 @@ formatdescribeSingle <-
         }
       }  # end lang='html'
       else {  # lang='plain' or 'latex'
-        low <- paste('lowest:',  paste(val[1: 5], collapse=' '))
+        low <- paste(' lowest:',  paste(val[1: 5], collapse=' '))
         hi  <- paste('highest:', paste(val[6:10], collapse=' '))
         R <- c(R,
                if(w + 2 <= wide)

@@ -439,6 +439,13 @@ markupSpecs <- list(html=list(
     htmltools::HTML(paste0('<style>div.tocify {width: ', width,
                            '; max-width: ', maxwidth, '; max-height: ',
                            maxheight, ';}</style>')),
+  sectionNumberDepth = function() {
+    ## Set depth for numbering sections the same as TOC depth
+    ## See https://stackoverflow.com/questions/47124299/
+    toc_depth <- rmarkdown::metadata$output$html_document$toc_depth
+    sel <- paste0("h", (toc_depth + 1) : 10, collapse = " > span, ")
+    paste0("<style>", sel, " > .header-section-number { display: none; } </style>")    
+    },
   scroll   = function(x, size=75, rows=10, cols=100,
                       font='', name='') {
     w <- paste0('<div style="width: ', cols, 'ex; overflow: auto; height: ',

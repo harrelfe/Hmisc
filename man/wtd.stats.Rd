@@ -37,7 +37,9 @@ ranks, using mid--ranks for ties.  This can be used to obtain Wilcoxon
 tests and rank correlation coefficients.  \code{wtd.loess.noiter} is a
 weighted version of \code{loess.smooth} when no iterations for outlier
 rejection are desired. This results in especially good smoothing when
-\code{y} is binary.
+\code{y} is binary.  \code{wtd.quantile} removes any observations with
+zero weight at the beginning.  Previously, these were changing the
+quantile estimates.
 
 \code{num.denom.setup} is a utility function that allows one to deal with
 observations containing numbers of events and numbers of trials, by

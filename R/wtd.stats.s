@@ -58,7 +58,12 @@ wtd.quantile <- function(x, weights=NULL, probs=c(0, .25, .5, .75, 1),
                              2 - log10(diff(range(probs))) else 2)), 
                 "%", sep = "")
 
-  if(type=='quantile') {
+  i <- weights == 0
+  if(any(i)) {
+    x <- x[! i]
+    weights <- weights[! i]
+    }
+  if(type == 'quantile') {
     w <- wtd.table(x, weights, na.rm=na.rm, normwt=normwt, type='list')
     x     <- w$x
     wts   <- w$sum.of.weights

@@ -1,0 +1,11 @@
+copyright
+www
+\.git
+\.gitignore
+\.Rhistory
+R/\.Rhistory
+tests/\.Rhistory
+\.Rproj\.user
+.*.Rproj
+
+

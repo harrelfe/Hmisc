@@ -24,6 +24,8 @@ Changes in version 4.0-4 (2017-12-03)
    * html markupSpecs: added sectionNumberDepth function
    * wtd.quantile: remove zero weight observations early
    * latexCheckOptions: new function from Richard Heiberger
+   * htmlSN: used new HTML specials mechanism for times symbol
+   * summaryM: added escape.html=FALSE to htmlTable calls
 	 
 Changes in version 4.0-3 (2017-04-30)
    * bpplot: added plotopts argument

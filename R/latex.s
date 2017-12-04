@@ -1230,12 +1230,15 @@ latexSN <- function(x) {
 
 htmlSN <- function(x) {
   x <- format(x)
+  times <- htmlSpecial('times')
   x <- sedit(x, c('e+00','e-0*',
                   'e-*',
                   'e+0*',
                   'e+*'),
              c('',
-               '&times;10<sup>-*</sup>', '&times;10<sup>-*</sup>',
-               '&times;10<sup>*</sup>',  '&times;10<sup>*</sup>'))
+               paste0(times, '10<sup>-*</sup>'),
+               paste0(times, '10<sup>-*</sup>'),
+               paste0(times, '10<sup>*</sup>'),
+               paste0(times, '10<sup>*</sup>')))
   x
 }

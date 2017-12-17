@@ -555,6 +555,8 @@ latex.default <-
     }
     
     nc <- 1 + nc
+  } else if(length(cgroup) > 0L) {
+      cline <- paste0(sl, "cline{", cgroup.cols[,1], "-", cgroup.cols[,2], "}", collapse=" ")
   }
 
   vbar <- ifelse(vbar, "|", "")

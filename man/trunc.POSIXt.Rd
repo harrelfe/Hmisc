@@ -1,33 +1,34 @@
 \name{trunc.POSIXt}
-\alias{trunc.POSIXt}
+\alias{truncPOSIXt}
 \alias{ceil.POSIXt}
 \alias{ceil}
 \alias{ceil.default}
-\alias{round.POSIXt}
-\title{ return the floor, ceiling, or rounded value of date or time to
-  specified unit. }
+\alias{roundPOSIXt}
+\title{Return the floor, ceiling, or rounded value of date or time to
+  specified unit.}
 \description{
-  \code{trunc.POSIXt} returns the date truncated to the specified unit.
-  \code{ceiling.POSIXt} returns next ceiling of the date at the unit selected in
+  \code{truncPOSIXt} returns the date truncated to the specified unit.
+  \code{ceil.POSIXt} returns next ceiling of the date at the unit selected in
   \code{units}.
-  \code{floor.POSIXt} \code{trunk.POSIXt} by another name.
-  \code{round.POSIXt} returns the date or time value rounded to nearest
+  \code{roundPOSIXt} returns the date or time value rounded to nearest
   specified unit selected in \code{digits}.
 
-  \code{trunc.POSIXt} and \code{round.POSIXt} have been extended from
-  the \code{base} package functions.
+  \code{truncPOSIXt} and \code{roundPOSIXt} have been extended from
+  the \code{base} package functions \code{trunc.POSIXt} and
+  \code{round.POSIXt} which in the future will add the other time units
+  we need.
 }
 \usage{
 ceil(x, units,\dots)
 \method{ceil}{default}(x, units, \dots)
-\method{trunc}{POSIXt}(x, units = c("secs", "mins", "hours", "days",
+truncPOSIXt(x, units = c("secs", "mins", "hours", "days",
 "months", "years"), \dots)
 \method{ceil}{POSIXt}(x, units = c("secs", "mins", "hours", "days",
 "months", "years"), \dots)
-\method{round}{POSIXt}(x, digits = c("secs", "mins", "hours", "days", "months", "years"))
+roundPOSIXt(x, digits = c("secs", "mins", "hours", "days", "months", "years"))
 }
 \arguments{
-  \item{x}{ date to be floored, ceilinged, truncated, or rounded }
+  \item{x}{ date to be ceilinged, truncated, or rounded }
   \item{units}{ unit to that is is rounded up or down to. }
   \item{digits}{
     same as \code{units} but different name to be compatible
@@ -43,9 +44,9 @@ ceil(x, units,\dots)
 \examples{
 date <- ISOdate(1832, 7, 12)
 ceil(date, units='months')  # '1832-8-1'
-trunc(date, units='years')     # '1832-1-1'
-round.POSIXt(date, digits='months')    # '1832-7-1'
+truncPOSIXt(date, units='years')     # '1832-1-1'
+roundPOSIXt(date, digits='months')    # '1832-7-1'
 }
-\keyword{ manip }% at least one, from doc/KEYWORDS
+\keyword{ manip }
 \keyword{ utilities }
-\keyword{ chron }% __ONLY ONE__ keyword per line
+\keyword{ chron }

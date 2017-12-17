@@ -15,7 +15,7 @@ monthDays <- function(time) {
   return(as.POSIXlt(as.POSIXct(time))$mday)
 }
 
-round.POSIXt <- function(x, digits=c("secs", "mins", "hours", "days", "months", "years"))
+roundPOSIXt <- function(x, digits=c("secs", "mins", "hours", "days", "months", "years"))
   {
     ## this gets the default from the generic, as that has two args.
     if(is.numeric(digits) && digits == 0.0) digits <-"secs"
@@ -39,10 +39,10 @@ round.POSIXt <- function(x, digits=c("secs", "mins", "hours", "days", "months", 
                          isdst <- x$isdst <- -1}
              )
 
-    return(trunc(as.POSIXct(x), units=units))
+    return(truncPOSIXt(as.POSIXct(x), units=units))
   }
 
-trunc.POSIXt <- function(x, units=c("secs", "mins", "hours", "days", "months", "years"), ...) {
+truncPOSIXt <- function(x, units=c("secs", "mins", "hours", "days", "months", "years"), ...) {
     units <- match.arg(units)
 
     x <- as.POSIXlt(x)
@@ -92,7 +92,7 @@ ceil.POSIXt <- function(x, units=c("secs", "mins", "hours", "days", "months", "y
   x <- as.POSIXlt(x)
 
   isdst <- x$isdst
-  if(length(x$sec) > 0 && x != trunc.POSIXt(x, units=units)) {
+  if(length(x$sec) > 0 && x != truncPOSIXt(x, units=units)) {
     switch(units,
            "secs" = {
              x$sec <- ceiling(x$sec)

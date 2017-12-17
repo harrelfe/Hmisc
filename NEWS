@@ -30,7 +30,7 @@ Changes in version 4.1-0 (2017-12-17)
    * removed inc-dec.s which defined unused inc<- and dec<- for increment and decrement
    * NAMESPACE: removed exportPattern("^([^.]|\\..+\\.)") and explicitly exported everything, stopping export of methods
    * round.POSIXt,trunc.POSIXt: changed to roundPOSIXt, trunPOSIXt to avoid conflicts with R base
-   * asNumericMatrix, matrix2dataFrame: changed to respect original storage.mode
+   * asNumericMatrix, matrix2dataFrame: changed to respect original storage.mode.  Thanks: Andre Mikulec
 	 
 Changes in version 4.0-3 (2017-04-30)
    * bpplot: added plotopts argument

@@ -99,9 +99,7 @@ variable is a matrix.
 
 \code{asNumericMatrix} returns a numeric matrix and stores an object
 \code{origAttributes} as an attribute of the returned object, with original
-attributes of component variables, plus an indicator for whether a
-variable was converted from character to factor to allow it to be made
-numeric. 
+attributes of component variables, the \code{storage.mode}. 
 
 \code{matrix2dataFrame} returns a data frame.
 
@@ -235,8 +233,9 @@ count <- rep(1,length(dx))
 d <- summarize(count, llist(dx,sex), sum)
 Dotplot(dx ~ count | sex, data=d)
 }
-d <- list(x=1:10, a=factor(rep(c('a','b'),5)),
-          b=structure(letters[1:10], label='label for a'))
+d <- list(x=1:10, a=factor(rep(c('a','b'), 5)),
+          b=structure(letters[1:10], label='label for b'),
+          d=c(rep(TRUE,9), FALSE), f=pi*(1 : 10))
 x <- asNumericMatrix(d)
 attr(x, 'origAttributes')
 matrix2dataFrame(x)

@@ -2560,19 +2560,17 @@ asNumericMatrix <- function(x)
   at <- vector('list', k); names(at) <- a$names
   for(i in 1:k) {
     xi <- x[[i]]
-    ischar <- FALSE
+    type <- storage.mode(xi)
     A <- attributes(xi)
-    if(is.character(xi)) {
-      ischar <- TRUE
+    if(type == 'character') {
       xi <- factor(xi)
       A <- c(A, attributes(xi))
       x[[i]] <- xi
     }
     A$dim <- A$names <- A$dimnames <- NULL
-    A$ischar <- ischar
+    A$.type. <- type
     at[[i]] <- A
   }
-#  assign('origAttributes', at, pos='.GlobalEnv')
   resp <- matrix(unlist(x), ncol=k,
                  dimnames=list(a$row.names, a$names))
   attr(resp, 'origAttributes') <- at
@@ -2581,48 +2579,44 @@ asNumericMatrix <- function(x)
 
 matrix2dataFrame <- function(x, at=attr(x, 'origAttributes'), restoreAll=TRUE)
 {
-  d <- dimnames(x)
-  k <- length(d[[2]])
-  w <- vector('list',k)
+  d   <- dimnames(x)
+  k   <- length(d[[2]])
+  w   <- vector('list',k)
   nam <- names(w) <- d[[2]]
-  sm <- storage.mode(x)
-  
-  for(i in 1:k) {
-    a <- at[[nam[i]]]
-    isc <- a$ischar
-    if(!length(a))
-      next
 
-    xi <- x[,i]
+  for(i in 1 : k) {
+    a    <- at[[nam[i]]]
+    type <- a$.type.
+    a$.type. <- NULL
+
+    xi <- x[, i]
     names(xi) <- NULL
+    lev <- a$levels
+    
     if(restoreAll) {
-      a$ischar <- NULL
-      if(isc) {
-        xi <- as.character(xi)
+      if(type == 'character') {
+        xi <- as.character(factor(xi, 1 : length(lev), lev))
         a$levels <- NULL
         if(length(a$class)) a$class <- setdiff(a$class, 'factor')
       }
-      if('factor' %in% a$class) storage.mode(xi) <- 'integer'
+      storage.mode(xi) <- type
+      
       ## R won't let something be assigned class factor by brute
       ## force unless it's an integer object
       attributes(xi) <- a
     } else {
-      if(length(l   <- a$label))
-        label(xi) <- l
-      
-      if(length(u   <- a$units))
-        units(xi) <- u
-      
-      if(length(lev <- a$levels)) {
-        xi <- factor(xi, 1:length(lev), lev)
-        if(isc) xi <- as.character(xi)
+      if(length(l   <- a$label)) label(xi) <- l
+      if(length(u   <- a$units)) units(xi) <- u
+      if(length(lev)) {
+        xi <- factor(xi, 1 : length(lev), lev)
+        if(type == 'character') xi <- as.character(xi)
       }
     }
     
     w[[i]] <- xi
   }
   rn <- d[[1]]
-  if(!length(rn)) rn <- as.character(seq(along=xi))
+  if(! length(rn)) rn <- as.character(seq(along=xi))
   structure(w, class='data.frame', row.names=rn)
 }
 

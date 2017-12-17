@@ -88,7 +88,7 @@ S3method(as.discrete,default)
 S3method(as.double,Cbind)
 S3method(as.double,mChoice)
 S3method(as.numeric,Cbind)
-#S3method(ceil,POSIXt)
+S3method(ceil,POSIXt)
 
 S3method(ceil,default)
 S3method(consolidate,default)

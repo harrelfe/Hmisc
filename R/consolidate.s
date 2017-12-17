@@ -1,5 +1,5 @@
-combine <- function(x, value, protect, ...) stop("combine() depricated due to naming conflict renamed consolidate()")
-'combine<-' <- function(x, protect, ..., value) stop("combine<-() depricated due to naming conflict renamed consolidate<-()")
+#combine <- function(x, value, protect, ...) stop("combine() depricated due to naming conflict renamed consolidate()")
+#'combine<-' <- function(x, protect, ..., value) stop("combine<-() depricated due to naming conflict renamed consolidate<-()")
 
 consolidate <- function(x, value, protect, ...) {
   UseMethod("consolidate")

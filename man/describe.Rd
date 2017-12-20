@@ -61,19 +61,20 @@ highly skewed binary variable.  \code{Info} is reported to
 two decimal places.
 
 A latex method exists for converting the \code{describe} object to a
-LaTeX file.  For numeric variables having at least 20 distinct values,
+LaTeX file.  For numeric variables having more than 20 distinct values,
 \code{describe} saves in its returned object the frequencies of 100
 evenly spaced bins running from minimum observed value to the maximum.
-\code{latex} inserts a spike histogram displaying these frequency counts
-in the tabular material using the LaTeX picture environment.  For
-example output see
+When there are less than or equal to 20 distinct values, the original
+values are maintained.
+\code{latex} and \code{html} insert a spike histogram displaying these
+frequency counts in the tabular material using the LaTeX picture
+environment.  For example output see
 \url{http://biostat.mc.vanderbilt.edu/wiki/pub/Main/Hmisc/counties.pdf}.
 Note that the latex method assumes you have the following styles
 installed in your latex installation: setspace and relsize.
 
-The \code{html} method mimics the LaTeX output except for not including
-the spike histogram.  This is useful in the context of Rmarkdown html
-and html notebook output.
+The \code{html} method mimics the LaTeX output.  This is useful in the
+context of Rmarkdown html and html notebook output.
 
 The \code{plot} method is for \code{describe} objects run on data
 frames.  It produces spike histograms for a graphic of

@@ -21,3 +21,13 @@ html(describe(x1))
 ```{r indevasdf}
 html(describe(data.frame(x1)))
 ```
+
+```{r lricketts}
+x = c(0, 0, 0, 0, 2053, 2098, 0, 2053, 2098, 2, 5, 0, 0, 0, 
+                    5, 13, 13, 0, 2053, 2098)
+length(unique(x))
+table(x)
+d <- describe(x)
+d
+d$values
+```

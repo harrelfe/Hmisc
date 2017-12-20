@@ -196,7 +196,8 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
       if(isnum || n.unique <= 100) {
         if(isnum) {
           if(n.unique >= 100 ||
-             min(diff(sort(unique(xnum)))) < diff(range(xnum)) / 500) {
+             (n.unique > 20 && 
+              min(diff(sort(unique(xnum)))) < diff(range(xnum)) / 500)) {
             pret <- pretty(xnum, if(n.unique >= 100) 100 else 500)
             dist <- pret[2] - pret[1]
             r    <- range(pret)

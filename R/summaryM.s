@@ -95,6 +95,9 @@ summaryM <- function(formula, groups=NULL, data=NULL, subset,
         labels[i] <- attr(w, "label")
       
       if(length(attr(w, 'units'))) Units[i]  <- attr(w, 'units')
+
+      if(is.character(w))
+        w <- as.factor(w)
       
       if(!inherits(w, 'mChoice')) {
         if(!is.factor(w) && !is.logical(w) &&

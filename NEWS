@@ -32,6 +32,7 @@ Changes in version 4.1-0 (2017-12-19)
    * round.POSIXt,trunc.POSIXt: changed to roundPOSIXt, trunPOSIXt to avoid conflicts with R base
    * asNumericMatrix, matrix2dataFrame: changed to respect original storage.mode.  Thanks: Andre Mikulec
    * describe: quit rounding values when <= 20 distinct values no matter how far apart any two values are spaced.  https://stackoverflow.com/questions/47679551
+   * summaryM: fixed to handle character variables properly, by converting them to factors.  Thanks: Matt Shotwell
 	 
 Changes in version 4.0-3 (2017-04-30)
    * bpplot: added plotopts argument

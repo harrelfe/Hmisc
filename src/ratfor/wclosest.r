@@ -30,7 +30,7 @@ do i=1, lw {
     xd(k) = dabs(x(k) - wi)
     dmean = dmean + xd(k)
   }
-  dmean = f*dmean/dfloat(lx)
+  dmean = f * dmean / lx
   sump = 0d0
   do k=1, lx {
     z = min(xd(k)/dmean, 1d0)

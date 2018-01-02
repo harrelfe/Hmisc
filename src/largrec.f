@@ -52,8 +52,8 @@ C     * ar - tempory area storage
 C
       xd   = xlim(2)-xlim(1)
       yd   = ylim(2)-ylim(1)
-      xinc = xd/DFLOAT(numbins)
-      yinc = yd/DFLOAT(numbins)
+      xinc = xd / numbins
+      yinc = yd / numbins
       rx(1) = 1d30
       rx(2) = 1d30
       ry(1) = 1d30

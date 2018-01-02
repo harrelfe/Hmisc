@@ -32,7 +32,7 @@ C Output from Public domain Ratfor, version 1.01
       dmean = dmean + xd(k)
 23008 continue
 23009 continue
-      dmean = f*dmean/dfloat(lx)
+      dmean = f * dmean / lx
       sump = 0d0
       do23010 k=1, lx 
       z = min(xd(k)/dmean, 1d0)

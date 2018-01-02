@@ -61,7 +61,7 @@ C Output from Public domain Ratfor, version 1.01
       s = 0d0
       aad = 0d0
       maxad = 0d0
-      z = dfloat(n)
+      z = n
       do23018 i=1,n 
       rxi = rx(i)
       ryi = ry(i)

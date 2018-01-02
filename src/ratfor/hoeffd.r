@@ -57,7 +57,7 @@ DOUBLE PRECISION x(n), y(n), rx(n), ry(n), rj(n), maxad
     s = 0d0
     aad = 0d0
     maxad = 0d0
-    z = dfloat(n)
+    z = n
     DO i=1,n {
         rxi = rx(i)
         ryi = ry(i)

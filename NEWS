@@ -1,6 +1,7 @@
-Changes in version 4.1-1 (2017-12-22)
+Changes in version 4.1-1 (2017-01-02))
    * describe: quit rounding values when <= 20 distinct values no matter how far apart any two values are spaced.  https://stackoverflow.com/questions/47679551
    * summaryM: fixed to handle character variables properly, by converting them to factors.  Thanks: Matt Shotwell
+   * Fortran/ratfor routines hoeffd, jacklins, largrec, rcorr, wclosest: fixed errors where some scalars were single precision, got rid of some warnings
 
 Changes in version 4.1-0 (2017-12-19)
    * latex.default: insert spaces between multiple entries in bottom index in latex tables (thanks: ecortens https://github.com/harrelfe/Hmisc/pull/73)

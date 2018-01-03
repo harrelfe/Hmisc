@@ -1,4 +1,4 @@
-Changes in version 4.1-1 (2017-01-02))
+Changes in version 4.1-1 (2018-01-03))
    * describe: quit rounding values when <= 20 distinct values no matter how far apart any two values are spaced.  https://stackoverflow.com/questions/47679551
    * summaryM: fixed to handle character variables properly, by converting them to factors.  Thanks: Matt Shotwell
    * Fortran/ratfor routines hoeffd, jacklins, largrec, rcorr, wclosest: fixed errors where some scalars were single precision, got rid of some warnings

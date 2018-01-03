@@ -32,15 +32,9 @@ Much of the tabular output produced here was created using `html` methods, which
 # Setup 
 ```{r setup,results='hide'}
 require(Hmisc)
-source('~/R/Hmisc/R/label.s')
-# Use the following require() if rendering with html output instead of notebook
-# require(plotly)
-# Use the folowing with html output instead of notebook
-# knitrSet(lang='markdown', h=4.5, cache=TRUE)
-knitrSet(lang='markdown', h=4.5, fig.path='png/', fig.align='left')
+knitrSet(lang='markdown', h=4.5, fig.path='png/', fig.align='left')  # + sometimes ,cache=TRUE
 # knitrSet redirects all messages to messages.txt
 options(grType='plotly') # for certain graphics functions
-#require(plotly)          # not needed if using html notebook instead
 mu <- markupSpecs$html   # markupSpecs is in Hmisc
 cap  <- mu$cap           # function to output html caption
 lcap <- mu$lcap          # for continuation for long caption

@@ -410,7 +410,40 @@ else
 invisible()
 }
 
+putHcap <- function(..., scap=NULL, extra=NULL, subsub=TRUE, hr=TRUE,
+                    file='', append=FALSE) {
   
+  mu <- markupSpecs$html
+  
+  lcap <- unlist(list(...))
+  if(length(lcap)) lcap <- paste(lcap, collapse=' ')
+
+  if(! length(lcap) && ! length(scap)) {
+    if(hr) cat(mu$hrule, '\n', sep='', file=file, append=append)
+    return(invisible())
+  }
+  if(! length(scap)) {
+    scap <- lcap
+    lcap <- NULL
+  }
+  scap <- mu$cap(scap)
+  if(subsub) scap <- paste0('\n### ', scap)
+  if(hr) cat(mu$hrule, '\n', sep='', file=file, append=append)
+  cat(scap, '\n', sep='', file=file, append=append || hr)
+  if(length(lcap)) {
+    lcap <- mu$lcap(lcap)
+    if(length(extra))
+      lcap <- paste0(
+        '<TABLE width="100%" BORDER="0" CELLPADDING="3" CELLSPACING="3">',
+        '<TR><TD>', lcap, '</TD>',
+        paste(paste0('<TD style="text-align:right;padding: 0 1ex 0 1ex;">',
+                     extra, '</TD>'), collapse=''),
+        '</TR></TABLE>')
+    cat(lcap, '\n', sep='', file=file, append=TRUE)
+  }
+invisible()
+}
+
 combineLabels <- function(...)
   {
     w <- list(...)

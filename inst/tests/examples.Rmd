@@ -1,37 +1,46 @@
 ---
 title: "Hmisc Examples"
-author: "FE Harrell"
+author: "FE Harrell<br><small>Department of Biostatistics<br>Vanderbilt University</small>"
 date: '`r Sys.Date()`'
 output:
-  html_notebook:
-    toc: yes
-    toc_depth: 3
-    toc_float:
-      collapsed: yes
-    fig_caption: yes
   html_document:
     toc: yes
     toc_depth: 3
-    toc_float:
-      collapsed: yes
+    number_sections: false
+    toc_float: 
+      collapsed: false
+    code_folding: hide
+    theme: cerulean
 csl: american-medical-association.csl
-bibliography: ~/bib/harrelfe.bib
+css: stewarttoc.css
+bibliography: harrelfe.bib
+description: "Hmisc examples using plotly interactive graphics in an html report"
 ---
+<button id="toc-toggle" type="button" class="btn btn-default btn-xs code-folding-btn pull-right collapsed" onclick="toggletoc()"><span>Outline</span></button>
+
+<script>
+function toggletoc(){
+$("#TOC").toggle();
+}
+</script>
+
 # Introduction
-This is a set of reproducible examples for the R[@R] `Hmisc` package[@Hmisc], put together in an `rmarkdown` notebook using `RStudio` and `knitr`.  When viewing the resulting [html file](http://data.vanderbilt.edu/fh/R/Hmisc/examples.nb.html) you can see all the code, and can download the entire `rmarkdown` script, which is especially helpful for seeing how `knitr` chunks are specified.  Graphics that have a [plotly](http://plot.ly/r) method for them are rendered using `plotly` instead of using defaults such as base graphics, `lattice`, or `ggplot2`.  That way the plots are somewhat interactive, e.g., allow for drill-down for more information without the viewer needing to install `R`.
+This is a set of reproducible examples for the R[@R] `Hmisc` package[@Hmisc], put together in an `rmarkdown` notebook using `RStudio` and `knitr`.  When viewing the resulting [html file](http://data.vanderbilt.edu/fh/R/Hmisc/examples.html) you can see all the code, and can download the entire `rmarkdown` script, which is especially helpful for seeing how `knitr` chunks are specified.  Graphics that have a [plotly](http://plot.ly/r) method for them are rendered using `plotly` instead of using defaults such as base graphics, `lattice`, or `ggplot2`.  That way the plots are somewhat interactive, e.g., allow for drill-down for more information without the viewer needing to install `R`.
 
 Much of the tabular output produced here was created using `html` methods, which are especially easy to implement with `rmarkdown` and make for output that can be directly opened using word processors.  Jump to [Computing Environment](#compenv) for a list of packages used here, and their version numbers.
 
 # Setup 
 ```{r setup,results='hide'}
 require(Hmisc)
+source('~/R/Hmisc/R/label.s')
 # Use the following require() if rendering with html output instead of notebook
 # require(plotly)
 # Use the folowing with html output instead of notebook
 # knitrSet(lang='markdown', h=4.5, cache=TRUE)
-knitrSet(lang='markdown', h=4.5)
+knitrSet(lang='markdown', h=4.5, fig.path='png/', fig.align='left')
 # knitrSet redirects all messages to messages.txt
 options(grType='plotly') # for certain graphics functions
+#require(plotly)          # not needed if using html notebook instead
 mu <- markupSpecs$html   # markupSpecs is in Hmisc
 cap  <- mu$cap           # function to output html caption
 lcap <- mu$lcap          # for continuation for long caption
@@ -108,14 +117,16 @@ p <- plot(d)
 # results='asis' was needed in the chunk header
 # We define a long caption for one of the plots, which does not appear
 # in the table of contents
-prList(p, lcap=c('', 'These are spike histograms'), htmlfig=2)
+# prList works for html notebooks but not html documents
+# prList(p, lcap=c('', 'These are spike histograms'), htmlfig=2)
 ```
+
 You can also re-form multiple `plotly` graphs into a [single HTML object](http://stackoverflow.com/questions/35193612).  Here we use the `putHfig` function to render the result, with a caption and a short caption for the table of contents.  This approach requires you to put <code>results='asis'</code> in the chunk header.  By default <code>putHfig</code> puts a horizontal line before the caption and figure.
 
 ```{r plotlym,results='asis'}
-x <- htmltools::tagList(p)  #lapply(p, plotly::as.widget))
-putHfig(x, 'This used the <code>htmltools tagList</code> function.',
+putHcap('This used the <code>htmltools tagList</code> function.',
         scap='Two <code>plotly</code> graphics combined into one')
+htmltools::tagList(p)    # lapply(p, plotly::as.widget)
 ```
 
 You can also create figure captions outside of R code by using the <code>smg, fcap</code> HTML tags defined in <code>markupSpecs</code>.  The long caption not appearing in the table of contents will be in a separate line without ###.
@@ -130,20 +141,19 @@ Produce stratified quantiles, means/SD, and proportions by treatment group.  Plo
 s <- summaryM(bili + albumin + stage + protime + sex + age + spiders +
               alk.phos + sgot + chol ~ drug, data=pbc,
 							overall=FALSE, test=TRUE)
-# If not using captions, just use plot(s, which='categorical')
-putHfig(plot(s, which='categorical'),
-        'Proportions and', mu$chisq(), 'tests for categorical variables')
+putHcap('Proportions and', mu$chisq(), 'tests for categorical variables')
+plot(s, which='categorical')
 ```
 To construct the caption outside of the code chunk use e.g. ### r cap('Proportions and', mu$chisq(), 'tests for categorical variables') where a backtick is placed before r and after the last ).
 
 ```{r summaryM2,results='asis'}
-putHfig(plot(s, which='continuous', vars=1 : 4),
-        'Extended box plots for the first 4 continuous variables')
+putHcap('Extended box plots for the first 4 continuous variables')
+plot(s, which='continuous', vars=1 : 4)
 ```
 
 ```{r summaryM3,results='asis'}
-putHfig(plot(s, which='continuous', vars=5 : 7),
-        'Extended box plots for the remaining continuous variables')
+putHcap('Extended box plots for the remaining continuous variables')
+plot(s, which='continuous', vars=5 : 7)
 ```
 
 ```{r summaryM4}
@@ -153,9 +163,9 @@ html(s, caption='Baseline characteristics by randomized treatment',
 ```
 Now show almost the full raw data for one continuous variable stratified by treatment.  This display spike histograms using at most 100 bins, and also shows the mean and quantiles similar to what is in an extended box plot: 0.05, 0.25, 0.5, 0.75, 0.95.  Measures of spread are also shown if the user clicks on their legend entries: Gini's mean difference (mean absolute difference between any two values) and the SD.  These can be seen as horizontal lines up against the minimum x-value.
 ```{r histbox,results='asis'}
-p <- with(pbc, histboxp(x=sgot, group=drug, sd=TRUE))
-putHfig(p, "Spike histograms, means, quantiles, Gini's mean difference, and SD stratified by treatment",
+putHcap("Spike histograms, means, quantiles, Gini's mean difference, and SD stratified by treatment",
        scap="Stratified spike histograms and quantiles")
+with(pbc, histboxp(x=sgot, group=drug, sd=TRUE))
 ```
 
 The following is a better way to display proportions, for categorical variables.  If computing marginal statistics by running the dataset through the `Hmisc` `addMarginal` function, the `plot` method with `options(grType='plotly')` is especially useful.
@@ -163,22 +173,22 @@ The following is a better way to display proportions, for categorical variables.
 ```{r summaryM5,results='asis'}
 pbcm <- addMarginal(pbc, drug)
 s <- summaryP(stage + sex + spiders ~ drug, data=pbc)
-putHfig(plot(s, groups='drug'),
-        'Proportions stratified by treatment')
+putHcap('Proportions stratified by treatment')
+plot(s, groups='drug')
 s <- summaryP(stage + sex + spiders ~ drug, data=pbcm)
-putHfig(plot(s, marginVal='All', marginLabel='All Treatment Groups'),
-        'Proportions (large symbols) and proportions stratified by treatment (small symbols)',
+putHcap('Proportions (large symbols) and proportions stratified by treatment (small symbols)',
 				scap='Proportions with and without stratification by treatment')
+plot(s, marginVal='All', marginLabel='All Treatment Groups')
 ```
 
 # Better Demonstration of Boxplot Replacement
-```{r support}
+```{r support, results='asis'}
 getHdata(support2)
-p <- with(support2, histboxp(x=meanbp, group=dzgroup, sd=TRUE,
-                             bins=200))
-putHfig(p, "Spike histograms, means, quantiles, Gini's mean difference, and SD for MAP stratified by diagnosis",
+putHcap("Spike histograms, means, quantiles, Gini's mean difference, and SD for MAP stratified by diagnosis",
        scap="Stratified spike histograms and quantiles for MAP")
+with(support2, histboxp(x=meanbp, group=dzgroup, sd=TRUE, bins=200))
 ```
+
 # Example of Ordinary Figure Captions
 As explained in https://stackoverflow.com/questions/45018397 one can place captions under figures using ordinary `knitr` capabilities, and one can change the size of captions.  The following example defines a `CSS` style to make captions small (here `0.6em`), and produces a plot with a caption.  Unlike using `putHfig` this caption does not also appear in the table of contents.  *However* figure captions appear to work only in html reports, not in html notebooks.
 
@@ -229,5 +239,5 @@ file.copy('~/Downloads/harrelfe-missing-data.bib', 'missing-data.bib',
 [^2]: `mu` is a copy of the part of the `Hmisc` package object `markupSpecs` that is for html.  It includes a function `session` that renders the session environment (including package versions) in html.
 
 <!---
-To update html notebook on the server: cdatar examples.nb.html Hmisc
+To update html notebook on the server: cdatar examples.html Hmisc
 -->

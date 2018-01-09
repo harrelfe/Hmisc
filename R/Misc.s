@@ -1652,7 +1652,8 @@ knitrSet <- function(basename=NULL, w=4, h=3, wo=NULL, ho=NULL,
                      tidy=FALSE, error=FALSE,
                      messages=c('messages.txt', 'console'),
                      width=61, decinline=5, size=NULL, cache=FALSE,
-                     echo=TRUE, results='markup', lang=c('latex','markdown')) {
+                     echo=TRUE, results='markup',
+                     lang=c('latex','markdown','blogdown')) {
 
   if(! requireNamespace('knitr')) stop('knitr package not available')
   messages <- match.arg(messages)
@@ -1667,11 +1668,12 @@ knitrSet <- function(basename=NULL, w=4, h=3, wo=NULL, ho=NULL,
 
   if(lang == 'latex') knitr::render_listings()
   if(messages != 'console') {
-	unlink(messages) # Start fresh with each run
-	hook_log = function(x, options) cat(x, file=messages, append=TRUE)
-	knitr::knit_hooks$set(warning = hook_log, message = hook_log)
+    unlink(messages) # Start fresh with each run
+    hook_log = function(x, options) cat(x, file=messages, append=TRUE)
+    knitr::knit_hooks$set(warning = hook_log, message = hook_log)
   }
-  else knitr::opts_chunk$set(message=FALSE, warning=FALSE)
+  else
+    knitr::opts_chunk$set(message=FALSE, warning=FALSE)
   if(length(size)) knitr::opts_chunk$set(size = size)
   ## For htmlcap see http://stackoverflow.com/questions/15010732
   ## Causes collisions in html and plotly output; Original (no better)
@@ -1688,50 +1690,52 @@ knitrSet <- function(basename=NULL, w=4, h=3, wo=NULL, ho=NULL,
     formals(rnd) <- list(x=NULL, dec=decinline)
     knitr::knit_hooks$set(inline = rnd)
   }
-
-  spar <- function(mar=if(!axes)
-                 c(2.25+bot-.45*multi,2*(las==1)+2+left,.5+top+.25*multi,
-                   .5+rt) else
+  
+  if(lang != 'blogdown') {
+    spar <- function(mar=if(!axes)
+                     c(2.25+bot-.45*multi,2*(las==1)+2+left,.5+top+.25*multi,
+                       .5+rt) else
                  c(3.25+bot-.45*multi,2*(las==1)+3.5+left,.5+top+.25*multi,
                    .5+rt),
                  lwd = if(multi)1 else 1.75,
                  mgp = if(!axes) mgp=c(.75, .1, 0) else
-                 if(multi) c(1.5, .365, 0) else c(2.4-.4, 0.475, 0),
+                       if(multi) c(1.5, .365, 0) else c(2.4-.4, 0.475, 0),
                  tcl = if(multi)-0.25 else -0.4, xpd=FALSE, las=1,
                  bot=0, left=0, top=0, rt=0, ps=if(multi) 14 else 10,
                  mfrow=NULL, axes=TRUE, cex.lab=1.15, cex.axis=.8,
                  ...) {
-  multi <- length(mfrow) > 0
-  par(mar=mar, lwd=lwd, mgp=mgp, tcl=tcl, ps=ps, xpd=xpd,
-      cex.lab=cex.lab, cex.axis=cex.axis, las=las, ...)
-  if(multi) par(mfrow=mfrow)
-}
+      multi <- length(mfrow) > 0
+      par(mar=mar, lwd=lwd, mgp=mgp, tcl=tcl, ps=ps, xpd=xpd,
+          cex.lab=cex.lab, cex.axis=cex.axis, las=las, ...)
+      if(multi) par(mfrow=mfrow)
+    }
 
-  knitr::knit_hooks$set(par=function(before, options, envir)
-                 if(before && options$fig.show != 'none') {
-                   p <- c('bty','mfrow','ps','bot','top','left','rt','lwd',
-                          'mgp','las','tcl','axes','xpd')
-                   pars <- knitr::opts_current$get(p)
-                   pars <- pars[!is.na(names(pars))]
-                   ## knitr 1.6 started returning NULLs for unspecified pars
-                   i <- sapply(pars, function(x) length(x) > 0)
-                   if(any(i)) do.call('spar', pars[i]) else spar()
-                 })
-  knitr::opts_knit$set(
-    width=width)
+    knitr::knit_hooks$set(par=function(before, options, envir)
+      if(before && options$fig.show != 'none') {
+        p <- c('bty','mfrow','ps','bot','top','left','rt','lwd',
+               'mgp','las','tcl','axes','xpd')
+        pars <- knitr::opts_current$get(p)
+        pars <- pars[!is.na(names(pars))]
+        ## knitr 1.6 started returning NULLs for unspecified pars
+        i <- sapply(pars, function(x) length(x) > 0)
+        if(any(i)) do.call('spar', pars[i]) else spar()
+      })
+    knitr::opts_knit$set(
+                       width=width)
     #aliases=c(h='fig.height', w='fig.width', cap='fig.cap', scap='fig.scap'))
     #eval.after = c('fig.cap','fig.scap'),
     #error=error)  #, keep.source=keep.source (TRUE))
   # See if need to remove dev=dev from below because of plotly graphics
-  knitr::opts_chunk$set(fig.path=fig.path, fig.align=fig.align,
-                        fig.width=w, fig.height=h,
-                        out.width=wo,out.height=ho,
-                        fig.show=fig.show, fig.lp=fig.lp, fig.pos=fig.pos,
-                        dev=dev, par=TRUE, tidy=tidy, out.width=NULL,
-                        cache=cache,
-                        echo=echo, error=error, comment='', results=results)
-  
-  if(lang == 'markdown') knitr::knit_hooks$set(uncover=markupSpecs$html$uncover)
+    knitr::opts_chunk$set(fig.path=fig.path, fig.align=fig.align,
+                          fig.width=w, fig.height=h,
+                          out.width=wo,out.height=ho,
+                          fig.show=fig.show, fig.lp=fig.lp, fig.pos=fig.pos,
+                          dev=dev, par=TRUE, tidy=tidy, out.width=NULL,
+                          cache=cache,
+                          echo=echo, error=error, comment='', results=results)
+  }
+
+  if(lang != 'latex') knitr::knit_hooks$set(uncover=markupSpecs$html$uncover)
   
   hook_chunk = knitr::knit_hooks$get('chunk')
   ## centering will not allow too-wide figures to go into left margin

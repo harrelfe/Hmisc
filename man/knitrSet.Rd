@@ -33,7 +33,7 @@ knitrSet(basename=NULL, w=4, h=3, wo=NULL, ho=NULL,
          tidy=FALSE, error=FALSE,
          messages=c('messages.txt', 'console'),
          width=61, decinline=5, size=NULL, cache=FALSE,
-         echo=TRUE, results='markup', lang=c('latex','markdown'))
+         echo=TRUE, results='markup', lang=c('latex','markdown','blogdown'))
 
 plotlySave(x, \dots)
 }
@@ -55,7 +55,11 @@ plotlySave(x, \dots)
 	\item{decinline}{number of digits to the right of the decimal point to
 		round numeric values appearing inside Sexpr}
 	\item{lang}{Default is \code{'latex'} to use LaTeX.  Set to
-		\code{markdown} when using R Markdown.}
+		\code{'markdown'} when using R Markdown or \code{'blogdown'}.  For
+		\code{'blogdown'} \code{par} and \code{knitr} graphics-related hooks
+		are not called as this would prevent
+		\code{blogdown} from putting graphics files in the correct directory
+		for the blog system.}
 	\item{x}{a \code{plotly} graphics object or a named list of such
 		objects.  The resulting \code{png} file will go in the file path
 		given by the \code{knitr} \code{fig.path} value, and have a base

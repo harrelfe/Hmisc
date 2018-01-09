@@ -1,6 +1,7 @@
-Changes in version 4.1-2 (2018-01-04)
+Changes in version 4.1-2 (2018-01-06)
    * putHcap: new function
    * inst/tests/example.Rmd: changed to html document, replaced putHfig calls with new putHcap
+   * knitrSet: new lang='blogdown' option
 
 Changes in version 4.1-1 (2018-01-03)
    * describe: quit rounding values when <= 20 distinct values no matter how far apart any two values are spaced.  https://stackoverflow.com/questions/47679551
@@ -38,7 +39,7 @@ Changes in version 4.1-0 (2017-12-19)
    * combine, combine<-: removed (were deprecated long time ago)
    * removed inc-dec.s which defined unused inc<- and dec<- for increment and decrement
    * NAMESPACE: removed exportPattern("^([^.]|\\..+\\.)") and explicitly exported everything, stopping export of methods
-   * round.POSIXt,trunc.POSIXt: changed to roundPOSIXt, trunPOSIXt to avoid conflicts with R base
+   * round.POSIXt,trunc.POSIXt: changed to roundPOSIXt, truncPOSIXt to avoid conflicts with R base
    * asNumericMatrix, matrix2dataFrame: changed to respect original storage.mode.  Thanks: Andre Mikulec
 	 
 Changes in version 4.0-3 (2017-04-30)

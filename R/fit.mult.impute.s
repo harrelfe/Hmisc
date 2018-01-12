@@ -50,7 +50,8 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
     v <- do.call('vcov', c(list(object=f, intercepts='all'), vcovOpts))
 
     if(i == 1) {
-      if(inherits(f, 'orm'))
+      if(inherits(f, 'orm') && length(f$na.action) &&
+         length(f$na.action$nmiss) && f$na.action$nmiss[1] > 0)
         warning('When using fit.mult.impute with orm, there should not be any missing\nY values because different imputations will result in differing numbers\nof intercepts')
       assign <- f$assign
       ns     <- num.intercepts(f)

@@ -1644,23 +1644,24 @@ getRs <- function(file=NULL,
   invisible()
 }
 
-knitrSet <- function(basename  = NULL,
-                     w=if(! bd) 4,
-                     h=if(! bd) 3,
-                     wo=NULL, ho=NULL,
-                     fig.path  = if(length(basename)) basename else '',
-                     fig.align = if(! bd) 'center',
-                     fig.show  = 'hold',
-                     fig.pos   = if(! bd) 'htbp',
-                     fig.lp    = if(! bd)
-                                   paste('fig', basename, sep=':'),
-                     dev       = switch(lang,
-                                        latex='pdf', markdown='png', blogdown=NULL),
-                     tidy=FALSE, error=FALSE,
-                     messages=c('messages.txt', 'console'),
-                     width=61, decinline=5, size=NULL, cache=FALSE,
-                     echo=TRUE, results='markup',
-                     lang=c('latex','markdown','blogdown')) {
+knitrSet <-
+  function(basename  = NULL,
+           w=if(! bd) 4,
+           h=if(! bd) 3,
+           wo=NULL, ho=NULL,
+           fig.path  = if(length(basename)) basename else '',
+           fig.align = if(! bd) 'center',
+           fig.show  = 'hold',
+           fig.pos   = if(! bd) 'htbp',
+           fig.lp    = if(! bd)
+                         paste('fig', basename, sep=':'),
+           dev       = switch(lang,
+                              latex='pdf', markdown='png', blogdown=NULL),
+           tidy=FALSE, error=FALSE,
+           messages=c('messages.txt', 'console'),
+           width=61, decinline=5, size=NULL, cache=FALSE,
+           echo=TRUE, results='markup',
+           lang=c('latex','markdown','blogdown')) {
 
   if(! requireNamespace('knitr')) stop('knitr package not available')
   
@@ -1703,24 +1704,6 @@ knitrSet <- function(basename  = NULL,
     knitr::knit_hooks$set(inline = rnd)
   }
   
-  spar <-
-    function(mar=if(!axes)
-                   c(2.25+bot-.45*multi,2*(las==1)+2+left,.5+top+.25*multi,
-                     .5+rt) else
-                      c(3.25+bot-.45*multi,2*(las==1)+3.5+left,.5+top+.25*multi,
-                        .5+rt),
-             lwd = if(multi)1 else 1.75,
-             mgp = if(!axes) mgp=c(.75, .1, 0) else
-                   if(multi) c(1.5, .365, 0) else c(2.4-.4, 0.475, 0),
-             tcl = if(multi)-0.25 else -0.4, xpd=FALSE, las=1,
-             bot=0, left=0, top=0, rt=0, ps=if(multi) 14 else 11,
-             mfrow=NULL, axes=TRUE, cex.lab=1.15, cex.axis=.8,
-             ...) {
-      multi <- length(mfrow) > 0
-      par(mar=mar, lwd=lwd, mgp=mgp, tcl=tcl, ps=ps, xpd=xpd,
-          cex.lab=cex.lab, cex.axis=cex.axis, las=las, ...)
-      if(multi) par(mfrow=mfrow)
-    }
 
   knitr::knit_hooks$set(par=function(before, options, envir)
     if(before && options$fig.show != 'none') {
@@ -1730,7 +1713,26 @@ knitrSet <- function(basename  = NULL,
       pars <- pars[! is.na(names(pars))]
       ## knitr 1.6 started returning NULLs for unspecified pars
       i <- sapply(pars, function(x) length(x) > 0)
-      if(any(i)) do.call('spar', pars[i]) else spar()
+      .spar. <-
+        function(mar=if(!axes)
+                       c(2.25+bot-.45*multi,2*(las==1)+2+left,.5+top+.25*multi,
+                         .5+rt) else
+                                  c(3.25+bot-.45*multi,2*(las==1)+3.5+left,.5+top+.25*multi,
+                                    .5+rt),
+                 lwd = if(multi)1 else 1.75,
+                 mgp = if(!axes) mgp=c(.75, .1, 0) else
+                       if(multi) c(1.5, .365, 0) else c(2.4-.4, 0.475, 0),
+                 tcl = if(multi)-0.25 else -0.4, xpd=FALSE, las=1,
+                 bot=0, left=0, top=0, rt=0, ps=if(multi) 14 else 12,
+                 mfrow=NULL, axes=TRUE, cex.lab=1.15, cex.axis=1,
+                 ...) {
+          multi <- length(mfrow) > 0
+          par(mar=mar, lwd=lwd, mgp=mgp, tcl=tcl, ps=ps, xpd=xpd,
+              cex.lab=cex.lab, cex.axis=cex.axis, las=las, ...)
+          if(multi) par(mfrow=mfrow)
+        }
+
+      if(any(i)) do.call(.spar., pars[i]) else .spar.()
     })
   
   knitr::opts_knit$set(width=width)

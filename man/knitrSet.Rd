@@ -25,11 +25,12 @@
 	found in one's profile settings.
 }
 \usage{
-knitrSet(basename=NULL, w=4, h=3, wo=NULL, ho=NULL,
+knitrSet(basename=NULL, w=if(! bd) 4, h=if(! bd) 3, wo=NULL, ho=NULL,
          fig.path=if(length(basename)) basename else '',
-         fig.align='center', fig.show='hold', fig.pos='htbp',
-         fig.lp=paste('fig', basename, sep=':'),
-         dev=switch(lang, latex='pdf', markdown='png'),
+         fig.align=if(! bd) 'center', fig.show='hold',
+         fig.pos=if(! bd) 'htbp',
+         fig.lp=if(! bd) paste('fig', basename, sep=':'),
+         dev=switch(lang, latex='pdf', markdown='png', blowdown=NULL),
          tidy=FALSE, error=FALSE,
          messages=c('messages.txt', 'console'),
          width=61, decinline=5, size=NULL, cache=FALSE,
@@ -44,7 +45,7 @@ plotlySave(x, \dots)
 	\item{wo,ho}{default figure rendering width and height, in integer
 		pixels or percent as a character string, e.g. \code{'40\%'}}
 	\item{fig.path}{path for figures.  To put figures in a subdirectory
-		specify e.g. \code{fig.path='folder/'}.}
+		specify e.g. \code{fig.path='folder/'}.  Ignored for blogdown.}
 	\item{fig.align,fig.show,fig.pos,fig.lp,tidy,cache,echo,results,error,size}{see knitr documentation} 
 	\item{dev}{graphics device, with default figured from \code{lang}}
 	\item{messages}{By default warning and other messages such as those

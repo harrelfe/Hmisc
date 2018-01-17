@@ -1746,7 +1746,7 @@ knitrSet <-
             fig.width=w, fig.height=h,
             out.width=wo,out.height=ho,
             fig.show=fig.show, fig.lp=fig.lp, fig.pos=fig.pos,
-            dev=dev, par=TRUE, tidy=tidy, out.width=NULL,
+            dev=dev, par=TRUE, tidy=tidy,
             cache=cache,
             echo=echo, error=error, comment='', results=results)
   if(bd) w$fig.path <- NULL

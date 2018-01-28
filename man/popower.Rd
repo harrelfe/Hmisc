@@ -100,6 +100,10 @@ p <- c(.1,.2,.4,.3)
 popower(p, 1.2, 1000)   # OR=1.2, total n=1000
 posamsize(p, 1.2)
 popower(p, 1.2, 3148)
+# If p was the vector of probabilities for group 1, here's how to
+# compute the average over the two groups:
+# p2   <- pomodm(p=p, odds.ratio=1.2)
+# pavg <- (p + p2) / 2
 
 # Compare power to test for proportions for binary case,
 # proportion of events in control group of 0.1

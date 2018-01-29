@@ -567,7 +567,8 @@ invertTabulated(x, y, freq=rep(1,length(x)),
     example of how \code{dtrans} might be specified is
     \code{dtrans=function(w) \{w$age <- w$years + w$months/12; w\}}
     where \code{months} might havebeen imputed but \code{years} was
-    never missing.
+    never missing.  An outline for using `dtrans` to impute missing
+		baseline variables in a longitudinal analysis appears in Details below.
   }
   \item{derived}{
     an expression containing \R expressions for computing derived
@@ -850,6 +851,33 @@ invertTabulated(x, y, freq=rep(1,length(x)),
   \code{transcan}.  Use for example \code{fit.mult.impute(y ~ codes(x),
     lrm, trans)} (thanks to Trevor Thompson
   \email{trevor@hp5.eushc.org}).
+
+	Here is an outline of the steps necessary to impute baseline variables
+	using the \code{dtrans} argument, when the analysis to be repeated by
+	\code{fit.mult.impute} is a longitudinal analysis (using
+	e.g. \code{Gls}).
+	\enumerate{
+		\item Create a one row per subject data frame containing baseline
+	variables plus follow-up variables that are assigned to windows.  For
+	example, you may have dozens of repeated measurements over years but
+	you capture the measurements at the times measured closest to 1, 2,
+	and 3 years after study entry
+	\item Make sure the dataset contains the subject ID
+	\item This dataset becomes the one passed to \code{aregImpute} as
+	\code{data=}.  You will be imputing missing baseline variables from
+	follow-up measurements defined at fixed times.
+	\item Have another dataset with all the non-missing follow-up values
+	on it, one record per measurement time per subject.  This dataset
+	should not have the baseline variables on it, and the follow-up
+	measurements should not be named the same as the baseline variable(s);
+	the subject ID must also appear
+	\item Add the dtrans argument to \code{fit.mult.impute} to define a
+	function with one argument representing the one record per subject
+	dataset with missing values filled it from the current imputation.
+	This function merges the above 2 datasets; the returned value of this
+	function is the merged data frame.
+	\item This merged-on-the-fly dataset is the one handed by \code{fit.mult.impute} to your fitting function, so  variable names in the formula given to \code{fit.mult.impute} must matched the names created by the merge
+		}
 }
 \author{
   Frank Harrell  \cr

@@ -545,7 +545,8 @@ if(FALSE)
 
 histboxp <- function(p=plotly::plot_ly(height=height),
                      x, group=NULL, xlab=NULL,
-                     gmd=TRUE, sd=FALSE, bins=100, wmax=190, mult=7) {
+                     gmd=TRUE, sd=FALSE, bins=100, wmax=190, mult=7,
+                     symbol='line-ns-open', size=9) {
 
   if(! length(xlab)) xlab <- label(x, html=TRUE, plot=TRUE,
                                    default=deparse(substitute(x)))
@@ -619,9 +620,9 @@ histboxp <- function(p=plotly::plot_ly(height=height),
   }
 
   ng <- length(levs)
-  height <- plotlyParm$heightDotchart(ng) + 50 * (gmd & sd)
+  height <- plotlyParm$heightDotchart(1.2 * ng) + 50 * (gmd & sd)
 
-  dh$prop <- 0.8 * dh$prop / max(dh$prop)
+  dh$prop <- 0.6 * dh$prop / max(dh$prop)
   p <- plotly::add_segments(p, data=dh,
                             x = ~ x,
                             y = ~ y,
@@ -635,7 +636,7 @@ histboxp <- function(p=plotly::plot_ly(height=height),
   dm$txt <- with(dm, paste0('Mean:', format(Mean, digits=5), '<br>n=', n,
                             '<br>', miss, ' missing'))
 
-  yoff <- 0.09
+  yoff <- 0.15 # 0.09
 
   p <- plotly::add_markers(p, data=dm, mode='markers', color=I('black'),
                            x = ~ Mean, y = ~ y - yoff,
@@ -648,8 +649,8 @@ histboxp <- function(p=plotly::plot_ly(height=height),
                            y = ~ y - yoff,
                            text = ~ txt,
                            hoverinfo = 'text',
-                           marker = list(symbol='line-ns-open',
-                                         color='black', size=8),
+                           marker = list(symbol=symbol,
+                                         color='black', size=size),
                            name = 'Median')
   
   p <- plotly::add_markers(p, mode='markers', data=dq2,
@@ -657,8 +658,8 @@ histboxp <- function(p=plotly::plot_ly(height=height),
                            y = ~ y - yoff,
                            text = ~ txt,
                            hoverinfo = 'text',
-                           marker = list(symbol='line-ns-open',
-                                         color='blue', size=6),
+                           marker = list(symbol=symbol,
+                                         color='blue', size=size * 6/8),
                            name = 'Quartiles')
   
   p <- plotly::add_markers(p, mode='markers', data=dq3,
@@ -666,8 +667,8 @@ histboxp <- function(p=plotly::plot_ly(height=height),
                            y = ~ y - yoff,
                            text = ~ txt,
                            hoverinfo = 'text',
-                           marker = list(symbol='line-ns-open',
-                                         color='red', size=4),
+                           marker = list(symbol=symbol,
+                                         color='red', size=size * 4/8),
                            name = '0.05, 0.95<br>Quantiles')
 
   if(gmd)

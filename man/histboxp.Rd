@@ -18,7 +18,8 @@ easily seen.
 }
 \usage{
 histboxp(p = plotly::plot_ly(height=height), x, group = NULL,
-         xlab=NULL, gmd=TRUE, sd=FALSE, bins = 100, wmax=190, mult=7)
+         xlab=NULL, gmd=TRUE, sd=FALSE, bins = 100, wmax=190, mult=7,
+         symbol='line-ns-open', size=9)
 }
 \arguments{
   \item{p}{\code{plotly} graphics object if already begun}
@@ -33,6 +34,11 @@ histboxp(p = plotly::plot_ly(height=height), x, group = NULL,
 		the number of distinct values of \code{x} is less than \code{bins},
 		the actual values of \code{x} are used.}
 	\item{wmax,mult}{tweaks for margin to allocate}
+	\item{symbol}{marker symbol for depicting quantiles.  Default is
+		vertical lines.  Other good choices are \code{"triangle-up-open", "diamond-tall"}}
+	\item{size}{length of symbol for median.  Symbols for quartiles and
+		outer quantiles are respectively 3/4 and 1/2 as large as
+		\code{size}}
 }
 \value{a \code{plotly} object}
 \author{Frank Harrell}

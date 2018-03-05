@@ -545,8 +545,7 @@ if(FALSE)
 
 histboxp <- function(p=plotly::plot_ly(height=height),
                      x, group=NULL, xlab=NULL,
-                     gmd=TRUE, sd=FALSE, bins=100, wmax=190, mult=7,
-                     symbol='line-ns-open', size=9) {
+                     gmd=TRUE, sd=FALSE, bins=100, wmax=190, mult=7) {
 
   if(! length(xlab)) xlab <- label(x, html=TRUE, plot=TRUE,
                                    default=deparse(substitute(x)))
@@ -636,14 +635,44 @@ histboxp <- function(p=plotly::plot_ly(height=height),
   dm$txt <- with(dm, paste0('Mean:', format(Mean, digits=5), '<br>n=', n,
                             '<br>', miss, ' missing'))
 
-  yoff <- 0.15 # 0.09
+#  yoff <- 0.15 # 0.09
+
+  a <- 0.05
+  b <- 0.4
+  k <- (a + b) / 2
+  w <- (b - a) / 2
 
   p <- plotly::add_markers(p, data=dm, mode='markers', color=I('black'),
-                           x = ~ Mean, y = ~ y - yoff,
+                           x = ~ Mean, y = ~ y - k,
                            text = ~ txt,
                            hoverinfo = 'text',
-                           name = 'Mean')
+                           name = 'Mean', size=I(4))
 
+  segs <- function(p, x, y, yend, text, data, color, name) {
+    
+    plotly::add_segments(p, data=data,
+                         x=x, y=y,
+                         xend=x, yend=yend,
+                         text=text, hoverinfo='text',
+                         name=name, # legendgroup=name,
+                         color=color, line=list(width=2))
+    
+#    plotly::add_segments(p, data=data,
+#                         x=x, y=y,
+#                         xend=x, yend=yend,
+#                         hoverinfo='none',
+#                         name='junk', legendgroup=name, showlegend=FALSE,
+#                         opacity=0.2, color=color, line=list(width=9))
+  }
+
+  p <- segs(p, x=~Median, y=~y-k-w, yend=~y-k+w, text=~txt,
+            data=dq1, color=I('black'), name='Median')
+  p <- segs(p, x=~quartiles, y=~y-k-w*.8, yend=~y-k+w*.8, text=~txt,
+            data=dq2, color=I('blue'), name='Quartiles')
+  p <- segs(p, x=~outer, y=~y-k-w*.64, yend=~y-k+w*.64, text=~txt,
+            data=dq3, color=I('red'), name='0.05, 0.95<br>Quantiles')
+
+   if(FALSE) {
   p <- plotly::add_markers(p, mode='markers', data=dq1,
                            x = ~ Median,
                            y = ~ y - yoff,
@@ -670,6 +699,7 @@ histboxp <- function(p=plotly::plot_ly(height=height),
                            marker = list(symbol=symbol,
                                          color='red', size=size * 4/8),
                            name = '0.05, 0.95<br>Quantiles')
+  }
 
   if(gmd)
     p <- plotly::add_segments(p, data=dgmd,

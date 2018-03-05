@@ -6,7 +6,7 @@ Changes in version 4.1-2 (2018-03-04)
    * knitrSet: made more functional for blogdown
    * knitrSet: removed duplicate setting of out.width
    * fit.mult.impute: added step-by-step instructions for imputing missing baseline variables when analyzing serial data
-   * hixboxp: added arguments symbol, size, changed default for size
+   * histboxp: changed to display quantiles using line segments, and centered segments vertically
 
 Changes in version 4.1-1 (2018-01-03)
    * describe: quit rounding values when <= 20 distinct values no matter how far apart any two values are spaced.  https://stackoverflow.com/questions/47679551

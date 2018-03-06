@@ -545,7 +545,8 @@ if(FALSE)
 
 histboxp <- function(p=plotly::plot_ly(height=height),
                      x, group=NULL, xlab=NULL,
-                     gmd=TRUE, sd=FALSE, bins=100, wmax=190, mult=7) {
+                     gmd=TRUE, sd=FALSE, bins=100, wmax=190, mult=7,
+                     connect=TRUE) {
 
   if(! length(xlab)) xlab <- label(x, html=TRUE, plot=TRUE,
                                    default=deparse(substitute(x)))
@@ -575,12 +576,17 @@ histboxp <- function(p=plotly::plot_ly(height=height),
 
   group <- as.factor(group)
   mis   <- is.na(x)
+  levs  <- levels(group)
+  ng    <- length(levs)
+  Qu    <- matrix(NA, nrow=ng, ncol=5)
+  j     <- 0
+
   for(g in levels(group)) {
     i <- group == g
+    j <- j + 1
     miss <- sum(mis[i])
     if(miss > 0) i <- i & ! mis
     if(! any(i)) next
-    levs <- c(levs, g)
     u     <- x[i]
     ur    <- xr[i]
     tab   <- as.data.frame(table(ur))
@@ -611,6 +617,7 @@ histboxp <- function(p=plotly::plot_ly(height=height),
 
     probs <- c(0.05, 0.25, 0.5, 0.75, 0.95)
     qu  <- quantile(u, probs)
+    Qu[j, ] <- qu
     nam <- paste0('Q', mu$sub(probs))
     txt <- paste0(nam, ':', format(qu, digits=5))
     dq1 <- rbind(dq1, data.frame(Median=qu[3], txt=txt[3], y=y))
@@ -618,7 +625,6 @@ histboxp <- function(p=plotly::plot_ly(height=height),
     dq3 <- rbind(dq3, data.frame(outer=qu[c(1,5)], txt=txt[c(1,5)], y=y))
   }
 
-  ng <- length(levs)
   height <- plotlyParm$heightDotchart(1.2 * ng) + 50 * (gmd & sd)
 
   dh$prop <- 0.6 * dh$prop / max(dh$prop)
@@ -635,8 +641,6 @@ histboxp <- function(p=plotly::plot_ly(height=height),
   dm$txt <- with(dm, paste0('Mean:', format(Mean, digits=5), '<br>n=', n,
                             '<br>', miss, ' missing'))
 
-#  yoff <- 0.15 # 0.09
-
   a <- 0.05
   b <- 0.4
   k <- (a + b) / 2
@@ -646,16 +650,16 @@ histboxp <- function(p=plotly::plot_ly(height=height),
                            x = ~ Mean, y = ~ y - k,
                            text = ~ txt,
                            hoverinfo = 'text',
-                           name = 'Mean', size=I(4))
+                           name = 'Mean', size=I(5))
 
-  segs <- function(p, x, y, yend, text, data, color, name) {
+  segs <- function(p, x, y, yend, text, data, color, name, width=2) {
     
     plotly::add_segments(p, data=data,
                          x=x, y=y,
                          xend=x, yend=yend,
                          text=text, hoverinfo='text',
-                         name=name, # legendgroup=name,
-                         color=color, line=list(width=2))
+                         name=name, legendgroup=name,
+                         color=color, line=list(width=width))
     
 #    plotly::add_segments(p, data=data,
 #                         x=x, y=y,
@@ -666,11 +670,24 @@ histboxp <- function(p=plotly::plot_ly(height=height),
   }
 
   p <- segs(p, x=~Median, y=~y-k-w, yend=~y-k+w, text=~txt,
-            data=dq1, color=I('black'), name='Median')
+            data=dq1, color=I('black'), name='Median', width=3)
   p <- segs(p, x=~quartiles, y=~y-k-w*.8, yend=~y-k+w*.8, text=~txt,
             data=dq2, color=I('blue'), name='Quartiles')
+  onam <- '0.05, 0.95<br>Quantiles'
   p <- segs(p, x=~outer, y=~y-k-w*.64, yend=~y-k+w*.64, text=~txt,
-            data=dq3, color=I('red'), name='0.05, 0.95<br>Quantiles')
+            data=dq3, color=I('red'), name=onam)
+
+  if(connect) {
+    ys <- -(1 : ng) - k
+    qs <- function(p, x, xend, color, lg)
+      plotly::add_segments(p, x=x, xend=xend, y=~ys, yend=~ys,
+                           hoverinfo='none', showlegend=FALSE,
+                           opacity=0.3, color=color,
+                           legendgroup=lg, name='ignored')
+    p <- qs(p, x= ~ Qu[,1], xend=~ Qu[,2], color=I('red'),  lg=onam)
+    p <- qs(p, x= ~ Qu[,2], xend=~ Qu[,4], color=I('blue'), lg='Quartiles')
+    p <- qs(p, x= ~ Qu[,4], xend=~ Qu[,5], color=I('red'),  lg=onam)
+    }
 
    if(FALSE) {
   p <- plotly::add_markers(p, mode='markers', data=dq1,

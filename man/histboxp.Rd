@@ -18,7 +18,8 @@ easily seen.
 }
 \usage{
 histboxp(p = plotly::plot_ly(height=height), x, group = NULL,
-         xlab=NULL, gmd=TRUE, sd=FALSE, bins = 100, wmax=190, mult=7)
+         xlab=NULL, gmd=TRUE, sd=FALSE, bins = 100, wmax=190, mult=7,
+         connect=TRUE)
 }
 \arguments{
   \item{p}{\code{plotly} graphics object if already begun}
@@ -33,6 +34,7 @@ histboxp(p = plotly::plot_ly(height=height), x, group = NULL,
 		the number of distinct values of \code{x} is less than \code{bins},
 		the actual values of \code{x} are used.}
 	\item{wmax,mult}{tweaks for margin to allocate}
+	\item{connect}{set to \code{FALSE} to suppress lines connecting quantiles}
 }
 \value{a \code{plotly} object}
 \author{Frank Harrell}

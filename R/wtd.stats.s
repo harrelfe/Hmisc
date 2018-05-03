@@ -1,6 +1,6 @@
 wtd.mean <- function(x, weights=NULL, normwt='ignored', na.rm=TRUE)
 {
-  if(!length(weights)) return(mean(x, na.rm=na.rm))
+  if(! length(weights)) return(mean(x, na.rm=na.rm))
   if(na.rm) {
     s <- ! is.na(x + weights)
     x <- x[s]
@@ -17,7 +17,7 @@ wtd.var <- function(x, weights=NULL, normwt=FALSE, na.rm=TRUE,
   ## By Benjamin Tyner <btyner@gmail.com> 2017-0-12
 {
   method <- match.arg(method)
-  if(!length(weights)) {
+  if(! length(weights)) {
     if(na.rm) x <- x[!is.na(x)]
     return(var(x))
   }
@@ -58,7 +58,7 @@ wtd.quantile <- function(x, weights=NULL, probs=c(0, .25, .5, .75, 1),
                              2 - log10(diff(range(probs))) else 2)), 
                 "%", sep = "")
 
-  i <- weights == 0
+  i <- is.na(weights) || weights == 0
   if(any(i)) {
     x <- x[! i]
     weights <- weights[! i]

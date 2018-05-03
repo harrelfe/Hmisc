@@ -481,6 +481,7 @@ print.summaryM <-
   what   <- match.arg(what)
   if(is.logical(prtest) && !prtest) prtest <- 'none'
   obj <- x
+  if(! length(obj$results)) return()
   for(strat in names(obj$results)) {
     x <- obj$results[[strat]]
     
@@ -594,6 +595,7 @@ latex.summaryM <-
            tabenv1=FALSE, prob=c(0.25, 0.5, 0.75), prN=FALSE,
            legend.bottom=FALSE, html=FALSE, mspecs=markupSpecs, ...)
 {
+  if(! length(object$results)) return()
   if(! append) cat('', file=file)
   append <- TRUE
   what   <- match.arg(what)

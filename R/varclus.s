@@ -10,7 +10,7 @@ varclus <-
 {
   call <- match.call()
   type <- match.arg(type)
-  if(type!="similarity.matrix") similarity <- match.arg(similarity)
+  if(type != "similarity.matrix") similarity <- match.arg(similarity)
   trans <- match.arg(trans)
   
   nact <- NULL
@@ -39,7 +39,7 @@ varclus <-
 
   if(type == "data.matrix") { ## assume not a correlation matrix
       if(similarity %in% c("bothpos","ccbothpos")) {
-        isthere <- 1*(!is.na(x))
+        isthere <- 1*(! is.na(x))
         x[is.na(x)] <- 0
         x[x > 0] <- 1
         n <- crossprod(isthere)
@@ -140,19 +140,19 @@ plot.varclus <- function(x, ylab, abbrev=FALSE, legend.=FALSE, loc, maxlen=20,
            bothpos="Proportion",
            ccbothpos="Chance-Corrected Proportion")[x$similarity]
     if((is.expression(s) && as.character(s)=='NULL') ||
-       (!is.expression(s) && (is.na(s) || s=='')))
+       (! is.expression(s) && (is.na(s) || s=='')))
       s <- x$similarity
     ylab <- s
   }
   
   if(legend.) abbrev <- TRUE
   
-  if(!length(labels)) labels <- dimnames(x$sim)[[2]]
+  if(! length(labels)) labels <- dimnames(x$sim)[[2]]
   
   olabels <- labels
   if(abbrev) labels <- abbreviate(labels)
 
-  if(!length(x$hclust))
+  if(! length(x$hclust))
     stop('clustering was not done on similarity="ccbothpos"')
 
   plot(x$hclust, labels=labels, ann=FALSE, axes=FALSE, ...)
@@ -182,12 +182,12 @@ na.retain <- function(mf) mf
 
 naclus <- function(df, method="complete")
 {
-  ismiss <- function(x) if(is.character(x))x=='' else is.na(x) 
+  ismiss <- function(x) if(is.character(x)) is.na(x) | x=='' else is.na(x) 
 
-  na <- sapply(df, ismiss)*1
+  na <- sapply(df, ismiss) * 1
 
   n <- nrow(na)
-  sim <- crossprod(na)/n
+  sim <- crossprod(na) / n
   res <- varclus(sim, type="similarity.matrix", similarity="Fraction Missing",
                  method=method)
   na.per.obs <- apply(na, 1, sum)
@@ -242,7 +242,7 @@ naplot <- function(obj, which=c('all','na per var','na per obs','mean na',
     eps <- .015*diff(usr[1:2]);
     epsy <- .015*diff(usr[3:4])
     
-    s <- (1:length(na.per.var))[!is.na(mean.na)]
+    s <- (1:length(na.per.var))[! is.na(mean.na)]
     taken.care.of <- NULL
     for(i in s) {
       if(i %in% taken.care.of)
@@ -291,7 +291,7 @@ plotMultSim <- function(s, x=1:dim(s)[3],
                         lwd=par('lwd'), vname=NULL, h=.5, w=.75,
                         u=.05, labelx=TRUE, xspace=.35)
 {
-  if(!length(vname))
+  if(! length(vname))
     vname <- dimnames(s)[[1]]
   p <- dim(s)[1]
   if(length(vname) != p) stop('wrong length for vname')
@@ -302,7 +302,7 @@ plotMultSim <- function(s, x=1:dim(s)[3],
   if(length(x) != dim(s)[3])
     stop('length of x differs from extent of 3rd dimension of s')
 
-  if(!add) {
+  if(! add) {
     plot(c(-xspace,p+.5),c(.5,p+.25), type='n', axes=FALSE, xlab='',ylab='')
     if(labelx)
       text(1:p, rep(.6,p), vname, adj=.5)
@@ -339,7 +339,7 @@ plotMultSim <- function(s, x=1:dim(s)[3],
         
         sle <- c(sl[1]-u*diff(sl), sl[2]+u*diff(sl))
         
-        if(!add) {
+        if(! add) {
           lines(c(i-w/2,i+w/2,i+w/2,
                   i-w/2,i-w/2),
                 c(j-h/2,j-h/2,j+h/2,
@@ -357,7 +357,7 @@ plotMultSim <- function(s, x=1:dim(s)[3],
         lines(scaleit(x, rxe, c(i-w/2,i+w/2)),
               scaleit(s[i,j,], sle, c(j-h/2,j+h/2)),
               lty=lty, lwd=lwd, col=col)
-        if(!add && slimds && (i!=j))
+        if(! add && slimds && (i != j))
           lines(c(i-w/2,i+w/2),
                 rep(scaleit(0, sle, c(j-h/2,j+h/2)),2),
                 col=gray(.5))

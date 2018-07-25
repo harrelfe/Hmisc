@@ -18,5 +18,5 @@ Changes the first letter of each word in a string to upper case, keeping selecte
 upFirst(c('this and that','that is Beyond question'))
 }
 \references{
-\url{http://en.wikipedia.org/wiki/Letter_case#Headings_and_publication_titles}, \url{http://titlecapitalization.com}
+\url{http://en.wikipedia.org/wiki/Letter_case#Headings_and_publication_titles}
 }

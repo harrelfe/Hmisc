@@ -27,6 +27,7 @@ histboxp(p = plotly::plot_ly(height=height), x, group = NULL,
          connect=TRUE, showlegend=TRUE)
 histboxpM(p=plotly::plot_ly(height=height), x, group=NULL,
           gmd=TRUE, sd=FALSE, ...)
+}
 \arguments{
   \item{p}{\code{plotly} graphics object if already begun}
   \item{x}{a numeric vector, or for \code{histboxpM} a numeric vector or

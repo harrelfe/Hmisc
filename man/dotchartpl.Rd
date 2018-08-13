@@ -38,7 +38,8 @@ dotchartpl(x, major=NULL, minor=NULL, group=NULL, mult=NULL,
            lower=NULL, upper=NULL,
            refgroup=NULL, sortdiff=TRUE, conf.int=0.95,
            minkeep=NULL, xlim=NULL, xlab='Proportion',
-           tracename=NULL, limitstracename=NULL,
+           tracename=NULL, limitstracename='Limits',
+           nonbigtracename='Stratified Estimates',
            width=800,
            col=colorspace::rainbow_hcl)
 }
@@ -81,9 +82,15 @@ dotchartpl(x, major=NULL, minor=NULL, group=NULL, mult=NULL,
 	\item{tracename}{\code{plotly} trace name if \code{group} is not used}
 	\item{limitstracename}{\code{plotly} trace name for \code{lower} and
 		\code{upper} if \code{group} is not used}
+	\item{nonbigtracename}{\code{plotly} trace name used for non-big
+	elements, which usually represent stratified versions of the "big"
+	observations}
 	\item{col}{a function or vector of colors to assign to \code{group}.
 	If a function it will be evaluated with an argument equal to the
 	number of distinct groups.}
+  \item{nonbigtracename}{character string specifying the trace name to
+	use for non-\code{big} elements, typically representing stratified
+	estimates}
 	\item{width}{width of plot in pixels}
 	}
 \value{a \code{plotly} object.  An attribute \code{levelsRemoved} is

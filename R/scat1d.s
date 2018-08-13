@@ -530,23 +530,15 @@ if(FALSE)
   d$y[j] <- d$y[j] + d$z[j] / ifelse(bottom.align, 1, 2)
 
   plotly::plot_ly(d, x=~ x, y=~ y, mode='lines', type='scatter',
-#                  color=d$color,# colors=colors,
                   line=list(color=d$color, width=1.4),  # ...
                   text=~ hovertext,
                   hoverinfo=if(length(hovertext)) 'text' else 'none')
-
-#  plotly::add_trace(p, data=d, x=x, y=y, mode='lines',
-#                    color=color, colors=colors,
-#                    line=list(..., width=1.4),
-#                    text=hovertext,
-#                    hoverinfo=if(length(hovertext)) 'text' else 'none',
-#                    evaluate=TRUE, name=tracename)
-}
+  }
 
 histboxp <- function(p=plotly::plot_ly(height=height),
                      x, group=NULL, xlab=NULL,
                      gmd=TRUE, sd=FALSE, bins=100, wmax=190, mult=7,
-                     connect=TRUE) {
+                     connect=TRUE, showlegend=TRUE) {
 
   if(! length(xlab)) xlab <- label(x, html=TRUE, plot=TRUE,
                                    default=deparse(substitute(x)))
@@ -636,7 +628,9 @@ histboxp <- function(p=plotly::plot_ly(height=height),
                             text = ~ txt,
                             hoverinfo = 'text',
                             color = I('black'),
-                            name  = 'Histogram')
+                            name  = 'Histogram',
+                            legendgroup = 'Histogram',
+                            showlegend=showlegend)
 
   dm$txt <- with(dm, paste0('Mean:', format(Mean, digits=5), '<br>n=', n,
                             '<br>', miss, ' missing'))
@@ -649,8 +643,9 @@ histboxp <- function(p=plotly::plot_ly(height=height),
   p <- plotly::add_markers(p, data=dm, mode='markers', color=I('black'),
                            x = ~ Mean, y = ~ y - k,
                            text = ~ txt,
-                           hoverinfo = 'text',
-                           name = 'Mean', size=I(5))
+                           hoverinfo = 'text', size=I(5),
+                           name='Mean', legendgroup='Mean',
+                           showlegend=showlegend)
 
   segs <- function(p, x, y, yend, text, data, color, name, width=2) {
     
@@ -659,14 +654,8 @@ histboxp <- function(p=plotly::plot_ly(height=height),
                          xend=x, yend=yend,
                          text=text, hoverinfo='text',
                          name=name, legendgroup=name,
+                         showlegend=showlegend,
                          color=color, line=list(width=width))
-    
-#    plotly::add_segments(p, data=data,
-#                         x=x, y=y,
-#                         xend=x, yend=yend,
-#                         hoverinfo='none',
-#                         name='junk', legendgroup=name, showlegend=FALSE,
-#                         opacity=0.2, color=color, line=list(width=9))
   }
 
   p <- segs(p, x=~Median, y=~y-k-w, yend=~y-k+w, text=~txt,
@@ -689,35 +678,7 @@ histboxp <- function(p=plotly::plot_ly(height=height),
     p <- qs(p, x= ~ Qu[,4], xend=~ Qu[,5], color=I('red'),  lg=onam)
     }
 
-   if(FALSE) {
-  p <- plotly::add_markers(p, mode='markers', data=dq1,
-                           x = ~ Median,
-                           y = ~ y - yoff,
-                           text = ~ txt,
-                           hoverinfo = 'text',
-                           marker = list(symbol=symbol,
-                                         color='black', size=size),
-                           name = 'Median')
-  
-  p <- plotly::add_markers(p, mode='markers', data=dq2,
-                           x = ~ quartiles,
-                           y = ~ y - yoff,
-                           text = ~ txt,
-                           hoverinfo = 'text',
-                           marker = list(symbol=symbol,
-                                         color='blue', size=size * 6/8),
-                           name = 'Quartiles')
-  
-  p <- plotly::add_markers(p, mode='markers', data=dq3,
-                           x = ~ outer,
-                           y = ~ y - yoff,
-                           text = ~ txt,
-                           hoverinfo = 'text',
-                           marker = list(symbol=symbol,
-                                         color='red', size=size * 4/8),
-                           name = '0.05, 0.95<br>Quantiles')
-  }
-
+  gnam <- paste0('Gini ', mu$overbar(paste0('|', htmlGreek('Delta'), '|')))
   if(gmd)
     p <- plotly::add_segments(p, data=dgmd,
                               x = ~ x,
@@ -727,10 +688,9 @@ histboxp <- function(p=plotly::plot_ly(height=height),
                               text = ~ txt,
                               hoverinfo = 'text',
                               color = I('light gray'),
-                              name = paste0('Gini ',
-                                       mu$overbar(paste0('|',
-                                                    htmlGreek('Delta'), '|'))),
-                              visible='legendonly')
+                              name = gnam, legendgroup=gnam,
+                              visible='legendonly',
+                              showlegend=showlegend)
                               
   if(sd)
     p <- plotly::add_segments(p, data=dsd,
@@ -741,8 +701,9 @@ histboxp <- function(p=plotly::plot_ly(height=height),
                               text = ~ txt,
                               hoverinfo = 'text',
                               color = I('light blue'),
-                              name = 'SD',
-                              visible='legendonly')
+                              name = 'SD', legendgroup='SD',
+                              visible='legendonly',
+                              showlegend=showlegend)
 
   p <- plotly::layout(p,
                       margin = list(l=plotlyParm$lrmargin(levs,
@@ -753,3 +714,28 @@ histboxp <- function(p=plotly::plot_ly(height=height),
                                    ticktext = levs))
   p
 }
+
+histboxpM <- function(p=plotly::plot_ly(height=height), x, group=NULL, gmd=TRUE, sd=FALSE, ...) {
+  nx <- if(is.data.frame(x)) ncol(x) else 1
+  ng <- if(length(group)) length(unique(group)) else 1
+  height <- nx * (plotlyParm$heightDotchart(1.2 * ng) + 50 * (gmd & sd))
+  height <- min(height, 1700)
+
+  nam <- deparse(substitute(x))
+  if(is.data.frame(x) && ncol(x) == 1) x <- x[[1]]
+  if(! is.data.frame(x))
+    return(histboxp(p=p, x=x, group=group,
+                    xlab=labelPlotmath(label(x, default=nam), units(x),
+                                       html=TRUE), gmd=gmd, sd=sd, ...))
+
+  P <- list()
+  for(i in 1 : nx) {
+    y <- x[[i]]
+    xlab <- labelPlotmath(label(y, default=names(x)[i]), units(y), html=TRUE)
+    P[[i]] <- histboxp(p, x=y, group=group, xlab=xlab, showlegend=i==1,
+                       gmd=gmd, sd=sd, ...)
+  }
+
+  plotly::subplot(P, nrows=ncol(x), shareX=FALSE, shareY=FALSE,
+                  titleX=TRUE, margin=c(.02, .02, .05, .04))
+  }

@@ -418,8 +418,13 @@ putHcap <- function(..., scap=NULL, extra=NULL, subsub=TRUE, hr=TRUE,
   lcap <- unlist(list(...))
   if(length(lcap)) lcap <- paste(lcap, collapse=' ')
 
+  r <- NULL
+  txt <- is.logical(file)
+  
   if(! length(lcap) && ! length(scap)) {
-    if(hr) cat(mu$hrule, '\n', sep='', file=file, append=append)
+    if(hr) r <- c(r, mu$hrule)
+    if(txt) return(r)
+    if(hr) cat(r, '\n', sep='', file=file, append=append)
     return(invisible())
   }
   if(! length(scap)) {
@@ -428,8 +433,8 @@ putHcap <- function(..., scap=NULL, extra=NULL, subsub=TRUE, hr=TRUE,
   }
   scap <- mu$cap(scap)
   if(subsub) scap <- paste0('\n### ', scap)
-  if(hr) cat(mu$hrule, '\n', sep='', file=file, append=append)
-  cat(scap, '\n', sep='', file=file, append=append || hr)
+  if(hr) r <- c(r, mu$hrule)
+  r <- c(r, scap)
   if(length(lcap)) {
     lcap <- mu$lcap(lcap)
     if(length(extra))
@@ -439,9 +444,11 @@ putHcap <- function(..., scap=NULL, extra=NULL, subsub=TRUE, hr=TRUE,
         paste(paste0('<TD style="text-align:right;padding: 0 1ex 0 1ex;">',
                      extra, '</TD>'), collapse=''),
         '</TR></TABLE>')
-    cat(lcap, '\n', sep='', file=file, append=TRUE)
+    r <- c(r, lcap)
   }
-invisible()
+  if(txt) return(r)
+  cat(r, sep='\n', file=file, append=append)
+  invisible()
 }
 
 combineLabels <- function(...)

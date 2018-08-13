@@ -142,6 +142,8 @@ plot.summaryP <-
            outerlabels=TRUE, autoarrange=TRUE, col=colorspace::rainbow_hcl,
            ...)
 {
+  ## marginval: category name indicating addMarginal summaries (usually 'All')
+  ## marginLabel: a fuller label for this, e.g. 'All Regions'
   X <- x
   at   <- attributes(x)
   Form <- at$formula
@@ -170,7 +172,8 @@ plot.summaryP <-
       X$Big <- X[[condvar]] == marginVal
       if(marginLabel != marginVal)
         X[[condvar]] <- ifelse(X$Big, marginLabel, as.character(X[[condvar]]))
-      }
+    }
+
     p <-
       with(X,
            dotchartpl(freq / denom,
@@ -184,6 +187,10 @@ plot.summaryP <-
                       refgroup = refgroup,
                       xlim  = xlim,
                       col   = col,
+                      nonbigtracename=if(length(condvar))
+                                        paste0('Stratified by\n', condvar[1])
+                                      else
+                                        'Stratified Estimates',
                       ...)
            )
     return(p)

@@ -1,4 +1,4 @@
-Changes in version 4.1-2 (2018-06-08)
+Changes in version 4.1-2 (2018-08-11)
    * putHcap: new function
    * inst/tests/example.Rmd: changed to html document, replaced putHfig calls with new putHcap
    * knitrSet: new lang='blogdown' option
@@ -10,6 +10,10 @@ Changes in version 4.1-2 (2018-06-08)
    * wtd.quantile: removed observations with missing weights
    * print.summaryM, latex.summaryM: if no statistical results, do nothing and return
    * naclus: checking missings in character variables to also use is.na
+   * dotchartpl: backsolve from Wilson confidence interval when prop=0 or 1; added nobigtracename argument; fixed trace names
+   * putHfig: added file=FALSE to return character vector instead of writing
+   * histboxp: added showlegend so that can be called in a loop
+   * histboxpM: new function to call histboxp for multiple variables in a data frame
 
 Changes in version 4.1-1 (2018-01-03)
    * describe: quit rounding values when <= 20 distinct values no matter how far apart any two values are spaced.  https://stackoverflow.com/questions/47679551

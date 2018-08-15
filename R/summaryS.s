@@ -149,6 +149,55 @@ plot.summaryS <-
   }
   if(length(ylim)) lims <- ylim
   
+#########################################################################
+## plotly graphic
+#########################################################################
+
+  if(grType() == 'plotly') {
+    gp <- length(groups)
+    ylev <- levels(X$yvar)
+    xn <- setdiff(xnames, groups)
+    if(length(xn) != 1) stop('expecting one x variable')
+    X$.x.   <- X[[xn]]
+    mainstatname <- colnames(X$y)[1]
+    yn <- colnames(X$y)
+    yy <- rep('', nrow(X))
+    ny <- ncol(X$y)
+    for(i in 1 : ny) yy <- paste0(yy, if(i > 1)'<br>', yn[i], '=',
+                                  format(X$y[, i], nsmall=3, scientific=10))
+    X$.txt. <- paste0(xn, '=', format(X$.x., digits=4), ' ', yy)
+    xless(X$.txt)
+    if(gp) X$.group. <- X[[groups]]
+    xlab <- labelPlotmath(xlabels[xn], xunits[xn], default=xn, html=TRUE)
+    
+    if(ptype == 'xy') {
+      P <- list()
+      for(i in 1 : length(ylev)) {
+        d <- subset(X, yvar == ylev[i])
+        p <- plot_ly()
+        p <- if(gp)
+               add_markers(p, data=d, mode='markers', color=~ .group.,
+                           x = ~.x., y = ~y,
+                           text = ~ .txt., name=xlab, legendgroup=xlab,
+                           showlegend=i==1)
+             else
+               add_markers(p, data=d, mode='markers',
+                           x = ~.x., y = ~y,
+                           text = ~ .txt., name=xlab, legendgroup=xlab,
+                           showlegend=i==1)
+        P[[i]] <- p
+      }
+      if(nY == 1) return(p)
+      return(subplot(P, nrows=nY, shareX=TRUE, shareY=FALSE,
+                     titleX=TRUE, margin=c(.02, .02, .05, .04)))
+      }   ## end ptype xy
+  }  ## end plotly
+
+
+  
+########################################################################
+## lattice graphic  
+########################################################################
   
   d <- if(ptype == 'xy') {
     pan <- if(! length(datadensity)) function(...) {}

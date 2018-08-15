@@ -1,3 +1,5 @@
+## See stackoverflow.com/questions/10049402
+
 wtd.mean <- function(x, weights=NULL, normwt='ignored', na.rm=TRUE)
 {
   if(! length(weights)) return(mean(x, na.rm=na.rm))

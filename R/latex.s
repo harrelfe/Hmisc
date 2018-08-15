@@ -1230,17 +1230,13 @@ latexSN <- function(x) {
   x
 }
 
-htmlSN <- function(x) {
-  x <- format(x)
+htmlSN <- function(x, pretty=TRUE, ...) {
+  x <- if(pretty) prettyNum(x, ...) else format(x, ...)
+  prn(x)
   times <- htmlSpecial('times')
-  x <- sedit(x, c('e+00','e-0*',
-                  'e-*',
-                  'e+0*',
-                  'e+*'),
-             c('',
-               paste0(times, '10<sup>-*</sup>'),
-               paste0(times, '10<sup>-*</sup>'),
-               paste0(times, '10<sup>*</sup>'),
-               paste0(times, '10<sup>*</sup>')))
-  x
+  x <- gsub('e\\+00', '', x)
+  x <- gsub('e\\+0([0-9])', '×10<sup>\\1</sup>', x)
+  x <- gsub('e\\+(.*)', '×10<sup>\\1</sup>', x)
+  x <- gsub('e-0([0-9])', '×10<sup>-\\1</sup>', x)
+  gsub('e-(.*)', '×10<sup>-\\1</sup>', x)
 }

@@ -161,7 +161,7 @@ htmlTranslate(object, inn=NULL, out=NULL, greek=FALSE, na='',
 
 latexSN(x)
 
-htmlSN(x)
+htmlSN(x, pretty=TRUE, \dots)
 
 latexVerbatim(x, title=first.word(deparse(substitute(x))),
     file=paste(title, ".tex", sep=""),
@@ -485,7 +485,9 @@ dvigv(object, \dots)
     passes arguments to \code{format.df} (e.g., \code{col.just} and other
     formatting options like \code{dec}, \code{rdec}, and \code{cdec}).  For
     \code{latexVerbatim} these arguments are passed to the \code{print}
-    function.  Ignored for \code{latexTranslate} and \code{htmlTranslate}.
+    function.  Ignored for \code{latexTranslate} and
+		\code{htmlTranslate}.  For \code{htmlSN}, these arguments are passed
+		to \code{prettyNum} or \code{format}.
   }
   \item{inn, out}{
     specify additional input and translated strings over the usual
@@ -503,6 +505,8 @@ dvigv(object, \dots)
 		\code{latexTranslate} and \code{htmlTranslate}}
 	\item{code}{set to \code{'unicode'} to use HTML unicode characters
 		or \code{'&'} to use the ampersand pound number format}
+	\item{pretty}{set to \code{FALSE} to have \code{htmlSN} use
+		\code{format} instead of \code{prettyNum}}
   \item{hspace}{
     horizontal space, e.g., extra left margin for verbatim text.  Default
     is none.  Use e.g. \code{hspace="10ex"} to add 10 extra spaces to the left

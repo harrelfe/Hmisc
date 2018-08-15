@@ -1,4 +1,4 @@
-Changes in version 4.1-2 (2018-08-11)
+Changes in version 4.1-2 (2018-08-15)
    * putHcap: new function
    * inst/tests/example.Rmd: changed to html document, replaced putHfig calls with new putHcap
    * knitrSet: new lang='blogdown' option
@@ -14,6 +14,8 @@ Changes in version 4.1-2 (2018-08-11)
    * putHfig: added file=FALSE to return character vector instead of writing
    * histboxp: added showlegend so that can be called in a loop
    * histboxpM: new function to call histboxp for multiple variables in a data frame
+   * htmlSN: re-wrote for speed, and added argument pretty=
+   * plot.summaryS: added plotly method when options(grType='plotly')
 
 Changes in version 4.1-1 (2018-01-03)
    * describe: quit rounding values when <= 20 distinct values no matter how far apart any two values are spaced.  https://stackoverflow.com/questions/47679551

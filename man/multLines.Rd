@@ -8,12 +8,18 @@
 	and third columns of \code{y} represent lower and upper confidence
 	limits, or that (2) there is an even number of columns beyond the
 	first and these represent ascending quantiles that are symmetrically
-	arranged around 0.5.
+	arranged around 0.5.  If \code{options(grType='plotly')} is in effect,
+	uses \code{plotly} graphics instead of \code{grid} or base graphics.
+	For \code{plotly} you may want to set the list of possible colors,
+	etc. using \code{pobj=plot_ly(colors=...)}.  \code{lwd,lty,lwd.vert}
+	are ignored under \code{plotly}.
 }
 \usage{
 multLines(x, y, pos = c('left', 'right'), col='gray',
           lwd=1, lty=1, lwd.vert = .85, lty.vert = 1,
-          alpha = 0.4, grid = FALSE)
+          alpha = 0.4, grid = FALSE,
+          pobj=plotly::plot_ly(), xlim, name=colnames(y)[1], legendgroup=name,
+          showlegend=TRUE, ...)
 }
 \arguments{
   \item{x}{a numeric vector}
@@ -31,6 +37,15 @@ multLines(x, y, pos = c('left', 'right'), col='gray',
 	\item{lty.vert}{line type for vertical lines}
   \item{alpha}{transparency}
   \item{grid}{set to \code{TRUE} when using \code{grid}/\code{lattice}}
+	\item{pobj}{an already started \code{plotly} object to add to}
+	\item{xlim}{global x-axis limits (required if using \code{plotly})}
+	\item{name}{trace name if using \code{plotly}}
+	\item{legendgroup}{legend group name if using \code{plotly}}
+	\item{showlegend}{whether or not to show traces in legend, if using
+		\code{plotly}} 
+	\item{\dots}{passed to \code{add_lines} or \code{add_segments} if
+		using \code{plotly}}
+		
 }
 \author{Frank Harrell}
 \examples{

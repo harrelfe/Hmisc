@@ -1851,3 +1851,5 @@ tobase64image <- function (file, Rd = FALSE, alt = "image") {
                                   "}"
                                 else "")
 }
+
+plotp <- function(data, ...) UseMethod("plotp")

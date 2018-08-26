@@ -88,9 +88,6 @@ dotchartpl(x, major=NULL, minor=NULL, group=NULL, mult=NULL,
 	\item{col}{a function or vector of colors to assign to \code{group}.
 	If a function it will be evaluated with an argument equal to the
 	number of distinct groups.}
-  \item{nonbigtracename}{character string specifying the trace name to
-	use for non-\code{big} elements, typically representing stratified
-	estimates}
 	\item{width}{width of plot in pixels}
 	}
 \value{a \code{plotly} object.  An attribute \code{levelsRemoved} is

@@ -15,6 +15,7 @@
 \alias{nomiss}
 \alias{outerText}
 \alias{plotlyParm}
+\alias{plotp}
 \alias{sepUnitsTrans}
 \alias{strgraphwrap}
 \alias{tobase64image}
@@ -123,6 +124,9 @@
 	\code{plotlyParm} is a list of functions useful for specifying
 	parameters to \code{plotly} graphics.
 
+	\code{plotp} is a generic to handle \code{plotp} methods to make
+	\code{plotly} graphics.
+
   \code{sepUnitsTrans} converts character vectors containing values such
   as \code{c("3 days","3day","4month","2 years","2weeks","7")} to
   numeric vectors 
@@ -186,6 +190,7 @@ matxv(a, b, kint=1, bmat=FALSE)
 nomiss(x)
 outerText(string, y, cex=par('cex'), \dots)
 plotlyParm
+plotp(data, ...)
 sepUnitsTrans(x, conversion=c(day=1, month=365.25/12, year=365.25, week=7),
               round=FALSE, digits=0)
 strgraphwrap(x, width = 0.9 * getOption("width"),
@@ -213,6 +218,7 @@ xless(x, \dots, title)
   \item{clip}{interval to truncate limits}
   \item{col}{vector of colors}
   \item{conversion}{a named numeric vector}
+	\item{data}{an object having a \code{plotp} method}
   \item{digits}{number of digits used for \code{round}}
   \item{est}{vector of point estimates for confidence limits}
   \item{f}{a scaling constant}

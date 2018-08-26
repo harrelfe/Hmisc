@@ -1232,11 +1232,10 @@ latexSN <- function(x) {
 
 htmlSN <- function(x, pretty=TRUE, ...) {
   x <- if(pretty) prettyNum(x, ...) else format(x, ...)
-  prn(x)
   times <- htmlSpecial('times')
   x <- gsub('e\\+00', '', x)
-  x <- gsub('e\\+0([0-9])', '×10<sup>\\1</sup>', x)
-  x <- gsub('e\\+(.*)', '×10<sup>\\1</sup>', x)
-  x <- gsub('e-0([0-9])', '×10<sup>-\\1</sup>', x)
-  gsub('e-(.*)', '×10<sup>-\\1</sup>', x)
+  x <- gsub('e\\+0([0-9])', '\u00D710<sup>\\1</sup>', x)
+  x <- gsub('e\\+(.*)', '\u00D710<sup>\\1</sup>', x)
+  x <- gsub('e-0([0-9])', '\u00D710<sup>-\\1</sup>', x)
+  gsub('e-(.*)', '\u00D710<sup>-\\1</sup>', x)
 }

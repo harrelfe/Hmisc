@@ -1,6 +1,7 @@
 \name{histboxp}
 \alias{histboxp}
 \alias{histboxpM}
+\alias{dhistboxp}
 \title{Use plotly to Draw Stratified Spike Histogram and Box Plot Statistics}
 \description{
 Uses \code{plotly} to draw horizontal spike histograms stratified by
@@ -20,13 +21,24 @@ easily seen.
 \code{histboxpM} plots multiple histograms stacked vertically, for
 variables in a data frame having a common \code{group} variable (if any)
 and combined using \code{plotly::subplot}.
+
+\code{dhistboxp} is like \code{histboxp} but no \code{plotly} graphics
+are actually drawn.  Instead, a data frame suitable for use with
+\code{plotlyM} is returned.  For \code{dhistboxp} an additional level of
+stratification \code{strata} is implemented.  \code{group} causes a
+different result here to produce back-to-back histograms (in the case of
+two groups) for each level of \code{strata}.
 }
 \usage{
 histboxp(p = plotly::plot_ly(height=height), x, group = NULL,
          xlab=NULL, gmd=TRUE, sd=FALSE, bins = 100, wmax=190, mult=7,
          connect=TRUE, showlegend=TRUE)
+
+dhistboxp(x, group = NULL, strata=NULL, xlab=NULL, 
+          gmd=FALSE, sd=FALSE, bins = 100)
+
 histboxpM(p=plotly::plot_ly(height=height), x, group=NULL,
-          gmd=TRUE, sd=FALSE, ...)
+          gmd=TRUE, sd=FALSE, nrows=NULL, ncols=NULL, ...)
 }
 \arguments{
   \item{p}{\code{plotly} graphics object if already begun}
@@ -35,10 +47,16 @@ a data frame of numeric vectors, hopefully with \code{label} and
 \code{units} attributes}
   \item{group}{a discrete grouping variable.  If omitted, defaults to a
 		vector of ones}
+	\item{strata}{a discrete numeric stratification variable.  Values are
+          also used to space out different spike histograms.  Defaults
+          to a vector of ones.}
 	\item{xlab}{x-axis label, defaults to labelled version include units
 		of measurement if any}
 	\item{gmd}{set to \code{FALSE} to not compute Gini's mean difference}
 	\item{sd}{set to \code{TRUE} to compute the SD}
+	\item{nrows}{number of rows for layout of multiple plots}
+	\item{ncols}{number of columns for layout of multiple plots.  At most
+		one of \code{nrows,ncols} should be specified.}
   \item{bins}{number of equal-width bins to use for spike histogram.  If
 		the number of distinct values of \code{x} is less than \code{bins},
 		the actual values of \code{x} are used.}
@@ -50,7 +68,8 @@ a data frame of numeric vectors, hopefully with \code{label} and
   \item{\dots}{other arguments for \code{histboxpM} that are passed to
 \code{histboxp}}
 }
-\value{a \code{plotly} object}
+\value{a \code{plotly} object.  For \code{dhistboxp} a data frame as
+          expected by \code{plotlyM}}
 \author{Frank Harrell}
 
 \seealso{\code{\link{histSpike}}, \code{\link{plot.describe}},
@@ -64,7 +83,7 @@ x <- c(rnorm(500, 6, 1),
        rnorm(200, 2, .7), rnorm(300, 5.5, .4), rnorm(100, 8, .4))
 histboxp(x=x, group=Distribution, sd=TRUE)
 X <- data.frame(x, x2=runif(length(x)))
-histboxpM(x=X, group=Distribution)  # separate plots
+histboxpM(x=X, group=Distribution, ncols=2)  # separate plots
 }
 }
 \keyword{hplot}

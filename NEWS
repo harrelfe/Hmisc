@@ -1,4 +1,4 @@
-Changes in version 4.1-2 (2018-08-15)
+Changes in version 4.1-2 (2018-08-26)
    * putHcap: new function
    * inst/tests/example.Rmd: changed to html document, replaced putHfig calls with new putHcap
    * knitrSet: new lang='blogdown' option
@@ -16,7 +16,12 @@ Changes in version 4.1-2 (2018-08-15)
    * histboxpM: new function to call histboxp for multiple variables in a data frame
    * htmlSN: re-wrote for speed, and added argument pretty=
    * plot.summaryS: added plotly method when options(grType='plotly')
-
+   * plotp: moved generic from rms to Hmisc
+   * plotlyM: new function to make it easy to use plotly to produce multiple graphics of certain types, with specifications coming from a data frame
+   * plotp.summaryS: new plotly method for summaryS
+	 * mbarclpl, medvpl: new auxiliary functions for plotp.summaryS
+   * dhistboxp: new function
+	 
 Changes in version 4.1-1 (2018-01-03)
    * describe: quit rounding values when <= 20 distinct values no matter how far apart any two values are spaced.  https://stackoverflow.com/questions/47679551
    * summaryM: fixed to handle character variables properly, by converting them to factors.  Thanks: Matt Shotwell

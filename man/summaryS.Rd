@@ -1,8 +1,11 @@
 \name{summaryS}
 \alias{summaryS}
 \alias{plot.summaryS}
+\alias{plotp.summaryS}
 \alias{mbarclPanel}
 \alias{medvPanel}
+\alias{mbarclpl}
+\alias{medvpl}
 \title{Summarize Multiple Response Variables and Make Multipanel Scatter
 	or Dot Plot}
 \description{
@@ -27,6 +30,8 @@ When \code{panel} is specified in addition to \code{fun}, a special
 (typically time) is discrete.  This is used for example to plot multiple
 quantile intervals as vertical lines next to the main point.  A special
 panel function \code{mvarclPanel} is provided for this purpose.
+
+The \code{plotp} method produces corresponding \code{plotly} graphics.
 
 When \code{fun} is given and \code{panel} is omitted, and the result of
 \code{fun} is a vector of more than one 
@@ -55,12 +60,23 @@ intervals in this fashion, a failure of the two point estimates to touch
 the half-confidence interval is consistent with rejecting the null
 hypothesis of no difference at the 0.05 level.
 
+\code{mbarclpl} is the \code{sfun} function corresponding to
+\code{mbarclPanel} for \code{plotp}, and \code{medvpl} is the
+\code{sfun} replacement for \code{medvPanel}.
+
 \code{medvPanel} takes raw data and plots median \code{y} vs. \code{x},
 along with confidence intervals and half-interval for the difference in
 medians as with \code{mbarclPanel}.  Quantile intervals are optional.
 Very transparent vertical violin plots are added by default.  Unlike
 \code{panel.violin}, only half of the violin is plotted, and when there
 are two superpose groups they are side-by-side in different colors.
+
+For \code{plotp}, the function corresponding to \code{medvPanel} is
+\code{medvpl}, which draws back-to-back spike histograms, optional Gini
+mean difference, optional SD, quantiles (thin line version of box
+plot with 0.05 0.25 0.5 0.75 0.95 quantiles), and half-width confidence
+interval for differences in medians.  For quantiles, the Harrell-Davis
+estimator is used.
 }
 \usage{
 summaryS(formula, fun = NULL, data = NULL, subset = NULL,
@@ -76,9 +92,22 @@ summaryS(formula, fun = NULL, data = NULL, subset = NULL,
              col=trellis.par.get('superpose.symbol')$col, corner=c(0,1)),
            outerlabels=TRUE, autoarrange=TRUE, scat1d.opts=NULL, \dots)
 
+\method{plotp}{summaryS}(data, formula=NULL, groups=NULL, sfun=NULL,
+           fitter=NULL, showpts=! length(fitter), funlabel=NULL,
+           digits=5, xlim=NULL, ylim=NULL,
+           shareX=TRUE, shareY=FALSE, autoarrange=TRUE, \dots)
+
 mbarclPanel(x, y, subscripts, groups=NULL, yother, \dots)
 
 medvPanel(x, y, subscripts, groups=NULL, violin=TRUE, quantiles=FALSE, \dots)
+
+mbarclpl(x, y, groups=NULL, yother, yvar=NULL, maintracename='y',
+         xlim=NULL, ylim=NULL, xname='x', alphaSegments=0.7, \dots)
+
+medvpl(x, y, groups=NULL, yvar=NULL, maintracename='y',
+       xlim=NULL, ylim=NULL, xlab=xname, ylab=NULL, xname='x',
+       zeroline=FALSE, yother=NULL, alphaSegments=0.45,
+       dhistboxp.opts=NULL, \dots)
 }
 \arguments{
   \item{formula}{a formula with possibly multiple left and right-side
@@ -87,7 +116,8 @@ medvPanel(x, y, subscripts, groups=NULL, violin=TRUE, quantiles=FALSE, \dots)
            \code{formula} is optional and overrides the default formula
            inferred for the reshaped data frame.}
   \item{fun}{an optional summarization function, e.g., \code{\link{smean.sd}}}
-  \item{data}{optional input data frame}
+  \item{data}{optional input data frame.  For \code{plotp} is the object
+       produced by \code{summaryS}.}
   \item{subset}{optional subsetting criteria}
   \item{na.action}{function for dealing with \code{NA}s when
 		constructing the model data frame}
@@ -95,10 +125,12 @@ medvPanel(x, y, subscripts, groups=NULL, violin=TRUE, quantiles=FALSE, \dots)
            variable to have to be considered continuous}
   \item{\dots}{ignored for \code{summaryS} and \code{mbarclPanel},
 		passed to \code{strip} and \code{panel} for \code{plot}.  Passed to
-		the \code{\link{density}} function by \code{medvPanel}.}
+		the \code{\link{density}} function by \code{medvPanel}.  For
+       \code{plotp}, are passed to \code{plotlyM} and \code{sfun}.  For
+       \code{mbarclpl}, passed to \code{plotlyM}.}
 	\item{x}{an object created by \code{summaryS}.  For \code{mbarclPanel}
 		is an \code{x}-axis argument provided by \code{lattice}}
-	\item{groups}{a character string specifying that one of the
+	\item{groups}{a character string or factor specifying that one of the
            conditioning variables is used for superpositioning and not
            paneling}
   \item{panel}{optional \code{lattice} \code{panel} function}
@@ -112,9 +144,9 @@ medvPanel(x, y, subscripts, groups=NULL, violin=TRUE, quantiles=FALSE, \dots)
 	\item{textonly}{names of statistics to print and not plot.  By
            default, any statistic named \code{"n"} is only printed.}
 	\item{textplot}{names of statistics to print and plot}
-	\item{digits}{used if any statistics are printed as text, to specify
-           the number of digits to the right of the decimal point to
-           print}
+	\item{digits}{used if any statistics are printed as text (including
+       \code{plotly} hovertext), to specify
+           the number of significant digits to render}
 	\item{custom}{a function that customizes formatting of statistics that
            are printed as text.  This is useful for generating plotmath
            notation.  See the example in the tests directory.}
@@ -138,13 +170,37 @@ medvPanel(x, y, subscripts, groups=NULL, violin=TRUE, quantiles=FALSE, \dots)
 		based on multiple statistics computed}
 	\item{violin}{controls whether violin plots are included}
 	\item{quantiles}{controls whether quantile intervals are included}
+	\item{sfun}{a function called by \code{plotp.summaryS} to compute and
+       plot user-specified summary measures.  Two functions for doing
+       this are provided here: \code{mbarclpl, medvpl}.}
+  \item{fitter}{a fitting function such as \code{loess} to smooth
+       points.  The smoothed values over a systematic grid will be
+       evaluated and plotted as curves.}
+  \item{showpts}{set to \code{TRUE} to show raw data points in additon
+    to smoothed curves}
+	\item{shareX}{\code{TRUE} to cause \code{plotly} to share a single
+    x-axis when graphs are aligned vertically}
+	\item{shareY}{\code{TRUE} to cause \code{plotly} to share a single
+    y-axis when graphs are aligned horizontally}
+	\item{yvar}{a character or factor variable used to stratify the
+    analysis into multiple y-variables}
+	\item{maintracename}{a default trace name when it can't be inferred}
+	\item{xname}{x-axis variable name for hover text when it can't be
+    inferred}
+	\item{xlab}{x-axis label when it can't be inferred}
+	\item{alphaSegments}{alpha saturation to draw line segments for
+    \code{plotly}}
+	\item{dhistboxp.opts}{\code{list} of options to pass to \code{dhistboxp}}
+	\item{zeroline}{set to \code{FALSE} to suppress \code{plotly} zero
+    line at x=0}
 }
 \value{a data frame with added attributes for \code{summaryS} or a
            \code{lattice} object ready to render for \code{plot}}
 \author{Frank Harrell}
 \seealso{\code{\link{summary}}, \code{\link{summarize}}}
 \examples{
-# See tests directory file summaryS.r for more examples
+# See tests directory file summaryS.r for more examples, and summarySp.r
+# for plotp examples
 n <- 100
 set.seed(1)
 d <- data.frame(sbp=rnorm(n, 120, 10),

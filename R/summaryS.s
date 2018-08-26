@@ -54,7 +54,8 @@ summaryS <- function(formula, fun=NULL,
   ylabels <- sapply(Y, label)
   ylabels <- ifelse(ylabels == '', names(ylabels), ylabels)
 
-  structure(w, class=c('summaryS', 'data.frame'), formula=formula, fun=fun,
+  structure(w, class=c('summaryS', 'data.frame'),
+            formula=formula, fun=fun,
             xnames=names(X), xlabels=xlabels, xunits=sapply(X, units),
             xtype=sapply(X, gg),
             ynames=namY, ylabels=ylabels, yunits=sapply(Y, units),
@@ -88,7 +89,7 @@ plot.summaryS <-
   fun     <- at$fun
   funlabel <- if(length(at$funlabel)) at$funlabel else funlabel
   Panel    <- panel
-  
+
   ptype <- if(length(fun)) {  # used to always be 'dot'
     if(length(Panel)) 'xy.special' else 'dot'
   } else 'xy'
@@ -98,8 +99,10 @@ plot.summaryS <-
   groupslevels <- if(length(groups)) levels(x[[groups]])
   condvar <- xnames[xtype == 'categorical']
   ## Reorder condvar in descending order of number of levels
-  numu <- function(x) if(is.factor(x)) length(levels(x))
-                       else length(unique(x[! is.na(x)]))
+  numu <- function(x)
+    if(is.factor(x)) length(levels(x))
+    else
+      length(unique(x[! is.na(x)]))
 
   if(autoarrange && length(condvar) > 1) {
     nlev <- sapply(X[condvar], numu)
@@ -148,56 +151,6 @@ plot.summaryS <-
     lims <- rep(lims, each=nr)
   }
   if(length(ylim)) lims <- ylim
-  
-#########################################################################
-## plotly graphic
-#########################################################################
-
-  if(grType() == 'plotly') {
-    gp <- length(groups)
-    ylev <- levels(X$yvar)
-    xn <- setdiff(xnames, groups)
-    if(length(xn) != 1) stop('expecting one x variable')
-    X$.x.   <- X[[xn]]
-    mainstatname <- colnames(X$y)[1]
-    yn <- colnames(X$y)
-    yy <- rep('', nrow(X))
-    ny <- ncol(X$y)
-    for(i in 1 : ny) yy <- paste0(yy, if(i > 1)'<br>', yn[i], '=',
-                                  format(X$y[, i], nsmall=3, scientific=10))
-    X$.txt. <- paste0(xn, '=', format(X$.x., digits=4), ' ', yy)
-    xless(X$.txt)
-    if(gp) X$.group. <- X[[groups]]
-    xlab <- labelPlotmath(xlabels[xn], xunits[xn], default=xn, html=TRUE)
-    
-    if(ptype == 'xy') {
-      P <- list()
-      for(i in 1 : length(ylev)) {
-        d <- subset(X, yvar == ylev[i])
-        p <- plot_ly()
-        p <- if(gp)
-               add_markers(p, data=d, mode='markers', color=~ .group.,
-                           x = ~.x., y = ~y,
-                           text = ~ .txt., name=xlab, legendgroup=xlab,
-                           showlegend=i==1)
-             else
-               add_markers(p, data=d, mode='markers',
-                           x = ~.x., y = ~y,
-                           text = ~ .txt., name=xlab, legendgroup=xlab,
-                           showlegend=i==1)
-        P[[i]] <- p
-      }
-      if(nY == 1) return(p)
-      return(subplot(P, nrows=nY, shareX=TRUE, shareY=FALSE,
-                     titleX=TRUE, margin=c(.02, .02, .05, .04)))
-      }   ## end ptype xy
-  }  ## end plotly
-
-
-  
-########################################################################
-## lattice graphic  
-########################################################################
   
   d <- if(ptype == 'xy') {
     pan <- if(! length(datadensity)) function(...) {}
@@ -384,6 +337,200 @@ plot.summaryS <-
   d
 }
 
+plotp.summaryS <-
+  function(data, formula=NULL,
+           groups=NULL, sfun=NULL, fitter=NULL,
+           showpts=! length(fitter),
+           funlabel=NULL, digits=5,
+           xlim=NULL,     ylim=NULL,
+           shareX=TRUE,   shareY=FALSE,
+           autoarrange=TRUE,
+           ...)
+{
+  xtype <- attr(data, 'xtype')
+  nn    <- sum(xtype == 'numeric')
+  if(nn > 1) stop('does not handle more than one numeric continuous x')
+  X       <- data
+  at      <- attributes(data)
+  Form    <- at$formula
+  nX      <- at$nX
+  nY      <- at$nY
+  ylabels <- at$ylabels
+  yunits  <- at$yunits
+  ylims   <- at$ylim
+  xnames  <- at$xnames
+  xlabels <- at$xlabels
+  xunits  <- at$xunits
+  fun     <- at$fun
+  funlabel <- if(! length(funlabel) && length(at$funlabel))
+                at$funlabel else funlabel
+  ly <- length(ylabels)
+  ylab    <- ylabels
+  for(i in 1 : length(ylab))
+    ylab[i] <- labelPlotmath(ylabels[i], yunits[i], html=TRUE)
+
+  aform <- function(n) as.formula(paste('~', n))
+  fmt <- function(x) htmlSN(x, digits=digits)
+  
+  ptype <- if(length(fun)) {  # used to always be 'dot'
+    if(length(sfun)) 'xy.special' else 'dot'
+           } else 'xy'
+  if(length(sfun)) ptype <- 'xy.special'
+  
+  if(ptype %in% c('xy', 'xy.special') && ! any(xtype == 'numeric'))
+    stop('must have a numeric x variable to make x-y plot')
+
+  groupslevels <- if(length(groups)) levels(data[[groups]])
+  condvar <- xnames[xtype == 'categorical']
+  ## Reorder condvar in descending order of number of levels
+  numu <- function(x)
+    if(is.factor(x)) length(levels(x))
+    else
+      length(unique(x[! is.na(x)]))
+
+  if(autoarrange && length(condvar) > 1) {
+    nlev <- sapply(X[condvar], numu)
+    condvar <- condvar[order(nlev)]
+  }
+
+  form <- if(length(formula)) formula
+  else {
+    ## Non-groups conditioning variables
+    ngcond <- setdiff(condvar, groups)
+    ## Collapsed non-group conditioning variables
+    ccv <- paste('|', paste(c(ngcond, 'yvar'), collapse=' * '))
+    ## Collapsed non-group cond var after the first
+    ccv1 <- if(length(ngcond > 1))
+      paste('|', paste(c(ngcond[-1], 'yvar'), collapse=' * '))
+    f <- if(ptype %in% c('xy', 'xy.special'))
+      paste('y ~', xnames[xtype == 'numeric'], ccv, sep='')
+      else paste(ngcond[1], '~ y', ccv1, sep='')
+    as.formula(f)
+  }
+
+  yvarlev <- NULL
+   for(v in levels(X$yvar)) {
+    un <- yunits[v]
+    l <- if(ylabels[v] == v && un == '') v else
+         labelPlotmath(ylabels[v], un, html=TRUE)
+    yvarlev <- c(yvarlev, l)
+  }
+
+  ylev <- levels(X$yvar)
+  lims <- ylims[ylev]
+  vars <- all.vars(form)
+  cond <- vars[- (1 : 2)]
+  if(! all(cond %in% 'yvar') && cond[1] != 'yvar') {
+    ngny <- setdiff(cond, 'yvar')
+    nr <- length(unique(do.call('paste', X[ngny])))
+  }
+  if(length(ylim)) lims <- ylim
+  
+  gp    <- length(groups)
+  ylev  <- levels(X$yvar)
+  nyvar <- length(ylev)
+  xn    <- setdiff(xnames, groups)
+  if(length(xn) %nin% 1:2)
+    stop(paste('expecting at most two variables, found these:',
+               paste(xn, collapse=', ')))
+  if(length(xn) > 1) {
+    strata <- aform(xn[2])
+    xn     <- xn[1]
+  }
+  else
+    strata <- NULL
+  statnames <- if(is.matrix(X$y)) colnames(X$y)
+  .txt. <- paste0(xn, ': ', fmt(X[[xn]]))
+  if(gp) .txt. <- paste0(.txt., '<br>', X[[groups]])
+  nstat <- length(statnames)
+  if(nstat == 0) .txt. <- paste0(.txt., '<br>',
+                                 X$yvar, ': ', fmt(X$y))
+  else
+    for(i in 1 : nstat) { ## ?? was if(i > 1)'<br>'
+      if(i == 2 && length(funlabel) && funlabel != '' && funlabel != ' ')
+        .txt. <- paste0(.txt., '<br>', funlabel)
+      .txt. <- paste0(.txt., '<br>', statnames[i], ': ',
+                      fmt(X$y[, i]))
+      }
+  X$.txt. <- .txt.
+
+  xlab <- labelPlotmath(xlabels[xn], xunits[xn], html=TRUE)
+
+  gp <- length(groups)
+  gr <- if(gp) X[[groups]] else factor(rep('', length(x)))
+
+  if(ptype == 'xy') {
+    if(nstat > 0 && ! gp) X <- cbind(X, tracename=statnames[1])
+    p <- plotlyM(X, x = aform(xn), y = ~y, htext = ~.txt.,
+                 color = if(gp) aform(groups),
+                 multplot = ~yvar, strata = strata,
+                 xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim,
+                 fitter=fitter, showpts=showpts,
+                 ...)
+  } else {  ## end ptype xy
+    ## Dot chart or xy.special
+    ## If > 1 calculated statistics, y is a matrix.
+    ## Save first column as y and save remaining columns as yother
+    y      <- X$y
+    yother <- NULL
+    if(is.matrix(y) && ncol(y) > 1) {
+      yother <- y[, -1, drop=FALSE]
+      X$y    <- y[, 1]
+    }
+
+    if(ptype == 'dot') {
+      R     <- X
+      R$yhi <- NA
+      if(length(statnames) && ! gp)
+        R <- cbind(R, tracename=statnames[1])
+      if(length(yother)) {
+        snames <- colnames(yother)
+        nc     <- ncol(yother)
+        ##        if(nc > 1)  yother[,1] yother[,nc]
+        if((all(c('Lower', 'Upper') %in% snames)) && nc < 4) {
+          S <- R
+          S$y   <- yother[, 'Lower']
+          S$yhi <- yother[, 'Upper']
+          if(! gp) S$tracename <- 'C.L.'
+          R <- rbind(R, S)
+          }
+        if(nc == 4) {
+          S <- R
+          S$y   <- yother[, 2]
+          S$yhi <- yother[, 3]
+          if(! gp) S$tracename <- paste(snames[2:3], collapse=' ')
+          R <- rbind(R, S)
+        }
+#        for(k in 1 : nc) {
+#          if(length(pch.stats)) {
+#            p <- pch.stats[snames[k]]
+#            if(!is.na(p))
+#              R <- rbind(R, data.frame(x=X$y, y=yother[, k], yhi=NA, gr=gr,
+#                                       tracename=snames[k]))
+#            ## TODO: need to communicate pch=p
+#          }
+#        }
+      }
+
+      p <- plotlyM(R, x=aform(xn), multplot=~ yvar,
+                   color  = if(gp) aform(groups),
+                   htext  = ~ .txt.,
+                   rotate = TRUE,
+                   ylab   = ylab,
+                   xlim   = xlim,  ylim=ylim,
+                   shareX = shareX, shareY=shareY, ...)
+    }  # end ptype 'dot'
+    else {  # ptype 'xy.special'
+      xl <- labelPlotmath(xlabels[1], xunits[1], html=TRUE)
+      yl <- if(! length(ylab) || ylab[1] == '') funlabel else ylab
+      p <- sfun(X[[xn]], X$y, groups=if(gp) gr, yother=yother, yvar=X$yvar,
+                maintracename=statnames[1], xlab=xl, ylab=yl,
+                xlim=xlim, ylim=ylim, zeroline=FALSE, ...)
+    }
+  }
+p
+}
+
 mbarclPanel <- function(x, y, subscripts, groups=NULL, yother, ...) {
   gp <- length(groups)
   plot.line <-
@@ -478,7 +625,6 @@ medvPanel <-
                    else              unit(x, 'native') + mm,
                  gp=grid::gpar(col=FALSE, fill=kol))
   }
-    
 
   gr <- if(gp) groups[subscripts] else factor(rep('', length(x)))
   lev <- levels(gr)
@@ -530,3 +676,185 @@ medvPanel <-
                   gp=grid::gpar(col=col, lwd=1.5))
   }
 }
+
+ mbarclpl <- function(x, y, groups=NULL, yother, yvar=NULL,
+                     maintracename='y', xlim=NULL, ylim=NULL,
+                     xname='x', alphaSegments=0.7, ...) {
+  gp    <- length(groups)
+  gr    <- if(gp) groups else rep('', length(x))
+  gr    <- as.factor(gr)
+  color <- if(gp) ~ .g.
+  lev   <- levels(gr)
+  if(! length(yvar)) yvar <- rep('', length(x))
+  yvar <- as.factor(yvar)
+
+  se     <- if('se' %in% colnames(yother)) yother[, 'se']
+  yother <- yother[, colnames(yother) %nin% c('n', 'se'), drop=FALSE]
+
+  if(all(c('0.375', '0.625') %in% colnames(yother))) {
+    ## If HD median estimate is not between 0.375 and 0.625 quantiles
+    ## take it to be the closer of the two
+    y375 <- yother[, '0.375']
+    y625 <- yother[, '0.625']
+    y <- pmin(y, y625)
+    y <- pmax(y, y375)
+  }
+
+  fmt <- function(x) htmlSN(x, digits=5)
+  xdel <- 0.01 * diff(range(x, na.rm=TRUE))
+  
+  xtxt <- paste0(xname, ': ', fmt(x), '<br>')
+  R <- data.frame(x=x, y=y, yhi=NA, .g.=gr, .yvar.=yvar,
+                  tracename = maintracename, connect=TRUE,
+                  txt       = paste0(xtxt, maintracename, ': ',
+                                     fmt(y)))
+
+  p    <- ncol(yother)
+  half <- p / 2
+  x0   <- x
+
+  for(i in 1 : half) {
+    i1 <- i
+    i2 <- p - i + 1
+    tn <- paste0(colnames(yother)[i1], ' - ', colnames(yother)[i2])
+    x0 <- ifelse(gr == lev[1],
+                 x - i * xdel, x + i * xdel)
+    txt <- paste0(xtxt, tn, ': [', fmt(yother[, i1]),
+                  ', ', fmt(yother[, i2]), ']')
+    r  <- data.frame(x=x0, y=yother[, i1], yhi=yother[, i2],
+                     .g.=gr, .yvar.=yvar,
+                     tracename=tn, connect=NA, txt=txt)
+    R <- rbind(R, r)
+}
+
+  if(length(lev) == 2 && length(se)) {
+    rr <- NULL
+    for(yv in levels(yvar)) {
+      k <- yvar == yv
+      xk <- x[k]; yk <- y[k]; sek <- se[k]; grk <- gr[k]
+      xu <- sort(unique(xk))
+      j1 <- grk == lev[1]
+      j2 <- grk == lev[2]
+      Y <- matrix(NA, nrow=length(xu), ncol=4,
+                  dimnames=list(as.character(xu),
+                                c('y1', 'y2', 'se1', 'se2')))
+      x1 <- as.character(xk)[j1]
+      x2 <- as.character(xk)[j2]
+      Y[x1, 'y1' ] <- yk [j1]
+      Y[x1, 'se1'] <- sek[j1]
+      Y[x2, 'y2' ] <- yk [j2]
+      Y[x2, 'se2'] <- sek[j2]
+      ymid        <- (Y[, 'y1'] + Y[, 'y2']) / 2.
+      halfwidthci <- qnorm(0.975) * sqrt(Y[, 'se1']^2 + Y[, 'se2']^2)
+      ydel        <- Y[, 'y2'] - Y[, 'y1']
+
+      txt <- paste0(xname, ': ', fmt(xu),
+                    '<br>\u0394: ',   fmt(ydel),
+                    '<br>0.95 C.I. for \u0394: [',
+                    fmt(ydel - halfwidthci), ', ',
+                    fmt(ydel + halfwidthci), ']')
+      r <- data.frame(x   = xu,
+                      y   = ymid - 0.5 * halfwidthci,
+                      yhi = ymid + 0.5 * halfwidthci,
+                      .g. = paste0(lev[1], ' vs. ', lev[2]),
+                      .yvar. = yv, txt=txt,
+                      tracename='\u00BD 0.95 C.I. for \u0394', connect=FALSE)
+      rr <- rbind(rr, r)
+    }
+    R <- rbind(R, rr)
+  }
+  plotlyM(R, multplot=~.yvar., color=color, htext=~txt,
+          xlim=xlim, ylim=ylim, alphaSegments=alphaSegments, ...)
+}
+
+medvpl <-
+  function(x, y, groups=NULL, yvar=NULL, maintracename='y',
+           xlim=NULL, ylim=NULL, xlab=xname, ylab=NULL, xname='x',
+           zeroline=FALSE, yother=NULL, alphaSegments=0.45,
+           dhistboxp.opts=list(), ...) {
+  gp <- length(groups)
+  gr <- if(gp) groups else factor(rep('', length(x)))
+  lev <- levels(gr)
+
+  yvarpres <- length(yvar)
+  if(! length(yvar)) yvar <- rep('', length(x))
+
+  if(! length(ylab)) ylab <- structure(unique(yvar), names=yvar)
+  if(! length(names(ylab))) stop('ylab must have names')
+
+  fmt <- function(x) htmlSN(x, digits=5)
+  
+  R <- NULL
+  
+  for(yv in unique(yvar)) {
+    k     <- yvar == yv
+    xk    <- x[k]
+    yk    <- y[k]
+    gk    <- gr[k]
+    r     <- do.call('dhistboxp',
+                     c(list(yk, group=gk, strata=xk, xlab=ylab[yv]),
+                       dhistboxp.opts))
+    r$strata <- NULL
+    ry       <- r$y
+    r$y      <- r$x
+    r$x      <- ry
+    ryhi     <- r$yhi
+    r$yhi    <- r$xhi
+    r$xhi    <- ryhi
+    r$yvar   <- yv
+
+    R <- rbind(R, r)
+
+    xku <- unique(xk)
+    if(length(lev) == 2) {
+      for(xa in xku) {
+        Y <- matrix(NA, nrow=length(xku), ncol=4,
+                    dimnames=list(as.character(xku), c('y1','y2','se1','se2')))
+        for(ga in lev) {
+          j <- xk == xa & gk == ga
+          ykj <- yk[j]
+          ykj <- ykj[! is.na(ykj)]
+          if(length(ykj) < 3) {
+            m <- median(ykj)
+            se <- NA
+          }
+          else {
+            m <- hdquantile(ykj, probs=0.5, se=TRUE)
+            se <- attr(m, 'se')
+          }
+          med <- as.vector(m)
+          if(ga == lev[1]) {
+            med1 <- med
+            se1  <- se
+          } else {
+            med2 <- med
+            se2  <- se
+          }
+        }
+        ydel <-  med2 - med1
+        ymid <- (med1 + med2) / 2.
+        halfwidthci <- qnorm(0.975) * sqrt(se1 ^ 2 + se2 ^ 2)
+        txt <- paste0(xname, ': ', fmt(xa),
+                      '<br>\u0394: ',   fmt(ydel),
+                      '<br>0.95 C.I. for \u0394: [',
+                      fmt(ydel - halfwidthci), ', ',
+                      fmt(ydel + halfwidthci), ']')
+        R <- rbind(R,
+                   data.frame(x  =xa, y  =ymid - 0.5 * halfwidthci,
+                              xhi=NA, yhi=ymid + 0.5 * halfwidthci,
+                              group=paste0(lev[1], ' vs. ', lev[2]),
+                              yvar  = yv,
+                              txt = txt,
+                              type = '', connect=NA))
+      }
+    }
+  }
+
+  R$group <- paste(R$group, R$type)
+  R$type  <- NULL
+  plotlyM(R, htext=~txt, multplot=~yvar, color=~group,
+          alphaSegments=alphaSegments,
+          xlab=xlab, ylab=ylab, xlim=xlim, ylim=ylim, zeroline=zeroline,
+          ...)
+  
+ }

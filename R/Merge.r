@@ -8,6 +8,7 @@
 #' @param verbose set to \code{FALSE} to not print information about observations
 #' @export
 #' @examples
+#' \dontrun{
 #' a <- data.frame(sid=1:3, age=c(20,30,40))
 #' b <- data.frame(sid=c(1,2,2), bp=c(120,130,140))
 #' d <- data.frame(sid=c(1,3,4), wt=c(170,180,190))
@@ -20,6 +21,7 @@
 #' b <- data.table(sid=1:2, bp=c(120,130)); setkey(b, sid)
 #' d <- data.table(d); setkey(d, sid)
 #' all <- Merge(a, b, d)
+#' }
 
 Merge <- function(..., id, all=TRUE, verbose=TRUE) {
   

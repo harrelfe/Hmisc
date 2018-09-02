@@ -7,10 +7,11 @@
 plotlyM(data, x = ~x, y = ~y, xhi = ~xhi, yhi = ~yhi,
   htext = NULL, multplot = NULL, strata = NULL, fitter = NULL,
   color = NULL, size = NULL, showpts = !length(fitter),
-  rotate = FALSE, xlab = NULL, ylab = NULL, xlim = NULL,
-  ylim = NULL, shareX = TRUE, shareY = FALSE, height = NULL,
-  width = NULL, nrows = NULL, ncols = NULL, colors = NULL,
-  alphaSegments = 1, alphaCline = 0.3, digits = 4, zeroline = TRUE)
+  rotate = FALSE, xlab = NULL, ylab = NULL, ylabpos = c("top",
+  "y"), xlim = NULL, ylim = NULL, shareX = TRUE, shareY = FALSE,
+  height = NULL, width = NULL, nrows = NULL, ncols = NULL,
+  colors = NULL, alphaSegments = 1, alphaCline = 0.3, digits = 4,
+  zeroline = TRUE)
 }
 \arguments{
 \item{data}{input data frame}
@@ -42,6 +43,8 @@ plotlyM(data, x = ~x, y = ~y, xhi = ~xhi, yhi = ~yhi,
 \item{xlab}{x-axis label.  May contain html.}
 
 \item{ylab}{a named vector of y-axis labels, possibly containing html (see example below).  The names of the vector must correspond to levels of the \code{multplot} variable.}
+
+\item{ylabpos}{position of y-axis labels.  Default is on top left of plot.  Specify \code{ylabpos='y'} for usual y-axis placement.}
 
 \item{xlim}{2-vector of x-axis limits, optional}
 

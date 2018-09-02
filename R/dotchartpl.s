@@ -48,7 +48,7 @@ dotchartpl <- function(x, major=NULL, minor=NULL, group=NULL, mult=NULL,
               if(grouppres) col(length(unique(group)))
             else
               col(1) }
-  if(! length(col) && ! grouppres) col <- 'black'
+  if(! length(col) && ! grouppres) cols <- 'black'
 
   levelsRemoved <- character(0)
   
@@ -224,7 +224,8 @@ dotchartpl <- function(x, major=NULL, minor=NULL, group=NULL, mult=NULL,
   if(! grouppres) d$Group <- NULL  ####
   if(any(d$Big)) {
     db <- subset(d, Big)  # non-stratified estimates
-    p <- plotly::plot_ly(data=db,
+    ## For some reason, colors= in add_marker did not always take
+    p <- plotly::plot_ly(data=db, colors=cols,
                          height=plotlyParm$heightDotchart(lines), width=width)
 
     if(length(difflower)) {
@@ -276,7 +277,7 @@ dotchartpl <- function(x, major=NULL, minor=NULL, group=NULL, mult=NULL,
                                     else
                                       if(any(! d$Big)) 'All' else '')
 
-  } else p <- plotly::plot_ly()   # Big is not used
+  } else p <- plotly::plot_ly(colors=cols)   # Big is not used
     
   if(any(! d$Big)) {
     dnb <- subset(d, ! Big)  # stratified estimates

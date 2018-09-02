@@ -35,7 +35,7 @@ histboxp(p = plotly::plot_ly(height=height), x, group = NULL,
          connect=TRUE, showlegend=TRUE)
 
 dhistboxp(x, group = NULL, strata=NULL, xlab=NULL, 
-          gmd=FALSE, sd=FALSE, bins = 100)
+          gmd=FALSE, sd=FALSE, bins = 100, nmin=5, ff1=1, ff2=1)
 
 histboxpM(p=plotly::plot_ly(height=height), x, group=NULL,
           gmd=TRUE, sd=FALSE, nrows=NULL, ncols=NULL, ...)
@@ -60,6 +60,10 @@ a data frame of numeric vectors, hopefully with \code{label} and
   \item{bins}{number of equal-width bins to use for spike histogram.  If
 		the number of distinct values of \code{x} is less than \code{bins},
 		the actual values of \code{x} are used.}
+	\item{nmin}{minimum number of non-missing observations for a
+          group-stratum combination before the spike histogram and
+          quantiles are drawn}
+	\item{ff1,ff2}{fudge factors for position and bar length for spike histograms}
 	\item{wmax,mult}{tweaks for margin to allocate}
 	\item{connect}{set to \code{FALSE} to suppress lines connecting
 		quantiles}

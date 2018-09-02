@@ -717,7 +717,7 @@ histboxp <- function(p=plotly::plot_ly(height=height),
 }
 
 dhistboxp <- function(x, group=NULL, strata=NULL, xlab=NULL,
-                      gmd=FALSE, sd=FALSE, bins=100) {
+                      gmd=FALSE, sd=FALSE, bins=100, nmin=5, ff1=1, ff2=1) {
 
   if(! length(group)) group <- rep(1, length(x))
   if(length(x) != length(group)) stop('x and group must be same length')
@@ -739,7 +739,6 @@ dhistboxp <- function(x, group=NULL, strata=NULL, xlab=NULL,
     r    <- range(pret)
     xr   <- r[1] + dist * round((x - r[1]) / dist)
   }
-
   mu  <- markupSpecs$html
   fmt <- function(x) htmlSN(x, digits=5)
   quant <- function(x, probs=0.5) {
@@ -756,24 +755,30 @@ dhistboxp <- function(x, group=NULL, strata=NULL, xlab=NULL,
   levs  <- levels(group)
   ng    <- length(levs)
 
-  stdel <- diff(range(ustrata)) * 0.025
+  stdel <- diff(range(ustrata)) * 0.025 * ff1
   stmin <- min(strata, na.rm=TRUE)
   R     <- NULL
 
   ## Compute maximum proportion in any bin in any group/stratum
-  maxp <- 0
+  prop <- numeric(0)
+  nn   <- integer(0)
+  j <- 0
   for(st in ustrata) {
     for(g in levels(group)) {
       i <- strata == st & group == g
       if(any(i)) {
-        prop <- table(xr[i])
-        if(sum(prop) > 0) {
-          prop <- prop / sum(prop)
-          maxp <- max(maxp, max(prop))
+        tab <- table(xr[i])
+        den <- sum(tab)
+        if(den > 0) {
+          j <- j + 1
+          prop <- c(prop, max(tab) / den)
+          nn <- c(nn, den)
           }
       }
     }
   }
+  maxp <- if(any(nn >= nmin)) max(prop[nn >= nmin]) else max(prop)
+  maxp <- min(maxp, wtd.quantile(prop, probs=0.98, weights=nn))
   propfac <- stdel / maxp
 
   j <- 0
@@ -790,18 +795,21 @@ dhistboxp <- function(x, group=NULL, strata=NULL, xlab=NULL,
       if(! any(i)) next
       u     <- x[i]
       ur    <- xr[i]
-      if(length(ur) == 0) next
-      tab   <- as.data.frame(table(ur))
-      z     <- as.numeric(as.character(tab$ur))
-      prop  <- tab$Freq / length(ur)
-      R <- rbind(R,
-                 data.frame(x=z,
-                            y  =st + 0.5 * stdir * stdel, xhi=NA,
-                            yhi=st + 0.5 * stdir * stdel + stoffset * prop * propfac,
-                            group=g, strata=st,
-                            txt=paste0(fmt(z), '<br>', round(prop, 3),
-                                       '<br>n=', tab$Freq),
-                            type='histogram', connect=NA))
+      nn    <- length(ur)
+      if(nn >= nmin) {
+        tab   <- as.data.frame(table(ur))
+        z     <- as.numeric(as.character(tab$ur))
+        prop  <- tab$Freq / nn
+        R <- rbind(R,
+                   data.frame(x=z,
+                              y  =st + 0.5 * stdir * stdel, xhi=NA,
+                              yhi=st + 0.5 * stdir * stdel +
+                                stoffset * prop * propfac * ff2,
+                              group=g, strata=st,
+                              txt=paste0(fmt(z), '<br>', round(prop, 3),
+                                         '<br>n=', tab$Freq),
+                              type='histogram', connect=NA))
+        }
       med <- quant(u)
       R <- rbind(R,
                  data.frame(x=med, y=st, xhi=NA, yhi=NA,
@@ -810,54 +818,56 @@ dhistboxp <- function(x, group=NULL, strata=NULL, xlab=NULL,
                                        '<br>n=', length(u),
                                        '<br>', miss, ' missing'),
                             type='median', connect=TRUE))
-    if(gmd) {
-      gnam <- paste0('Gini ', mu$overbar(paste0('|', htmlGreek('Delta'), '|')))
-      Gmd  <- GiniMd(u)
-      R <- rbind(R,
-                 data.frame(x   = xmin,
-                            xhi = xmin + Gmd,
-                            y   = st - stdel * 2,
-                            yhi = NA,
-                            group=g, strata=st,
-                            txt=paste0(gnam, ': ', fmt(Gmd)),
-                            type=gnam, connect=NA))
-    }
-    if(sd) {
-      Sd  <- sd(u)
-      R <- rbind(R,
-                 data.frame(x   = xmin,
-                            xhi = xmin + Sd,
-                            y   = st - stdel * (if(gmd) 3 else 2),
-                            yhi = NA,
-                            group=g, strata=st,
-                            txt = paste0('SD:', fmt(Sd)),
-                            type = 'SD', connect=NA))
+      if(gmd) {
+        gnam <- paste0('Gini ', mu$overbar(paste0('|', htmlGreek('Delta'), '|')))
+        Gmd  <- GiniMd(u)
+        R <- rbind(R,
+                   data.frame(x   = xmin,
+                              xhi = xmin + Gmd,
+                              y   = st - stdel * 2,
+                              yhi = NA,
+                              group=g, strata=st,
+                              txt=paste0(gnam, ': ', fmt(Gmd)),
+                              type=gnam, connect=NA))
+      }
+      if(sd) {
+        Sd  <- sd(u)
+        R <- rbind(R,
+                   data.frame(x   = xmin,
+                              xhi = xmin + Sd,
+                              y   = st - stdel * (if(gmd) 3 else 2),
+                              yhi = NA,
+                              group=g, strata=st,
+                              txt = paste0('SD:', fmt(Sd)),
+                              type = 'SD', connect=NA))
       }
 
-      probs <- c(0.5, 0.25, 0.75, 0.05, 0.95)
-      qu   <- quant(u, probs)
-      nam  <- paste0('Q', mu$sub(probs))
-      txt  <- paste0(nam, ':', fmt(qu))
-      mult <- c(1.15, 1, 1, 0.64, 0.64)
-
-      yinc    <- 0.3 * stdir * stdel * mult
-      ycenter <- st + stdir * stdel + stoffset * maxp * propfac
-      R <- rbind(R,
-                 data.frame(x   = qu,
-                            xhi = NA,
-                            y   = ycenter - yinc,
-                            yhi = ycenter + yinc,
-                            group=g, strata=st,
-                            txt = txt,
-                            type='quantiles', connect=FALSE))
-      R <- rbind(R,
-                 data.frame(x   = min(qu),
-                            xhi = max(qu),
-                            y   = ycenter,
-                            yhi = ycenter,
-                            group=g, strata=st,
-                            txt = '',
-                            type='quantiles', connect=FALSE))
+      if(nn >= nmin) {
+        probs <- c(0.5, 0.25, 0.75, 0.05, 0.95)
+        qu   <- quant(u, probs)
+        nam  <- paste0('Q', mu$sub(probs))
+        txt  <- paste0(nam, ':', fmt(qu))
+        mult <- c(1.15, 1, 1, 0.64, 0.64)
+        
+        yinc    <- 0.3 * stdir * stdel * mult
+        ycenter <- st + stdir * stdel + stoffset * maxp * propfac
+        R <- rbind(R,
+                   data.frame(x   = qu,
+                              xhi = NA,
+                              y   = ycenter - yinc,
+                              yhi = ycenter + yinc,
+                              group=g, strata=st,
+                              txt = txt,
+                              type='quantiles', connect=FALSE))
+        R <- rbind(R,
+                   data.frame(x   = min(qu),
+                              xhi = max(qu),
+                              y   = ycenter,
+                              yhi = ycenter,
+                              group=g, strata=st,
+                              txt = '',
+                              type='quantiles', connect=FALSE))
+        }
     }    ## end groups
   }    ## end strata
   R

@@ -550,8 +550,26 @@ bottom: -1ex;
 unicodeshow = function(x, surr=TRUE, append=FALSE) {
   if(surr) x <- paste0('&', x, ';')
   cat('<meta charset="utf-8">', paste(x, collapse=''), '<br>', file='/tmp/z.html', append=append)
-}
+},
 
+## Function to intersperse markdown with knitr chunk output, especially
+## for chunks producing plotly graphics.  The typical use is to intersperse
+## figure captions and table of contents entries produced by putHcap()
+## with plotly graphics.  md is a list of character vectors, one element
+## per chunk, and robj is a list of R objects to print
+## Accounts for markdown being in caption text; knitr processes this
+## See stackoverflow.com/questions/51803162
+  mdchunk <- function(md, robj) {
+    bn <- paste0('c', round(runif(1, 0, 1e6)))
+    n <- length(md)
+    if(length(robj) != n) stop('robj and md must have same length')
+    for(i in 1 : n) {
+      cn <- paste0(bn, i)
+      .obj. <- robj[[i]]
+      k <- c(md[[i]], paste0('```{r ', cn, ',echo=FALSE}'), '.obj.', '```')
+      cat(trimws(knitr::knit(text=knitr::knit_expand(text=k), quiet=TRUE)))
+      }
+    }
 ),
 
 latex = list(

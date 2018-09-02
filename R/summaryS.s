@@ -116,7 +116,7 @@ plot.summaryS <-
     ## Collapsed non-group conditioning variables
     ccv <- paste('|', paste(c(ngcond, 'yvar'), collapse=' * '))
     ## Collapsed non-group cond var after the first
-    ccv1 <- if(length(ngcond > 1))
+    ccv1 <- if(length(ngcond) > 1)
       paste('|', paste(c(ngcond[-1], 'yvar'), collapse=' * '))
     f <- if(ptype %in% c('xy', 'xy.special'))
       paste('y ~', xnames[xtype == 'numeric'], ccv, sep='')
@@ -344,7 +344,7 @@ plotp.summaryS <-
            funlabel=NULL, digits=5,
            xlim=NULL,     ylim=NULL,
            shareX=TRUE,   shareY=FALSE,
-           autoarrange=TRUE,
+           autoarrange=TRUE, transhtml=TRUE,
            ...)
 {
   xtype <- attr(data, 'xtype')
@@ -364,10 +364,17 @@ plotp.summaryS <-
   fun     <- at$fun
   funlabel <- if(! length(funlabel) && length(at$funlabel))
                 at$funlabel else funlabel
+  htran <- if(transhtml) function(x) {
+    if(length(x)) htmlTranslate(x, greek=TRUE)
+    }
+    else
+      function(x) x
+  funlabel <- htran(funlabel)
+  
   ly <- length(ylabels)
   ylab    <- ylabels
   for(i in 1 : length(ylab))
-    ylab[i] <- labelPlotmath(ylabels[i], yunits[i], html=TRUE)
+    ylab[i] <- htran(labelPlotmath(ylabels[i], yunits[i], html=TRUE))
 
   aform <- function(n) as.formula(paste('~', n))
   fmt <- function(x) htmlSN(x, digits=digits)
@@ -400,7 +407,7 @@ plotp.summaryS <-
     ## Collapsed non-group conditioning variables
     ccv <- paste('|', paste(c(ngcond, 'yvar'), collapse=' * '))
     ## Collapsed non-group cond var after the first
-    ccv1 <- if(length(ngcond > 1))
+    ccv1 <- if(length(ngcond) > 1)
       paste('|', paste(c(ngcond[-1], 'yvar'), collapse=' * '))
     f <- if(ptype %in% c('xy', 'xy.special'))
       paste('y ~', xnames[xtype == 'numeric'], ccv, sep='')
@@ -412,7 +419,7 @@ plotp.summaryS <-
    for(v in levels(X$yvar)) {
     un <- yunits[v]
     l <- if(ylabels[v] == v && un == '') v else
-         labelPlotmath(ylabels[v], un, html=TRUE)
+         htran(labelPlotmath(ylabels[v], un, html=TRUE))
     yvarlev <- c(yvarlev, l)
   }
 
@@ -454,7 +461,7 @@ plotp.summaryS <-
       }
   X$.txt. <- .txt.
 
-  xlab <- labelPlotmath(xlabels[xn], xunits[xn], html=TRUE)
+  xlab <- htran(labelPlotmath(xlabels[xn], xunits[xn], html=TRUE))
 
   gp <- length(groups)
   gr <- if(gp) X[[groups]] else factor(rep('', length(x)))
@@ -521,7 +528,7 @@ plotp.summaryS <-
                    shareX = shareX, shareY=shareY, ...)
     }  # end ptype 'dot'
     else {  # ptype 'xy.special'
-      xl <- labelPlotmath(xlabels[1], xunits[1], html=TRUE)
+      xl <- htran(labelPlotmath(xlabels[1], xunits[1], html=TRUE))
       yl <- if(! length(ylab) || ylab[1] == '') funlabel else ylab
       p <- sfun(X[[xn]], X$y, groups=if(gp) gr, yother=yother, yvar=X$yvar,
                 maintracename=statnames[1], xlab=xl, ylab=yl,
@@ -679,7 +686,7 @@ medvPanel <-
 
  mbarclpl <- function(x, y, groups=NULL, yother, yvar=NULL,
                      maintracename='y', xlim=NULL, ylim=NULL,
-                     xname='x', alphaSegments=0.7, ...) {
+                     xname='x', alphaSegments=0.45, ...) {
   gp    <- length(groups)
   gr    <- if(gp) groups else rep('', length(x))
   gr    <- as.factor(gr)
@@ -689,9 +696,13 @@ medvPanel <-
   yvar <- as.factor(yvar)
 
   se     <- if('se' %in% colnames(yother)) yother[, 'se']
-  yother <- yother[, colnames(yother) %nin% c('n', 'se'), drop=FALSE]
+  ## prn(se, 'mbarclpl', fi='/tmp/z')
 
-  if(all(c('0.375', '0.625') %in% colnames(yother))) {
+  cy <- colnames(yother)
+  n <- if('n' %in% cy) yother[, 'n']
+  yother <- yother[, cy %nin% c('n', 'se'), drop=FALSE]
+
+  if(all(c('0.375', '0.625') %in% cy)) {
     ## If HD median estimate is not between 0.375 and 0.625 quantiles
     ## take it to be the closer of the two
     y375 <- yother[, '0.375']
@@ -704,6 +715,7 @@ medvPanel <-
   xdel <- 0.01 * diff(range(x, na.rm=TRUE))
   
   xtxt <- paste0(xname, ': ', fmt(x), '<br>')
+  if(length(n)) xtxt <- paste0(xtxt, 'n:', n, '<br>')
   R <- data.frame(x=x, y=y, yhi=NA, .g.=gr, .yvar.=yvar,
                   tracename = maintracename, connect=TRUE,
                   txt       = paste0(xtxt, maintracename, ': ',
@@ -759,6 +771,7 @@ medvPanel <-
                       .g. = paste0(lev[1], ' vs. ', lev[2]),
                       .yvar. = yv, txt=txt,
                       tracename='\u00BD 0.95 C.I. for \u0394', connect=FALSE)
+##  prn(cbind(yother, 2 * rep(halfwidthci, each=2)), fi='/tmp/z')
       rr <- rbind(rr, r)
     }
     R <- rbind(R, rr)
@@ -771,7 +784,7 @@ medvpl <-
   function(x, y, groups=NULL, yvar=NULL, maintracename='y',
            xlim=NULL, ylim=NULL, xlab=xname, ylab=NULL, xname='x',
            zeroline=FALSE, yother=NULL, alphaSegments=0.45,
-           dhistboxp.opts=list(), ...) {
+           dhistboxp.opts=NULL, ...) {
   gp <- length(groups)
   gr <- if(gp) groups else factor(rep('', length(x)))
   lev <- levels(gr)

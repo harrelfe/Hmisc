@@ -22,6 +22,7 @@
 #' @param rotate set to \code{TRUE} to reverse the roles of \code{x} and \code{y}, for example to get horizontal dot charts with error bars
 #' @param xlab x-axis label.  May contain html.
 #' @param ylab a named vector of y-axis labels, possibly containing html (see example below).  The names of the vector must correspond to levels of the \code{multplot} variable.
+#' @param ylabpos position of y-axis labels.  Default is on top left of plot.  Specify \code{ylabpos='y'} for usual y-axis placement.
 #' @param xlim 2-vector of x-axis limits, optional
 #' @param ylim 2-vector of y-axis limits, optional
 #' @param shareX specifies whether x-axes should be shared when they align vertically over multiple plots
@@ -73,11 +74,14 @@ plotlyM <- function(data, x=~x, y=~y, xhi=~xhi, yhi=~yhi, htext=NULL,
                     color=NULL, size=NULL,
                     showpts=! length(fitter),
                     rotate=FALSE, xlab=NULL, ylab=NULL,
+                    ylabpos=c('top', 'y'),
                     xlim=NULL, ylim=NULL,
                     shareX=TRUE, shareY=FALSE, height=NULL, width=NULL,
                     nrows=NULL, ncols=NULL,
                     colors=NULL, alphaSegments=1, alphaCline=0.3, digits=4,
                     zeroline=TRUE) {
+
+  ylabpos <- match.arg(ylabpos)
 
   if(rotate) {
     xf  <- y   #~ y
@@ -200,7 +204,8 @@ plotlyM <- function(data, x=~x, y=~y, xhi=~xhi, yhi=~yhi, htext=NULL,
                                fmt(data[[yn]]), ', ', fmt(data[[yhin]]), ']'))))
     htext <- ~ htxt
     }
-  p <- plotly::plot_ly(height=height, width=width)
+  p <- plotly::plot_ly(height=height, width=width, colors=colors)
+  ## For some reason colors doesn't always take in add_*
   P <- list()
   iv <- 0
 #  axislab <- character(0)
@@ -212,9 +217,7 @@ plotlyM <- function(data, x=~x, y=~y, xhi=~xhi, yhi=~yhi, htext=NULL,
       whichaxis <- if(iv == 1) '' else iv
       ax1 <- if(rotate) ylab[vn] else xlab
       ax2 <- if(rotate) xlab else ylab[vn]
-#      axislab <- paste0(axislab,
-#                        ', ', axn1, whichaxis, '=list(title="', ax1, '")',
-#                        ', ', axn2, whichaxis, '=list(title="', ax2, '")')
+
       w  <- subset(data, .v. == vn & strata == sn)
       j <- if(length(colvar)) order(w[[colvar]], w[[xn]])
            else
@@ -278,16 +281,23 @@ plotlyM <- function(data, x=~x, y=~y, xhi=~xhi, yhi=~yhi, htext=NULL,
       ## rdocumentation.org/packages/plotly/versions/4.7.1/topics/add_annotations
       ## https://plot.ly/r/text-and-annotations/
 			## plot.ly/r/text-and-annotations/#set-annotation-coordinate-references      
-      if(length(stlevs) > 1 && vn == vlevs[1])   
-        r <- plotly::add_annotations(r,  x=0.06, y=1,
+      firstst <- length(stlevs) > 1 && vn == vlevs[1]
+      if(firstst || ylabpos == 'top') {
+        lab <- ax2
+        if(firstst) lab <- paste0(lab, '<br>', sn)
+        r <- plotly::add_annotations(r,  x=0, y=1,
                                      xref='paper', xanchor='left',
                                      yref='paper', yanchor='bottom',
-                                     text=paste0('<b>', sn, '</b>'),
+                                     text=paste0('<b>', lab, '</b>'),
                                      showarrow=FALSE,
-                                     font=list(color='blue', size=14))
+                                     font=list(color='rgba(25, 25, 112, 1.0)',
+                                               size=14))
+        ## midnight blue
+        }
       r <- plotly::layout(r, xaxis=list(title=ax1, range=xlim,
                                         zeroline=zeroline),
-                             yaxis=list(title=ax2, range=ylim))
+                          yaxis=list(title=if(ylabpos == 'y') ax2 else '',
+                                     range=ylim))
       P[[iv]] <- r
     }
   }

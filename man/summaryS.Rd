@@ -95,14 +95,14 @@ summaryS(formula, fun = NULL, data = NULL, subset = NULL,
 \method{plotp}{summaryS}(data, formula=NULL, groups=NULL, sfun=NULL,
            fitter=NULL, showpts=! length(fitter), funlabel=NULL,
            digits=5, xlim=NULL, ylim=NULL,
-           shareX=TRUE, shareY=FALSE, autoarrange=TRUE, \dots)
+           shareX=TRUE, shareY=FALSE, autoarrange=TRUE, transhtml=TRUE, \dots)
 
 mbarclPanel(x, y, subscripts, groups=NULL, yother, \dots)
 
 medvPanel(x, y, subscripts, groups=NULL, violin=TRUE, quantiles=FALSE, \dots)
 
 mbarclpl(x, y, groups=NULL, yother, yvar=NULL, maintracename='y',
-         xlim=NULL, ylim=NULL, xname='x', alphaSegments=0.7, \dots)
+         xlim=NULL, ylim=NULL, xname='x', alphaSegments=0.45, \dots)
 
 medvpl(x, y, groups=NULL, yvar=NULL, maintracename='y',
        xlim=NULL, ylim=NULL, xlab=xname, ylab=NULL, xname='x',
@@ -164,6 +164,8 @@ medvpl(x, y, groups=NULL, yvar=NULL, maintracename='y',
     through \code{\link[latticeExtra]{useOuterStrips}}}
 	\item{autoarrange}{set to \code{FALSE} to prevent \code{plot} from
     trying to optimize which conditioning variable is vertical}
+	\item{transhtml}{if \code{TRUE}, labels through \code{htmlTranslate}
+       to handle scientific notation in units, for example}
 	\item{scat1d.opts}{a list of options to specify to \code{\link{scat1d}}}
 	\item{y, subscripts}{provided by \code{lattice}}
 	\item{yother}{passed to the panel function from the \code{plot} method

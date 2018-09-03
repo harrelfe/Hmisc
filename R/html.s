@@ -331,7 +331,7 @@ markupSpecs <- list(html=list(
   cap      = function(..., symbol=htmlSpecial('angrt')) { # figure caption formatting
   ## alternative: symbol='Figure:'; default is right angle
   ## use symbol=htmlSpecial('squarecrosshatch') for grid graph paper symbol
-    lcap <- paste(unlist(list(...)), collapse=' ')
+    lcap <- htmlTranslate(paste(unlist(list(...)), collapse=' '), greek=TRUE)
     paste0('<span style="font-family:Verdana;font-size:10px;">', symbol,
            ' </span><span style="font-family:Verdana;font-size:12px;color:MidnightBlue;">',
              lcap, '</span>')
@@ -339,11 +339,12 @@ markupSpecs <- list(html=list(
   
   lcap     = function(...) # for continuation of figure caption
     paste0('<span style="font-family:Verdana;font-size:12px;color:MidnightBlue;">',
-           paste(unlist(list(...)), collapse=' '), '</span>'),
+           htmlTranslate(paste(unlist(list(...)), collapse=' '), greek=TRUE),
+           '</span>'),
 
   tcap      = function(..., symbol=htmlSpecial('whitesquareverticalline')) { # table caption formatting
     # alt: symbol='Table:'; default is white square w/vertical bisecting line
-    lcap <- paste(unlist(list(...)), collapse=' ')
+    lcap <- htmlTranslate(paste(unlist(list(...)), collapse=' '), greek=TRUE)
     paste0('<span style="font-family:Verdana;font-size:10px;">', symbol,
            ' </span><span style="font-family:Verdana;font-size:12px;color:MidnightBlue;">',
              lcap, '</span>')
@@ -351,7 +352,8 @@ markupSpecs <- list(html=list(
   
   ltcap     = function(...) # for continuation of table caption
     paste0('<span style="font-family:Verdana;font-size:12px;color:MidnightBlue;">',
-           paste(unlist(list(...)), collapse=' '), '</span>'),
+           htmlTranslate(paste(unlist(list(...)), collapse=' '), greek=TRUE),
+           '</span>'),
 
   expcoll = function(vis, invis) {
       id <- floor(runif(1, 100000, 999999))  # unique html id

@@ -22,6 +22,9 @@ Changes in version 4.1-2 (2018-09-01)
 	 * mbarclpl, medvpl: new auxiliary functions for plotp.summaryS
    * dhistboxp: new function
    * markupSpecs$httml: added new function mdchunk to intersperse markdown with R object output
+   * markupSpecs$html$varlabel: if html is TRUE run label and units through htmlTranslate
+   * dotchartpl: removed stratified by groupname from hover text
+   * plot.summaryS: removed transhtml argument
 	 
 Changes in version 4.1-1 (2018-01-03)
    * describe: quit rounding values when <= 20 distinct values no matter how far apart any two values are spaced.  https://stackoverflow.com/questions/47679551

@@ -473,14 +473,16 @@ markupSpecs <- list(html=list(
                                    "</span></sup><sub style='position: relative; left: -.47em; bottom: -.4em;'><span style='font-size: 70%;'>",
                                    a, "</span></sub>"),
   varlabel = function(label, units='', size=75, hfill=FALSE) {
-    if(units=='') label
+    if(units=='') htmlTranslate(label, greek=TRUE)
     else
-      if(hfill) paste0("<div style='float: left; text-align: left;'>", label,
-                       "</div><div style='float: right; text-align: right; font-family: Verdana; font-size:", size, "%;'>", units, "</div>")
+      if(hfill) paste0("<div style='float: left; text-align: left;'>",
+                       htmlTranslate(label, greek=TRUE),
+                       "</div><div style='float: right; text-align: right; font-family: Verdana; font-size:", size, "%;'>", htmlTranslate(units, greek=TRUE),
+                       "</div>")
     else
-      paste0(label, htmlSpecial('emsp'),
+      paste0(htmlTranslate(label, greek=TRUE), htmlSpecial('emsp'),
              "<span style='font-family:Verdana;font-size:", size, "%;'>",
-             units, "</span>") },
+             htmlTranslate(units, greek=TRUE), "</span>") },
   rightAlign  = function(x)
     paste0("<div style='float: right; text-align: right;'>",
            x, "</div>"),

@@ -344,7 +344,7 @@ plotp.summaryS <-
            funlabel=NULL, digits=5,
            xlim=NULL,     ylim=NULL,
            shareX=TRUE,   shareY=FALSE,
-           autoarrange=TRUE, transhtml=TRUE,
+           autoarrange=TRUE,
            ...)
 {
   xtype <- attr(data, 'xtype')
@@ -364,17 +364,12 @@ plotp.summaryS <-
   fun     <- at$fun
   funlabel <- if(! length(funlabel) && length(at$funlabel))
                 at$funlabel else funlabel
-  htran <- if(transhtml) function(x) {
-    if(length(x)) htmlTranslate(x, greek=TRUE)
-    }
-    else
-      function(x) x
-  funlabel <- htran(funlabel)
+  funlabel <- htmlTranslate(funlabel, greek=TRUE)
   
   ly <- length(ylabels)
   ylab    <- ylabels
   for(i in 1 : length(ylab))
-    ylab[i] <- htran(labelPlotmath(ylabels[i], yunits[i], html=TRUE))
+    ylab[i] <- labelPlotmath(ylabels[i], yunits[i], html=TRUE)
 
   aform <- function(n) as.formula(paste('~', n))
   fmt <- function(x) htmlSN(x, digits=digits)
@@ -419,7 +414,7 @@ plotp.summaryS <-
    for(v in levels(X$yvar)) {
     un <- yunits[v]
     l <- if(ylabels[v] == v && un == '') v else
-         htran(labelPlotmath(ylabels[v], un, html=TRUE))
+         labelPlotmath(ylabels[v], un, html=TRUE)
     yvarlev <- c(yvarlev, l)
   }
 
@@ -461,7 +456,7 @@ plotp.summaryS <-
       }
   X$.txt. <- .txt.
 
-  xlab <- htran(labelPlotmath(xlabels[xn], xunits[xn], html=TRUE))
+  xlab <- labelPlotmath(xlabels[xn], xunits[xn], html=TRUE)
 
   gp <- length(groups)
   gr <- if(gp) X[[groups]] else factor(rep('', length(x)))
@@ -528,7 +523,7 @@ plotp.summaryS <-
                    shareX = shareX, shareY=shareY, ...)
     }  # end ptype 'dot'
     else {  # ptype 'xy.special'
-      xl <- htran(labelPlotmath(xlabels[1], xunits[1], html=TRUE))
+      xl <- labelPlotmath(xlabels[1], xunits[1], html=TRUE)
       yl <- if(! length(ylab) || ylab[1] == '') funlabel else ylab
       p <- sfun(X[[xn]], X$y, groups=if(gp) gr, yother=yother, yvar=X$yvar,
                 maintracename=statnames[1], xlab=xl, ylab=yl,

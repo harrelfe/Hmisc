@@ -10,7 +10,6 @@ dotchartpl <- function(x, major=NULL, minor=NULL, group=NULL, mult=NULL,
                        width=800,
                        col=colorspace::rainbow_hcl
                        ) {
-
   mu   <- markupSpecs$html
   bold <- mu$bold
 
@@ -108,9 +107,9 @@ dotchartpl <- function(x, major=NULL, minor=NULL, group=NULL, mult=NULL,
   ht <- paste0(ht, if(length(ht)) '<br>',
                if(majorpres) paste0(major, ': '))
   if(minorpres) ht <- paste0(ht, minor)
-  if(grouppres) ht <- paste0(ht, '<br>', group)
+  if(grouppres) ht <- paste0(ht, '<br>',
+                             gsub(' stratified<br>by .*', '', group))
   if(multpres)  ht <- paste0(ht, '<br>', mult)
-
   n <- length(x)
 
   minor <- if(minorpres) minor else rep('', n)

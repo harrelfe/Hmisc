@@ -563,7 +563,7 @@ unicodeshow = function(x, surr=TRUE, append=FALSE) {
 ## per chunk, and robj is a list of R objects to print
 ## Accounts for markdown being in caption text; knitr processes this
 ## See stackoverflow.com/questions/51803162
-  mdchunk <- function(md, robj) {
+  mdchunk = function(md, robj) {
     bn <- paste0('c', round(runif(1, 0, 1e6)))
     n <- length(md)
     if(length(robj) != n) stop('robj and md must have same length')
@@ -657,6 +657,9 @@ plotmath = list(
 htmlTranslate <- function(object, inn=NULL, out=NULL,
                            greek=FALSE, na='', code=htmlSpecialType(), ...)
 {
+  if(! length(object) || all(trimws(object) == ''))
+    return(object)
+  
   text <- ifelse(is.na(object), na, as.character(object))
 
   ## Must translate & first so won't be converted to &amp; when other

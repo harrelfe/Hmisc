@@ -1,4 +1,4 @@
-Changes in version 4.1-2 (2018-09-01)
+Changes in version 4.1-2 (2018-09-17)
    * putHcap: new function
    * inst/tests/example.Rmd: changed to html document, replaced putHfig calls with new putHcap
    * knitrSet: new lang='blogdown' option
@@ -26,6 +26,8 @@ Changes in version 4.1-2 (2018-09-01)
    * dotchartpl: removed stratified by groupname from hover text
    * plot.summaryS: removed transhtml argument
    * markupSpecs$html cap-type functions: called htmlTranslate(...,greek=TRUE) on long and short captions
+   * formatTestStats: ran P-values with < through latexTranslate to make latex.summary.formula.reverse and latex.summaryM work correctly
+   * hidingTOC: new function by Thomas Dupont for various features for floating table of contents with RMarkdown html reports
 	 
 Changes in version 4.1-1 (2018-01-03)
    * describe: quit rounding values when <= 20 distinct values no matter how far apart any two values are spaced.  https://stackoverflow.com/questions/47679551

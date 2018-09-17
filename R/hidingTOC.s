@@ -1,4 +1,6 @@
-#' Hiding Table of Contents for Rmd HTML documents
+#' Moving and Hiding Table of Contents
+#' 
+#' Moving and hiding table of contents for Rmd HTML documents
 #' 
 #' \code{hidingTOC} creates a table of contents in a Rmd document that
 #' can be hidden at the press of a button. It also generate buttons that allow
@@ -16,9 +18,12 @@
 #'   Defaults to \code{FALSE}
 #'
 #' @return a HTML formated text string to be inserted into an markdown document
-#' 
+#' @author Thomas Dupont
 #' @examples
+#' \dontrun{
 #' hidingTOC()
+#' }
+#' @export
 
 hidingTOC <- function(buttonLabel="Table of Contents", levels=3,
                       side=c('right','left'), buttonSide=c('right','left'),

@@ -1751,6 +1751,8 @@ formatTestStats <- function(tr, multchoice=FALSE,
   
   pval <- format.pval(pval, digits=pdig, eps=eps)
   plt  <- substring(pval,1,1) == '<'
+  if(plt && lang == 'latex')
+    pval <- sub('<', '\\\\textless ', pval)
   
   if(lang != 'plain') {
     if(length(prtest) == 1) 
@@ -1896,7 +1898,7 @@ latex.summary.formula.reverse <-
                             outer.size=outer.size, msdsize=msdsize,
                             pdig=pdig, eps=eps, footnoteTest=gt1.test,
                             mspecs=mspecs)
-                              
+
     cstats <- rbind(cstats, cs)
     if(length(auxc) && nrow(cstats) > 1)
       auxc <- c(auxc, rep(NA, nrow(cs)-1))

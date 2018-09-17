@@ -1,4 +1,4 @@
-Changes in version 4.1-2 (2018-09-16)
+Changes in version 4.1-2 (2018-09-17)
    * putHcap: new function
    * inst/tests/example.Rmd: changed to html document, replaced putHfig calls with new putHcap
    * knitrSet: new lang='blogdown' option

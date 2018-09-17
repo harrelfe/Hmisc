@@ -1751,7 +1751,8 @@ formatTestStats <- function(tr, multchoice=FALSE,
   
   pval <- format.pval(pval, digits=pdig, eps=eps)
   plt  <- substring(pval,1,1) == '<'
-  if(plt && lang == 'latex') pval <- latexTranslate(pval)
+  if(plt && lang == 'latex')
+    pval <- sub('<', '\\\\textless ', pval)
   
   if(lang != 'plain') {
     if(length(prtest) == 1) 

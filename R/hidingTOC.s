@@ -36,29 +36,29 @@ hidingTOC <- function(buttonLabel="Table of Contents", levels=3,
             stop("level value ", level, " is greater then maxLevels value ", maxLevels)
 
         ## There are 2 special cases.
-        if (level == 1L) {
-            ## Where the reqested level equals 1. Unhide the element with id
-            ## equal to TOC and hide the elements with class equal to
-            ## tocify-subheader.
-            'function expandLevel1(){$("#TOC").toggle(true);$(".tocify-subheader").toggle(false)}'
-        } else if (level == maxLevels) {
-            ## Where the requested level is equal to maxLevels then just unhide
-            ## all elements with id equal to TOC or class equal to
-            ## tocify-subheader.
-            paste0('function expandLevel', level, '(){$("TOC,.tocify-subheader").toggle(true)}')
-        } else {
-            ## General case level greater then 1 and less then maxLevels. Unhide
-            ## the elements with id equal to TOC or class equal to
-            ## tocify-subheader with attribute data-tag values less then or
-            ## equal to the requested level. Then hide elements with class
-            ## tocify-subheader with attribute data-tag values greater then the
-            ## requested level but less then or equal to maxLevels.
-            paste0("function expandLevel", level, '(){$("#TOC,',
-                   paste0('.tocify-subheader[data-tag=',seq.int(2L, level),']', collapse=','),
-                   '").toggle(true);$("',
-                   paste0('.tocify-subheader[data-tag=',seq.int(level+1L, maxLevels),']', collapse=','),
-                   '").toggle(false)}')
-        }
+        return(if (level == 1L) {
+                   ## Where the reqested level equals 1. Unhide the element with id
+                   ## equal to TOC and hide the elements with class equal to
+                   ## tocify-subheader.
+                   'function expandLevel1(){$("#TOC").toggle(true);$(".tocify-subheader").toggle(false)}'
+               } else if (level == maxLevels) {
+                   ## Where the requested level is equal to maxLevels then just unhide
+                   ## all elements with id equal to TOC or class equal to
+                   ## tocify-subheader.
+                   paste0('function expandLevel', level, '(){$("TOC,.tocify-subheader").toggle(true)}')
+               } else {
+                   ## General case level greater then 1 and less then maxLevels. Unhide
+                   ## the elements with id equal to TOC or class equal to
+                   ## tocify-subheader with attribute data-tag values less then or
+                   ## equal to the requested level. Then hide elements with class
+                   ## tocify-subheader with attribute data-tag values greater then the
+                   ## requested level but less then or equal to maxLevels.
+                   paste0("function expandLevel", level, '(){$("#TOC,',
+                          paste0('.tocify-subheader[data-tag=',seq.int(2L, level),']', collapse=','),
+                          '").toggle(true);$("',
+                          paste0('.tocify-subheader[data-tag=',seq.int(level+1L, maxLevels),']', collapse=','),
+                          '").toggle(false)}')
+               })
     }
 
     ## basic HTML skeleton to inwhich to place various values
@@ -87,7 +87,7 @@ hidingTOC <- function(buttonLabel="Table of Contents", levels=3,
     margin-left:0px;
     margin-right:none;
   }
-</style><script>function toggleTOC(){$("#TOC").toggle();}%s</script><div id="toc-toggle" class="pull-right"><button id="toc-toggle" type="button" class="btn btn-default btn-xs code-folding-btn collapsed" onclick="toggleTOC()">%s</button><br/><center>%s</center></div>
+</style><script>function toggleTOC(){$("#TOC").toggle()}%s</script><div id="toc-toggle" class="pull-right"><button type="button" class="btn btn-default btn-xs toc-folding-btn pull-right" onclick="toggleTOC()">%s</button><br/>%s</div>
 '
     levelSequence <- seq_len(levels)
 
@@ -97,11 +97,12 @@ hidingTOC <- function(buttonLabel="Table of Contents", levels=3,
                          collapse="")
 
     ## Generate the button HTML text.
-    buttonText <- paste0('<button id="toc-expand-level', levelSequence,
-                         '" type="button" class="btn btn-default btn-xs" onclick="expandLevel',
-                         levelSequence, '()">', levelSequence, '</button>',
-                         collapse="")
-    
+    buttonText <- paste0("<center>", paste0('<button id="toc-expand-level', levelSequence,
+                                            '" type="button" class="btn btn-default btn-xs toc-folding-btn" onclick="expandLevel',
+                                            levelSequence, '()">', levelSequence, '</button>',
+                                            collapse=""),
+                         "</center>")
+
     buttonSide <- match.arg(buttonSide)
     side <- match.arg(side)
     return(sprintf(skeleton, side, if(hidden) "\ndisplay:none" else "", buttonSide, scriptText, buttonLabel, buttonText))

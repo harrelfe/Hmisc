@@ -12,20 +12,17 @@ output:
     code_folding: hide
     theme: cerulean
 csl: american-medical-association.csl
-css: stewarttoc.css
 bibliography: harrelfe.bib
 description: "Hmisc examples using plotly interactive graphics in an html report"
 ---
-<button id="toc-toggle" type="button" class="btn btn-default btn-xs code-folding-btn pull-right collapsed" onclick="toggletoc()"><span>Outline</span></button>
 
-<script>
-function toggletoc(){
-$("#TOC").toggle();
-}
-</script>
+<!--
+To run: ln -s ~/bib/harrelfe.bib
+To copy html output of server: cpaws examples.html R/Hmisc/
+-->
 
 # Introduction
-This is a set of reproducible examples for the R[@R] `Hmisc` package[@Hmisc], put together in an `rmarkdown` notebook using `RStudio` and `knitr`.  When viewing the resulting [html file](http://data.vanderbilt.edu/fh/R/Hmisc/examples.html) you can see all the code, and can download the entire `rmarkdown` script, which is especially helpful for seeing how `knitr` chunks are specified.  Graphics that have a [plotly](http://plot.ly/r) method for them are rendered using `plotly` instead of using defaults such as base graphics, `lattice`, or `ggplot2`.  That way the plots are somewhat interactive, e.g., allow for drill-down for more information without the viewer needing to install `R`.
+This is a set of reproducible examples for the R[@R] `Hmisc` package[@Hmisc], put together in an `rmarkdown` notebook using `RStudio` and `knitr`.  When viewing the resulting [html file](http://hbiostat.org/R/Hmisc/examples.html) you can see all the code, and can download the entire `rmarkdown` script, which is especially helpful for seeing how `knitr` chunks are specified.  Graphics that have a [plotly](http://plot.ly/r) method for them are rendered using `plotly` instead of using defaults such as base graphics, `lattice`, or `ggplot2`.  That way the plots are somewhat interactive, e.g., allow for drill-down for more information without the viewer needing to install `R`.
 
 Much of the tabular output produced here was created using `html` methods, which are especially easy to implement with `rmarkdown` and make for output that can be directly opened using word processors.  Jump to [Computing Environment](#compenv) for a list of packages used here, and their version numbers.
 
@@ -40,6 +37,10 @@ cap  <- mu$cap           # function to output html caption
 lcap <- mu$lcap          # for continuation for long caption
 # These last 2 functions are used by the putHfig function in Hmisc
 ```
+The following (<code>r hidingTOC(buttonLabel="Outline")</code>) uses the Hmisc `hidingTOC` function to define HTML styles related to a floating table of contents that can be minimized or be collapsed to major outline levels.  For more details see [this](http://biostat.mc.vanderbilt.edu/KnitrHtmlTemplate).
+
+`r hidingTOC(buttonLabel="Outline")`
+
 The following (<code>r mu$styles()</code>) defines HTML styles and javascript functions, such as <code>ffig, smg</code> and the function for expanding and collapsing text as done by the <code>expcoll</code> function. 
 `r mu$styles()`
 

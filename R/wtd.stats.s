@@ -60,7 +60,7 @@ wtd.quantile <- function(x, weights=NULL, probs=c(0, .25, .5, .75, 1),
                              2 - log10(diff(range(probs))) else 2)), 
                 "%", sep = "")
 
-  i <- is.na(weights) || weights == 0
+  i <- is.na(weights) | weights == 0
   if(any(i)) {
     x <- x[! i]
     weights <- weights[! i]

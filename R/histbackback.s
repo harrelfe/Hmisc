@@ -62,8 +62,10 @@ histbackback <-
       del <- (brks[2]-brks[1] - (brks[3]-brks[2]))/2
       brks[1] <- brks[1] + del
       brks[-1] <- brks[-1] - del
-      mgp.axis(2, at=0:(length(brks)-1),
-               labels=formatC(brks, format='f', digits=.Options$digits))
+      at <- 0 : (length(brks) - 1)
+      pb <- pretty(brks)
+      atpb <- approxExtrap(brks, at, xout=pb)$y
+      mgp.axis(2, at=atpb, labels=format(pb))
     
       title(xlab = xlab[1], adj = (-0.5 * xl[1])/( - xl[1] + xl[2]))
       title(xlab = xlab[2], adj = (-xl[1] + 0.5 * xl[2])/(-xl[1] + xl[2]))

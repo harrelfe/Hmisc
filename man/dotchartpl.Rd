@@ -56,8 +56,8 @@ dotchartpl(x, major=NULL, minor=NULL, group=NULL, mult=NULL,
 		right on horizontal lines) vs. minor (smaller, transparent points
 		slightly below the line).}
 	\item{htext}{additional hover text per point}
-	\item{num}{if \code{x} represents proportions, optinally specifies to
-		numerators, to be used in fractions added to hover text.  When
+	\item{num}{if \code{x} represents proportions, optionally specifies
+		numerators to be used in fractions added to hover text.  When
 		\code{num} is given, \code{x} is automatically added to hover text,
 		rounded to 3 digits after the decimal point.}
 	\item{denom}{like \code{num} but for denominators}

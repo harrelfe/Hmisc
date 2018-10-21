@@ -6,10 +6,17 @@
 ## Modified 16Jun95 (categories with 1 unique value -> label=value, not interval)
 ## Modified 1Jul95 - if specified cuts, mindif would cause improper
 ##   categorization if a cut was close to but not equal an actual value
+## Modified 21oct18 - added formatfun
 
 cut2 <- function(x, cuts, m=150, g, levels.mean=FALSE, digits, minmax=TRUE,
-		 oneval=TRUE, onlycuts=FALSE)
+		 oneval=TRUE, onlycuts=FALSE, formatfun = format, ...)
 {
+  if (inherits(formatfun, "formula")) {
+    if (!requireNamespace("rlang"))
+      stop("Package 'rlang' must be installed to use formula notation")
+    formatfun <- rlang::as_function(formatfun)
+  }
+  
   method <- 1 ## 20may02
   x.unique <- sort(unique(c(x[!is.na(x)],if(!missing(cuts))cuts)))
   min.dif <- min(diff(x.unique))/2
@@ -18,6 +25,14 @@ cut2 <- function(x, cuts, m=150, g, levels.mean=FALSE, digits, minmax=TRUE,
   ## Make formatted values look good
   if(missing(digits))
     digits <- if(levels.mean) 5 else 3
+  
+  ## add digits to formatfun's arguments if relevant
+  format.args <- 
+    if (any(c("...","digits") %in%  names(formals(args(formatfun))))) {
+    c(digits = digits, list(...))
+  } else {
+    list(...)
+  }
   
   oldopt <- options('digits')
   options(digits=digits)
@@ -79,8 +94,8 @@ cut2 <- function(x, cuts, m=150, g, levels.mean=FALSE, digits, minmax=TRUE,
       variation[ii] <- diff(r) > 0
     }
     if(onlycuts) return(unique(c(low, max(xx))))
-    flow <- format(low)
-    fup  <- format(up)
+    flow <- do.call(formatfun,c(list(low), format.args))
+    fup  <- do.call(formatfun,c(list(up),  format.args))
     bb   <- c(rep(')',i-1),']')
     labs <- ifelse(low==up | (oneval & !variation), flow,
                    paste('[',flow,',',fup,bb,sep=''))
@@ -109,7 +124,7 @@ cut2 <- function(x, cuts, m=150, g, levels.mean=FALSE, digits, minmax=TRUE,
     if(!levels.mean) {
       brack <- rep(")",l-1)
       brack[l-1] <- "]"
-      fmt <- format(cuts)
+      fmt <- do.call(formatfun,c(list(cuts), format.args))
       ## If any interval has only one unique value, set label for
       ## that interval to that value and not to an interval
       labs <- paste("[",fmt[1:(l-1)],",",fmt[2:l],
@@ -128,7 +143,7 @@ cut2 <- function(x, cuts, m=150, g, levels.mean=FALSE, digits, minmax=TRUE,
 
   if(levels.mean) {
     means <- tapply(x, y, function(w)mean(w,na.rm=TRUE))
-    levels(y) <- format(means)
+    levels(y) <- do.call(formatfun,c(list(means), format.args))
   }
   attr(y,'class') <- "factor"
   if(length(xlab)) label(y) <- xlab

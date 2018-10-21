@@ -51,6 +51,12 @@ interval endpoints, unless \code{oneval=FALSE}
   set to \code{TRUE} to only return the vector of computed cuts.  This
   consists of the interior values plus outer ranges.
 }
+\item{formatfun}{
+  formatting function, supports formula notation (if \code{rlang} is installed)
+}
+\item{...}{
+  additional arguments passed to \code{formatfun}
+}
 }
 \value{
 a factor variable with levels of the form \code{[a,b)} or formatted means

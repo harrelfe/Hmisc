@@ -6,14 +6,21 @@
 #' can be hidden at the press of a button. It also generate buttons that allow
 #' the hiding or unhiding of the diffrent level depths of the table of contents.
 #'
-#' @param buttonLabel The text on the button that hides and unhides the
-#'   table of contents
-#' @param levels The max depth of the table of contents that it is desired to
+#' @param buttonLabel the text on the button that hides and unhides the
+#'   table of contents. Defaults to \code{Contents}.
+#' @param levels the max depth of the table of contents that it is desired to
 #'   have control over the display of.  (defaults to 3)
-#' @param side which side of the page should the table of contents be placed
-#'   on. Can be either \code{'right'} or \code{'left'}. Defaults to \code{'right'}
-#' @param buttonSide which side of the page should the button be placed on.
-#'   Can be either \code{'right'} or \code{'left'}. Defaults to \code{'right'}
+#' @param posCollapse if \code{'margin'} then display the depth select buttons
+#'   vertically along the side of the page choosen by \code{buttonSide}. If
+#'   \code{'top'} then display the depth select buttons horizontally under the
+#'   button that hides the TOC. Defaults to \code{'margin'}. \code{'bottom'} is
+#'   currently unimplemented.
+#' @param tocSide which side of the page should the table of contents be placed
+#'   on. Can be either \code{'right'} or \code{'left'}. Defaults to
+#'   \code{'right'}
+#' @param buttonSide which side of the page should the button that hides the TOC
+#'   be placed on. Can be either \code{'right'} or \code{'left'}. Defaults to
+#'   \code{'right'}
 #' @param hidden Logical should the table of contents be hidden at page load
 #'   Defaults to \code{FALSE}
 #'
@@ -25,9 +32,9 @@
 #' }
 #' @export
 
-hidingTOC <- function(buttonLabel="Table of Contents", levels=3,
-                      side=c('right','left'), buttonSide=c('right','left'),
-                      hidden=FALSE) {
+hidingTOC <- function(buttonLabel="Contents", levels=3,
+                      tocSide=c('right','left'), buttonSide=c('right','left'),
+                      posCollapse=c('margin','top','bottom'), hidden=FALSE) {
 
     ## Make javascript functions that controll the hiding and unhiding of
     ## different levels of the TOC
@@ -67,48 +74,78 @@ hidingTOC <- function(buttonLabel="Table of Contents", levels=3,
     }
 
     ## basic HTML skeleton to inwhich to place various values
-    skeleton <- '<style type="text/css">
-  #TOC{
-    position:fixed;
-    top:0;
-    %s:0;
-    margin: 54px 20px 20px 20px;
-    z-index: 9;%s
-  }
-  #toc-toggle{
-    position:fixed;
-    top:0;
-    %s:0;
-    margin: 5px 20px 5px 20px;
-  }
-  .col-md-3{
-    width: 0%%;
-  }
-  .col-md-9{
-    width: 100%%;
-  }
-  div.container-fluid.main-container{
-    max-width:none;
-    margin-left:0px;
-    margin-right:none;
-  }
-</style><script>function toggleTOC(){$("#TOC").toggle()}%s</script><div id="toc-toggle" class="pull-right"><button type="button" class="btn btn-default btn-xs toc-folding-btn pull-right" onclick="toggleTOC()">%s</button><br/>%s</div>
+    skeleton <- '<style type="text/css">%s</style><script>function toggleTOC(){$("#TOC").toggle()}%s</script><div id="toc-controls">%s<br/>%s</div>
 '
+    buttonSide <- match.arg(buttonSide)
+    tocSide <- match.arg(tocSide)
+    posCollapse <- match.arg(posCollapse)
+    if(posCollapse == 'bottom') {
+        stop("arguement posCollapse = bottom is not supported yet")
+    }
+
+    if(tocSide != buttonSide)
+        stop("non-symmetric values for tocSide and buttonSide are not supported")
+    
+    if(!missing(hidden) && (length(hidden) == 0L || (!is.logical(hidden) && !is.numeric(hidden))))
+        stop("hidden must be of logical type")
+
     levelSequence <- seq_len(levels)
+
+    ## CSS text
+    cssText <- paste0(".toc-level-select-group{clear:both}#TOC{position:fixed;top:0;",
+                      tocSide, ':0;margin:',
+                      switch(posCollapse,
+                             margin = '23px ',
+                             top = '44px '),
+                      switch(posCollapse,
+                             margin = '20px ',
+                             top = '0px '),
+                      '20px ',
+                      switch(posCollapse,
+                             margin = '20px',
+                             top = '0px'),
+                      ';z-index:9',
+                      if(hidden) ";display:none",
+                      '}#toc-controls{position:fixed;top:0;',
+                      buttonSide, ':0;margin:0px}.col-md-3{width: 0%}.col-md-9{width: 100%}',
+                      'div.container-fluid.main-container{max-width:none;margin-left:0px;margin-right:none}')
+
+
 
     ## Generate the javascript text needed for the TOC level display buttons'
     ## functions.
     scriptText <- paste0(vapply(levelSequence, makeLevelExpandFun, "", maxLevels=levels),
                          collapse="")
 
-    ## Generate the button HTML text.
-    buttonText <- paste0("<center>", paste0('<button id="toc-expand-level', levelSequence,
-                                            '" type="button" class="btn btn-default btn-xs toc-folding-btn" onclick="expandLevel',
-                                            levelSequence, '()">', levelSequence, '</button>',
-                                            collapse=""),
-                         "</center>")
+    ## Which side the buttons should be pulled to.
+    pullClass <- if(buttonSide == "right") {
+                     "pull-right"
+                 } else {
+                     "pull-left"
+                 }
 
-    buttonSide <- match.arg(buttonSide)
-    side <- match.arg(side)
-    return(sprintf(skeleton, side, if(hidden) "\ndisplay:none" else "", buttonSide, scriptText, buttonLabel, buttonText))
+    ## Generate the hiding button HTML text.
+    buttonText <- paste0('<button type="button" id="toc-toggle" class="btn btn-default btn-xs toc-folding-btn ',
+                         pullClass, '" onclick="toggleTOC()">', buttonLabel, '</button>')
+    
+    ## Generate the level buttons' HTML text.
+    levelButtonText <- paste0('<div class="toc-level-select-group',
+                              switch(posCollapse,
+                                     margin = paste0(" ", pullClass),
+                                     ""),
+                              '">',
+                              paste0('<button id="toc-expand-level', levelSequence,
+                                     '" type="button" class="btn btn-default btn-xs toc-collapsing-btn',
+                                     switch(posCollapse,
+                                            margin = paste0(" ", pullClass),
+                                            ""),
+                                     '" onclick="expandLevel',
+                                     levelSequence, '()">', levelSequence, '</button>',
+                                     collapse=switch(posCollapse,
+                                                     margin = "<br/>",
+                                                     top="",
+                                                     stop("Unknown value for posCollapse ", posCollapse))),
+                              "</div>")
+
+    return(sprintf(skeleton, cssText, scriptText, buttonText, levelButtonText))
 }

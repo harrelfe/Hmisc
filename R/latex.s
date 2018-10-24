@@ -401,16 +401,18 @@ latex.default <-
   if (length(rgroup) && rowlabel.just == "l")
     rowname <- paste("~~", rowname, sep="")
 
-  sl <- ifelse(double.slash, "\\\\", "\\")
-  if(ctable) {
-    eol <- paste(sl, 'NN\n', sep='')
-    eog <- ""
-  } else if(longtable && length(n.rgroup)) {
-    eol <- paste(sl,"tabularnewline*\n", sep='')
-    eog <- paste(sl, "tabularnewline\n", sep='')
-  } else {
-    eol <- paste(sl,"tabularnewline\n",  sep='')
-    eog <- paste(sl, "tabularnewline\n", sep='')      
+  if(ctable && !booktabs) {
+      eol <- paste(sl, 'NN\n', sep='')
+      eog <- ""
+    } else if(ctable) {
+      eol <- paste(sl, 'NN\n', sep='')
+      eog <- paste(sl, 'NN\n', sep='')
+    } else if(longtable && length(n.rgroup)) {
+      eol <- paste(sl,"tabularnewline*\n", sep='')
+      eog <- paste(sl, "tabularnewline\n", sep='')
+    } else {
+      eol <- paste(sl,"tabularnewline\n",  sep='')
+      eog <- paste(sl, "tabularnewline\n", sep='')      
   }
   
   if(booktabs) {

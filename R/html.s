@@ -323,6 +323,20 @@ markupSpecs <- list(html=list(
   center   = function(x) paste0('<div align=center>', x, '</div>'),
   color    = function(x, col) paste0('<font color="', col, '">', x,
                                      '</font>'),
+
+  ## Break a long string into two lines with <br> inserted at a space
+  ## between words that is close to the middle of the string
+  ## Cole Beck 2018-10-18
+  addBreak = function(x, minbreak=30) {
+    sl <- nchar(x)
+    if(sl < minbreak) return(x)
+    si <- c(gregexpr(' ', x)[[1]])
+    ix <- si[which.min(abs(si - sl/2))]
+    p1 <- substr(x, 1, ix - 1)
+    p2 <- substr(x, ix + 1, sl)
+    paste0(p1, "<br>", p2)
+  },
+
   subtext  = function(..., color='blue')
     paste0('<br><font size=1 color="', color, '">',
            paste(unlist(list(...)), collapse=' '),
@@ -571,7 +585,9 @@ unicodeshow = function(x, surr=TRUE, append=FALSE) {
       cn <- paste0(bn, i)
       .obj. <- robj[[i]]
       k <- c(md[[i]], paste0('```{r ', cn, ',echo=FALSE}'), '.obj.', '```')
-      cat(trimws(knitr::knit(text=knitr::knit_expand(text=k), quiet=TRUE)))
+      ## Original solution had cat(trimws(...)) but this caused
+      ## section headings to be run into R output and markdown not recog.
+      cat(knitr::knit(text=knitr::knit_expand(text=k), quiet=TRUE))
       }
     }
 ),

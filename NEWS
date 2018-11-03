@@ -1,4 +1,4 @@
-Changes in version 4.2-0 (2018-09-28)
+Changes in version 4.2-0 (2018-11-03)
    * putHcap: new function
    * inst/tests/example.Rmd: changed to html document, replaced putHfig calls with new putHcap
    * knitrSet: new lang='blogdown' option
@@ -29,6 +29,8 @@ Changes in version 4.2-0 (2018-09-28)
    * formatTestStats: ran P-values with < through latexTranslate to make latex.summary.formula.reverse and latex.summaryM work correctly
    * hidingTOC: new function by Thomas Dupont for various features for floating table of contents with RMarkdown html reports
    * histbackback: use pretty() to label breaks
+   * cut2: added formatfun argument, by github.com/harrelfe/Hmisc/commit/c8816d589b2e95eed15b96a886558a92bb143abd
+   * latex.default: fixed midfules for booktabs with ctable: https://github.com/harrelfe/Hmisc/pull/100
 	 
 Changes in version 4.1-1 (2018-01-03)
    * describe: quit rounding values when <= 20 distinct values no matter how far apart any two values are spaced.  https://stackoverflow.com/questions/47679551

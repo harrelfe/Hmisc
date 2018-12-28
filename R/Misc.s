@@ -1816,7 +1816,28 @@ plotlySave <- function(x, ...) {
 plotlyParm = list(
   ## Needed height in pixels for a plotly dot chart given the number of
   ## rows in the chart
-  heightDotchart = function(rows) min(800, max(200, 25 * rows)),
+  heightDotchart = function(rows, per=25, low=200, high=800)
+    min(high, max(low, per * rows)),
+
+  ## Given a vector of row labels that appear to the left on a dot chart,
+  ## compute the needed chart height taking label line breaks into account
+  ## Since plotly devotes the same vertical space to each category,
+  ## just need to find the maximum number of breaks present
+  heightDotchartb = function(x, per=40,
+      low=c(200, 200, 250, 300, 375)[min(nx, 5)],
+      high=1700) {
+    x  <- if(is.factor(x)) levels(x) else sort(as.character(x))
+    nx <- length(x)
+    m <- sapply(strsplit(x, '<br>'), length)
+    # If no two categories in a row are at the max # lines,
+    # reduce max by 1
+    mx   <- max(m)
+    lm   <- length(m)
+    mlag <- if(lm == 1) 0 else c(0, m[1:(lm - 1)])
+    if(! any(m == mx & mlag == mx)) mx <- mx - 1
+    z <- 1 + (if(mx > 1) 0.5 * (mx - 1) else 0)
+    min(high, max(low, per * length(x) * z))
+  },
 
   ## Colors for unordered categories
   colUnorder = function(n=5, col=colorspace::rainbow_hcl) {

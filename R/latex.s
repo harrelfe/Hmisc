@@ -401,6 +401,8 @@ latex.default <-
   if (length(rgroup) && rowlabel.just == "l")
     rowname <- paste("~~", rowname, sep="")
 
+  sl <- ifelse(double.slash, "\\\\", "\\")
+
   if(ctable && !booktabs) {
       eol <- paste(sl, 'NN\n', sep='')
       eog <- ""

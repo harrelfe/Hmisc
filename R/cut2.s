@@ -14,7 +14,8 @@ cut2 <- function(x, cuts, m=150, g, levels.mean=FALSE, digits, minmax=TRUE,
   if (inherits(formatfun, "formula")) {
     if (!requireNamespace("rlang"))
       stop("Package 'rlang' must be installed to use formula notation")
-    formatfun <- rlang::as_function(formatfun)
+    formatfun <- getFromNamespace('as_function', 'rlang')(formatfun)
+
   }
   
   method <- 1 ## 20may02

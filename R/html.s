@@ -577,7 +577,8 @@ unicodeshow = function(x, surr=TRUE, append=FALSE) {
 ## per chunk, and robj is a list of R objects to print
 ## Accounts for markdown being in caption text; knitr processes this
 ## See stackoverflow.com/questions/51803162
-  mdchunk = function(md=rep('', length(robj)), robj, w=NULL, h=NULL) {
+mdchunk = function(md=rep('', length(robj)), robj,
+                   cnames=NULL, w=NULL, h=NULL) {
     bn <- paste0('c', round(runif(1, 0, 1e6)))
     n <- length(md)
     if(length(robj) != n) stop('robj and md must have same length')
@@ -585,8 +586,9 @@ unicodeshow = function(x, surr=TRUE, append=FALSE) {
     if(length(w)) opts <- c(paste0('fig.width=' , w), opts)
     if(length(h)) opts <- c(paste0('fig.height=', h), opts)
     opts <- paste(opts, collapse=',')
+    if(! length(cnames)) cnames <- paste0(bn, 1 : n)
     for(i in 1 : n) {
-      cn <- paste0(bn, i)
+      cn <- cnames[i]
       .obj. <- robj[[i]]
       k <- c(md[[i]], paste0('```{r ', cn, ',', opts, '}'), '.obj.', '```')
       ## Original solution had cat(trimws(...)) but this caused

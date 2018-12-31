@@ -10,6 +10,8 @@ stat_plsmo(mapping = NULL, data = NULL, geom = "smooth",
   inherit.aes = TRUE, ...)
 }
 \arguments{
+\item{mapping, data, geom, position, show.legend, inherit.aes}{see ggplot2 documentation}
+
 \item{n}{number of points to evaluate smoother at}
 
 \item{fullrange}{should the fit span the full range of the plot, or just

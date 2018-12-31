@@ -3,6 +3,7 @@
 #' Automatically selects \code{iter=0} for \code{lowess} if \code{y} is binary, otherwise uses \code{iter=3}.
 #'
 #'
+#' @param mapping,data,geom,position,show.legend,inherit.aes see ggplot2 documentation
 #' @param span see \code{f} argument to \code{lowess}
 #' @param fun a function to transform smoothed \code{y}
 #' @param fullrange should the fit span the full range of the plot, or just

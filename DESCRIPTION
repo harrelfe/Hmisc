@@ -7,7 +7,7 @@ Author: Frank E Harrell Jr <f.harrell@vanderbilt.edu>, with
 Maintainer: Frank E Harrell Jr <f.harrell@vanderbilt.edu>
 Depends: lattice, survival (>= 2.40-1), Formula, ggplot2 (>= 2.2)
 Imports: methods, latticeExtra, cluster, rpart, nnet, acepack, foreign, gtable, grid, gridExtra, data.table, htmlTable (>= 1.11.0), viridis, htmltools, base64enc
-Suggests: chron, rms, mice, tables, knitr, ff, ffbase, plotly (>= 4.5.6)
+Suggests: chron, rms, mice, tables, knitr, ff, ffbase, plotly (>= 4.5.6), rlang
 Description: Contains many functions useful for data
 	analysis, high-level graphics, utility operations, functions for
 	computing sample size and power, importing and annotating datasets,

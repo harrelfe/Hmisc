@@ -1,8 +1,6 @@
 \name{cut2}
 \alias{cut2}
-\title{
-Cut a Numeric Variable into Intervals
-}
+\title{Cut a Numeric Variable into Intervals}
 \description{
 Function like cut but left endpoints are inclusive and labels are of
 the form \code{[lower, upper)}, except that last interval is \code{[lower,upper]}.  
@@ -14,7 +12,8 @@ with a given minimum number of observations (\code{m}).  Whereas cut creates a
 category object, \code{cut2} creates a factor object.
 }
 \usage{
-cut2(x, cuts, m, g, levels.mean, digits, minmax=TRUE, oneval=TRUE, onlycuts=FALSE)
+cut2(x, cuts, m=150, g, levels.mean=FALSE, digits, minmax=TRUE,
+oneval=TRUE, onlycuts=FALSE, formatfun=format, \dots)
 }
 \arguments{
 \item{x}{
@@ -54,7 +53,7 @@ interval endpoints, unless \code{oneval=FALSE}
 \item{formatfun}{
   formatting function, supports formula notation (if \code{rlang} is installed)
 }
-\item{...}{
+\item{\dots}{
   additional arguments passed to \code{formatfun}
 }
 }

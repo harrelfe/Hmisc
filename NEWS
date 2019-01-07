@@ -1,4 +1,4 @@
-Changes in version 4.2-0 (2018-12-31)
+Changes in version 4.2-0 (2018-01-07)
    * putHcap: new function
    * inst/tests/example.Rmd: changed to html document, replaced putHfig calls with new putHcap
    * knitrSet: new lang='blogdown' option
@@ -31,6 +31,7 @@ Changes in version 4.2-0 (2018-12-31)
    * histbackback: use pretty() to label breaks
    * cut2: added formatfun argument, by github.com/harrelfe/Hmisc/commit/c8816d589b2e95eed15b96a886558a92bb143abd
    * latex.default: fixed midfules for booktabs with ctable: https://github.com/harrelfe/Hmisc/pull/100
+   * formatTestStats: trapped logical length mismatch
 	 
 Changes in version 4.1-1 (2018-01-03)
    * describe: quit rounding values when <= 20 distinct values no matter how far apart any two values are spaced.  https://stackoverflow.com/questions/47679551

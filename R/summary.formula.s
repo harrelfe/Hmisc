@@ -984,12 +984,12 @@ plot.summary.formula.reverse <-
         dotchart2(zi, groups=vnd, xlab=xlab, xlim=xlim, 
                   sort.=FALSE, pch=pch[i],
                   dotfont=dotfont[i],
-                  add=i>1, ...)
+                  add=i > 1, ...)
       else
         dotchart2(zi, groups=vnd, auxdata=ftstats,
                   xlab=xlab, xlim=xlim, sort.=FALSE,
                   pch=pch[i], dotfont=dotfont[i],
-                  add=i>1, ...)
+                  add=i > 1, ...)
     }
 
     if(main != '')
@@ -1707,7 +1707,9 @@ formatTestStats <- function(tr, multchoice=FALSE,
 
   ## tr=an element of testresults (created by summary.formula method='reverse')
   ## or summaryM
-  if(i > 1 && ! multchoice) stop('logic error')
+
+  if(any(i > 1) && ! multchoice) stop('logic error')
+  ## was i > 1; length mismatch
 
   specs <- mspecs[[lang]]
   spc   <- specs$space

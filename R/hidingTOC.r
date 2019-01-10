@@ -57,7 +57,7 @@ hidingTOC <- function(buttonLabel="Contents", levels=3,
                    ## Where the requested level is equal to maxLevels then just unhide
                    ## all elements with id equal to TOC or class equal to
                    ## tocify-subheader.
-                   paste0('function expandLevel', level, '(){$("TOC,.tocify-subheader").toggle(true)}')
+                   paste0('function expandLevel', level, '(){$("#TOC,.tocify-subheader").toggle(true)}')
                } else {
                    ## General case level greater then 1 and less then maxLevels. Unhide
                    ## the elements with id equal to TOC or class equal to
@@ -74,7 +74,7 @@ hidingTOC <- function(buttonLabel="Contents", levels=3,
     }
 
     ## basic HTML skeleton to inwhich to place various values
-    skeleton <- '<style type="text/css">%s</style><script>function toggleTOC(){$("#TOC").toggle()}%s</script><div id="toc-controls">%s<br/>%s</div>
+    skeleton <- '<style type="text/css">%s</style><script>function toggleTOC(){$("#TOC").toggle();$(".toc-level-select-group").toggle()}%s</script><div id="toc-controls">%s<br/>%s</div>
 '
     buttonSide <- match.arg(buttonSide)
     tocSide <- match.arg(tocSide)

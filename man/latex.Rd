@@ -548,6 +548,13 @@ dvigv(object, \dots)
   commands which are assumed to be in the system path.
 }
 \details{
+	\command{latex.default} outputs a LaTeX comment containing the calling
+  statement.  To suppress outputting this comment, run
+  \command{options(omitlatexcom=TRUE)} before running.  This is helpful
+  when running RMarkdown to produce pdf output using LaTeX, as this uses
+  \command{pandoc} which is fooled into try to escape the percent
+  comment symbol.
+	
   If running under Windows and using MikTeX, \command{latex} and \command{yap}
   must be in your system path, and \command{yap} is used to browse
   \file{.dvi} files created by \command{latex}.  You should install the

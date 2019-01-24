@@ -566,8 +566,11 @@ latex.default <-
   vbar <- ifelse(vbar, "|", "")
 
   if(! append) cat("", file=file)	#start new file
-  
-  cat("%", deparse(sys.call()), "%\n", file=file, append=file != '', sep='')
+
+  ## pandoc used by R Markdown gets fooled by LaTeX comments
+  olc <- getOption('omitlatexcom')
+  if(! length(olc) || ! olc)
+    cat("%", deparse(sys.call()), "%\n", file=file, append=file != '', sep='')
 
   if(dcolumn) {
     decimal.point <- ifelse(cdot, paste(sl, "cdot", sep=""), ".")

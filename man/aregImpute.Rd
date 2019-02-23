@@ -27,7 +27,7 @@ is assumed for target variables (variables being imputed) and
 \code{nk=3} knots are assumed for continuous predictors transformed
 using restricted cubic splines.  If \code{nk} is three or greater and
 \code{tlinear} is set to \code{FALSE}, \code{areg}
-simultaneously find transformations of the target variable and of all of
+simultaneously finds transformations of the target variable and of all of
 the predictors, to get a good fit assuming additivity, maximizing
 \eqn{R^2}, using the same canonical correlation method as
 \code{transcan}.  Flexible transformations may be overridden for
@@ -67,7 +67,7 @@ of possible inverse values is made.
 
 The \code{reformM} function provides two ways of recreating a formula to
 give to \code{aregImpute} by reordering the variables in the formula.
-This ia a modified version of a function written by Yong Hao Pua.  One
+This is a modified version of a function written by Yong Hao Pua.  One
 can specify \code{nperm} to obtain a list of \code{nperm} randomly
 permuted variables.  The list is converted to a single ordinary formula
 if \code{nperm=1}.  If \code{nperm} is omitted, variables are sorted in
@@ -136,7 +136,7 @@ recommended but 10 or more doesn't hurt.
   linearity for non-categorical variables) or 3 (minimum number of knots
   possible with a linear tail-restricted cubic spline) for small sample
   sizes.  Simulated problems as in the examples section can assist in
-  choosing \code{nk}.  See \code{nk} to a vector to get bootstrap-validated
+  choosing \code{nk}.  Set \code{nk} to a vector to get bootstrap-validated
   and 10-fold cross-validated \eqn{R^2} and mean and median absolute
   prediction errors for imputing each sometimes-missing variable, with
   \code{nk} ranging over the given vector.  The errors are on the
@@ -147,7 +147,7 @@ recommended but 10 or more doesn't hurt.
   being imputed) to have a nonlinear left-hand-side transformation when
   \code{nk} is 3 or greater}
 \item{type}{
-  The default is \code{"pmn"} for predictive mean matching,
+  The default is \code{"pmm"} for predictive mean matching,
   which is a more nonparametric approach that will work for categorical
   as well as continuous predictors.  Alternatively, use
   \code{"regression"} when all variables that are sometimes missing are

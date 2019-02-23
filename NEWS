@@ -1,4 +1,8 @@
-Changes in version 4.2-0 (2018-01-24)
+Changes in version 4.2-1 (2019-02-23)
+   * Corrected typos in aregImpute help file.  Thanks: Mark Seeto.
+
+
+Changes in version 4.2-0 (2019-01-25)
    * putHcap: new function
    * inst/tests/example.Rmd: changed to html document, replaced putHfig calls with new putHcap
    * knitrSet: new lang='blogdown' option

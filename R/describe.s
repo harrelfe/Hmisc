@@ -92,7 +92,7 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
   }
   
   if(length(pd <- atx$partial.date)) {
-    if((nn <- length(pd$month))>0) {
+    if((nn <- length(pd$month)) > 0) {
       counts <- c(counts, nn)
       lab <- c(lab, "missing month")
     }
@@ -202,6 +202,7 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
             dist <- pret[2] - pret[1]
             r    <- range(pret)
             xnum <- r[1] + dist * round((xnum - r[1]) / dist)
+            z$roundedTo <- dist
           }
         }
         values <- wtd.table(if(isnum) xnum else if(isdat) format(x) else x,
@@ -386,7 +387,7 @@ formatdescribeSingle <-
   val.wide    <- length(v$value) && sum(nchar(as.character(v$value))) > 200
   val.few     <- length(v$value) && (length(v$value) <= 20)
   print.freq  <- is.standard && val.few && ! val.wide
-  print.ext   <- length(x$extremes) && ! print.freq
+  print.ext   <- length(x$extremes) ## && ! print.freq
 
   if(print.ext) {
     val  <- format(x$extremes)
@@ -471,6 +472,11 @@ formatdescribeSingle <-
       w <- strwrap(paste(w, collapse=', '), width=wide)
       R <- c(R, '', w)
     }
+    if(length(x$roundedTo))
+      R <- c(R, '',
+             paste('For the frequency table, variable is rounded to the nearest',
+                   format(x$roundedTo, scientific=3)))
+    
   } else if(length(v) && ! is.standard)
     R <- c(R, '', vbtm(v))
   

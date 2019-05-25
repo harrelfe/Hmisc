@@ -168,13 +168,19 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
 }
 
 
+## orm fit$var has only middle intercept
+## fit.mult.impute from orm has all intercepts
 vcov.fit.mult.impute <-
   function(object, regcoef.only=TRUE, intercepts='mid', ...) {
+    if(inherits(object, 'orm'))
+      return(NextMethod('vcov', object, regcoef.only=regcoef.only,
+                           intercepts=intercepts, ...))
     ns    <- num.intercepts(object)
     v     <- object$var
     if(ns == 0) return(v)
     vari  <- attr(v, 'intercepts')
     lvari <- length(vari)
+    
     if(is.character(intercepts)) {
       switch(intercepts,
              mid = {

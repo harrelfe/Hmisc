@@ -2,7 +2,7 @@
 \alias{mdb.get}
 \title{Read Tables in a Microsoft Access Database}
 \description{
-  Assuming the \code{mdb-tools} package has been installed on your
+  Assuming the \code{mdbtools} package has been installed on your
   system and is in the system path, \code{mdb.get} imports
   one or more tables in a Microsoft Access database.  Date-time
   variables are converted to dates or \code{chron} package date-time

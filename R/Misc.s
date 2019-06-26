@@ -1162,6 +1162,56 @@ formatDateTime <- function(x, at, roundDay=FALSE)
   format(w)
 }
 
+## Try to guess whether a factor or character variable is a date, and
+## allow for partial dates of the form YYYY and mm/YYYY, the former
+## only used if at least one observation has a month in it.  If a minority
+## fraction of observations fracnn or less is not convertable to a date,
+## set those observations to NA
+## Allows for mixing of common date forms across observations
+##
+## Example:
+##
+## x <- convertPdate(c(rep('2019-03-04',7), '2018', '03/2018', 'junk', '3/11/17','2017-01-01','2017-01-01', NA, ''))
+## x
+## describe(x)
+
+
+convertPdate <- function(x, fracnn=0.3, considerNA=NULL) {
+  xo <- x
+  if(is.factor(x)) x <- as.character(x)
+  if(! is.character(x)) return(xo)
+  x <- trimws(x)
+  if(all(is.na(x)) || all(x =='')) return(xo)
+
+  ymd <- grepl('^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$', x)
+  mdy <- grepl('^[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}$', x)
+  y   <- grepl('^[0-9]{4}$', x)
+  my  <- grepl('^[0-9]{1,2}/[0-9]{4}$', x)
+  m   <- sum(x %nin% c('', considerNA) & ! is.na(x)) * (1 - fracnn)
+  dny <- ymd | mdy | my   # date other than just YYYY
+  d   <- dny | (y & any(dny))
+  ## The variable is a date if at least m values are dates
+  if(sum(d) < m) return(xo)
+  special <- obs <- NULL
+  ndnm <- ! d & ! is.na(x)   # not date and not missing
+  if(any(ndnm)) {
+    special <- setdiff(x[ndnm], c('', ' '))
+    obs     <- x %in% special
+    x[ndnm] <- NA    # values such as text comments
+    }
+
+  x <- ifelse(y, paste0(x, '-07-03'),
+        ifelse(my, gsub('^([0-9]{1,2})/([0-9]{4})$', '\\2-\\1-15', x),
+         ifelse(ymd, x,
+          ifelse(mdy, gsub('^([0-9]{1,2})/([0-9]{1,2})/([0-9]{4})$',
+                               '\\3-\\1-\\2', x), NA))))
+
+  x <- as.Date(x)
+  if(length(special))
+    attr(x, 'special.miss') <- list(codes=special, obs=obs)
+  if(any(y | my)) attr(x, 'imputed') <- which(y | my)
+  x
+}
 
 getHdata <-
   function(file, what=c('data','contents','description','all'),

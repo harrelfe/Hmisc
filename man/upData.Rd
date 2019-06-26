@@ -55,7 +55,9 @@ cleanup.import(obj, labels, lowernames=FALSE,
                force.single=TRUE, force.numeric=TRUE, rmnames=TRUE,
                big=1e20, sasdict, print, datevars=NULL, datetimevars=NULL,
                dateformat='\%F',
-               fixdates=c('none','year'), charfactor=FALSE)
+               fixdates=c('none','year'),
+               autodate=FALSE, autonum=FALSE, fracnn=0.3,
+               considerNA=NULL, charfactor=FALSE)
 
 upData(object, \dots, 
        subset, rename, drop, keep, labels, units, levels, force.single=TRUE,
@@ -141,6 +143,27 @@ dataframeReduce(data, fracmiss=1, maxlevels=NULL,  minprev=0, print=TRUE)
     on the left.  Set \code{dateformat} to the desired format, not the
     exceptional format.
   }
+	\item{autodate}{set to \code{TRUE} to have \code{cleanup.import}
+		determine and automatically handle factor or character 
+		vectors that mainly contain dates of the form YYYY-mm-dd,
+		mm/dd/YYYY, YYYY, or mm/YYYY, where the later two are imputed to,
+		respectively, July 3 and the 15th of the month.  Takes effect when
+		the fraction of non-dates (of non-missing values) is less than
+		\code{fracnn} to allow for some free text such as \code{"unknown"}.
+		Attributes 
+		\code{special.miss} and \code{imputed} are created for the vector so
+		that \code{describe()} will inform the user.  Illegal values are
+		converted to \code{NA}s and stored in the \code{special.miss} attribute.}
+	\item{autonum}{set to \code{TRUE} to have \code{cleanup.import}
+		examine (after \code{autodate}) character and factor variables to
+		see if they are legal numerics exact for at most a fraction of
+		\code{fracnn} of non-missing non-numeric values.  Qualifying variables are
+		converted to numeric, and illegal values set to \code{NA} and stored in
+		the \code{special.miss} attribute to enhance \code{describe} output.}
+	\item{fracnn}{see \code{autodate} and \code{autonum}}
+	\item{considerNA}{for \code{autodate} and \code{autonum}, considers
+		character values in the vector \code{considerNA} to be considered
+		the same as \code{NA}}
   \item{charfactor}{set to \code{TRUE} to change character variables to
 	factors if they have fewer than n/2 unique values.  Null strings and
 	blanks are converted to \code{NA}s.}

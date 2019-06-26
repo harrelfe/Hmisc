@@ -6,6 +6,8 @@ cleanup.import <-
            print=prod(dimobj) > 5e5,
            datevars=NULL, datetimevars=NULL,
            dateformat='%F', fixdates=c('none','year'),
+           autodate=FALSE, autonum=FALSE, fracnn=0.3,
+           considerNA=NULL,
            charfactor=FALSE)
 {
   fixdates <- match.arg(fixdates)
@@ -77,7 +79,6 @@ cleanup.import <-
       if(fixdates != 'none') {
         if(dateformat %nin% c('%F','%y-%m-%d','%m/%d/%y','%m/%d/%Y'))
           stop('fixdates only supported for dateformat %F %y-%m-%d %m/%d/%y %m/%d/%Y')
-        
         x <-
           switch(dateformat,
                  '%F'      =gsub('^([0-9]{2})-([0-9]{1,2})-([0-9]{1,2})',
@@ -87,30 +88,54 @@ cleanup.import <-
                  '%m/%d/%y'=gsub('^([0-9]{1,2})/([0-9]{1,2})/[0-9]{2}([0-9]{2})',
                                  '\\1/\\2/\\3',x),
                  '%m/%d/%Y'=gsub('^([0-9]{1,2})/([0-9]{1,2})/([0-9]{2})$',
-                                 '\\1/\\2/20\\3',x))
+                                 '\\1/\\2/20\\3',x)
+                 )
       }
+            
       x <- if(length(xt) && requireNamespace("chron", quietly = TRUE)) {
-        cform <- if(dateformat=='%F') 'y-m-d'
-        else gsub('%','',tolower(dateformat))
-        chron::chron(x, xt, format=c(dates=cform,times='h:m:s'))
-      }
-      else as.Date(x, format=dateformat)
+             cform <- if(dateformat=='%F') 'y-m-d'
+                      else gsub('%','',tolower(dateformat))
+             chron::chron(x, xt, format=c(dates=cform,times='h:m:s'))
+           }
+           else as.Date(x, format=dateformat)
       modif <- TRUE
     }
-      
-      if(length(labels)) {
-        label(x) <- labels[i]
+
+    if(autodate) {
+      x <- convertPdate(x, fracnn=fracnn, considerNA=considerNA)
+      if(inherits(x, 'Date')) modif <- TRUE
+    }
+
+    if(autonum && (is.character(x) || is.factor(x))) {
+      xc <- trimws(as.character(x))
+      bl <- is.na(xc) | xc == ''
+      xn <- suppressWarnings(as.numeric(xc))
+      illegal <- xc[is.na(xn) & ! bl]
+      if(length(illegal) < sum(xc %nin% c('', considerNA) & ! is.na(xc)) *
+         fracnn) {
+        labx <- attr(x, 'label')
+        x <- xn
+        label(x) <- labx
+        attr(x, 'special.miss') <-
+          list(codes=illegal, obs=which(xc %in% illegal))
+        class(x) <- c(class(x), 'special.miss')
+        modif <- TRUE
+        }
+    }
+    
+    if(length(labels)) {
+      label(x) <- labels[i]
+      modif <- TRUE
+    }
+    
+    if(force.numeric && length(lev <- levels(x))) {
+      if(all.is.numeric(lev)) {
+        labx <- attr(x,'label')
+        x <- as.numeric(as.character(x))
+        label(x) <- labx
         modif <- TRUE
       }
-
-      if(force.numeric && length(lev <- levels(x))) {
-        if(all.is.numeric(lev)) {
-          labx <- attr(x,'label')
-          x <- as.numeric(as.character(x))
-          label(x) <- labx
-          modif <- TRUE
-        }
-      }
+    }
     
     if(storage.mode(x) == 'double') {
       xu <- unclass(x)

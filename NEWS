@@ -1,7 +1,9 @@
-Changes in version 4.2-1 (2019-05-25)
+Changes in version 4.2-1 (2019-06-26)
    * Corrected typos in aregImpute help file.  Thanks: Mark Seeto.
    * describe: changed to print 5 lowest and highest values even if frequency table printed, added a line of printed output specifying any rounding done for the frequency table
    * vcov.fit.mult.impute: use vcov.orm if object has orm class.  intercepts=mid logic was not working for this
+   * New service function convertPdate to do automatic date conversions and handle partial dates such as YYYY and mm/YYYY with imputation, for cleanup.import
+   * cleanup.import: new arguments autodate, autonum, fracnn
 
 Changes in version 4.2-0 (2019-01-25)
    * putHcap: new function

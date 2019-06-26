@@ -13,6 +13,7 @@
 \alias{substi.source}
 \alias{[.substi}
 \alias{bpx}
+\alias{convertPdate}
 \alias{ddmmmyy}
 \alias{expr.tree}
 \alias{fillin}

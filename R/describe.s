@@ -72,7 +72,7 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
   n.unique <- length(x.unique)
   attributes(x) <- attributes(x.unique) <- atx
 
-  isnum <- (is.numeric(x) || isdat) && ! is.factor(x)
+  isnum <- (is.numeric(x) || isdot) && ! is.factor(x)  # was isdat
   timeUsed <- isdat && testDateTime(x.unique, 'timeVaries')
 
   z <- list(descript=descript, units=un, format=fmt)
@@ -144,10 +144,11 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
     
     lab <- c(lab, "Mean")
     if(! weighted) {
-      gmd <- GiniMd(xnum)
-      counts <- c(counts, if(isdot) formatDateTime(gmd, atx, ! timeUsed)
-                          else
-                            format(gmd, ...))
+      gmd <- format(GiniMd(xnum), ...)
+      counts <- c(counts, gmd)
+#      counts <- c(counts, if(isdot) formatDateTime(gmd, atx, ! timeUsed)
+#                          else
+#                            format(gmd, ...))
       lab <- c(lab, "Gmd")
     }
   } else if(n.unique == 1) {
@@ -205,9 +206,17 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
             z$roundedTo <- dist
           }
         }
-        values <- wtd.table(if(isnum) xnum else if(isdat) format(x) else x,
+#        values <- wtd.table(if(isnum) xnum else if(isdat) format(x) else x,
+#                            weights, normwt=FALSE, na.rm=FALSE)
+#        values <- wtd.table(if(isdot) format(x) else if(isnum) xnum else x,
+#                            weights, normwt=FALSE, na.rm=FALSE)
+        values <- wtd.table(if(isnum) xnum else x,
                             weights, normwt=FALSE, na.rm=FALSE)
-        values <- list(value=values$x, frequency=unname(values$sum.of.weights))
+        vx <- values$x
+        cx <- intersect(atx$class,
+                    c("Date", "POSIXt", "POSIXct", "dates", "times", "chron"))
+        class(vx) <- cx   # restores as date, time, etc.
+        values <- list(value=vx, frequency=unname(values$sum.of.weights))
       }
     z$values <- values
     

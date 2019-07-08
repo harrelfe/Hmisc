@@ -171,16 +171,18 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
     f <- function(x) {
       s <- x$counts
       v <- x$values
+      isn <- function(z) is.numeric(z) || testDateTime(z, 'either')
       if(! (as.numeric(s['distinct']) >= n.unique &&
             length(v) && is.list(v) &&
             all(names(v) == c('value', 'frequency')) &&
-            is.numeric(v$value)) )
+            isn(v$value)) )
         return(data.frame(X=numeric(0), count=numeric(0), text=character(0)))
-      X <- v$value
-      Y <- v$frequency
+      X  <- v$value
+      Y  <- v$frequency
+      Xn <- as.numeric(X)
       
       text <- paste(format(X, digits=digits), ' (n=', Y, ')', sep='')
-      X    <- (X - X[1]) / diff(range(X))
+      X    <- (Xn - Xn[1]) / diff(range(Xn))
       zz   <- format_counts(s)
       lab  <- fmtlab(x)
       

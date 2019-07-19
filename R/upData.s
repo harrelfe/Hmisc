@@ -110,16 +110,19 @@ cleanup.import <-
       xc <- trimws(as.character(x))
       bl <- is.na(xc) | xc == ''
       xn <- suppressWarnings(as.numeric(xc))
-      illegal <- xc[is.na(xn) & ! bl]
-      if(length(illegal) < sum(xc %nin% c('', considerNA) & ! is.na(xc)) *
-         fracnn) {
-        labx <- attr(x, 'label')
-        x <- xn
-        label(x) <- labx
-        attr(x, 'special.miss') <-
-          list(codes=illegal, obs=which(xc %in% illegal))
-        class(x) <- c(class(x), 'special.miss')
-        modif <- TRUE
+      ignore  <- bl | tolower(xc) %in% tolower(trimws(considerNA))
+      illegal <- is.na(xn) & ! bl
+      illegal.not.ignored <- xc[illegal & ! ignore]
+#      if(length(illegal) < sum(tolower(xc) %nin%
+#                               c('', tolower(considerNA)) & ! is.na(xc)) * fracnn) {
+        if(length(illegal.not.ignored) < sum(! ignore) * fracnn) {
+          labx <- attr(x, 'label')
+          x <- xn
+          label(x) <- labx
+          attr(x, 'special.miss') <-
+            list(codes=xc[illegal], obs=which(illegal))
+          class(x) <- c(class(x), 'special.miss')
+          modif <- TRUE
         }
     }
     
@@ -133,7 +136,7 @@ cleanup.import <-
         labx <- attr(x,'label')
         x <- as.numeric(as.character(x))
         label(x) <- labx
-        modif <- TRUE
+        modif <- TRUEuuuuuuuu
       }
     }
     

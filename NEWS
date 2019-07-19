@@ -1,4 +1,4 @@
-Changes in version 4.2-1 (2019-07-08)
+Changes in version 4.2-1 (2019-07-19)
    * Corrected typos in aregImpute help file.  Thanks: Mark Seeto.
    * describe: changed to print 5 lowest and highest values even if frequency table printed, added a line of printed output specifying any rounding done for the frequency table
    * vcov.fit.mult.impute: use vcov.orm if object has orm class.  intercepts=mid logic was not working for this
@@ -6,6 +6,7 @@ Changes in version 4.2-1 (2019-07-08)
    * cleanup.import: new arguments autodate, autonum, fracnn
    * describe: formatted dates if there is only one distinct value; changed to sense date or date-times, for Gmd not format as date-time
    * plot.describe: treated date/time variables as numeric
+   * cleanup.import: refined autonum considerNA
 
 Changes in version 4.2-0 (2019-01-25)
    * putHcap: new function

@@ -162,8 +162,9 @@ dataframeReduce(data, fracmiss=1, maxlevels=NULL,  minprev=0, print=TRUE)
 		the \code{special.miss} attribute to enhance \code{describe} output.}
 	\item{fracnn}{see \code{autodate} and \code{autonum}}
 	\item{considerNA}{for \code{autodate} and \code{autonum}, considers
-		character values in the vector \code{considerNA} to be considered
-		the same as \code{NA}}
+		character values in the vector \code{considerNA} to be the same as
+		\code{NA}.  Leading and trailing white space and upper/lower case
+		are ignored.} 
   \item{charfactor}{set to \code{TRUE} to change character variables to
 	factors if they have fewer than n/2 unique values.  Null strings and
 	blanks are converted to \code{NA}s.}

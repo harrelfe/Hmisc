@@ -9,7 +9,7 @@ variables it serves the same purpose as hexagonal binning.  Counts for
 overlapping points are grouped into quantile groups and level of
 transparency and rainbow colors are used to provide count information.
 
-Instead, you can specify \code{stick=TRUE) not use color but to encode
+Instead, you can specify \code{stick=TRUE} not use color but to encode
 	cell frequencies 
 	with the height of a black line y-centered at the middle of the bins.
 	Relative frequencies are not transformed, and the maximum cell

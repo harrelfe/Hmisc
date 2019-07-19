@@ -9,6 +9,17 @@ variables it serves the same purpose as hexagonal binning.  Counts for
 overlapping points are grouped into quantile groups and level of
 transparency and rainbow colors are used to provide count information.
 
+Instead, you can specify \code{stick=TRUE) not use color but to encode
+	cell frequencies 
+	with the height of a black line y-centered at the middle of the bins.
+	Relative frequencies are not transformed, and the maximum cell
+	frequency is shown in a caption.  Every point with at least a
+	frequency of one is depicted with a full-height light gray vertical
+	line, scaled to the above overall maximum frequency.  In this way to
+	relative frequency is to proportion of these light gray lines that are
+	black, and one can see points whose frequencies are too low to see the
+	black lines.
+
 The result can also be passed to \code{ggplotly}.  Actual cell
 frequencies are added to the hover text in that case.
 }
@@ -22,7 +33,7 @@ ggfreqScatter(x, y, bins=50, g=10, cuts=NULL,
               xlab = as.character(substitute(x)),
               ylab = as.character(substitute(y)),
               fcolors = viridis::viridis(10), nsize=FALSE,
-              html=FALSE, prfreq=FALSE, \dots)
+              stick=FALSE, html=FALSE, prfreq=FALSE, \dots)
 }
 \arguments{
 \item{x}{x-variable}
@@ -43,7 +54,7 @@ ggfreqScatter(x, y, bins=50, g=10, cuts=NULL,
 \item{xminor,yminor}{values at which to put minor tick marks, on
 	original scale}
 \item{xlab,ylab}{axis labels.  If not specified and variable has a
-	\code{label}, that label will be used.}
+	\code{label}, thatu label will be used.}
 \item{fcolors}{\code{colors} argument to pass to
 	\code{scale_color_gradientn} to color code frequencies}
 \item{nsize}{set to \code{TRUE} to not vary color or transparency but
@@ -52,6 +63,8 @@ ggfreqScatter(x, y, bins=50, g=10, cuts=NULL,
 	\code{size} is taken as the fourth root of the frequency.  If there
 	are 15 or unique frequencies all the unique frequencies are used,
 	otherwise \code{g} quantile groups of frequencies are used.}
+\item{stick}{set to \code{TRUE} to not use colors but instead use
+	varying-height black vertical lines to depict cell frequencies.}
 \item{html}{set to \code{TRUE} to use html in axis labels instead of
 	plotmath}
 \item{prfreq}{set to \code{TRUE} to print the frequency distributions of
@@ -76,6 +89,9 @@ g <- ggfreqScatter(x, y) +   # might add g=0 if using plotly
 g
 # plotly::ggplotly(g, tooltip='label')  # use plotly, hover text = freq. only
 # Plotly makes it somewhat interactive, with hover text tooltips
+
+# Instead use varying-height sticks to depict frequencies
+ggfreqScatter(x, y, stick=TRUE)
 
 # Try with x categorical
 x1 <- sample(c('cat', 'dog', 'giraffe'), length(x), TRUE)

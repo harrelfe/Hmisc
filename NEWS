@@ -7,6 +7,7 @@ Changes in version 4.2-1 (2019-07-19)
    * describe: formatted dates if there is only one distinct value; changed to sense date or date-times, for Gmd not format as date-time
    * plot.describe: treated date/time variables as numeric
    * cleanup.import: refined autonum considerNA
+   * ggfreqScatter: added stick=TRUE argument
 
 Changes in version 4.2-0 (2019-01-25)
    * putHcap: new function

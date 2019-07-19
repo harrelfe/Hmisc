@@ -8,7 +8,8 @@ ggfreqScatter <- function(x, y, bins=50, g=10, cuts=NULL,
                           xlab=as.character(substitute(x)),
                           ylab=as.character(substitute(y)),
                           fcolors=viridis::viridis(10),
-                          nsize=FALSE, html=FALSE, prfreq=FALSE, ...) {
+                          nsize=FALSE, stick=FALSE,
+                          html=FALSE, prfreq=FALSE, ...) {
 
   xlab <- if(! missing(xlab)) xlab
           else if(label(x) != '') label(x, plot=TRUE, html=html) else xlab
@@ -37,6 +38,27 @@ ggfreqScatter <- function(x, y, bins=50, g=10, cuts=NULL,
   if(nx) k$x <- as.numeric(as.character(k$x))
   if(ny) k$y <- as.numeric(as.character(k$y))
   if(prfreq) print(table(k$Freq))
+
+  if(stick) {
+    if(! ny) stop('stick=TRUE only works with numeric y')
+    Y <- k$y
+    f <- k$Freq
+    m <- max(f)
+    z <- 1.15 * m / sy
+    k$y1 <- Y - f / z / 2
+    k$y2 <- Y + f / z / 2
+    k$y3 <- ifelse(f == m, NA, Y - m / z / 2)
+    k$y4 <- ifelse(f == m, NA, Y - f / z / 2)
+    k$y5 <- ifelse(f == m, NA, Y + f / z / 2)
+    k$y6 <- ifelse(f == m, NA, Y + m / z / 2)
+    w <- ggplot(k, aes(x=x, y=y, label=Freq)) +
+      geom_segment(aes(x=x, y=y1, xend=x, yend=y2, color=I('black')), data=k) +
+      geom_segment(aes(x=x, y=y3, xend=x, yend=y4, color=I('lightgray')), data=k) +
+      geom_segment(aes(x=x, y=y5, xend=x, yend=y6, color=I('lightgray')), data=k) +
+      xlab(xlab) + ylab(ylab) +
+      labs(caption=paste0('Maximum frequency:', m))
+    return(w)
+    }
 
   if(g == 0) {
     w <-  if(nsize)

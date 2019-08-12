@@ -111,5 +111,4 @@ ggfreqScatter <- function(x, y, bins=50, g=10, cuts=NULL,
   w
 }
 
-utils::globalVariables('fg')
-
+utils::globalVariables(c('fg','y1','y2','y3','y4','y5','y6'))

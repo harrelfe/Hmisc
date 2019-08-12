@@ -136,7 +136,7 @@ cleanup.import <-
         labx <- attr(x,'label')
         x <- as.numeric(as.character(x))
         label(x) <- labx
-        modif <- TRUEuuuuuuuu
+        modif <- TRUE
       }
     }
     

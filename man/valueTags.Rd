@@ -7,7 +7,7 @@
 \alias{valueUnit<-}
 \alias{valueName}
 \alias{valueName<-}
-\title{Store Discriptive Information About an Object}
+\title{Store Descriptive Information About an Object}
 \description{
   Functions get or set useful information about the contents of the
   object for later use.

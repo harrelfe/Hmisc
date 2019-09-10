@@ -174,7 +174,7 @@ formatdescribeSingle(x, condense=c('extremes', 'frequencies', 'both', 'none'),
   has its longest string length greater than \code{listnchar}, and that
   has no more than \code{listunique} distinct values, all values are
   listed in alphabetic order.  Any value having more than one occurrence
-  has the frequency of occurrence after it, in parentheses.  Specify
+  has the frequency of occurrence included.  Specify
   \code{listunique} equal to some value at least as large as the number
   of observations to ensure that all character variables will have all
   their values listed.  For purposes of tabulating character strings,

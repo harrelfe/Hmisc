@@ -12,7 +12,6 @@ titles or subtitles that are inside the plotting region for a single plot.
 mtitle(main, ll, lc,  
        lr=format(Sys.time(),'\%d\%b\%y'),
        cex.m=1.75, cex.l=.5, \dots)
-none
 }
 \arguments{
 \item{main}{

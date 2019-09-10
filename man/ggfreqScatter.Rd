@@ -91,7 +91,11 @@ g
 # Plotly makes it somewhat interactive, with hover text tooltips
 
 # Instead use varying-height sticks to depict frequencies
-ggfreqScatter(x, y, stick=TRUE) + labs(subtitle='Relative height of black lines to gray lines\nis proportional to cell frequency.\nNote that points with even tiny frequency are visable\n(gray line with no visible black line).')
+ggfreqScatter(x, y, stick=TRUE) +
+ labs(subtitle='Relative height of black lines to gray lines
+is proportional to cell frequency.
+Note that points with even tiny frequency are visable
+(gray line with no visible black line).')
 
 
 # Try with x categorical

@@ -301,27 +301,27 @@ htmlSpecial <- function(x, code=htmlSpecialType()) {
 
 markupSpecs <- list(html=list(
   ## <span> needed for text in plotly graphics
-  bold     = function(x, span=TRUE)
-    if(span) paste0('<span style="font-weight:bold">', x, '</span>')
-      else   paste0('<strong>', x, '</strong>'),
-  italics  = function(x) paste0('<i>', x, '</i>'),
-  math     = function(x) paste0('<i>', x, '</i>'),
-  code     = function(x) paste0('<code style="font-size:0.8em">', x, '</code>'),
+  bold     = function(..., span=TRUE)
+    if(span) paste0('<span style="font-weight:bold">', ..., '</span>')
+      else   paste0('<strong>', ..., '</strong>'),
+  italics  = function(...) paste0('<i>', ..., '</i>'),
+  math     = function(...) paste0('<i>', ..., '</i>'),
+  code     = function(...) paste0('<code style="font-size:0.8em">', ..., '</code>'),
   sup      = function(x, ...) paste0('<sup>', x, '</sup>'),
   sub      = function(x, ...) paste0('<sub>', x, '</sub>'),
-  size     = function(x, pct) paste0('<span style="font-size: ', pct,
-                                     '%;">', paste(x, collapse=' '),
+  size     = function(..., pct) paste0('<span style="font-size: ', pct,
+                                     '%;">', paste(..., collapse=' '),
                                      '</span>'),
-  smaller  = function(x) paste0('<span style="font-size: 80%;">', x,
+  smaller  = function(...) paste0('<span style="font-size: 80%;">', ...,
                                 '</span>'),
-  larger   = function(x) paste0('<span style="font-size: 125%;">', x,
+  larger   = function(...) paste0('<span style="font-size: 125%;">', ...,
                                 '</span>'),
-  smaller2 = function(x) paste0('<span style="font-size: 64%;">', x,
+  smaller2 = function(...) paste0('<span style="font-size: 64%;">', ...,
                                  '</span>'),
-  larger2  = function(x) paste0('<span style="font-size: 156%;">', x,
+  larger2  = function(...) paste0('<span style="font-size: 156%;">', ...,
                                  '</span>'),
-  center   = function(x) paste0('<div align=center>', x, '</div>'),
-  color    = function(x, col) paste0('<font color="', col, '">', x,
+  center   = function(...) paste0('<div align=center>', ..., '</div>'),
+  color    = function(..., col) paste0('<font color="', col, '">', ...,
                                      '</font>'),
 
   ## Break a long string into two lines with <br> inserted at a space
@@ -599,17 +599,17 @@ mdchunk = function(md=rep('', length(robj)), robj,
 ),
 
 latex = list(
-  bold     = function(x) paste0('\\textbf{', x, '}'),
-  italics  = function(x) paste0('\\emph{', x, '}'),
-  math     = function(x) paste0('$', x, '$'),
-  code     = function(x) paste0('\\texttt{\\smaller ', x, '}'),
+  bold     = function(...) paste0('\\textbf{', ..., '}'),
+  italics  = function(...) paste0('\\emph{', ..., '}'),
+  math     = function(...) paste0('$', ..., '$'),
+  code     = function(...) paste0('\\texttt{\\smaller ', ..., '}'),
   sup      = function(x, add='$') paste0(add, '^{',x, '}', add),
   sub      = function(x, add='$') paste0(add, '_{',x, '}', add),
-  smaller  = function(x) paste0('{\\smaller ',     x, '}' ),
-  larger   = function(x) paste0('{\\smaller[-1]{', x, '}' ),
-  smaller2 = function(x) paste0('{\\smaller[2]{',  x, '}' ),
-  larger2  = function(x) paste0('{\\smaller[-2]{', x, '}' ),
-  center   = function(x) paste0('\\centerline{', x,   '}' ),
+  smaller  = function(...) paste0('{\\smaller ',     ..., '}' ),
+  larger   = function(...) paste0('{\\smaller[-1]{', ..., '}' ),
+  smaller2 = function(...) paste0('{\\smaller[2]{',  ..., '}' ),
+  larger2  = function(...) paste0('{\\smaller[-2]{', ..., '}' ),
+  center   = function(...) paste0('\\centerline{', ...,   '}' ),
   color    = function(x, col) {
     colcmd <- if(col == 'MidnightBlue') '\\textcolor[rgb]{0.1,0.1,0.44}'
               else

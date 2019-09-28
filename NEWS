@@ -1,4 +1,4 @@
-Changes in version 4.2-1 (2019-07-19)
+Changes in version 4.2-1 (2019-09-28)
    * Corrected typos in aregImpute help file.  Thanks: Mark Seeto.
    * describe: changed to print 5 lowest and highest values even if frequency table printed, added a line of printed output specifying any rounding done for the frequency table
    * vcov.fit.mult.impute: use vcov.orm if object has orm class.  intercepts=mid logic was not working for this
@@ -8,7 +8,8 @@ Changes in version 4.2-1 (2019-07-19)
    * plot.describe: treated date/time variables as numeric
    * cleanup.import: refined autonum considerNA
    * ggfreqScatter: added stick=TRUE argument
-
+   * markupSpecs: changed math and similar functions to use ... argument instead of x
+	 
 Changes in version 4.2-0 (2019-01-25)
    * putHcap: new function
    * inst/tests/example.Rmd: changed to html document, replaced putHfig calls with new putHcap

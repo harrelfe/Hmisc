@@ -476,10 +476,10 @@ summaryDp <-
       sapply(strwrap(w, ..., simplify=FALSE),
              function(x) paste(x, collapse='<br>'))
     addbr <- markupSpecs$html$addBreak
+    width <- ncharsmax[1]; minbreak <- ncharsmax[2]
 
     if(! length(xlab)) xlab <- swr(label(y, default=names(Y)[1]), width=width)
 
-    width <- ncharsmax[1]; minbreak <- ncharsmax[2]
     major <- minor <- ht <- character(0)
     x     <- numeric(0)
 

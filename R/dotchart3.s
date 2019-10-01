@@ -455,3 +455,70 @@ summaryD <- function(formula, data=NULL, fun=mean, funm=fun,
 
   if(use.plotly) res else invisible(res)
 }
+
+
+summaryDp <-
+  function(formula,
+           fun=function(x) c(Mean=mean(x, na.rm=TRUE),
+                             N=sum(! is.na(x))),
+           overall=TRUE, xlim=NULL, xlab=NULL,
+           data=NULL, subset=NULL, na.action=na.retain,
+           width=50, minbreak=30, digits=4, ...) {
+  
+    Y <- if(length(subset))
+           model.frame(formula, data=data, subset=subset, na.action=na.action)
+         else
+           model.frame(formula, data=data, na.action=na.action)
+    X    <- Y[-1]
+    y    <- Y[[1]]
+    
+    swr <- function(w, ...) 
+      sapply(strwrap(w, ..., simplify=FALSE),
+             function(x) paste(x, collapse='<br>'))
+    addbr <- markupSpecs$html$addBreak
+
+    if(! length(xlab)) xlab <- swr(label(y, default=names(Y)[1]), width=width)
+
+    major <- minor <- ht <- character(0)
+    x     <- numeric(0)
+
+    funlabs <- names(fun(y))
+    nx <- names(X)
+    if(overall) nx <- c(nx, 'Overall')
+    
+    for(v in nx) {
+      if(v == 'Overall') {
+        by <- rep('Overall', length(y))
+        bylab <- 'Overall'
+      } else {
+        by     <- X[[v]]
+        bylab  <- addbr(label(by, default=v), minbreak=minbreak)
+      }
+      s <- summarize(y, by, fun)
+      i <- order(- s[, 2])
+      s <- s[i, ]
+      m <- s[, 2]
+      faux <- paste0(funlabs[1], ': ', format(m, digits=digits))
+      if(NCOL(s) > 2) {
+        j <- 0
+        aux <- s[-(1:2)]
+        for(a in names(aux)) {
+          j <- j + 1
+          faux <- paste0(faux, '<br>', funlabs[j + 1], ': ',
+                             format(aux[[a]], digits=digits))
+          }
+      }
+
+      major <- c(major, rep(bylab, length(m)))
+      minor <- c(minor, if(v == 'Overall') '' else as.character(s[, 1]))
+      ht    <- c(ht, faux)
+      x     <- c(x, unname(m))
+    }
+
+    if(! length(xlim)) {
+      r    <- range(x)
+      xlim <- r + c(-1, 1) * diff(r) / 20
+    }
+    
+    dotchartpl(x, major, minor, htext=ht, xlim=xlim, xlab=xlab, ...)
+  }

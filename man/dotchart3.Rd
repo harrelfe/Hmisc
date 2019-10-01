@@ -2,6 +2,7 @@
 \alias{dotchart3}
 \alias{dotchartp}
 \alias{summaryD}
+\alias{summaryDp}
 \title{Enhanced Version of dotchart Function}
 \description{
 These are adaptations of the R dotchart function that sorts categories
@@ -29,6 +30,11 @@ calls \code{dotchart3} with suitable arguments to summarize data by
 major and minor categories.  If \code{options(grType='plotly')} is in
 effect and the \code{plotly} package is installed, \code{summaryD} uses
 \code{dotchartp} instead of \code{dotchart3}.
+
+\code{summaryDp} is a streamlined \code{summaryD}-like function that
+uses the \code{dotchartpl} function to render a \code{plotly} graphic.
+It is used to compute summary statistics stratified separately by a
+series of variables.
 }
 \usage{
 dotchart3(x, labels = NULL, groups = NULL, gdata = NULL,
@@ -59,6 +65,15 @@ summaryD(formula, data=NULL, fun=mean, funm=fun,
          legendgroup=NULL,
          cex.auxdata=.7, xlab=v[1], ylab=NULL,
          gridevery=NULL, gridcol=gray(.95), sort=TRUE, \dots)
+
+summaryDp <-
+  function(formula,
+           fun=function(x) c(Mean=mean(x, na.rm=TRUE),
+                             N=sum(! is.na(x))),
+           overall=TRUE, xlim=NULL, xlab=NULL,
+           data=NULL, subset=NULL, na.action=na.retain,
+           ncharsmax=c(50, 30),
+           digits=4, ...)
 }
 \arguments{
   \item{x}{a numeric vector or matrix}
@@ -80,7 +95,7 @@ summaryD(formula, data=NULL, fun=mean, funm=fun,
   \item{axislabels}{a vector of strings specifying axis tick mark
 		labels.  Useful if transforming the data axis}
 	\item{digits}{number of significant digits for formatting numeric data
-    in hover text for \code{dotchartp}}
+    in hover text for \code{dotchartp} and \code{summaryDp}}
 	\item{dec}{for \code{dotchartp} only, overrides \code{digits} to
          specify the argument to \code{round()} for rounding values for
          hover labels}
@@ -97,7 +112,8 @@ summaryD(formula, data=NULL, fun=mean, funm=fun,
   \item{\dots}{other arguments passed to some of the graphics functions,
     or to \code{dotchart3} or \code{dotchartp} from \code{summaryD}.
          The \code{auxwhere='hover'} option is a useful argument to pass
-         from \code{summaryD} to \code{dotchartp}.}
+         from \code{summaryD} to \code{dotchartp}.  Also used to pass
+    other arguments to \code{dotchartpl} from \code{summaryDp}.}
   \item{layoutattr}{set to \code{TRUE} to put \code{plotly::layout}
          information in a list as an attribute \code{layout} of the
          returned \code{plotly} object instead of running the
@@ -113,11 +129,14 @@ summaryD(formula, data=NULL, fun=mean, funm=fun,
          the first is taken as the major grouping variable.  If the left
          hand side variable is a matrix it has to be a legal R variable
          name, not an expression, and \code{fun} needs to be able to
-         process a matrix.}
+         process a matrix.  For \code{summaryDp} there may be more than
+  two right-hand-side variables.}
   \item{data}{a data frame or list used to find the variables in
     \code{formula}.  If omitted, the parent environment is used.}
 	\item{fun}{a summarization function creating a single number from a
-    vector.  Default is the mean.}
+    vector.  Default is the mean.  For \code{summaryDp}, \code{fun}
+         produces a named vector of summary statistics, with the default
+         computing the \code{Mean} and \code{N} (number of non-missing values).}
 	\item{funm}{applies if there are two right hand variables and
          \code{groupsummary=TRUE} and the marginal summaries over just
          the first \code{x} variable need to be computed differently
@@ -164,6 +183,13 @@ summaryD(formula, data=NULL, fun=mean, funm=fun,
          not using \code{plotly} defaults.  Ignored for
          \code{dotchart3}.  If set to \code{"auto"} the height is
          computed using \code{Hmisc::plotlyHeightDotchart}.}
+	\item{overall}{set to \code{FALSE} to suppress plotting of
+		unstratified estimates}
+	\item{subset}{an observation subsetting expression}
+	\item{na.action}{an \code{NA} action function}
+	\item{ncharsmax}{a 2-vector specifying the number of characters after
+  which an html new line character should be placed, respectively for
+  the x-axis label and the stratification variable levels}
 }
 \value{the function returns invisibly}
 \author{Frank Harrell}

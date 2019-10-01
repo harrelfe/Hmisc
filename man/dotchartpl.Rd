@@ -40,7 +40,7 @@ dotchartpl(x, major=NULL, minor=NULL, group=NULL, mult=NULL,
            minkeep=NULL, xlim=NULL, xlab='Proportion',
            tracename=NULL, limitstracename='Limits',
            nonbigtracename='Stratified Estimates',
-           width=800,
+           width=800, height=NULL,
            col=colorspace::rainbow_hcl)
 }
 \arguments{
@@ -88,7 +88,9 @@ dotchartpl(x, major=NULL, minor=NULL, group=NULL, mult=NULL,
 	\item{col}{a function or vector of colors to assign to \code{group}.
 	If a function it will be evaluated with an argument equal to the
 	number of distinct groups.}
-	\item{width}{width of plot in pixels}
+  \item{width}{width of plot in pixels}
+  \item{height}{height of plot in pixels; computed from number of strata
+	by default}
 	}
 \value{a \code{plotly} object.  An attribute \code{levelsRemoved} is
 	added if \code{minkeep} is used and any categories were omitted from

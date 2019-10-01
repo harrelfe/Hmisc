@@ -7,7 +7,7 @@ dotchartpl <- function(x, major=NULL, minor=NULL, group=NULL, mult=NULL,
                        xlim=NULL, xlab='Proportion',
                        tracename=NULL, limitstracename='Limits',
                        nonbigtracename='Stratified Estimates',
-                       width=800,
+                       width=800, height=NULL,
                        col=colorspace::rainbow_hcl
                        ) {
   mu   <- markupSpecs$html
@@ -225,7 +225,8 @@ dotchartpl <- function(x, major=NULL, minor=NULL, group=NULL, mult=NULL,
     db <- subset(d, Big)  # non-stratified estimates
     ## For some reason, colors= in add_marker did not always take
     p <- plotly::plot_ly(data=db, colors=cols,
-                         height=plotlyParm$heightDotchart(lines), width=width)
+                         height=if(length(height)) height else
+                           plotlyParm$heightDotchart(lines), width=width)
 
     if(length(difflower)) {
       ddiff <- data.frame(Diff, difflower, diffupper, Ydiff, coldiff, htdiff)

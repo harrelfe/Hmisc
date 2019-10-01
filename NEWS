@@ -10,6 +10,7 @@ Changes in version 4.3-0 (2019-10-01)
    * ggfreqScatter: added stick=TRUE argument
    * markupSpecs: changed math and similar functions to use ... argument instead of x
    * summaryDp: new function for plotly dotcharts stratifying separately on a series of variables
+   * dotchartpl: added height argument
 	 
 Changes in version 4.2-0 (2019-01-25)
    * putHcap: new function

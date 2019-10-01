@@ -463,7 +463,7 @@ summaryDp <-
                              N=sum(! is.na(x))),
            overall=TRUE, xlim=NULL, xlab=NULL,
            data=NULL, subset=NULL, na.action=na.retain,
-           width=50, minbreak=30, digits=4, ...) {
+           ncharsmax=c(50, 30), digits=4, ...) {
   
     Y <- if(length(subset))
            model.frame(formula, data=data, subset=subset, na.action=na.action)
@@ -479,6 +479,7 @@ summaryDp <-
 
     if(! length(xlab)) xlab <- swr(label(y, default=names(Y)[1]), width=width)
 
+    width <- ncharsmax[1]; minbreak <- ncharsmax[2]
     major <- minor <- ht <- character(0)
     x     <- numeric(0)
 

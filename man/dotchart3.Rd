@@ -211,6 +211,8 @@ dotchart3(cbind(y1,y2), g, groups=maj, auxdata=n, auxtitle='n',
 dotchartp(cbind(y1, y2), g, groups=maj, auxdata=n, auxtitle='n',
           xlab='Y', gdata=cbind(c(0,.1), c(.23,.44)), auxgdata=c(-1,-2),
           symbol=c('circle', 'line-ns-open'))
+
+summaryDp(sbp ~ region + sex + race + cut2(age, g=5), data=mydata)
 }
 
 ## Put options(grType='plotly') to have the following use dotchartp

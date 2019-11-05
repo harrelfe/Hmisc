@@ -1,4 +1,4 @@
-Changes in version 4.3-0 (2019-10-01)
+Changes in version 4.3-0 (2019-11-05)
    * Corrected typos in aregImpute help file.  Thanks: Mark Seeto.
    * describe: changed to print 5 lowest and highest values even if frequency table printed, added a line of printed output specifying any rounding done for the frequency table
    * vcov.fit.mult.impute: use vcov.orm if object has orm class.  intercepts=mid logic was not working for this
@@ -11,6 +11,7 @@ Changes in version 4.3-0 (2019-10-01)
    * markupSpecs: changed math and similar functions to use ... argument instead of x
    * summaryDp: new function for plotly dotcharts stratifying separately on a series of variables
    * dotchartpl: added height argument
+   * html.describe: fixed but where markupSpecs$html utility function last arguments were not named in calls
 	 
 Changes in version 4.2-0 (2019-01-25)
    * putHcap: new function

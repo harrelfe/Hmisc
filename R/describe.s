@@ -413,7 +413,7 @@ formatdescribeSingle <-
         if(w + 2 <= wide) {
           low <- paste(blo, paste(val[1: 5], collapse=' '))
           hi  <- paste(bhi, paste(val[6:10], collapse=' '))
-          R <- c(R, fsize(paste(low, ', ', hi), size))
+          R <- c(R, fsize(paste(low, ', ', hi), pct=size))
         } else {
           low <- data.frame(name=blo, e1=val[1], e2=val[2], e3=val[3],
                             e4=val[4], e5=val[5])
@@ -743,7 +743,7 @@ html.describe <-
 {
   at <- attributes(object)
 
-  m <- markupSpecs$html
+  m      <- markupSpecs$html
   center <- m$center
   bold   <- m$bold
   code   <- m$code
@@ -752,7 +752,7 @@ html.describe <-
   sskip  <- m$smallskip
   hrule  <- m$hrulethin
   fsize  <- m$size
-  mnb    <- function(x) m$color(x, 'MidnightBlue')
+  mnb    <- function(x) m$color(x, col='MidnightBlue')
 
   R <- c(m$unicode, m$style())   ## define thinhr (and others not needed here)
   

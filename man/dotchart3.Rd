@@ -66,14 +66,13 @@ summaryD(formula, data=NULL, fun=mean, funm=fun,
          cex.auxdata=.7, xlab=v[1], ylab=NULL,
          gridevery=NULL, gridcol=gray(.95), sort=TRUE, \dots)
 
-summaryDp <-
-  function(formula,
-           fun=function(x) c(Mean=mean(x, na.rm=TRUE),
-                             N=sum(! is.na(x))),
-           overall=TRUE, xlim=NULL, xlab=NULL,
-           data=NULL, subset=NULL, na.action=na.retain,
-           ncharsmax=c(50, 30),
-           digits=4, ...)
+summaryDp(formula,
+          fun=function(x) c(Mean=mean(x, na.rm=TRUE),
+                            N=sum(! is.na(x))),
+          overall=TRUE, xlim=NULL, xlab=NULL,
+          data=NULL, subset=NULL, na.action=na.retain,
+          ncharsmax=c(50, 30),
+          digits=4, ...)
 }
 \arguments{
   \item{x}{a numeric vector or matrix}

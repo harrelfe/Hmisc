@@ -1,5 +1,6 @@
-Changes in version 4.3-1 (2019-11-07)
+Changes in version 4.3-1 (2020-01-17)
    * Depend on survival >= 3.1-6
+   * pomodm: checked that x is sorted
 
 Changes in version 4.3-0 (2019-11-07)
    * Corrected typos in aregImpute help file.  Thanks: Mark Seeto.

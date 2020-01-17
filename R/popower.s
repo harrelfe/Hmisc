@@ -58,6 +58,7 @@ print.posamsize <- function(x, ...)
 pomodm <- function(x=NULL, p, odds.ratio=1) {
   if(length(x) && (length(x) != length(p)))
     stop('p and x must have same length')
+  if(length(x) && any(diff(x) <= 0)) stop('x is not sorted or has duplicates')
   if(abs(sum(p) - 1) > .00001)
     stop('probabilities do not sum to 1')
 

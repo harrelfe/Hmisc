@@ -17,7 +17,10 @@ mdb.get <- function(file, tables=NULL, lowernames=FALSE, allow=NULL,
     end   <- grep('^\\);$', s) - 1
     s <- s[start:end]
     s <- strsplit(s, '\t')
-    vnames <- sapply(s, function(x)x[2])
+    vnames <- sapply(s, function(x) {
+      bracketed = x[2]
+      substr(bracketed, 2, nchar(bracketed) - 1)
+    })
     vnames <- makeNames(vnames, unique=TRUE, allow=allow)
     if(lowernames) vnames <- casefold(vnames)
     types  <- sapply(s, function(x)x[length(x)])

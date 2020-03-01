@@ -10,6 +10,7 @@ combplotp(
   subset,
   na.action = na.retain,
   vnames = c("labels", "names"),
+  includenone = FALSE,
   showno = FALSE,
   pos = function(x) 1 * (toupper(x) \%in\% c("true", "yes", "y", "positive", "+",
     "present", "1")),
@@ -28,6 +29,8 @@ combplotp(
 \item{na.action}{see \code{lm} etc.}
 
 \item{vnames}{set to \code{"names"} to use variable names to label axes instead of variable labels.  When using the default \code{labels}, any variable not having a label will have its name used instead.}
+
+\item{includenone}{set to \code{TRUE} to include the combination where all conditions are absent}
 
 \item{showno}{set to \code{TRUE} to show a light dot for conditions that are not part of the currently tabulated combination}
 
@@ -49,15 +52,28 @@ Generates a plotly attribute plot given a series of possibly overlapping binary 
 Similar to the \code{UpSetR} package, draws a special dot chart sometimes called an attribute plot that depicts all possible combination of the binary variables.  By default a positive value, indicating that a certain condition pertains for a subject, is any of logical \code{TRUE}, numberic 1, \code{"yes"}, \code{"y"}, \code{"positive"}, \code{"+"} or \code{"present"} value, and all others are considered negative.  The user can override this determination by specifying her own \code{pos} function.  Case is ignored in the variable values.
 
 The plot uses solid dots arranged in a vertical line to indicate which combination of conditions is being considered.  Frequencies of all possible combinations are shown above the dot chart.  Marginal frequencies of positive values for the input variables are shown to the left of the dot chart.  More information for all three of these component symbols is provided in hover text.
+
+Variables are sorted in descending order of marginal frqeuencies and likewise for combinations of variables.
 }
 \examples{
-g <- function() sample(0:1, 100, replace=TRUE)
-set.seed(2)
+g <- function() sample(0:1, n, prob=c(1 - p, p), replace=TRUE)
+set.seed(2); n <- 100; p <- 0.5
 x1 <- g(); label(x1) <- 'A long label for x1 that describes it'
 x2 <- g()
 x3 <- g(); label(x3) <- 'This is<br>a label for x3'
 x4 <- g()
-combplotp(~ x1 + x2 + x3 + x4, showno=TRUE)
+combplotp(~ x1 + x2 + x3 + x4, showno=TRUE, includenone=TRUE)
+
+n <- 1500; p <- 0.05
+pain       <- g()
+anxiety    <- g()
+depression <- g()
+soreness   <- g()
+numbness   <- g()
+tiredness  <- g()
+sleepiness <- g()
+combplotp(~ pain + anxiety + depression + soreness + numbness +
+          tiredness + sleepiness, showno=TRUE)
 }
 \author{
 Frank Harrell

@@ -448,7 +448,7 @@ orig.x1 <- x1[1:250]
 orig.x2 <- x2[251:350]
 x1[1:250] <- NA
 x2[251:350] <- NA
-d <- data.frame(x1,x2,x3,y)
+d <- data.frame(x1,x2,x3,y, stringsAsFactors=TRUE)
 # Find value of nk that yields best validating imputation models
 # tlinear=FALSE means to not force the target variable to be linear
 f <- aregImpute(~y + x1 + x2 + x3, nk=c(0,3:5), tlinear=FALSE,
@@ -491,7 +491,7 @@ orig.x2 <- x2[18:23]
 x1[1:20] <- NA
 x2[18:23] <- NA
 #x2[21:25] <- NA
-d <- data.frame(x1,x2,x3,y)
+d <- data.frame(x1,x2,x3,y, stringsAsFactors=TRUE)
 n <- naclus(d)
 plot(n); naplot(n)  # Show patterns of NAs
 # 100 imputations to study them; normally use 5 or 10

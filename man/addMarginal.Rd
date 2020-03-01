@@ -36,7 +36,7 @@ addMarginal(d, sex, country)
 d <- data.frame(state=c('AL', 'AL', 'GA', 'GA', 'GA'),
                 city=c('Mobile', 'Montgomery', 'Valdosto',
                        'Augusta', 'Atlanta'),
-                x=1:5)
+                x=1:5, stringsAsFactors=TRUE)
 addMarginal(d, state, nested=city) # cite set to 'All' when state is
 }
 \keyword{utilities}

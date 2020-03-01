@@ -114,7 +114,8 @@ contents(object, \dots)
 }
 \examples{
 set.seed(1)
-dfr <- data.frame(x=rnorm(400),y=sample(c('male','female'),400,TRUE))
+dfr <- data.frame(x=rnorm(400),y=sample(c('male','female'),400,TRUE),
+                  stringsAsFactors=TRUE)
 contents(dfr)
 dfr <- upData(dfr, labels=c(x='Label for x', y='Label for y'))
 attr(dfr$x, 'longlabel') <-

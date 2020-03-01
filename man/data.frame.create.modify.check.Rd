@@ -462,7 +462,8 @@ detach()
 
 
 dframe <- data.frame(age=c(10,20,30), 
-                     sex=c('male','female','male'))
+                     sex=c('male','female','male'),
+                     stringsAsFactors=TRUE)
 
 
 # You can also create a data frame using the Data
@@ -471,7 +472,8 @@ dframe <- data.frame(age=c(10,20,30),
 # data.
 
 
-dd <- data.frame(age=numeric(0),sex=character(0))
+dd <- data.frame(age=numeric(0),sex=character(0),
+                 stringsAsFactors=TRUE)
 
 
 # The sex variable will be stored as a factor, and

@@ -105,10 +105,14 @@ summaryP <- function(formula, data=NULL,
         z <- data.frame(var   = unname(la),
                         val   = lev,
                         freq  = as.numeric(tab),
-                        denom = no)
+                        denom = no,
+                        stringsAsFactors=TRUE)
       }
       ## Add current X subset settings
-      if(nX > 0) for(k in 1: nX) z[[names(ux)[k]]] <- ux[i, k]
+      if(nX > 0)
+        for(k in 1: nX)
+         z[[names(ux)[k]]] <- if(is.character(ux[i,k]))
+                                factor(ux[i, k]) else ux[i,k]
       Z <- rbind(Z, z)
     }
   }

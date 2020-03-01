@@ -2,11 +2,11 @@
 #' 
 #' Generates a plotly attribute plot given a series of possibly overlapping binary variables
 #' 
-#' Similar to the \code{UpSetR} package, draws a special dot chart sometimes called an attribute plot that depicts all possible combination of the binary variables.  By default a positive value, indicating that a certain condition pertains for a subject, is any of logical \code{TRUE}, numberic 1, \code{"yes"}, or \code{"present"} value, and all others are considered negative.  The user can override this determination by specifying her own \code{pos} function.  Case is ignored in the variable values.
+#' Similar to the \code{UpSetR} package, draws a special dot chart sometimes called an attribute plot that depicts all possible combination of the binary variables.  By default a positive value, indicating that a certain condition pertains for a subject, is any of logical \code{TRUE}, numberic 1, \code{"yes"}, \code{"y"}, \code{"positive"}, \code{"+} or \code{"present"} value, and all others are considered negative.  The user can override this determination by specifying her own \code{pos} function.  Case is ignored in the variable values.
 #' 
 #' The plot uses solid dots arranged in a vertical line to indicate which combination of conditions is being considered.  Frequencies of all possible combinations are shown above the dot chart.  Marginal frequencies of positive values for the input variables are shown to the left of the dot chart.  More information for all three of these component symbols is provided in hover text.
 #' 
-#' @param formula a formula containing all the variables to be cross-tabulated, on the formula's right hand side.  There is no left hand side variable.
+#' @param formula a formula containing all the variables to be cross-tabulated, on the formula's right hand side.  There is no left hand side variable.  If \code{formula} is omitted, then all variables from \code{data} are analyzed.
 #' @param data input data frame.  If none is specified the data are assumed to come from the parent frame.
 #' @param subset an optional subsetting expression applied to \code{data}
 #' @param na.action see \code{lm} etc.
@@ -31,15 +31,20 @@
 combplotp <- function(formula, data=NULL, subset, na.action=na.retain,
                       vnames=c('labels', 'names'),
                       pos=function(x) 1 * (toupper(x) %in% 
-                        c('true', 'yes', 'present', '1')),
+                        c('true', 'yes', 'y', 'positive', '+', 'present', '1')),
                       width=NULL, height=NULL,
                       ...) {
   vnames <- match.arg(vnames)
-  
-  Y <- if(!missing(subset) && length(subset))
-    model.frame(formula, data=data, subset=subset, na.action=na.action)
-  else
-    model.frame(formula, data=data, na.action=na.action)
+  Y <- if(missing(formula)) {
+    if(! missing(subset)) stop('subset not allowed if formula missing')
+    if(! length(data)) stop('data must be specified if formula missing')
+    data
+    } else {
+      if(!missing(subset) && length(subset))
+        model.frame(formula, data=data, subset=subset, na.action=na.action)
+      else
+        model.frame(formula, data=data, na.action=na.action)
+      }
 
   # Get variable labels, defaulting to variable names
   labs <- if(vnames == 'names') structure(names(Y), names=names(Y))

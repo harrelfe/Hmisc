@@ -1,6 +1,6 @@
 Package: Hmisc
-Version: 4.3-1
-Date: 2020-01-17
+Version: 4.4-0
+Date: 2020-02-29
 Title: Harrell Miscellaneous
 Author: Frank E Harrell Jr <f.harrell@vanderbilt.edu>, with
   contributions from Charles Dupont and many others.
@@ -18,4 +18,4 @@ License: GPL (>= 2)
 LazyLoad: Yes
 URL: http://biostat.mc.vanderbilt.edu/Hmisc, https://github.com/harrelfe/Hmisc
 Encoding: UTF-8
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2

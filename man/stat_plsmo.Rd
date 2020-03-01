@@ -4,10 +4,20 @@
 \alias{stat_plsmo}
 \title{Add a lowess smoother without counfidence bands.}
 \usage{
-stat_plsmo(mapping = NULL, data = NULL, geom = "smooth",
-  position = "identity", n = 80, fullrange = FALSE, span = 2/3,
-  fun = function(x) x, na.rm = FALSE, show.legend = NA,
-  inherit.aes = TRUE, ...)
+stat_plsmo(
+  mapping = NULL,
+  data = NULL,
+  geom = "smooth",
+  position = "identity",
+  n = 80,
+  fullrange = FALSE,
+  span = 2/3,
+  fun = function(x) x,
+  na.rm = FALSE,
+  show.legend = NA,
+  inherit.aes = TRUE,
+  ...
+)
 }
 \arguments{
 \item{mapping, data, geom, position, show.legend, inherit.aes}{see ggplot2 documentation}

@@ -4,9 +4,14 @@
 \alias{hidingTOC}
 \title{Moving and Hiding Table of Contents}
 \usage{
-hidingTOC(buttonLabel = "Contents", levels = 3, tocSide = c("right",
-  "left"), buttonSide = c("right", "left"), posCollapse = c("margin",
-  "top", "bottom"), hidden = FALSE)
+hidingTOC(
+  buttonLabel = "Contents",
+  levels = 3,
+  tocSide = c("right", "left"),
+  buttonSide = c("right", "left"),
+  posCollapse = c("margin", "top", "bottom"),
+  hidden = FALSE
+)
 }
 \arguments{
 \item{buttonLabel}{the text on the button that hides and unhides the

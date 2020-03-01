@@ -306,6 +306,8 @@ markupSpecs <- list(html=list(
       else   paste0('<strong>', ..., '</strong>'),
   italics  = function(...) paste0('<i>', ..., '</i>'),
   math     = function(...) paste0('<i>', ..., '</i>'),
+  ord      = function(n) paste0(n, '<sup>', markupSpecs$all$ordsuffix(n),
+                                '</sup>'),
   code     = function(...) paste0('<code style="font-size:0.8em">', ..., '</code>'),
   sup      = function(x, ...) paste0('<sup>', x, '</sup>'),
   sub      = function(x, ...) paste0('<sub>', x, '</sub>'),
@@ -595,13 +597,34 @@ mdchunk = function(md=rep('', length(robj)), robj,
       ## section headings to be run into R output and markdown not recog.
       cat(knitr::knit(text=knitr::knit_expand(text=k), quiet=TRUE))
       }
-    }
+    },
+## Function to define css for putting a background around a character string
+## to make it look more like a button
+## Usage: <p class="cssbutton">Text inside button</p>
+cssbutton = function(color='DarkBlue', background='LightBlue', size='115%')
+ htmltools::HTML('
+<style>
+.rbutton {
+ font-family: Times;
+ font-size:', size, ';
+ color:', color, ';
+ background-color:', background, ';
+}
+</style>'),
+## Function to high details using <details>...</details>
+## Usage: `r cssbutton()` ... `r hideDetails('button text', ...)` ... </details>
+hideDetails = function(txt)
+ htmltools::HTML('
+<details><summary><p class="rbutton">', txt, '</p></summary>')
 ),
 
 latex = list(
   bold     = function(...) paste0('\\textbf{', ..., '}'),
   italics  = function(...) paste0('\\emph{', ..., '}'),
   math     = function(...) paste0('$', ..., '$'),
+  ord      = function(n) paste0('$', n, '^\\textrm{',
+                                markupSpecs$all$ordsuffix(n),
+                                '}$'),
   code     = function(...) paste0('\\texttt{\\smaller ', ..., '}'),
   sup      = function(x, add='$') paste0(add, '^{',x, '}', add),
   sub      = function(x, add='$') paste0(add, '_{',x, '}', add),
@@ -653,6 +676,7 @@ plain = list(
   lineskip = function(n) paste(rep('\n', n), collapse=''),
   hrule  = '',
   code   = function(x) x,
+  ord      = function(n) paste0(n, markupSpecs$all$ordsuffix(n)),
   chisq  = function(x, ...) if(missing(x)) 'chi-square'
                             else
                               paste0('chi-square(', x, ')'),
@@ -667,8 +691,19 @@ plain = list(
 plotmath = list(
   varlabel = function(label, units='', ...)
     labelPlotmath(label, units)
-  )
+),
+
+all=list(
+  ordsuffix = function(n) {
+    l <- n - floor(n / 10) * 10
+    ifelse(n %in% 11:13, 'th',
+     ifelse(l == 1, 'st',
+      ifelse(l == 2, 'nd',
+       ifelse(l == 3, 'rd', 'th'))))
+  }
+ )
 )
+
 
 ## For expand_collapse see http://dickervasti.com/wiki-style-text-expand-collapse-no-jquery.htm#01000
 

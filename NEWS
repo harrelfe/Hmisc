@@ -1,6 +1,11 @@
-Changes in version 4.3-1 (2020-01-17)
+Changes in version 4.4-1 (2020-02-29)
+   * combplotp: new function for attribute plots with plotly
+
+Changes in version 4.3-1 (2020-02-07)
    * Depend on survival >= 3.1-6
    * pomodm: checked that x is sorted
+   * markupSpecs: added ord function for ordinal representation of integers
+   * mChoice: removed unused argument sort. from help file
 
 Changes in version 4.3-0 (2019-11-07)
    * Corrected typos in aregImpute help file.  Thanks: Mark Seeto.

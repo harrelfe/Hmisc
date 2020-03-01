@@ -4,14 +4,37 @@
 \alias{plotlyM}
 \title{plotly Multiple}
 \usage{
-plotlyM(data, x = ~x, y = ~y, xhi = ~xhi, yhi = ~yhi,
-  htext = NULL, multplot = NULL, strata = NULL, fitter = NULL,
-  color = NULL, size = NULL, showpts = !length(fitter),
-  rotate = FALSE, xlab = NULL, ylab = NULL, ylabpos = c("top",
-  "y"), xlim = NULL, ylim = NULL, shareX = TRUE, shareY = FALSE,
-  height = NULL, width = NULL, nrows = NULL, ncols = NULL,
-  colors = NULL, alphaSegments = 1, alphaCline = 0.3, digits = 4,
-  zeroline = TRUE)
+plotlyM(
+  data,
+  x = ~x,
+  y = ~y,
+  xhi = ~xhi,
+  yhi = ~yhi,
+  htext = NULL,
+  multplot = NULL,
+  strata = NULL,
+  fitter = NULL,
+  color = NULL,
+  size = NULL,
+  showpts = !length(fitter),
+  rotate = FALSE,
+  xlab = NULL,
+  ylab = NULL,
+  ylabpos = c("top", "y"),
+  xlim = NULL,
+  ylim = NULL,
+  shareX = TRUE,
+  shareY = FALSE,
+  height = NULL,
+  width = NULL,
+  nrows = NULL,
+  ncols = NULL,
+  colors = NULL,
+  alphaSegments = 1,
+  alphaCline = 0.3,
+  digits = 4,
+  zeroline = TRUE
+)
 }
 \arguments{
 \item{data}{input data frame}

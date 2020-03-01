@@ -46,13 +46,15 @@ summaryS <- function(formula, fun=NULL,
     w <- summarize(y, w[by], fun, type='matrix', keepcolnames=TRUE)
     funlabel <- if(is.matrix(w$y)) colnames(w$y)[1]
   }
-
   gg <- function(x) if(is.character(x) || is.factor(x))
                       'categorical' else 'numeric'
   xlabels <- sapply(X, label)
   xlabels <- ifelse(xlabels == '', names(xlabels), xlabels)
   ylabels <- sapply(Y, label)
   ylabels <- ifelse(ylabels == '', names(ylabels), ylabels)
+
+  for(n in names(w))  # takes care of R change stringsAsFactors=FALSE
+    if(is.character(w[[n]])) w[[n]] <- factor(w[[n]])
 
   structure(w, class=c('summaryS', 'data.frame'),
             formula=formula, fun=fun,

@@ -2,7 +2,7 @@
 #' 
 #' Generates a plotly attribute plot given a series of possibly overlapping binary variables
 #' 
-#' Similar to the \code{UpSetR} package, draws a special dot chart sometimes called an attribute plot that depicts all possible combination of the binary variables.  By default a positive value, indicating that a certain condition pertains for a subject, is any of logical \code{TRUE}, numberic 1, \code{"yes"}, \code{"y"}, \code{"positive"}, \code{"+} or \code{"present"} value, and all others are considered negative.  The user can override this determination by specifying her own \code{pos} function.  Case is ignored in the variable values.
+#' Similar to the \code{UpSetR} package, draws a special dot chart sometimes called an attribute plot that depicts all possible combination of the binary variables.  By default a positive value, indicating that a certain condition pertains for a subject, is any of logical \code{TRUE}, numberic 1, \code{"yes"}, \code{"y"}, \code{"positive"}, \code{"+"} or \code{"present"} value, and all others are considered negative.  The user can override this determination by specifying her own \code{pos} function.  Case is ignored in the variable values.
 #' 
 #' The plot uses solid dots arranged in a vertical line to indicate which combination of conditions is being considered.  Frequencies of all possible combinations are shown above the dot chart.  Marginal frequencies of positive values for the input variables are shown to the left of the dot chart.  More information for all three of these component symbols is provided in hover text.
 #' 
@@ -10,7 +10,8 @@
 #' @param data input data frame.  If none is specified the data are assumed to come from the parent frame.
 #' @param subset an optional subsetting expression applied to \code{data}
 #' @param na.action see \code{lm} etc.
-#' @param vmames set to \code{"names"} to use variable names to label axes instead of variable labels.  When using the default \code{labels}, any variable not having a label will have its name used instead.
+#' @param vnames set to \code{"names"} to use variable names to label axes instead of variable labels.  When using the default \code{labels}, any variable not having a label will have its name used instead.
+#' @param showno set to \code{TRUE} to show a light dot for conditions that are not part of the currently tabulated combination
 #' @param pos a function of vector returning a logical vector with \code{TRUE} values indicating positive
 #' @param width width of \code{plotly} plot
 #' @param height height of \code{plotly} plot
@@ -25,11 +26,11 @@
 #' x2 <- g()
 #' x3 <- g(); label(x3) <- 'This is<br>a label for x3'
 #' x4 <- g()
-#' combplotp(~ x1 + x2 + x3 + x4)
+#' combplotp(~ x1 + x2 + x3 + x4, showno=TRUE)
 #' @export
 
 combplotp <- function(formula, data=NULL, subset, na.action=na.retain,
-                      vnames=c('labels', 'names'),
+                      vnames=c('labels', 'names'), showno=FALSE,
                       pos=function(x) 1 * (toupper(x) %in% 
                         c('true', 'yes', 'y', 'positive', '+', 'present', '1')),
                       width=NULL, height=NULL,
@@ -103,7 +104,8 @@ combplotp <- function(formula, data=NULL, subset, na.action=na.retain,
                             y = ~ rep(1, n), yend = ~ rep(p + 1.5, n),
                             color = I('gray80'), line=list(width=0.75),
                             showlegend=FALSE)
-  
+
+  # Show main result as dot chart
   P <- plotly::add_markers(P,
                            x = ~ x[present == 1],
                            y = ~ y[present == 1],
@@ -111,6 +113,15 @@ combplotp <- function(formula, data=NULL, subset, na.action=na.retain,
                            hoverinfo='text',
                            color=I('black'), size=I(35),
                            showlegend=FALSE)
+
+  if(showno)
+    P <- plotly::add_markers(P,
+                             x = ~ x[present == 0],
+                             y = ~ y[present == 0],
+                             hoverinfo='none',
+                             color=I('gray90'), size=I(35),
+                             showlegend=FALSE)
+                             
   
   # Add a trace showing marginal frequencies on the left as segments
   relfreq <- m[namx] / max(m)

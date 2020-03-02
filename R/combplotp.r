@@ -16,6 +16,8 @@
 #' @param includenone set to \code{TRUE} to include the combination where all conditions are absent
 #' @param showno set to \code{TRUE} to show a light dot for conditions that are not part of the currently tabulated combination
 #' @param pos a function of vector returning a logical vector with \code{TRUE} values indicating positive
+#' @param obsname character string noun describing observations, default is \code{"subjects"}
+#' @param ptsize point size, defaults to 35
 #' @param width width of \code{plotly} plot
 #' @param height height of \code{plotly} plot
 #' @param \dots optional arguments to pass to \code{table}
@@ -48,9 +50,14 @@ combplotp <- function(formula, data=NULL, subset, na.action=na.retain,
                       includenone=FALSE, showno=FALSE,
                       pos=function(x) 1 * (toupper(x) %in% 
                         c('true', 'yes', 'y', 'positive', '+', 'present', '1')),
-                      width=NULL, height=NULL,
+                      obsname='subjects',
+                      ptsize=35, width=NULL, height=NULL,
                       ...) {
+
   vnames <- match.arg(vnames)
+  frac   <- markupSpecs$html$frac
+  fr2    <- function(a, b) paste0(frac(a, b), ' = ', round(a / b, 3))
+  
   Y <- if(missing(formula)) {
     if(! missing(subset)) stop('subset not allowed if formula missing')
     if(! length(data)) stop('data must be specified if formula missing')
@@ -75,14 +82,15 @@ combplotp <- function(formula, data=NULL, subset, na.action=na.retain,
   m <- sapply(Y, sum, na.rm=TRUE)
   # Sort variables in order of descending marginal frequency
   Y <- Y[order(m)]
+  N <- length(Y[[1]])    # no. obs
   f <- as.data.frame(table(Y, ...))
   f <- f[f$Freq > 0, ]   # subset didn't work
   p <- ncol(f) - 1       # no. variables
-  if(! includenone) {
-    numcondpresent <- apply(f[, 1 : p], 1, function(u) sum(u == 1))
-    if(any(numcondpresent == 0))
+  numcondpresent <- apply(f[, 1 : p], 1, function(u) sum(u == 1))
+  Nc <- sum(f$Freq[numcondpresent > 0])  # no. obs with any condition
+  if(! includenone && any(numcondpresent == 0))
       f <- f[numcondpresent > 0, ]
-  }
+
   # Sort combinations in descending order of frequency
   i <- order(-f$Freq)
   f <- f[i, ]
@@ -92,28 +100,34 @@ combplotp <- function(formula, data=NULL, subset, na.action=na.retain,
   Freq <- f$Freq
   
   # String out information
-  x <- y <- present <- txt <- xn <- NULL
+  x <- y <- present <- txt <- xn <- frq <- NULL
   namx <- colnames(X)
   for(i in 1 : n) {
-    x <- c(x, rep(i, p))
-    y <- c(y, 1 : p)
-    xi <- X[i, ]
-    present <- c(present, xi)
+    x         <- c(x, rep(i, p))
+    y         <- c(y, 1 : p)
+    xi        <- X[i, ]
+    present   <- c(present, xi)
     namespres <- if(! any(xi == 1)) 'none' else
-      paste(labs[namx][xi == 1], collapse='<br>')
-    tx <- paste0('Conditions:<br>', namespres, '<br>Frequency:', Freq[i])
+                  paste(labs[namx][xi == 1], collapse='<br>')
+    k         <- Freq[i]
+    tx <- paste0('Conditions:<br>',                            namespres,
+                 '<br>Frequency: ',                            k,
+                 '<br>Fraction of ', obsname, ': ',            fr2(k, N),
+                 '<br>Fraction of ', obsname, ' w/any cond: ', fr2(k, Nc))
     txt <- c(txt, rep(tx, p))
-    xn  <- c(xn, namx)
+    xn  <- c(xn,  namx)
+    frq <- c(frq, rep(k, p))
   }
-  
+  txt <- paste0(txt, '<br>Fraction of subj w/', namx[y], ': ',
+                fr2(frq, m[namx[y]]))
   hdc <- plotlyParm$heightDotchartb
   if(! length(height)) height <- hdc(c(labs, '', ''), low=250, per=30)
   if(! length(width)) {
     # Find longest html line in labs
-    w <- unlist(strsplit(labs, '<br>'))
+    w        <- unlist(strsplit(labs, '<br>'))
     longest  <- w[which.max(nchar(w))]
     nlongest <- nchar(longest)
-    width <- hdc(rep('X', n), per=23, low=450) + 8 * nlongest
+    width    <- hdc(rep('X', n), per=23, low=450) + 8 * nlongest
   }
   P <- plotly::plot_ly(height=height, width=width)
   
@@ -133,11 +147,11 @@ combplotp <- function(formula, data=NULL, subset, na.action=na.retain,
 
   # Show main result as dot chart
   P <- plotly::add_markers(P,
-                           x = ~ x[present == 1],
-                           y = ~ y[present == 1],
+                           x    = ~ x[present == 1],
+                           y    = ~ y[present == 1],
                            text = ~ txt[present == 1],
                            hoverinfo='text',
-                           color=I('black'), size=I(35),
+                           color=I('black'), size=I(ptsize),
                            showlegend=FALSE)
 
   if(showno)
@@ -145,17 +159,21 @@ combplotp <- function(formula, data=NULL, subset, na.action=na.retain,
                              x = ~ x[present == 0],
                              y = ~ y[present == 0],
                              hoverinfo='none',
-                             color=I('gray90'), size=I(35),
+                             color=I('gray90'), size=I(ptsize),
                              showlegend=FALSE)
                              
   
   # Add a trace showing marginal frequencies on the left as segments
   relfreq <- m[namx] / max(m)
+  tmf <- paste0(labs[namx], '<br>Marginal frequency: ',       m[namx],
+                '<br>Fraction of ', obsname, ': ',            fr2(m[namx], N),
+                '<br>Fraction of ', obsname, ' w/any cond: ', fr2(m[namx], Nc))
+                
   P <- plotly::add_segments(P,
                             x = ~ rep(0, p), xend= ~ -2 * relfreq,
                             # y = ~ labs[namx], yend ~ labs[namx],
                             y = ~ 1 : p, yend ~ 1 : p,
-                            text = ~ paste0(labs[namx], '<br>Marginal<br>frequency:', m[namx]),
+                            text = ~ tmf,
                             hoverinfo='text', color=I('blue'), 
                             name='Marginal Frequencies',
                             showlegend=TRUE,
@@ -175,7 +193,10 @@ combplotp <- function(formula, data=NULL, subset, na.action=na.retain,
     txtc[i] <- if(! any(xi == 1)) 'none' else
       paste(labs[namx][xi == 1], collapse='<br>')
   }
-  txtc <- paste0('Combination:<br>', txtc, '<br>Frequency:', Freq)
+  txtc <- paste0('Combination:<br>', txtc,
+                 '<br>Frequency: ',                            Freq,
+                 '<br>Fraction of ', obsname, ': ',            fr2(Freq, N),
+                 '<br>Fraction of ', obsname, ' w/any cond: ', fr2(Freq, Nc))
   
   P <- plotly::add_segments(P,
                             x    = ~ nn,

@@ -15,6 +15,8 @@
 #' @param vnames set to \code{"names"} to use variable names to label axes instead of variable labels.  When using the default \code{labels}, any variable not having a label will have its name used instead.
 #' @param includenone set to \code{TRUE} to include the combination where all conditions are absent
 #' @param showno set to \code{TRUE} to show a light dot for conditions that are not part of the currently tabulated combination
+#' @param maxcomb maximum number of combinations to display
+#' @param minfreq if specified, any combination having a frequency less than this will be omitted from the display
 #' @param pos a function of vector returning a logical vector with \code{TRUE} values indicating positive
 #' @param obsname character string noun describing observations, default is \code{"subjects"}
 #' @param ptsize point size, defaults to 35
@@ -48,6 +50,7 @@
 combplotp <- function(formula, data=NULL, subset, na.action=na.retain,
                       vnames=c('labels', 'names'),
                       includenone=FALSE, showno=FALSE,
+                      maxcomb=NULL, minfreq=NULL,
                       pos=function(x) 1 * (toupper(x) %in% 
                         c('true', 'yes', 'y', 'positive', '+', 'present', '1')),
                       obsname='subjects',
@@ -94,6 +97,9 @@ combplotp <- function(formula, data=NULL, subset, na.action=na.retain,
   # Sort combinations in descending order of frequency
   i <- order(-f$Freq)
   f <- f[i, ]
+
+  if(length(maxcomb) && maxcomb < nrow(f))     f <- f[1 : maxcomb, ]
+  if(length(minfreq) && any(f$Freq < minfreq)) f <- f[f$Freq >= minfreq, ]
   
   n <- nrow(f)        # no. combinations
   X <- as.matrix(1 * (f[, 1 : p] == '1'))

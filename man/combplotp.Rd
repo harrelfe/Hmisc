@@ -12,6 +12,8 @@ combplotp(
   vnames = c("labels", "names"),
   includenone = FALSE,
   showno = FALSE,
+  maxcomb = NULL,
+  minfreq = NULL,
   pos = function(x) 1 * (toupper(x) \%in\% c("true", "yes", "y", "positive", "+",
     "present", "1")),
   obsname = "subjects",
@@ -35,6 +37,10 @@ combplotp(
 \item{includenone}{set to \code{TRUE} to include the combination where all conditions are absent}
 
 \item{showno}{set to \code{TRUE} to show a light dot for conditions that are not part of the currently tabulated combination}
+
+\item{maxcomb}{maximum number of combinations to display}
+
+\item{minfreq}{if specified, any combination having a frequency less than this will be omitted from the display}
 
 \item{pos}{a function of vector returning a logical vector with \code{TRUE} values indicating positive}
 

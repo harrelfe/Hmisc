@@ -124,7 +124,7 @@ combplotp <- function(formula, data=NULL, subset, na.action=na.retain,
     xn  <- c(xn,  namx)
     frq <- c(frq, rep(k, p))
   }
-  txt <- paste0(txt, '<br>Fraction of subj w/', namx[y], ': ',
+  txt <- paste0(txt, '<br>Fraction of ', obsname, ' w/', namx[y], ': ',
                 fr2(frq, m[namx[y]]))
   hdc <- plotlyParm$heightDotchartb
   if(! length(height)) height <- hdc(c(labs, '', ''), low=250, per=30)

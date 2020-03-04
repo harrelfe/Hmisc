@@ -116,8 +116,8 @@ combplotp <- function(formula, data=NULL, subset, na.action=na.retain,
     namespres <- if(! any(xi == 1)) 'none' else
                   paste(labs[namx][xi == 1], collapse='<br>')
     k         <- Freq[i]
-    tx <- paste0('Conditions:<br>',                            namespres,
-                 '<br>Frequency: ',                            k,
+    tx <- paste0('<b>', namespres, '</b><br>',
+                 '<br>Count: ',                                k,
                  '<br>Fraction of ', obsname, ': ',            fr2(k, N),
                  '<br>Fraction of ', obsname, ' w/any cond: ', fr2(k, Nc))
     txt <- c(txt, rep(tx, p))
@@ -171,7 +171,8 @@ combplotp <- function(formula, data=NULL, subset, na.action=na.retain,
   
   # Add a trace showing marginal frequencies on the left as segments
   relfreq <- m[namx] / max(m)
-  tmf <- paste0(labs[namx], '<br>Marginal frequency: ',       m[namx],
+  tmf <- paste0('<b>', labs[namx],
+                '</b><br><br>Marginal count: ',               m[namx],
                 '<br>Fraction of ', obsname, ': ',            fr2(m[namx], N),
                 '<br>Fraction of ', obsname, ' w/any cond: ', fr2(m[namx], Nc))
                 
@@ -181,7 +182,7 @@ combplotp <- function(formula, data=NULL, subset, na.action=na.retain,
                             y = ~ 1 : p, yend ~ 1 : p,
                             text = ~ tmf,
                             hoverinfo='text', color=I('blue'), 
-                            name='Marginal Frequencies',
+                            name='Marginal Counts',
                             showlegend=TRUE,
                             line=list(width=3)
                             )
@@ -199,8 +200,8 @@ combplotp <- function(formula, data=NULL, subset, na.action=na.retain,
     txtc[i] <- if(! any(xi == 1)) 'none' else
       paste(labs[namx][xi == 1], collapse='<br>')
   }
-  txtc <- paste0('Combination:<br>', txtc,
-                 '<br>Frequency: ',                            Freq,
+  txtc <- paste0('<b>', txtc, '</b>',
+                 '<br><br>Count: ',                            Freq,
                  '<br>Fraction of ', obsname, ': ',            fr2(Freq, N),
                  '<br>Fraction of ', obsname, ' w/any cond: ', fr2(Freq, Nc))
   
@@ -211,7 +212,7 @@ combplotp <- function(formula, data=NULL, subset, na.action=na.retain,
                             yend = ~ p + 0.5 + relfreqc,
                             text = ~ txtc,
                             hoverinfo='text', color=I('black'),
-                            name='Combination Frequencies',
+                            name='Combination Counts',
                             showlegend=TRUE, line=list(width=3))
   
   # Add variable labels as annotations

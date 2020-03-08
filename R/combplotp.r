@@ -17,6 +17,7 @@
 #' @param showno set to \code{TRUE} to show a light dot for conditions that are not part of the currently tabulated combination
 #' @param maxcomb maximum number of combinations to display
 #' @param minfreq if specified, any combination having a frequency less than this will be omitted from the display
+#' @param N set to an integer to override the global denominator, instead of using the number of rows in the data
 #' @param pos a function of vector returning a logical vector with \code{TRUE} values indicating positive
 #' @param obsname character string noun describing observations, default is \code{"subjects"}
 #' @param ptsize point size, defaults to 35
@@ -50,7 +51,7 @@
 combplotp <- function(formula, data=NULL, subset, na.action=na.retain,
                       vnames=c('labels', 'names'),
                       includenone=FALSE, showno=FALSE,
-                      maxcomb=NULL, minfreq=NULL,
+                      maxcomb=NULL, minfreq=NULL, N=NULL,
                       pos=function(x) 1 * (toupper(x) %in% 
                         c('true', 'yes', 'y', 'positive', '+', 'present', '1')),
                       obsname='subjects',
@@ -85,7 +86,7 @@ combplotp <- function(formula, data=NULL, subset, na.action=na.retain,
   m <- sapply(Y, sum, na.rm=TRUE)
   # Sort variables in order of descending marginal frequency
   Y <- Y[order(m)]
-  N <- length(Y[[1]])    # no. obs
+  if(! length(N)) N <- length(Y[[1]])    # no. obs
   f <- as.data.frame(table(Y, ...))
   f <- f[f$Freq > 0, ]   # subset didn't work
   p <- ncol(f) - 1       # no. variables
@@ -95,7 +96,16 @@ combplotp <- function(formula, data=NULL, subset, na.action=na.retain,
       f <- f[numcondpresent > 0, ]
 
   # Sort combinations in descending order of frequency
-  i <- order(-f$Freq)
+  # Tie-breaker is row order when a combination has only one condition
+  mdesc <- sort(m)
+  mdesc <- 1 : length(mdesc)
+  names(mdesc) <- names(sort(m))
+  g <- function(x) {
+    i <- x > 0
+    ifelse(sum(i) == 1, mdesc[names(x)[i]], 0)
+    }
+  tiebr <- apply(f[, 1 : p], 1, g)
+  i <- order(-f$Freq, -tiebr)
   f <- f[i, ]
 
   if(length(maxcomb) && maxcomb < nrow(f))     f <- f[1 : maxcomb, ]

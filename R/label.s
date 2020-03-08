@@ -352,8 +352,7 @@ prList <- function(x, lcap=NULL, htmlfig=0, after=FALSE) {
 }
 
 putHfig <- function(x, ..., scap=NULL, extra=NULL, subsub=TRUE, hr=TRUE,
-                    table=FALSE, file='', append=FALSE,
-                    expcoll=NULL) {
+                    table=FALSE, file='', append=FALSE, expcoll=NULL) {
   ec <- length(expcoll) > 0
   if(ec && ! table)
     stop('expcoll can only be specified for tables, not figures')
@@ -411,32 +410,36 @@ invisible()
 }
 
 putHcap <- function(..., scap=NULL, extra=NULL, subsub=TRUE, hr=TRUE,
-                    file='', append=FALSE) {
-  
-  mu <- markupSpecs$html
+                    table=FALSE, file='', append=FALSE) {
+
+
+  mu    <- markupSpecs$html
+  fcap  <- if(table) mu$tcap  else mu$cap
+  flcap <- if(table) mu$ltcap else mu$lcap
+  output <- function(r)
+    if(is.logical(file)) return(r)
+    else {
+      cat(r, sep='\n', file=file, append=append)
+      return(invisible())
+      }
   
   lcap <- unlist(list(...))
   if(length(lcap)) lcap <- paste(lcap, collapse=' ')
-
-  r <- NULL
-  txt <- is.logical(file)
   
-  if(! length(lcap) && ! length(scap)) {
-    if(hr) r <- c(r, mu$hrule)
-    if(txt) return(r)
-    if(hr) cat(r, '\n', sep='', file=file, append=append)
-    return(invisible())
-  }
+  r <- NULL
+  
+  if(! length(lcap) && ! length(scap)) return('')
+
   if(! length(scap)) {
     scap <- lcap
     lcap <- NULL
   }
-  scap <- mu$cap(scap)
+  scap <- fcap(scap)
   if(subsub) scap <- paste0('\n### ', scap)
   if(hr) r <- c(r, mu$hrule)
   r <- c(r, scap)
   if(length(lcap)) {
-    lcap <- mu$lcap(lcap)
+    lcap <- flcap(lcap)
     if(length(extra))
       lcap <- paste0(
         '<TABLE width="100%" BORDER="0" CELLPADDING="3" CELLSPACING="3">',
@@ -446,9 +449,7 @@ putHcap <- function(..., scap=NULL, extra=NULL, subsub=TRUE, hr=TRUE,
         '</TR></TABLE>')
     r <- c(r, lcap)
   }
-  if(txt) return(r)
-  cat(r, sep='\n', file=file, append=append)
-  invisible()
+  output(r)
 }
 
 combineLabels <- function(...)

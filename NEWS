@@ -1,4 +1,4 @@
-Changes in version 4.4-1 (2020-03-04)
+Changes in version 4.4-1 (2020-03-07)
    * combplotp: new function for attribute plots with plotly
    * summaryP: made to work with new default stringsAsFactors=FALSE
 

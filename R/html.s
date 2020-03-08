@@ -381,6 +381,10 @@ markupSpecs <- list(html=list(
              invis, '</span>')
   },
 
+  expcolld = function(vis, invis)
+    paste0('<details><summary>', vis, ## htmlSpecial('blackdowntriangle'),
+           '</summary>', invis, '</details>'),
+
   uncover = function(before, options, envir) {
     ## https://stackoverflow.com/questions/44866287
     ## usage: knitrSet(lang='markdown')  # issues knit_hooks$set(uncover=uncover)

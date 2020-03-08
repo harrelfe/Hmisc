@@ -101,10 +101,10 @@
 	\code{markupSpecs} \code{html} function \code{expcoll} will be used to
 	make tables expand upon clicking an arrow rather than always appear.
 
-	\code{putHcap} is like \code{putHfig} except it is for figures only,
-	and assumes that users render the graphics outside of the
+	\code{putHcap} is like \code{putHfig} except that it
+	assumes that users render the graphics or table outside of the
 	\code{putHcap} call.  This allows things to work in ordinary html
-	documents. 
+	documents.  \code{putHcap} does not handle collapsed text.
 
   \code{plotmathTranslate} is a simple function that translates certain
   character strings to character strings that can be used as part of \R
@@ -162,7 +162,7 @@ putHfig(x, \dots, scap=NULL, extra=NULL, subsub=TRUE, hr=TRUE,
         table=FALSE, file='', append=FALSE, expcoll=NULL)
 
 putHcap(\dots, scap=NULL, extra=NULL, subsub=TRUE, hr=TRUE,
-        file='', append=FALSE)
+        table=FALSE, file='', append=FALSE)
 
 plotmathTranslate(x)
 

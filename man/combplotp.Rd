@@ -14,6 +14,7 @@ combplotp(
   showno = FALSE,
   maxcomb = NULL,
   minfreq = NULL,
+  N = NULL,
   pos = function(x) 1 * (toupper(x) \%in\% c("true", "yes", "y", "positive", "+",
     "present", "1")),
   obsname = "subjects",
@@ -41,6 +42,8 @@ combplotp(
 \item{maxcomb}{maximum number of combinations to display}
 
 \item{minfreq}{if specified, any combination having a frequency less than this will be omitted from the display}
+
+\item{N}{set to an integer to override the global denominator, instead of using the number of rows in the data}
 
 \item{pos}{a function of vector returning a logical vector with \code{TRUE} values indicating positive}
 

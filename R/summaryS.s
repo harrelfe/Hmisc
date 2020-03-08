@@ -461,7 +461,7 @@ plotp.summaryS <-
   xlab <- labelPlotmath(xlabels[xn], xunits[xn], html=TRUE)
 
   gp <- length(groups)
-  gr <- if(gp) X[[groups]] else factor(rep('', length(x)))
+  gr <- if(gp) X[[groups]] else factor(rep('', nrow(X)))
 
   if(ptype == 'xy') {
     if(nstat > 0 && ! gp) X <- cbind(X, tracename=statnames[1])

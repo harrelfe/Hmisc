@@ -303,14 +303,15 @@ plotlyM <- function(data, x=~x, y=~y, xhi=~xhi, yhi=~yhi, htext=NULL,
   }
   if(length(ncols)) nrows <- ceil(iv / ncols)
   if(length(stlevs) > 1) shareY <- TRUE
-  if(length(P) > 1)
+  if(length(P) == 1) P <- P[[1]]
+  else {
     P <- if(length(nrows))
            plotly::subplot(P, shareX=shareX, shareY=shareY,
                            titleX=TRUE, titleY=TRUE, nrows=nrows)
          else
            plotly::subplot(P, shareX=shareX, shareY=shareY,
                            titleX=TRUE, titleY=TRUE)
-#  eval(parse(text=paste0('plotly::layout(P', axislab, ')')))
+    }
   P
 }
 utils::globalVariables('.v.')

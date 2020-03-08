@@ -374,7 +374,7 @@ plotp.summaryS <-
     ylab[i] <- labelPlotmath(ylabels[i], yunits[i], html=TRUE)
 
   aform <- function(n) as.formula(paste('~', n))
-  fmt <- function(x) htmlSN(x, digits=digits)
+  fmt   <- function(x) htmlSN(x, digits=digits)
   
   ptype <- if(length(fun)) {  # used to always be 'dot'
     if(length(sfun)) 'xy.special' else 'dot'

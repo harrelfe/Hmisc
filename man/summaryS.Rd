@@ -228,6 +228,10 @@ plot(s, groups='treat', datadensity=TRUE,
 plot(s, groups='treat', panel=panel.loess, key=list(space='bottom', columns=2),
      datadensity=TRUE, scat1d.opts=list(lwd=.5))
 
+# To make a plotly graph when the stratification variable region is not
+# present, run the following (showpts adds raw data points):
+# plotp(s, groups='treat', fitter=loess, showpts=TRUE)
+
 # Make your own plot using data frame created by summaryP
 # xyplot(y ~ days | yvar * region, groups=treat, data=s,
 #        scales=list(y='free', rot=0))

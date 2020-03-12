@@ -367,7 +367,6 @@ plotp.summaryS <-
   funlabel <- if(! length(funlabel) && length(at$funlabel))
                 at$funlabel else funlabel
   funlabel <- htmlTranslate(funlabel, greek=TRUE)
-  
   ly <- length(ylabels)
   ylab    <- ylabels
   for(i in 1 : length(ylab))
@@ -380,7 +379,6 @@ plotp.summaryS <-
     if(length(sfun)) 'xy.special' else 'dot'
            } else 'xy'
   if(length(sfun)) ptype <- 'xy.special'
-  
   if(ptype %in% c('xy', 'xy.special') && ! any(xtype == 'numeric'))
     stop('must have a numeric x variable to make x-y plot')
 

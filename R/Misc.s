@@ -1924,3 +1924,27 @@ tobase64image <- function (file, Rd = FALSE, alt = "image") {
 }
 
 plotp <- function(data, ...) UseMethod("plotp")
+
+keepHattrib <- function(obj) {
+  g <- function(x) {
+    a <- attributes(x)
+    i <- intersect(names(a), c('label', 'units'))
+    if(length(i)) a[i]
+  }
+  if(! is.list(obj)) list(.single.variable.=g(obj)) else sapply(obj, g)
+}
+
+restoreHattrib <- function(obj, attribs) {
+  for(n in names(attribs)) {
+    a <- attribs[[n]]
+    if(length(a)) {
+      sv <- n == '.single.variable.'
+      x <- if(sv) obj else obj[[n]]
+      if(length(a$label)) label(x) <- a$label
+      if(length(a$units)) units(x) <- a$units
+      if(sv) return(x)
+      obj[[n]] <- x
+    }
+  }
+  obj
+}

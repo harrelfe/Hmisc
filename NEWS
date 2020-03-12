@@ -1,8 +1,10 @@
-Changes in version 4.4-1 (2020-03-08)
+Changes in version 4.4-1 (2020-03-11)
    * combplotp: new function for attribute plots with plotly
    * summaryP: made to work with new default stringsAsFactors=FALSE
-   * plotlyM: fixed but where need to unlist if only one graph produced 
-
+   * plotlyM: fixed bug where need to unlist if only one graph produced
+   * plotlyM: added ECDF support through fitter='ecdf'
+   * keepHattrib, restoreHattrib: new functions for saving Hmisc attributes that can be restored later, e.g., after data.table processes a data frame
+	 
 Changes in version 4.3-1 (2020-02-07)
    * Depend on survival >= 3.1-6
    * pomodm: checked that x is sorted

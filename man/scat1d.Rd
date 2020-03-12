@@ -7,6 +7,7 @@
 \alias{datadensity.data.frame}
 \alias{histSpike}
 \alias{histSpikeg}
+\alias{ecdfpM}
 \title{One-Dimensional Scatter Diagram, Spike Histogram, or Density}
 \description{
   \code{scat1d} adds tick marks (bar codes. rug plot) on any of the four
@@ -84,6 +85,9 @@
 	to a \code{ggplot2} graphics object or traces to a \code{plotly}
 	object.
 	\code{histSpikeg} can also add \code{lowess} curves to the plot.
+
+	\code{ecdfpM} makes a \code{plotly} graph or series of graphs showing
+	possibly superposed empirical cumulative distribution functions.
 }
 \usage{
 scat1d(x, side=3, frac=0.02, jitfrac=0.008, tfrac,
@@ -130,10 +134,15 @@ histSpikeg(formula=NULL, predictions=NULL, data, plotly=NULL,
            side=1, nint=100,
            frac=function(f) 0.01 + 0.02*sqrt(f-1)/sqrt(max(f,2)-1),
            span=3/4, histcol='black', showlegend=TRUE)
+
+ecdfpM(x, group=NULL, what=c('F','1-F','f','1-f'), q=NULL,
+       extra=c(0.025, 0.025), xlab=NULL, ylab=NULL, height=NULL, width=NULL,
+       colors=NULL, nrows=NULL, ncols=NULL, ...)
 }
 \arguments{
   \item{x}{
-    a vector of numeric data, or a data frame (for \code{jitter2})
+    a vector of numeric data, or a data frame (for \code{jitter2} or
+       \code{ecdfpM}) 
   }
   \item{object}{
     a data frame or list (even with unequal number of observations per
@@ -256,7 +265,8 @@ histSpikeg(formula=NULL, predictions=NULL, data, plotly=NULL,
   \item{\dots}{
     optional arguments passed to \code{scat1d} from \code{datadensity}
     or to \code{histSpike} from \code{scat1d}.  For \code{histSpikep}
-           are passed to the \code{lines} list to \code{add_trace}.
+           are passed to the \code{lines} list to \code{add_trace}.  For
+					 \code{ecdfpM} these arguments are passed to \code{add_lines}.
   }
   \item{presorted}{
     set to \code{TRUE} to prevent from sorting for determining the order
@@ -301,6 +311,8 @@ histSpikeg(formula=NULL, predictions=NULL, data, plotly=NULL,
     a vector of quantiles to display.  By default, quantiles are not
     shown.
   }
+	\item{extra}{a two-vector specifying the fraction of the x
+       range to add on the left and the fraction to add on the right}
   \item{cex.axis}{
     character size for draw labels for axis tick marks
   }
@@ -352,11 +364,14 @@ histSpikeg(formula=NULL, predictions=NULL, data, plotly=NULL,
     \code{histSpikeg} to help scale the tick mark line segments.
   }
   \item{xlab}{
-    x-axis label (\code{add=FALSE}); default is name of input argument
-    \code{x}
-  }
+    x-axis label (\code{add=FALSE} or for \code{ecdfpM}); default is
+       name of input argument, or for \code{ecdfpM} comes from
+       \code{label} and \code{units} attributes of the analysis
+       variable.  For \code{ecdfpM} \code{xlab} may be a vector if there
+       is more than one analysis variable.
+		 }
   \item{ylab}{
-    y-axis label (\code{add=FALSE})
+    y-axis label (\code{add=FALSE} or for \code{ecdfpM})
   }
   \item{add}{
     set to \code{TRUE} to add the spike-histogram to an existing plot,
@@ -398,10 +413,15 @@ histSpikeg(formula=NULL, predictions=NULL, data, plotly=NULL,
 \item{histcol}{color of line segments (tick marks) for
  \code{histSpikeg}.  Default is black.  Set to any color or to
    \code{"default"} to use the prevailing colors for the
-   graphic.
- }
+   graphic.}
 \item{showlegend}{set to \code{FALSE} too have the added \code{plotly}
-           traces not have entries in the plot legend}
+  traces not have entries in the plot legend}
+\item{what}{set to \code{"1-F"} to plot 1 minus the ECDF instead of the
+       ECDF, \code{"f"} to plot cumulative frequency, or \code{"1-f"} to
+       plot the inverse cumulative frequency}
+\item{height,width}{passed to \code{plot_ly}}
+\item{colors}{a vector of colors to pas to \code{add_lines}}
+\item{nrows,ncols}{passed to \code{plotly::subplot}}
 }
 \value{
   \code{histSpike} returns the actual range of \code{x} used in its binning
@@ -536,6 +556,10 @@ g + histSpikeg(yhat ~ cholesterol + sex, p, d)
 # colors <- c('red', 'blue')
 # p <- plot_ly(x=x, y=y, color=g, colors=colors, mode='markers')
 # histSpikep(p, x, y, z, color=g, colors=colors)
+
+w <- data.frame(x1=rnorm(100), x2=exp(rnorm(100)))
+g <- c(rep('a', 50), rep('b', 50))
+ecdfpM(w, group=g, ncols=2)
 }
 }
 \keyword{dplot}

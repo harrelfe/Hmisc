@@ -7,6 +7,7 @@
 \alias{htmlSpecialType}
 \alias{inverseFunction}
 \alias{james.stein}
+\alias{keepHattrib}
 \alias{km.quick}
 \alias{latexBuild}
 \alias{lm.fit.qr.bare}
@@ -16,6 +17,7 @@
 \alias{outerText}
 \alias{plotlyParm}
 \alias{plotp}
+\alias{restoreHattrib}
 \alias{sepUnitsTrans}
 \alias{strgraphwrap}
 \alias{tobase64image}
@@ -74,6 +76,11 @@
   \code{james.stein} computes James-Stein shrunken estimates of cell
   means given a response variable (which may be binary) and a grouping
   indicator.
+
+	\code{keepHattrib} for an input variable or a data frame, creates a
+	list object saving special Hmisc attributes such as \code{label} and
+	\code{units} that might be lost during certain operations such as
+	running \code{data.table}.  \code{restoreHattrib} restores these attributes.
 
   \code{km.quick} provides a fast way to invoke \code{survfitKM} in the
   \code{survival} package to get Kaplan-Meier estimates for a
@@ -183,6 +190,7 @@ prType()
 htmlSpecialType()
 inverseFunction(x, y)
 james.stein(y, group)
+keepHattrib(obj)
 km.quick(S, times, q)
 latexBuild(\dots, insert, sep='')
 lm.fit.qr.bare(x, y, tolerance, intercept=TRUE, xpxi=FALSE, singzero=FALSE)
@@ -191,6 +199,7 @@ nomiss(x)
 outerText(string, y, cex=par('cex'), \dots)
 plotlyParm
 plotp(data, ...)
+restoreHattrib(obj, attrib)
 sepUnitsTrans(x, conversion=c(day=1, month=365.25/12, year=365.25, week=7),
               round=FALSE, digits=0)
 strgraphwrap(x, width = 0.9 * getOption("width"),
@@ -209,7 +218,8 @@ xless(x, \dots, title)
   \item{a}{a numeric matrix or vector}
 	\item{alt,Rd}{see \code{base64::img}}
   \item{at}{x-coordinate for vertical confidence intervals, y-coordinate
-	for horizontal}
+		for horizontal}
+	\item{attrib}{an object returned by \code{keepHattrib}}
   \item{avail}{set to \code{TRUE} to have \code{getLatestSource} return
 	a data frame of available files and latest versions instead of
 	fetching any}
@@ -244,7 +254,8 @@ xless(x, \dots, title)
 	coefficients}
   \item{lwd}{line widths}
   \item{package}{name of package for \code{getLatestSource}, default is
-	\code{'Hmisc'}}
+		\code{'Hmisc'}}
+	\item{obj}{a variable, data frame, or data table}
   \item{q}{vector of confidence coefficients or quantiles}
   \item{qfun}{quantiles on transformed scale}
   \item{recent}{an integer telling \code{getLatestSource} to get the
@@ -324,6 +335,14 @@ lines(a, h(a)[,1])            ## first inverse
 lines(a, h(a)[,2], col='red') ## second inverse
 a <- c(-.1, 1.01, 1.1, 1.2)
 points(a, h(a)[,1])
+
+d <- data.frame(x=1:2, y=3:4, z=5:6)
+d <- upData(d, labels=c(x='X', z='Z lab'), units=c(z='mm'))
+a <- keepHattrib(d)
+
+d <- data.frame(x=1:2, y=3:4, z=5:6)
+d2 <- restoreHattrib(d, a)
+sapply(d2, attributes)
 
 \dontrun{
 getLatestSource(recent=5)  # source() most recent 5 revised files in Hmisc

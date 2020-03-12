@@ -902,3 +902,96 @@ histboxpM <- function(p=plotly::plot_ly(height=height), x, group=NULL,
   plotly::subplot(P, nrows=nrows, shareX=FALSE, shareY=FALSE,
                   titleX=TRUE, margin=c(.02, .02, .05, .04))
   }
+
+ecdfpM <- function(x, group=NULL, what=c('F','1-F','f','1-f'), q=NULL,
+                   extra=c(0.025, 0.025), xlab=NULL, ylab=NULL,
+                   height=NULL, width=NULL,
+                   colors=NULL, nrows=NULL, ncols=NULL, ...) {
+
+  what <- match.arg(what)
+  nam <- deparse(substitute(x))
+  if(! is.data.frame(x)) x <- data.frame(x)
+  nx <- ncol(x)
+  if(! length(group)) group <- rep('', nrow(x))
+  group <- as.factor(group)
+
+  fmt <- function(x) htmlSN(x, digits=5)
+  trans <- switch(what,
+                  'F'   = function(y) y,
+                  '1-F' = function(y) 1 - y,
+                  'f'   = function(y) n * y,
+                  '1-f' = function(y) n * (1 - y))
+
+  P  <- list()
+  kq <- length(q)
+  for(i in 1 : nx) {
+    y <- x[[i]]
+    rng  <- range(y, na.rm=TRUE)
+    xl <- if(! length(xlab)) 
+            labelPlotmath(label(y, default=names(x)[i]), units(y), html=TRUE)
+          else
+            xlab[min(length(xlab), i)]
+    D    <- Dq <- NULL
+    p    <- plotly::plot_ly(height=height, width=width)
+    for(gv in levels(group)) {
+      j    <- group == gv & ! is.na(y)
+      yg   <- sort(y[j])
+      n    <- length(yg)
+      vals <- unique(yg)   # see stats::ecdf
+      a <- approx(vals, cumsum(tabulate(match(yg, vals))) / n,
+                  method='constant', yleft=0, yright=1, f=0,
+                  ties='ordered', xout=vals)
+      delta <- diff(rng)
+      a$x   <- c(min(a$x) - extra[1] * delta, a$x, max(a$x) + extra[2] * delta)
+      a$y   <- c(0, a$y, 1)
+      yg <- a$y
+      d <- data.frame(x = a$x, y = trans(yg), g=gv)
+      D <- rbind(D, d)
+      if(kq) for(k in 1 : kq) {
+        quant <- min(a$x[yg >= q[k]])
+        tx <- paste0(q[k], ' quantile of ', names(x)[i], ':', fmt(quant))
+        if(gv != '') tx <- paste0(tx, '<br>', gv)
+        Dq <- rbind(Dq,
+                    data.frame(x=rng[1], xe=quant,
+                               y=trans(q[k]), ye=trans(q[k]), g=gv, txt=''),
+                    data.frame(x=quant,  xe=quant,
+                               y=trans(q[k]), ye=trans(0),    g=gv, txt=tx))
+      }
+    }
+
+    linet <- if(what %in% c('F', 'f')) 'hv' else 'vh'
+    p <- plotly::add_lines(p, data=D, x= ~ x, y= ~ y,
+                           showlegend = i == nx,
+                           color= ~ g,
+                           colors=colors,
+                           line=list(shape=linet),
+                           ...)
+    if(kq)
+      p <- plotly::add_segments(p, data=Dq,
+                                x = ~ x, xend = ~ xe,
+                                y = ~ y, yend = ~ ye,
+                                color = ~ g,
+                                colors = colors,
+                                alpha = 0.4,
+                                text = ~ txt, hoverinfo='text',
+                                name = 'Quantiles',
+                                legendgroup = "quantiles",
+                                showlegend = i == nx)
+
+    yt <- if(length(ylab)) ylab
+          else
+            if(what %in% c('F', '1-F')) 'Cumulative Proportion'
+          else
+            'Number of Observations'
+    p <- plotly::layout(p,
+                        xaxis = list(title=xl, zeroline=FALSE),
+                        yaxis = list(title=yt))
+    P[[i]] <- p
+  }
+
+  if(nx == 1) return(p)
+  if(length(ncols)) nrows <- ceil(nx / ncols)
+  else if(! length(nrows)) nrows <- nx
+  plotly::subplot(P, nrows=nrows, shareX=FALSE,
+                  titleX=TRUE, margin=c(.02, .02, .05, .04))
+}

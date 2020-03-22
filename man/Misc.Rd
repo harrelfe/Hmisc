@@ -199,7 +199,7 @@ nomiss(x)
 outerText(string, y, cex=par('cex'), \dots)
 plotlyParm
 plotp(data, ...)
-restoreHattrib(obj, attrib)
+restoreHattrib(obj, attribs)
 sepUnitsTrans(x, conversion=c(day=1, month=365.25/12, year=365.25, week=7),
               round=FALSE, digits=0)
 strgraphwrap(x, width = 0.9 * getOption("width"),
@@ -219,7 +219,7 @@ xless(x, \dots, title)
 	\item{alt,Rd}{see \code{base64::img}}
   \item{at}{x-coordinate for vertical confidence intervals, y-coordinate
 		for horizontal}
-	\item{attrib}{an object returned by \code{keepHattrib}}
+	\item{attribs}{an object returned by \code{keepHattrib}}
   \item{avail}{set to \code{TRUE} to have \code{getLatestSource} return
 	a data frame of available files and latest versions instead of
 	fetching any}

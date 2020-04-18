@@ -281,7 +281,7 @@ plot.summaryM <-
              'Stratified by',
              obj$group.label)
 
-    pch     <- rep(pch,     length=nw)
+    pch     <- rep(pch, length.out=nw)
   
     lab <- vnd <- z <- nmiss <- vnamd <- NULL
     type  <- obj$type; n <- obj$n

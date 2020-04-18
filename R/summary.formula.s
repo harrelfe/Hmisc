@@ -800,8 +800,8 @@ plot.summary.formula.response <-
     main <- at$funlab
 
   nw      <- length(which)
-  pch     <- rep(pch, length=if(superposeStrata)ns else nw)
-  dotfont <- rep(dotfont, length=nw)
+  pch     <- rep(pch, length.out=if(superposeStrata)ns else nw)
+  dotfont <- rep(dotfont, length.out=nw)
   opar <- par(no.readonly=TRUE)
 
   if(reset.par)
@@ -906,8 +906,8 @@ plot.summary.formula.reverse <-
           else 'Percentages','Stratified by',
           obj$group.label)
 
-  pch     <- rep(pch, length=nw)
-  dotfont <- rep(dotfont, length=nw)
+  pch     <- rep(pch, length.out=nw)
+  dotfont <- rep(dotfont, length.out=nw)
   
   lab <- vnd <- z <- nmiss <- vnamd <- NULL
   type  <- obj$type; n <- obj$n

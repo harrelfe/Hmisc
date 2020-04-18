@@ -47,7 +47,7 @@ latexNeedle <- function(y, x=NULL, col='black', href=0.5, name, w=.05, h=.15,
   }
   ct('\\setlength{\\unitlength}{.001in}%\n')
   k <- length(y)
-  col <- rep(col, length=k)
+  col <- rep(col, length.out=k)
   W <- max(k, 2) * w
   z <- function(a) round(a * 1000)
   ct('\\begin{picture}(', z(W + extra), ',', z(h), ')%\n')
@@ -68,7 +68,7 @@ latexNeedle <- function(y, x=NULL, col='black', href=0.5, name, w=.05, h=.15,
   x <- if(length(x)) {
     r <- range(x)
     w / 2 + (k - 1) * w / 2 * (x - r[1]) / diff(r)
-    } else seq(w / 2, k * w / 2, length=k)
+    } else seq(w / 2, k * w / 2, length.out=k)
 
   ct('\\linethickness{1.55pt}%\n')
   for(i in 1 : k) {
@@ -91,7 +91,7 @@ pngNeedle <- function(y, x=NULL, col='black', href=0.5, lwd=3.5, w=6, h=18,
                       file=tempfile(fileext='.png')) {
 
   k <- length(y)
-  col <- rep(col, length=k)
+  col <- rep(col, length.out=k)
 
   png(file, width=1 + k * w, height=h)
   par(mar=rep(0,4))
@@ -106,7 +106,7 @@ pngNeedle <- function(y, x=NULL, col='black', href=0.5, lwd=3.5, w=6, h=18,
   x <- if(length(x)) {
     r <- range(x)
     0.025 + 0.95 * (x - r[1]) / diff(r)
-    } else seq(0.025, 0.975, length=k)
+    } else seq(0.025, 0.975, length.out=k)
   for(i in 1 : k) lines(c(x[i], x[i]), c(0, y[i]), col=col[i], lwd=lwd)
   dev.off()
   invisible(file)

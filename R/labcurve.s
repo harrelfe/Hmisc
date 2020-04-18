@@ -37,10 +37,10 @@ labcurve <- function(curves, labels=names(curves),
   if(!mcurves)
     {
       nc <- length(curves)
-      type <- rep(type, length=nc)
-      lty  <- rep(lty,  length=nc)
-      lwd  <- rep(lwd,  length=nc)
-      col. <- rep(col., length=nc)
+      type <- rep(type, length.out=nc)
+      lty  <- rep(lty,  length.out=nc)
+      lwd  <- rep(lwd,  length.out=nc)
+      col. <- rep(col., length.out=nc)
       for(i in 1:nc)
         {
           z <- curves[[i]]
@@ -86,10 +86,10 @@ labcurve <- function(curves, labels=names(curves),
   else if(!is.logical(labels) && nc != length(labels))
     stop('length of labels is not equal to # curves')
 
-  type <- rep(type, length=nc)
-  lty  <- rep(lty,  length=nc)
-  lwd  <- rep(lwd,  length=nc)
-  col. <- rep(col., length=nc)
+  type <- rep(type, length.out=nc)
+  lty  <- rep(lty,  length.out=nc)
+  lwd  <- rep(lwd,  length.out=nc)
+  col. <- rep(col., length.out=nc)
 
   if(pl)
     {
@@ -223,10 +223,10 @@ labcurve <- function(curves, labels=names(curves),
   else {
     adj.does.vary     <- length(adj) > 1
     adj.needs.to.vary <- FALSE
-    adj <- rep(adj, length=nc)
+    adj <- rep(adj, length.out=nc)
   }
 
-  if(xmethod=='grid') xs <- seq(xlim[1],xlim[2],length=npts) else {
+  if(xmethod=='grid') xs <- seq(xlim[1],xlim[2],length.out=npts) else {
     xs <- unlist(sapply(curves, function(z)z[[1]]))
     xs <- sort(unique(xs[!is.na(xs)]))
     xs <- xs[xs>=xlim[1] & xs<=xlim[2]]

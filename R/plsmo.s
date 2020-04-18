@@ -82,7 +82,7 @@ plsmo <-
       
       if(length(evaluate)) {
         rx   <- range(z$x)
-        xseq <- seq(rx[1], rx[2], length=evaluate)
+        xseq <- seq(rx[1], rx[2], length.out=evaluate)
         z <- approx(z, xout=xseq)
       }
 
@@ -118,12 +118,12 @@ plsmo <-
          type='n', xlab=xlab, ylab=ylab)
   }
   
-  lty <- rep(lty, length=lc)
-  col <- rep(col, length=lc)
+  lty <- rep(lty, length.out=lc)
+  col <- rep(col, length.out=lc)
   if(missing(lwd) && is.list(label.curves) && length(label.curves$lwd))
     lwd <- label.curves$lwd
   
-  lwd <- rep(lwd, length=lc)
+  lwd <- rep(lwd, length.out=lc)
 
   if(method == 'intervals')
     for(i in 1 : lc) {

@@ -102,8 +102,8 @@ Quantile2 <- function(scontrol, hratio,
   ## Generate sequence of times to use in all approximations and sequence
   ## to use for plot method
 
-  times <- seq(0, tmax, length=m)
-  tim   <- seq(0, tmax, length=mplot)
+  times <- seq(0, tmax, length.out=m)
+  tim   <- seq(0, tmax, length.out=mplot)
   tinc  <- times[2]
 
   ## Approximate hazard function for control group
@@ -112,15 +112,15 @@ Quantile2 <- function(scontrol, hratio,
   hc <- c(hc, hc[m-1])/tinc  ## to make length=m
 
   ## hazard function for intervention group
-  hr <- rep(hratio(times), length=m)
+  hr <- rep(hratio(times), length.out=m)
   hi <- hc*hr
 
   ## hazard for control group with dropin
-  di  <- rep(dropin(times),length=m)
+  di  <- rep(dropin(times), length.out=m)
   hc2 <- (1-di)*hc + di*hi
 
   ## hazard for intervention group with dropout
-  do  <- rep(dropout(times),length=m)
+  do  <- rep(dropout(times), length.out=m)
   hi2 <- (1-do)*hi + do*hc
 
   ## survival for intervention group

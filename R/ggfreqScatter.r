@@ -18,7 +18,7 @@ ggfreqScatter <- function(x, y, bins=50, g=10, cuts=NULL,
 
   nx <- is.numeric(x); ny <- is.numeric(y)
   xbreaks <- if(nx) xbreaks; ybreaks <- if(ny) ybreaks
-  bins <- rep(bins, length=2)
+  bins <- rep(bins, length.out=2)
   
   i <-  ! (is.na(x) | is.na(y))
   x <- xtrans(x[i]); y <- ytrans(y[i])

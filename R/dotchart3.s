@@ -17,7 +17,7 @@ dotchart3 <-
   x    <- as.matrix(x)
   n    <- nrow(x)
   nc   <- ncol(x)
-  pch  <- rep(pch,  length=nc)
+  pch  <- rep(pch, length.out=nc)
   
   if(! length(labels)) labels <- rownames(x)
   if(! length(labels)) stop('labels not defined')
@@ -153,12 +153,12 @@ dotchartp <-
   n    <- nrow(x)
   nc   <- ncol(x)
 
-  symbol <- rep(symbol, length=nc)
+  symbol <- rep(symbol, length.out=nc)
   col <- if(length(col)) {
            if(! is.function(col)) col
            else col(ncol(x))
          }
-  col    <- rep(col,    length=nc)
+  col    <- rep(col, length.out=nc)
   
   if(length(gdata)) {
     gdata <- as.matrix(gdata)

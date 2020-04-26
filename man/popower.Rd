@@ -24,7 +24,7 @@ differences in mean or median on the original scale.
 \code{propsPO} uses \code{ggplot2} to plot a stacked bar chart of
 proportions stratified by a grouping variable, with an optional
 additional graph showing what the proportions would be had proportional
-odds held and an odds ratio was applied to the proportions in the first group
+odds held and an odds ratio was applied to the proportions in a reference group
 }
 \usage{
 popower(p, odds.ratio, n, n1, n2, alpha=0.05)
@@ -32,7 +32,7 @@ popower(p, odds.ratio, n, n1, n2, alpha=0.05)
 posamsize(p, odds.ratio, fraction=.5, alpha=0.05, power=0.8)
 \method{print}{posamsize}(x, \dots)
 pomodm(x=NULL, p, odds.ratio=1)
-propsPO(formula, or=NULL, data=NULL)
+propsPO(formula, odds.ratio=NULL, ref=NULL, data=NULL)
 }
 \arguments{
 \item{p}{
@@ -45,10 +45,10 @@ the odds ratio to be able to detect.  It doesn't
 matter which group is in the numerator.  For \code{propsPO},
 \code{odds.ratio} is a function of the grouping (right hand side)
 variable value.  The value of the function specifies the odds ratio to
-apply to the first group to get all other group's expected proportions
+apply to the refernce group to get all other group's expected proportions
 were proportional odds to hold against the first group.  Normally the
 function should return 1.0 when its \code{x} argument corresponds to the
-first group.}
+\code{ref} group.}
 \item{n}{
 total sample size for \code{popower}.  You must specify either \code{n} or
 \code{n1} and \code{n2}.  If you specify \code{n}, \code{n1} and
@@ -81,6 +81,10 @@ for \code{posamsize}, the desired power (default is 0.8)
 	variable is on the right.  It is assume that the left hand variable is
 	either already a factor or will have its levels in the right order for
 	an ordinal model when it is converted to factor.}
+\item{ref}{for \code{propsPO} specifies the reference group (value of
+	the right hand side \code{formula} variable) to use in computing
+	proportions on which too translate proportions in other groups, under
+	the proportional odds assumption.}
 \item{data}{a data frame or \code{data.table}}
 \item{\dots}{unused}
 }

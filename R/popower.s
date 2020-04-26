@@ -143,11 +143,12 @@ simRegOrd <- function(n, nsim=1000, delta=0, odds.ratio=1, sigma,
 }
 
 
-propsPO <- function(formula, odds.ratio=NULL, data=NULL) {
+propsPO <- function(formula, odds.ratio=NULL, ref=NULL, data=NULL) {
   v <- all.vars(formula)
   d <- model.frame(formula, data=data)
   y <- as.factor(d[[v[1]]])
   x <- d[[v[2]]]
+  xl <- label(x, default=v[2])
   names(d) <- c('y', 'x')
   # For each x compute the vector of proportions of y categories
   # Assume levels are in order
@@ -161,11 +162,12 @@ propsPO <- function(formula, odds.ratio=NULL, data=NULL) {
   plegend <- guides(fill=guide_legend(title=v[1]))
   if(! length(odds.ratio)) {
   gg <- ggplot(pm, aes(x=as.factor(x), y=prop, fill=factor(y))) +
-        geom_col() + plegend + xlab(v[2]) + ylab('Proportion')
+        geom_col() + plegend + xlab(xl) + ylab('Proportion')
   return(gg)
   }
 
-  propfirstx <- as.matrix(p[1, -1])
+  if(! length(ref)) ref <- p$x[1]
+  propfirstx <- as.matrix(p[x == ref, -1])
   g <- function(x) {
     w <- pomodm(p=propfirstx, odds.ratio=odds.ratio(x))
     names(w) <- levels(y)
@@ -179,5 +181,5 @@ propsPO <- function(formula, odds.ratio=NULL, data=NULL) {
                    c('Observed', 'Asssuming Proportional Odds'))
   ggplot(w, aes(x=as.factor(x), y=prop, fill=factor(y))) + geom_col() +
     facet_wrap(~ type, nrow=2) +
-    plegend + xlab(v[2]) + ylab('Proportion')
+    plegend + xlab(xl) + ylab('Proportion')
 }

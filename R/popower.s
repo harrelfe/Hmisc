@@ -16,7 +16,8 @@ popower <- function(p, odds.ratio, n, n1, n2, alpha=.05)
   V <- n1 * n2 * n / 3 / ((n + 1) ^ 2) * ps
   power <- pnorm(abs(logb(odds.ratio)) * sqrt(V) - z)
   eff <- ps / (1 - 1 / n / n)
-  structure(list(power=power, eff=eff), class='popower')
+  structure(list(power=power, eff=eff, approx.se=1./sqrt(V)),
+            class='popower')
 }
 
 
@@ -24,7 +25,9 @@ print.popower <- function(x, ...)
 {
   cat('Power:',round(x$power,3),
       '\nEfficiency of design compared with continuous response:',
-      round(x$eff, 3),'\n\n')
+      round(x$eff, 3),
+      '\nApproximate standard error of log odds ratio:',
+      round(x$approx.se, 4), '\n\n')
   invisible()
 }
 
@@ -137,4 +140,44 @@ simRegOrd <- function(n, nsim=1000, delta=0, odds.ratio=1, sigma,
   power <- mean(pvals < alpha, na.rm=TRUE)
   list(n=n, delta=delta, sigma=sigma, power=power, betas=betas, se=se,
        pvals=pvals)
+}
+
+
+propsPO <- function(formula, odds.ratio=NULL, data=NULL) {
+  v <- all.vars(formula)
+  d <- model.frame(formula, data=data)
+  y <- as.factor(d[[v[1]]])
+  x <- d[[v[2]]]
+  names(d) <- c('y', 'x')
+  # For each x compute the vector of proportions of y categories
+  # Assume levels are in order
+  g <- function(y) {
+    tab <- table(y)
+    tab / sum(tab)
+  }
+  d <- data.table(d)
+  p  <- d[, as.list(g(y)), by=x]
+  pm <- melt(p, id=1, variable.name='y', value.name='prop')
+  plegend <- guides(fill=guide_legend(title=v[1]))
+  if(! length(odds.ratio)) {
+  gg <- ggplot(pm, aes(x=as.factor(x), y=prop, fill=factor(y))) +
+        geom_col() + plegend + xlab(v[2]) + ylab('Proportion')
+  return(gg)
+  }
+
+  propfirstx <- as.matrix(p[1, -1])
+  g <- function(x) {
+    w <- pomodm(p=propfirstx, odds.ratio=odds.ratio(x))
+    names(w) <- levels(y)
+    w
+  }
+  pa <- d[, as.list(g(x)), by=x]
+  pma <- melt(pa, id=1, variable.name='y', value.name='prop')
+  w <- rbind(cbind(type=1, pm),
+             cbind(type=2, pma))
+  w$type <- factor(w$type, 1 : 2,
+                   c('Observed', 'Asssuming Proportional Odds'))
+  ggplot(w, aes(x=as.factor(x), y=prop, fill=factor(y))) + geom_col() +
+    facet_wrap(~ type, nrow=2) +
+    plegend + xlab(v[2]) + ylab('Proportion')
 }

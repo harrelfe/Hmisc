@@ -689,6 +689,7 @@ plain = list(
   varlabel = function(label, units='', ...)
     if(units == '') label else  paste0(label, '  [', units, ']'),
   times  = 'x',
+  plminus = '+/-',
   color = function(x, ...) x
 ),
 

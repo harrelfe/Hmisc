@@ -4,6 +4,7 @@
 \alias{print.popower}
 \alias{print.posamsize}
 \alias{pomodm}
+\alias{propsPO}
 \title{Power and Sample Size for Ordinal Response}
 \description{
 \code{popower} computes the power for a two-tailed two sample comparison
@@ -19,6 +20,11 @@ Whitehead (1993).
 
 \code{pomodm} is a function that assists in translating odds ratios to
 differences in mean or median on the original scale.
+
+\code{propsPO} uses \code{ggplot2} to plot a stacked bar chart of
+proportions stratified by a grouping variable, with an optional
+additional graph showing what the proportions would be had proportional
+odds held and an odds ratio was applied to the proportions in the first group
 }
 \usage{
 popower(p, odds.ratio, n, n1, n2, alpha=0.05)
@@ -26,6 +32,7 @@ popower(p, odds.ratio, n, n1, n2, alpha=0.05)
 posamsize(p, odds.ratio, fraction=.5, alpha=0.05, power=0.8)
 \method{print}{posamsize}(x, \dots)
 pomodm(x=NULL, p, odds.ratio=1)
+propsPO(formula, or=NULL, data=NULL)
 }
 \arguments{
 \item{p}{
@@ -35,8 +42,13 @@ in response level \code{i}, averaged over the two treatment groups.
 }
 \item{odds.ratio}{
 the odds ratio to be able to detect.  It doesn't
-matter which group is in the numerator.
-}
+matter which group is in the numerator.  For \code{propsPO},
+\code{odds.ratio} is a function of the grouping (right hand side)
+variable value.  The value of the function specifies the odds ratio to
+apply to the first group to get all other group's expected proportions
+were proportional odds to hold against the first group.  Normally the
+function should return 1.0 when its \code{x} argument corresponds to the
+first group.}
 \item{n}{
 total sample size for \code{popower}.  You must specify either \code{n} or
 \code{n1} and \code{n2}.  If you specify \code{n}, \code{n1} and
@@ -64,11 +76,18 @@ for \code{posamsize}, the fraction of subjects that will be allocated to group 1
 \item{power}{
 for \code{posamsize}, the desired power (default is 0.8)
 }
+\item{formula}{an R formula expressure for \code{proposPO} where the
+	outcome categorical variable is on the left hand side and the grouping
+	variable is on the right.  It is assume that the left hand variable is
+	either already a factor or will have its levels in the right order for
+	an ordinal model when it is converted to factor.}
+\item{data}{a data frame or \code{data.table}}
 \item{\dots}{unused}
 }
 \value{
-a list containing \code{power} and \code{eff} (relative efficiency) for \code{popower},
-or containing \code{n} and \code{eff} for \code{posamsize}.
+a list containing \code{power}, \code{eff} (relative efficiency), and
+\code{approx.se} (approximate standard error of log odds ratio) for
+\code{popower}, or containing \code{n} and \code{eff} for \code{posamsize}.
 }
 \author{
 Frank Harrell
@@ -128,6 +147,16 @@ X <- rep(1 : 5, 20 * p)
 c(mean=mean(X), median=median(X))
 pomodm(x, p, odds.ratio=1)  # still have to figure out the right median
 pomodm(x, p, odds.ratio=0.5)
+
+# An ordinal outcome with levels a, b, c, d, e is measured at 3 times
+# Show the proportion of values in each outcome category stratified by
+# time.  Then compute what the proportions would be had the proportions
+# at times 2 and 3 been the proportions at time 1 modified by two odds ratios 
+
+set.seed(1)
+d <- expand.grid(time=1:3, reps=1:30)
+d$y <- sample(letters[1:5], nrow(d), replace=TRUE)
+propsPO(y ~ time, data=d, odds.ratio=function(time) c(1, 2, 4)[time])
 }
 \keyword{htest}
 \keyword{category}

@@ -143,13 +143,23 @@ simRegOrd <- function(n, nsim=1000, delta=0, odds.ratio=1, sigma,
 }
 
 
-propsPO <- function(formula, odds.ratio=NULL, ref=NULL, data=NULL) {
-  v <- all.vars(formula)
-  d <- model.frame(formula, data=data)
-  y <- as.factor(d[[v[1]]])
-  x <- d[[v[2]]]
+propsPO <- function(formula, odds.ratio=NULL, ref=NULL, data=NULL,
+                    ncol=NULL, nrow=NULL) {
+  v  <- all.vars(formula)
+  d  <- model.frame(formula, data=data)
+  y  <- as.factor(d[[v[1]]])
+  x  <- d[[v[2]]]
   xl <- label(x, default=v[2])
-  names(d) <- c('y', 'x')
+  s  <- sn <- NULL
+  if(length(v) > 2) {
+    if(length(odds.ratio))
+      stop('odds ratio may not be specified when a stratification variable is include')
+    s <- d[[v[3]]]
+    sl <- label(s, default=v[3])
+    s <- as.factor(s)
+    sn <- 's'
+  }
+  names(d) <- c('y', 'x', sn)
   # For each x compute the vector of proportions of y categories
   # Assume levels are in order
   g <- function(y) {
@@ -157,14 +167,24 @@ propsPO <- function(formula, odds.ratio=NULL, ref=NULL, data=NULL) {
     tab / sum(tab)
   }
   d <- data.table(d)
-  p  <- d[, as.list(g(y)), by=x]
-  pm <- melt(p, id=1, variable.name='y', value.name='prop')
-  plegend <- guides(fill=guide_legend(title=v[1]))
-  if(! length(odds.ratio)) {
-  gg <- ggplot(pm, aes(x=as.factor(x), y=prop, fill=factor(y))) +
+  if(! length(s)) {
+    p  <- d[, as.list(g(y)), by=x]
+    pm <- melt(p, id=1, variable.name='y', value.name='prop')
+    plegend <- guides(fill=guide_legend(title=v[1]))
+    if(! length(odds.ratio)) {
+      gg <- ggplot(pm, aes(x=as.factor(x), y=prop, fill=factor(y))) +
         geom_col() + plegend + xlab(xl) + ylab('Proportion')
-  return(gg)
-  }
+      return(gg)
+    }
+  } else {
+    p  <- d[, as.list(g(y)), by=.(x,s)]
+    pm <- melt(p, id=c('x', 's'), variable.name='y', value.name='prop')
+    plegend <- guides(fill=guide_legend(title=v[1]))
+    gg <- ggplot(pm, aes(x=as.factor(x), y=prop, fill=factor(y))) +
+        facet_wrap(~ s, ncol=ncol, nrow=nrow) +
+        geom_col() + plegend + xlab(xl) + ylab('Proportion')
+    return(gg)
+    }
 
   if(! length(ref)) ref <- p$x[1]
   propfirstx <- as.matrix(p[x == ref, -1])

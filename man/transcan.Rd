@@ -575,7 +575,7 @@ invertTabulated(x, y, freq=rep(1,length(x)),
     variables that are used in the model formula.  This is useful when
     multiple imputations are done for component variables but the actual
     model uses combinations of these (e.g., ratios or other
-    derivations). For a single derived variable you can specified for
+    derivations). For a single derived variable you can specify for
     example \code{derived=expression(ratio <- weight/height)}.  For
     multiple derived variables use the form
     \code{derived=expression(\{ratio <- weight/height; product <-

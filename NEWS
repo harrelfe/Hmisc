@@ -1,4 +1,4 @@
-Changes in version 4.4-1 (2020-04-25)
+Changes in version 4.4-1 (2020-05-05)
    * popower: added approximate S.E. of log(OR) in results
    * propsPO: new function for exploring proportional odds
 

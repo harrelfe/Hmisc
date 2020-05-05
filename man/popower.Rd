@@ -21,8 +21,8 @@ Whitehead (1993).
 \code{pomodm} is a function that assists in translating odds ratios to
 differences in mean or median on the original scale.
 
-\code{propsPO} uses \code{ggplot2} to plot a stacked bar chart of
-proportions stratified by a grouping variable, with an optional
+\code{propsPO} uses \code{\link{ggplot2}} to plot a stacked bar chart of
+proportions stratified by a grouping variable (and optionally a stratification variable), with an optional
 additional graph showing what the proportions would be had proportional
 odds held and an odds ratio was applied to the proportions in a reference group
 }
@@ -32,7 +32,7 @@ popower(p, odds.ratio, n, n1, n2, alpha=0.05)
 posamsize(p, odds.ratio, fraction=.5, alpha=0.05, power=0.8)
 \method{print}{posamsize}(x, \dots)
 pomodm(x=NULL, p, odds.ratio=1)
-propsPO(formula, odds.ratio=NULL, ref=NULL, data=NULL)
+propsPO(formula, odds.ratio=NULL, ref=NULL, data=NULL, ncol=NULL, nrow=NULL )
 }
 \arguments{
 \item{p}{
@@ -86,6 +86,7 @@ for \code{posamsize}, the desired power (default is 0.8)
 	proportions on which too translate proportions in other groups, under
 	the proportional odds assumption.}
 \item{data}{a data frame or \code{data.table}}
+\item{nrow,ncol}{see \code{\link[ggplot2]{facet_wrap}}}
 \item{\dots}{unused}
 }
 \value{
@@ -158,9 +159,14 @@ pomodm(x, p, odds.ratio=0.5)
 # at times 2 and 3 been the proportions at time 1 modified by two odds ratios 
 
 set.seed(1)
-d <- expand.grid(time=1:3, reps=1:30)
+d   <- expand.grid(time=1:3, reps=1:30)
 d$y <- sample(letters[1:5], nrow(d), replace=TRUE)
 propsPO(y ~ time, data=d, odds.ratio=function(time) c(1, 2, 4)[time])
+
+# Add a stratification variable and don't consider an odds ratio
+d   <- expand.grid(time=1:5, sex=c('female', 'male'), reps=1:30)
+d$y <- sample(letters[1:5], nrow(d), replace=TRUE)
+propsPO(y ~ time + sex, data=d)  # may add nrow= or ncol=
 }
 \keyword{htest}
 \keyword{category}

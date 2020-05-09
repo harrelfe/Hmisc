@@ -203,3 +203,56 @@ propsPO <- function(formula, odds.ratio=NULL, ref=NULL, data=NULL,
     facet_wrap(~ type, nrow=2) +
     plegend + xlab(xl) + ylab('Proportion')
 }
+
+
+propsTrans <- function(formula, data=NULL, ncol=NULL, nrow=NULL) {
+  v  <- all.vars(formula)
+  d  <- model.frame(formula, data=data)
+  y  <- as.factor(d[[v[1]]])
+  x  <- d[[v[2]]]
+  id <- as.character(d[[v[3]]])
+  uid <- sort(unique(id))
+  nid <- length(uid)
+
+  times <- if(is.factor(x)) levels(x) else sort(unique(x))
+  nt <- length(times)
+
+  itrans <- integer(0)
+  Prev   <- Cur <- character(0)
+  prop   <- numeric(0)
+
+  for(it in 2 : nt) {
+    prev <- cur <- rep(NA, nid)
+    names(prev) <- names(cur) <- uid
+    i <- x == times[it - 1]
+    j <- x == times[it]
+    prev[id[i]] <- as.character(y[i])
+    cur [id[j]] <- as.character(y[j])
+    props <- as.data.frame(prop.table(table(prev, cur)))
+    Prev  <- c(Prev, as.character(props$prev))
+    Cur   <- c(Cur,  as.character(props$cur))
+    prop  <- c(prop, props$Freq)
+    k     <- length(props$Freq)
+    itrans <- c(itrans, rep(it, k))
+  }
+
+  Prev  <- factor(Prev, levels(y))
+  Cur   <- factor(Cur,  levels(y))
+  trans <- factor(itrans, 2 : nt,
+                  labels=paste0(times[1 : (nt - 1)], ' -> ', times[2 : nt]))
+  w <- data.frame(trans, Prev, Cur, prop)
+  
+  ggplot(w, aes(x=Prev, y=Cur, size=prop)) +
+    facet_wrap(~ trans, ncol=ncol, nrow=nrow) +
+    geom_point() + scale_size(range = c(0, 12)) + 
+    xlab('Previous State') + ylab('Current State') +
+    guides(size = guide_legend(title='Proportion'))
+
+#  ggplot(w, aes(x=Prev, y=prop, fill=Cur)) +
+#    facet_wrap(~ trans, ncol=ncol, nrow=nrow) +
+#    geom_col() + #scale_size(range = c(0, 12)) + 
+#    xlab('Previous State') + ylab('Proportion') +
+#    guides(fill = guide_legend(title='Current State'))
+  
+}
+

@@ -5,6 +5,7 @@
 \alias{print.posamsize}
 \alias{pomodm}
 \alias{propsPO}
+\alias{propsTrans}
 \title{Power and Sample Size for Ordinal Response}
 \description{
 \code{popower} computes the power for a two-tailed two sample comparison
@@ -24,7 +25,14 @@ differences in mean or median on the original scale.
 \code{propsPO} uses \code{\link{ggplot2}} to plot a stacked bar chart of
 proportions stratified by a grouping variable (and optionally a stratification variable), with an optional
 additional graph showing what the proportions would be had proportional
-odds held and an odds ratio was applied to the proportions in a reference group
+odds held and an odds ratio was applied to the proportions in a
+reference group.
+
+\code{propsTrans} uses \code{\link{ggplot2}} to plot all successive
+transition proportions.  \code{formula} has the state variable on the
+left hand side, the first right-hand variable is time, and the second
+right-hand variable is a subject ID variable.
+
 }
 \usage{
 popower(p, odds.ratio, n, n1, n2, alpha=0.05)
@@ -33,6 +41,7 @@ posamsize(p, odds.ratio, fraction=.5, alpha=0.05, power=0.8)
 \method{print}{posamsize}(x, \dots)
 pomodm(x=NULL, p, odds.ratio=1)
 propsPO(formula, odds.ratio=NULL, ref=NULL, data=NULL, ncol=NULL, nrow=NULL )
+propsTrans(formula, data=NULL, ncol=NULL, nrow=NULL)
 }
 \arguments{
 \item{p}{
@@ -167,6 +176,11 @@ propsPO(y ~ time, data=d, odds.ratio=function(time) c(1, 2, 4)[time])
 d   <- expand.grid(time=1:5, sex=c('female', 'male'), reps=1:30)
 d$y <- sample(letters[1:5], nrow(d), replace=TRUE)
 propsPO(y ~ time + sex, data=d)  # may add nrow= or ncol=
+
+# Show all successive transition proportion matrices
+d   <- expand.grid(id=1:30, time=1:10)
+d$state <- sample(LETTERS[1:4], nrow(d), replace=TRUE)
+propsTrans(state ~ time + id, data=d)
 }
 \keyword{htest}
 \keyword{category}

@@ -1,6 +1,7 @@
-Changes in version 4.4-1 (2020-05-05)
+Changes in version 4.4-1 (2020-05-09)
    * popower: added approximate S.E. of log(OR) in results
    * propsPO: new function for exploring proportional odds
+   * propsTrans: new function for showing distributions of successive state transitions
 
 Changes in version 4.4-0 (2020-03-22)
    * combplotp: new function for attribute plots with plotly

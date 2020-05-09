@@ -205,7 +205,7 @@ propsPO <- function(formula, odds.ratio=NULL, ref=NULL, data=NULL,
 }
 
 
-propsTrans <- function(formula, data=NULL, ncol=NULL, nrow=NULL) {
+propsTrans <- function(formula, data=NULL, maxsize=12, ncol=NULL, nrow=NULL) {
   v  <- all.vars(formula)
   d  <- model.frame(formula, data=data)
   y  <- as.factor(d[[v[1]]])
@@ -244,7 +244,7 @@ propsTrans <- function(formula, data=NULL, ncol=NULL, nrow=NULL) {
   
   ggplot(w, aes(x=Prev, y=Cur, size=prop)) +
     facet_wrap(~ trans, ncol=ncol, nrow=nrow) +
-    geom_point() + scale_size(range = c(0, 12)) + 
+    geom_point() + scale_size(range = c(0, maxsize)) + 
     xlab('Previous State') + ylab('Current State') +
     guides(size = guide_legend(title='Proportion'))
 
@@ -255,4 +255,5 @@ propsTrans <- function(formula, data=NULL, ncol=NULL, nrow=NULL) {
 #    guides(fill = guide_legend(title='Current State'))
   
 }
+
 

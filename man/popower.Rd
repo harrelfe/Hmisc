@@ -41,7 +41,7 @@ posamsize(p, odds.ratio, fraction=.5, alpha=0.05, power=0.8)
 \method{print}{posamsize}(x, \dots)
 pomodm(x=NULL, p, odds.ratio=1)
 propsPO(formula, odds.ratio=NULL, ref=NULL, data=NULL, ncol=NULL, nrow=NULL )
-propsTrans(formula, data=NULL, ncol=NULL, nrow=NULL)
+propsTrans(formula, data=NULL, maxsize=12, ncol=NULL, nrow=NULL)
 }
 \arguments{
 \item{p}{
@@ -96,6 +96,7 @@ for \code{posamsize}, the desired power (default is 0.8)
 	the proportional odds assumption.}
 \item{data}{a data frame or \code{data.table}}
 \item{nrow,ncol}{see \code{\link[ggplot2]{facet_wrap}}}
+\item{maxsize}{maximum symbol size}
 \item{\dots}{unused}
 }
 \value{

@@ -528,7 +528,7 @@ print.describe.single <-
   object <- '['(unclass(object),i)
   structure(object, descript=at$descript,
             dimensions=c(at$dimensions[1], length(object)),
-            class='describe')
+            class=class(object))
 }
 
 

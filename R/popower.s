@@ -147,7 +147,9 @@ propsPO <- function(formula, odds.ratio=NULL, ref=NULL, data=NULL,
                     ncol=NULL, nrow=NULL) {
   v  <- all.vars(formula)
   d  <- model.frame(formula, data=data)
-  y  <- as.factor(d[[v[1]]])
+  y  <- d[[v[1]]]
+  yl <- label(y, default=v[1])
+  y  <- as.factor(y)
   x  <- d[[v[2]]]
   xl <- label(x, default=v[2])
   s  <- sn <- NULL
@@ -170,7 +172,7 @@ propsPO <- function(formula, odds.ratio=NULL, ref=NULL, data=NULL,
   if(! length(s)) {
     p  <- d[, as.list(g(y)), by=x]
     pm <- melt(p, id=1, variable.name='y', value.name='prop')
-    plegend <- guides(fill=guide_legend(title=v[1]))
+    plegend <- guides(fill=guide_legend(title=yl))
     if(! length(odds.ratio)) {
       gg <- ggplot(pm, aes(x=as.factor(x), y=prop, fill=factor(y))) +
         geom_col() + plegend + xlab(xl) + ylab('Proportion')
@@ -179,7 +181,7 @@ propsPO <- function(formula, odds.ratio=NULL, ref=NULL, data=NULL,
   } else {
     p  <- d[, as.list(g(y)), by=.(x,s)]
     pm <- melt(p, id=c('x', 's'), variable.name='y', value.name='prop')
-    plegend <- guides(fill=guide_legend(title=v[1]))
+    plegend <- guides(fill=guide_legend(title=yl))
     gg <- ggplot(pm, aes(x=as.factor(x), y=prop, fill=factor(y))) +
         facet_wrap(~ s, ncol=ncol, nrow=nrow) +
         geom_col() + plegend + xlab(xl) + ylab('Proportion')
@@ -210,9 +212,10 @@ propsTrans <- function(formula, data=NULL, maxsize=12, ncol=NULL, nrow=NULL) {
   d  <- model.frame(formula, data=data)
   y  <- as.factor(d[[v[1]]])
   x  <- d[[v[2]]]
-  id <- as.character(d[[v[3]]])
-  uid <- sort(unique(id))
-  nid <- length(uid)
+  xlab <- label(x, default=v[2])
+  id   <- as.character(d[[v[3]]])
+  uid  <- sort(unique(id))
+  nid  <- length(uid)
 
   times <- if(is.factor(x)) levels(x) else sort(unique(x))
   nt <- length(times)
@@ -239,7 +242,8 @@ propsTrans <- function(formula, data=NULL, maxsize=12, ncol=NULL, nrow=NULL) {
   Prev  <- factor(Prev, levels(y))
   Cur   <- factor(Cur,  levels(y))
   trans <- factor(itrans, 2 : nt,
-                  labels=paste0(times[1 : (nt - 1)], ' -> ', times[2 : nt]))
+                  labels=paste0(xlab, ' ',
+                                times[1 : (nt - 1)], ' - ', times[2 : nt]))
   w <- data.frame(trans, Prev, Cur, prop)
   
   ggplot(w, aes(x=Prev, y=Cur, size=prop)) +

@@ -264,7 +264,7 @@ multEventChart <-
   function(formula, data=NULL,
            absorb=NULL, sortbylast=FALSE,
            colorTitle=label(y), eventTitle='Event',
-           colorRange=c('#7D3A2C', '#FCEEBC'),
+           palette='OrRd',
            eventSymbols=c(15, 5, 1:4, 6:10),
            timeInc=min(diff(unique(x))/2)) {
 
@@ -290,14 +290,13 @@ multEventChart <-
     id <- factor(id, levels=levels(id)[i])
   } else  id    <- factor(id, levels=rev(levels(id)))
   ab    <- as.character(y) %in% absorb
-  ns    <- length(setdiff(levels(y), absorb))
-  cols  <- grDevices::colorRampPalette(colorRange)(ns)
+  nay   <- setdiff(levels(y), absorb)
   event       <- y
   event[! ab] <- NA
   y[ab]       <- NA
   de <- subset(data.frame(id, x, y, event), ! is.na(event))
   ggplot(mapping=aes(x = id, y = x, fill = y)) +
-    scale_fill_manual(colorTitle, values=cols) +
+    scale_fill_brewer(colorTitle, palette=palette, direction=-1, breaks=nay) +
     geom_segment(aes(x = id, xend = id, y = 0, yend = x - timeInc),
                  lty = 3) +
     geom_tile(width = timeInc) + 

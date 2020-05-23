@@ -49,7 +49,7 @@ propsPO(formula, odds.ratio=NULL, ref=NULL, data=NULL, ncol=NULL, nrow=NULL )
 propsTrans(formula, data=NULL, maxsize=12, ncol=NULL, nrow=NULL)
 multEventChart(formula, data=NULL, absorb=NULL, sortbylast=FALSE,
    colorTitle=label(y), eventTitle='Event',
-   colorRange=c('#7D3A2C', '#FCEEBC'),
+   palette='OrRd',
    eventSymbols=c(15, 5, 1:4, 6:10),
    timeInc=min(diff(unique(x))/2))
 }
@@ -119,8 +119,8 @@ for \code{posamsize}, the desired power (default is 0.8)
 	severity of the status at the last time point}
 \item{colorTitle}{label for legend for status}
 \item{eventTitle}{label for legend for \code{absorb}}
-\item{colorRange}{2-vector representing the range of colors for states,
-	which are interpolated when there are more than 2 states}
+\item{palette}{a single character string specifying the
+	\code{\link[ggplot2]{scale_fill_brewer}} color palette}
 \item{eventSymbols}{vector of symbol codes.  Default for first two
 	symbols is a solid square and an open diamond.}
 \item{timeInc}{time increment for the x-axis.  Default is 1/2 the
@@ -225,7 +225,8 @@ label(d$day) <- 'Day'
 multEventChart(status ~ day + pt, data=d,
                absorb=c('death', 'discharged'),
                colorTitle='Status', sortbylast=TRUE) +
-theme_classic()
+theme_classic() +
+theme(legend.position='bottom')
 }
 \keyword{htest}
 \keyword{category}

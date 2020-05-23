@@ -1,4 +1,5 @@
 \name{popower}
+\alias{multEventChart}
 \alias{popower}
 \alias{posamsize}
 \alias{print.popower}
@@ -31,7 +32,11 @@ reference group.
 \code{propsTrans} uses \code{\link{ggplot2}} to plot all successive
 transition proportions.  \code{formula} has the state variable on the
 left hand side, the first right-hand variable is time, and the second
-right-hand variable is a subject ID variable.
+right-hand variable is a subject ID variable.\
+
+\code{multEventChart} uses \code{\link{ggplot2}} to plot event charts
+showing state transitions, account for absorbing states/events.  It is
+based on code written by Lucy D'Agostino McGowan posted at \url{https://livefreeordichotomize.com/2020/05/21/survival-model-detective-1}.
 
 }
 \usage{
@@ -42,6 +47,11 @@ posamsize(p, odds.ratio, fraction=.5, alpha=0.05, power=0.8)
 pomodm(x=NULL, p, odds.ratio=1)
 propsPO(formula, odds.ratio=NULL, ref=NULL, data=NULL, ncol=NULL, nrow=NULL )
 propsTrans(formula, data=NULL, maxsize=12, ncol=NULL, nrow=NULL)
+multEventChart(formula, data=NULL, absorb=NULL, sortbylast=FALSE,
+   colorTitle=label(y), eventTitle='Event',
+   colorRange=c('#7D3A2C', '#FCEEBC'),
+   eventSymbols=c(15, 5, 1:4, 6:10),
+   timeInc=min(diff(unique(x))/2))
 }
 \arguments{
 \item{p}{
@@ -89,7 +99,11 @@ for \code{posamsize}, the desired power (default is 0.8)
 	outcome categorical variable is on the left hand side and the grouping
 	variable is on the right.  It is assume that the left hand variable is
 	either already a factor or will have its levels in the right order for
-	an ordinal model when it is converted to factor.}
+	an ordinal model when it is converted to factor.  For
+	\code{multEventChart} the left hand variable is a categorial status
+	variable, the first right hand side variable represents time, and the
+	second right side variable is a unique subject ID.  One line is
+	produced per subject.}
 \item{ref}{for \code{propsPO} specifies the reference group (value of
 	the right hand side \code{formula} variable) to use in computing
 	proportions on which too translate proportions in other groups, under
@@ -98,6 +112,19 @@ for \code{posamsize}, the desired power (default is 0.8)
 \item{nrow,ncol}{see \code{\link[ggplot2]{facet_wrap}}}
 \item{maxsize}{maximum symbol size}
 \item{\dots}{unused}
+\item{absorb}{character vector specifying the subset of levels of the
+	left hand side variable that are absorbing states such as death or
+	hospital discharge}
+\item{sortbylast}{set to \code{TRUE} to sort the subjects by the
+	severity of the status at the last time point}
+\item{colorTitle}{label for legend for status}
+\item{eventTitle}{label for legend for \code{absorb}}
+\item{colorRange}{2-vector representing the range of colors for states,
+	which are interpolated when there are more than 2 states}
+\item{eventSymbols}{vector of symbol codes.  Default for first two
+	symbols is a solid square and an open diamond.}
+\item{timeInc}{time increment for the x-axis.  Default is 1/2 the
+	shortest gap between any two distincttimes in the data.}
 }
 \value{
 a list containing \code{power}, \code{eff} (relative efficiency), and
@@ -182,6 +209,23 @@ propsPO(y ~ time + sex, data=d)  # may add nrow= or ncol=
 d   <- expand.grid(id=1:30, time=1:10)
 d$state <- sample(LETTERS[1:4], nrow(d), replace=TRUE)
 propsTrans(state ~ time + id, data=d)
+
+pt1 <- data.frame(pt=1, day=0:3,
+   status=c('well', 'well', 'sick', 'very sick'))
+pt2 <- data.frame(pt=2, day=c(1,2,4,6),
+   status=c('sick', 'very sick', 'coma', 'death'))
+pt3 <- data.frame(pt=3, day=1:5,
+   status=c('sick', 'very sick', 'sick', 'very sick', 'discharged'))
+pt4 <- data.frame(pt=4, day=c(1:4, 10),
+   status=c('well', 'sick', 'very sick', 'well', 'discharged'))
+d <- rbind(pt1, pt2, pt3, pt4)
+d$status <- factor(d$status, c('discharged', 'well', 'sick',
+                               'very sick', 'coma', 'death'))
+label(d$day) <- 'Day'
+multEventChart(status ~ day + pt, data=d,
+               absorb=c('death', 'discharged'),
+               colorTitle='Status', sortbylast=TRUE) +
+theme_classic()
 }
 \keyword{htest}
 \keyword{category}

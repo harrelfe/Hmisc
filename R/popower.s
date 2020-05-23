@@ -260,4 +260,51 @@ propsTrans <- function(formula, data=NULL, maxsize=12, ncol=NULL, nrow=NULL) {
   
 }
 
+multEventChart <-
+  function(formula, data=NULL,
+           absorb=NULL, sortbylast=FALSE,
+           colorTitle=label(y), eventTitle='Event',
+           colorRange=c('#7D3A2C', '#FCEEBC'),
+           eventSymbols=c(15, 5, 1:4, 6:10),
+           timeInc=min(diff(unique(x))/2)) {
 
+  v     <- all.vars(formula)
+  d     <- model.frame(formula, data=data)
+  y     <- as.factor(d[[v[1]]])
+  y     <- factor(y, levels=rev(levels(y)))
+  x     <- d[[v[2]]]
+  xlab  <- label(x, default=v[2])
+  id    <- as.factor(d[[v[3]]])
+
+  # Optionally sort subjects by last status, assuming levels of y
+  # are in ascending order of badness
+  if(sortbylast) {
+    last <- tapply(1 : length(y), id,
+                   function(i) { 
+                     times  <- x[i]
+                     status <- y[i]
+                     as.integer(status[which.max(times)])
+                   })
+    
+    i <- order(last, levels(id), decreasing=TRUE)
+    id <- factor(id, levels=levels(id)[i])
+  } else  id    <- factor(id, levels=rev(levels(id)))
+  ab    <- as.character(y) %in% absorb
+  ns    <- length(setdiff(levels(y), absorb))
+  cols  <- grDevices::colorRampPalette(colorRange)(ns)
+  event       <- y
+  event[! ab] <- NA
+  y[ab]       <- NA
+  de <- subset(data.frame(id, x, y, event), ! is.na(event))
+  ggplot(mapping=aes(x = id, y = x, fill = y)) +
+    scale_fill_manual(colorTitle, values=cols) +
+    geom_segment(aes(x = id, xend = id, y = 0, yend = x - timeInc),
+                 lty = 3) +
+    geom_tile(width = timeInc) + 
+    scale_y_continuous(breaks=min(x) : max(x)) +
+    geom_point(aes(x = id, y = x - timeInc, shape = event), data=de) + 
+    scale_shape_manual(eventTitle, values=eventSymbols[1 : length(absorb)],
+                       labels=c(absorb)) +
+    guides(fill=guide_legend(override.aes=list(shape=NA), order=1)) +
+    coord_flip() + labs(y=xlab, x='')
+  }

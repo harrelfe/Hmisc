@@ -28,13 +28,13 @@ transace <- function(x, monotonic=NULL, categorical=NULL, binary=NULL,
       ic <- c(0, ic)
     m <- 10*(length(im)>0)+(length(ic)>0)
     if(m==11)
-      a <- ace(x[,-i], x[,i], mon=im, cat=ic)
+      a <- acepack::ace(x[,-i], x[,i], mon=im, cat=ic)
     else if (m==10)
-      a <- ace(x[,-i], x[,i], mon=im)
+      a <- acepack::ace(x[,-i], x[,i], mon=im)
     else if(m==1)
-      a <- ace(x[,-i], x[,i], cat=ic)
+      a <- acepack::ace(x[,-i], x[,i], cat=ic)
     else
-      a <- ace(x[,-i], x[,i])
+      a <- acepack::ace(x[,-i], x[,i])
 
     xt[,i] <- a$ty
     rsq[i] <- a$rsq
@@ -150,7 +150,7 @@ areg.boot <- function(x, data, weights, subset, na.action=na.delete,
          mono  <- (0:p)[types == 'm']
          lin   <- (0:p)[types == 'l']
          categ <- (0:p)[types == 'c'] 
-         avas(x, y, weights, cat=categ, mon=mono, lin=lin)
+         acepack::avas(x, y, weights, cat=categ, mon=mono, lin=lin)
        }
      f <- Avas(x, y, xtype, ytype, weights)
      rsquared.app <- f$rsq

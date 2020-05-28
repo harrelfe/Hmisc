@@ -206,6 +206,7 @@ propsPO <- function(formula, odds.ratio=NULL, ref=NULL, data=NULL,
     plegend + xlab(xl) + ylab('Proportion')
 }
 
+utils::globalVariables(c('.', 'prop'))
 
 propsTrans <- function(formula, data=NULL, maxsize=12, ncol=NULL, nrow=NULL) {
   v  <- all.vars(formula)

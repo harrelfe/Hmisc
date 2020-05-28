@@ -26,7 +26,7 @@ Much of the tabular output produced here was created using `html` methods, which
 
 `Rmarkdown` themes such as `bookdown` and [rmdformats::readthedown](https://github.com/juba/rmdformats) (the latter is used here) allow one to number figures and the symbolically reference them.  The `knitrSet` `capfile='captions.md'` argument below capitalizes on this to make it easy for the user to insert a table of figures anywhere in the report.  Here we place it at the end.  A caption listed in the table of figures is the short caption (`scap=` or `fig.scap` in the chunk header) if there is one, otherwise the long caption is used.  If neither caption is used, that figure will not appear in the table of figures.
 
-The `yaml` prolog for this document may be found at the end of this report.
+The full script for this report may be found [here](https://github.com/harrelfe/Hmisc/blob/master/inst/tests/examples.Rmd).
 
 
 # Setup
@@ -215,27 +215,5 @@ Note: the hidden R command that rendered the table of figures (including short c
 
 [^2]: `mu` is a copy of the part of the `Hmisc` package object `markupSpecs` that is for html.  It includes a function `session` that renders the session environment (including package versions) in html.
 
-# `readthedown` Theme `yaml` Prolog
-
-
-```
----
-title: "Hmisc Examples"
-author: "FE Harrell<br><small>Department of Biostatistics<br>Vanderbilt University</small>"
-date: '`r Sys.Date()`'
-output:
-  rmdformats::readthedown:
-    thumbnails: false
-    lightbox: true
-    gallery: true
-    highlight: tango
-    use_bookdown: true
-    toc_depth: 3
-    fig_caption: true
-csl: american-medical-association.csl
-bibliography: /home/harrelfe/bib/harrelfe.bib
-description: "Hmisc examples using plotly interactive graphics in an html report"
----
-```
 
 # References

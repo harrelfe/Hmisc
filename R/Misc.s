@@ -1215,7 +1215,7 @@ convertPdate <- function(x, fracnn=0.3, considerNA=NULL) {
 
 getHdata <-
   function(file, what=c('data','contents','description','all'),
-           where='http://biostat.mc.vanderbilt.edu/wiki/pub/Main/DataSets')
+           where='https://hbiostat.org/data/repo')
   {
     what <- match.arg(what)
     fn <- as.character(substitute(file))
@@ -1407,7 +1407,6 @@ Save <- function(object, name=deparse(substitute(object)), compress=TRUE)
 getZip <- function(url, password=NULL) {
   ## Allows downloading and reading a .zip file containing one file
   ## File may be password protected.  Password will be requested unless given.
-  ## Example: read.csv(getZip('http://biostat.mc.vanderbilt.edu/twiki/pub/Sandbox/WebHome/z.zip'))
   ## Password is 'foo'
   ## url may also be a local file
   ## Note: to make password-protected zip file z.zip, do zip -e z myfile
@@ -1710,7 +1709,7 @@ knitrSet <-
            tidy=FALSE, error=FALSE,
            messages=c('messages.txt', 'console'),
            width=61, decinline=5, size=NULL, cache=FALSE,
-           echo=TRUE, results='markup',
+           echo=TRUE, results='markup', capfile=NULL,
            lang=c('latex','markdown','blogdown')) {
 
   if(! requireNamespace('knitr')) stop('knitr package not available')
@@ -1785,7 +1784,29 @@ knitrSet <-
       if(any(i)) do.call(.spar., pars[i]) else .spar.()
     })
   
-  knitr::opts_knit$set(width=width)
+    knitr::opts_knit$set(width=width)
+
+    if(length(capfile)) {
+      options(FigCapFile=capfile)
+      
+      cf <- function(before, options, envir) {
+        if(before) return()
+        label   <- knitr::opts_current$get('label')
+        figname <- paste0(options$fig.lp, label)
+        figref  <- paste0('\\@ref(', figname, ')')
+        cap     <- options$fig.cap
+        scap    <- options$fig.scap
+        if(length(cap) && is.call(cap))   cap <- eval(cap)
+        if(length(scap) && is.call(scap)) scap <- eval(scap)
+        if( ! length(scap) || scap == '') scap <- cap
+        if(length(scap) && scap != '')
+          cat(label, figref, paste0('"', scap, '"\n'), sep=',',
+              append=TRUE, file=getOption('FigCapFile'))
+      }
+      knitr::knit_hooks$set(capfileFun=cf)
+    }
+    ## May want to see https://stackoverflow.com/questions/37116632/r-markdown-html-number-figures
+
   
   ## aliases=c(h='fig.height', w='fig.width', cap='fig.cap', scap='fig.scap'))
   ## eval.after = c('fig.cap','fig.scap'),
@@ -1796,8 +1817,8 @@ knitrSet <-
             fig.width=w, fig.height=h,
             out.width=wo,out.height=ho,
             fig.show=fig.show, fig.lp=fig.lp, fig.pos=fig.pos,
-            dev=dev, par=TRUE, tidy=tidy,
-            cache=cache,
+            dev=dev, par=TRUE, capfileFun=length(capfile) > 0,
+            tidy=tidy, cache=cache,
             echo=echo, error=error, comment='', results=results)
   if(bd) w$fig.path <- NULL
   w <- w[sapply(w, function(x) length(x) > 0)]

@@ -206,8 +206,6 @@ mu$installcsl()     # web search of styles meeting your criteria
 mu$installcsl('american-medical-association')
 ```
 
-# Table of Figures
-
 `r markupSpecs$markdown$tof()`
 
 Note: the hidden R command that rendered the table of figures (including short captions) was `markupSpecs$markdown$tof()`.

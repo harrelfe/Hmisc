@@ -696,6 +696,8 @@ plain = list(
 markdown = list(
   tof = function(file=.Options$FigCapFile) {
     if(! length(file) || file == '') stop('figure captions file not defined')
+    r <- readLines(file)
+    if(! length(r)) return()
     r <- read.csv(file, header=FALSE)
     names(r) <- c('label', 'figref', 'scap')
     n <- nrow(r)
@@ -706,7 +708,13 @@ markdown = list(
     r      <- r[nrow(r) : 1, ]
     figref <- r[[2]]
     scap   <- r[[3]]
-    head <- c('| **Figure** | **Description** |', '|:---|:---|')
+    head <- c('',
+              '<a name="LOF"></a>',
+              '',
+              '# List of Figures',
+              '',
+              '| **Figure** | **Description** |',
+              '|:---|:---|')
     w <- c(head, paste0('| ', figref, ' | ', scap, ' |'))
     paste0(w, '\n')
     }

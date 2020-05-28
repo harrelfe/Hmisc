@@ -1251,7 +1251,10 @@ getHdata <-
     if(what %nin% c('data','all'))
       return(invisible())
     
-    f <- paste(where,wds,sep='/')
+    f <- paste(where, wds, sep='/')
+    if(length(f) > 1)
+      warning(paste('More than one file matched; using the first:',
+                    paste(f, collapse=', ')))
     tf <- tempfile()
     download.file(f, tf, mode='wb', quiet=TRUE)
     load(tf, .GlobalEnv)
@@ -1804,8 +1807,7 @@ knitrSet <-
   if(bd) w$fig.path <- NULL
   w <- w[sapply(w, function(x) length(x) > 0)]
   ## knitr doesn't like null fig.align etc.
-  do.call(knitr::opts_chunk$set, w)
-
+    do.call(knitr::opts_chunk$set, w)
 
   if(lang != 'latex') knitr::knit_hooks$set(uncover=markupSpecs$html$uncover)
 

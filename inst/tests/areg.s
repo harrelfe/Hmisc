@@ -1,5 +1,5 @@
 # Tests for parametric version of ace in acepack
-
+if(FALSE) {
 set.seed(1)
 library(Hmisc)
 source('~/R/test/parAce.s')
@@ -73,3 +73,4 @@ n <- 10000
 x <- matrix(runif(n*20),n,20)
 y <- rnorm(n)
 z <- parAce(x,y,xtype=rep('spline',20),ytype='spline',k=5)
+}

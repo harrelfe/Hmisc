@@ -1,6 +1,6 @@
 \name{getZip}
 \alias{getZip}
-\title{Open a Zip File From a URL.}
+\title{Open a Zip File From a URL}
 \description{
   Allows downloading and reading of a zip file containing one file
 }

@@ -457,7 +457,7 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
 \references{
   Harrell FE (2004): Statistical tables and plots using S and LaTeX.
   Document available from
-    \url{http://biostat.mc.vanderbilt.edu/twiki/pub/Main/StatReport/summary.pdf}. 
+    \url{https://hbiostat.org/R/Hmisc/summary.pdf}. 
 }
 \seealso{
   \code{\link{mChoice}}, \code{\link{label}}, \code{\link{dotchart3}},

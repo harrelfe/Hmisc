@@ -215,7 +215,7 @@ ggplot(s, groups='treat')
 
 plot(s, val ~ freq | region * var, groups='treat', outerlabels=FALSE)
 # Much better looking if omit outerlabels=FALSE; see output at
-# http://biostat.mc.vanderbilt.edu/HmiscNew#summaryP
+# https://hbiostat.org/R/Hmisc/summaryFuns.pdf
 # See more examples under bpplotM
 
 ## For plotly interactive graphic that does not handle variable size

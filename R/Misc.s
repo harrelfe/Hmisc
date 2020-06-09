@@ -1830,7 +1830,7 @@ knitrSet <-
 
 
 grType <- function() {
-	if('plotly' %nin% utils::installed.packages()[,1]) return('base')
+	if(is.null(.Internal(getRegisteredNamespace('plotly')))) return('base')
 	if(length(g <- .Options$grType) && g == 'plotly') 'plotly' else 'base'
 }
 

@@ -338,9 +338,11 @@ upData <- function(object, ...,
       lx <- if(length(d))d[1] else length(x)
 
       if(lx != nobs) {
-        if(lx == 1)
+        if(lx == 1) {
           warning(paste('length of ',v,
                         ' is 1; will replicate this value.', sep=''))
+          x <- rep(x, length.out=nobs)
+	  }
         else {
           f <- find(v)
           if(length(f)) {

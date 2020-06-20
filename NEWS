@@ -9,6 +9,7 @@ Changes in version 4.4-1 (2020-06-20)
    * knitrSet: added capfile argument to store figure tags and short captions
    * getLatestSource: changed to use GitHub and hbiostat.org/R/packagename/dir.txt
    * histboxpM: added width argument
+   * upData: handled zero-length subsets (Thanks: Will Gray)
 
 Changes in version 4.4-0 (2020-03-22)
    * combplotp: new function for attribute plots with plotly

@@ -219,7 +219,6 @@ upData <- function(object, ...,
     object <- object[r, , drop=FALSE]
     nobs <- sum(r)
   }
-    
   rnames <- row.names(object)
 
   g <- function(x)
@@ -361,7 +360,6 @@ upData <- function(object, ...,
         warning(paste('Variable ',v,'is a factor with all values NA.\n',
          'Check that the second argument to factor() matched the original levels.\n',
                       sep=''))
-
       object[[v]] <- x
     }
   }

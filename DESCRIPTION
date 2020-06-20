@@ -1,10 +1,10 @@
 Package: Hmisc
 Version: 4.4-1
-Date: 2020-05-28
+Date: 2020-06-20
 Title: Harrell Miscellaneous
-Author: Frank E Harrell Jr <f.harrell@vanderbilt.edu>, with
+Author: Frank E Harrell Jr <fh@fharrell.com>, with
   contributions from Charles Dupont and many others.
-Maintainer: Frank E Harrell Jr <f.harrell@vanderbilt.edu>
+Maintainer: Frank E Harrell Jr <fh@fharrell.com>
 Depends: lattice, survival (>= 3.1-6), Formula, ggplot2 (>= 2.2)
 Imports: methods, latticeExtra, cluster, rpart, nnet, foreign, gtable, grid, gridExtra, data.table, htmlTable (>= 1.11.0), viridis, htmltools, base64enc
 Suggests: acepack, chron, rms, mice, tables, knitr, ff, ffbase, plotly (>= 4.5.6), rlang

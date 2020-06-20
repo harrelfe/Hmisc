@@ -37,8 +37,8 @@ histboxp(p = plotly::plot_ly(height=height), x, group = NULL,
 dhistboxp(x, group = NULL, strata=NULL, xlab=NULL, 
           gmd=FALSE, sd=FALSE, bins = 100, nmin=5, ff1=1, ff2=1)
 
-histboxpM(p=plotly::plot_ly(height=height), x, group=NULL,
-          gmd=TRUE, sd=FALSE, nrows=NULL, ncols=NULL, ...)
+histboxpM(p=plotly::plot_ly(height=height, width=width), x, group=NULL,
+          gmd=TRUE, sd=FALSE, width=NULL, nrows=NULL, ncols=NULL, ...)
 }
 \arguments{
   \item{p}{\code{plotly} graphics object if already begun}
@@ -54,6 +54,7 @@ a data frame of numeric vectors, hopefully with \code{label} and
 		of measurement if any}
 	\item{gmd}{set to \code{FALSE} to not compute Gini's mean difference}
 	\item{sd}{set to \code{TRUE} to compute the SD}
+	\item{width}{width in pixels}
 	\item{nrows}{number of rows for layout of multiple plots}
 	\item{ncols}{number of columns for layout of multiple plots.  At most
 		one of \code{nrows,ncols} should be specified.}

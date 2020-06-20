@@ -694,7 +694,7 @@ plain = list(
 ),
 
 markdown = list(
-  tof = function(file=.Options$FigCapFile) {
+  tof = function(file=.Options$FigCapFile, level=2, number=FALSE) {
     if(! length(file) || file == '') stop('figure captions file not defined')
     r <- readLines(file)
     if(! length(r)) return()
@@ -711,7 +711,8 @@ markdown = list(
     head <- c('',
               '<a name="LOF"></a>',
               '',
-              '# List of Figures',
+              paste(substring('####', 1, level), 'List of Figures',
+                    if(! number) '{-}'),
               '',
               '| **Figure** | **Description** |',
               '|:---|:---|')

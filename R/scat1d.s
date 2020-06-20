@@ -873,8 +873,9 @@ dhistboxp <- function(x, group=NULL, strata=NULL, xlab=NULL,
   R
 }
 
-histboxpM <- function(p=plotly::plot_ly(height=height), x, group=NULL,
-                      gmd=TRUE, sd=FALSE, nrows=NULL, ncols=NULL, ...) {
+histboxpM <- function(p=plotly::plot_ly(height=height, width=width),
+                      x, group=NULL,
+                      gmd=TRUE, sd=FALSE, width=NULL, nrows=NULL, ncols=NULL, ...) {
   ## See stackoverflow.com/questions/26939121
   ##     stackoverflow.com/questions/39948151
   nx <- if(is.data.frame(x)) ncol(x) else 1

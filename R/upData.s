@@ -11,9 +11,9 @@ cleanup.import <-
            charfactor=FALSE)
 {
   fixdates <- match.arg(fixdates)
-  nam <- names(obj)
-  dimobj <- dim(obj)
-  nv <- length(nam)
+  nam      <- names(obj)
+  dimobj   <- dim(obj)
+  nv       <- length(nam)
 
   if(!missing(sasdict)) {
     sasvname <- makeNames(sasdict$NAME)
@@ -26,7 +26,7 @@ cleanup.import <-
     labels <- saslabel[nam]
     names(labels) <- NULL
   }
-	
+
   if(length(labels) && length(labels) != dimobj[2])
     stop('length of labels does not match number of variables')
 
@@ -207,8 +207,8 @@ upData <- function(object, ...,
   if(lowernames) names(object) <- casefold(names(object))
   no   <- names(object)
   nobs <- nrow(object)
-  out <- paste('Input object size:\t', object.size(object), 'bytes;\t',
-               length(no), 'variables\t', nobs, 'observations\n')
+  out  <- paste('Input object size:\t', object.size(object), 'bytes;\t',
+                length(no), 'variables\t', nobs, 'observations\n')
   if(print) cat(out)
 
   if(! missing(subset)) {
@@ -235,7 +235,13 @@ upData <- function(object, ...,
   
   j <- which(vinfo['labpres', ] == 'TRUE' & vinfo['labclass', ] == 'FALSE')
   if(length(j))
-    for(i in j) class(object[[i]]) <- c('labelled', class(object[[i]]))
+    for(i in j) {
+      x <- object[[i]]
+      class(x) <- c('labelled', class(x))
+      object[[i]] <- x
+    }
+  ## Much slower:
+  ##  for(i in j) class(object[[i]]) <- c('labelled', class(object[[i]]))
 
 
   ## The following is targeted at R workspaces exported from StatTransfer
@@ -248,9 +254,13 @@ upData <- function(object, ...,
     if(missing(force.single)) force.single <- FALSE
   } else
     if(caplabels) {
-      for(i in which(vinfo['labpres', ] == 'TRUE'))
-        if(length(la <- attr(object[[i]], 'label')))
-          attr(object[[i]], 'label') <- upfirst(la)
+      for(i in which(vinfo['labpres', ] == 'TRUE')) {
+        x <- object[[i]]
+        if(length(la <- attr(x, 'label'))) {
+          attr(x, 'label') <- upfirst(la)
+          object[[i]] <- x
+        }
+      }
     }
   al <- attr(object, 'label.table')
   if(length(al)) {
@@ -273,11 +283,11 @@ upData <- function(object, ...,
       brack <- length(grep('\\[.*\\]',lab))
       if(paren + brack == 0) next
 
-      u <- if(paren)regexpr('\\(.*\\)', lab)
+      u <- if(paren) regexpr('\\(.*\\)', lab)
            else regexpr('\\[.*\\]', lab)
 
       len <- attr(u,'match.length')
-      un <- substring(lab, u + 1, u + len - 2)
+      un  <- substring(lab, u + 1, u + len - 2)
       lab <- substring(lab, 1, u-1)
       if(substring(lab, nchar(lab), nchar(lab)) == ' ')
         lab <- substring(lab, 1, nchar(lab) - 1)
@@ -325,7 +335,7 @@ upData <- function(object, ...,
         out <- c(out, outn <- paste0('Modified variable\t', v, '\n'))
         if(print) cat(outn)
         vinfo[, v] <- g(x)
-        }
+      }
       else {
         out <- c(out, outn <- paste0('Added variable\t\t', v, '\n'))
         if(print) cat(outn)
@@ -334,21 +344,21 @@ upData <- function(object, ...,
         colnames(vinfo)[ncol(vinfo)] <- v
       }
       d <- dim(x)
-      lx <- if(length(d))d[1] else length(x)
-
+      lx <- if(length(d)) d[1] else length(x)
+      
       if(lx != nobs) {
         if(lx == 1) {
           warning(paste('length of ',v,
                         ' is 1; will replicate this value.', sep=''))
           x <- rep(x, length.out=nobs)
-	  }
+        }
         else {
           f <- find(v)
           if(length(f)) {
             out <- c(out, outn <- paste('Variable', v, 'found in',
                                         paste(f, collapse=' '), '\n'))
             if(print) cat(outn)
-            }
+          }
           
           stop(paste('length of ', v, ' (', lx, ')\n',
                      'does not match number of rows in object (',
@@ -372,16 +382,23 @@ upData <- function(object, ...,
     ii <- which(sm == 'double')
     if(length(ii))
       for(i in ii) {
-        if(sm[i] == 'double') {
-          x <- object[[i]]
-          if(testDateTime(x) || is.matrix(x))
-            next
-          if(all(is.na(x)))
-            storage.mode(object[[i]]) <- 'integer'
-          else {
-            notfractional <- !any(floor(x) != x, na.rm=TRUE)
-            if(notfractional && max(abs(x), na.rm=TRUE) <= (2 ^ 31 - 1))
-              storage.mode(object[[i]]) <- 'integer'
+        x <- object[[i]]
+        if(testDateTime(x) || is.matrix(x))
+          next
+        ## For long vectors don't consider unless the first 500 are NA
+        ## all(is.na(x)) is slow
+        notallna <- any(! is.na(x[1:min(nobs,500)]))
+        notallna <- notallna || any(! is.na(x))
+        if(! notallna) storage.mode(object[[i]]) <- 'integer'
+        else {
+          ## For long vectors don't consider unless the first 500
+          ## are integer
+          if(nobs < 500 || ! any(floor(x[1:500]) != x[1:500], na.rm=TRUE)) { 
+            notfractional <- ! any(floor(x) != x, na.rm=TRUE)
+            if(notfractional && max(abs(x), na.rm=TRUE) <= (2 ^ 31 - 1)) {
+              storage.mode(x) <- 'integer'
+              object[[i]] <- x
+            }
           }
         }
       }
@@ -450,10 +467,12 @@ upData <- function(object, ...,
     }
 
     for(n in nl) {
-      if(! is.factor(object[[n]]))
-        object[[n]] <- as.factor(object[[n]])
+      x <- object[[n]]
+      if(! is.factor(x))
+        x <- as.factor(x)
 
-      levels(object[[n]]) <- levels[[n]]
+      levels(x) <- levels[[n]]
+      object[[n]] <- x
       ## levels[[nn]] will usually be a list; S+ invokes merge.levels
     }
   }
@@ -468,7 +487,11 @@ upData <- function(object, ...,
       nl <- nl[!s]
     }
     
-    for(n in nl) label(object[[n]]) <- labels[[n]]
+    for(n in nl) {
+      x <- object[[n]]
+      label(x) <- labels[[n]]
+      object[[n]] <- x
+      }
   }
 
   if(length(units)) {

@@ -71,7 +71,7 @@ wtd.quantile <- function(x, weights=NULL, probs=c(0, .25, .5, .75, 1),
     wts   <- w$sum.of.weights
     n     <- sum(wts)
     quantiles <- approx(cumsum(wts), x, xout=probs*n, 
-                   method='constant', f=1, rule=2)$y
+                   method='linear', f=1, rule=2)$y
     names(quantiles) <- nams
     return(quantiles)
   } 

@@ -69,8 +69,17 @@ wtd.quantile <- function(x, weights=NULL, probs=c(0, .25, .5, .75, 1),
     w <- wtd.table(x, weights, na.rm=na.rm, normwt=normwt, type='list')
     x     <- w$x
     wts   <- w$sum.of.weights
-    n     <- sum(wts)
-    quantiles <- approx(cumsum(wts), x, xout=probs*n, 
+    weighted_S = c()
+    cum_w <- cumsum(wts)
+    for (i in c(1:length(wts))){
+      if (i > 1){
+        Sk = (i-1) * wts[i] + (length(wts)-1) * cum_w[i-1]}
+      else{
+        Sk = 0
+      }
+      weighted_S = append(weighted_S, Sk)
+    }
+    allq <- approx(weighted_S, x, xout=probs*weighted_S[length(weighted_S)], 
                    method='linear', f=1, rule=2)$y
     names(quantiles) <- nams
     return(quantiles)

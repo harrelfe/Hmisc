@@ -70,16 +70,8 @@ wtd.quantile <- function(x, weights=NULL, probs=c(0, .25, .5, .75, 1),
     x     <- w$x
     wts   <- w$sum.of.weights
     n     <- sum(wts)
-    order <- 1 + (n - 1) * probs
-    low   <- pmax(floor(order), 1)
-    high  <- pmin(low + 1, n)
-    order <- order %% 1
-    ## Find low and high order statistics
-    ## These are minimum values of x such that the cum. freqs >= c(low,high)
-    allq <- approx(cumsum(wts), x, xout=c(low,high), 
+    quantiles <- approx(cumsum(wts), x, xout=probs*n, 
                    method='constant', f=1, rule=2)$y
-    k <- length(probs)
-    quantiles <- (1 - order)*allq[1:k] + order*allq[-(1:k)]
     names(quantiles) <- nams
     return(quantiles)
   } 

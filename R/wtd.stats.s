@@ -79,6 +79,9 @@ wtd.quantile <- function(x, weights=NULL, probs=c(0, .25, .5, .75, 1),
       }
       weighted_s = append(weighted_s, sk)
     }
+    print (weighted_s)
+    print (x)
+    print (wts)
     quantiles <- approx(weighted_s, x, xout=probs*weighted_s[length(weighted_s)], 
                    method='linear', f=1, rule=2)$y
     names(quantiles) <- nams

@@ -70,6 +70,8 @@ wtd.quantile <- function(x, weights=NULL, probs=c(0, .25, .5, .75, 1),
     x     <- w$x
     wts   <- w$sum.of.weights
     n     <- sum(wts)
+    print (x)
+    print (wts)
     order <- 1 + (n - 1) * probs
     low   <- pmax(floor(order), 1)
     high  <- pmin(low + 1, n)

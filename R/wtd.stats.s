@@ -66,22 +66,21 @@ wtd.quantile <- function(x, weights=NULL, probs=c(0, .25, .5, .75, 1),
     weights <- weights[! i]
     }
   if(type == 'quantile') {
-    w <- wtd.table(x, weights, na.rm=na.rm, normwt=normwt, type='list')
-    x     <- w$x
-    wts   <- w$sum.of.weights
-    n     <- sum(wts)
-    print (x)
-    print (wts)
-    order <- 1 + (n - 1) * probs
-    low   <- pmax(floor(order), 1)
-    high  <- pmin(low + 1, n)
-    order <- order %% 1
-    ## Find low and high order statistics
-    ## These are minimum values of x such that the cum. freqs >= c(low,high)
-    allq <- approx(cumsum(wts), x, xout=c(low,high), 
-                   method='constant', f=1, rule=2)$y
-    k <- length(probs)
-    quantiles <- (1 - order)*allq[1:k] + order*allq[-(1:k)]
+    sorted_xi = sort(x, index.return=TRUE)
+    sorted_x = sorted_xi$x
+    sorted_weights = weights[sorted_xi$ix]
+    weighted_s = c()
+    cum_w <- cumsum(sorted_weights)
+    for (i in c(1:length(sorted_weights))){
+      if (i > 1){
+        sk = (i-1) * sorted_weights[i] + (length(sorted_weights)-1) * cum_w[i-1]}
+      else{
+        sk = 0
+      }
+      weighted_s = append(weighted_s, sk)
+    }
+    quantiles <- approx(weighted_s, sorted_x, xout=probs*weighted_s[length(weighted_s)], 
+                   method='linear', f=1, rule=2)$y
     names(quantiles) <- nams
     return(quantiles)
   } 

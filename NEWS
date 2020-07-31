@@ -1,4 +1,4 @@
-Changes in version 4.4-1 (2020-06-25)
+Changes in version 4.4-1 (2020-07-31)
    * popower: added approximate S.E. of log(OR) in results
    * propsPO: new function for exploring proportional odds
    * propsTrans: new function for showing distributions of successive state transitions
@@ -11,6 +11,8 @@ Changes in version 4.4-1 (2020-06-25)
    * histboxpM: added width argument
    * upData: handled zero-length subsets (Thanks: Will Gray)
    * upData: made faster for large datasets
+   * ffCompress: removed from package and put in Github Rscripts
+   * Changed maintainer email
 
 Changes in version 4.4-0 (2020-03-22)
    * combplotp: new function for attribute plots with plotly

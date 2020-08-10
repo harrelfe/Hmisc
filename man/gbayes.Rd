@@ -256,7 +256,7 @@ Department of Biostatistics
 \cr
 Vanderbilt University School of Medicine
 \cr
-\email{f.harrell@vanderbilt.edu}
+\email{fh@fharrell.com}
 }
 \references{
 Spiegelhalter DJ, Freedman LS, Parmar MKB (1994): Bayesian approaches to

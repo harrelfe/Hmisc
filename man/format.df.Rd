@@ -166,7 +166,7 @@ format.df(x, digits, dec=NULL, rdec=NULL, cdec=NULL,
   \cr
   Vanderbilt University,
   \cr
-  \email{f.harrell@vanderbilt.edu}
+  \email{fh@fharrell.com}
 
 
   Richard M. Heiberger,

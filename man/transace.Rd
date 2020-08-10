@@ -429,7 +429,7 @@ Quantile(object, \dots)
   \cr
   Vanderbilt University School of Medicine
   \cr
-  \email{f.harrell@vanderbilt.edu}
+  \email{fh@fharrell.com}
 }
 \seealso{
   \code{\link[acepack]{avas}}, \code{\link[acepack]{ace}},

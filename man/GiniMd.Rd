@@ -31,7 +31,7 @@ David HA (1968): Gini's mean difference rediscovered.  Biometrika 55:573--575.
 Frank Harrell\cr
 Department of Biostatistics\cr
 Vanderbilt University\cr
-\email{f.harrell@vanderbilt.edu}
+\email{fh@fharrell.com}
 }
 \examples{
 set.seed(1)

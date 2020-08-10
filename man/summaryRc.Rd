@@ -99,7 +99,7 @@ summaryRc(formula, data=NULL, subset=NULL,
   Frank Harrell\cr
   Department of Biostatistics\cr
   Vanderbilt University\cr
-  \email{f.harrell@vanderbilt.edu}
+  \email{fh@fharrell.com}
 }
 \seealso{
   \code{\link{plsmo}}, \code{\link{stratify}},

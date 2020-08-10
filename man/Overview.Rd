@@ -293,16 +293,15 @@ changes to the author.\cr
 If this software is used is work presented for publication, kindly
 reference it using for example:\cr
  Harrell FE (2014): Hmisc: A package of miscellaneous R functions.
-  Programs available from \url{https://hbiostat.org/R/Hmisc}.\cr
+  Programs available from \url{https://hbiostat.org/R/Hmisc/}.\cr
   Be sure to reference \R itself and other libraries used.
 }
 \author{
 Frank E Harrell Jr\cr
 Professor of Biostatistics\cr
-Chair, Department of Biostatistics\cr
 Vanderbilt University School of Medicine\cr
 Nashville, Tennessee\cr
-\email{f.harrell@vanderbilt.edu}
+\email{fh@fharrell.com}
 }
 \keyword{misc}
 \concept{overview}

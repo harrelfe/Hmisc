@@ -183,7 +183,7 @@ summaryP(formula, data = NULL, subset = NULL,
   \cr
   Vanderbilt University
   \cr
-  \email{f.harrell@vanderbilt.edu}}
+  \email{fh@fharrell.com}}
 \seealso{\code{\link{bpplotM}}, \code{\link{summaryM}},
 	\code{\link{ynbind}}, \code{\link{pBlock}},
 	\code{\link[ggplot2]{ggplot}}, \code{\link{colorFacet}}

@@ -1,6 +1,6 @@
 Package: Hmisc
 Version: 4.4-1
-Date: 2020-08-07
+Date: 2020-08-10
 Title: Harrell Miscellaneous
 Author: Frank E Harrell Jr <fh@fharrell.com>, with
   contributions from Charles Dupont and many others.
@@ -16,6 +16,6 @@ Description: Contains many functions useful for data
 	and recoding variables.
 License: GPL (>= 2)
 LazyLoad: Yes
-URL: http://hbiostat.org/R/Hmisc, https://github.com/harrelfe/Hmisc
+URL: https://hbiostat.org/R/Hmisc/, https://github.com/harrelfe/Hmisc/
 Encoding: UTF-8
 RoxygenNote: 7.1.1

@@ -124,7 +124,7 @@ rcspline.plot(x,y,model=c("logistic", "cox", "ols"), xrange, event, nk=5,
 \author{
   Frank Harrell  \cr
   Department of Biostatistics, Vanderbilt University  \cr
-  \email{f.harrell@vanderbilt.edu}
+  \email{fh@fharrell.com}
 }
 \seealso{
   \code{\link[rms]{lrm}}, \code{\link[rms]{cph}}, \code{\link{rcspline.eval}},

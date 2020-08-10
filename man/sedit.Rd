@@ -134,7 +134,7 @@ substring2(text, first, last) <- value
   \cr
   Vanderbilt University School of Medicine
   \cr
-  \email{f.harrell@vanderbilt.edu}
+  \email{fh@fharrell.com}
 }
 \seealso{
   \code{\link{grep}}, \code{\link{substring}}

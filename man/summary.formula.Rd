@@ -621,7 +621,7 @@ ordTestpo(group, x)
   Frank Harrell\cr
   Department of Biostatistics\cr
   Vanderbilt University\cr
-  \email{f.harrell@vanderbilt.edu}
+  \email{fh@fharrell.com}
 }
 \references{
   Harrell FE (2007): Statistical tables and plots using S and LaTeX.

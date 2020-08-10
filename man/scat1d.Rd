@@ -445,7 +445,7 @@ Frank Harrell\cr
 Department of Biostatistics\cr
 Vanderbilt University\cr
 Nashville TN, USA\cr
-\email{f.harrell@vanderbilt.edu}
+\email{fh@fharrell.com}
 
 
 Martin Maechler (improved \code{scat1d})\cr

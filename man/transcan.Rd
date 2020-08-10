@@ -883,7 +883,7 @@ invertTabulated(x, y, freq=rep(1,length(x)),
   Frank Harrell  \cr
   Department of Biostatistics  \cr
   Vanderbilt University  \cr
-  \email{f.harrell@vanderbilt.edu}
+  \email{fh@fharrell.com}
 }
 \references{
   Kuhfeld, Warren F: The PRINQUAL Procedure.  SAS/STAT User's Guide, Fourth

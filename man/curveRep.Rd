@@ -186,7 +186,7 @@ curveSmooth(x, y, id, p=NULL, pr=TRUE)
   Frank Harrell\cr
   Department of Biostatistics\cr
   Vanderbilt University\cr
-  \email{f.harrell@vanderbilt.edu}
+  \email{fh@fharrell.com}
 }
 \note{The references describe other methods for deriving
   representative curves, but those methods were not used here.  The last

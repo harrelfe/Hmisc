@@ -55,7 +55,7 @@ Department of Biostatistics
 \cr
 Vanderbilt University School of Medicine
 \cr
-\email{f.harrell@vanderbilt.edu}
+\email{fh@fharrell.com}
 }
 \seealso{\code{\link{popower}}}
 \examples{

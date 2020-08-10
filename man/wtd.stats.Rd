@@ -163,7 +163,7 @@ Department of Biostatistics
 \cr
 Vanderbilt University School of Medicine
 \cr
-\email{f.harrell@vanderbilt.edu}
+\email{fh@fharrell.com}
 \cr
 Benjamin Tyner
 \cr
@@ -181,7 +181,7 @@ Gatz DF, Smith L (1995): The standard error of a weighted mean
 concentration--II.  Estimating confidence intervals.  Atmospheric Env
 29:1195-1200.
 
-http://en.wikipedia.org/wiki/Weighted_arithmetic_mean
+https://en.wikipedia.org/wiki/Weighted_arithmetic_mean
 }
 \seealso{
 \code{\link{mean}}, \code{\link{var}}, \code{\link{quantile}}, \code{\link{table}}, \code{\link{rank}}, \code{\link{loess.smooth}}, \code{\link{lowess}},

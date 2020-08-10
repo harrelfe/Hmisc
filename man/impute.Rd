@@ -77,7 +77,7 @@ Department of Biostatistics
 \cr
 Vanderbilt University
 \cr
-\email{f.harrell@vanderbilt.edu}
+\email{fh@fharrell.com}
 }
 \seealso{
 \code{\link{transcan}}, \code{\link{impute.transcan}}, \code{\link{describe}}, \code{\link{na.include}}, \code{\link{sample}}

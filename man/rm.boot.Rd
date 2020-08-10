@@ -374,7 +374,7 @@ rm.boot(time, y, id=seq(along=time), subset,
   Frank Harrell  \cr
   Department of Biostatistics  \cr
   Vanderbilt University School of Medicine  \cr
-  \email{f.harrell@vanderbilt.edu}
+  \email{fh@fharrell.com}
 }
 \references{
   Feng Z, McLerran D, Grizzle J (1996): A comparison of statistical methods for
@@ -383,7 +383,7 @@ rm.boot(time, y, id=seq(along=time), subset,
   Tibshirani R, Knight K (1997):Model search and inference by bootstrap 
   "bumping".  Technical Report, Department of Statistics, University of Toronto.
   \cr
-  \url{http://www-stat.stanford.edu/~tibs}. Presented at the Joint Statistical
+  \url{http://statweb.stanford.edu/~tibs/}. Presented at the Joint Statistical
   Meetings, Chicago, August 1996.
 
 

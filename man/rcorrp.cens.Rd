@@ -126,7 +126,7 @@ improveProb(x1, x2, y)
 \author{
   Frank Harrell  \cr
   Department of Biostatistics, Vanderbilt University  \cr
-  \email{f.harrell@vanderbilt.edu}
+  \email{fh@fharrell.com}
 
   Scott Williams  \cr
   Division of Radiation Oncology  \cr

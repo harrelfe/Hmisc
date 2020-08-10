@@ -107,7 +107,7 @@ contents(object, \dots)
   \cr
   Vanderbilt University
   \cr
-  \email{f.harrell@vanderbilt.edu}
+  \email{fh@fharrell.com}
 }
 \seealso{
   \code{\link{describe}}, \code{\link{html}}, \code{\link{upData}}

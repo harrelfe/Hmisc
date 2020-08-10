@@ -596,7 +596,7 @@ dvigv(object, \dots)
   Frank E. Harrell, Jr.,\cr
   Department of Biostatistics,\cr
   Vanderbilt University,\cr
-  \email{f.harrell@vanderbilt.edu}
+  \email{fh@fharrell.com}
 
 
   Richard M. Heiberger,\cr

@@ -118,7 +118,7 @@ Department of Biostatistics
 \cr
 Vanderbilt University
 \cr
-\email{f.harrell@vanderbilt.edu}
+\email{fh@fharrell.com}
 }
 \seealso{\code{\link{cancor}},\code{\link[acepack]{ace}}, \code{\link{transcan}}}
 \examples{

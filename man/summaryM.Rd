@@ -452,7 +452,7 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
   \cr
   Vanderbilt University
   \cr
-  \email{f.harrell@vanderbilt.edu}
+  \email{fh@fharrell.com}
 }
 \references{
   Harrell FE (2004): Statistical tables and plots using S and LaTeX.

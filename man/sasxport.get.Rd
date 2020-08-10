@@ -37,7 +37,7 @@ sasdsLabels(file)
 }
 \arguments{
   \item{file}{name of a file containing the SAS transport file.
-	\code{file} may be a URL beginning with \code{http://}.  For
+	\code{file} may be a URL beginning with \code{https://}.  For
 \code{sasdsLabels}, \code{file} is the name of a file containing a
 \code{PROC CONTENTS} output listing.  For \code{method='csv'},
 \code{file} is the name of the directory containing all the \code{CSV}

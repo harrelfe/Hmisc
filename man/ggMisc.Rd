@@ -9,10 +9,10 @@ building a \code{ggplot2} object, and to facilitate use of
 \code{gridExtra}.  \code{colorFacet} colors the thin 
 rectangles used to separate panels created by \code{facet_grid} (and
 probably by \code{facet_wrap}). 
-A better approach may be found at \url{http://stackoverflow.com/questions/28652284}.
+A better approach may be found at \url{https://stackoverflow.com/questions/28652284/}.
 \code{arrGrob} is a front-end to \code{gridExtra::arrangeGrob} that
 allows for proper printing.  See
-\url{http://stackoverflow.com/questions/29062766/store-output-from-gridextragrid-arrange-into-an-object}.  The \code{arrGrob} \code{print} method calls \code{grid::grid.draw}.
+\url{https://stackoverflow.com/questions/29062766/store-output-from-gridextragrid-arrange-into-an-object/}.  The \code{arrGrob} \code{print} method calls \code{grid::grid.draw}.
 }
 \usage{
 colorFacet(g, col = adjustcolor("blue", alpha.f = 0.3))

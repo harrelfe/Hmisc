@@ -25,7 +25,7 @@ rcorr <- function(x, y, type=c("pearson","spearman"))
   nam <- dimnames(x)[[2]]
   dimnames(h) <- list(nam, nam)
   dimnames(npair) <- list(nam, nam)
-  P <- matrix(2 * (1 - pt(abs(h) * sqrt(npair - 2) / sqrt(1 - h * h),
+  P <- matrix(2 * (1 - pt(abs(h) * sqrt(npair - 2) / sqrt(pmax(1 - h * h, 0.)),
                           npair - 2)), ncol=p)
   P[abs(h) == 1] <- 0
   diag(P) <- NA

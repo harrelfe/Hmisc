@@ -1,5 +1,8 @@
-Changes in version 4.4-2 (2020-09-24)
+Changes in version 4.4-2 (2020-10-04)
    * rcorr: captured loss of precision leading to square root of a negative number.  Thanks: Ann Voss <avoss@novanthealth.org>
+   * summaryS: sapply was doubling names
+   * pairUpDiff: created for dotchartpl - function to pair up grouped observations for sorting by descending differences and computing approximate confidence intervals for the difference given individual confidence limits
+   * dotchartpl: added new arguments and functionality to handle quantities other than proportions (e.g., hazards) and streamlined code using pairUpDiff
 
 Changes in version 4.4-1 (2020-08-07)
    * popower: added approximate S.E. of log(OR) in results

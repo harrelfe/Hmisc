@@ -48,9 +48,15 @@ summaryS <- function(formula, fun=NULL,
   }
   gg <- function(x) if(is.character(x) || is.factor(x))
                       'categorical' else 'numeric'
-  xlabels <- sapply(X, label)
+  ## For some reason sapply is doubling names e.g. sbp.sbp
+  sapply2 <- function(data, ...) {
+    s <- sapply(data, ...)
+    names(s) <- names(data)
+    s
+    }
+  xlabels <- sapply2(X, label)
   xlabels <- ifelse(xlabels == '', names(xlabels), xlabels)
-  ylabels <- sapply(Y, label)
+  ylabels <- sapply2(Y, label)
   ylabels <- ifelse(ylabels == '', names(ylabels), ylabels)
 
   for(n in names(w))  # takes care of R change stringsAsFactors=FALSE
@@ -58,9 +64,9 @@ summaryS <- function(formula, fun=NULL,
 
   structure(w, class=c('summaryS', 'data.frame'),
             formula=formula, fun=fun,
-            xnames=names(X), xlabels=xlabels, xunits=sapply(X, units),
+            xnames=names(X), xlabels=xlabels, xunits=sapply2(X, units),
             xtype=sapply(X, gg),
-            ynames=namY, ylabels=ylabels, yunits=sapply(Y, units),
+            ynames=namY, ylabels=ylabels, yunits=sapply2(Y, units),
             ylim=ylim, funlabel=funlabel)
 }
 
@@ -412,7 +418,7 @@ plotp.summaryS <-
 
   yvarlev <- NULL
    for(v in levels(X$yvar)) {
-    un <- yunits[v]
+     un <- yunits[v]
     l <- if(ylabels[v] == v && un == '') v else
          labelPlotmath(ylabels[v], un, html=TRUE)
     yvarlev <- c(yvarlev, l)

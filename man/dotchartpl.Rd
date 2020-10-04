@@ -31,10 +31,17 @@
 	These have the property of intersecting the two proportions if and
 	only if there is no significant difference at the \code{1 - conf.int}
 	level.
+
+	Specify \code{fun=exp} and \code{ifun=log} if estimates and confidence
+	limits are on the log scale.  Make sure that zeros were prevented in
+	the original calculations.  For exponential hazard rates this can be
+	accomplished by replacing event counts of 0 with 0.5.
 	}
 \usage{
 dotchartpl(x, major=NULL, minor=NULL, group=NULL, mult=NULL,
            big=NULL, htext=NULL, num=NULL, denom=NULL,
+           numlabel='', denomlabel='',
+           fun=function(x) x, ifun=function(x) x, op='-',
            lower=NULL, upper=NULL,
            refgroup=NULL, sortdiff=TRUE, conf.int=0.95,
            minkeep=NULL, xlim=NULL, xlab='Proportion',
@@ -61,6 +68,17 @@ dotchartpl(x, major=NULL, minor=NULL, group=NULL, mult=NULL,
 		\code{num} is given, \code{x} is automatically added to hover text,
 		rounded to 3 digits after the decimal point.}
 	\item{denom}{like \code{num} but for denominators}
+	\item{numlabel}{character string to put to the right of the numerator
+		in hover text}
+	\item{denomlabel}{character string to put to the right of the
+	denominator in hover text}
+	\item{fun}{a transformation to make when printing estimates.  For
+	example, one may specify \code{fun=exp} to anti-log estimates and
+	confidence limites that were computed on a log basis}
+  \item{ifun}{inverse transformation of \code{fun}}
+  \item{op}{set to for example \code{'/'} when \code{fun=exp} and
+	effects are computed as ratios instead of differences.  This is used
+	in hover text.}
 	\item{lower}{lower limits for optional error bars}
 	\item{upper}{upper limits for optional error bars}
 	\item{refgroup}{if \code{group} is specified and there are exactly two
@@ -122,7 +140,8 @@ with(d,
 # state/region/group
 d <- subset(d, city == 0)
 with(d,
- dotchartpl(x, major, minor, group, num=num, denom=denom, refgroup='Male')
+ dotchartpl(x, major, minor, group, num=num, denom=denom,
+            lower=lower, upper=upper, refgroup='Male')
 )
 
 n <- 500
@@ -155,6 +174,25 @@ with(s2,
                 big=region == 'All Regions', num=freq, denom=denom)
 )
 # Note these plots can be created by plot.summaryP when options(grType='plotly')
+
+# Plot hazard rates and ratios with confidence limits, on log scale
+d <- data.frame(tx=c('a', 'a', 'b', 'b'),
+                event=c('MI', 'stroke', 'MI', 'stroke'),
+                count=c(10, 5, 5, 2),
+                exposure=c(1000, 1000, 900, 900))
+# There were no zero event counts in this dataset.  In general we
+# want to handle that, hence the 0.5 below
+d <- upData(d, hazard = pmax(0.5, count) / exposure,
+               selog  = sqrt(1. / pmax(0.5, count)),
+               lower  = log(hazard) - 1.96 * selog,
+               upper  = log(hazard) + 1.96 * selog)
+with(d,
+     dotchartpl(log(hazard), minor=event, group=tx, num=count, denom=exposure,
+                lower=lower, upper=upper,
+                fun=exp, ifun=log, op='/',
+                numlabel='events', denomlabel='years',
+                refgroup='a', xlab='Events Per Person-Year')
+)
 }
 }
 \keyword{hplot}

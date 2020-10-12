@@ -153,43 +153,78 @@ propsPO <- function(formula, odds.ratio=NULL, ref=NULL, data=NULL,
   x  <- d[[v[2]]]
   xl <- label(x, default=v[2])
   s  <- sn <- NULL
+  sl <- NULL
   if(length(v) > 2) {
     if(length(odds.ratio))
-      stop('odds ratio may not be specified when a stratification variable is include')
+      stop('odds ratio may not be specified when a stratification variable is included')
     s <- d[[v[3]]]
     sl <- label(s, default=v[3])
     s <- as.factor(s)
     sn <- 's'
   }
   names(d) <- c('y', 'x', sn)
+  ## ggplot2 bar chart puts first category at the top
+  ## Let's put it at the bottom
+  d$y  <- factor(d$y, levels=rev(levels(d$y)))
+
+  
   # For each x compute the vector of proportions of y categories
   # Assume levels are in order
+  # Put numerators and denominators into a character string so that
+  # data.table [ operator can operate on one variable
+  # The delimiter is a single space
   g <- function(y) {
     tab <- table(y)
-    tab / sum(tab)
+    structure(paste(tab, rep(sum(tab), length(tab))), names=names(tab))
   }
+  atxt <- function(d, strat=NULL, or=FALSE) {
+    if(! or) {
+      z <- d$prop
+      num   <- as.numeric(sub(' .*', '', z)) # get first number
+      denom <- as.numeric(sub('.* ', '', z)) # get second number
+      d$prop <- num / denom
+      }
+    d$txt <- paste0(sl, if(length(strat)) ': ', as.character(strat),
+                  if(length(strat)) '<br>',
+                  xl, ': ', as.character(d$x), '<br>',
+                  yl, ': ', as.character(d$y), '<br>',
+                  'Proportion: ', round(d$prop, 3),
+                  if(! or) '\u2003',
+                  if(! or) markupSpecs$html$frac(num, denom, size=90))
+    d
+    }
+
   d <- data.table(d)
-  if(! length(s)) {
+  
+  if(! length(s)) {   # stratification variable not present
     p  <- d[, as.list(g(y)), by=x]
     pm <- melt(p, id=1, variable.name='y', value.name='prop')
+    pm <- atxt(pm)
+
     plegend <- guides(fill=guide_legend(title=yl))
     if(! length(odds.ratio)) {
-      gg <- ggplot(pm, aes(x=as.factor(x), y=prop, fill=factor(y))) +
+      gg <- ggplot(pm, aes(x=as.factor(x), y=prop, fill=factor(y), text=txt)) +
         geom_col() + plegend + xlab(xl) + ylab('Proportion')
       return(gg)
     }
-  } else {
-    p  <- d[, as.list(g(y)), by=.(x,s)]
+  } else {   # stratification variable present; odds ratio must be absent
+    p  <- d[, as.list(g(y)), by=.(x, s)]
     pm <- melt(p, id=c('x', 's'), variable.name='y', value.name='prop')
+    pm <- atxt(pm, pm$s)
     plegend <- guides(fill=guide_legend(title=yl))
-    gg <- ggplot(pm, aes(x=as.factor(x), y=prop, fill=factor(y))) +
+    gg <- ggplot(pm, aes(x=as.factor(x), y=prop, fill=factor(y), text=txt)) +
         facet_wrap(~ s, ncol=ncol, nrow=nrow) +
         geom_col() + plegend + xlab(xl) + ylab('Proportion')
     return(gg)
     }
 
+  ## odds.ratio is present
+  
   if(! length(ref)) ref <- p$x[1]
-  propfirstx <- as.matrix(p[x == ref, -1])
+  pfx <- as.matrix(p[x == ref, -1])
+  propfirstx <- as.numeric(sub(' .*', '', pfx)) /
+                as.numeric(sub('.* ', '', pfx))
+  
   g <- function(x) {
     w <- pomodm(p=propfirstx, odds.ratio=odds.ratio(x))
     names(w) <- levels(y)
@@ -197,11 +232,13 @@ propsPO <- function(formula, odds.ratio=NULL, ref=NULL, data=NULL,
   }
   pa <- d[, as.list(g(x)), by=x]
   pma <- melt(pa, id=1, variable.name='y', value.name='prop')
+  pma <- atxt(pma, or=TRUE)
   w <- rbind(cbind(type=1, pm),
              cbind(type=2, pma))
   w$type <- factor(w$type, 1 : 2,
                    c('Observed', 'Asssuming Proportional Odds'))
-  ggplot(w, aes(x=as.factor(x), y=prop, fill=factor(y))) + geom_col() +
+  ggplot(w, aes(x=as.factor(x), y=prop, fill=factor(y), text=txt)) +
+    geom_col() +
     facet_wrap(~ type, nrow=2) +
     plegend + xlab(xl) + ylab('Proportion')
 }
@@ -308,3 +345,5 @@ multEventChart <-
     guides(fill=guide_legend(override.aes=list(shape=NA), order=1)) +
     coord_flip() + labs(y=xlab, x='')
   }
+
+utils::globalVariables('txt')

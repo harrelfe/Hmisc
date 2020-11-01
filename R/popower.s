@@ -62,6 +62,7 @@ pomodm <- function(x=NULL, p, odds.ratio=1) {
   if(length(x) && (length(x) != length(p)))
     stop('p and x must have same length')
   if(length(x) && any(diff(x) <= 0)) stop('x is not sorted or has duplicates')
+
   if(abs(sum(p) - 1) > .00001)
     stop('probabilities do not sum to 1')
 
@@ -165,7 +166,7 @@ propsPO <- function(formula, odds.ratio=NULL, ref=NULL, data=NULL,
   names(d) <- c('y', 'x', sn)
   ## ggplot2 bar chart puts first category at the top
   ## Let's put it at the bottom
-  d$y  <- factor(d$y, levels=rev(levels(d$y)))
+  d$y  <- factor(d$y, levels=rev(levels(as.factor(d$y))))
 
   
   # For each x compute the vector of proportions of y categories

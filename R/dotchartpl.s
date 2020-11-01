@@ -11,7 +11,7 @@ dotchartpl <- function(x, major=NULL, minor=NULL,
                        xlim=NULL, xlab='Proportion',
                        tracename=NULL, limitstracename='Limits',
                        nonbigtracename='Stratified Estimates',
-                       width=800, height=NULL,
+                       dec=3, width=800, height=NULL,
                        col=colorspace::rainbow_hcl
                        ) {
 
@@ -34,7 +34,9 @@ dotchartpl <- function(x, major=NULL, minor=NULL,
   if(minorpres) minor <- as.character(minor)
   if(grouppres) group <- as.character(group)
   if(multpres)  mult  <- as.character(mult)
-  ugroup <- if(grouppres) unique(group)
+  ugroup <- if(grouppres) unique(group) else ''
+
+  fmt <- function(x) format(round(x, dec))
 
   if(rgpres) {
     if(! grouppres || multpres || length(big))
@@ -85,13 +87,21 @@ dotchartpl <- function(x, major=NULL, minor=NULL,
 
 
   ht <- htext
-  if(numlabel != '')   numlabel <- paste0(' ', numlabel)
+  if(numlabel != '')   numlabel   <- paste0(' ', numlabel)
   if(denomlabel != '') denomlabel <- paste0(' ', denomlabel)
   if(length(num))
     ht <- paste0(ht, if(length(htext)) mu$lspace,
-                 round(fun(x), 3), mu$lspace,
+                 fmt(fun(x)), mu$lspace,
                  mu$frac(paste0(num, numlabel),
                          paste0(denom, denomlabel), size=95))
+
+  ## if confidence interval for differences are not to be displayed,
+  ## put point estimate confidence intervals in point hypertext
+  if(length(ugroup) != 2 && limspres)
+    ht <- paste0(ht, ' [',
+                 fmt(fun(lower)), ', ',
+                 fmt(fun(upper)), ']')
+
   ht <- paste0(ht, if(length(ht)) '<br>',
                if(majorpres) paste0(major, ': '))
   if(minorpres) ht <- paste0(ht, minor)
@@ -156,10 +166,10 @@ dotchartpl <- function(x, major=NULL, minor=NULL,
         if(minorpres) htd <- paste0(htd, mi)
 
         htd   <- paste0(htd, '<br>', altgroup, ' ', op, ' ',
-                        refgroup, ': ', round(fun(diff), 3))
+                        refgroup, ': ', fmt(fun(diff)))
         if(! is.logical(conf.int) && limspres && length(D)) {
-          dlower <- format(round(fun(D$lower[k]), 3), nsmall=3)
-          dupper <- format(round(fun(D$upper[k]), 3), nsmall=3)
+          dlower <- fmt(fun(D$lower[k]))
+          dupper <- fmt(fun(D$upper[k]))
           htd <- paste0(htd, '<br>', conf.int, ' C.L.: [', dlower,
                           ', ', dupper, ']')
           Diff      <- c(Diff, diff)
@@ -171,8 +181,10 @@ dotchartpl <- function(x, major=NULL, minor=NULL,
       if(limspres && ! length(D)) {
         Lower  <- c(Lower, lower[j])
         Upper  <- c(Upper, upper[j])
-        Htextl <- paste0('[', format(fun(lower[j]), digits=4), ', ',
-                              format(fun(upper[j]), digits=4), ']')
+        Htextl <- c(Htextl,
+                    paste0('[',
+                           fmt(fun(lower[j])), ', ',
+                           fmt(fun(upper[j])), ']' ) )
       }
       Group <- c(Group, group[j])
       Big   <- c(Big,   big[j])
@@ -232,7 +244,7 @@ dotchartpl <- function(x, major=NULL, minor=NULL,
 
     ## tracename and limitstracename are used if groups not used
 
-    if(limspres && ! length(D))
+    if(limspres && ! length(D) && length(ugroup) == 2)
       p <- if(grouppres)
              plotly::add_segments(p, data=db,
                                   x=~ Lower, xend=~ Upper,
@@ -263,7 +275,7 @@ dotchartpl <- function(x, major=NULL, minor=NULL,
   if(any(! d$Big)) {
     dnb <- subset(d, ! Big)  # stratified estimates
     if(limspres)
-      p <- if(grouppres)
+      p <- if(grouppres && length(ugroup) == 2)
              plotly::add_segments(p, data=dnb,
                                   x=~ Lower, xend=~ Upper,
                                   y=~ Y,     yend=~ Y,

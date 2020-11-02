@@ -4,29 +4,21 @@
 \alias{gbayesSeqSim}
 \title{gbayesSeqSim}
 \usage{
-gbayesSeqSim(parameter, looks, asserts, gendat, fitter, nsim = 1)
+gbayesSeqSim(est, asserts)
 }
 \arguments{
-\item{parameter}{vector of true parameter (effects; group differences) values}
-
-\item{looks}{integer vector of observation numbers at which posterior probabilities are computed}
+\item{est}{data frame created by \code{estSeqSim()}}
 
 \item{asserts}{list of lists.  The first element of each list is the user-specified name for each assertion/prior combination, e.g., \code{"efficacy"}.  The other elements are, in order, a character string equal to "<", ">", or "in", a parameter value \code{cutoff} (for "<" and ">") or a 2-vector specifying an interval for "in", and either a prior distribution mean and standard deviation named \code{mu} and \code{sigma} respectively, or a parameter value (\code{"cutprior"}) and tail area \code{"tailprob"}.  If the latter is used, \code{mu} is assumed to be zero and \code{sigma} is solved for such that P(parameter > 'cutprior') = P(parameter < - 'cutprior') = \code{tailprob}.}
-
-\item{gendat}{a function of three arguments: true parameter value (scalar), sample size for first group, sample size for second group}
-
-\item{fitter}{a function of two arguments: 0/1 group indicator vector and the dependent variable vector}
-
-\item{nsim}{number of simulations (default is 1)}
 }
 \value{
-a data frame with number of rows equal to the product of \code{nsim}, the length of \code{looks}, the length of \code{asserts}, and the length of \code{parameter}.  It also has an attribute \code{asserts} added which is the original \code{asserts} augmented with any derived \code{mu} and \code{sigma} and converted to a data frame.
+a data frame with number of rows equal to that of \code{est} with a number of new columns equal to the number of assertions added.  The new columns are named \code{p1}, \code{p2}, \code{p3}, ...  The returned data frame also has an attribute \code{asserts} added which is the original \code{asserts} augmented with any derived \code{mu} and \code{sigma} and converted to a data frame.
 }
 \description{
 Simulate Bayesian Sequential Treatment Comparisons Using a Gaussian Model
 }
 \details{
-Simulate a sequential trial under a Gaussian model for parameter estimates, and Gaussian priors.  Looks are done sequentially at observation numbers given in the vector \code{looks} with the earliest possible look being at observation 2.  For each true effect parameter value, simulation, at each look, and for each prior/assertion combination, computes the posterior probability of the assertion.  For each simulation, data are first simulated for the last look, and these data are sequentialy revealed for earlier looks.  The user provides a function \code{gendat} that given a true effect of \code{parameter} and the two sample sizes (for treatment groups 1 and 2) returns a list with vectors \code{y1} and \code{y2} containing simulated data.  The user also provides a function \code{fitter} with arguments \code{x} (group indicator 0/1) and \code{y} (response variable) that returns a 2-vector containing the effect estimate and its variance.  \code{parameter} and \code{cutoff} are usually on the scale of a regression coefficient, e.g., a log odds ratio.
+Simulate a sequential trial under a Gaussian model for parameter estimates, and Gaussian priors using simulated estimates and variances returned by \code{estSeqSim}.  For each row of the data frame \code{est} and for each prior/assertion combination, computes the posterior probability of the assertion.
 }
 \examples{
 \dontrun{
@@ -61,33 +53,29 @@ asserts <- list(list('Efficacy', '<', 0, mu=0.1, sigma=1),
                      cutprior=log(2), tailprob=0.05))
 
 set.seed(1)
-z <- gbayesSeqSim(c(0, log(0.7)), looks=c(50, 75, 95, 100, 200),
-                  asserts=asserts, gendat=gdat,
-                  fitter=lfit, nsim=100)
+est <- estSeqSim(c(0, log(0.7)), looks=c(50, 75, 95, 100, 200),
+                   gendat=gdat,
+                   fitter=lfit, nsim=100)
+z <- gbayesSeqSim(est, asserts)
 head(z)
 attr(z, 'asserts')
 
 # Compute the proportion of simulations that hit targets (different target posterior
 # probabilities for efficacy vs. similarity)
 
-# For each simulation and assertion/prior/parameter combination compute the
-# first look at which the target was hit (set to infinity if never hit)
+# For the efficacy assessment compute the first look at which the target
+# was hit (set to infinity if never hit)
 require(data.table)
-# Define posterior probability target for each type of assertion/prior
-z$target <- c(Efficacy=0.95, Similarity=0.75)[z$assert]
 z <- data.table(z)
-u <- z[, .(first=min(look[prob > target])), by=list(parameter, assert, sim)]
-
-# For each assertion/prior and true parameter value combination compute the
-# proportion of simulations that hit the target (1) ever or (2) by the 100th subject
-
-u[, .(ever=mean(first < Inf)),  by=list(parameter, assert)]
-u[, .(by75=mean(first <= 100)), by=list(parameter, assert)]
-
+u <- z[, .(first=min(p1 > 0.95])), by=.(parameter, sim)]
+# Compute the proportion of simulations that ever hit the target and
+# that hit it by the 100th subject
+u[, .(ever=mean(first < Inf)),  by=.(parameter)]
+u[, .(by75=mean(first <= 100)), by=.(parameter)]
 }
 }
 \seealso{
-\code{gbayes()}
+\code{gbayes()}, \code{estSeqSim()}
 }
 \author{
 Frank Harrell

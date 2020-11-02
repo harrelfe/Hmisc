@@ -5,7 +5,7 @@ Changes in version 4.4-2 (2020-11-01)
    * dotchartpl: added new arguments and functionality to handle quantities other than proportions (e.g., hazards) and streamlined code using pairUpDiff
    * propsPO: added tooltip text for gpplot that will be transmitted to ggplotly; reversed order of categories so lowest category put at bottom of bar
    * dotchartpl: suppressed confidence intervals when the number of groups is not 2; fixed bug where hover text confidence intervals were repeats of the last computed interval instead of properly using all the intervals; added dec argument
-   * added gbayesSeqSim function
+   * added estSeqSim and gbayesSeqSim functions
 
 Changes in version 4.4-1 (2020-08-07)
    * popower: added approximate S.E. of log(OR) in results

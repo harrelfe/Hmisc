@@ -4,7 +4,7 @@
 ##' @title gbayesSeqSim
 ##' @param est data frame created by `estSeqSim()`
 ##' @param asserts list of lists.  The first element of each list is the user-specified name for each assertion/prior combination, e.g., `"efficacy"`.  The other elements are, in order, a character string equal to "<", ">", or "in", a parameter value `cutoff` (for "<" and ">") or a 2-vector specifying an interval for "in", and either a prior distribution mean and standard deviation named `mu` and `sigma` respectively, or a parameter value (`"cutprior"`) and tail area `"tailprob"`.  If the latter is used, `mu` is assumed to be zero and `sigma` is solved for such that P(parameter > 'cutprior') = P(parameter < - 'cutprior') = `tailprob`.
-##' @return a data frame with number of rows equal to that of `est` with a number of new columns equal to the number of assertions added.  The new columns are named `p1`, `p2`, `p3`, ...  The returned data frame also has an attribute `asserts` added which is the original `asserts` augmented with any derived `mu` and `sigma` and converted to a data frame.
+##' @return a data frame with number of rows equal to that of `est` with a number of new columns equal to the number of assertions added.  The new columns are named `p1`, `p2`, `p3`, ... (posterior probabilities), `mean1`, `mean2`, ... (posterior means), and `sd1`, `sd2`, ... (posterior standard deviations).  The returned data frame also has an attribute `asserts` added which is the original `asserts` augmented with any derived `mu` and `sigma` and converted to a data frame, and another attribute `alabels` which is a named vector used to map `p1`, `p2`, ... to the user-provided labels in `asserts`.
 ##' @author Frank Harrell
 ##' @seealso `gbayes()`, `estSeqSim()`
 ##' @examples
@@ -62,7 +62,8 @@
 ##' }
 ##' @md
 gbayesSeqSim <- function(est, asserts) {
-  nas    <- length(asserts)
+  nas     <- length(asserts)
+  alabels <- character(nas)
   for(i in 1 : nas) {
     a <- asserts[[i]]
     nam <- names(a)
@@ -84,6 +85,7 @@ gbayesSeqSim <- function(est, asserts) {
                          else
                            w[1])
     asserts[[i]] <- a
+    alabels[i]   <- a$label
   }
 
   N <- nrow(est)
@@ -110,7 +112,9 @@ gbayesSeqSim <- function(est, asserts) {
              'in' = pnorm(cutoff[2], mean.post, sd.post) -
                     pnorm(cutoff[1], mean.post, sd.post))
     label(pp) <- a$label
-    est[[paste0('p', i)]] <- pp
+    est[[paste0('p', i)]]    <- pp
+    est[[paste0('mean', i)]] <- mean.post
+    est[[paste0('sd', i)]]   <- sd.post
   }
 
   a <- asserts
@@ -123,6 +127,8 @@ gbayesSeqSim <- function(est, asserts) {
     w <- rbind(w, as.data.frame(a))
     }
   attr(est, 'asserts') <- w
+  names(alabels) <- paste0('p', 1 : nas)
+  attr(est, 'alabels') <- alabels
   est
 }
 

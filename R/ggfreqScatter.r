@@ -68,7 +68,7 @@ ggfreqScatter <- function(x, y, bins=50, g=10, cuts=NULL,
               xlab(xlab) + ylab(ylab) +
               guides(size = guide_legend(title='Frequency'))
        else
-         ggplot(k, aes(x=x, y=y, alpha=Freq ^ 0.25, label=Freq,
+         ggplot(k, aes(x=x, y=y, label=Freq, #alpha=Freq ^ 0.25,
                        color=Freq ^ 0.25)) +
                    geom_point(...) +
                    scale_color_gradientn(colors=fcolors) +
@@ -90,7 +90,7 @@ ggfreqScatter <- function(x, y, bins=50, g=10, cuts=NULL,
            xlab(xlab) + ylab(ylab) +
            guides(size = guide_legend(title='Frequency'))
        else
-         ggplot(k, aes(x=x, y=y, alpha=fg, label=Freq,
+         ggplot(k, aes(x=x, y=y, label=Freq, # alpha=fg,
                        color=if(few) k$Freq else as.integer(fg))) +
            geom_point(...) +
            scale_color_gradientn(colors=fcolors,

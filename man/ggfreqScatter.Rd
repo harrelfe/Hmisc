@@ -43,7 +43,7 @@ ggfreqScatter(x, y, bins=50, g=10, cuts=NULL,
 	2-vector, the first element corresponds to \code{x} and the second to
 	\code{y}.}
 \item{g}{number of quantile groups to make for frequency counts.  Use
-	\code{g=0} to use frequencies continuously for color and alpha
+	\code{g=0} to use frequencies continuously for color 
 	coding.  This is recommended only when using \code{plotly}.}
 \item{cuts}{instead of using \code{g}, specify \code{cuts} to provide
 	the vector of cuts for categorizing frequencies for assignment to colors}
@@ -56,7 +56,10 @@ ggfreqScatter(x, y, bins=50, g=10, cuts=NULL,
 \item{xlab,ylab}{axis labels.  If not specified and variable has a
 	\code{label}, thatu label will be used.}
 \item{fcolors}{\code{colors} argument to pass to
-	\code{scale_color_gradientn} to color code frequencies}
+	\code{scale_color_gradientn} to color code frequencies.  Use
+	\code{fcolors=gray.colors(10, 0.75, 0)} to show gray
+	scale, for example.  Another good choice is
+	\code{fcolors=hcl.colors(10, 'Blue-Red')}.} 
 \item{nsize}{set to \code{TRUE} to not vary color or transparency but
 	instead to size the symbols in relation to the number of points.  Best
 	with both \code{x} and \code{y} are discrete.  \code{ggplot2}

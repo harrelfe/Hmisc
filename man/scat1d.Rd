@@ -119,13 +119,13 @@ datadensity(object, \dots)
 # sc(a,b) means default to a if number of axes <= 3, b if >=50, use
 # linear interpolation within 3-50
 
-histSpike(x, side=1, nint=100, frac=.05, minf=NULL, mult.width=1,
+histSpike(x, side=1, nint=100, bins=NULL, frac=.05, minf=NULL, mult.width=1,
           type=c('proportion','count','density'),
           xlim=range(x), ylim=c(0,max(f)), xlab=deparse(substitute(x)), 
           ylab=switch(type,proportion='Proportion',
                            count     ='Frequency',
                            density   ='Density'),
-          y=NULL, curve=NULL, add=FALSE, 
+          y=NULL, curve=NULL, add=FALSE, minimal=FALSE,
           bottom.align=type=='density', col=par('col'), lwd=par('lwd'),
           grid=FALSE, \dots)
 
@@ -205,6 +205,12 @@ ecdfpM(x, group=NULL, what=c('F','1-F','f','1-f'), q=NULL,
     the curve.  For \code{histSpike}, interpolated \code{y} values are
     derived for binmidpoints.
   }
+	\item{minimal}{for \code{histSpike} set \code{minimal=TRUE} to draw a
+       minimalist spike histogram with no y-axis.  This works best when
+       produce graphics images that are short, e.g., have a height of
+       two inches.  \code{add} is forced to be \code{FALSE} in this case
+       so that a standalone graph is produced.  Only base graphics are
+       used.}
   \item{bottom.align}{
     set to \code{TRUE} to have the bottoms of tick marks (for
     \code{side=1} or \code{side=3}) aligned at the y-coordinate.  The
@@ -260,8 +266,12 @@ ecdfpM(x, group=NULL, what=c('F','1-F','f','1-f'), q=NULL,
     plotted.  For \code{histSpikeg}, if \code{x} has no more than
     \code{nint} unique values, all observed values are used, otherwise
     the data are rounded before tabulation so that there are no more
-    than \code{nint} intervals.
-  }
+    than \code{nint} intervals.  For \code{histSpike}, \code{nint} is
+       ignored if \code{bins} is given.
+		 }
+  \item{bins}{for \code{histSpike} specifies the actual cutpoints to use
+       for binning \code{x}.  The default is to use \code{nint} in
+       conjunction with \code{xlim}.}
   \item{\dots}{
     optional arguments passed to \code{scat1d} from \code{datadensity}
     or to \code{histSpike} from \code{scat1d}.  For \code{histSpikep}

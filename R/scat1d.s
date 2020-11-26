@@ -369,23 +369,26 @@ datadensity.data.frame <-
 
 
 histSpike <-
-  function(x, side=1, nint=100, frac=.05, minf=NULL, mult.width=1,
+  function(x, side=1, nint=100, bins=NULL, frac=.05, minf=NULL, mult.width=1,
            type=c('proportion','count','density'),
            xlim=range(x),
-           ylim=c(0,max(f)), xlab=deparse(substitute(x)), 
+           ylim=c(0, max(f)), xlab=deparse(substitute(x)), 
            ylab=switch(type, proportion='Proportion',
              count     ='Frequency',
              density   ='Density'),
-           y=NULL, curve=NULL, add=FALSE, 
+           y=NULL, curve=NULL, add=FALSE, minimal=FALSE,
            bottom.align=type == 'density', 
            col=par('col'), lwd=par('lwd'), grid=FALSE, ...)
 {
   type <- match.arg(type)
-  if(! add && side != 1)
-    stop('side must be 1 if add=FALSE')
 
-  if(add && type == 'count')
-    warning('type="count" is ignored if add=TRUE')
+  if(! minimal) {
+    if(! add && side != 1)
+      stop('side must be 1 if add=FALSE')
+
+    if(add && type == 'count')
+      warning('type="count" is ignored if add=TRUE')
+    }
 
   if(length(y) > 1) {
     if(length(y) != length(x))
@@ -394,7 +397,7 @@ histSpike <-
     if(length(curve))
       warning('curve ignored when y specified')
     
-    i <- !is.na(x + y)
+    i <- ! is.na(x + y)
     curve <- list(x=x[i], y=y[i])
   }
   
@@ -410,9 +413,9 @@ histSpike <-
       f <- table(x)
       x <- as.numeric(names(f))
     } else {
-      ncut <- nint+1
-      bins <- seq(xlim[1], xlim[2], length = ncut)
-      delta <- (bins[2]-bins[1]) / 2
+      ncut <- nint + 1
+      if(! length(bins)) bins <- seq(xlim[1], xlim[2], length = ncut)
+      delta <- (bins[2] - bins[1]) / 2
       f <- table(cut(x, c(bins[1] - delta, bins)))
       
       x <- bins
@@ -430,13 +433,13 @@ histSpike <-
     f <- den$y
   }
   
-  if(!add) {
+  if(! minimal && ! add) {
     if(grid)
       stop('add=FALSE not implemented for lattice')
     
     plot(0, 0, xlim=xlim, ylim=ylim, xlab=xlab, ylab=ylab, type='n')
   }
-  
+
   if(side == 1 || side == 3) {
     l <- 1:2;
     ax <- 1
@@ -448,6 +451,17 @@ histSpike <-
   f <- f / max(f)
   if(length(minf)) f <- pmax(f, minf)
 
+  if(minimal) {
+    plot.new()    # sets (0,0) to (1,1)
+    del <- diff(xlim)
+    usr <- c(xlim[1] - 0.04 * del, xlim[2] + 0.04 * del, 0, 1)
+    par(mar=c(3.5, 0.5, 0.5, 0.5), mgp=c(2, 0.5, 0), usr=usr)
+    axis(1, line=0.25)
+    title(xlab=xlab)
+    segments(x, rep(0, length(x)), x, f, lwd=lwd, col=col)
+    return(invisible(xlim))
+    }
+  
   pr <- parGrid(grid)
   usr <- pr$usr;
   pin <- pr$pin;

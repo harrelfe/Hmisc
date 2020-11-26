@@ -1,4 +1,4 @@
-Changes in version 4.4-2 (2020-11-17)
+Changes in version 4.4-2 (2020-11-25)
    * rcorr: captured loss of precision leading to square root of a negative number.  Thanks: Ann Voss <avoss@novanthealth.org>
    * summaryS: sapply was doubling names
    * pairUpDiff: created for dotchartpl - function to pair up grouped observations for sorting by descending differences and computing approximate confidence intervals for the difference given individual confidence limits
@@ -7,6 +7,7 @@ Changes in version 4.4-2 (2020-11-17)
    * dotchartpl: suppressed confidence intervals when the number of groups is not 2; fixed bug where hover text confidence intervals were repeats of the last computed interval instead of properly using all the intervals; added dec argument
    * added estSeqSim and gbayesSeqSim functions
    * ggfreqScatter: stopped varying alpha and just varied color, as alpha collided with the color scheme
+   * histSpike: added minimal=TRUE and bins arguments
 	 
 Changes in version 4.4-1 (2020-08-07)
    * popower: added approximate S.E. of log(OR) in results

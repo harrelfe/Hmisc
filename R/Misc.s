@@ -933,11 +933,14 @@ approxExtrap <- function(x, y, xout, method='linear', n=50, rule=2,
 
   ## remove duplicates and order so can do linear extrapolation
   if(na.rm) {
-    d <- !is.na(x+y)
+    d <- ! is.na(x + y)
     x <- x[d]; y <- y[d]
   }
+
+  x <- as.numeric(x)  # handles dates etc.
+  y <- as.numeric(y)
   
-  d <- !duplicated(x)
+  d <- ! duplicated(x)
   x <- x[d]
   y <- y[d]
   d <- order(x)

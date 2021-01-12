@@ -221,25 +221,28 @@ dotchartpl <- function(x, major=NULL, minor=NULL,
       ## Could not get color=coldiff to work; perhaps conflicted with
       ## earlier use of color =
 
-      if(any(Diff > 0))
-        p <- plotly::add_segments(p, data=subset(ddiff, Diff > 0),
-                                  x= ~ difflower, xend= ~ diffupper,
-                                  y= ~ Ydiff, yend= ~ Ydiff,
-                                  color = I('lightgray'),
-                                  text = ~ htdiff, hoverinfo='text',
-                                  name = paste0(htmlSpecial('half'),
-                                                ' CL of difference<br>',
-                                                coldiff[Diff > 0][1]))
+      nDiff <- Diff[! is.na(Diff)]
+      if(length(nDiff)) {
+        if(any(nDiff > 0))
+          p <- plotly::add_segments(p, data=subset(ddiff, Diff > 0),
+                                    x= ~ difflower, xend= ~ diffupper,
+                                    y= ~ Ydiff, yend= ~ Ydiff,
+                                    color = I('lightgray'),
+                                    text = ~ htdiff, hoverinfo='text',
+                                    name = paste0(htmlSpecial('half'),
+                                                  ' CL of difference<br>',
+                                                  coldiff[Diff > 0][1]))
 
-      if(any(Diff <= 0))
-        p <- plotly::add_segments(p, data=subset(ddiff, Diff <= 0),
-                                  x= ~ difflower, xend= ~ diffupper,
-                                  y= ~ Ydiff, yend= ~ Ydiff,
-                                  color = I('lavender'),
-                                  text = ~ htdiff, hoverinfo='text',
-                                  name = paste0(htmlSpecial('half'),
-                                                ' CL of difference<br>',
-                                                coldiff[Diff <= 0][1]))
+        if(any(nDiff <= 0))
+          p <- plotly::add_segments(p, data=subset(ddiff, Diff <= 0),
+                                    x= ~ difflower, xend= ~ diffupper,
+                                    y= ~ Ydiff, yend= ~ Ydiff,
+                                    color = I('lavender'),
+                                    text = ~ htdiff, hoverinfo='text',
+                                    name = paste0(htmlSpecial('half'),
+                                                  ' CL of difference<br>',
+                                                  coldiff[Diff <= 0][1]))
+      }
     }
 
     ## tracename and limitstracename are used if groups not used

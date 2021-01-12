@@ -205,6 +205,7 @@ upData <- function(object, ...,
   upfirst <- function(txt) gsub("(\\w)(\\w*)", "\\U\\1\\L\\2", txt, perl=TRUE)
 
   if(lowernames) names(object) <- casefold(names(object))
+  isdt <- inherits(object, 'data.table')
   no   <- names(object)
   nobs <- nrow(object)
   out  <- paste('Input object size:\t', object.size(object), 'bytes;\t',
@@ -432,7 +433,7 @@ upData <- function(object, ...,
                     paste(drop[s], collapse=' ')))
 
     no <- no[no %nin% drop]
-    object <- object[no]
+    object <- if(isdt) object[, ..no] else object[no]
   }
 
   if(length(keep)) {
@@ -452,7 +453,7 @@ upData <- function(object, ...,
                     paste(keep[s], collapse=' ')))
 
     no <- no[no %in% keep]
-    object <- object[no]
+    object <- if(isdt) object[, ..no] else object[no]
   }
 
   if(length(levels)) {

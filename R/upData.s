@@ -569,3 +569,5 @@ dataframeReduce <- function(data, fracmiss=1, maxlevels=NULL,
     if(any(h != '' & ! s)) data <- data[h == '' | s]
   data
 }
+
+utils::globalVariables('..no')

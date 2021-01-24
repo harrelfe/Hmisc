@@ -6,7 +6,7 @@
 ##' @param asserts list of lists.  The first element of each list is the user-specified name for each assertion/prior combination, e.g., `"efficacy"`.  The other elements are, in order, a character string equal to "<", ">", or "in", a parameter value `cutoff` (for "<" and ">") or a 2-vector specifying an interval for "in", and either a prior distribution mean and standard deviation named `mu` and `sigma` respectively, or a parameter value (`"cutprior"`) and tail area `"tailprob"`.  If the latter is used, `mu` is assumed to be zero and `sigma` is solved for such that P(parameter > 'cutprior') = P(parameter < - 'cutprior') = `tailprob`.
 ##' @return a data frame with number of rows equal to that of `est` with a number of new columns equal to the number of assertions added.  The new columns are named `p1`, `p2`, `p3`, ... (posterior probabilities), `mean1`, `mean2`, ... (posterior means), and `sd1`, `sd2`, ... (posterior standard deviations).  The returned data frame also has an attribute `asserts` added which is the original `asserts` augmented with any derived `mu` and `sigma` and converted to a data frame, and another attribute `alabels` which is a named vector used to map `p1`, `p2`, ... to the user-provided labels in `asserts`.
 ##' @author Frank Harrell
-##' @seealso `gbayes()`, `estSeqSim()`
+##' @seealso `gbayes()`, `estSeqSim()`, `simMarkovOrd()`, `estSeqMarkovOrd()`
 ##' @examples
 ##' \dontrun{
 ##' # Simulate Bayesian operating characteristics for an unadjusted
@@ -144,7 +144,7 @@ gbayesSeqSim <- function(est, asserts) {
 ##' @param progress set to `TRUE` to send current iteration number to the console
 ##' @return a data frame with number of rows equal to the product of `nsim`, the length of `looks`, and the length of `parameter`.
 ##' @author Frank Harrell
-##' @seealso `gbayesSeqSim()`
+##' @seealso `gbayesSeqSim()`, `simMarkovOrd()`, `estSeqMarkovOrd()`
 ##' @examples
 ##' # Run 100 simulations, 5 looks, 2 true parameter values
 ##' # Total simulation time: 2s

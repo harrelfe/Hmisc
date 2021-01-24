@@ -75,7 +75,7 @@ u[, .(by75=mean(first <= 100)), by=.(parameter)]
 }
 }
 \seealso{
-\code{gbayes()}, \code{estSeqSim()}
+\code{gbayes()}, \code{estSeqSim()}, \code{simMarkovOrd()}, \code{estSeqMarkovOrd()}
 }
 \author{
 Frank Harrell

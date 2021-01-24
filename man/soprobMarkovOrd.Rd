@@ -17,7 +17,7 @@ soprobMarkovOrd(y, times, initial, absorb = NULL, intercepts, g, ...)
 
 \item{intercepts}{vector of intercepts in the proportional odds model, with length one less than the length of \code{y}}
 
-\item{g}{a user-specified function of three or more arguments which in order are the value of \code{y} at the previous time, the current time, the gap between the previous time and the current time, and optional arguments such as treatment assignment (scalar).  The function returns the linear predictor for the proportional odds model aside from \code{intercepts}.  The first argument of \code{g} must be allowed to be a vector of all non-absorbing state \code{y} values.}
+\item{g}{a user-specified function of three or more arguments which in order are the value of \code{y} at the previous time, the current time, the gap between the previous time and the current time, and optional arguments \code{X} and others such as true regression coefficients.  The function returns the linear predictor for the proportional odds model aside from \code{intercepts}.  The first argument of \code{g} must be allowed to be a vector of all non-absorbing state \code{y} values.}
 
 \item{...}{additional arguments to pass to \code{g} such as covariate settings}
 }
@@ -32,14 +32,17 @@ State Occupancy Probabilities for First-Order Markov Ordinal Model
 # states with exact state occupancy probabilities.  Carry absorbing
 # states forward just to simplify calculation of proportions
 g <- function(yprev, t, gap) yprev - ((gap - 1)/ 7) * yprev + t / 10
-s <- sapply(1 : 1000, function(id)
-       simMarkovOrd(1:3, c(1, 2, 3, 7, 14), 2, absorb=3,
-                    intercepts=c(-1, -2), g=g, id=id, carry=TRUE), simplify=FALSE)
-s <- do.call(rbind, s)
+s <- simMarkovOrd(1000, 1:3, c(1, 2, 3, 7, 14), 2, absorb=3,
+                  intercepts=c(-1, -2), g=g, carry=TRUE)
 relfreq <- function(x) table(x) / length(x)
-do.call(rbind, tapply(s[, 'y'], s[, 'time'], relfreq))
+w <- with(s, tapply(y, time, relfreq))
+do.call(rbind, w)
+# Compare with exact answer:
 soprobMarkovOrd(1:3, c(1, 2, 3, 7, 14), initial=2, absorb=3,
                 intercepts=c(-1, -2), g=g)
+}
+\seealso{
+\url{https://hbiostat.org/R/simMarkovOrd.html}
 }
 \author{
 Frank Harrell

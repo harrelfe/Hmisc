@@ -1,8 +1,9 @@
-Changes in version 4.4-3 (2020-01-21)
+Changes in version 4.4-3 (2020-01-24)
    * approxExtrap: changed x and y to as.numeric.  Thanks: juha.heikkinen@luke.fi
    * upData: fix column subsetting for data.tables
    * dotchartpl: intercepted missing Diff
-   * simMarkovOrd, soprobMarkovOrd: new functions for Markov proportional odds model simulation and calculatino of state occupancy probabilities
+   * simMarkovOrd, soprobMarkovOrd, intMarkovOrd, estSeqMarkovOrd: new functions for Markov proportional odds model simulation and calculation of state occupancy probabilities
+   * ggfreqScatter: added by argument
 
 Changes in version 4.4-2 (2020-11-25)
    * rcorr: captured loss of precision leading to square root of a negative number.  Thanks: Ann Voss <avoss@novanthealth.org>

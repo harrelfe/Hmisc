@@ -5,55 +5,56 @@
 \title{simMarkovOrd}
 \usage{
 simMarkovOrd(
+  n = 1,
   y,
   times,
   initial,
+  X = NULL,
   absorb = NULL,
   intercepts,
   g,
-  id = NULL,
   carry = FALSE,
   ...
 )
 }
 \arguments{
+\item{n}{number of subjects to simulate}
+
 \item{y}{vector of possible y values in order}
 
 \item{times}{vector of measurement times}
 
-\item{initial}{initial value of \code{y} (baseline state)}
+\item{initial}{initial value of \code{y} (baseline state).  If length 1 this value is used for all subjects, otherwise it is a vector of length \code{n}.}
+
+\item{X}{an optional vector of matrix of baseline covariate values passed to \code{g}.  If a vector, \code{X} represents a set of single values for all the covariates and those values are used for every subject.  Otherwise \code{X} is a matrix with rows corresponding to subjects and columns corresponding to covariates which \code{g} must know how to handle.  \code{g} only sees one row of \code{X} at a time.}
 
 \item{absorb}{vector of absorbing states, a subset of \code{y}.  The default is no absorbing states.  Observations are truncated when an absorbing state is simulated.}
 
 \item{intercepts}{vector of intercepts in the proportional odds model.  There must be one fewer of these than the length of \code{y}.}
 
-\item{g}{a user-specified function of three or more arguments which in order are the value of \code{y} at the previous time, the current time, the gap between the previous time and the current time, and optional arguments such as treatment assignment (scalar).  The function returns the linear predictor for the proportional odds model aside from \code{intercepts}.}
-
-\item{id}{if you desire a subject ID value to appear as a column of constants in the resulting matrix, specify an integer scalar as \code{id}}
+\item{g}{a user-specified function of three or more arguments which in order are the value of \code{y} at the previous time, the current time, the gap between the previous time and the current time, an optional (usually named) covariate vector \code{X}, and optional arguments such as a regression coefficient value to simulate from.  The function returns the linear predictor for the proportional odds model aside from \code{intercepts}.}
 
 \item{carry}{set to \code{TRUE} to carry absorbing state forward after it is first hit; the default is to end records for the subject once the absorbing state is hit}
 
-\item{...}{additional arguments to pass to \code{g} such as covariate settings}
+\item{...}{additional arguments to pass to \code{g} such as a regresson coefficient}
 }
 \value{
-matrix with rows = times, columns time and y
+data frame with one row per subject per time, and columns id, time, yprev, y, values in ...
 }
 \description{
 Simulate Ordinal Markov Process
 }
 \details{
-Simulates longitudinal data for one subject following a first-order Markov process under a proportional odds model.
+Simulates longitudinal data for subjects following a first-order Markov process under a proportional odds model.
 }
 \examples{
 g <- function(yprev, t, gap) yprev - ((gap - 1)/ 7) * yprev + t / 10
-simMarkovOrd(1:3, c(1, 2, 3, 7, 14), 2, absorb=3,
+# The following takes 1.6s for n=100,000
+simMarkovOrd(10, 1:3, c(1, 2, 3, 7, 14), 2, absorb=3,
              intercepts=c(-1, -2), g=g)
-
-# Simulate 100 subjects (for 100,000 subjects this takes 2s)
-s <- sapply(1 : 100, function(id)
-      simMarkovOrd(1:3, c(1, 2, 3, 7, 14), 2, absorb=3,
-                   intercepts=c(-1, -2), g=g, id=id) )
-do.call(rbind, s)   # create one matrix out of 100 matrices having varying # rows
+}
+\seealso{
+\url{https://hbiostat.org/R/Hmisc/simMarkovOrd.html}
 }
 \author{
 Frank Harrell

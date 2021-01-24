@@ -54,7 +54,7 @@ est <- estSeqSim(c(0, log(0.7)), looks=c(50, 75, 95, 100, 200),
 head(est)
 }
 \seealso{
-\code{gbayesSeqSim()}
+\code{gbayesSeqSim()}, \code{simMarkovOrd()}, \code{estSeqMarkovOrd()}
 }
 \author{
 Frank Harrell

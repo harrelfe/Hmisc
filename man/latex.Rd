@@ -40,7 +40,7 @@ commands that are similar to those in the
 \code{S.to.latex} procedure in the \code{s.to.latex} package (Chambers
 and Hastie, 1993).  \code{latex.function} can also produce
 \code{verbatim} output or output that works with the \code{Sweavel}
-LaTeX style at \url{http://biostat.mc.vanderbilt.edu/SweaveTemplate}.
+LaTeX style at \url{https://biostat.app.vumc.org/wiki/Main/SweaveTemplate}.
 
 \code{latex.list} calls \code{latex} recursively for each element in the argument.
 

@@ -14,6 +14,7 @@ simMarkovOrd(
   intercepts,
   g,
   carry = FALSE,
+  rdsample = NULL,
   ...
 )
 }
@@ -32,9 +33,11 @@ simMarkovOrd(
 
 \item{intercepts}{vector of intercepts in the proportional odds model.  There must be one fewer of these than the length of \code{y}.}
 
-\item{g}{a user-specified function of three or more arguments which in order are the value of \code{y} at the previous time, the current time, the gap between the previous time and the current time, an optional (usually named) covariate vector \code{X}, and optional arguments such as a regression coefficient value to simulate from.  The function returns the linear predictor for the proportional odds model aside from \code{intercepts}.}
+\item{g}{a user-specified function of three or more arguments which in order are \code{yprev} - the value of \code{y} at the previous time, the current time \code{t}, the \code{gap} between the previous time and the current time, an optional (usually named) covariate vector \code{X}, and optional arguments such as a regression coefficient value to simulate from.  The function needs to allow \code{yprev} to be a vector and \code{yprev} must not include any absorbing states.  The \code{g} function returns the linear predictor for the proportional odds model aside from \code{intercepts}.  The returned value must be a matrix with row names taken from \code{yprev}.  If the model is a proportional odds model, the returned value must be one column.  If it is a partial proportional odds model, the value must have one column for each distinct value of the response variable Y after the first one, with the levels of Y used as optional column names.  So columns correspond to \code{intercepts}. The different columns are used for \code{y}-specific contributions to the linear predictor (aside from \code{intercepts}) for a partial or constrained partial proportional odds model.  Parameters for partial proportional odds effects may be included in the ... arguments.}
 
 \item{carry}{set to \code{TRUE} to carry absorbing state forward after it is first hit; the default is to end records for the subject once the absorbing state is hit}
+
+\item{rdsample}{an optional function to do response-dependent sampling.  It is a function of these arguments, which are vectors that stop at any absorbing state: \code{times} (ascending measurement times for one subject), \code{y} (vector of ordinal outcomes at these times for one subject.  The function returns \code{NULL} if no observations are to be dropped, returns the vector of new times to sample.}
 
 \item{...}{additional arguments to pass to \code{g} such as a regresson coefficient}
 }
@@ -45,13 +48,7 @@ data frame with one row per subject per time, and columns id, time, yprev, y, va
 Simulate Ordinal Markov Process
 }
 \details{
-Simulates longitudinal data for subjects following a first-order Markov process under a proportional odds model.
-}
-\examples{
-g <- function(yprev, t, gap) yprev - ((gap - 1)/ 7) * yprev + t / 10
-# The following takes 1.6s for n=100,000
-simMarkovOrd(10, 1:3, c(1, 2, 3, 7, 14), 2, absorb=3,
-             intercepts=c(-1, -2), g=g)
+Simulates longitudinal data for subjects following a first-order Markov process under a proportional odds model.  Optionally, response-dependent sampling can be done, e.g., if a subject hits a specified state at time t, measurements are removed for times t+1, t+3, t+5, ...  This is applicable when for example a study of hospitalized patients samples every day, Y=1 denotes patient discharge to home, and sampling is less frequent outside the hospital.  This example assumes that arriving home is not an absorbing state, i.e., a patient could return to the hospital.
 }
 \seealso{
 \url{https://hbiostat.org/R/Hmisc/simMarkovOrd.html}

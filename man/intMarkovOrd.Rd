@@ -2,34 +2,53 @@
 % Please edit documentation in R/simMarkovOrd.r
 \name{intMarkovOrd}
 \alias{intMarkovOrd}
-\title{Compute Intercepts for Proportional Odds Markov Model}
+\title{Compute Parameters for Proportional Odds Markov Model}
 \usage{
-intMarkovOrd(y, times, initial, absorb = NULL, intercepts, g, target, t, ...)
+intMarkovOrd(
+  y,
+  times,
+  initial,
+  absorb = NULL,
+  intercepts,
+  extra = NULL,
+  g,
+  target,
+  t,
+  onlycrit = FALSE,
+  constraints = NULL,
+  ...
+)
 }
 \arguments{
-\item{y}{see \link{simMarkovOrd}}
+\item{y}{vector of possible y values in order}
 
-\item{times}{see \link{simMarkovOrd}}
+\item{times}{vector of measurement times}
 
-\item{initial}{see \link{simMarkovOrd}}
+\item{initial}{initial value of \code{y} (baseline state).  If length 1 this value is used for all subjects, otherwise it is a vector of length \code{n}.}
 
-\item{absorb}{see \link{simMarkovOrd}}
+\item{absorb}{vector of absorbing states, a subset of \code{y}.  The default is no absorbing states.  Observations are truncated when an absorbing state is simulated.}
 
 \item{intercepts}{vector of initial guesses for the intercepts}
 
-\item{g}{see \link{simMarkovOrd}}
+\item{extra}{an optional vector of intial guesses for other parameters passed to \code{g} such as regression coefficients for previous states and for general time trends.  Name the elements of \code{extra} for more informative output.}
 
-\item{target}{vector of target state occupancy probabilities at time \code{t}}
+\item{g}{a user-specified function of three or more arguments which in order are \code{yprev} - the value of \code{y} at the previous time, the current time \code{t}, the \code{gap} between the previous time and the current time, an optional (usually named) covariate vector \code{X}, and optional arguments such as a regression coefficient value to simulate from.  The function needs to allow \code{yprev} to be a vector and \code{yprev} must not include any absorbing states.  The \code{g} function returns the linear predictor for the proportional odds model aside from \code{intercepts}.  The returned value must be a matrix with row names taken from \code{yprev}.  If the model is a proportional odds model, the returned value must be one column.  If it is a partial proportional odds model, the value must have one column for each distinct value of the response variable Y after the first one, with the levels of Y used as optional column names.  So columns correspond to \code{intercepts}. The different columns are used for \code{y}-specific contributions to the linear predictor (aside from \code{intercepts}) for a partial or constrained partial proportional odds model.  Parameters for partial proportional odds effects may be included in the ... arguments.}
 
-\item{t}{target time}
+\item{target}{vector of target state occupancy probabilities at time \code{t}.  If \code{extra} is specified, \code{target} must be a matrix where row names are character versions of \code{t} and columns represent occupancy probabilities corresponding to values of \code{y} at the time given in the row.}
 
-\item{...}{optional arguments to pass to \code{\link[stats:nlm]{stats::nlm()}}}
+\item{t}{target times.  Can have more than one element only if \code{extra} is given.}
+
+\item{onlycrit}{set to \code{TRUE} to only return the achieved objective criterion and not print anything}
+
+\item{constraints}{a function of two arguments: the vector of current intercept values and the vector of \code{extra} parameters, returning \code{TRUE} if that vector meets the constrains and \code{FALSE} otherwise}
+
+\item{...}{optional arguments to pass to \code{\link[stats:nlm]{stats::nlm()}}.  If this is specified, the arguments that \code{intMarkovOrd} normally sends to \code{nlm} are not used.}
 }
 \value{
-vector of intercept values
+list containing two vectors named \code{intercepts} and \code{extra}
 }
 \description{
-Given a vector \code{intercepts} of initial guesses at the intercepts in a Markov proportional odds model, solves for the intercept vector that yields a set of occupancy probabilities at time \code{t} that equal a vector of target values.
+Given a vector \code{intercepts} of initial guesses at the intercepts in a Markov proportional odds model, and a vector \code{extra} if there are other parameters, solves for the \code{intercepts} and \code{extra} vectors that yields a set of occupancy probabilities at time \code{t} that equal, as closely as possible, a vector of target values.
 }
 \seealso{
 \url{https://hbiostat.org/R/Hmisc/simMarkovOrd.html}

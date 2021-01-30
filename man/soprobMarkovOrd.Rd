@@ -17,7 +17,7 @@ soprobMarkovOrd(y, times, initial, absorb = NULL, intercepts, g, ...)
 
 \item{intercepts}{vector of intercepts in the proportional odds model, with length one less than the length of \code{y}}
 
-\item{g}{a user-specified function of three or more arguments which in order are the value of \code{y} at the previous time, the current time, the gap between the previous time and the current time, and optional arguments \code{X} and others such as true regression coefficients.  The function returns the linear predictor for the proportional odds model aside from \code{intercepts}.  The first argument of \code{g} must be allowed to be a vector of all non-absorbing state \code{y} values.}
+\item{g}{a user-specified function of three or more arguments which in order are \code{yprev} - the value of \code{y} at the previous time, the current time \code{t}, the \code{gap} between the previous time and the current time, an optional (usually named) covariate vector \code{X}, and optional arguments such as a regression coefficient value to simulate from.  The function needs to allow \code{yprev} to be a vector and \code{yprev} must not include any absorbing states.  The \code{g} function returns the linear predictor for the proportional odds model aside from \code{intercepts}.  The returned value must be a matrix with row names taken from \code{yprev}.  If the model is a proportional odds model, the returned value must be one column.  If it is a partial proportional odds model, the value must have one column for each distinct value of the response variable Y after the first one, with the levels of Y used as optional column names.  So columns correspond to \code{intercepts}. The different columns are used for \code{y}-specific contributions to the linear predictor (aside from \code{intercepts}) for a partial or constrained partial proportional odds model.  Parameters for partial proportional odds effects may be included in the ... arguments.}
 
 \item{...}{additional arguments to pass to \code{g} such as covariate settings}
 }
@@ -27,22 +27,8 @@ matrix with rows corresponding to times and columns corresponding to states, wit
 \description{
 State Occupancy Probabilities for First-Order Markov Ordinal Model
 }
-\examples{
-# Simulate a sample of 1000 subjects and compare proportions in
-# states with exact state occupancy probabilities.  Carry absorbing
-# states forward just to simplify calculation of proportions
-g <- function(yprev, t, gap) yprev - ((gap - 1)/ 7) * yprev + t / 10
-s <- simMarkovOrd(1000, 1:3, c(1, 2, 3, 7, 14), 2, absorb=3,
-                  intercepts=c(-1, -2), g=g, carry=TRUE)
-relfreq <- function(x) table(x) / length(x)
-w <- with(s, tapply(y, time, relfreq))
-do.call(rbind, w)
-# Compare with exact answer:
-soprobMarkovOrd(1:3, c(1, 2, 3, 7, 14), initial=2, absorb=3,
-                intercepts=c(-1, -2), g=g)
-}
 \seealso{
-\url{https://hbiostat.org/R/simMarkovOrd.html}
+\url{https://hbiostat.org/R/Hmisc/simMarkovOrd.html}
 }
 \author{
 Frank Harrell

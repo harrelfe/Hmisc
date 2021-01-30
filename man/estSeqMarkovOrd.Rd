@@ -17,6 +17,7 @@ estSeqMarkovOrd(
   groupContrast = NULL,
   timecriterion = NULL,
   coxzph = FALSE,
+  rdsample = NULL,
   nsim = 1,
   progress = FALSE
 )
@@ -36,15 +37,17 @@ estSeqMarkovOrd(
 
 \item{looks}{integer vector of ID numbers at which maximum likelihood estimates and their estimated variances are computed.  For a single look specify a scalar value for \code{loops} equal to the number of subjects in the sample.}
 
-\item{g}{a user-specified function whose first 5 arguments in order are the value of \code{y} at the previous time, the current time, the gap between the previous time and the current time, \code{group} (1 or 2), and \code{parameter} (the group effect).  The function returns the linear predictor for the proportional odds model aside from \code{intercepts}.}
+\item{g}{a user-specified function of three or more arguments which in order are \code{yprev} - the value of \code{y} at the previous time, the current time \code{t}, the \code{gap} between the previous time and the current time, an optional (usually named) covariate vector \code{X}, and optional arguments such as a regression coefficient value to simulate from.  The function needs to allow \code{yprev} to be a vector and \code{yprev} must not include any absorbing states.  The \code{g} function returns the linear predictor for the proportional odds model aside from \code{intercepts}.  The returned value must be a matrix with row names taken from \code{yprev}.  If the model is a proportional odds model, the returned value must be one column.  If it is a partial proportional odds model, the value must have one column for each distinct value of the response variable Y after the first one, with the levels of Y used as optional column names.  So columns correspond to \code{intercepts}. The different columns are used for \code{y}-specific contributions to the linear predictor (aside from \code{intercepts}) for a partial or constrained partial proportional odds model.  Parameters for partial proportional odds effects may be included in the ... arguments.}
 
 \item{formula}{a formula object given to the \code{lrm()} function using variables with these name: \code{y}, \code{time}, \code{yprev}, and \code{group} (having values 1 and 2)}
 
-\item{groupContrast}{omit this argument if \code{group} has only one regression coefficient in \code{formula}.  Otherwise provide \code{groupContrast} as a list of two lists that are passed to \code{rms::contrast.rms()} to compute the contrast of interest and its standard error.  The first list corresponds to group 2, the second to group 1, to get a 2 - 1 contrast.}
+\item{groupContrast}{omit this argument if \code{group} has only one regression coefficient in \code{formula}.  Otherwise provide \code{groupContrast} as a list of two lists that are passed to \code{rms::contrast.rms()} to compute the contrast of interest and its standard error.  The first list corresponds to group 1, the second to group 2, to get a 2:1 contrast.}
 
 \item{timecriterion}{a function of a time-ordered vector of simulated ordinal responses \code{y} that returns a vector \code{FALSE} or \code{TRUE} values denoting whether the current \code{y} level met the condition of interest.  For example \code{estSeqMarkovOrd} will compute the first time at which \code{y >= 5} if you specify \code{timecriterion=function(y) y >= 5}.  This function is only called at the last data look for each simulated study.}
 
 \item{coxzph}{set to \code{TRUE} if \code{timecriterion} is specified and you want to compute a statistic for testing proportional hazards at the last look of each simulated data}
+
+\item{rdsample}{an optional function to do response-dependent sampling.  It is a function of these arguments, which are vectors that stop at any absorbing state: \code{times} (ascending measurement times for one subject), \code{y} (vector of ordinal outcomes at these times for one subject.  The function returns \code{NULL} if no observations are to be dropped, returns the vector of new times to sample.}
 
 \item{nsim}{number of simulations (default is 1)}
 

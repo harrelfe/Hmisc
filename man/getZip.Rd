@@ -25,8 +25,7 @@ getZip(url, password=NULL)
 }
 \examples{
 \dontrun{
-read.csv(getZip('http://biostat.mc.vanderbilt.edu/twiki/pub/Sandbox/WebHome/z.zip'))
-## Password is 'foo'
+read.csv(getZip('http://test.com/z.zip'))
 }
 }
 \author{Frank E. Harrell}

@@ -14,22 +14,26 @@ estSeqMarkovOrd(
   looks,
   g,
   formula,
+  ppo = NULL,
+  yprevfactor = TRUE,
   groupContrast = NULL,
+  cscov = FALSE,
   timecriterion = NULL,
   coxzph = FALSE,
   rdsample = NULL,
   nsim = 1,
-  progress = FALSE
+  progress = FALSE,
+  pfile = ""
 )
 }
 \arguments{
-\item{y}{vector of possible y values in order}
+\item{y}{vector of possible y values in order (numeric, character, factor)}
 
 \item{times}{vector of measurement times}
 
 \item{initial}{a vector of probabilities summing to 1.0 that specifies the frequency distribution of initial values to be sampled from.  The vector must have names that correspond to values of \code{y} representing non-absorbing states.}
 
-\item{absorb}{vector of absorbing states, a subset of \code{y}.  The default is no absorbing states.  Observations are truncated when an absorbing state is simulated.}
+\item{absorb}{vector of absorbing states, a subset of \code{y}.  The default is no absorbing states.  Observations are truncated when an absorbing state is simulated.  May be numeric, character, or factor.}
 
 \item{intercepts}{vector of intercepts in the proportional odds model.  There must be one fewer of these than the length of \code{y}.}
 
@@ -39,9 +43,15 @@ estSeqMarkovOrd(
 
 \item{g}{a user-specified function of three or more arguments which in order are \code{yprev} - the value of \code{y} at the previous time, the current time \code{t}, the \code{gap} between the previous time and the current time, an optional (usually named) covariate vector \code{X}, and optional arguments such as a regression coefficient value to simulate from.  The function needs to allow \code{yprev} to be a vector and \code{yprev} must not include any absorbing states.  The \code{g} function returns the linear predictor for the proportional odds model aside from \code{intercepts}.  The returned value must be a matrix with row names taken from \code{yprev}.  If the model is a proportional odds model, the returned value must be one column.  If it is a partial proportional odds model, the value must have one column for each distinct value of the response variable Y after the first one, with the levels of Y used as optional column names.  So columns correspond to \code{intercepts}. The different columns are used for \code{y}-specific contributions to the linear predictor (aside from \code{intercepts}) for a partial or constrained partial proportional odds model.  Parameters for partial proportional odds effects may be included in the ... arguments.}
 
-\item{formula}{a formula object given to the \code{lrm()} function using variables with these name: \code{y}, \code{time}, \code{yprev}, and \code{group} (having values 1 and 2)}
+\item{formula}{a formula object given to the \code{lrm()} function using variables with these name: \code{y}, \code{time}, \code{yprev}, and \code{group} (factor variable having values '1' and '2').  The \code{yprev} variable is converted to a factor before fitting the model unless \code{yprevfactor=FALSE}.}
 
-\item{groupContrast}{omit this argument if \code{group} has only one regression coefficient in \code{formula}.  Otherwise provide \code{groupContrast} as a list of two lists that are passed to \code{rms::contrast.rms()} to compute the contrast of interest and its standard error.  The first list corresponds to group 1, the second to group 2, to get a 2:1 contrast.}
+\item{ppo}{a formula specifying the part of \code{formula} for which proportional odds is not to be assumed, i.e., that specifies a partial proportional odds model.  Specifying \code{ppo} triggers the use of \code{VGAM::vgam()} instead of \code{rms::lrm} and will make the simulations run slower.}
+
+\item{yprevfactor}{see \code{formula}}
+
+\item{groupContrast}{omit this argument if \code{group} has only one regression coefficient in \code{formula}.  Otherwise if \code{ppo} is omitted, provide \code{groupContrast} as a list of two lists that are passed to \code{rms::contrast.rms()} to compute the contrast of interest and its standard error.  The first list corresponds to group 1, the second to group 2, to get a 2:1 contrast.  If \code{ppo} is given and the group effect is not just a simple regression coefficient, specify as \code{groupContrast} a function of a \code{vgam} fit that computes the contrast of interest and its standard error and returns a list with elements named \code{Contrast} and \code{SE}.}
+
+\item{cscov}{applies if \code{ppo} is not used.  Set to \code{TRUE} to use the cluster sandwich covariance estimator of the variance of the group comparison.}
 
 \item{timecriterion}{a function of a time-ordered vector of simulated ordinal responses \code{y} that returns a vector \code{FALSE} or \code{TRUE} values denoting whether the current \code{y} level met the condition of interest.  For example \code{estSeqMarkovOrd} will compute the first time at which \code{y >= 5} if you specify \code{timecriterion=function(y) y >= 5}.  This function is only called at the last data look for each simulated study.}
 
@@ -51,16 +61,18 @@ estSeqMarkovOrd(
 
 \item{nsim}{number of simulations (default is 1)}
 
-\item{progress}{set to \code{TRUE} to send current iteration number to the console}
+\item{progress}{set to \code{TRUE} to send current iteration number to \code{pfile} every 10 iterations.  Each iteration will really involve multiple simulations, if \code{parameter} has length greater than 1.}
+
+\item{pfile}{file to which to write progress information.  Defaults to \code{''} which is the console.  Ignored if \code{progress=FALSE}.}
 }
 \value{
-a data frame with number of rows equal to the product of \code{nsim}, the length of \code{looks}, and the length of \code{parameter}.
+a data frame with number of rows equal to the product of \code{nsim}, the length of \code{looks}, and the length of \code{parameter}, with variables \code{sim}, \code{parameter}, \code{look}, \code{est} (log odds ratio for group), and \code{vest} (the variance of the latter).  If \code{timecriterion} is specified the data frame also contains \code{loghr} (Cox log hazard ratio for group), \code{lrchisq} (chi-square from Cox test for group), and if \code{coxph=TRUE}, \code{phchisq}, the chi-square for testing proportional hazards.  The attribute \code{etimefreq} is also present if \code{timecriterion=TRUE} and it probvides the frequency distribution of derived event times by group.  The returned data frame also has attribute \code{lrmcoef} which is the average of all the last-look logistic regression coefficient estimates over the \code{nsim} simulations.
 }
 \description{
 Simulate Comparisons For Use in Sequential Markov Longitudinal Clinical Trial Simulations
 }
 \details{
-Simulates sequential clinical trials of longitudinal ordinal outcomes using a first-order Markov model.  Looks are done sequentially after subject ID numbers given in the vector \code{looks} with the earliest possible look being after subject 2.  At each look, a subject's repeated records are either all used or all ignored depending on the sequent ID number.  For each true effect parameter value, simulation, and at each look, runs a function to compute the estimate of the parameter of interest along with its variance.  For each simulation, data are first simulated for the last look, and these data are sequentially revealed for earlier looks.  The user provides a function \code{g} that has extra arguments specifying the true effect of \code{parameter} the treatment \code{group} expecting treatments to be coded 1 and 2.  \code{parameter} is usually on the scale of a regression coefficient, e.g., a log odds ratio.  Fitting is done using the \code{rms} \code{lrm} function.  If \code{timecriterion} is specified, the function also, for the last data look only, computes the first time at which the criterion is satisfied for the subject.  The Cox/logrank chi-square statistic for comparing groups on the derived time variable is saved.  If \code{coxzph=TRUE}, the \code{survival} package correlation coefficient \code{rho} from the scaled partial residuals is also saved so that the user can later determine to what extent the Markov model resulted in the proportional hazards assumption being violated when analyzing on the time scale.
+Simulates sequential clinical trials of longitudinal ordinal outcomes using a first-order Markov model.  Looks are done sequentially after subject ID numbers given in the vector \code{looks} with the earliest possible look being after subject 2.  At each look, a subject's repeated records are either all used or all ignored depending on the sequent ID number.  For each true effect parameter value, simulation, and at each look, runs a function to compute the estimate of the parameter of interest along with its variance.  For each simulation, data are first simulated for the last look, and these data are sequentially revealed for earlier looks.  The user provides a function \code{g} that has extra arguments specifying the true effect of \code{parameter} the treatment \code{group} expecting treatments to be coded 1 and 2.  \code{parameter} is usually on the scale of a regression coefficient, e.g., a log odds ratio.  Fitting is done using the \code{rms::lrm()} function, unless non-proportional odds is allowed in which case \code{VGAM::vgam()} is used.  If \code{timecriterion} is specified, the function also, for the last data look only, computes the first time at which the criterion is satisfied for the subject.  The Cox/logrank chi-square statistic for comparing groups on the derived time variable is saved.  If \code{coxzph=TRUE}, the \code{survival} package correlation coefficient \code{rho} from the scaled partial residuals is also saved so that the user can later determine to what extent the Markov model resulted in the proportional hazards assumption being violated when analyzing on the time scale.
 }
 \seealso{
 \code{gbayesSeqSim()}, \code{simMarkovOrd()}, \url{https://hbiostat.org/R/Hmisc/simMarkovOrd.html}

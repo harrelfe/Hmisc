@@ -14,19 +14,20 @@ intMarkovOrd(
   g,
   target,
   t,
+  ftarget = NULL,
   onlycrit = FALSE,
   constraints = NULL,
   ...
 )
 }
 \arguments{
-\item{y}{vector of possible y values in order}
+\item{y}{vector of possible y values in order (numeric, character, factor)}
 
 \item{times}{vector of measurement times}
 
-\item{initial}{initial value of \code{y} (baseline state).  If length 1 this value is used for all subjects, otherwise it is a vector of length \code{n}.}
+\item{initial}{initial value of \code{y} (baseline state; numeric, character, or factor matching \code{y}).  If length 1 this value is used for all subjects, otherwise it is a vector of length \code{n}.}
 
-\item{absorb}{vector of absorbing states, a subset of \code{y}.  The default is no absorbing states.  Observations are truncated when an absorbing state is simulated.}
+\item{absorb}{vector of absorbing states, a subset of \code{y} (numeric, character, or factor matching \code{y}).  The default is no absorbing states.  Observations are truncated when an absorbing state is simulated.}
 
 \item{intercepts}{vector of initial guesses for the intercepts}
 
@@ -37,6 +38,8 @@ intMarkovOrd(
 \item{target}{vector of target state occupancy probabilities at time \code{t}.  If \code{extra} is specified, \code{target} must be a matrix where row names are character versions of \code{t} and columns represent occupancy probabilities corresponding to values of \code{y} at the time given in the row.}
 
 \item{t}{target times.  Can have more than one element only if \code{extra} is given.}
+
+\item{ftarget}{an optional function defining constraints that relate to transition probabilities.  The function returns a penalty which is a sum of absolute differences in probabilities from target probabilities over possibly multiple targets.  The \code{ftarget} function must have two arguments: \code{intercepts} and \code{extra}.}
 
 \item{onlycrit}{set to \code{TRUE} to only return the achieved objective criterion and not print anything}
 

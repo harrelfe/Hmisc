@@ -21,15 +21,15 @@ simMarkovOrd(
 \arguments{
 \item{n}{number of subjects to simulate}
 
-\item{y}{vector of possible y values in order}
+\item{y}{vector of possible y values in order (numeric, character, factor)}
 
 \item{times}{vector of measurement times}
 
-\item{initial}{initial value of \code{y} (baseline state).  If length 1 this value is used for all subjects, otherwise it is a vector of length \code{n}.}
+\item{initial}{initial value of \code{y} (baseline state; numeric, character, or factor matching \code{y}).  If length 1 this value is used for all subjects, otherwise it is a vector of length \code{n}.}
 
 \item{X}{an optional vector of matrix of baseline covariate values passed to \code{g}.  If a vector, \code{X} represents a set of single values for all the covariates and those values are used for every subject.  Otherwise \code{X} is a matrix with rows corresponding to subjects and columns corresponding to covariates which \code{g} must know how to handle.  \code{g} only sees one row of \code{X} at a time.}
 
-\item{absorb}{vector of absorbing states, a subset of \code{y}.  The default is no absorbing states.  Observations are truncated when an absorbing state is simulated.}
+\item{absorb}{vector of absorbing states, a subset of \code{y} (numeric, character, or factor matching \code{y}).  The default is no absorbing states.  Observations are truncated when an absorbing state is simulated.}
 
 \item{intercepts}{vector of intercepts in the proportional odds model.  There must be one fewer of these than the length of \code{y}.}
 

@@ -3,11 +3,11 @@
 ##' Simulates longitudinal data for subjects following a first-order Markov process under a proportional odds model.  Optionally, response-dependent sampling can be done, e.g., if a subject hits a specified state at time t, measurements are removed for times t+1, t+3, t+5, ...  This is applicable when for example a study of hospitalized patients samples every day, Y=1 denotes patient discharge to home, and sampling is less frequent outside the hospital.  This example assumes that arriving home is not an absorbing state, i.e., a patient could return to the hospital.
 ##' @title simMarkovOrd
 ##' @param n number of subjects to simulate
-##' @param y vector of possible y values in order
+##' @param y vector of possible y values in order (numeric, character, factor)
 ##' @param times vector of measurement times
-##' @param initial initial value of `y` (baseline state).  If length 1 this value is used for all subjects, otherwise it is a vector of length `n`.
+##' @param initial initial value of `y` (baseline state; numeric, character, or factor matching `y`).  If length 1 this value is used for all subjects, otherwise it is a vector of length `n`.
 ##' @param X an optional vector of matrix of baseline covariate values passed to `g`.  If a vector, `X` represents a set of single values for all the covariates and those values are used for every subject.  Otherwise `X` is a matrix with rows corresponding to subjects and columns corresponding to covariates which `g` must know how to handle.  `g` only sees one row of `X` at a time.
-##' @param absorb vector of absorbing states, a subset of `y`.  The default is no absorbing states.  Observations are truncated when an absorbing state is simulated.
+##' @param absorb vector of absorbing states, a subset of `y` (numeric, character, or factor matching `y`).  The default is no absorbing states.  Observations are truncated when an absorbing state is simulated.
 ##' @param intercepts vector of intercepts in the proportional odds model.  There must be one fewer of these than the length of `y`.
 ##' @param g a user-specified function of three or more arguments which in order are `yprev` - the value of `y` at the previous time, the current time `t`, the `gap` between the previous time and the current time, an optional (usually named) covariate vector `X`, and optional arguments such as a regression coefficient value to simulate from.  The function needs to allow `yprev` to be a vector and `yprev` must not include any absorbing states.  The `g` function returns the linear predictor for the proportional odds model aside from `intercepts`.  The returned value must be a matrix with row names taken from `yprev`.  If the model is a proportional odds model, the returned value must be one column.  If it is a partial proportional odds model, the value must have one column for each distinct value of the response variable Y after the first one, with the levels of Y used as optional column names.  So columns correspond to `intercepts`. The different columns are used for `y`-specific contributions to the linear predictor (aside from `intercepts`) for a partial or constrained partial proportional odds model.  Parameters for partial proportional odds effects may be included in the ... arguments.
 ##' @param carry set to `TRUE` to carry absorbing state forward after it is first hit; the default is to end records for the subject once the absorbing state is hit
@@ -21,6 +21,11 @@
 simMarkovOrd <- function(n=1, y, times, initial, X=NULL, absorb=NULL,
                          intercepts, g, carry=FALSE, rdsample=NULL, ...) {
 
+  if(is.factor(y))       y       <- as.character(y)
+  if(is.factor(initial)) initial <- as.character(initial)
+  if(is.factor(absorb))  absorb  <- as.character(absorb)
+  ychar <- is.character(y)
+
   if(length(initial) == 1) initial <- rep(initial, n)
   if(length(initial) != n) stop('initial must have length 1 or n')
   if(any(initial %in% absorb))
@@ -32,11 +37,12 @@ simMarkovOrd <- function(n=1, y, times, initial, X=NULL, absorb=NULL,
   if(length(X) && ! Xmat && ! length(names(X)))
     stop('when a vector, elements of X must have names')
   
-  nt    <- length(times)
-  Y     <- Yp <- integer(nt)
-  gaps  <- numeric(nt)
-  ID    <- Time <- Gap <- YYprev <- YY <- integer(n * nt)
-  is    <- 1
+  nt     <- length(times)
+  Y      <- Yp <- if(ychar) character(nt) else numeric(nt)
+  gaps   <- numeric(nt)
+  ID     <- Time <- Gap <- numeric(n * nt)
+  YYprev <- YY <- if(ychar) character(n * nt) else numeric(n * nt)
+  is     <- 1
   times.saved <- 0
   
   for(id in 1 : n) {
@@ -57,6 +63,17 @@ simMarkovOrd <- function(n=1, y, times, initial, X=NULL, absorb=NULL,
         ## Compute cell probabilities from successive differences in
         ## exceedance probs
         probs <- c(1., probs) - c(probs, 0.)
+        lo <- probs < 0.
+        hi <- probs > 1.
+        ## The following is needed for partial proportional odds models
+        if(any(c(lo , hi))) {
+          warning(paste('Probabilities < 0 or > 1 at time t=', t,
+                        'id=', id,
+                        ':', paste(probs[c(lo, hi)], collapse=' '),
+                        'set to 0 or 1'))
+          if(any(lo)) probs[lo] <- 0.
+          if(any(hi)) probs[hi] <- 1.
+          }
         Y[i]  <- sample(y, 1, prob=probs)
         if(! carry && (Y[i] %in% absorb)) break
       }
@@ -69,7 +86,7 @@ simMarkovOrd <- function(n=1, y, times, initial, X=NULL, absorb=NULL,
     aY     <- Y[s]
 
     if(length(rdsample)) {
-    stimes <- rdsample(atimes, aY)
+      stimes <- rdsample(atimes, aY)
       lt     <- length(stimes)
       if(lt) {
         times.saved <- times.saved + i - lt
@@ -91,8 +108,13 @@ simMarkovOrd <- function(n=1, y, times, initial, X=NULL, absorb=NULL,
     is              <- ie + 1
   }
 
+  yy <- YY[1 : ie]
+  if(ychar) yy <- factor(yy, levels=y)
+  yyp <- YYprev[1 : ie]
+  if(ychar) yyp <- factor(yyp, levels=setdiff(y, absorb))
+
   res <- data.frame(id=ID[1 : ie], time=Time[1 : ie], gap=Gap[1 : ie],
-                    yprev=YYprev[1 : ie], y=YY[1 : ie], ...)
+                    yprev=yyp, y=yy, ...)
   attr(res, 'times.saved.per.subject') <- times.saved / n
     
   ## Handle case where X is a constant vector to distribute to all obs
@@ -109,10 +131,10 @@ simMarkovOrd <- function(n=1, y, times, initial, X=NULL, absorb=NULL,
 #'
 #' @title soprobMarkovOrd
 #' @inheritParams simMarkovOrd
-#' @param y a vector of possible y values in order
+#' @param y a vector of possible y values in order (numeric, character, factor)
 #' @param times vector of measurement times
-#' @param initial initial value of `y` (baseline state)
-#' @param absorb vector of absorbing states, a subset of `y`.  The default is no absorbing states.
+#' @param initial initial value of `y` (baseline state; numeric, character, factr)
+#' @param absorb vector of absorbing states, a subset of `y`.  The default is no absorbing states. (numeric, character, factor)
 #' @param intercepts vector of intercepts in the proportional odds model, with length one less than the length of `y`
 #' @param ... additional arguments to pass to `g` such as covariate settings
 #'
@@ -183,37 +205,53 @@ soprobMarkovOrd <- function(y, times, initial, absorb=NULL,
 
 ##' Simulate Comparisons For Use in Sequential Markov Longitudinal Clinical Trial Simulations
 ##'
-##' Simulates sequential clinical trials of longitudinal ordinal outcomes using a first-order Markov model.  Looks are done sequentially after subject ID numbers given in the vector `looks` with the earliest possible look being after subject 2.  At each look, a subject's repeated records are either all used or all ignored depending on the sequent ID number.  For each true effect parameter value, simulation, and at each look, runs a function to compute the estimate of the parameter of interest along with its variance.  For each simulation, data are first simulated for the last look, and these data are sequentially revealed for earlier looks.  The user provides a function `g` that has extra arguments specifying the true effect of `parameter` the treatment `group` expecting treatments to be coded 1 and 2.  `parameter` is usually on the scale of a regression coefficient, e.g., a log odds ratio.  Fitting is done using the `rms` `lrm` function.  If `timecriterion` is specified, the function also, for the last data look only, computes the first time at which the criterion is satisfied for the subject.  The Cox/logrank chi-square statistic for comparing groups on the derived time variable is saved.  If `coxzph=TRUE`, the `survival` package correlation coefficient `rho` from the scaled partial residuals is also saved so that the user can later determine to what extent the Markov model resulted in the proportional hazards assumption being violated when analyzing on the time scale.
+##' Simulates sequential clinical trials of longitudinal ordinal outcomes using a first-order Markov model.  Looks are done sequentially after subject ID numbers given in the vector `looks` with the earliest possible look being after subject 2.  At each look, a subject's repeated records are either all used or all ignored depending on the sequent ID number.  For each true effect parameter value, simulation, and at each look, runs a function to compute the estimate of the parameter of interest along with its variance.  For each simulation, data are first simulated for the last look, and these data are sequentially revealed for earlier looks.  The user provides a function `g` that has extra arguments specifying the true effect of `parameter` the treatment `group` expecting treatments to be coded 1 and 2.  `parameter` is usually on the scale of a regression coefficient, e.g., a log odds ratio.  Fitting is done using the `rms::lrm()` function, unless non-proportional odds is allowed in which case `VGAM::vgam()` is used.  If `timecriterion` is specified, the function also, for the last data look only, computes the first time at which the criterion is satisfied for the subject.  The Cox/logrank chi-square statistic for comparing groups on the derived time variable is saved.  If `coxzph=TRUE`, the `survival` package correlation coefficient `rho` from the scaled partial residuals is also saved so that the user can later determine to what extent the Markov model resulted in the proportional hazards assumption being violated when analyzing on the time scale.
 ##' @title estSeqMarkovOrd
 ##' @inheritParams simMarkovOrd
-##' @param y vector of possible y values in order
+##' @param y vector of possible y values in order (numeric, character, factor)
 ##' @param times vector of measurement times
 ##' @param initial a vector of probabilities summing to 1.0 that specifies the frequency distribution of initial values to be sampled from.  The vector must have names that correspond to values of `y` representing non-absorbing states.
-##' @param absorb vector of absorbing states, a subset of `y`.  The default is no absorbing states.  Observations are truncated when an absorbing state is simulated.
+##' @param absorb vector of absorbing states, a subset of `y`.  The default is no absorbing states.  Observations are truncated when an absorbing state is simulated.  May be numeric, character, or factor.
 ##' @param intercepts vector of intercepts in the proportional odds model.  There must be one fewer of these than the length of `y`.
 ##' @param parameter vector of true parameter (effects; group differences) values.  These are group 2:1 log odds ratios in the transition model, conditioning on the previous `y`.
 ##' @param looks integer vector of ID numbers at which maximum likelihood estimates and their estimated variances are computed.  For a single look specify a scalar value for `loops` equal to the number of subjects in the sample.
-##' @param formula a formula object given to the `lrm()` function using variables with these name: `y`, `time`, `yprev`, and `group` (having values 1 and 2)
-##' @param groupContrast omit this argument if `group` has only one regression coefficient in `formula`.  Otherwise provide `groupContrast` as a list of two lists that are passed to `rms::contrast.rms()` to compute the contrast of interest and its standard error.  The first list corresponds to group 1, the second to group 2, to get a 2:1 contrast.
+##' @param formula a formula object given to the `lrm()` function using variables with these name: `y`, `time`, `yprev`, and `group` (factor variable having values '1' and '2').  The `yprev` variable is converted to a factor before fitting the model unless `yprevfactor=FALSE`.
+##' @param ppo a formula specifying the part of `formula` for which proportional odds is not to be assumed, i.e., that specifies a partial proportional odds model.  Specifying `ppo` triggers the use of `VGAM::vgam()` instead of `rms::lrm` and will make the simulations run slower.
+##' @param yprevfactor see `formula`
+##' @param groupContrast omit this argument if `group` has only one regression coefficient in `formula`.  Otherwise if `ppo` is omitted, provide `groupContrast` as a list of two lists that are passed to `rms::contrast.rms()` to compute the contrast of interest and its standard error.  The first list corresponds to group 1, the second to group 2, to get a 2:1 contrast.  If `ppo` is given and the group effect is not just a simple regression coefficient, specify as `groupContrast` a function of a `vgam` fit that computes the contrast of interest and its standard error and returns a list with elements named `Contrast` and `SE`.
+##' @param cscov applies if `ppo` is not used.  Set to `TRUE` to use the cluster sandwich covariance estimator of the variance of the group comparison.
 ##' @param timecriterion a function of a time-ordered vector of simulated ordinal responses `y` that returns a vector `FALSE` or `TRUE` values denoting whether the current `y` level met the condition of interest.  For example `estSeqMarkovOrd` will compute the first time at which `y >= 5` if you specify `timecriterion=function(y) y >= 5`.  This function is only called at the last data look for each simulated study.
 ##' @param coxzph set to `TRUE` if `timecriterion` is specified and you want to compute a statistic for testing proportional hazards at the last look of each simulated data
 ##' @param nsim number of simulations (default is 1)
-##' @param progress set to `TRUE` to send current iteration number to the console
-##' @return a data frame with number of rows equal to the product of `nsim`, the length of `looks`, and the length of `parameter`.
+##' @param progress set to `TRUE` to send current iteration number to `pfile` every 10 iterations.  Each iteration will really involve multiple simulations, if `parameter` has length greater than 1.
+##' @param pfile file to which to write progress information.  Defaults to `''` which is the console.  Ignored if `progress=FALSE`.
+##' @return a data frame with number of rows equal to the product of `nsim`, the length of `looks`, and the length of `parameter`, with variables `sim`, `parameter`, `look`, `est` (log odds ratio for group), and `vest` (the variance of the latter).  If `timecriterion` is specified the data frame also contains `loghr` (Cox log hazard ratio for group), `lrchisq` (chi-square from Cox test for group), and if `coxph=TRUE`, `phchisq`, the chi-square for testing proportional hazards.  The attribute `etimefreq` is also present if `timecriterion=TRUE` and it probvides the frequency distribution of derived event times by group and censoring/event indicator.  The returned data frame also has attribute `lrmcoef` which is the average of all the last-look logistic regression coefficient estimates over the `nsim` simulations.
 ##' @author Frank Harrell
 ##' @seealso `gbayesSeqSim()`, `simMarkovOrd()`, <https://hbiostat.org/R/Hmisc/simMarkovOrd.html>
 ##' @export
 ##' @md
 
 estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
-                            parameter, looks, g, formula,
-                            groupContrast=NULL,
+                            parameter, looks, g, formula, ppo=NULL,
+                            yprevfactor=TRUE,
+                            groupContrast=NULL, cscov=FALSE,
                             timecriterion=NULL, coxzph=FALSE,
                             rdsample=NULL,
-                            nsim=1, progress=FALSE) {
+                            nsim=1, progress=FALSE, pfile='') {
 
   olddd <- getOption('datadist')
   on.exit(options(datadist=olddd))
+
+  isppo <- length(ppo) > 0
+  if(isppo) {
+    if(! inherits(ppo, 'formula')) stop('ppo must be a formula')
+    if(! requireNamespace('VGAM'))
+      stop('ppo specified and VGAM package not available')
+    # vgam wants you to declare FALSE to indicate non-PO
+    ppo <- formula(paste('FALSE ~', as.character(ppo)[-1]))
+    }
+
+  if(isppo && cscov) stop('may not specify cscov=TRUE with ppo')
   
   nas <- setdiff(y, absorb)    # non-absorbing states
   if(length(initial) != length(nas))
@@ -223,23 +261,24 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
   if(coxzph && ! length(timecriterion))
     stop('must specify timecriterion when coxzph=TRUE')
   
-  looks  <- sort(looks)
-  nlook  <- length(looks)
-  N      <- max(looks)
-  np     <- length(parameter)
-  nc     <- nsim * nlook * np
-  parm   <- est <- vest <- numeric(nc)
-  look   <- sim <- integer(nc)
+  looks   <- sort(looks)
+  nlook   <- length(looks)
+  N       <- max(looks)
+  np      <- length(parameter)
+  nc      <- nsim * nlook * np
+  parm    <- est <- vest <- numeric(nc)
+  look    <- sim <- integer(nc)
+  
   Etimefreq <- NULL
   if(length(timecriterion)) {
-    censlab <- paste0(as.character(max(times)), '+')
     Etimefreq <-
-      array(0, dim=c(nsim, np, 2, length(times) + 1),
+      array(0, dim=c(nsim, np, 2, 2, length(times)),
             dimnames=list(paste('sim', 1 : nsim),
                           as.character(parameter),
                           c('1', '2'),
-                          c(as.character(times), censlab)))
-    loghr <- lrchisq <- rep(NA, nc)
+                          c('censored', 'event'),
+                          as.character(times)))
+    loghr <-   lrchisq <- rep(NA, nc) 
     if(coxzph) phchisq <- rep(NA, nc)
     }
   
@@ -247,23 +286,29 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
   ## whole study
 
   is    <- 0
-  pname <- 'group=2'
+  pname <- if(isppo) 'group2' else 'group=2'
   h <- function(time, y) {
     u <- timecriterion(y)
+    # Note that if there are any absorbing events, the time vector
+    # would already have been truncated at the first of such events
     if(any(u)) list(etime=as.numeric(min(time[u])), event=1L)
     else
-               list(etime=as.numeric(max(times)),   event=0L)
+               list(etime=as.numeric(max(time)),   event=0L)
   }
+
+  lrmcoef <- NULL
   
   for(isim in 1 : nsim) {
-    if(progress) cat('Simulation', isim, '\r')
-    for(param in parameter) {
+    if(progress && (isim %% 10 == 0))
+      cat('Simulation', isim, '\n', file=pfile)
+       for(param in parameter) {
       ## Sample N initial states
       initials <- sample(names(initial), N, replace=TRUE, prob=initial)
       if(is.numeric(y)) initials <- as.numeric(initials)
       ## Sample treatment groups 1 and 2
       X   <- matrix(sample(1 : 2, N, replace=TRUE), ncol=1,
                     dimnames=list(NULL, 'group'))
+      ## For simMarkovOrd X must be a matrix if it varies
       sdata <- simMarkovOrd(n=N, y, times, initials, X=X, absorb=absorb,
                             intercepts=intercepts, g=g, parameter=param,
                             rdsample=rdsample)
@@ -273,10 +318,10 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
         cat('Average number of measurement times saved per subject by response-dependent sampling:', round(tsps, 1), '\n')
       ## sdata is a data frame containing id, time, yprev, y, ...
       sdata$group <- as.factor(sdata$group)
-      if(isim == 1) {
+      if(yprevfactor) sdata$yprev <- as.factor(sdata$yprev)
+      if(isim == 1 && ! isppo) {
         .dd. <- rms::datadist(sdata)
-        assign('.dd.', .dd., envir=.GlobalEnv)
-        options(datadist='.dd.')
+        options(datadist=.dd.)   # requires rms 6.1-1
         }
       
       ## For each look compute the parameter estimate and its variance
@@ -285,13 +330,23 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
 
       for(l in looks) {
         dat <- subset(sdata, id <= l)
-        f   <- rms::lrm(formula, data=dat)
+
+        f   <- if(isppo)
+                 VGAM::vgam(formula,
+                            VGAM::cumulative(parallel = ppo, reverse=TRUE),
+                            data=dat)
+                else
+                  rms::lrm(formula, data=dat, x=cscov, y=cscov)
+
+        if(cscov) f <- rms::robcov(f, dat$id)
         is         <- is + 1
         sim [is]   <- isim
         parm[is]   <- param
         look[is]   <- l
         if(length(groupContrast)) {
-          fc <- rms::contrast(f, groupContrast[[2]], groupContrast[[1]])
+          fc <- if(isppo) groupContrast(f)
+                else
+                  rms::contrast(f, groupContrast[[2]], groupContrast[[1]])
           est [is] <- fc$Contrast
           vest[is] <- (fc$SE) ^ 2
         }
@@ -300,31 +355,42 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
           vest[is]   <- vcov(f)[pname, pname]
           }
       }  # end looks
+      co <- coef(f)
+      if(! length(lrmcoef))
+         lrmcoef <- array(0., dim=c(length(parameter), nsim, length(co)),
+                          dimnames=list(as.character(parameter),
+                                        paste('sim', 1 : nsim),
+                                        names(co)))
+      lrmcoef[as.character(param), isim, ] <- co
+      
       if(length(timecriterion)) {
-        ## Separately for each subject compute the time until the
-        ## criterion is satisfied.  Right censor at last time if it
-        ## doesn't occur
+        # Separately for each subject compute the time until the
+        # criterion is satisfied.  Right censor at last observed time if it
+        # doesn't occur
         setDT(sdata, key=c('group', 'id', 'time'))
         d <- sdata[, h(time, y), by=.(group, id)]
+        
         fit <- survival::coxph(Surv(etime, event) ~ group, data=d)
         loghr  [is] <- fit$coef
         lrchisq[is] <- 2. * diff(fit$loglik)
-        phchisq[is] <- survival::cox.zph(fit, transform='identity',
-                                         global=FALSE)$table[, 'chisq']
+        if(coxzph)
+          phchisq[is] <- survival::cox.zph(fit, transform='identity',
+                                           global=FALSE)$table[, 'chisq']
+
         for(gr in c('1', '2')) {
-          utimes <- with(subset(d, group == gr),
-                         ifelse(event == 1, as.character(etime), censlab))
-          utimes <- factor(utimes, c(times, censlab))
-          tab <- table(utimes)
-          Etimefreq[isim, as.character(param), gr, ] <-
-            Etimefreq[isim, as.character(param), gr, ] + tab
-        }
-      }
+          for(ev in 0 : 1) {
+            utimes <- with(subset(d, group == gr & event == ev),
+                           as.character(etime))
+            utimes <- factor(utimes, as.character(times))
+            tab    <- table(utimes)
+            Etimefreq[isim, as.character(param), gr, ev + 1, ] <-
+              Etimefreq[isim, as.character(param), gr, ev + 1, ] + tab
+          } # end censored vs event
+        } # end group
+      } # end timecriterion
     }  # end param
   } # end sim
   
-  if(progress) cat('\n')
-
   res <- data.frame(sim=sim, parameter=parm, look=look,
                     est=est, vest=vest)
   if(length(timecriterion)) {
@@ -332,7 +398,8 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
     res$lrchisq <- lrchisq
     if(coxzph) res$phchisq <- phchisq
     attr(res, 'etimefreq') <- Etimefreq
-    }
+  }
+  attr(res, 'lrmcoef') <- lrmcoef
   res
 }
 
@@ -344,6 +411,7 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
 #' @param extra an optional vector of intial guesses for other parameters passed to `g` such as regression coefficients for previous states and for general time trends.  Name the elements of `extra` for more informative output.
 #' @param target vector of target state occupancy probabilities at time `t`.  If `extra` is specified, `target` must be a matrix where row names are character versions of `t` and columns represent occupancy probabilities corresponding to values of `y` at the time given in the row.
 #' @param t target times.  Can have more than one element only if `extra` is given.
+#' @param ftarget an optional function defining constraints that relate to transition probabilities.  The function returns a penalty which is a sum of absolute differences in probabilities from target probabilities over possibly multiple targets.  The `ftarget` function must have two arguments: `intercepts` and `extra`.
 #' @param onlycrit set to `TRUE` to only return the achieved objective criterion and not print anything
 #' @param constraints a function of two arguments: the vector of current intercept values and the vector of `extra` parameters, returning `TRUE` if that vector meets the constrains and `FALSE` otherwise
 #' @param ... optional arguments to pass to [stats::nlm()].  If this is specified, the arguments that `intMarkovOrd` normally sends to `nlm` are not used.
@@ -354,7 +422,7 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
 #' @md
 #' @seealso <https://hbiostat.org/R/Hmisc/simMarkovOrd.html>
 intMarkovOrd <- function(y, times, initial, absorb=NULL,
-                         intercepts, extra=NULL, g, target, t,
+                         intercepts, extra=NULL, g, target, t, ftarget=NULL,
                          onlycrit=FALSE, constraints=NULL, ...) {
 
   if(any(diff(intercepts) > 0)) stop('initial intercepts are out of order')
@@ -380,6 +448,7 @@ intMarkovOrd <- function(y, times, initial, absorb=NULL,
     # with restriction that intercepts be in descending order
     crit <- 0.  # if(any(diff(ints) > 0.)) 1000. else 0.
     for(tim in rownames(s)) crit <- crit + sum(abs(s[tim, ] - target[tim, ]))
+    if(length(ftarget)) crit <- crit + ftarget(intercepts=ints, extra=extra)
     crit
   }
 

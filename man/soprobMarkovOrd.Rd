@@ -7,13 +7,13 @@
 soprobMarkovOrd(y, times, initial, absorb = NULL, intercepts, g, ...)
 }
 \arguments{
-\item{y}{a vector of possible y values in order}
+\item{y}{a vector of possible y values in order (numeric, character, factor)}
 
 \item{times}{vector of measurement times}
 
-\item{initial}{initial value of \code{y} (baseline state)}
+\item{initial}{initial value of \code{y} (baseline state; numeric, character, factr)}
 
-\item{absorb}{vector of absorbing states, a subset of \code{y}.  The default is no absorbing states.}
+\item{absorb}{vector of absorbing states, a subset of \code{y}.  The default is no absorbing states. (numeric, character, factor)}
 
 \item{intercepts}{vector of intercepts in the proportional odds model, with length one less than the length of \code{y}}
 

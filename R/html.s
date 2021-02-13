@@ -584,24 +584,37 @@ unicodeshow = function(x, surr=TRUE, append=FALSE) {
 ## Accounts for markdown being in caption text; knitr processes this
 ## See stackoverflow.com/questions/51803162
 mdchunk = function(md=rep('', length(robj)), robj,
-                   cnames=NULL, w=NULL, h=NULL) {
-    bn <- paste0('c', round(runif(1, 0, 1e6)))
-    n <- length(md)
-    if(length(robj) != n) stop('robj and md must have same length')
-    opts <- 'echo=FALSE'
-    if(length(w)) opts <- c(paste0('fig.width=' , w), opts)
-    if(length(h)) opts <- c(paste0('fig.height=', h), opts)
-    opts <- paste(opts, collapse=',')
-    if(! length(cnames)) cnames <- paste0(bn, 1 : n)
+                   cnames=FALSE, w=NULL, h=NULL, caption=NULL,
+                   results=NULL, method=c('knit_expand','knit_child')) {
+
+  method <- match.arg(method)
+  
+  bn <- paste0('c', round(runif(1, 0, 1e6)))
+  n <- length(md)
+  if(length(robj) != n) stop('robj and md must have same length')
+  opts <- rep('echo=FALSE', n)
+  if(length(results)) opts <- paste0(opts, ',results="', results, '"')
+  if(length(w)) opts <- paste0(opts, ',fig.width=' , w)
+  if(length(h)) opts <- paste0(opts, ',fig.height=', h)
+  if(length(caption)) opts <- paste0(opts, ',fig.cap="', caption, '"')
+
+  if(length(cnames) == 1 && is.logical(cnames))
+    cnames <- if(cnames) paste0(bn, 1 : n) else rep('', n)
+  if(! all(cnames == '')) cnames <- paste0(cnames, ',')
+  
     for(i in 1 : n) {
-      cn <- cnames[i]
-      .obj. <- robj[[i]]
-      k <- c(md[[i]], paste0('```{r ', cn, ',', opts, '}'), '.obj.', '```')
+      if(method == 'knit_expand') .obj. <- robj[[i]]
+      else assign('.obj.', robj[[i]], envir=.GlobalEnv)
+      k <- c(md[[i]], paste0('```{r ', cnames[i], opts[i], '}'), '.obj.', '```')
       ## Original solution had cat(trimws(...)) but this caused
       ## section headings to be run into R output and markdown not recog.
-      cat(knitr::knit(text=knitr::knit_expand(text=k), quiet=TRUE))
-      }
-    },
+      switch(method,
+             knit_expand = cat(knitr::knit(text=knitr::knit_expand(text=k),
+                                           quiet=TRUE)),
+             knit_child = knitr::knit_child(text=k, quiet=TRUE)
+             )
+    }
+},
 ## Function to define css for putting a background around a character string
 ## to make it look more like a button
 ## Usage: <p class="cssbutton">Text inside button</p>

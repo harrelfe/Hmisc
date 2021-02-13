@@ -28,7 +28,7 @@ matrix with rows corresponding to times and columns corresponding to states, wit
 State Occupancy Probabilities for First-Order Markov Ordinal Model
 }
 \seealso{
-\url{https://hbiostat.org/R/Hmisc/simMarkovOrd.html}
+\url{https://hbiostat.org/R/Hmisc/markov}
 }
 \author{
 Frank Harrell

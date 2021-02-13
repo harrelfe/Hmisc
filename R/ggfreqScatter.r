@@ -55,7 +55,7 @@ ggfreqScatter <- function(x, y, by=NULL, bins=50, g=10, cuts=NULL,
     k$y4 <- ifelse(f == m, NA, Y - f / z / 2)
     k$y5 <- ifelse(f == m, NA, Y + f / z / 2)
     k$y6 <- ifelse(f == m, NA, Y + m / z / 2)
-    w <- ggplot(k, aes(x=x, y=y, label=Freq)) +
+    w <- ggplot(k, aes(x=x, y=y, text=Freq)) +
       geom_segment(aes(x=x, y=y1, xend=x, yend=y2, color=I('black')), data=k) +
       geom_segment(aes(x=x, y=y3, xend=x, yend=y4, color=I('lightgray')), data=k) +
       geom_segment(aes(x=x, y=y5, xend=x, yend=y6, color=I('lightgray')), data=k) +
@@ -67,13 +67,13 @@ ggfreqScatter <- function(x, y, by=NULL, bins=50, g=10, cuts=NULL,
 
   if(g == 0) {
     w <-  if(nsize)
-            ggplot(k, aes(x=x, y=y, size=Freq ^ 0.25, label=Freq)) +
+            ggplot(k, aes(x=x, y=y, size=Freq ^ 0.25, text=Freq)) +
               geom_point(...) +
               scale_size_continuous() +
               xlab(xlab) + ylab(ylab) +
               guides(size = guide_legend(title='Frequency'))
        else
-         ggplot(k, aes(x=x, y=y, label=Freq,
+         ggplot(k, aes(x=x, y=y, text=Freq,
                        color=Freq ^ 0.25)) +
                    geom_point(...) +
                    scale_color_gradientn(colors=fcolors) +
@@ -90,13 +90,13 @@ ggfreqScatter <- function(x, y, by=NULL, bins=50, g=10, cuts=NULL,
   few <- length(ufreq) <= 15
   brn <- if(few) ufreq else unique(quantile(k$Freq, seq(0, g) / g))
   w <- if(nsize)
-         ggplot(k, aes(x=x, y=y, size=Freq ^ 0.25, label=Freq)) +
+         ggplot(k, aes(x=x, y=y, size=Freq ^ 0.25, text=Freq)) +
            geom_point(...) +
            scale_size_continuous(breaks=brn ^ 0.25, labels=round(brn)) +
            xlab(xlab) + ylab(ylab) +
            guides(size = guide_legend(title='Frequency'))
        else
-         ggplot(k, aes(x=x, y=y, label=Freq,
+         ggplot(k, aes(x=x, y=y, text=Freq,
                        color=if(few) Freq else as.integer(fg))) + # k$Freq
            geom_point(...) +
            scale_color_gradientn(colors=fcolors,

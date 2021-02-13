@@ -51,7 +51,7 @@ Simulate Ordinal Markov Process
 Simulates longitudinal data for subjects following a first-order Markov process under a proportional odds model.  Optionally, response-dependent sampling can be done, e.g., if a subject hits a specified state at time t, measurements are removed for times t+1, t+3, t+5, ...  This is applicable when for example a study of hospitalized patients samples every day, Y=1 denotes patient discharge to home, and sampling is less frequent outside the hospital.  This example assumes that arriving home is not an absorbing state, i.e., a patient could return to the hospital.
 }
 \seealso{
-\url{https://hbiostat.org/R/Hmisc/simMarkovOrd.html}
+\url{https://hbiostat.org/R/Hmisc/markov}
 }
 \author{
 Frank Harrell

@@ -15,7 +15,7 @@
 ##' @param ... additional arguments to pass to `g` such as a regresson coefficient
 ##' @return data frame with one row per subject per time, and columns id, time, yprev, y, values in ...
 ##' @author Frank Harrell
-##' @seealso <https://hbiostat.org/R/Hmisc/simMarkovOrd.html>
+##' @seealso <https://hbiostat.org/R/Hmisc/markov>
 ##' @export
 ##' @md
 simMarkovOrd <- function(n=1, y, times, initial, X=NULL, absorb=NULL,
@@ -141,7 +141,7 @@ simMarkovOrd <- function(n=1, y, times, initial, X=NULL, absorb=NULL,
 #' @return matrix with rows corresponding to times and columns corresponding to states, with values equal to exact state occupancy probabilities
 #' @export
 #' @author Frank Harrell
-#' @seealso <https://hbiostat.org/R/Hmisc/simMarkovOrd.html>
+#' @seealso <https://hbiostat.org/R/Hmisc/markov>
 #' @export 
 #' @md
 soprobMarkovOrd <- function(y, times, initial, absorb=NULL,
@@ -227,7 +227,7 @@ soprobMarkovOrd <- function(y, times, initial, absorb=NULL,
 ##' @param pfile file to which to write progress information.  Defaults to `''` which is the console.  Ignored if `progress=FALSE`.
 ##' @return a data frame with number of rows equal to the product of `nsim`, the length of `looks`, and the length of `parameter`, with variables `sim`, `parameter`, `look`, `est` (log odds ratio for group), and `vest` (the variance of the latter).  If `timecriterion` is specified the data frame also contains `loghr` (Cox log hazard ratio for group), `lrchisq` (chi-square from Cox test for group), and if `coxph=TRUE`, `phchisq`, the chi-square for testing proportional hazards.  The attribute `etimefreq` is also present if `timecriterion=TRUE` and it probvides the frequency distribution of derived event times by group and censoring/event indicator.  The returned data frame also has attribute `lrmcoef` which is the average of all the last-look logistic regression coefficient estimates over the `nsim` simulations.
 ##' @author Frank Harrell
-##' @seealso `gbayesSeqSim()`, `simMarkovOrd()`, <https://hbiostat.org/R/Hmisc/simMarkovOrd.html>
+##' @seealso `gbayesSeqSim()`, `simMarkovOrd()`, <https://hbiostat.org/R/Hmisc/markov>
 ##' @export
 ##' @md
 
@@ -414,16 +414,18 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
 #' @param ftarget an optional function defining constraints that relate to transition probabilities.  The function returns a penalty which is a sum of absolute differences in probabilities from target probabilities over possibly multiple targets.  The `ftarget` function must have two arguments: `intercepts` and `extra`.
 #' @param onlycrit set to `TRUE` to only return the achieved objective criterion and not print anything
 #' @param constraints a function of two arguments: the vector of current intercept values and the vector of `extra` parameters, returning `TRUE` if that vector meets the constrains and `FALSE` otherwise
+#' @param printsop set to `TRUE` to print solved-for state occupancy probabilities for groups 1 and 2
 #' @param ... optional arguments to pass to [stats::nlm()].  If this is specified, the arguments that `intMarkovOrd` normally sends to `nlm` are not used.
 #'
-#' @return list containing two vectors named `intercepts` and `extra`
+#' @return list containing two vectors named `intercepts` and `extra` unless `oncrit=TRUE` in which case the best achieved sum of absolute errors is returned
 #' @author Frank Harrell
 #' @export
 #' @md
-#' @seealso <https://hbiostat.org/R/Hmisc/simMarkovOrd.html>
+#' @seealso <https://hbiostat.org/R/Hmisc/markov>
 intMarkovOrd <- function(y, times, initial, absorb=NULL,
                          intercepts, extra=NULL, g, target, t, ftarget=NULL,
-                         onlycrit=FALSE, constraints=NULL, ...) {
+                         onlycrit=FALSE, constraints=NULL,
+                         printsop=FALSE, ...) {
 
   if(any(diff(intercepts) > 0)) stop('initial intercepts are out of order')
   
@@ -472,13 +474,17 @@ intMarkovOrd <- function(y, times, initial, absorb=NULL,
     }
   s1 <- soprobMarkovOrd(y, times, initial=initial, absorb=absorb,
                         intercepts=ints, g=g, X=1, extra=extra)
-  cat('\nOccupancy probabilities for group 1:\n\n')
-  print(round(s1, 3))
+  if(printsop) {
+    cat('\nOccupancy probabilities for group 1:\n\n')
+    print(round(s1, 3))
+    }
   # Show occupancy probabilities for group 2
   s2 <- soprobMarkovOrd(y, times, initial=initial, absorb=absorb,
                         intercepts=ints, g=g, X=2, extra=extra)
-  cat('\nOccupancy probabilities for group 2:\n\n')
-  print(round(s2, 3))
+  if(printsop) {
+    cat('\nOccupancy probabilities for group 2:\n\n')
+    print(round(s2, 3))
+    }
 
   ## Compute log odds ratios at day t
 

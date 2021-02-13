@@ -17,6 +17,7 @@ intMarkovOrd(
   ftarget = NULL,
   onlycrit = FALSE,
   constraints = NULL,
+  printsop = FALSE,
   ...
 )
 }
@@ -45,16 +46,18 @@ intMarkovOrd(
 
 \item{constraints}{a function of two arguments: the vector of current intercept values and the vector of \code{extra} parameters, returning \code{TRUE} if that vector meets the constrains and \code{FALSE} otherwise}
 
+\item{printsop}{set to \code{TRUE} to print solved-for state occupancy probabilities for groups 1 and 2}
+
 \item{...}{optional arguments to pass to \code{\link[stats:nlm]{stats::nlm()}}.  If this is specified, the arguments that \code{intMarkovOrd} normally sends to \code{nlm} are not used.}
 }
 \value{
-list containing two vectors named \code{intercepts} and \code{extra}
+list containing two vectors named \code{intercepts} and \code{extra} unless \code{oncrit=TRUE} in which case the best achieved sum of absolute errors is returned
 }
 \description{
 Given a vector \code{intercepts} of initial guesses at the intercepts in a Markov proportional odds model, and a vector \code{extra} if there are other parameters, solves for the \code{intercepts} and \code{extra} vectors that yields a set of occupancy probabilities at time \code{t} that equal, as closely as possible, a vector of target values.
 }
 \seealso{
-\url{https://hbiostat.org/R/Hmisc/simMarkovOrd.html}
+\url{https://hbiostat.org/R/Hmisc/markov}
 }
 \author{
 Frank Harrell

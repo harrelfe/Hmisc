@@ -731,9 +731,35 @@ markdown = list(
               '|:---|:---|')
     w <- c(head, paste0('| ', figref, ' | ', scap, ' |'))
     paste0(w, '\n')
-    }
+  },
+  # Function to start a verbatim quote if results='asis' in effect
+  # Works for all output formats in R markdown
+  squote <- function() {    # start quote
+    r <- knitr::opts_current$get('results')
+    if(length(r) && r == 'asis') cat('\n```')
+    invisible()
+  },
+  # Function to close the quote if needed
+  equote <- function() {    # end quote
+    r <- knitr::opts_current$get('results')
+    if(length(r) && r == 'asis') cat('```\n\n')
+    invisible()
+  },
+  # Function to print an object or inline text or both,
+  # verbatim quoting if needed (results='asis') in effect in chunk
+  # Inline text is printed with cat()
+  pr <- function(x='', obj=NULL, inline=NULL) {
+    r <- knitr::opts_current$get('results')
+    asis <- length(r) && r == 'asis'
+    if(asis) cat('\n```')
+    if(x != '' || length(inline))
+      cat('\n', x, if(x != '') ' ', inline, '\n\n', sep='')
+	  if(length(obj)) print(obj, quote=FALSE)
+    if(asis) cat('```\n\n')
+	  invisible()
+	}
 
-  ),
+  ),   # end markdown
 plotmath = list(
   varlabel = function(label, units='', ...)
     labelPlotmath(label, units)

@@ -47,7 +47,7 @@ posamsize(p, odds.ratio, fraction=.5, alpha=0.05, power=0.8)
 \method{print}{posamsize}(x, \dots)
 pomodm(x=NULL, p, odds.ratio=1)
 propsPO(formula, odds.ratio=NULL, ref=NULL, data=NULL, ncol=NULL, nrow=NULL )
-propsTrans(formula, data=NULL, maxsize=12, ncol=NULL, nrow=NULL)
+propsTrans(formula, data=NULL, labels=NULL, maxsize=12, ncol=NULL, nrow=NULL)
 multEventChart(formula, data=NULL, absorb=NULL, sortbylast=FALSE,
    colorTitle=label(y), eventTitle='Event',
    palette='OrRd',
@@ -113,6 +113,11 @@ for \code{posamsize}, the desired power (default is 0.8)
 	proportions on which too translate proportions in other groups, under
 	the proportional odds assumption.}
 \item{data}{a data frame or \code{data.table}}
+\item{labels}{for \code{propsTrans} is an optional character vector
+	corresponding to y=1,2,3,... that is used to construct \code{plotly}
+	hovertext as a \code{label} attribute in the \code{ggplot2}
+	aesthetic.  Used with y is integer on axes but you want long labels in
+	hovertext.}
 \item{nrow,ncol}{see \code{\link[ggplot2]{facet_wrap}}}
 \item{maxsize}{maximum symbol size}
 \item{\dots}{unused}
@@ -204,7 +209,7 @@ d   <- expand.grid(time=1:3, reps=1:30)
 d$y <- sample(letters[1:5], nrow(d), replace=TRUE)
 propsPO(y ~ time, data=d, odds.ratio=function(time) c(1, 2, 4)[time])
 # To show with plotly, save previous result as object p and then:
-# plotly::ggplotly(p, tooltip='text')
+# plotly::ggplotly(p, tooltip='label')
 
 # Add a stratification variable and don't consider an odds ratio
 d   <- expand.grid(time=1:5, sex=c('female', 'male'), reps=1:30)

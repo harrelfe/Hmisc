@@ -57,7 +57,7 @@ list containing two vectors named \code{intercepts} and \code{extra} unless \cod
 Given a vector \code{intercepts} of initial guesses at the intercepts in a Markov proportional odds model, and a vector \code{extra} if there are other parameters, solves for the \code{intercepts} and \code{extra} vectors that yields a set of occupancy probabilities at time \code{t} that equal, as closely as possible, a vector of target values.
 }
 \seealso{
-\url{https://hbiostat.org/R/Hmisc/markov}
+\url{https://hbiostat.org/R/Hmisc/markov/}
 }
 \author{
 Frank Harrell

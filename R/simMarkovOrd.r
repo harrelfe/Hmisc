@@ -15,7 +15,7 @@
 ##' @param ... additional arguments to pass to `g` such as a regresson coefficient
 ##' @return data frame with one row per subject per time, and columns id, time, yprev, y, values in ...
 ##' @author Frank Harrell
-##' @seealso <https://hbiostat.org/R/Hmisc/markov>
+##' @seealso <https://hbiostat.org/R/Hmisc/markov/>
 ##' @export
 ##' @md
 simMarkovOrd <- function(n=1, y, times, initial, X=NULL, absorb=NULL,
@@ -141,7 +141,7 @@ simMarkovOrd <- function(n=1, y, times, initial, X=NULL, absorb=NULL,
 #' @return matrix with rows corresponding to times and columns corresponding to states, with values equal to exact state occupancy probabilities
 #' @export
 #' @author Frank Harrell
-#' @seealso <https://hbiostat.org/R/Hmisc/markov>
+#' @seealso <https://hbiostat.org/R/Hmisc/markov/>
 #' @export 
 #' @md
 soprobMarkovOrd <- function(y, times, initial, absorb=NULL,
@@ -221,13 +221,14 @@ soprobMarkovOrd <- function(y, times, initial, absorb=NULL,
 ##' @param groupContrast omit this argument if `group` has only one regression coefficient in `formula`.  Otherwise if `ppo` is omitted, provide `groupContrast` as a list of two lists that are passed to `rms::contrast.rms()` to compute the contrast of interest and its standard error.  The first list corresponds to group 1, the second to group 2, to get a 2:1 contrast.  If `ppo` is given and the group effect is not just a simple regression coefficient, specify as `groupContrast` a function of a `vgam` fit that computes the contrast of interest and its standard error and returns a list with elements named `Contrast` and `SE`.
 ##' @param cscov applies if `ppo` is not used.  Set to `TRUE` to use the cluster sandwich covariance estimator of the variance of the group comparison.
 ##' @param timecriterion a function of a time-ordered vector of simulated ordinal responses `y` that returns a vector `FALSE` or `TRUE` values denoting whether the current `y` level met the condition of interest.  For example `estSeqMarkovOrd` will compute the first time at which `y >= 5` if you specify `timecriterion=function(y) y >= 5`.  This function is only called at the last data look for each simulated study.
+##' @param sstat set to a function of the time vector and the corresponding vector of ordinal responses for a single group if you want to compute a Wilcoxon test on a derived quantity such as the number of days in a given state.  
 ##' @param coxzph set to `TRUE` if `timecriterion` is specified and you want to compute a statistic for testing proportional hazards at the last look of each simulated data
 ##' @param nsim number of simulations (default is 1)
 ##' @param progress set to `TRUE` to send current iteration number to `pfile` every 10 iterations.  Each iteration will really involve multiple simulations, if `parameter` has length greater than 1.
 ##' @param pfile file to which to write progress information.  Defaults to `''` which is the console.  Ignored if `progress=FALSE`.
-##' @return a data frame with number of rows equal to the product of `nsim`, the length of `looks`, and the length of `parameter`, with variables `sim`, `parameter`, `look`, `est` (log odds ratio for group), and `vest` (the variance of the latter).  If `timecriterion` is specified the data frame also contains `loghr` (Cox log hazard ratio for group), `lrchisq` (chi-square from Cox test for group), and if `coxph=TRUE`, `phchisq`, the chi-square for testing proportional hazards.  The attribute `etimefreq` is also present if `timecriterion=TRUE` and it probvides the frequency distribution of derived event times by group and censoring/event indicator.  The returned data frame also has attribute `lrmcoef` which is the average of all the last-look logistic regression coefficient estimates over the `nsim` simulations.
+##' @return a data frame with number of rows equal to the product of `nsim`, the length of `looks`, and the length of `parameter`, with variables `sim`, `parameter`, `look`, `est` (log odds ratio for group), and `vest` (the variance of the latter).  If `timecriterion` is specified the data frame also contains `loghr` (Cox log hazard ratio for group), `lrchisq` (chi-square from Cox test for group), and if `coxph=TRUE`, `phchisq`, the chi-square for testing proportional hazards.  The attribute `etimefreq` is also present if `timecriterion=TRUE` and it probvides the frequency distribution of derived event times by group and censoring/event indicator.  If `sstat` is given, the attribute `sstat` is also present, and it contains an array with dimensions corresponding to simulations, parameter values within simulations, `id`, and a two-column subarray with columns `group` and `y`, the latter being the summary measure computed by the `sstat` function.  The returned data frame also has attribute `lrmcoef` which is the average of all the last-look logistic regression coefficient estimates over the `nsim` simulations.
 ##' @author Frank Harrell
-##' @seealso `gbayesSeqSim()`, `simMarkovOrd()`, <https://hbiostat.org/R/Hmisc/markov>
+##' @seealso `gbayesSeqSim()`, `simMarkovOrd()`, <https://hbiostat.org/R/Hmisc/markov/>
 ##' @export
 ##' @md
 
@@ -236,7 +237,7 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
                             yprevfactor=TRUE,
                             groupContrast=NULL, cscov=FALSE,
                             timecriterion=NULL, coxzph=FALSE,
-                            rdsample=NULL,
+                            sstat=NULL, rdsample=NULL,
                             nsim=1, progress=FALSE, pfile='') {
 
   olddd <- getOption('datadist')
@@ -280,8 +281,14 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
                           as.character(times)))
     loghr <-   lrchisq <- rep(NA, nc) 
     if(coxzph) phchisq <- rep(NA, nc)
-    }
-  
+  }
+  if(length(sstat))
+    Sstat <- array(0L, dim=c(nsim, np, N, 2),
+                   dimnames=list(paste('sim', 1 : nsim),
+                                 as.character(parameter),
+                                 paste('id', 1 : N),
+                                 c('group', 'y')))
+
   ## For each simulation and each parameter value, simulate data for the
   ## whole study
 
@@ -301,7 +308,7 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
   for(isim in 1 : nsim) {
     if(progress && (isim %% 10 == 0))
       cat('Simulation', isim, '\n', file=pfile)
-       for(param in parameter) {
+    for(param in parameter) {
       ## Sample N initial states
       initials <- sample(names(initial), N, replace=TRUE, prob=initial)
       if(is.numeric(y)) initials <- as.numeric(initials)
@@ -312,7 +319,7 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
       sdata <- simMarkovOrd(n=N, y, times, initials, X=X, absorb=absorb,
                             intercepts=intercepts, g=g, parameter=param,
                             rdsample=rdsample)
-
+      
       tsps <- attr(sdata, 'time.saved.per.subject')
       if(length(tsps))
         cat('Average number of measurement times saved per subject by response-dependent sampling:', round(tsps, 1), '\n')
@@ -322,21 +329,21 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
       if(isim == 1 && ! isppo) {
         .dd. <- rms::datadist(sdata)
         options(datadist=.dd.)   # requires rms 6.1-1
-        }
+      }
       
       ## For each look compute the parameter estimate and its variance
       ## If a contrast is specified (say when treatment interacts with time)
       ## use that instead of a simple treatment effect
-
+      
       for(l in looks) {
         dat <- subset(sdata, id <= l)
-
+        
         f   <- if(isppo)
                  VGAM::vgam(formula,
                             VGAM::cumulative(parallel = ppo, reverse=TRUE),
                             data=dat)
-                else
-                  rms::lrm(formula, data=dat, x=cscov, y=cscov)
+               else
+                 rms::lrm(formula, data=dat, x=cscov, y=cscov)
 
         if(cscov) f <- rms::robcov(f, dat$id)
         is         <- is + 1
@@ -353,14 +360,14 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
         else {
           est [is]   <- coef(f)[pname]
           vest[is]   <- vcov(f)[pname, pname]
-          }
+        }
       }  # end looks
       co <- coef(f)
       if(! length(lrmcoef))
-         lrmcoef <- array(0., dim=c(length(parameter), nsim, length(co)),
-                          dimnames=list(as.character(parameter),
-                                        paste('sim', 1 : nsim),
-                                        names(co)))
+        lrmcoef <- array(0., dim=c(length(parameter), nsim, length(co)),
+                         dimnames=list(as.character(parameter),
+                                       paste('sim', 1 : nsim),
+                                       names(co)))
       lrmcoef[as.character(param), isim, ] <- co
       
       if(length(timecriterion)) {
@@ -388,6 +395,12 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
           } # end censored vs event
         } # end group
       } # end timecriterion
+      if(length(sstat)) {
+        ## Separately for each subject compute the summary statistic
+        sds <- sdata[, ys := sstat(time, y), by=.(group, id)]
+        Sstat[isim, as.character(param), sds$id, ] <-
+          cbind(sds$group, sds$ys)
+      }  # end sstat
     }  # end param
   } # end sim
   
@@ -399,6 +412,7 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
     if(coxzph) res$phchisq <- phchisq
     attr(res, 'etimefreq') <- Etimefreq
   }
+  if(length(sstat)) attr(res, 'sstat') <- Sstat
   attr(res, 'lrmcoef') <- lrmcoef
   res
 }
@@ -421,7 +435,7 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
 #' @author Frank Harrell
 #' @export
 #' @md
-#' @seealso <https://hbiostat.org/R/Hmisc/markov>
+#' @seealso <https://hbiostat.org/R/Hmisc/markov/>
 intMarkovOrd <- function(y, times, initial, absorb=NULL,
                          intercepts, extra=NULL, g, target, t, ftarget=NULL,
                          onlycrit=FALSE, constraints=NULL,
@@ -499,4 +513,4 @@ intMarkovOrd <- function(y, times, initial, absorb=NULL,
   list(intercepts=ints, extra=extra)
 }
 
-utils::globalVariables(c('id', 'group'))
+utils::globalVariables(c('id', 'group', 'event'))

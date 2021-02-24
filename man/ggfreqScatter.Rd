@@ -21,7 +21,8 @@ Instead, you can specify \code{stick=TRUE} not use color but to encode
 	black lines.
 
 The result can also be passed to \code{ggplotly}.  Actual cell
-frequencies are added to the hover text in that case.
+frequencies are added to the hover text in that case using the
+\code{label} \code{ggplot2} aesthetic.
 }
 \usage{
 ggfreqScatter(x, y, by=NULL, bins=50, g=10, cuts=NULL,

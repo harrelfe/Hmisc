@@ -246,7 +246,7 @@ propsPO <- function(formula, odds.ratio=NULL, ref=NULL, data=NULL,
 
 utils::globalVariables(c('.', 'prop'))
 
-propsTrans <- function(formula, data=NULL, labels=NULL,
+propsTrans <- function(formula, data=NULL, labels=NULL, arrow='\u2794',
                        maxsize=12, ncol=NULL, nrow=NULL) {
   v  <- all.vars(formula)
   d  <- model.frame(formula, data=data)
@@ -264,7 +264,9 @@ propsTrans <- function(formula, data=NULL, labels=NULL,
   Prev   <- Cur <- Frac <- character(0)
   prop   <- numeric(0)
 
-  mu <- markupSpecs$html
+  mu    <- markupSpecs$html
+  arrowbr <- paste0(' ', arrow, '<br>')
+  arrow   <- paste0(' ', arrow, ' ')
 
   for(it in 2 : nt) {
     prev <- cur <- rep(NA, nid)
@@ -293,22 +295,22 @@ propsTrans <- function(formula, data=NULL, labels=NULL,
   Cur   <- factor(Cur,  levels(y))
   trans <- factor(itrans, 2 : nt,
                   labels=paste0(xlab, ' ',
-                                times[1 : (nt - 1)], ' -> ', times[2 : nt]))
+                                times[1 : (nt - 1)], arrow, times[2 : nt]))
   transp <- factor(itrans, 2 : nt,
                   labels=paste0(xlab, ' ',
-                                times[1 : (nt - 1)], ' ➙ ', times[2 : nt]))
+                                times[1 : (nt - 1)], arrow, times[2 : nt]))
   
   w <- data.frame(trans, transp, Prev, Cur, prop, Frac,
                   txt=if(! length(labels))
                         ifelse(Prev == Cur,
                          paste0('Stay at:', as.character(Prev)),
                          paste0(as.character(Prev),
-                               ' ➙<br>', as.character(Cur)))
+                               arrowbr, as.character(Cur)))
                   else
                     ifelse(Prev == Cur,
                       paste0('Stay at:', labels[as.integer(Prev)]),
                       paste0(labels[as.integer(Prev)],
-                             ' ➙<br>', labels[as.integer(Cur)])))
+                             arrowbr, labels[as.integer(Cur)])))
   w$txt <- paste0(w$transp, '<br>', w$txt, '<br>', w$Frac)
   
   ggplot(w, aes(x=Prev, y=Cur, size=prop, label=txt)) +

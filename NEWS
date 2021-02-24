@@ -1,11 +1,10 @@
-Changes in version 4.5-3 (2020-02-21)
+Changes in version 4.5-3 (2020-02-23)
    * approxExtrap: changed x and y to as.numeric.  Thanks: juha.heikkinen@luke.fi
    * upData: fix column subsetting for data.tables
    * dotchartpl: intercepted missing Diff
    * simMarkovOrd, soprobMarkovOrd, intMarkovOrd, estSeqMarkovOrd: new functions for Markov proportional odds model simulation and calculation of state occupancy probabilities
    * ggfreqScatter: added by argument
    * VGAM package added to Suggests in DESCRIPTION
-   * ggfreqScatter: changed aes(label=) to aes(text=) to make it work properly with ggplotly
    * html markupSpecs mdchunk: added caption argument, allowed for vectors
    * propsTrans: added labels argument for plotly, added numerators and denominators in tooltips
 

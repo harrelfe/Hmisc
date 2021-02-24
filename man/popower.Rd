@@ -47,7 +47,8 @@ posamsize(p, odds.ratio, fraction=.5, alpha=0.05, power=0.8)
 \method{print}{posamsize}(x, \dots)
 pomodm(x=NULL, p, odds.ratio=1)
 propsPO(formula, odds.ratio=NULL, ref=NULL, data=NULL, ncol=NULL, nrow=NULL )
-propsTrans(formula, data=NULL, labels=NULL, maxsize=12, ncol=NULL, nrow=NULL)
+propsTrans(formula, data=NULL, labels=NULL, arrow='\u2794',
+           maxsize=12, ncol=NULL, nrow=NULL)
 multEventChart(formula, data=NULL, absorb=NULL, sortbylast=FALSE,
    colorTitle=label(y), eventTitle='Event',
    palette='OrRd',
@@ -118,6 +119,9 @@ for \code{posamsize}, the desired power (default is 0.8)
 	hovertext as a \code{label} attribute in the \code{ggplot2}
 	aesthetic.  Used with y is integer on axes but you want long labels in
 	hovertext.}
+\item{arrow}{character to use as the arrow symbol for transitions in
+	\code{propsTrans.  The default is the dingbats heavy wide-headed
+		rightwards arror.}}
 \item{nrow,ncol}{see \code{\link[ggplot2]{facet_wrap}}}
 \item{maxsize}{maximum symbol size}
 \item{\dots}{unused}

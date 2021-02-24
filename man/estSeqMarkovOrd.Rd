@@ -20,6 +20,7 @@ estSeqMarkovOrd(
   cscov = FALSE,
   timecriterion = NULL,
   coxzph = FALSE,
+  sstat = NULL,
   rdsample = NULL,
   nsim = 1,
   progress = FALSE,
@@ -57,6 +58,8 @@ estSeqMarkovOrd(
 
 \item{coxzph}{set to \code{TRUE} if \code{timecriterion} is specified and you want to compute a statistic for testing proportional hazards at the last look of each simulated data}
 
+\item{sstat}{set to a function of the time vector and the corresponding vector of ordinal responses for a single group if you want to compute a Wilcoxon test on a derived quantity such as the number of days in a given state.}
+
 \item{rdsample}{an optional function to do response-dependent sampling.  It is a function of these arguments, which are vectors that stop at any absorbing state: \code{times} (ascending measurement times for one subject), \code{y} (vector of ordinal outcomes at these times for one subject.  The function returns \code{NULL} if no observations are to be dropped, returns the vector of new times to sample.}
 
 \item{nsim}{number of simulations (default is 1)}
@@ -66,7 +69,7 @@ estSeqMarkovOrd(
 \item{pfile}{file to which to write progress information.  Defaults to \code{''} which is the console.  Ignored if \code{progress=FALSE}.}
 }
 \value{
-a data frame with number of rows equal to the product of \code{nsim}, the length of \code{looks}, and the length of \code{parameter}, with variables \code{sim}, \code{parameter}, \code{look}, \code{est} (log odds ratio for group), and \code{vest} (the variance of the latter).  If \code{timecriterion} is specified the data frame also contains \code{loghr} (Cox log hazard ratio for group), \code{lrchisq} (chi-square from Cox test for group), and if \code{coxph=TRUE}, \code{phchisq}, the chi-square for testing proportional hazards.  The attribute \code{etimefreq} is also present if \code{timecriterion=TRUE} and it probvides the frequency distribution of derived event times by group and censoring/event indicator.  The returned data frame also has attribute \code{lrmcoef} which is the average of all the last-look logistic regression coefficient estimates over the \code{nsim} simulations.
+a data frame with number of rows equal to the product of \code{nsim}, the length of \code{looks}, and the length of \code{parameter}, with variables \code{sim}, \code{parameter}, \code{look}, \code{est} (log odds ratio for group), and \code{vest} (the variance of the latter).  If \code{timecriterion} is specified the data frame also contains \code{loghr} (Cox log hazard ratio for group), \code{lrchisq} (chi-square from Cox test for group), and if \code{coxph=TRUE}, \code{phchisq}, the chi-square for testing proportional hazards.  The attribute \code{etimefreq} is also present if \code{timecriterion=TRUE} and it probvides the frequency distribution of derived event times by group and censoring/event indicator.  If \code{sstat} is given, the attribute \code{sstat} is also present, and it contains an array with dimensions corresponding to simulations, parameter values within simulations, \code{id}, and a two-column subarray with columns \code{group} and \code{y}, the latter being the summary measure computed by the \code{sstat} function.  The returned data frame also has attribute \code{lrmcoef} which is the average of all the last-look logistic regression coefficient estimates over the \code{nsim} simulations.
 }
 \description{
 Simulate Comparisons For Use in Sequential Markov Longitudinal Clinical Trial Simulations
@@ -75,7 +78,7 @@ Simulate Comparisons For Use in Sequential Markov Longitudinal Clinical Trial Si
 Simulates sequential clinical trials of longitudinal ordinal outcomes using a first-order Markov model.  Looks are done sequentially after subject ID numbers given in the vector \code{looks} with the earliest possible look being after subject 2.  At each look, a subject's repeated records are either all used or all ignored depending on the sequent ID number.  For each true effect parameter value, simulation, and at each look, runs a function to compute the estimate of the parameter of interest along with its variance.  For each simulation, data are first simulated for the last look, and these data are sequentially revealed for earlier looks.  The user provides a function \code{g} that has extra arguments specifying the true effect of \code{parameter} the treatment \code{group} expecting treatments to be coded 1 and 2.  \code{parameter} is usually on the scale of a regression coefficient, e.g., a log odds ratio.  Fitting is done using the \code{rms::lrm()} function, unless non-proportional odds is allowed in which case \code{VGAM::vgam()} is used.  If \code{timecriterion} is specified, the function also, for the last data look only, computes the first time at which the criterion is satisfied for the subject.  The Cox/logrank chi-square statistic for comparing groups on the derived time variable is saved.  If \code{coxzph=TRUE}, the \code{survival} package correlation coefficient \code{rho} from the scaled partial residuals is also saved so that the user can later determine to what extent the Markov model resulted in the proportional hazards assumption being violated when analyzing on the time scale.
 }
 \seealso{
-\code{gbayesSeqSim()}, \code{simMarkovOrd()}, \url{https://hbiostat.org/R/Hmisc/markov}
+\code{gbayesSeqSim()}, \code{simMarkovOrd()}, \url{https://hbiostat.org/R/Hmisc/markov/}
 }
 \author{
 Frank Harrell

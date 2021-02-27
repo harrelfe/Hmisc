@@ -1,4 +1,4 @@
-Changes in version 4.5-3 (2020-02-23)
+Changes in version 4.5-3 (2020-02-27)
    * approxExtrap: changed x and y to as.numeric.  Thanks: juha.heikkinen@luke.fi
    * upData: fix column subsetting for data.tables
    * dotchartpl: intercepted missing Diff
@@ -6,7 +6,7 @@ Changes in version 4.5-3 (2020-02-23)
    * ggfreqScatter: added by argument
    * VGAM package added to Suggests in DESCRIPTION
    * html markupSpecs mdchunk: added caption argument, allowed for vectors
-   * propsTrans: added labels argument for plotly, added numerators and denominators in tooltips
+   * propsTrans: added labels argument for plotly, added numerators and denominators in tooltips, fixed bug where factor levels were reversed if odds.ratio specified
 
 Changes in version 4.4-2 (2020-11-25)
    * rcorr: captured loss of precision leading to square root of a negative number.  Thanks: Ann Voss <avoss@novanthealth.org>

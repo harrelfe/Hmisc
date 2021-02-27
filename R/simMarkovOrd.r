@@ -513,4 +513,4 @@ intMarkovOrd <- function(y, times, initial, absorb=NULL,
   list(intercepts=ints, extra=extra)
 }
 
-utils::globalVariables(c('id', 'group', 'event'))
+utils::globalVariables(c('id', 'group', 'event', ':=', 'ys'))

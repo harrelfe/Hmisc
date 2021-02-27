@@ -166,8 +166,11 @@ propsPO <- function(formula, odds.ratio=NULL, ref=NULL, data=NULL,
   names(d) <- c('y', 'x', sn)
   ## ggplot2 bar chart puts first category at the top
   ## Let's put it at the bottom
-  d$y  <- factor(d$y, levels=rev(levels(as.factor(d$y))))
 
+  revo <- function(z) {
+    z <- as.factor(z)
+    factor(z, levels=rev(levels(as.factor(z))))
+    }
   
   # For each x compute the vector of proportions of y categories
   # Assume levels are in order
@@ -204,7 +207,7 @@ propsPO <- function(formula, odds.ratio=NULL, ref=NULL, data=NULL,
 
     plegend <- guides(fill=guide_legend(title=yl))
     if(! length(odds.ratio)) {
-      gg <- ggplot(pm, aes(x=as.factor(x), y=prop, fill=factor(y), label=txt)) +
+      gg <- ggplot(pm, aes(x=as.factor(x), y=prop, fill=revo(y), label=txt)) +
         geom_col() + plegend + xlab(xl) + ylab('Proportion')
       return(gg)
     }
@@ -213,7 +216,7 @@ propsPO <- function(formula, odds.ratio=NULL, ref=NULL, data=NULL,
     pm <- melt(p, id=c('x', 's'), variable.name='y', value.name='prop')
     pm <- atxt(pm, pm$s)
     plegend <- guides(fill=guide_legend(title=yl))
-    gg <- ggplot(pm, aes(x=as.factor(x), y=prop, fill=factor(y), label=txt)) +
+    gg <- ggplot(pm, aes(x=as.factor(x), y=prop, fill=revo(y), label=txt)) +
         facet_wrap(~ s, ncol=ncol, nrow=nrow) +
         geom_col() + plegend + xlab(xl) + ylab('Proportion')
     return(gg)
@@ -226,19 +229,19 @@ propsPO <- function(formula, odds.ratio=NULL, ref=NULL, data=NULL,
   propfirstx <- as.numeric(sub(' .*', '', pfx)) /
                 as.numeric(sub('.* ', '', pfx))
   
-  g <- function(x) {
+  .g. <- function(x) {
     w <- pomodm(p=propfirstx, odds.ratio=odds.ratio(x))
     names(w) <- levels(y)
     w
   }
-  pa <- d[, as.list(g(x)), by=x]
+  pa <- d[, as.list(.g.(x)), by=x]
   pma <- melt(pa, id=1, variable.name='y', value.name='prop')
   pma <- atxt(pma, or=TRUE)
   w <- rbind(cbind(type=1, pm),
              cbind(type=2, pma))
   w$type <- factor(w$type, 1 : 2,
                    c('Observed', 'Asssuming Proportional Odds'))
-  ggplot(w, aes(x=as.factor(x), y=prop, fill=factor(y), label=txt)) +
+  ggplot(w, aes(x=as.factor(x), y=prop, fill=revo(y), label=txt)) +
     geom_col() +
     facet_wrap(~ type, nrow=2) +
     plegend + xlab(xl) + ylab('Proportion')

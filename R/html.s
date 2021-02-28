@@ -414,28 +414,36 @@ markupSpecs <- list(html=list(
         }
   },
   
-  session  = function(cite=TRUE, loadedOnly=FALSE) {
+  session  = function(cite=TRUE, loadedOnly=FALSE, style=NULL) {
     si <- sessionInfo()
     if(! loadedOnly) si$loadedOnly <- NULL
-    sty <- if(knitr::is_html_output()) 'html'  else
-      if(knitr::is_latex_output()) 'latex' else 'text'
-    w <- c('\n```\n',
+    # Need to default to html because non-RStudio knitting to .md
+    # will not know ultimate output format
+    if(! length(style))
+      style <- if(knitr::is_html_output() ) 'html'  else
+               if(knitr::is_latex_output()) 'latex' else 'html'
+    tt <- function(x) switch(style,
+                             text = x,
+                             html = paste0('<tt>', x, '</tt>'),
+                             latex = paste0('\\texttt{', x, '}'))
+    w <- c(if(style == 'html') '<pre>',
+           if(style == 'latex') toLatex(si, locale=FALSE) else
            capture.output(print(si, locale=FALSE)),
-           '```\n',
+           if(style == 'html') '</pre>',
            if(cite) 'To cite R in publications use:',
-           if(cite) capture.output(print(citation(), style=sty)))
+           if(cite) capture.output(print(citation(), style=style)))
     if(cite) {
       s <- search()
       for(pac in c('Hmisc', 'rms', 'rmsb', 'hreport')) {
         if(paste0('package:', pac) %in% s) {
-          w <- c(w, paste0('To cite the ', pac,
-                           ' package in publications use:'))
-          w <- c(w, capture.output(print(citation(pac), style=sty)))
+          w <- c(w, paste0('\nTo cite the ', tt(pac),
+                           ' package in publications use:\n'))
+          w <- c(w, capture.output(print(citation(pac), style=style)))
           }
         }
       }
     w <- paste0(w, '\n')
-    htmltools::HTML(w)
+    if(style == 'html') htmltools::HTML(w) else knitr::asis_output(w)
   },
   installcsl = function(cslname, rec=FALSE) {
     if(rec) {

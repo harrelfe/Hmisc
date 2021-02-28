@@ -417,11 +417,23 @@ markupSpecs <- list(html=list(
   session  = function(cite=TRUE, loadedOnly=FALSE) {
     si <- sessionInfo()
     if(! loadedOnly) si$loadedOnly <- NULL
-    w <- c('<pre>',
+    sty <- if(knitr::is_html_output()) 'html'  else
+      if(knitr::is_latex_output()) 'latex' else 'text'
+    w <- c('\n```\n',
            capture.output(print(si, locale=FALSE)),
-           '</pre>',
-           if(cite) 'To cite R in publication use:',
-           if(cite) capture.output(print(citation(), style='html')))
+           '```\n',
+           if(cite) 'To cite R in publications use:',
+           if(cite) capture.output(print(citation(), style=sty)))
+    if(cite) {
+      s <- search()
+      for(pac in c('Hmisc', 'rms', 'rmsb', 'hreport')) {
+        if(paste0('package:', pac) %in% s) {
+          w <- c(w, paste0('To cite the ', pac,
+                           ' package in publications use:'))
+          w <- c(w, capture.output(print(citation(pac), style=sty)))
+          }
+        }
+      }
     w <- paste0(w, '\n')
     htmltools::HTML(w)
   },
@@ -602,10 +614,12 @@ mdchunk = function(md=rep('', length(robj)), robj,
     cnames <- if(cnames) paste0(bn, 1 : n) else rep('', n)
   if(! all(cnames == '')) cnames <- paste0(cnames, ',')
   
-    for(i in 1 : n) {
-      if(method == 'knit_expand') .obj. <- robj[[i]]
-      else assign('.obj.', robj[[i]], envir=.GlobalEnv)
-      k <- c(md[[i]], paste0('```{r ', cnames[i], opts[i], '}'), '.obj.', '```')
+  for(i in 1 : n) {
+    pos <- 1
+    env <- as.environment(pos)
+    if(method == 'knit_expand') .obj. <- robj[[i]]
+    else assign('.obj.', robj[[i]], envir=env)
+    k <- c(md[[i]], paste0('```{r ', cnames[i], opts[i], '}'), '.obj.', '```')
       ## Original solution had cat(trimws(...)) but this caused
       ## section headings to be run into R output and markdown not recog.
       switch(method,
@@ -613,7 +627,7 @@ mdchunk = function(md=rep('', length(robj)), robj,
                                            quiet=TRUE)),
              knit_child = knitr::knit_child(text=k, quiet=TRUE)
              )
-    }
+  }
 },
 ## Function to define css for putting a background around a character string
 ## to make it look more like a button

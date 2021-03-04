@@ -513,4 +513,100 @@ intMarkovOrd <- function(y, times, initial, absorb=NULL,
   list(intercepts=ints, extra=extra)
 }
 
+
+#' State Occupancy Probabilities for First-Order Markov Ordinal Model from a Model Fit
+#'
+#' Computes state occupancy probabilities for a single setting of baseline covariates.  If the model fit was from `rms::blrm()`, these probabilities are from all the posterior draws of the basic model parameters.  Otherwise they are maximum likelihood point estimates.
+#'
+#' @title soprobMarkovOrdm
+#' @param object a fit object created by `blrm`, `lrm`, or `orm`
+#' @param data a single observation list or data frame with covariate settings, including the initial state for Y
+#' @param times vector of measurement times
+#' @param ylevels a vector of ordered levels of the outcome variable (numeric or character)
+#' @param absorb vector of absorbing states, a subset of `ylevels`.  The default is no absorbing states. (numeric, character, factor)
+#' @param tvarname name of time variable, defaulting to `time`
+#' @param pvarname name of previous state variable, defaulting to `yprev`
+#' @param gap name of time gap variable, defaults assuming that gap time is not in the model
+#'
+#' @return if `object` was not a Bayesian model, a matrix with rows corresponding to times and columns corresponding to states, with values equal to exact state occupancy probabilities.  If `object` was created by `blrm`, the result is a 3-dimensional array with the posterior draws as the first dimension.
+#' @export
+#' @author Frank Harrell
+#' @seealso <https://hbiostat.org/R/Hmisc/markov/>
+#' @md
+soprobMarkovOrdm <- function(object, data, times, ylevels, absorb=NULL,
+                             tvarname='time', pvarname='yprev',
+                             gap=NULL) {
+
+  if(pvarname %nin% names(data))
+    stop(paste(pvarname, 'is not in data'))
+  if(length(absorb) && (pvarname %in% absorb))
+    stop('initial state cannot be an absorbing state')
+
+	nd <- if(length(object$draws)) nrow(object$draws) else 0
+  k  <- length(ylevels)
+  s  <- length(times)
+  P  <- if(nd == 0)
+          array(NA, c(s, k),
+  						dimnames=list(as.character(times), 
+  													as.character(ylevels))) else
+          array(NA, c(nd, s, k),
+  						dimnames=list(paste('draw', 1 : nd), as.character(times), 
+  													as.character(ylevels)))
+  # Never uncondition on initial state
+  data[[tvarname]] <- times[1]
+  if(length(gap)) data[[gap]] <- times[1]
+  if(nd == 0) {
+    p <- predict(object, data, type='fitted.ind')
+    P[1, ] <- p
+  }
+  else {
+    p <- predict(object, data, type='fitted.ind', posterior.summary='all')
+    P[, 1, ] <- p
+  }
+  # cp: matrix of conditional probabilities of Y conditioning on previous time Y
+  # Columns = k conditional probabilities conditional on a single previous state
+  # Rows    = all possible previous states
+  # This is for a single posterior draw (or for a frequentist fit)
+  rnameprev   <- paste('t-1', ylevels)
+  rnameprevna <- paste('t-1', setdiff(ylevels, absorb))
+  if(length(absorb)) {
+    rnamepreva <- paste('t-1', absorb)
+    cnamea     <- paste('t',   absorb)
+    }
+  cp <- matrix(0., nrow=k, ncol=k, 
+               dimnames=list(rnameprev, paste('t', ylevels)))
+  ## cp is initialized to zero, which will remain the values for
+  ## probabilities of moving out of absorbing (row) states
+  ## Set probabilities of staying in absorbing states to 1
+  if(length(absorb)) cp[cbind(rnamepreva, cnamea)] <- 1.
+  
+  data <- as.list(data)
+  yna  <- setdiff(ylevels, absorb)  # non-absorbing states
+  data[[pvarname]] <- yna   # don't request estimates for absorbing states
+  edata <- expand.grid(data)
+  for(it in 2 : s) {
+    edata[[tvarname]] <- times[it]
+    if(length(gap)) edata[[gap]] <- times[it] - times[it - 1]
+    if(nd == 0) {
+      pp <- predict(object, edata, type='fitted.ind')
+      ## If there are absorbing states, make a bigger version of
+      ## the cell probability matrix that includes them
+      ## Rows representing absorbing states have P(stating in that state)=1
+      cp[rnameprevna, ] <- pp
+      
+      ## Compute unconditional probabilities of being in all possible states
+      ## at current time t
+      P[it, ] <- t(cp) %*% P[it - 1, ]
+    }
+    else {
+      pp <- predict(object, edata, type='fitted.ind', posterior.summary='all')
+      for(idraw in 1 : nd) {
+        cp[rnameprevna, ] <- pp[idraw, ,]
+        P[idraw, it, ] <- t(cp) %*% P[idraw, it - 1, ]
+      }
+    }
+  }
+  P
+}
+
 utils::globalVariables(c('id', 'group', 'event', ':=', 'ys'))

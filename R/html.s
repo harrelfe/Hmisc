@@ -770,7 +770,7 @@ markdown = list(
   # Function to print an object or inline text or both,
   # verbatim quoting if needed (results='asis') in effect in chunk
   # Inline text is printed with cat()
-  pr <- function(x='', obj=NULL, inline=NULL) {
+  pr = function(x='', obj=NULL, inline=NULL) {
     r <- knitr::opts_current$get('results')
     asis <- length(r) && r == 'asis'
     if(asis) cat('\n```')

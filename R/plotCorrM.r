@@ -4,8 +4,11 @@
 ##' @title plotCorrM
 ##' @param r correlation matrix
 ##' @param what specifies whether to return plots or the data frame used in making the plots
+##' @param type specifies whether to use bottom-aligned rectangles (the default) or centered circles
 ##' @param xlab x-axis label for correlation matrix
 ##' @param ylab y-axis label for correlation matrix
+##' @param maxsize maximum circle size if `type='circle'`
+##' @param xangle angle for placing x-axis labels, defaulting to 0.  Consider using `xangle=45` when labels are long.
 ##' @return a list containing two `ggplot2` objects if `what='plots'`, or a data frame if `what='data'`
 ##' @author Frank Harrell
 ##' @md
@@ -16,9 +19,14 @@
 ##' g <- plotCorrM(r)
 ##' g[[1]]  # plot matrix
 ##' g[[2]]  # plot correlation vs gap time
-##' # ggplotly(g[[2]], tooltip='label')
-plotCorrM <- function(r, what=c('plots', 'data'), xlab='', ylab='') {
+##' # ggplotlyr(g[[2]])
+##' # ggplotlyr uses ggplotly with tooltip='label' then removes
+##' # txt: from hover text
+plotCorrM <- function(r, what=c('plots', 'data'),
+                      type=c('rectangle', 'circle'),
+                      xlab='', ylab='', maxsize=12, xangle=0) {
   what <- match.arg(what)
+  type <- match.arg(type)
   p <- dim(r)[1]
   v <- dimnames(r)[[1]]
   if(! length(v)) v <- as.character(1 : p)
@@ -35,17 +43,27 @@ plotCorrM <- function(r, what=c('plots', 'data'), xlab='', ylab='') {
   mx <- max(abs(d$r))
   
   g1 <-
-    ggplot(d, aes(x=x, y=y,
-                color=ifelse(r > 0, '+', '-'), label=txt)) +
-    geom_segment(aes(x=x, y=y, xend=x, yend=y + 0.9 * abs(r) / mx), size=3) +
-    scale_x_continuous(breaks = 1 : p, labels=v) +
-    scale_y_continuous(breaks = 1 : p, labels=v) +
-    guides(color = guide_legend(title=''),
-           size  = guide_legend(title='r')) +
-    xlab(xlab) + ylab(ylab) +
-    theme(axis.text.x=element_text(angle=45)) +
-    labs(subtitle=paste0('max |r|:', round(mx, 3),
-                         '  min |r|:', round(mn, 3)))
+    switch(type,
+           rectangle = ggplot(d,
+                              aes(x=x, y=y,
+                                  color=ifelse(r > 0, '+', '-'), label=txt)) +
+             geom_segment(aes(x=x, y=y, xend=x, yend=y + 0.9 * abs(r) / mx),
+                          size=3),
+           circle    = ggplot(d,
+                              aes(x=x, y=y,
+                                  color=ifelse(r > 0, '+', '-'), label=txt,
+                                  size=abs(r))) +
+             geom_point() + scale_size(range = c(0, maxsize)) )
+           
+    g1 <- g1 + scale_x_continuous(breaks = 1 : p, labels=v) +
+      scale_y_continuous(breaks = 1 : p, labels=v) +
+      guides(color = guide_legend(title=''),
+             size  = guide_legend(title='r')) +
+      xlab(xlab) + ylab(ylab) +
+      theme(axis.text.x=element_text(angle=xangle)) +
+      labs(subtitle=paste0('max |r|:', round(mx, 3),
+                           '  min |r|:', round(mn, 3)))
+  
   # Would not run loess if use text=txt
   # Need to run ggplotly with tooltip='label'
   g2 <- ggplot(d, aes(x=delta, y=r, label=txt)) +
@@ -53,3 +71,5 @@ plotCorrM <- function(r, what=c('plots', 'data'), xlab='', ylab='') {
     xlab('Absolute Time Difference') + ylab('Correlation')
   list(g1, g2)
   }
+
+utils::globalVariables('delta')

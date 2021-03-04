@@ -4,16 +4,30 @@
 \alias{plotCorrM}
 \title{plotCorrM}
 \usage{
-plotCorrM(r, what = c("plots", "data"), xlab = "", ylab = "")
+plotCorrM(
+  r,
+  what = c("plots", "data"),
+  type = c("rectangle", "circle"),
+  xlab = "",
+  ylab = "",
+  maxsize = 12,
+  xangle = 0
+)
 }
 \arguments{
 \item{r}{correlation matrix}
 
 \item{what}{specifies whether to return plots or the data frame used in making the plots}
 
+\item{type}{specifies whether to use bottom-aligned rectangles (the default) or centered circles}
+
 \item{xlab}{x-axis label for correlation matrix}
 
 \item{ylab}{y-axis label for correlation matrix}
+
+\item{maxsize}{maximum circle size if \code{type='circle'}}
+
+\item{xangle}{angle for placing x-axis labels, defaulting to 0.  Consider using \code{xangle=45} when labels are long.}
 }
 \value{
 a list containing two \code{ggplot2} objects if \code{what='plots'}, or a data frame if \code{what='data'}
@@ -30,7 +44,9 @@ r <- cor(matrix(rnorm(100), ncol=10))
 g <- plotCorrM(r)
 g[[1]]  # plot matrix
 g[[2]]  # plot correlation vs gap time
-# ggplotly(g[[2]], tooltip='label')
+# ggplotlyr(g[[2]])
+# ggplotlyr uses ggplotly with tooltip='label' then removes
+# txt: from hover text
 }
 \author{
 Frank Harrell

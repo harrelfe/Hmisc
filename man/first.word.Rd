@@ -44,7 +44,7 @@ Department of Statistics,
 \cr
 Temple University, Philadelphia, PA.
 \cr
-\email{rmh@astro.ocis.temple.edu}
+\email{rmh@temple.edu}
 }
 \examples{
 first.word(expr=expression(y ~ x + log(w)))

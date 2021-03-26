@@ -175,7 +175,7 @@ format.df(x, digits, dec=NULL, rdec=NULL, cdec=NULL,
   \cr
   Temple University, Philadelphia, PA.
   \cr
-  \email{rmh@astro.ocis.temple.edu}
+  \email{rmh@temple.edu}
 
 
 }

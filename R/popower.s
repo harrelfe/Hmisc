@@ -281,6 +281,7 @@ propsTrans <- function(formula, data=NULL, labels=NULL, arrow='\u2794',
     tab   <- table(prev, cur)
     rowf  <- rowSums(tab)
     tab   <- as.data.frame(tab)
+    tab   <- subset(tab, Freq > 0)
     tab$denom <- rowf[tab$prev]
     tab$prop  <- tab$Freq / tab$denom
     Prev  <- c(Prev, as.character(tab$prev))

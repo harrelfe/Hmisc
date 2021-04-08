@@ -52,7 +52,7 @@ combplotp <- function(formula, data=NULL, subset, na.action=na.retain,
                       vnames=c('labels', 'names'),
                       includenone=FALSE, showno=FALSE,
                       maxcomb=NULL, minfreq=NULL, N=NULL,
-                      pos=function(x) 1 * (toupper(x) %in% 
+                      pos=function(x) 1 * (tolower(x) %in% 
                         c('true', 'yes', 'y', 'positive', '+', 'present', '1')),
                       obsname='subjects',
                       ptsize=35, width=NULL, height=NULL,
@@ -72,7 +72,6 @@ combplotp <- function(formula, data=NULL, subset, na.action=na.retain,
       else
         model.frame(formula, data=data, na.action=na.action)
       }
-
   # Get variable labels, defaulting to variable names
   labs <- if(vnames == 'names') structure(names(Y), names=names(Y))
   else {

@@ -1,12 +1,13 @@
-Changes in version 4.6-0 (2021-04-05)
+Changes in version 4.6-0 (2021-04-08)
    * package: improved author formatting in DESCRIPTION
    * html: markupSpecs$html$session: added citations for any Harrell packages that are loaded, respecting current output format in effect with knitr
-   * soprobMarkovOrdm: new function too compute state occupancy probabilities from proportion odds model fits
+   * soprobMarkovOrdm: new function to compute state occupancy probabilities from proportion odds model fits
    * plotCorrM: new function to graph correlation matrices and gap time relationships using ggplot2
    * ggplotlyr: new function to use plotly::ggplotly to render ggplot2 graphs but intercepting hover text to remove extraneous labels
    * Fixed Heiberger email address
    * propTrans: removed zero frequency combinations
-	 
+   * combplotp: fixed bug in case regarding recognition of positives
+
 Changes in version 4.5-0 (2021-02-27)
    * approxExtrap: changed x and y to as.numeric.  Thanks: juha.heikkinen@luke.fi
    * upData: fix column subsetting for data.tables

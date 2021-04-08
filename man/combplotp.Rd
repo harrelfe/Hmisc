@@ -15,7 +15,7 @@ combplotp(
   maxcomb = NULL,
   minfreq = NULL,
   N = NULL,
-  pos = function(x) 1 * (toupper(x) \%in\% c("true", "yes", "y", "positive", "+",
+  pos = function(x) 1 * (tolower(x) \%in\% c("true", "yes", "y", "positive", "+",
     "present", "1")),
   obsname = "subjects",
   ptsize = 35,

@@ -102,7 +102,7 @@ for \code{posamsize}, the desired power (default is 0.8)
 }
 \item{formula}{an R formula expressure for \code{proposPO} where the
 	outcome categorical variable is on the left hand side and the grouping
-	variable is on the right.  It is assume that the left hand variable is
+	variable is on the right.  It is assumed that the left hand variable is
 	either already a factor or will have its levels in the right order for
 	an ordinal model when it is converted to factor.  For
 	\code{multEventChart} the left hand variable is a categorial status

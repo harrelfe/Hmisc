@@ -151,6 +151,7 @@ propsPO <- function(formula, odds.ratio=NULL, ref=NULL, data=NULL,
   y  <- d[[v[1]]]
   yl <- label(y, default=v[1])
   y  <- as.factor(y)
+  d[[v[1]]] <- y
   x  <- d[[v[2]]]
   xl <- label(x, default=v[2])
   s  <- sn <- NULL

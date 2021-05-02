@@ -555,6 +555,7 @@ soprobMarkovOrdm <- function(object, data, times, ylevels, absorb=NULL,
   # Never uncondition on initial state
   data[[tvarname]] <- times[1]
   if(length(gap)) data[[gap]] <- times[1]
+  data <- as.data.frame(data)
   if(nd == 0) {
     p <- predict(object, data, type='fitted.ind')
     P[1, ] <- p

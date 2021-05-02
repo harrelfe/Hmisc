@@ -1,4 +1,4 @@
-Changes in version 4.6-0 (2021-04-25)
+Changes in version 4.6-0 (2021-05-02)
    * package: improved author formatting in DESCRIPTION
    * html: markupSpecs$html$session: added citations for any Harrell packages that are loaded, respecting current output format in effect with knitr
    * soprobMarkovOrdm: new function to compute state occupancy probabilities from proportion odds model fits
@@ -8,6 +8,7 @@ Changes in version 4.6-0 (2021-04-25)
    * propTrans: removed zero frequency combinations
    * combplotp: fixed bug in case regarding recognition of positives
    * propsPO: fixed making y factor
+   * soprobMarkovOrdm: added as.data.frame(generated data)
 
 Changes in version 4.5-0 (2021-02-27)
    * approxExtrap: changed x and y to as.numeric.  Thanks: juha.heikkinen@luke.fi

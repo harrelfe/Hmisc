@@ -205,7 +205,7 @@ soprobMarkovOrd <- function(y, times, initial, absorb=NULL,
 
 ##' Simulate Comparisons For Use in Sequential Markov Longitudinal Clinical Trial Simulations
 ##'
-##' Simulates sequential clinical trials of longitudinal ordinal outcomes using a first-order Markov model.  Looks are done sequentially after subject ID numbers given in the vector `looks` with the earliest possible look being after subject 2.  At each look, a subject's repeated records are either all used or all ignored depending on the sequent ID number.  For each true effect parameter value, simulation, and at each look, runs a function to compute the estimate of the parameter of interest along with its variance.  For each simulation, data are first simulated for the last look, and these data are sequentially revealed for earlier looks.  The user provides a function `g` that has extra arguments specifying the true effect of `parameter` the treatment `group` expecting treatments to be coded 1 and 2.  `parameter` is usually on the scale of a regression coefficient, e.g., a log odds ratio.  Fitting is done using the `rms::lrm()` function, unless non-proportional odds is allowed in which case `VGAM::vgam()` is used.  If `timecriterion` is specified, the function also, for the last data look only, computes the first time at which the criterion is satisfied for the subject.  The Cox/logrank chi-square statistic for comparing groups on the derived time variable is saved.  If `coxzph=TRUE`, the `survival` package correlation coefficient `rho` from the scaled partial residuals is also saved so that the user can later determine to what extent the Markov model resulted in the proportional hazards assumption being violated when analyzing on the time scale.
+##' Simulates sequential clinical trials of longitudinal ordinal outcomes using a first-order Markov model.  Looks are done sequentially after subject ID numbers given in the vector `looks` with the earliest possible look being after subject 2.  At each look, a subject's repeated records are either all used or all ignored depending on the sequent ID number.  For each true effect parameter value, simulation, and at each look, runs a function to compute the estimate of the parameter of interest along with its variance.  For each simulation, data are first simulated for the last look, and these data are sequentially revealed for earlier looks.  The user provides a function `g` that has extra arguments specifying the true effect of `parameter` the treatment `group` expecting treatments to be coded 1 and 2.  `parameter` is usually on the scale of a regression coefficient, e.g., a log odds ratio.  Fitting is done using the `rms::lrm()` function, unless non-proportional odds is allowed in which case `VGAM::vgam()` is used.  If `timecriterion` is specified, the function also, for the last data look only, computes the first time at which the criterion is satisfied for the subject or use the event time and event/censoring indicator computed by `timecriterion`.  The Cox/logrank chi-square statistic for comparing groups on the derived time variable is saved.  If `coxzph=TRUE`, the `survival` package correlation coefficient `rho` from the scaled partial residuals is also saved so that the user can later determine to what extent the Markov model resulted in the proportional hazards assumption being violated when analyzing on the time scale.
 ##' @title estSeqMarkovOrd
 ##' @inheritParams simMarkovOrd
 ##' @param y vector of possible y values in order (numeric, character, factor)
@@ -218,15 +218,15 @@ soprobMarkovOrd <- function(y, times, initial, absorb=NULL,
 ##' @param formula a formula object given to the `lrm()` function using variables with these name: `y`, `time`, `yprev`, and `group` (factor variable having values '1' and '2').  The `yprev` variable is converted to a factor before fitting the model unless `yprevfactor=FALSE`.
 ##' @param ppo a formula specifying the part of `formula` for which proportional odds is not to be assumed, i.e., that specifies a partial proportional odds model.  Specifying `ppo` triggers the use of `VGAM::vgam()` instead of `rms::lrm` and will make the simulations run slower.
 ##' @param yprevfactor see `formula`
-##' @param groupContrast omit this argument if `group` has only one regression coefficient in `formula`.  Otherwise if `ppo` is omitted, provide `groupContrast` as a list of two lists that are passed to `rms::contrast.rms()` to compute the contrast of interest and its standard error.  The first list corresponds to group 1, the second to group 2, to get a 2:1 contrast.  If `ppo` is given and the group effect is not just a simple regression coefficient, specify as `groupContrast` a function of a `vgam` fit that computes the contrast of interest and its standard error and returns a list with elements named `Contrast` and `SE`.
+##' @param groupContrast omit this argument if `group` has only one regression coefficient in `formula`.  Otherwise if `ppo` is omitted, provide `groupContrast` as a list of two lists that are passed to `rms::contrast.rms()` to compute the contrast of interest and its standard error.  The first list corresponds to group 1, the second to group 2, to get a 2:1 contrast.  If `ppo` is given and the group effect is not just a simple regression coefficient, specify as `groupContrast` a function of a `vgam` fit that computes the contrast of interest and its standard error and returns a list with elements named `Contrast` and `SE`.  For the latter type you can optionally have formal arguments `n1`, `n2`, and `parameter` that are passed to `groupContrast` to compute the standard error of the group contrast, where `n1` and `n2` respectively are the sample sizes for the two groups and `parameter` is the true group effect parameter value.
 ##' @param cscov applies if `ppo` is not used.  Set to `TRUE` to use the cluster sandwich covariance estimator of the variance of the group comparison.
-##' @param timecriterion a function of a time-ordered vector of simulated ordinal responses `y` that returns a vector `FALSE` or `TRUE` values denoting whether the current `y` level met the condition of interest.  For example `estSeqMarkovOrd` will compute the first time at which `y >= 5` if you specify `timecriterion=function(y) y >= 5`.  This function is only called at the last data look for each simulated study.
+##' @param timecriterion a function of a time-ordered vector of simulated ordinal responses `y` that returns a vector `FALSE` or `TRUE` values denoting whether the current `y` level met the condition of interest.  For example `estSeqMarkovOrd` will compute the first time at which `y >= 5` if you specify `timecriterion=function(y) y >= 5`.  This function is only called at the last data look for each simulated study.  To have more control, instead of `timecriterion` returning a logical vector have it return a numeric 2-vector containing, in order, the event/censoring time and the 1/0 event/censoring indicator.
 ##' @param sstat set to a function of the time vector and the corresponding vector of ordinal responses for a single group if you want to compute a Wilcoxon test on a derived quantity such as the number of days in a given state.  
 ##' @param coxzph set to `TRUE` if `timecriterion` is specified and you want to compute a statistic for testing proportional hazards at the last look of each simulated data
 ##' @param nsim number of simulations (default is 1)
 ##' @param progress set to `TRUE` to send current iteration number to `pfile` every 10 iterations.  Each iteration will really involve multiple simulations, if `parameter` has length greater than 1.
 ##' @param pfile file to which to write progress information.  Defaults to `''` which is the console.  Ignored if `progress=FALSE`.
-##' @return a data frame with number of rows equal to the product of `nsim`, the length of `looks`, and the length of `parameter`, with variables `sim`, `parameter`, `look`, `est` (log odds ratio for group), and `vest` (the variance of the latter).  If `timecriterion` is specified the data frame also contains `loghr` (Cox log hazard ratio for group), `lrchisq` (chi-square from Cox test for group), and if `coxph=TRUE`, `phchisq`, the chi-square for testing proportional hazards.  The attribute `etimefreq` is also present if `timecriterion=TRUE` and it probvides the frequency distribution of derived event times by group and censoring/event indicator.  If `sstat` is given, the attribute `sstat` is also present, and it contains an array with dimensions corresponding to simulations, parameter values within simulations, `id`, and a two-column subarray with columns `group` and `y`, the latter being the summary measure computed by the `sstat` function.  The returned data frame also has attribute `lrmcoef` which is the average of all the last-look logistic regression coefficient estimates over the `nsim` simulations.
+##' @return a data frame with number of rows equal to the product of `nsim`, the length of `looks`, and the length of `parameter`, with variables `sim`, `parameter`, `look`, `est` (log odds ratio for group), and `vest` (the variance of the latter).  If `timecriterion` is specified the data frame also contains `loghr` (Cox log hazard ratio for group), `lrchisq` (chi-square from Cox test for group), and if `coxph=TRUE`, `phchisq`, the chi-square for testing proportional hazards.  The attribute `etimefreq` is also present if `timecriterion` is present, and it probvides the frequency distribution of derived event times by group and censoring/event indicator.  If `sstat` is given, the attribute `sstat` is also present, and it contains an array with dimensions corresponding to simulations, parameter values within simulations, `id`, and a two-column subarray with columns `group` and `y`, the latter being the summary measure computed by the `sstat` function.  The returned data frame also has attribute `lrmcoef` which is the average of all the last-look logistic regression coefficient estimates over the `nsim` simulations.
 ##' @author Frank Harrell
 ##' @seealso `gbayesSeqSim()`, `simMarkovOrd()`, <https://hbiostat.org/R/Hmisc/markov/>
 ##' @export
@@ -289,6 +289,10 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
                                  paste('id', 1 : N),
                                  c('group', 'y')))
 
+  groupContrastUsesN <-
+    length(groupContrast) &&
+       all(c('n1', 'n2', 'parameter') %in% names(formals(groupContrast)))
+
   ## For each simulation and each parameter value, simulate data for the
   ## whole study
 
@@ -296,6 +300,8 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
   pname <- if(isppo) 'group2' else 'group=2'
   h <- function(time, y) {
     u <- timecriterion(y)
+    if(! is.logical(u))
+      return(list(etime=as.numeric(u[1]), event=as.integer(u[2])))
     # Note that if there are any absorbing events, the time vector
     # would already have been truncated at the first of such events
     if(any(u)) list(etime=as.numeric(min(time[u])), event=1L)
@@ -304,6 +310,7 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
   }
 
   lrmcoef <- NULL
+  co.na   <- NULL   # template of coef vector with to be all NAs
   
   for(isim in 1 : nsim) {
     if(progress && (isim %% 10 == 0))
@@ -337,32 +344,47 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
       
       for(l in looks) {
         dat <- subset(sdata, id <= l)
-        
-        f   <- if(isppo)
+        f   <- try(if(isppo)
                  VGAM::vgam(formula,
                             VGAM::cumulative(parallel = ppo, reverse=TRUE),
                             data=dat)
                else
-                 rms::lrm(formula, data=dat, x=cscov, y=cscov)
-
-        if(cscov) f <- rms::robcov(f, dat$id)
+                 rms::lrm(formula, data=dat, x=cscov, y=cscov),
+               silent=TRUE)
+        fail <- inherits(f, 'try-error')
+        if(fail) warning(paste('fit failed for a simulated dataset:', f))
+        else if(! length(co.na)) {   # save template to insert for failures
+          co.na <- coef(f)
+          co.na[] <- NA
+          }
+        if(cscov && ! fail) f <- rms::robcov(f, dat$id)
         is         <- is + 1
         sim [is]   <- isim
         parm[is]   <- param
         look[is]   <- l
-        if(length(groupContrast)) {
-          fc <- if(isppo) groupContrast(f)
-                else
-                  rms::contrast(f, groupContrast[[2]], groupContrast[[1]])
-          est [is] <- fc$Contrast
-          vest[is] <- (fc$SE) ^ 2
-        }
-        else {
-          est [is]   <- coef(f)[pname]
-          vest[is]   <- vcov(f)[pname, pname]
-        }
+        if(fail) {
+          est [is] <- NA
+          vest[is] <- NA
+        } else {
+          if(length(groupContrast)) {
+            fc <- if(isppo) (if(groupContrastUsesN)
+                               groupContrast(f, n1=sum(dat$group == '1'),
+                                                n2=sum(dat$group == '2'),
+                                                parameter=param)
+                               else
+                                 groupContrast(f))
+                  else
+                    rms::contrast(f, groupContrast[[2]], groupContrast[[1]])
+            est [is] <- fc$Contrast
+            vest[is] <- (fc$SE) ^ 2
+          }
+          else {
+            est [is]   <- coef(f)[pname]
+            vest[is]   <- vcov(f)[pname, pname]
+          }
+          }
       }  # end looks
-      co <- coef(f)
+      co <- if(fail) co.na else coef(f)
       if(! length(lrmcoef))
         lrmcoef <- array(0., dim=c(length(parameter), nsim, length(co)),
                          dimnames=list(as.character(parameter),

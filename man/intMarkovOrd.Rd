@@ -46,7 +46,7 @@ intMarkovOrd(
 
 \item{constraints}{a function of two arguments: the vector of current intercept values and the vector of \code{extra} parameters, returning \code{TRUE} if that vector meets the constrains and \code{FALSE} otherwise}
 
-\item{printsop}{set to \code{TRUE} to print solved-for state occupancy probabilities for groups 1 and 2}
+\item{printsop}{set to \code{TRUE} to print solved-for state occupancy probabilities for groups 1 and 2 and log odds ratios corresponding to them}
 
 \item{...}{optional arguments to pass to \code{\link[stats:nlm]{stats::nlm()}}.  If this is specified, the arguments that \code{intMarkovOrd} normally sends to \code{nlm} are not used.}
 }

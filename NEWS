@@ -1,4 +1,4 @@
-Changes in version 4.6-0 (2021-05-25)
+Changes in version 4.6-0 (2021-05-27)
    * package: improved author formatting in DESCRIPTION
    * html: markupSpecs$html$session: added citations for any Harrell packages that are loaded, respecting current output format in effect with knitr
    * soprobMarkovOrdm: new function to compute state occupancy probabilities from proportion odds model fits
@@ -10,6 +10,7 @@ Changes in version 4.6-0 (2021-05-25)
    * propsPO: fixed making y factor
    * soprobMarkovOrdm: added as.data.frame(generated data)
    * estSeqMarkovOrd: extended timecriterion function to allow user to return the event/censoring time and indicator, and to allow groupContrast to compute using a variance formula
+   * estSeqMarkovOrd: sped up VGAM::vglm by using last fit as starting values;thanks Thomas Yee
 
 Changes in version 4.5-0 (2021-02-27)
    * approxExtrap: changed x and y to as.numeric.  Thanks: juha.heikkinen@luke.fi

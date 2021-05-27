@@ -205,7 +205,7 @@ soprobMarkovOrd <- function(y, times, initial, absorb=NULL,
 
 ##' Simulate Comparisons For Use in Sequential Markov Longitudinal Clinical Trial Simulations
 ##'
-##' Simulates sequential clinical trials of longitudinal ordinal outcomes using a first-order Markov model.  Looks are done sequentially after subject ID numbers given in the vector `looks` with the earliest possible look being after subject 2.  At each look, a subject's repeated records are either all used or all ignored depending on the sequent ID number.  For each true effect parameter value, simulation, and at each look, runs a function to compute the estimate of the parameter of interest along with its variance.  For each simulation, data are first simulated for the last look, and these data are sequentially revealed for earlier looks.  The user provides a function `g` that has extra arguments specifying the true effect of `parameter` the treatment `group` expecting treatments to be coded 1 and 2.  `parameter` is usually on the scale of a regression coefficient, e.g., a log odds ratio.  Fitting is done using the `rms::lrm()` function, unless non-proportional odds is allowed in which case `VGAM::vgam()` is used.  If `timecriterion` is specified, the function also, for the last data look only, computes the first time at which the criterion is satisfied for the subject or use the event time and event/censoring indicator computed by `timecriterion`.  The Cox/logrank chi-square statistic for comparing groups on the derived time variable is saved.  If `coxzph=TRUE`, the `survival` package correlation coefficient `rho` from the scaled partial residuals is also saved so that the user can later determine to what extent the Markov model resulted in the proportional hazards assumption being violated when analyzing on the time scale.
+##' Simulates sequential clinical trials of longitudinal ordinal outcomes using a first-order Markov model.  Looks are done sequentially after subject ID numbers given in the vector `looks` with the earliest possible look being after subject 2.  At each look, a subject's repeated records are either all used or all ignored depending on the sequent ID number.  For each true effect parameter value, simulation, and at each look, runs a function to compute the estimate of the parameter of interest along with its variance.  For each simulation, data are first simulated for the last look, and these data are sequentially revealed for earlier looks.  The user provides a function `g` that has extra arguments specifying the true effect of `parameter` the treatment `group` expecting treatments to be coded 1 and 2.  `parameter` is usually on the scale of a regression coefficient, e.g., a log odds ratio.  Fitting is done using the `rms::lrm()` function, unless non-proportional odds is allowed in which case `VGAM::vglm()` is used.  If `timecriterion` is specified, the function also, for the last data look only, computes the first time at which the criterion is satisfied for the subject or use the event time and event/censoring indicator computed by `timecriterion`.  The Cox/logrank chi-square statistic for comparing groups on the derived time variable is saved.  If `coxzph=TRUE`, the `survival` package correlation coefficient `rho` from the scaled partial residuals is also saved so that the user can later determine to what extent the Markov model resulted in the proportional hazards assumption being violated when analyzing on the time scale.
 ##' @title estSeqMarkovOrd
 ##' @inheritParams simMarkovOrd
 ##' @param y vector of possible y values in order (numeric, character, factor)
@@ -216,9 +216,9 @@ soprobMarkovOrd <- function(y, times, initial, absorb=NULL,
 ##' @param parameter vector of true parameter (effects; group differences) values.  These are group 2:1 log odds ratios in the transition model, conditioning on the previous `y`.
 ##' @param looks integer vector of ID numbers at which maximum likelihood estimates and their estimated variances are computed.  For a single look specify a scalar value for `loops` equal to the number of subjects in the sample.
 ##' @param formula a formula object given to the `lrm()` function using variables with these name: `y`, `time`, `yprev`, and `group` (factor variable having values '1' and '2').  The `yprev` variable is converted to a factor before fitting the model unless `yprevfactor=FALSE`.
-##' @param ppo a formula specifying the part of `formula` for which proportional odds is not to be assumed, i.e., that specifies a partial proportional odds model.  Specifying `ppo` triggers the use of `VGAM::vgam()` instead of `rms::lrm` and will make the simulations run slower.
+##' @param ppo a formula specifying the part of `formula` for which proportional odds is not to be assumed, i.e., that specifies a partial proportional odds model.  Specifying `ppo` triggers the use of `VGAM::vglm()` instead of `rms::lrm` and will make the simulations run slower.
 ##' @param yprevfactor see `formula`
-##' @param groupContrast omit this argument if `group` has only one regression coefficient in `formula`.  Otherwise if `ppo` is omitted, provide `groupContrast` as a list of two lists that are passed to `rms::contrast.rms()` to compute the contrast of interest and its standard error.  The first list corresponds to group 1, the second to group 2, to get a 2:1 contrast.  If `ppo` is given and the group effect is not just a simple regression coefficient, specify as `groupContrast` a function of a `vgam` fit that computes the contrast of interest and its standard error and returns a list with elements named `Contrast` and `SE`.  For the latter type you can optionally have formal arguments `n1`, `n2`, and `parameter` that are passed to `groupContrast` to compute the standard error of the group contrast, where `n1` and `n2` respectively are the sample sizes for the two groups and `parameter` is the true group effect parameter value.
+##' @param groupContrast omit this argument if `group` has only one regression coefficient in `formula`.  Otherwise if `ppo` is omitted, provide `groupContrast` as a list of two lists that are passed to `rms::contrast.rms()` to compute the contrast of interest and its standard error.  The first list corresponds to group 1, the second to group 2, to get a 2:1 contrast.  If `ppo` is given and the group effect is not just a simple regression coefficient, specify as `groupContrast` a function of a `vglm` fit that computes the contrast of interest and its standard error and returns a list with elements named `Contrast` and `SE`.  For the latter type you can optionally have formal arguments `n1`, `n2`, and `parameter` that are passed to `groupContrast` to compute the standard error of the group contrast, where `n1` and `n2` respectively are the sample sizes for the two groups and `parameter` is the true group effect parameter value.
 ##' @param cscov applies if `ppo` is not used.  Set to `TRUE` to use the cluster sandwich covariance estimator of the variance of the group comparison.
 ##' @param timecriterion a function of a time-ordered vector of simulated ordinal responses `y` that returns a vector `FALSE` or `TRUE` values denoting whether the current `y` level met the condition of interest.  For example `estSeqMarkovOrd` will compute the first time at which `y >= 5` if you specify `timecriterion=function(y) y >= 5`.  This function is only called at the last data look for each simulated study.  To have more control, instead of `timecriterion` returning a logical vector have it return a numeric 2-vector containing, in order, the event/censoring time and the 1/0 event/censoring indicator.
 ##' @param sstat set to a function of the time vector and the corresponding vector of ordinal responses for a single group if you want to compute a Wilcoxon test on a derived quantity such as the number of days in a given state.  
@@ -341,22 +341,29 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
       ## For each look compute the parameter estimate and its variance
       ## If a contrast is specified (say when treatment interacts with time)
       ## use that instead of a simple treatment effect
-      
+      ## For vglm speep up by taking as starting values the estimates
+      ## from the last successful run
+
+      flast <- NULL
       for(l in looks) {
         dat <- subset(sdata, id <= l)
         f   <- try(if(isppo)
-                 VGAM::vgam(formula,
+                 VGAM::vglm(formula,
                             VGAM::cumulative(parallel = ppo, reverse=TRUE),
-                            data=dat)
+                            data=dat,
+                            etastart = if(length(flast)) predict(flast))
                else
                  rms::lrm(formula, data=dat, x=cscov, y=cscov),
                silent=TRUE)
         fail <- inherits(f, 'try-error')
         if(fail) warning(paste('fit failed for a simulated dataset:', f))
-        else if(! length(co.na)) {   # save template to insert for failures
+        else {
+          if(isppo) flast <- f
+          if(! length(co.na)) {   # save template to insert for failures
           co.na <- coef(f)
           co.na[] <- NA
           }
+        }
         if(cscov && ! fail) f <- rms::robcov(f, dat$id)
         is         <- is + 1
         sim [is]   <- isim
@@ -450,7 +457,7 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
 #' @param ftarget an optional function defining constraints that relate to transition probabilities.  The function returns a penalty which is a sum of absolute differences in probabilities from target probabilities over possibly multiple targets.  The `ftarget` function must have two arguments: `intercepts` and `extra`.
 #' @param onlycrit set to `TRUE` to only return the achieved objective criterion and not print anything
 #' @param constraints a function of two arguments: the vector of current intercept values and the vector of `extra` parameters, returning `TRUE` if that vector meets the constrains and `FALSE` otherwise
-#' @param printsop set to `TRUE` to print solved-for state occupancy probabilities for groups 1 and 2
+#' @param printsop set to `TRUE` to print solved-for state occupancy probabilities for groups 1 and 2 and log odds ratios corresponding to them
 #' @param ... optional arguments to pass to [stats::nlm()].  If this is specified, the arguments that `intMarkovOrd` normally sends to `nlm` are not used.
 #'
 #' @return list containing two vectors named `intercepts` and `extra` unless `oncrit=TRUE` in which case the best achieved sum of absolute errors is returned
@@ -524,7 +531,7 @@ intMarkovOrd <- function(y, times, initial, absorb=NULL,
 
   ## Compute log odds ratios at day t
 
-  for(ti in t) {
+  if(printsop) for(ti in t) {
     ## Get cumulative probabilities from right to left except for the first    
     s1t <- rev(cumsum(rev(s1[ti, -1])))
     s2t <- rev(cumsum(rev(s2[ti, -1])))

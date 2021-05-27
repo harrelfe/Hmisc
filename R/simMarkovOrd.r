@@ -249,7 +249,8 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
     if(! requireNamespace('VGAM'))
       stop('ppo specified and VGAM package not available')
     # vgam wants you to declare FALSE to indicate non-PO
-    ppo <- formula(paste('FALSE ~', as.character(ppo)[-1]))
+    vglm <- VGAM::vglm
+    ppo  <- formula(paste('FALSE ~', as.character(ppo)[-1]))
     }
 
   if(isppo && cscov) stop('may not specify cscov=TRUE with ppo')
@@ -311,11 +312,14 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
 
   lrmcoef <- NULL
   co.na   <- NULL   # template of coef vector with to be all NAs
+  pprev   <- list() # to hold first working fit at last look for each parameter
+  ## pprev speeds up vglm
   
   for(isim in 1 : nsim) {
     if(progress && (isim %% 10 == 0))
       cat('Simulation', isim, '\n', file=pfile)
     for(param in parameter) {
+      cparam <- as.character(param)
       ## Sample N initial states
       initials <- sample(names(initial), N, replace=TRUE, prob=initial)
       if(is.numeric(y)) initials <- as.numeric(initials)
@@ -344,21 +348,23 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
       ## For vglm speep up by taking as starting values the estimates
       ## from the last successful run
 
-      flast <- NULL
       for(l in looks) {
         dat <- subset(sdata, id <= l)
-        f   <- try(if(isppo)
-                 VGAM::vglm(formula,
-                            VGAM::cumulative(parallel = ppo, reverse=TRUE),
-                            data=dat,
-                            etastart = if(length(flast)) predict(flast))
-               else
-                 rms::lrm(formula, data=dat, x=cscov, y=cscov),
-               silent=TRUE)
+        prevp <- pprev[[cparam]]
+        if(isppo) {
+          ## Could not get system to find prevp when regular call inside try()
+          ff <- call('vglm', formula,
+                     VGAM::cumulative(parallel=ppo, reverse=TRUE),
+                     etastart=prevp, data=dat)
+          f <- try(eval(ff), silent=TRUE)
+        } else
+          f <- try(rms::lrm(formula, data=dat, x=cscov, y=cscov), silent=TRUE)
+        
         fail <- inherits(f, 'try-error')
         if(fail) warning(paste('fit failed for a simulated dataset:', f))
         else {
-          if(isppo) flast <- f
+          if(isppo && l == max(looks) && ! length(pprev[[cparam]]))
+            pprev[[cparam]] <- predict(f) 
           if(! length(co.na)) {   # save template to insert for failures
           co.na <- coef(f)
           co.na[] <- NA

@@ -224,9 +224,11 @@ soprobMarkovOrd <- function(y, times, initial, absorb=NULL,
 ##' @param sstat set to a function of the time vector and the corresponding vector of ordinal responses for a single group if you want to compute a Wilcoxon test on a derived quantity such as the number of days in a given state.  
 ##' @param coxzph set to `TRUE` if `timecriterion` is specified and you want to compute a statistic for testing proportional hazards at the last look of each simulated data
 ##' @param nsim number of simulations (default is 1)
+##' @param maxest maximum acceptable absolute value of the contrast estimate, ignored if `NULL`.  Any values exceeding `maxest` will result in the estimate being set to `NA`.
+##' @param maxvest like `maxest` but for the estimated variance of the contrast estimate
 ##' @param progress set to `TRUE` to send current iteration number to `pfile` every 10 iterations.  Each iteration will really involve multiple simulations, if `parameter` has length greater than 1.
 ##' @param pfile file to which to write progress information.  Defaults to `''` which is the console.  Ignored if `progress=FALSE`.
-##' @return a data frame with number of rows equal to the product of `nsim`, the length of `looks`, and the length of `parameter`, with variables `sim`, `parameter`, `look`, `est` (log odds ratio for group), and `vest` (the variance of the latter).  If `timecriterion` is specified the data frame also contains `loghr` (Cox log hazard ratio for group), `lrchisq` (chi-square from Cox test for group), and if `coxph=TRUE`, `phchisq`, the chi-square for testing proportional hazards.  The attribute `etimefreq` is also present if `timecriterion` is present, and it probvides the frequency distribution of derived event times by group and censoring/event indicator.  If `sstat` is given, the attribute `sstat` is also present, and it contains an array with dimensions corresponding to simulations, parameter values within simulations, `id`, and a two-column subarray with columns `group` and `y`, the latter being the summary measure computed by the `sstat` function.  The returned data frame also has attribute `lrmcoef` which is the average of all the last-look logistic regression coefficient estimates over the `nsim` simulations.
+##' @return a data frame with number of rows equal to the product of `nsim`, the length of `looks`, and the length of `parameter`, with variables `sim`, `parameter`, `look`, `est` (log odds ratio for group), and `vest` (the variance of the latter).  If `timecriterion` is specified the data frame also contains `loghr` (Cox log hazard ratio for group), `lrchisq` (chi-square from Cox test for group), and if `coxph=TRUE`, `phchisq`, the chi-square for testing proportional hazards.  The attribute `etimefreq` is also present if `timecriterion` is present, and it probvides the frequency distribution of derived event times by group and censoring/event indicator.  If `sstat` is given, the attribute `sstat` is also present, and it contains an array with dimensions corresponding to simulations, parameter values within simulations, `id`, and a two-column subarray with columns `group` and `y`, the latter being the summary measure computed by the `sstat` function.  The returned data frame also has attribute `lrmcoef` which are the last-look logistic regression coefficient estimates over the `nsim` simulations and the parameter settings, and an attribute `failures` which is a data frame containing the variables `reason` and `frequency` cataloging the reasons for unsuccessful model fits.
 ##' @author Frank Harrell
 ##' @seealso `gbayesSeqSim()`, `simMarkovOrd()`, <https://hbiostat.org/R/Hmisc/markov/>
 ##' @export
@@ -238,6 +240,7 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
                             groupContrast=NULL, cscov=FALSE,
                             timecriterion=NULL, coxzph=FALSE,
                             sstat=NULL, rdsample=NULL,
+                            maxest=NULL, maxvest=NULL,
                             nsim=1, progress=FALSE, pfile='') {
 
   olddd <- getOption('datadist')
@@ -249,7 +252,7 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
     if(! requireNamespace('VGAM'))
       stop('ppo specified and VGAM package not available')
     # vgam wants you to declare FALSE to indicate non-PO
-    vglm <- VGAM::vglm
+#    vglm <- VGAM::vglm
     ppo  <- formula(paste('FALSE ~', as.character(ppo)[-1]))
     }
 
@@ -312,14 +315,15 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
 
   lrmcoef <- NULL
   co.na   <- NULL   # template of coef vector with to be all NAs
-  pprev   <- list() # to hold first working fit at last look for each parameter
+#  pprev   <- list() # to hold first working fit at last look for each parameter
   ## pprev speeds up vglm
+  failures <- character(0)
   
   for(isim in 1 : nsim) {
     if(progress && (isim %% 10 == 0))
       cat('Simulation', isim, '\n', file=pfile)
     for(param in parameter) {
-      cparam <- as.character(param)
+#      cparam <- as.character(param)
       ## Sample N initial states
       initials <- sample(names(initial), N, replace=TRUE, prob=initial)
       if(is.numeric(y)) initials <- as.numeric(initials)
@@ -345,29 +349,33 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
       ## For each look compute the parameter estimate and its variance
       ## If a contrast is specified (say when treatment interacts with time)
       ## use that instead of a simple treatment effect
-      ## For vglm speep up by taking as starting values the estimates
-      ## from the last successful run
+#      ## For vglm speep up by taking as starting values the estimates
+#      ## from the last successful run
 
       for(l in looks) {
         dat <- subset(sdata, id <= l)
-        prevp <- pprev[[cparam]]
+#        prevp <- pprev[[cparam]]
         if(isppo) {
+          f <- try(VGAM::vgam(formula,
+                              VGAM::cumulative(parallel=ppo, reverse=TRUE),
+                              data=dat), silent=TRUE)
           ## Could not get system to find prevp when regular call inside try()
-          ff <- call('vglm', formula,
-                     VGAM::cumulative(parallel=ppo, reverse=TRUE),
-                     etastart=prevp, data=dat)
-          f <- try(eval(ff), silent=TRUE)
+#          ff <- call('vglm', formula,
+#                     VGAM::cumulative(parallel=ppo, reverse=TRUE),
+#                     etastart=prevp, data=dat)
+#          f <- try(eval(ff), silent=TRUE)
         } else
           f <- try(rms::lrm(formula, data=dat, x=cscov, y=cscov), silent=TRUE)
         
         fail <- inherits(f, 'try-error')
-        if(fail) warning(paste('fit failed for a simulated dataset:', f))
+        
+        if(fail) failures <- c(failures, as.character(f))
         else {
-          if(isppo && l == max(looks) && ! length(pprev[[cparam]]))
-            pprev[[cparam]] <- predict(f) 
+#          if(isppo && l == max(looks) && ! length(pprev[[cparam]]))
+#            pprev[[cparam]] <- predict(f) 
           if(! length(co.na)) {   # save template to insert for failures
-          co.na <- coef(f)
-          co.na[] <- NA
+            co.na <- coef(f)
+            co.na[] <- NA
           }
         }
         if(cscov && ! fail) f <- rms::robcov(f, dat$id)
@@ -395,7 +403,16 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
             est [is]   <- coef(f)[pname]
             vest[is]   <- vcov(f)[pname, pname]
           }
+          if(length(maxest) && abs(est[is]) > maxest) {
+            failures <- c(failures, paste0('|contrast|>', maxest))
+            est[is] <- vest[is] <- NA
+            fail <- TRUE
+          } else if(length(maxvest) && vest[is] > maxvest) {
+            failures <- c(failures, paste0('variance>', maxvest))
+            est[is] <- vest[is] <- NA
+            fail <- TRUE
           }
+        }    # end else if not fail
       }  # end looks
       co <- if(fail) co.na else coef(f)
       if(! length(lrmcoef))
@@ -449,6 +466,11 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
   }
   if(length(sstat)) attr(res, 'sstat') <- Sstat
   attr(res, 'lrmcoef') <- lrmcoef
+  failures <- if(length(failures))
+                as.data.frame(table(failure=failures))
+              else
+                data.frame(failure='', Freq=0)
+  attr(res, 'failures') <- failures
   res
 }
 

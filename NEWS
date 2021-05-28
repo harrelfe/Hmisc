@@ -10,7 +10,7 @@ Changes in version 4.6-0 (2021-05-27)
    * propsPO: fixed making y factor
    * soprobMarkovOrdm: added as.data.frame(generated data)
    * estSeqMarkovOrd: extended timecriterion function to allow user to return the event/censoring time and indicator, and to allow groupContrast to compute using a variance formula
-   * estSeqMarkovOrd: sped up VGAM::vglm by using last fit as starting values;thanks Thomas Yee
+   * estSeqMarkovOrd: trapped errors better, returning attribute failures, and added maxest and maxvest argument to declare large parameter or variance estimates as failed iterations
 
 Changes in version 4.5-0 (2021-02-27)
    * approxExtrap: changed x and y to as.numeric.  Thanks: juha.heikkinen@luke.fi

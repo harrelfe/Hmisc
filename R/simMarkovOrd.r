@@ -205,7 +205,7 @@ soprobMarkovOrd <- function(y, times, initial, absorb=NULL,
 
 ##' Simulate Comparisons For Use in Sequential Markov Longitudinal Clinical Trial Simulations
 ##'
-##' Simulates sequential clinical trials of longitudinal ordinal outcomes using a first-order Markov model.  Looks are done sequentially after subject ID numbers given in the vector `looks` with the earliest possible look being after subject 2.  At each look, a subject's repeated records are either all used or all ignored depending on the sequent ID number.  For each true effect parameter value, simulation, and at each look, runs a function to compute the estimate of the parameter of interest along with its variance.  For each simulation, data are first simulated for the last look, and these data are sequentially revealed for earlier looks.  The user provides a function `g` that has extra arguments specifying the true effect of `parameter` the treatment `group` expecting treatments to be coded 1 and 2.  `parameter` is usually on the scale of a regression coefficient, e.g., a log odds ratio.  Fitting is done using the `rms::lrm()` function, unless non-proportional odds is allowed in which case `VGAM::vglm()` is used.  If `timecriterion` is specified, the function also, for the last data look only, computes the first time at which the criterion is satisfied for the subject or use the event time and event/censoring indicator computed by `timecriterion`.  The Cox/logrank chi-square statistic for comparing groups on the derived time variable is saved.  If `coxzph=TRUE`, the `survival` package correlation coefficient `rho` from the scaled partial residuals is also saved so that the user can later determine to what extent the Markov model resulted in the proportional hazards assumption being violated when analyzing on the time scale.
+##' Simulates sequential clinical trials of longitudinal ordinal outcomes using a first-order Markov model.  Looks are done sequentially after subject ID numbers given in the vector `looks` with the earliest possible look being after subject 2.  At each look, a subject's repeated records are either all used or all ignored depending on the sequent ID number.  For each true effect parameter value, simulation, and at each look, runs a function to compute the estimate of the parameter of interest along with its variance.  For each simulation, data are first simulated for the last look, and these data are sequentially revealed for earlier looks.  The user provides a function `g` that has extra arguments specifying the true effect of `parameter` the treatment `group` expecting treatments to be coded 1 and 2.  `parameter` is usually on the scale of a regression coefficient, e.g., a log odds ratio.  Fitting is done using the `rms::lrm()` function, unless non-proportional odds is allowed in which case `VGAM::vglm()` is used.  If `timecriterion` is specified, the function also, for the last data look only, computes the first time at which the criterion is satisfied for the subject or use the event time and event/censoring indicator computed by `timecriterion`.  The Cox/logrank chi-square statistic for comparing groups on the derived time variable is saved.  If `coxzph=TRUE`, the `survival` package correlation coefficient `rho` from the scaled partial residuals is also saved so that the user can later determine to what extent the Markov model resulted in the proportional hazards assumption being violated when analyzing on the time scale.  `vglm` is accelerated by saving the first successful fit for the largest sample size and using its coefficients as starting value for further `vglm` fits for any sample size for the same setting of `parameter`.
 ##' @title estSeqMarkovOrd
 ##' @inheritParams simMarkovOrd
 ##' @param y vector of possible y values in order (numeric, character, factor)
@@ -251,8 +251,8 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
     if(! inherits(ppo, 'formula')) stop('ppo must be a formula')
     if(! requireNamespace('VGAM'))
       stop('ppo specified and VGAM package not available')
-    # vgam wants you to declare FALSE to indicate non-PO
-#    vglm <- VGAM::vglm
+    # VGAM wants you to declare FALSE to indicate non-PO
+    vglm <- VGAM::vglm
     ppo  <- formula(paste('FALSE ~', as.character(ppo)[-1]))
     }
 
@@ -313,17 +313,17 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
                list(etime=as.numeric(max(time)),   event=0L)
   }
 
-  lrmcoef <- NULL
-  co.na   <- NULL   # template of coef vector with to be all NAs
-#  pprev   <- list() # to hold first working fit at last look for each parameter
-  ## pprev speeds up vglm
+  lrmcoef  <- NULL
+  co.na    <- NULL   # template of coef vector with to be all NAs
+  coefprev <- list() # to hold first working fit at last look for each parameter
+  ## coefprev speeds up vglm (last look = maximum sample size)
   failures <- character(0)
   
   for(isim in 1 : nsim) {
     if(progress && (isim %% 10 == 0))
       cat('Simulation', isim, '\n', file=pfile)
     for(param in parameter) {
-#      cparam <- as.character(param)
+      cparam <- as.character(param)
       ## Sample N initial states
       initials <- sample(names(initial), N, replace=TRUE, prob=initial)
       if(is.numeric(y)) initials <- as.numeric(initials)
@@ -349,21 +349,18 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
       ## For each look compute the parameter estimate and its variance
       ## If a contrast is specified (say when treatment interacts with time)
       ## use that instead of a simple treatment effect
-#      ## For vglm speep up by taking as starting values the estimates
-#      ## from the last successful run
+      ## For vglm speep up by taking as starting values the estimates
+      ## from the last successful run
 
       for(l in looks) {
         dat <- subset(sdata, id <= l)
-#        prevp <- pprev[[cparam]]
+        cprev <- coefprev[[cparam]]
         if(isppo) {
-          f <- try(VGAM::vgam(formula,
-                              VGAM::cumulative(parallel=ppo, reverse=TRUE),
-                              data=dat), silent=TRUE)
-          ## Could not get system to find prevp when regular call inside try()
-#          ff <- call('vglm', formula,
-#                     VGAM::cumulative(parallel=ppo, reverse=TRUE),
-#                     etastart=prevp, data=dat)
-#          f <- try(eval(ff), silent=TRUE)
+          ## Could not get system to find cprev when regular call inside try()
+          ff <- call('vglm', formula,
+                     VGAM::cumulative(parallel=ppo, reverse=TRUE),
+                     coefstart=cprev, data=dat)
+          f <- try(eval(ff), silent=TRUE)
         } else
           f <- try(rms::lrm(formula, data=dat, x=cscov, y=cscov), silent=TRUE)
         
@@ -371,8 +368,8 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
         
         if(fail) failures <- c(failures, as.character(f))
         else {
-#          if(isppo && l == max(looks) && ! length(pprev[[cparam]]))
-#            pprev[[cparam]] <- predict(f) 
+          if(isppo && l == max(looks) && ! length(coefprev[[cparam]]))
+            coefprev[[cparam]] <- coef(f) 
           if(! length(co.na)) {   # save template to insert for failures
             co.na <- coef(f)
             co.na[] <- NA

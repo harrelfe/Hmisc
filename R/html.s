@@ -434,11 +434,12 @@ markupSpecs <- list(html=list(
            if(cite) capture.output(print(citation(), style=style)))
     if(cite) {
       s <- search()
-      for(pac in c('Hmisc', 'rms', 'rmsb', 'hreport')) {
+      for(pac in c('Hmisc', 'rms', 'rmsb', 'hreport', 'VGAM',
+                   'data.table', 'ggplot2', 'rstan', 'survival')) {
         if(paste0('package:', pac) %in% s) {
           w <- c(w, paste0('\nTo cite the ', tt(pac),
                            ' package in publications use:\n'))
-          w <- c(w, capture.output(print(citation(pac), style=style)))
+          w <- c(w, capture.output(print(citation(pac)[1], style=style)))
           }
         }
       }

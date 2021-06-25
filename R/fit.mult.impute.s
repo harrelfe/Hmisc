@@ -12,6 +12,8 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
   using.Design <- FALSE
   fits <- if(fit.reps) vector('list', n.impute)
   used.mice <- any(class(xtrans)=='mids')
+  if (used.mice && !requireNamespace("mice", quietly = TRUE))
+    stop("This data requires the 'mice' package.")
   if(used.mice && missing(n.impute)) n.impute <- xtrans$m
   stats.ok2average <- c('linear.predictors','fitted.values','stats', 'means',
                         'icoef', 'scale', 'center', 'y.imputed')

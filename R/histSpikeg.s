@@ -108,7 +108,7 @@ histSpikeg <- function(formula=NULL, predictions=NULL, data, plotly=NULL,
   hcol <- if(histcol == 'default') '' else sprintf(', col="%s"', histcol)
 
   P <- plotly
-  if(! is.null(P)) {
+  if(! is.null(P) && requireNamespace("plotly")) {
     tab$.xx. <- tab[[X]]
     
 ## Got NA/NaN argument, numerical expression has 8 elements

@@ -14,7 +14,7 @@ multLines <- function(x, y, pos=c('left', 'right'),
 
   vcol  <- adjustcolor(col, alpha.f=alpha)
 
-  pl <- grType() == 'plotly'
+  pl <- grType() == 'plotly' && requireNamespace("plotly")
   if(pl) {
     pobj <- plotly::add_lines(pobj, data=data.frame(x=x, y=y[,1]),
                       x=~x, y=~y, color=I(col),

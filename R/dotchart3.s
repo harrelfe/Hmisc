@@ -138,6 +138,9 @@ dotchartp <-
             height=NULL, width=700, layoutattr=FALSE, showlegend=TRUE,
             ...) 
 {
+  if (!requireNamespace("plotly"))
+    stop("This function requires the 'plotly' package.")
+    
   auxwhere <- match.arg(auxwhere)
   
   fmt <- if(length(dec)) function(x) format(round(x, dec))

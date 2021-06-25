@@ -2701,6 +2701,10 @@ catTestchisq=function(tab) {
        plotmathstat = 'chi[df]^2')
 }
 ordTestpo=function(group, x) {
+  
+  if (!requireNamespace("rms", quietly = TRUE))
+    stop("This function requires the 'rms' package.")
+  
   f <- rms::lrm(x ~ group)$stats
   list(P            = f['P'],
        stat         = f['Model L.R.'],

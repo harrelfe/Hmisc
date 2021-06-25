@@ -80,7 +80,10 @@ plotlyM <- function(data, x=~x, y=~y, xhi=~xhi, yhi=~yhi, htext=NULL,
                     nrows=NULL, ncols=NULL,
                     colors=NULL, alphaSegments=1, alphaCline=0.3, digits=4,
                     zeroline=TRUE) {
-
+  
+  if (!requireNamespace("plotly"))
+    stop("This function requires the 'plotly' package.")
+  
   ylabpos <- match.arg(ylabpos)
 
   if(rotate) {
@@ -152,7 +155,7 @@ plotlyM <- function(data, x=~x, y=~y, xhi=~xhi, yhi=~yhi, htext=NULL,
     sizeasis        <- FALSE
     sizevar         <- NULL
     }
-
+  
   if(length(color)) legendgroupform <- color
 
   usualfitter <- length(fitter) && is.function(fitter)

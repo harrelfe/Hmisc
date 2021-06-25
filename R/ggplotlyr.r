@@ -11,6 +11,10 @@
 ##' @export
 ##' @md
 ggplotlyr <- function(ggobject, tooltip='label', remove='txt: ', ...) {
+  
+  if (!requireNamespace("plotly"))
+    stop("This function requires the 'plotly' package.")
+  
 # Get around a bug in tooltip construction with ggplotly
 # See https://stackoverflow.com/questions/66316337
   g <- plotly::ggplotly(ggobject, tooltip=tooltip, ...)

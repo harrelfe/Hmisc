@@ -553,6 +553,9 @@ histboxp <- function(p=plotly::plot_ly(height=height),
                      x, group=NULL, xlab=NULL,
                      gmd=TRUE, sd=FALSE, bins=100, wmax=190, mult=7,
                      connect=TRUE, showlegend=TRUE) {
+  
+  if (!requireNamespace("plotly"))
+    stop("This function requires the 'plotly' package.")
 
   if(! length(xlab)) xlab <- label(x, html=TRUE, plot=TRUE,
                                    default=deparse(substitute(x)))
@@ -890,6 +893,10 @@ dhistboxp <- function(x, group=NULL, strata=NULL, xlab=NULL,
 histboxpM <- function(p=plotly::plot_ly(height=height, width=width),
                       x, group=NULL,
                       gmd=TRUE, sd=FALSE, width=NULL, nrows=NULL, ncols=NULL, ...) {
+
+  if (!requireNamespace("plotly"))
+    stop("This function requires the 'plotly' package.")
+  
   ## See stackoverflow.com/questions/26939121
   ##     stackoverflow.com/questions/39948151
   nx <- if(is.data.frame(x)) ncol(x) else 1
@@ -923,6 +930,9 @@ ecdfpM <- function(x, group=NULL, what=c('F','1-F','f','1-f'), q=NULL,
                    height=NULL, width=NULL,
                    colors=NULL, nrows=NULL, ncols=NULL, ...) {
 
+  if (!requireNamespace("plotly"))
+    stop("This function requires the 'plotly' package.")
+  
   what <- match.arg(what)
   nam <- deparse(substitute(x))
   if(! is.data.frame(x)) x <- data.frame(x)

@@ -16,7 +16,7 @@ soprobMarkovOrdm(
 )
 }
 \arguments{
-\item{object}{a fit object created by \code{blrm}, \code{lrm}, or \code{orm}}
+\item{object}{a fit object created by \code{blrm}, \code{lrm}, \code{orm}, \code{VGAM::vglm()}, or \code{VGAM::vgam()}}
 
 \item{data}{a single observation list or data frame with covariate settings, including the initial state for Y}
 

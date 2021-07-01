@@ -573,7 +573,7 @@ intMarkovOrd <- function(y, times, initial, absorb=NULL,
 #' Computes state occupancy probabilities for a single setting of baseline covariates.  If the model fit was from `rms::blrm()`, these probabilities are from all the posterior draws of the basic model parameters.  Otherwise they are maximum likelihood point estimates.
 #'
 #' @title soprobMarkovOrdm
-#' @param object a fit object created by `blrm`, `lrm`, or `orm`
+#' @param object a fit object created by `blrm`, `lrm`, `orm`, `VGAM::vglm()`, or `VGAM::vgam()`
 #' @param data a single observation list or data frame with covariate settings, including the initial state for Y
 #' @param times vector of measurement times
 #' @param ylevels a vector of ordered levels of the outcome variable (numeric or character)
@@ -591,12 +591,22 @@ soprobMarkovOrdm <- function(object, data, times, ylevels, absorb=NULL,
                              tvarname='time', pvarname='yprev',
                              gap=NULL) {
 
+  cl <- class(object)[1]
+  ftypes <- c(lrm='rms', orm='rms', blrm='rmsb', vglm='vgam', vgam='vgam')
+  ftype  <- ftypes[cl]
+  if(is.na(ftype)) stop(paste('object must be a fit from one of:',
+                              paste(ftypes, collapse=' ')))
+  ptype <- switch(ftype, rms='fitted.ind', vgam='response')
+  
   if(pvarname %nin% names(data))
     stop(paste(pvarname, 'is not in data'))
   if(length(absorb) && (pvarname %in% absorb))
     stop('initial state cannot be an absorbing state')
-
-	nd <- if(length(object$draws)) nrow(object$draws) else 0
+  
+  nd <- if(ftype == 'rmsb' && length(object$draws)) nrow(object$draws) else 0
+  if((nd == 0) != (ftype != 'rmsb'))
+    stop('model fit inconsistent with having posterior draws')
+  
   k  <- length(ylevels)
   s  <- length(times)
   P  <- if(nd == 0)
@@ -611,7 +621,7 @@ soprobMarkovOrdm <- function(object, data, times, ylevels, absorb=NULL,
   if(length(gap)) data[[gap]] <- times[1]
   data <- as.data.frame(data)
   if(nd == 0) {
-    p <- predict(object, data, type='fitted.ind')
+    p <- predict(object, data, type=ptype)
     P[1, ] <- p
   }
   else {
@@ -643,7 +653,7 @@ soprobMarkovOrdm <- function(object, data, times, ylevels, absorb=NULL,
     edata[[tvarname]] <- times[it]
     if(length(gap)) edata[[gap]] <- times[it] - times[it - 1]
     if(nd == 0) {
-      pp <- predict(object, edata, type='fitted.ind')
+      pp <- predict(object, edata, type=ptype)
       ## If there are absorbing states, make a bigger version of
       ## the cell probability matrix that includes them
       ## Rows representing absorbing states have P(stating in that state)=1

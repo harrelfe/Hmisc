@@ -389,14 +389,19 @@ formatdescribeSingle <-
   R <- character(0)
   
   v <- x$values
-  
+
   is.standard <- length(v) && is.list(v) &&
                  all(names(v) == c('value', 'frequency'))
-  ## Added is.standard to next 2
-  val.wide    <- is.standard && length(v$value) &&
-    sum(nchar(as.character(v$value))) > 200
-  val.few     <- is.standard && length(v$value) && (length(v$value) <= 20)
-  print.freq  <- is.standard && val.few && ! val.wide
+  v_len <- length(v$value)
+  if(is.standard && v_len > 0L && v_len <= 20L) {
+      # address GH issue #104
+      altv <- v$value
+      altv[is.na(altv)] <- ' '
+      # check total width
+      print.freq <- sum(nchar(altv)) <= 200
+  } else {
+      print.freq <- FALSE
+  }
   print.ext   <- length(x$extremes) ## && ! print.freq
 
   if(print.ext) {

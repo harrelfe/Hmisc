@@ -396,7 +396,7 @@ formatdescribeSingle <-
   if(is.standard && v_len > 0L && v_len <= 20L) {
       # address GH issue #104
       altv <- v$value
-      altv[is.na(altv)] <- ' '
+      altv[is.na(altv)] <- 'NA'
       # check total width
       print.freq <- sum(nchar(altv)) <= 200
   } else {

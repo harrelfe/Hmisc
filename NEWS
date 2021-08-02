@@ -1,4 +1,4 @@
-Changes in version 4.6-0 (2021-07-01)
+Changes in version 4.6-0 (2021-08-02)
    * package: improved author formatting in DESCRIPTION
    * html: markupSpecs$html$session: added citations for any Harrell packages that are loaded, respecting current output format in effect with knitr
    * soprobMarkovOrdm: new function to compute state occupancy probabilities from proportion odds model fits

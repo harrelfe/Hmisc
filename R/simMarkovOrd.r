@@ -596,7 +596,16 @@ soprobMarkovOrdm <- function(object, data, times, ylevels, absorb=NULL,
   ftype  <- ftypes[cl]
   if(is.na(ftype)) stop(paste('object must be a fit from one of:',
                               paste(ftypes, collapse=' ')))
-  ptype <- switch(ftype, rms='fitted.ind', vgam='response')
+
+  ## For VGAM objects, predict() did not find the right function when
+  ## inside the rms package
+  
+  prd <-
+    switch(ftype,
+           rms =function(obj, data) predict(obj, data, type='fitted.ind'),
+           vgam=function(obj, data) VGAM::predict(obj, data, type='response'),
+           rmsb=function(obj, data) predict(obj, data, type='fitted.ind',
+                                            posterior.summary='all'))
   
   if(pvarname %nin% names(data))
     stop(paste(pvarname, 'is not in data'))
@@ -620,14 +629,9 @@ soprobMarkovOrdm <- function(object, data, times, ylevels, absorb=NULL,
   data[[tvarname]] <- times[1]
   if(length(gap)) data[[gap]] <- times[1]
   data <- as.data.frame(data)
-  if(nd == 0) {
-    p <- predict(object, data, type=ptype)
-    P[1, ] <- p
-  }
-  else {
-    p <- predict(object, data, type='fitted.ind', posterior.summary='all')
-    P[, 1, ] <- p
-  }
+  p <- prd(object, data)
+  if(nd == 0) P[1, ] <- p else P[, 1, ] <- p
+
   # cp: matrix of conditional probabilities of Y conditioning on previous time Y
   # Columns = k conditional probabilities conditional on a single previous state
   # Rows    = all possible previous states
@@ -652,8 +656,8 @@ soprobMarkovOrdm <- function(object, data, times, ylevels, absorb=NULL,
   for(it in 2 : s) {
     edata[[tvarname]] <- times[it]
     if(length(gap)) edata[[gap]] <- times[it] - times[it - 1]
+    pp <- prd(object, edata)
     if(nd == 0) {
-      pp <- predict(object, edata, type=ptype)
       ## If there are absorbing states, make a bigger version of
       ## the cell probability matrix that includes them
       ## Rows representing absorbing states have P(stating in that state)=1
@@ -664,7 +668,6 @@ soprobMarkovOrdm <- function(object, data, times, ylevels, absorb=NULL,
       P[it, ] <- t(cp) %*% P[it - 1, ]
     }
     else {
-      pp <- predict(object, edata, type='fitted.ind', posterior.summary='all')
       for(idraw in 1 : nd) {
         cp[rnameprevna, ] <- pp[idraw, ,]
         P[idraw, it, ] <- t(cp) %*% P[idraw, it - 1, ]

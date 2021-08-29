@@ -100,6 +100,9 @@ pomodm <- function(x=NULL, p, odds.ratio=1) {
 
 simRegOrd <- function(n, nsim=1000, delta=0, odds.ratio=1, sigma,
                       p=NULL, x=NULL, X=x, Eyx, alpha=0.05, pr=FALSE) {
+  if (!requireNamespace("rms", quietly = TRUE))
+    stop("This function requires the 'rms' package.")
+  
   if(length(x) && (length(x) != n))
     stop('x must be omitted or have length n')
 

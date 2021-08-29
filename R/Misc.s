@@ -1150,6 +1150,8 @@ formatDateTime <- function(x, at, roundDay=FALSE)
          attributes(x) <- at
          fmt <- at$format
          if(roundDay) {
+           if (!requireNamespace("chron", quietly = TRUE))
+             stop("'roundDay = TRUE' requires the 'chron' package.")
            if(length(fmt)==2 && is.character(fmt))
              format(chron::dates(x), fmt[1])
            else
@@ -1853,6 +1855,10 @@ htmlSpecialType <- function() {
 ## http://stackoverflow.com/questions/33959635/exporting-png-files-from-plotly-in-r
 
 plotlySave <- function(x, ...) {
+  
+  if (!requireNamespace("plotly"))
+    stop("This function requires the 'plotly' package.")
+  
   chunkname <- knitr::opts_current$get("label")
   path      <- knitr::opts_chunk$get('fig.path')
   if(is.list(x) & ! inherits(x, 'plotly_hash')) {

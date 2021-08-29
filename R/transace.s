@@ -3,6 +3,8 @@ transace <- function(x, monotonic=NULL, categorical=NULL, binary=NULL,
                      pl=TRUE)
 {
   ## require(acepack)  # provides ace, avas
+  if (!requireNamespace("acepack", quietly = TRUE))
+    stop("This function requires the 'acepack' package.")
 
   nam <- dimnames(x)[[2]]
   omit <- is.na(x %*% rep(1,ncol(x)))
@@ -143,6 +145,9 @@ areg.boot <- function(x, data, weights, subset, na.action=na.delete,
   }
  else
    {
+     if (!requireNamespace("acepack", quietly = TRUE))
+       stop("The 'avas' method requires the 'acepack' package.")
+     
      Avas <- function(x, y, xtype, ytype, weights)
        {
          p <- ncol(x)

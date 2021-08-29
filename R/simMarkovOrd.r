@@ -254,7 +254,9 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
     # VGAM wants you to declare FALSE to indicate non-PO
     vglm <- VGAM::vglm
     ppo  <- formula(paste('FALSE ~', as.character(ppo)[-1]))
-    }
+  } else if (!requireNamespace("rms", quietly = TRUE))
+    stop('ppo not specified and rms package not available')
+  
 
   if(isppo && cscov) stop('may not specify cscov=TRUE with ppo')
   

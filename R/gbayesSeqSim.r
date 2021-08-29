@@ -146,29 +146,31 @@ gbayesSeqSim <- function(est, asserts) {
 ##' @author Frank Harrell
 ##' @seealso `gbayesSeqSim()`, `simMarkovOrd()`, `estSeqMarkovOrd()`
 ##' @examples
-##' # Run 100 simulations, 5 looks, 2 true parameter values
-##' # Total simulation time: 2s
-##' lfit <- function(x, y) {
-##' f <- rms::lrm.fit(x, y)
-##'   k <- length(coef(f))
-##'   c(coef(f)[k], vcov(f)[k, k])
-##' }
-##' gdat <- function(beta, n1, n2) {
-##'   # Cell probabilities for a 7-category ordinal outcome for the control group
-##'   p <- c(2, 1, 2, 7, 8, 38, 42) / 100
+##' if (requireNamespace("rms", quietly = TRUE)) {
+##'   # Run 100 simulations, 5 looks, 2 true parameter values
+##'   # Total simulation time: 2s
+##'   lfit <- function(x, y) {
+##'   f <- rms::lrm.fit(x, y)
+##'     k <- length(coef(f))
+##'     c(coef(f)[k], vcov(f)[k, k])
+##'   }
+##'   gdat <- function(beta, n1, n2) {
+##'     # Cell probabilities for a 7-category ordinal outcome for the control group
+##'     p <- c(2, 1, 2, 7, 8, 38, 42) / 100
 ##'
-##'   # Compute cell probabilities for the treated group
-##'   p2 <- pomodm(p=p, odds.ratio=exp(beta))
-##'   y1 <- sample(1 : 7, n1, p,  replace=TRUE)
-##'   y2 <- sample(1 : 7, n2, p2, replace=TRUE)
-##'   list(y1=y1, y2=y2)
+##'     # Compute cell probabilities for the treated group
+##'     p2 <- pomodm(p=p, odds.ratio=exp(beta))
+##'     y1 <- sample(1 : 7, n1, p,  replace=TRUE)
+##'     y2 <- sample(1 : 7, n2, p2, replace=TRUE)
+##'     list(y1=y1, y2=y2)
+##'   }
+##'
+##'   set.seed(1)
+##'   est <- estSeqSim(c(0, log(0.7)), looks=c(50, 75, 95, 100, 200),
+##'                     gendat=gdat,
+##'                     fitter=lfit, nsim=100)
+##'   head(est)
 ##' }
-##' 
-##' set.seed(1)
-##' est <- estSeqSim(c(0, log(0.7)), looks=c(50, 75, 95, 100, 200),
-##'                   gendat=gdat,
-##'                   fitter=lfit, nsim=100)
-##' head(est)
 ##' @md
 estSeqSim <- function(parameter, looks, gendat, fitter, nsim=1,
                       progress=FALSE) {

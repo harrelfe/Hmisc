@@ -77,6 +77,8 @@ rcspline.plot <- function(x, y, model=c("logistic","cox","ols"), xrange,
 
   df1 <- nk-2
   if(model == "logistic") {
+    if (!requireNamespace("rms", quietly = TRUE))
+      stop("The 'logistic' model requires the 'rms' package.")
     b <- rms::lrm.fit(cbind(x, xx, adj),  y)
     beta <- b$coef
     cov <- b$var

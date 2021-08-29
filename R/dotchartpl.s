@@ -15,6 +15,9 @@ dotchartpl <- function(x, major=NULL, minor=NULL,
                        col=colorspace::rainbow_hcl
                        ) {
 
+  if (!requireNamespace("plotly"))
+    stop("This function requires the 'plotly' package.")
+  
   mu   <- markupSpecs$html
   bold <- mu$bold
 

@@ -29,29 +29,31 @@ Simulate Comparisons For Use in Sequential Clinical Trial Simulations
 Simulates sequential clinical trials.  Looks are done sequentially at observation numbers given in the vector \code{looks} with the earliest possible look being at observation 2.  For each true effect parameter value, simulation, and at each look, runs a function to compute the estimate of the parameter of interest along with its variance.  For each simulation, data are first simulated for the last look, and these data are sequentially revealed for earlier looks.  The user provides a function \code{gendat} that given a true effect of \code{parameter} and the two sample sizes (for treatment groups 1 and 2) returns a list with vectors \code{y1} and \code{y2} containing simulated data.  The user also provides a function \code{fitter} with arguments \code{x} (group indicator 0/1) and \code{y} (response variable) that returns a 2-vector containing the effect estimate and its variance.  \code{parameter} is usually on the scale of a regression coefficient, e.g., a log odds ratio.
 }
 \examples{
-# Run 100 simulations, 5 looks, 2 true parameter values
-# Total simulation time: 2s
-lfit <- function(x, y) {
-f <- rms::lrm.fit(x, y)
-  k <- length(coef(f))
-  c(coef(f)[k], vcov(f)[k, k])
-}
-gdat <- function(beta, n1, n2) {
-  # Cell probabilities for a 7-category ordinal outcome for the control group
-  p <- c(2, 1, 2, 7, 8, 38, 42) / 100
+if (requireNamespace("rms", quietly = TRUE)) {
+  # Run 100 simulations, 5 looks, 2 true parameter values
+  # Total simulation time: 2s
+  lfit <- function(x, y) {
+  f <- rms::lrm.fit(x, y)
+    k <- length(coef(f))
+    c(coef(f)[k], vcov(f)[k, k])
+  }
+  gdat <- function(beta, n1, n2) {
+    # Cell probabilities for a 7-category ordinal outcome for the control group
+    p <- c(2, 1, 2, 7, 8, 38, 42) / 100
 
-  # Compute cell probabilities for the treated group
-  p2 <- pomodm(p=p, odds.ratio=exp(beta))
-  y1 <- sample(1 : 7, n1, p,  replace=TRUE)
-  y2 <- sample(1 : 7, n2, p2, replace=TRUE)
-  list(y1=y1, y2=y2)
-}
+    # Compute cell probabilities for the treated group
+    p2 <- pomodm(p=p, odds.ratio=exp(beta))
+    y1 <- sample(1 : 7, n1, p,  replace=TRUE)
+    y2 <- sample(1 : 7, n2, p2, replace=TRUE)
+    list(y1=y1, y2=y2)
+  }
 
-set.seed(1)
-est <- estSeqSim(c(0, log(0.7)), looks=c(50, 75, 95, 100, 200),
-                  gendat=gdat,
-                  fitter=lfit, nsim=100)
-head(est)
+  set.seed(1)
+  est <- estSeqSim(c(0, log(0.7)), looks=c(50, 75, 95, 100, 200),
+                    gendat=gdat,
+                    fitter=lfit, nsim=100)
+  head(est)
+}
 }
 \seealso{
 \code{gbayesSeqSim()}, \code{simMarkovOrd()}, \code{estSeqMarkovOrd()}

@@ -99,11 +99,11 @@ rcspline.restate <- function(knots, coef, type=c("ordinary","integral"),
                     else "4",
                     sep="")
       
-      z <- paste(if(coef[i]>0 & (i>2 | coef[1]!=0 | Intc!=0)) "+"
+      z <- paste(if(coef[i]>=0 & (i>2 | coef[1]!=0 | Intc!=0)) "+"
       else NULL,
                  cof[i], "*", nam, sep="")
       
-      z2 <- paste(if(coef[i]>0 & (i>2 | coef[1]!=0 | Intc!=0)) "+"
+      z2 <- paste(if(coef[i]>=0 & (i>2 | coef[1]!=0 | Intc!=0)) "+"
       else NULL,
                   cof[i], "*", nam2, sep="")
       
@@ -166,7 +166,7 @@ rcspline.restate <- function(knots, coef, type=c("ordinary","integral"),
                    else "4}",
                    sep="")
       
-      q <- paste(if(coef[i]>0 & (i>2 | coef[1]!=0 | Intc!=0)) "+"
+      q <- paste(if(coef[i]>=0 & (i>2 | coef[1]!=0 | Intc!=0)) "+"
       else NULL,
                  cof[i], nam, sep="")
       

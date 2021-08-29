@@ -240,7 +240,7 @@ datadensity.data.frame <-
     }
 
   ngroup <- length(levels(group))
-  col.group <- rep(col.group, length=ngroup)
+  col.group <- rep(col.group, length.out=ngroup)
 
   y <- 0
   for(i in (1:length(nams))[w])

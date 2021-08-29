@@ -1,6 +1,6 @@
 sedit <- function(text, from, to, test=NULL, wild.literal=FALSE)
 {
-  to <- rep(to, length=length(from))
+  to <- rep(to, length.out=length(from))
   for(i in seq_along(text)) {
     s <- text[i]
     if(length(s))
@@ -106,7 +106,7 @@ substring2 <- function(text, first, last=100000L)
     if(missing(last))
       last <- nchar(text)
 
-    last <- rep(last, length=lf)
+    last <- rep(last, length.out=lf)
     for(i in 1:lf) {
       text <- paste(if(first[i]>1) 
                       substring(text, 1, first[i]-1),
@@ -173,7 +173,7 @@ replace.substring.wild <- function(text, old, new, test=NULL,
       en <- et:1
     } else {
       st <- 1:et;
-      en <- rep(et,et)
+      en <- rep(et, et)
     }
 
     qual <- test(substring(text, st, en))

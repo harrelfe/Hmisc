@@ -53,9 +53,9 @@ Ecdf.default <- function(x, what=c('F','1-F','f','1-f'),
   curves <- vector('list',nlev)
   names(curves) <- lev
 
-  lty <- rep(lty, length=nlev)
-  col <- rep(col, length=nlev)
-  lwd <- rep(lwd, length=nlev)
+  lty <- rep(lty, length.out=nlev)
+  col <- rep(col, length.out=nlev)
+  lwd <- rep(lwd, length.out=nlev)
 
   if(missing(xlim)) xlim <- range(X)
 

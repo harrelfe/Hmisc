@@ -68,7 +68,7 @@ spearman <- function(x, y)
     c(rho=cor(rank(x[notna]), rank(y[notna])))
 }
 
-plotCorrPrecision <- function(rho=c(0,0.5), n=seq(10,400,length=100),
+plotCorrPrecision <- function(rho=c(0,0.5), n=seq(10,400,length.out=100),
                               conf.int=0.95, offset=.025, ...)
 {
   ## Thanks to Xin Wang for computations
@@ -913,7 +913,7 @@ if(FALSE) {
     ## s <- pmax( abs( w - min(x) ), abs( w - max(x) ) )  # to use max dist
     s <- rowSums(z)/lx/3   # use 1/3 mean dist for each row
     tricube <- function(u) (1 - pmin(u,1)^3)^3
-    ## z <- (1 - (z/rep(s,length=lx*lw))^3)^3   # Thanks: Tim Hesterberg
+    ## z <- (1 - (z/rep(s,length.out=lx*lw))^3)^3   # Thanks: Tim Hesterberg
     z <- tricube(z/s)   # Thanks: Tim Hesterberg
     sums <- rowSums(z)
     z <- z/sums 
@@ -1904,13 +1904,13 @@ plotlyParm = list(
 
   ## Colors for unordered categories
   colUnorder = function(n=5, col=colorspace::rainbow_hcl) {
-    if(! is.function(col)) rep(col, length=n)
+    if(! is.function(col)) rep(col, length.out=n)
     else col(n)
   },
 
   ## Colors for ordered levels
   colOrdered = function(n=5, col=viridis::viridis) {
-    if(! is.function(col)) rep(col, length=n)
+    if(! is.function(col)) rep(col, length.out=n)
     else col(n)
   },
 

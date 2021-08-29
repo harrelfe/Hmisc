@@ -19,7 +19,8 @@ mdb.get <- function(file, tables=NULL, lowernames=FALSE, allow=NULL,
     s <- strsplit(s, '\t')
     vnames <- sapply(s, function(x) {
       bracketed = x[2]
-      substr(bracketed, 2, nchar(bracketed) - 1)
+      if(substr(bracketed, 1, 1) == '[')
+        substr(bracketed, 2, nchar(bracketed) - 1) else bracketed
     })
     vnames <- makeNames(vnames, unique=TRUE, allow=allow)
     if(lowernames) vnames <- casefold(vnames)

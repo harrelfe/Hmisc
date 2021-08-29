@@ -129,7 +129,7 @@ format.df <- function(x,
   
   dot <- if(cdot && numeric.dollar)
     paste(sl,sl,'cdotp',sl,sl,'!',sep='')
-  else '.'
+  else getOption('OutDec')
   
   decimal.point <- if(cdot && dcolumn)
     paste(sl,'cdot',sep='')

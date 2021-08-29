@@ -13,6 +13,16 @@ Changes in version 4.6-0 (2021-08-02)
    * estSeqMarkovOrd: trapped errors better, returning attribute failures, and added maxest and maxvest argument to declare large parameter or variance estimates as failed iterations; changed from vgam to vglm and sped up computations by using previous coefficient estimates as starting values
    * session in markupSpecs: added citations for several other packages
    * soprobMarkovOrdm: extended to work with VGAM package
+   * describe: fix error with . (thanks to Cole Beck; https://github.com/harrelfe/Hmisc/pull/144)
+   * many: tests for presence of suggested packages using requireNamespace (thanks for major editing work by Duncan Murdoch at https://github.com/harrelfe/Hmisc/pull/143 motivated by https://stat.ethz.ch/pipermail/r-package-devel/2021q2/007101.html)
+   * mdb.get: fix for Windows by changing from system to system2 (thanks to Rainer Hurling at https://github.com/harrelfe/Hmisc/pull/135)
+   * summaryM: fixed error with prN=TRUE with latex (thanks Matt Shotwell in https://github.com/harrelfe/Hmisc/pull/109)
+	 * many: fix partial argument matching warnings length -> length.out in rep (thanks Bill Denney in https://github.com/harrelfe/Hmisc/pull/128)
+   * rcspline.restate: was dropping + for exactly zero coefficients (thanks https://github.com/harrelfe/Hmisc/pull/118)
+   * mdb.get: remove brackets from table names (thanks https://github.com/harrelfe/Hmisc/pull/123)
+   * latex: added new argument comment so that the generated comment can be suppressed (thanks Giuseppe Ragusa https://github.com/harrelfe/Hmisc/pull/33)
+   * sas.get: added new argument for variable case (thanks Tyler Hunt https://github.com/harrelfe/Hmisc/pull/8)
+   * format.df: changed to use system option OutDec when cdot is not specified (thanks https://github.com/harrelfe/Hmisc/issues/142)
 
 Changes in version 4.5-0 (2021-02-27)
    * approxExtrap: changed x and y to as.numeric.  Thanks: juha.heikkinen@luke.fi

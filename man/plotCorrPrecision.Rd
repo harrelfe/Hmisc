@@ -10,7 +10,7 @@ of the upper confidence limit minus rho and rho minus the lower confidence
 limit.  \code{labcurve} is used to automatically label the curves.
 }
 \usage{
-plotCorrPrecision(rho = c(0, 0.5), n = seq(10, 400, length = 100),
+plotCorrPrecision(rho = c(0, 0.5), n = seq(10, 400, length.out = 100),
                   conf.int = 0.95, offset=0.025, \dots)
 }
 \arguments{

@@ -49,10 +49,12 @@ multLines(x, y, pos = c('left', 'right'), col='gray',
 }
 \author{Frank Harrell}
 \examples{
-x <- 1:4
-y <- cbind(x, x-3, x-2, x-1, x+1, x+2, x+3)
-plot(NA, NA, xlim=c(1,4), ylim=c(-2, 7))
-multLines(x, y, col='blue')
-multLines(x, y, col='red', pos='right')
+if (requireNamespace("plotly")) {
+  x <- 1:4
+  y <- cbind(x, x-3, x-2, x-1, x+1, x+2, x+3)
+  plot(NA, NA, xlim=c(1,4), ylim=c(-2, 7))
+  multLines(x, y, col='blue')
+  multLines(x, y, col='red', pos='right')
+}
 }
 \keyword{hplot}

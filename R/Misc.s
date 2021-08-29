@@ -933,11 +933,14 @@ approxExtrap <- function(x, y, xout, method='linear', n=50, rule=2,
 
   ## remove duplicates and order so can do linear extrapolation
   if(na.rm) {
-    d <- !is.na(x+y)
+    d <- ! is.na(x + y)
     x <- x[d]; y <- y[d]
   }
+
+  x <- as.numeric(x)  # handles dates etc.
+  y <- as.numeric(y)
   
-  d <- !duplicated(x)
+  d <- ! duplicated(x)
   x <- x[d]
   y <- y[d]
   d <- order(x)
@@ -1147,6 +1150,8 @@ formatDateTime <- function(x, at, roundDay=FALSE)
          attributes(x) <- at
          fmt <- at$format
          if(roundDay) {
+           if (!requireNamespace("chron", quietly = TRUE))
+             stop("'roundDay = TRUE' requires the 'chron' package.")
            if(length(fmt)==2 && is.character(fmt))
              format(chron::dates(x), fmt[1])
            else
@@ -1215,7 +1220,7 @@ convertPdate <- function(x, fracnn=0.3, considerNA=NULL) {
 
 getHdata <-
   function(file, what=c('data','contents','description','all'),
-           where='http://biostat.mc.vanderbilt.edu/wiki/pub/Main/DataSets')
+           where='https://hbiostat.org/data/repo')
   {
     what <- match.arg(what)
     fn <- as.character(substitute(file))
@@ -1251,7 +1256,10 @@ getHdata <-
     if(what %nin% c('data','all'))
       return(invisible())
     
-    f <- paste(where,wds,sep='/')
+    f <- paste(where, wds, sep='/')
+    if(length(f) > 1)
+      warning(paste('More than one file matched; using the first:',
+                    paste(f, collapse=', ')))
     tf <- tempfile()
     download.file(f, tf, mode='wb', quiet=TRUE)
     load(tf, .GlobalEnv)
@@ -1407,7 +1415,6 @@ Save <- function(object, name=deparse(substitute(object)), compress=TRUE)
 getZip <- function(url, password=NULL) {
   ## Allows downloading and reading a .zip file containing one file
   ## File may be password protected.  Password will be requested unless given.
-  ## Example: read.csv(getZip('http://biostat.mc.vanderbilt.edu/twiki/pub/Sandbox/WebHome/z.zip'))
   ## Password is 'foo'
   ## url may also be a local file
   ## Note: to make password-protected zip file z.zip, do zip -e z myfile
@@ -1421,46 +1428,27 @@ getZip <- function(url, password=NULL) {
 }
 
 getLatestSource <- function(x=NULL, package='Hmisc',
-                            recent=NULL, avail=FALSE,
-                            type=c('svn','cvs')) {
-  type <- match.arg(type)
-  url <- switch(type,
-                cvs=paste('http://biostat.mc.vanderbilt.edu/cgi-bin/cvsweb.cgi',
-                  package, 'R/', sep='/'),
-                svn=paste('http://biostat.mc.vanderbilt.edu/cgi-bin/viewvc.cgi',
-                  package, 'trunk/R/', sep='/'))
-  if(length(recent)) url <- paste(url, '?sortby=date#dirlist', sep='')
+                            recent=NULL, avail=FALSE) {
+  urlf  <- paste0('https://hbiostat.org/R/', package, '/dir.txt')
+  fs    <- scan(urlf, what=list('', ''), sep=' ', quiet=TRUE)
+  dates <- fs[[1]]
+  files <- fs[[2]]
   
-  w <- scan(url, what='',quiet=TRUE)
-  i <- switch(type,
-              cvs=grep('\\.s\\?rev=',w),
-              svn=grep('\\.s\\?view=markup&amp;rev=', w))
-  w <- w[i]
-  
-  files <- switch(type,
-                  cvs=sub('href=\"(.*)\\?.*','\\1', w),
-                  svn=sub('href=\".*/trunk/R/(.*)\\?.*','\\1', w))
-  files <- sub('\\.s$','',files)
-  ver <- switch(type,
-                cvs=if(length(recent))
-                sub('^.*rev=(.*);.*','\\1',w) else
-                sub('\"$','',sub('^.*rev=','',w)),
-                svn=if(length(recent))
-                sub('^.*rev=(.*)&amp.*', '\\1', w) else
-                sub('^.*rev=(.*)\"', '\\1', w))
+  url <- if(length(recent))
+           paste0('https://github.com/harrelfe/', package, '/commits/master/R')
+           else
+             paste0('https://github.com/harrelfe/', package, '/tree/master/R/')
 
-  if(avail) return(data.frame(file=files, version=ver))
+  if(avail) return(data.frame(file=files, date=as.Date(dates)))
 
   if(length(recent)) x <- files[1:recent]
   if(length(x)==1 && x=='all') x <- files
   for(fun in x) {
     i <- which(files==fun)
     if(!length(i)) stop(paste('no file ', fun,' in ',package, sep=''))
-    cat('Fetching', fun, 'version', ver[i],'\n')
-    url <- switch(type,
-                  cvs=paste('http://biostat.mc.vanderbilt.edu/cgi-bin/cvsweb.cgi/~checkout~/',package,'/R/',fun,'.s?rev=',ver[i],';content-type=text%2Fplain', sep=''),
-                  svn=paste('http://biostat.mc.vanderbilt.edu/svn/R/',
-                    package,'/trunk/R/', fun,'.s',sep=''))
+    cat('Fetching', fun, dates[i],'\n')
+    url <- paste0('https://raw.githubusercontent.com/harrelfe/', package,
+                  '/master/R/', fun)
     source(url)
   }
 }
@@ -1710,7 +1698,7 @@ knitrSet <-
            tidy=FALSE, error=FALSE,
            messages=c('messages.txt', 'console'),
            width=61, decinline=5, size=NULL, cache=FALSE,
-           echo=TRUE, results='markup',
+           echo=TRUE, results='markup', capfile=NULL,
            lang=c('latex','markdown','blogdown')) {
 
   if(! requireNamespace('knitr')) stop('knitr package not available')
@@ -1785,7 +1773,29 @@ knitrSet <-
       if(any(i)) do.call(.spar., pars[i]) else .spar.()
     })
   
-  knitr::opts_knit$set(width=width)
+    knitr::opts_knit$set(width=width)
+
+    if(length(capfile)) {
+      options(FigCapFile=capfile)
+      
+      cf <- function(before, options, envir) {
+        if(before) return()
+        label   <- knitr::opts_current$get('label')
+        figname <- paste0(options$fig.lp, label)
+        figref  <- paste0('\\@ref(', figname, ')')
+        cap     <- options$fig.cap
+        scap    <- options$fig.scap
+        if(length(cap) && is.call(cap))   cap <- eval(cap)
+        if(length(scap) && is.call(scap)) scap <- eval(scap)
+        if( ! length(scap) || scap == '') scap <- cap
+        if(length(scap) && scap != '')
+          cat(label, figref, paste0('"', scap, '"\n'), sep=',',
+              append=TRUE, file=getOption('FigCapFile'))
+      }
+      knitr::knit_hooks$set(capfileFun=cf)
+    }
+    ## May want to see https://stackoverflow.com/questions/37116632/r-markdown-html-number-figures
+
   
   ## aliases=c(h='fig.height', w='fig.width', cap='fig.cap', scap='fig.scap'))
   ## eval.after = c('fig.cap','fig.scap'),
@@ -1796,14 +1806,13 @@ knitrSet <-
             fig.width=w, fig.height=h,
             out.width=wo,out.height=ho,
             fig.show=fig.show, fig.lp=fig.lp, fig.pos=fig.pos,
-            dev=dev, par=TRUE, tidy=tidy,
-            cache=cache,
+            dev=dev, par=TRUE, capfileFun=length(capfile) > 0,
+            tidy=tidy, cache=cache,
             echo=echo, error=error, comment='', results=results)
   if(bd) w$fig.path <- NULL
   w <- w[sapply(w, function(x) length(x) > 0)]
   ## knitr doesn't like null fig.align etc.
-  do.call(knitr::opts_chunk$set, w)
-
+    do.call(knitr::opts_chunk$set, w)
 
   if(lang != 'latex') knitr::knit_hooks$set(uncover=markupSpecs$html$uncover)
 
@@ -1846,6 +1855,10 @@ htmlSpecialType <- function() {
 ## http://stackoverflow.com/questions/33959635/exporting-png-files-from-plotly-in-r
 
 plotlySave <- function(x, ...) {
+  
+  if (!requireNamespace("plotly"))
+    stop("This function requires the 'plotly' package.")
+  
   chunkname <- knitr::opts_current$get("label")
   path      <- knitr::opts_chunk$get('fig.path')
   if(is.list(x) & ! inherits(x, 'plotly_hash')) {

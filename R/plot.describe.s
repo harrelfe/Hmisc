@@ -3,7 +3,7 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
                           n.unique=10, digits=5, ...) {
 
   which <- match.arg(which)
-  pty <- grType() == 'plotly'
+  pty <- grType() == 'plotly' && requireNamespace("plotly")
   
   if(length(what)) x <- x[what]
 

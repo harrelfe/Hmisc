@@ -1,4 +1,57 @@
-Changes in version 4.4-1 (2020-03-22)
+Changes in version 4.6-0 (2021-08-02)
+   * package: improved author formatting in DESCRIPTION
+   * html: markupSpecs$html$session: added citations for any Harrell packages that are loaded, respecting current output format in effect with knitr
+   * soprobMarkovOrdm: new function to compute state occupancy probabilities from proportion odds model fits
+   * plotCorrM: new function to graph correlation matrices and gap time relationships using ggplot2
+   * ggplotlyr: new function to use plotly::ggplotly to render ggplot2 graphs but intercepting hover text to remove extraneous labels
+   * Fixed Heiberger email address
+   * propTrans: removed zero frequency combinations
+   * combplotp: fixed bug in case regarding recognition of positives
+   * propsPO: fixed making y factor
+   * soprobMarkovOrdm: added as.data.frame(generated data)
+   * estSeqMarkovOrd: extended timecriterion function to allow user to return the event/censoring time and indicator, and to allow groupContrast to compute using a variance formula
+   * estSeqMarkovOrd: trapped errors better, returning attribute failures, and added maxest and maxvest argument to declare large parameter or variance estimates as failed iterations; changed from vgam to vglm and sped up computations by using previous coefficient estimates as starting values
+   * session in markupSpecs: added citations for several other packages
+   * soprobMarkovOrdm: extended to work with VGAM package
+
+Changes in version 4.5-0 (2021-02-27)
+   * approxExtrap: changed x and y to as.numeric.  Thanks: juha.heikkinen@luke.fi
+   * upData: fix column subsetting for data.tables
+   * dotchartpl: intercepted missing Diff
+   * simMarkovOrd, soprobMarkovOrd, intMarkovOrd, estSeqMarkovOrd: new functions for Markov proportional odds model simulation and calculation of state occupancy probabilities
+   * ggfreqScatter: added by argument
+   * VGAM package added to Suggests in DESCRIPTION
+   * html markupSpecs mdchunk: added caption argument, allowed for vectors
+   * propsTrans: added labels argument for plotly, added numerators and denominators in tooltips, fixed bug where factor levels were reversed if odds.ratio specified
+
+Changes in version 4.4-2 (2020-11-25)
+   * rcorr: captured loss of precision leading to square root of a negative number.  Thanks: Ann Voss <avoss@novanthealth.org>
+   * summaryS: sapply was doubling names
+   * pairUpDiff: created for dotchartpl - function to pair up grouped observations for sorting by descending differences and computing approximate confidence intervals for the difference given individual confidence limits
+   * dotchartpl: added new arguments and functionality to handle quantities other than proportions (e.g., hazards) and streamlined code using pairUpDiff
+   * propsPO: added tooltip text for gpplot that will be transmitted to ggplotly; reversed order of categories so lowest category put at bottom of bar
+   * dotchartpl: suppressed confidence intervals when the number of groups is not 2; fixed bug where hover text confidence intervals were repeats of the last computed interval instead of properly using all the intervals; added dec argument
+   * added estSeqSim and gbayesSeqSim functions
+   * ggfreqScatter: stopped varying alpha and just varied color, as alpha collided with the color scheme
+   * histSpike: added minimal=TRUE and bins arguments
+	 
+Changes in version 4.4-1 (2020-08-07)
+   * popower: added approximate S.E. of log(OR) in results
+   * propsPO: new function for exploring proportional odds
+   * propsTrans: new function for showing distributions of successive state transitions
+   * changed acepack to suggests
+   * multEventChart: new function for multi-state event charts based on code written by Lucy D'Agostino McGowan
+   * getHdata: changed to use hbiostat.org/data/repo
+   * markupSpecs$markdown$tof: new function to render a table of figures with short captions
+   * knitrSet: added capfile argument to store figure tags and short captions
+   * getLatestSource: changed to use GitHub and hbiostat.org/R/packagename/dir.txt
+   * histboxpM: added width argument
+   * upData: handled zero-length subsets (Thanks: Will Gray)
+   * upData: made faster for large datasets
+   * ffCompress: removed from package and put in Github Rscripts
+   * Changed maintainer email
+
+Changes in version 4.4-0 (2020-03-22)
    * combplotp: new function for attribute plots with plotly
    * summaryP: made to work with new default stringsAsFactors=FALSE
    * plotlyM: fixed bug where need to unlist if only one graph produced

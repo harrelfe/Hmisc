@@ -19,7 +19,7 @@ up, and these variables are converted to S \code{factor}s.
 For those users having access to SAS, \code{method='csv'} is preferred
 when importing several SAS datasets.
 Run SAS macro \code{exportlib.sas} available from
-\url{http://biostat.mc.vanderbilt.edu/twiki/pub/Main/Hmisc/exportlib.sas}
+\url{https://github.com/harrelfe/Hmisc/blob/master/src/sas/exportlib.sas}
 to convert all SAS datasets in a SAS data library (from any engine
 supported by your system) into \code{CSV} files.  If any customized
 formats are used, it is assumed that the \code{PROC FORMAT CNTLOUT=}
@@ -37,7 +37,7 @@ sasdsLabels(file)
 }
 \arguments{
   \item{file}{name of a file containing the SAS transport file.
-	\code{file} may be a URL beginning with \code{http://}.  For
+	\code{file} may be a URL beginning with \code{https://}.  For
 \code{sasdsLabels}, \code{file} is the name of a file containing a
 \code{PROC CONTENTS} output listing.  For \code{method='csv'},
 \code{file} is the name of the directory containing all the \code{CSV}
@@ -151,7 +151,7 @@ directory of SAS datasets when more than one was imported.}
 # PROC COPY IN=work OUT=y;SELECT test format z;RUN; *Creates test2.xpt;
 w <- sasxport.get('test2.xpt')
 # To use an existing copy of test2.xpt available on the web:
-w <- sasxport.get('http://biostat.mc.vanderbilt.edu/wiki/pub/Main/Hmisc/test2.xpt')
+w <- sasxport.get('https://github.com/harrelfe/Hmisc/raw/master/inst/tests/test2.xpt')
 
 describe(w$test)   # see labels, format names for dataset test
 # Note: if only one dataset (other than format) had been exported,

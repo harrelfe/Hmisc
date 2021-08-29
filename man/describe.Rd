@@ -69,7 +69,7 @@ values are maintained.
 \code{latex} and \code{html} insert a spike histogram displaying these
 frequency counts in the tabular material using the LaTeX picture
 environment.  For example output see
-\url{http://biostat.mc.vanderbilt.edu/wiki/pub/Main/Hmisc/counties.pdf}.
+\url{https://hbiostat.org/doc/rms/book/chapter7edition1.pdf}.
 Note that the latex method assumes you have the following styles
 installed in your latex installation: setspace and relsize.
 
@@ -322,7 +322,7 @@ Frank Harrell
 \cr
 Vanderbilt University
 \cr
-\email{f.harrell@vanderbilt.edu}
+\email{fh@fharrell.com}
 }
 \seealso{
 \code{\link{sas.get}}, \code{\link{quantile}}, \code{\link{GiniMd}},

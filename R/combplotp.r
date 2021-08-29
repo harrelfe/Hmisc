@@ -2,7 +2,7 @@
 #' 
 #' Generates a plotly attribute plot given a series of possibly overlapping binary variables
 #' 
-#' Similar to the \code{UpSetR} package, draws a special dot chart sometimes called an attribute plot that depicts all possible combination of the binary variables.  By default a positive value, indicating that a certain condition pertains for a subject, is any of logical \code{TRUE}, numberic 1, \code{"yes"}, \code{"y"}, \code{"positive"}, \code{"+"} or \code{"present"} value, and all others are considered negative.  The user can override this determination by specifying her own \code{pos} function.  Case is ignored in the variable values.
+#' Similar to the \code{UpSetR} package, draws a special dot chart sometimes called an attribute plot that depicts all possible combination of the binary variables.  By default a positive value, indicating that a certain condition pertains for a subject, is any of logical \code{TRUE}, numeric 1, \code{"yes"}, \code{"y"}, \code{"positive"}, \code{"+"} or \code{"present"} value, and all others are considered negative.  The user can override this determination by specifying her own \code{pos} function.  Case is ignored in the variable values.
 #' 
 #' The plot uses solid dots arranged in a vertical line to indicate which combination of conditions is being considered.  Frequencies of all possible combinations are shown above the dot chart.  Marginal frequencies of positive values for the input variables are shown to the left of the dot chart.  More information for all three of these component symbols is provided in hover text.
 #'
@@ -28,36 +28,41 @@
 #' @return \code{plotly} object
 #' @author Frank Harrell
 #' @examples
-#' g <- function() sample(0:1, n, prob=c(1 - p, p), replace=TRUE)
-#' set.seed(2); n <- 100; p <- 0.5
-#' x1 <- g(); label(x1) <- 'A long label for x1 that describes it'
-#' x2 <- g()
-#' x3 <- g(); label(x3) <- 'This is<br>a label for x3'
-#' x4 <- g()
-#' combplotp(~ x1 + x2 + x3 + x4, showno=TRUE, includenone=TRUE)
+#' if (requireNamespace("plotly")) {
+#'   g <- function() sample(0:1, n, prob=c(1 - p, p), replace=TRUE)
+#'   set.seed(2); n <- 100; p <- 0.5
+#'   x1 <- g(); label(x1) <- 'A long label for x1 that describes it'
+#'   x2 <- g()
+#'   x3 <- g(); label(x3) <- 'This is<br>a label for x3'
+#'   x4 <- g()
+#'   combplotp(~ x1 + x2 + x3 + x4, showno=TRUE, includenone=TRUE)
 #'
-#' n <- 1500; p <- 0.05
-#' pain       <- g()
-#' anxiety    <- g()
-#' depression <- g()
-#' soreness   <- g()
-#' numbness   <- g()
-#' tiredness  <- g()
-#' sleepiness <- g()
-#' combplotp(~ pain + anxiety + depression + soreness + numbness +
-#'           tiredness + sleepiness, showno=TRUE)
+#'   n <- 1500; p <- 0.05
+#'   pain       <- g()
+#'   anxiety    <- g()
+#'   depression <- g()
+#'   soreness   <- g()
+#'   numbness   <- g()
+#'   tiredness  <- g()
+#'   sleepiness <- g()
+#'   combplotp(~ pain + anxiety + depression + soreness + numbness +
+#'             tiredness + sleepiness, showno=TRUE)
+#' }
 #' @export
 
 combplotp <- function(formula, data=NULL, subset, na.action=na.retain,
                       vnames=c('labels', 'names'),
                       includenone=FALSE, showno=FALSE,
                       maxcomb=NULL, minfreq=NULL, N=NULL,
-                      pos=function(x) 1 * (toupper(x) %in% 
+                      pos=function(x) 1 * (tolower(x) %in% 
                         c('true', 'yes', 'y', 'positive', '+', 'present', '1')),
                       obsname='subjects',
                       ptsize=35, width=NULL, height=NULL,
                       ...) {
 
+  if (!requireNamespace("plotly"))
+    stop("This function requires the 'plotly' package.")
+  
   vnames <- match.arg(vnames)
   frac   <- markupSpecs$html$frac
   fr2    <- function(a, b) paste0(frac(a, b), ' = ', round(a / b, 3))
@@ -72,7 +77,6 @@ combplotp <- function(formula, data=NULL, subset, na.action=na.retain,
       else
         model.frame(formula, data=data, na.action=na.action)
       }
-
   # Get variable labels, defaulting to variable names
   labs <- if(vnames == 'names') structure(names(Y), names=names(Y))
   else {

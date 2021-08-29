@@ -62,10 +62,10 @@
   the plotting functions in \pkg{Hmisc} and \pkg{rms}.
 }
 \references{
-  Alzola CF, Harrell FE (2001):
+  Alzola CF, Harrell FE (2006):
   \emph{An Introduction to S and the Hmisc and Design Libraries.}
   Chapters 3 and 4,
-  \url{http://biostat.mc.vanderbilt.edu/twiki/pub/Main/RS/sintro.pdf}.
+  \url{https://hbiostat.org/R/doc/sintro.pdf}.
 
   Galobardes, et al. (1998), \emph{J Clin Epi} 51:875-881.
 

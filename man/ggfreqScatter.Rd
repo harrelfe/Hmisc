@@ -21,10 +21,11 @@ Instead, you can specify \code{stick=TRUE} not use color but to encode
 	black lines.
 
 The result can also be passed to \code{ggplotly}.  Actual cell
-frequencies are added to the hover text in that case.
+frequencies are added to the hover text in that case using the
+\code{label} \code{ggplot2} aesthetic.
 }
 \usage{
-ggfreqScatter(x, y, bins=50, g=10, cuts=NULL,
+ggfreqScatter(x, y, by=NULL, bins=50, g=10, cuts=NULL,
               xtrans = function(x) x,
               ytrans = function(y) y,
               xbreaks = pretty(x, 10),
@@ -38,12 +39,14 @@ ggfreqScatter(x, y, bins=50, g=10, cuts=NULL,
 \arguments{
 \item{x}{x-variable}
 \item{y}{y-variable}
+\item{by}{an optional vector used to make separate plots for each
+	distinct value using \code{facet_wrap()}}
 \item{bins}{for continuous \code{x} or \code{y} is the number of bins to
 	create by rounding.  Ignored for categorical variables.  If a
 	2-vector, the first element corresponds to \code{x} and the second to
 	\code{y}.}
 \item{g}{number of quantile groups to make for frequency counts.  Use
-	\code{g=0} to use frequencies continuously for color and alpha
+	\code{g=0} to use frequencies continuously for color 
 	coding.  This is recommended only when using \code{plotly}.}
 \item{cuts}{instead of using \code{g}, specify \code{cuts} to provide
 	the vector of cuts for categorizing frequencies for assignment to colors}
@@ -56,7 +59,10 @@ ggfreqScatter(x, y, bins=50, g=10, cuts=NULL,
 \item{xlab,ylab}{axis labels.  If not specified and variable has a
 	\code{label}, thatu label will be used.}
 \item{fcolors}{\code{colors} argument to pass to
-	\code{scale_color_gradientn} to color code frequencies}
+	\code{scale_color_gradientn} to color code frequencies.  Use
+	\code{fcolors=gray.colors(10, 0.75, 0)} to show gray
+	scale, for example.  Another good choice is
+	\code{fcolors=hcl.colors(10, 'Blue-Red')}.} 
 \item{nsize}{set to \code{TRUE} to not vary color or transparency but
 	instead to size the symbols in relation to the number of points.  Best
 	with both \code{x} and \code{y} are discrete.  \code{ggplot2}

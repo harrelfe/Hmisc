@@ -23,7 +23,7 @@ with(d,
 ## width equal to half-width of confidence interval
 d <- subset(d, city==0)
 i <- with(d, order(major, minor, group))
-xless(d[i, ])
+# xless(d[i, ])
 with(d,
      dotchartpl(x, major, minor, group, refgroup='Male', num=num, denom=denom,
                   xlim=c(0,1))

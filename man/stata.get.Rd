@@ -13,7 +13,7 @@ stata.get(file, lowernames = FALSE, convert.dates = TRUE,
 }
 \arguments{
   \item{file}{input \acronym{SPSS} save file.  May be a file on the \acronym{WWW}, indicated
-    by \code{file} starting with \samp{'http://'}.}
+    by \code{file} starting with \samp{'https://'}.}
   \item{lowernames}{set to \code{TRUE} to convert variable names to
     lower case}
   \item{convert.dates}{see \code{\link[foreign]{read.dta}}}

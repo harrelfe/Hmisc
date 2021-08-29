@@ -121,7 +121,7 @@ reShape(x, \dots, id, colvar, base, reps, times=1:reps,
 Frank Harrell\cr
 Department of Biostatistics\cr
 Vanderbilt University School of Medicine\cr
-\email{f.harrell@vanderbilt.edu}
+\email{fh@fharrell.com}
 }
 \seealso{
   \code{\link[stats]{reshape}}, \code{\link[base:vector]{as.vector}},

@@ -91,7 +91,7 @@ Department of Biostatistics
 \cr
 Vanderbilt University
 \cr
-\email{f.harrell@vanderbilt.edu}
+\email{fh@fharrell.com}
 }
 \seealso{
 \code{\link{somers2}}, \code{\link{biVar}}, \code{\link{rcorrp.cens}}

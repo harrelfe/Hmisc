@@ -621,11 +621,11 @@ ordTestpo(group, x)
   Frank Harrell\cr
   Department of Biostatistics\cr
   Vanderbilt University\cr
-  \email{f.harrell@vanderbilt.edu}
+  \email{fh@fharrell.com}
 }
 \references{
-  Harrell FE (2004): Statistical tables and plots using S and LaTeX.
-  Document available from \url{http://biostat.mc.vanderbilt.edu/twiki/pub/Main/StatReport/summary.pdf}.
+  Harrell FE (2007): Statistical tables and plots using S and LaTeX.
+  Document available from \url{https://hbiostat.org/R/Hmisc/summary.pdf}.
 }
 \seealso{
   \code{\link{mChoice}}, \code{\link{smean.sd}}, \code{\link{summarize}},

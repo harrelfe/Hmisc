@@ -9,3 +9,5 @@ tests/\.Rhistory
 .*.Rproj
 
 
+^.*\.Rproj$
+^\.Rproj\.user$

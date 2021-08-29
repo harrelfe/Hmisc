@@ -255,7 +255,7 @@ Weibull2(times, surv)
   \cr
   Vanderbilt University School of Medicine
   \cr
-  \email{f.harrell@vanderbilt.edu}
+  \email{fh@fharrell.com}
 }
 \references{
   Lakatos E (1988): Sample sizes based on the log-rank statistic in complex

@@ -106,7 +106,7 @@ cat('\\end{document}\n', file=fi, append=TRUE)
 ## In /tmp run htlatex z.tex to produce z.html
 ## To get htlatex install the linux tex4ht package
 ## You may also need to install the tth package
-## See http://biostat.mc.vanderbilt.edu/SweaveConvert
+## See https://biostat.app.vumc.org/wiki/Main/SweaveConvert
 @ 
 
 <<pbc,results='asis'>>=

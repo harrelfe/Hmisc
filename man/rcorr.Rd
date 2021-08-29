@@ -52,7 +52,7 @@ Department of Biostatistics
 \cr
 Vanderbilt University
 \cr
-\email{f.harrell@vanderbilt.edu}
+\email{fh@fharrell.com}
 }
 \references{
 Hollander M. and Wolfe D.A. (1973).  Nonparametric Statistical Methods.

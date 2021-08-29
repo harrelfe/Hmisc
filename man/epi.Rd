@@ -56,7 +56,7 @@ lrcum(a, b, c, d, conf.int = 0.95)
   confidence: sample size estimation for diagnostic test studies.  J
   Clin Epi 44:763-770.
 }
-\author{Frank E Harrell Jr \email{f.harrell@vanderbilt.edu}}
+\author{Frank E Harrell Jr \email{fh@fharrell.com}}
 \seealso{\code{\link{logrank}}}
 \examples{
 # Greate Migraine dataset used in Example 28.6 in the SAS PROC FREQ guide

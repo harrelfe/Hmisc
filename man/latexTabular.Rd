@@ -42,7 +42,7 @@ latexTabular(x, headings=colnames(x),
   Frank E. Harrell, Jr.,\cr
   Department of Biostatistics,\cr
   Vanderbilt University,\cr
-  \email{f.harrell@vanderbilt.edu}
+  \email{fh@fharrell.com}
 }
 \seealso{
 \code{\link{latex.default}}, \code{\link{format.df}}

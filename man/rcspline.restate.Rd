@@ -99,7 +99,7 @@ rcsplineFunction(knots, coef, norm=2, type=c('ordinary', 'integral'))
   \cr
   Department of Biostatistics, Vanderbilt University
   \cr
-  \email{f.harrell@vanderbilt.edu}
+  \email{fh@fharrell.com}
 }
 \seealso{
   \code{\link{rcspline.eval}}, \code{\link{ns}}, \code{\link[rms]{rcs}},

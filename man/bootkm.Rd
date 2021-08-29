@@ -50,7 +50,7 @@ bootkm(S, q=0.5, B=500, times, pr=TRUE)
   \cr
   Vanderbilt University School of Medicine
   \cr
-  \email{f.harrell@vanderbilt.edu}
+  \email{fh@fharrell.com}
 }
 \references{
   Akritas MG (1986): Bootstrapping the Kaplan-Meier estimator.  JASA

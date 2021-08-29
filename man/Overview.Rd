@@ -268,7 +268,7 @@ zoom            \tab Zoom in on any graphical display\cr \tab     (Bill Dunlap, 
 \references{
 See Alzola CF, Harrell FE (2004): An Introduction to S and the
 Hmisc and Design Libraries at
-\url{http://biostat.mc.vanderbilt.edu/twiki/pub/Main/RS/sintro.pdf}
+\url{https://hbiostat.org/R/doc/sintro.pdf}
 for extensive documentation and examples for the Hmisc package.
 }
 
@@ -293,16 +293,15 @@ changes to the author.\cr
 If this software is used is work presented for publication, kindly
 reference it using for example:\cr
  Harrell FE (2014): Hmisc: A package of miscellaneous R functions.
-  Programs available from \url{http://biostat.mc.vanderbilt.edu/Hmisc}.\cr
+  Programs available from \url{https://hbiostat.org/R/Hmisc/}.\cr
   Be sure to reference \R itself and other libraries used.
 }
 \author{
 Frank E Harrell Jr\cr
 Professor of Biostatistics\cr
-Chair, Department of Biostatistics\cr
 Vanderbilt University School of Medicine\cr
 Nashville, Tennessee\cr
-\email{f.harrell@vanderbilt.edu}
+\email{fh@fharrell.com}
 }
 \keyword{misc}
 \concept{overview}

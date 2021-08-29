@@ -172,7 +172,7 @@ is.mChoice(x)
   \cr
   Vanderbilt University
   \cr
-  \email{f.harrell@vanderbilt.edu}
+  \email{fh@fharrell.com}
 }
 \seealso{
   \code{\link{label}}, \code{\link{combplotp}}

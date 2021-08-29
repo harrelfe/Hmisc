@@ -41,8 +41,7 @@
   that may be of different colors.
 
   \code{getLatestSource} fetches and \code{source}s the most recent
-  source code for functions in packages in the Vanderbilty University
-  CVS repository.
+  source code for functions in GitHub.
   
   \code{grType} retrieves the system option \code{grType}, which is
   forced to be \code{"base"} if the \code{plotly} package is not
@@ -183,8 +182,7 @@ confbar(at, est, se, width, q = c(0.7, 0.8, 0.9, 0.95, 0.99),
         qfun = function(x) ifelse(x == 0.5, qnorm(x),
                             ifelse(x < 0.5, qnorm(x/2),
                             qnorm((1 +  x)/2))))
-getLatestSource(x=NULL, package='Hmisc', recent=NULL, avail=FALSE,
-                type=c('svn','cvs'))
+getLatestSource(x=NULL, package='Hmisc', recent=NULL, avail=FALSE)
 grType()
 prType()
 htmlSpecialType()
@@ -273,11 +271,7 @@ xless(x, \dots, title)
   \item{times}{a numeric vector of times}
   \item{title}{a character string to title a window or plot}
   \item{tolerance}{tolerance for judging singularity in matrix}
-  \item{type}{\code{"v"} for vertical, \code{"h"} for horizontal.  For
-	\code{getLatestSource} this specifies the type of source code
-	repository, \code{'svn'} (the default) or 
-	\code{'cvs'}, which is now outdated as Subversion has replaced CVS
-	in the Vanderbilt Biostatistics server.}
+  \item{type}{\code{"v"} for vertical, \code{"h"} for horizontal.}
   \item{w}{a numeric vector}
   \item{width}{width of confidence rectanges in user units, or see
 	\code{\link{strwrap}}} 

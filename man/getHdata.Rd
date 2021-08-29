@@ -22,7 +22,7 @@
 }
 \usage{
 getHdata(file, what = c("data", "contents", "description", "all"),
-         where="http://biostat.mc.vanderbilt.edu/wiki/pub/Main/DataSets")
+         where="https://hbiostat.org/data/repo")
 }
 \arguments{
   \item{file}{

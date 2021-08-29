@@ -21,7 +21,7 @@ showPsfrag(filename)
   Frank Harrell\cr
   Department of Biostatistics\cr
   Vanderbilt University\cr
-  \email{f.harrell@vanderbilt.edu}
+  \email{fh@fharrell.com}
 }
 \references{
   Grant MC, Carlisle (1998): The PSfrag System, Version 3.  Full

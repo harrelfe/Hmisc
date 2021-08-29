@@ -851,7 +851,6 @@ putKey <- function(z, labels, type=NULL,
     if(!all(is.na(pch))) m$pch <- pch
     
     if(length(key.opts)) m[names(key.opts)] <- key.opts
-    
     w <- eval(as.call(m))$rect
     return(invisible(c(w$w[1], w$h[1])))
   }

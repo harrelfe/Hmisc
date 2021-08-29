@@ -1,5 +1,7 @@
 tabulr <- function(formula, data=NULL, nolabel=NULL, nofill=NULL, ...) {
   ## require(gsubfn) || stop('package gsubfn not installed')
+  if (!requireNamespace("tables", quietly = TRUE))
+    stop("This function requires the 'tables' package.")
   if(!length(data)) data <- environment(formula)
   else if(is.list(data)) data <- list2env(data, parent=environment(formula))
 
@@ -58,6 +60,8 @@ tabulr <- function(formula, data=NULL, nolabel=NULL, nofill=NULL, ...) {
 }
 
 table_trio <- function(x) {
+  if (!requireNamespace("tables", quietly = TRUE))
+    stop("This function requires the 'tables' package.")
   o <- tables::table_options()
   s <- function(x, default) if(length(x)) x else default
   left     <- s(o$left,  3)
@@ -99,6 +103,8 @@ nFm <- function(x, left, right, neg=FALSE, pad=FALSE, html=FALSE) {
 
 table_freq <- function(x) {
   if(!length(x) || all(is.na(x))) return('')
+  if (!requireNamespace("tables", quietly = TRUE))
+    stop("This function requires the 'tables' package.")
   w   <- table(x)
   den <- sum(w)
   to <- tables::table_options()
@@ -137,6 +143,8 @@ table_pc <- function(x, y) {
 
 table_formatpct <- function(num, den) {
   if(den == 0 | all(is.na(num + den))) return('')
+  if (!requireNamespace("tables", quietly = TRUE))
+    stop("This function requires the 'tables' package.")
   to     <- tables::table_options()
   npct   <- to$npct
   pctdec <- to$pctdec

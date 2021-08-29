@@ -22,7 +22,8 @@ mdb.get <- function(file, tables=NULL, lowernames=FALSE, allow=NULL,
     if(lowernames) vnames <- casefold(vnames)
     types  <- sapply(s, function(x)x[length(x)])
     datetime <- vnames[grep('DateTime', s)]
-    system(paste('mdb-export', mdbexportArgs, file, shQuote(tab), '>', f))
+    system2(command = 'mdb-export',
+            args = paste(mdbexportArgs, file, shQuote(tab)), stdout = f)
     d <- csv.get(f, datetimevars=datetime,
                  lowernames=lowernames, allow=allow,
                  dateformat=dateformat, ...)

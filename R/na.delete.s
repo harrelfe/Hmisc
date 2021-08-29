@@ -14,7 +14,6 @@ na.delete <- function(frame)
     x <- frame[[j]]
     if(is.data.frame(x))
       x <- as.matrix(x)
-    
     class(x) <- NULL	#so Surv object is.na ignored
     if(!is.atomic(x)) 
       stop("non-atomic, non-data frame variables not allowed")

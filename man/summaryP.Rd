@@ -183,7 +183,7 @@ summaryP(formula, data = NULL, subset = NULL,
   \cr
   Vanderbilt University
   \cr
-  \email{f.harrell@vanderbilt.edu}}
+  \email{fh@fharrell.com}}
 \seealso{\code{\link{bpplotM}}, \code{\link{summaryM}},
 	\code{\link{ynbind}}, \code{\link{pBlock}},
 	\code{\link[ggplot2]{ggplot}}, \code{\link{colorFacet}}
@@ -215,7 +215,7 @@ ggplot(s, groups='treat')
 
 plot(s, val ~ freq | region * var, groups='treat', outerlabels=FALSE)
 # Much better looking if omit outerlabels=FALSE; see output at
-# http://biostat.mc.vanderbilt.edu/HmiscNew#summaryP
+# https://hbiostat.org/R/Hmisc/summaryFuns.pdf
 # See more examples under bpplotM
 
 ## For plotly interactive graphic that does not handle variable size

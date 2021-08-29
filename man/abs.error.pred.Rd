@@ -55,7 +55,7 @@ abs.error.pred(fit, lp=NULL, y=NULL)
   Frank Harrell\cr
   Department of Biostatistics\cr
   Vanderbilt University School of Medicine\cr
-  \email{f.harrell@vanderbilt.edu}
+  \email{fh@fharrell.com}
 }
 \seealso{
   \code{\link{lm}}, \code{\link[rms]{ols}}, \code{\link{cor}},

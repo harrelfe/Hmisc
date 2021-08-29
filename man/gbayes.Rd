@@ -256,8 +256,9 @@ Department of Biostatistics
 \cr
 Vanderbilt University School of Medicine
 \cr
-\email{f.harrell@vanderbilt.edu}
+\email{fh@fharrell.com}
 }
+\seealso{\code{\link{gbayesSeqSim}}}
 \references{
 Spiegelhalter DJ, Freedman LS, Parmar MKB (1994): Bayesian approaches to
 randomized trials.  JRSS A 157:357--416.  Results for \code{gbayes} are derived from

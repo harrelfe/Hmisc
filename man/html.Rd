@@ -121,7 +121,7 @@ Department of Biostatistics,
 \cr
 Vanderbilt University,
 \cr
-\email{f.harrell@vanderbilt.edu}
+\email{fh@fharrell.com}
 }
 \references{
 Maranget, Luc.  HeVeA: a LaTeX to HTML translater.

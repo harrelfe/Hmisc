@@ -1661,7 +1661,7 @@ formatCons <- function(stats, nam, tr, group.freq, prmsd, sep='/',
       }
       if(prN)
         st[j] <-
-          paste0(st[j], outer.size(paste0(spc, math('N=', cqu[j, ncol(cqu)]))))
+          paste0(st[j], outer.size(paste0(spc, math(paste0('N=', cqu[j, ncol(cqu)])))))
     }
   } else {
     if(prmsd) {
@@ -2701,6 +2701,10 @@ catTestchisq=function(tab) {
        plotmathstat = 'chi[df]^2')
 }
 ordTestpo=function(group, x) {
+  
+  if (!requireNamespace("rms", quietly = TRUE))
+    stop("This function requires the 'rms' package.")
+  
   f <- rms::lrm(x ~ group)$stats
   list(P            = f['P'],
        stat         = f['Model L.R.'],

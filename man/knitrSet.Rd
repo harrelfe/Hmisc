@@ -14,7 +14,11 @@
 	(\code{out.width} in knitr), \code{ho} (\code{out.height} in knitr),
 	\code{cap} (character
 	string containing figure caption), \code{scap} (character string
-	containing short figure caption for table of figures).
+	containing short figure caption for table of figures).  The
+	\code{capfile} argument facilities auto-generating a table of figures
+	for certain Rmarkdown report themes.  This is done by the addition of
+	a hook function that appends data to the \code{capfile} file each time
+	a chunk runs that has a long or short caption in the chunk header.
 
 	\code{plotlySave} saves a plotly graphic with name \code{foo.png}
 	where \code{foo} is the name of the current chunk.  You must have a
@@ -34,7 +38,8 @@ knitrSet(basename=NULL, w=if(! bd) 4, h=if(! bd) 3, wo=NULL, ho=NULL,
          tidy=FALSE, error=FALSE,
          messages=c('messages.txt', 'console'),
          width=61, decinline=5, size=NULL, cache=FALSE,
-         echo=TRUE, results='markup', lang=c('latex','markdown','blogdown'))
+         echo=TRUE, results='markup', capfile=NULL,
+         lang=c('latex','markdown','blogdown'))
 
 plotlySave(x, \dots)
 }
@@ -55,6 +60,16 @@ plotlySave(x, \dots)
 	\item{width}{text output width for R code and output}
 	\item{decinline}{number of digits to the right of the decimal point to
 		round numeric values appearing inside Sexpr}
+	\item{capfile}{the name of a file in the current working directory
+		that is used to accumulate chunk labels, figure cross-reference
+		tags, and figure short captions (long captions if no short caption
+		is defined) for the purpose of using
+		\code{markupSpecs$markdown$tof()} to insert a table of figures in a
+		report.  The file as appended to, which is useful if
+		\code{cache=TRUE} is used since this will keep some chunks from
+		running.  The \code{tof} function will remove earlier duplicated
+		figure tags if this is the case.  If not \code{cache}ing, the user
+		should initialize the file to empty at the top of the script.}
 	\item{lang}{Default is \code{'latex'} to use LaTeX.  Set to
 		\code{'markdown'} when using R Markdown or \code{'blogdown'}.  For
 		\code{'blogdown'} \code{par} and \code{knitr} graphics-related hooks

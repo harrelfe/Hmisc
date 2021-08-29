@@ -328,6 +328,9 @@ bppltp <- function(p=plotly::plot_ly(),
                    qref=c(.5,.25,.75), qomit=c(.025,.975),
                    teststat=NULL, showlegend=TRUE) {
 
+  if (!requireNamespace("plotly"))
+    stop("This function requires the 'plotly' package.")
+  
   ## Do what segments does with broken (by NAs) lines for plotly
   segm <- function(x0, y0, x1, y1, wquan, quan, group='') {
     n <- length(x0)

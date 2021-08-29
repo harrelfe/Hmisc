@@ -113,7 +113,7 @@ Department of Biostatistics
 \cr
 Vanderbilt University
 \cr
-\email{f.harrell@vanderbilt.edu}
+\email{fh@fharrell.com}
 }
 \seealso{
 \code{\link{interaction}}, \code{\link{cut}}, \code{\link{cut2}}, \code{\link{latex}}, \code{\link{print.char.matrix}},

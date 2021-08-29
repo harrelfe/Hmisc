@@ -35,7 +35,7 @@ Department of Biostatistics,
 \cr
 Vanderbilt University,
 \cr
-\email{f.harrell@vanderbilt.edu}
+\email{fh@fharrell.com}
 
 
 Richard M. Heiberger,
@@ -44,7 +44,7 @@ Department of Statistics,
 \cr
 Temple University, Philadelphia, PA.
 \cr
-\email{rmh@astro.ocis.temple.edu}
+\email{rmh@temple.edu}
 }
 \examples{
 first.word(expr=expression(y ~ x + log(w)))

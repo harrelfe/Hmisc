@@ -433,10 +433,10 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
       ww <- try(lrmcoef[as.character(param), isim, ] <- co)
       if(inherits(ww, 'try-error')) {
         wf <- 'estSeqMarkovOrd.err'
-        prn(dimnames(lrmcoef), fi=wf)
-        prn(as.character(param), fi=wf)
-        prn(isim, fi=wf)
-        prn(co, fi=wf)
+        prn(dimnames(lrmcoef), file=wf)
+        prn(as.character(param), file=wf)
+        prn(isim, file=wf)
+        prn(co, file=wf)
         stop('non-conformable coefficients in estSeqMarkovOrd.  See file estSeqMarkovOrd.err in current working directory.')
         }
       

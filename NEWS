@@ -1,4 +1,4 @@
-Changes in version 4.6-0 (2021-08-02)
+Changes in version 4.6-0 (2021-10-04)
    * package: improved author formatting in DESCRIPTION
    * html: markupSpecs$html$session: added citations for any Harrell packages that are loaded, respecting current output format in effect with knitr
    * soprobMarkovOrdm: new function to compute state occupancy probabilities from proportion odds model fits
@@ -23,6 +23,7 @@ Changes in version 4.6-0 (2021-08-02)
    * latex: added new argument comment so that the generated comment can be suppressed (thanks Giuseppe Ragusa https://github.com/harrelfe/Hmisc/pull/33)
    * sas.get: added new argument for variable case (thanks Tyler Hunt https://github.com/harrelfe/Hmisc/pull/8)
    * format.df: changed to use system option OutDec when cdot is not specified (thanks https://github.com/harrelfe/Hmisc/issues/142)
+   * C code: changed calls to warning/error routines
 
 Changes in version 4.5-0 (2021-02-27)
    * approxExtrap: changed x and y to as.numeric.  Thanks: juha.heikkinen@luke.fi

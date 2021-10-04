@@ -275,6 +275,7 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
   nc      <- nsim * nlook * np
   parm    <- est <- vest <- numeric(nc)
   look    <- sim <- integer(nc)
+  ndy     <- length(y)
   
   Etimefreq <- NULL
   if(length(timecriterion)) {
@@ -316,7 +317,7 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
   }
 
   lrmcoef  <- NULL
-  co.na    <- NULL   # template of coef vector with to be all NAs
+  co.na    <- NULL   # template of coef vector to be all NAs
   coefprev <- list() # to hold first working fit at last look for each parameter
   ## coefprev speeds up vglm (last look = maximum sample size)
   failures <- character(0)
@@ -351,22 +352,31 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
       ## For each look compute the parameter estimate and its variance
       ## If a contrast is specified (say when treatment interacts with time)
       ## use that instead of a simple treatment effect
-      ## For vglm speep up by taking as starting values the estimates
+      ## For vglm speed up by taking as starting values the estimates
       ## from the last successful run
 
       for(l in looks) {
+        ## Subjects are numbered consecutively with id=1,2,3,... and
+        ## these correspond to sequential data looks when accumulated
         dat <- subset(sdata, id <= l)
-        cprev <- coefprev[[cparam]]
-        if(isppo) {
-          ## Could not get system to find cprev when regular call inside try()
-          ff <- call('vglm', formula,
-                     VGAM::cumulative(parallel=ppo, reverse=TRUE),
-                     coefstart=cprev, data=dat)
-          f <- try(eval(ff), silent=TRUE)
-        } else
-          f <- try(rms::lrm(formula, data=dat, x=cscov, y=cscov), silent=TRUE)
-        
-        fail <- inherits(f, 'try-error')
+        luy <- length(unique(dat$y))
+        if(luy != ndy) {
+          f <- paste('Simulated data for simulation with sample size', l,
+                     'has', luy, 'distinct y values instead of the required',
+                     ndy)
+          fail <- TRUE
+          } else {
+            if(isppo) {
+              cprev <- coefprev[[cparam]]
+              ## Could not get system to find cprev when regular call inside try()
+              ff <- call('vglm', formula,
+                         VGAM::cumulative(parallel=ppo, reverse=TRUE),
+                         coefstart=cprev, data=dat)
+              f <- try(eval(ff), silent=TRUE)
+            } else
+              f <- try(rms::lrm(formula, data=dat, x=cscov, y=cscov), silent=TRUE)
+            fail <- inherits(f, 'try-error')
+          }
         
         if(fail) failures <- c(failures, as.character(f))
         else {
@@ -419,7 +429,16 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
                          dimnames=list(as.character(parameter),
                                        paste('sim', 1 : nsim),
                                        names(co)))
-      lrmcoef[as.character(param), isim, ] <- co
+
+      ww <- try(lrmcoef[as.character(param), isim, ] <- co)
+      if(inherits(ww, 'try-error')) {
+        wf <- 'estSeqMarkovOrd.err'
+        prn(dimnames(lrmcoef), fi=wf)
+        prn(as.character(param), fi=wf)
+        prn(isim, fi=wf)
+        prn(co, fi=wf)
+        stop('non-conformable coefficients in estSeqMarkovOrd.  See file estSeqMarkovOrd.err in current working directory.')
+        }
       
       if(length(timecriterion)) {
         # Separately for each subject compute the time until the

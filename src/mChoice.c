@@ -49,11 +49,11 @@ int get_next_mchoice(char **s)
      /* Check to see if an error occured in strtol */
      if(errno != 0) {
           errsv = errno;
-          PROBLEM "string to integer conversion error: %s", strerror(errsv) ERROR;
+          Rf_error("string to integer conversion error: %s", strerror(errsv));
      }
             
      if(err_chk == begin || *err_chk != '\0')
-          PROBLEM "string %s is not a valid integer number", begin ERROR;
+          Rf_error("string %s is not a valid integer number", begin);
      
      /* return the integer mChoice option */
      return (int)opt;
@@ -158,7 +158,7 @@ SEXP do_mchoice_equals(SEXP x, SEXP y)
      S_EVALUATOR
 
      if(!IS_INTEGER(y) || y_len == 0)
-          PROBLEM "y must be an integer vector of at least length one." ERROR;
+          Rf_error("y must be an integer vector of at least length one.");
    
      PROTECT(ans = NEW_LOGICAL(x_len));
      

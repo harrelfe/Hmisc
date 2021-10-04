@@ -5,6 +5,7 @@
 #include <errno.h>
 #include <R.h>
 #include <Rdefines.h>
+#include "R_ext/Error.h"
 
 #ifdef _SPLUS_
 #  define STRING_ELT(x,i) (CHARACTER_POINTER(x)[i])

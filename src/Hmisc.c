@@ -19,8 +19,8 @@ char *Hmisc_AllocStringBuffer(size_t blen, Hmisc_StringBuffer *buf)
     if(!buf->data) {
         buf->bufsize = 0;
         /* don't translate internal error message */
-        PROBLEM "could not allocate memory (%u Mb) in C function 'Hmisc_AllocStringBuffer'",
-              (unsigned int) blen/1024/1024 ERROR;
+        Rf_error("could not allocate memory (%u Mb) in C function 'Hmisc_AllocStringBuffer'",
+              (unsigned int) blen/1024/1024);
     }
     return buf->data;
 }

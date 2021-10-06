@@ -394,14 +394,13 @@ formatdescribeSingle <-
                  all(names(v) == c('value', 'frequency'))
   v_len <- if(is.standard) length(v$value)
   if(is.standard && v_len > 0L && v_len <= 20L) {
-      # address GH issue #104
-    altv <- v$value
-      altv[is.na(altv)] <- 'NA'
-      # check total width
-      print.freq <- sum(nchar(altv)) <= 200
-  } else {
-      print.freq <- FALSE
-  }
+    # address GH issue #104
+    altv <- format(v$value)
+    altv[is.na(altv)] <- 'NA'
+    # check total width
+    print.freq <- sum(nchar(altv)) <= 200
+  } else print.freq <- FALSE
+  
   print.ext   <- length(x$extremes) ## && ! print.freq
   if(print.ext) {
     val  <- format(x$extremes)

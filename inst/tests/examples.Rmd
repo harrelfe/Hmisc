@@ -16,9 +16,12 @@ bibliography: /home/harrelfe/bib/harrelfe.bib
 description: "Hmisc examples using plotly interactive graphics in an html report"
 ---
  
-<!-- Usage:   RStudio ... Knit
+<!-- Usage:   RStudio ... Knit or md2rmdreadthedown examples
               mv examples.html ~/web/R/Hmisc/    -->
-							
+
+**NOTE**: remove the `csl` and `bibliography` lines above if you don't have any bibliographic citations.
+
+
 # Introduction
 This is a set of reproducible examples for the R[@R] `Hmisc` package[@Hmisc], put together in an `rmarkdown` html document using `RStudio` and `knitr`.  When viewing the resulting [html file](http://hbiostat.org/R/Hmisc/examples.html) you can see all the code, and there exist options to download the entire `rmarkdown` script, which is especially helpful for seeing how `knitr` chunks are specified.  Graphics that have a [plotly](http://plot.ly/r) method for them are rendered using `plotly` instead of using defaults such as base graphics, `lattice`, or `ggplot2`.  That way the plots are somewhat interactive, e.g., allow for drill-down for more information without the viewer needing to install `R`.
     

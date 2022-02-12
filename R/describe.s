@@ -1151,7 +1151,7 @@ html.contents.data.frame <-
           for(k in which(reusingLevels))
             if(L[[k]] == nami) w <- c(w, Lnames[k])
         R <- c(R, paste0('<a name="levels.', nami, '"><h6>',
-                         paste(w, collapse=', '), '</h6>'))
+                         paste(w, collapse=', '), '</h6></a>'))
         if(length(l) > maxlevels) l <- c(l[1 : maxlevels], '...')
         for(k in l) R <- c(R,  paste0('<li>', k, '</li>\n'))
       }

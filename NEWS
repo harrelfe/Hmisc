@@ -1,3 +1,6 @@
+Changes in version 4.6-1 (2022-10-12)
+   * html.contents.data.frame: properly closed html <a>
+
 Changes in version 4.6-0 (2021-10-05)
    * package: improved author formatting in DESCRIPTION
    * html: markupSpecs$html$session: added citations for any Harrell packages that are loaded, respecting current output format in effect with knitr

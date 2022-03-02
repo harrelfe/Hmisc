@@ -5,6 +5,7 @@
 \alias{print.popower}
 \alias{print.posamsize}
 \alias{pomodm}
+\alias{simPOcuts}
 \alias{propsPO}
 \alias{propsTrans}
 \title{Power and Sample Size for Ordinal Response}
@@ -22,6 +23,10 @@ Whitehead (1993).
 
 \code{pomodm} is a function that assists in translating odds ratios to
 differences in mean or median on the original scale.
+
+\code{simPOcuts} simulates simple unadjusted two-group comparisons under
+a PO model to demonstrate the natural sampling variability that causes
+estimated odds ratios to vary over cutoffs of Y.
 
 \code{propsPO} uses \code{\link{ggplot2}} to plot a stacked bar chart of
 proportions stratified by a grouping variable (and optionally a stratification variable), with an optional
@@ -46,6 +51,7 @@ popower(p, odds.ratio, n, n1, n2, alpha=0.05)
 posamsize(p, odds.ratio, fraction=.5, alpha=0.05, power=0.8)
 \method{print}{posamsize}(x, \dots)
 pomodm(x=NULL, p, odds.ratio=1)
+simPOcuts(n, nsim=10, odds.ratio=1, p)
 propsPO(formula, odds.ratio=NULL, ref=NULL, data=NULL, ncol=NULL, nrow=NULL )
 propsTrans(formula, data=NULL, labels=NULL, arrow='\u2794',
            maxsize=12, ncol=NULL, nrow=NULL)
@@ -71,22 +77,18 @@ variable value.  The value of the function specifies the odds ratio to
 apply to the refernce group to get all other group's expected proportions
 were proportional odds to hold against the first group.  Normally the
 function should return 1.0 when its \code{x} argument corresponds to the
-\code{ref} group.  For \code{pomodm} is the odds ratio to apply to
-convert the given cell probabilities.}
+\code{ref} group.  For \code{pomodm} and \code{simPOcuts} is the odds
+ratio to apply to convert the given cell probabilities.}
 \item{n}{
 total sample size for \code{popower}.  You must specify either \code{n} or
 \code{n1} and \code{n2}.  If you specify \code{n}, \code{n1} and
-\code{n2} are set to \code{n/2}. 
+\code{n2} are set to \code{n/2}. For \code{simPOcuts} is a single number
+equal to the combined sample sizes of two groups.
 }
-\item{n1}{
-for \code{popower}, the number of subjects in treatment group 1
-}
-\item{n2}{
-for \code{popower}, the number of subjects in group 2
-}
-\item{alpha}{
-type I error
-}
+\item{n1}{for \code{popower}, the number of subjects in treatment group 1}
+\item{n2}{for \code{popower}, the number of subjects in group 2}
+\item{nsim}{number of simulated studies to create by \code{simPOcuts}}
+\item{alpha}{type I error}
 \item{x}{an object created by \code{popower} or \code{posamsize}, or a
 	vector of data values given to \code{pomodm} that corresponds to the
 	vector \code{p} of probabilities.  If \code{x} is omitted for
@@ -162,7 +164,7 @@ Julious SA, Campbell MJ (1996): Letter to the Editor.  Stat in Med 15:
 1065--1066.  Shows accuracy of formula for binary response case.
 }
 \seealso{
-\code{\link{simRegOrd}}, \code{\link{bpower}}, \code{\link{cpower}}
+\code{\link{simRegOrd}}, \code{\link{bpower}}, \code{\link{cpower}}, \code{\link[rms]{impactPO}}
 }
 \examples{
 # For a study of back pain (none, mild, moderate, severe) here are the
@@ -202,6 +204,12 @@ X <- rep(1 : 5, 20 * p)
 c(mean=mean(X), median=median(X))
 pomodm(x, p, odds.ratio=1)  # still have to figure out the right median
 pomodm(x, p, odds.ratio=0.5)
+
+# Show variation of odds ratios over possible cutoffs of Y even when PO
+# truly holds.  Run 5 simulations for a total sample size of 300.
+# The two groups have 150 subjects each.
+s <- simPOcuts(300, nsim=5, odds.ratio=2, p=p)
+round(s, 2)
 
 # An ordinal outcome with levels a, b, c, d, e is measured at 3 times
 # Show the proportion of values in each outcome category stratified by

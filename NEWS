@@ -1,5 +1,6 @@
-Changes in version 4.6-1 (2022-10-12)
+Changes in version 4.6-1 (2022-03-02)
    * html.contents.data.frame: properly closed html <a>
+   * simPOcuts: new function to demonstrate variation in odds ratios due to random chance
 
 Changes in version 4.6-0 (2021-10-05)
    * package: improved author formatting in DESCRIPTION

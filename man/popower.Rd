@@ -66,8 +66,11 @@ multEventChart(formula, data=NULL, absorb=NULL, sortbylast=FALSE,
 a vector of marginal cell probabilities which must add up to one.
 For \code{popower} and \code{posamsize}, The \code{i}th element specifies the probability that a patient will be
 in response level \code{i}, averaged over the two treatment groups.  For
-\code{pomodm}, \code{p} is the vector of cell probabilities to be
-translated under a given odds ratio.
+\code{pomodm} and \code{simPOcuts}, \code{p} is the vector of cell
+probabilities to be translated under a given odds ratio.  For
+\code{simPOcuts}, if \code{p} has names, those names are taken as the
+ordered distinct Y-values.  Otherwise Y-values are taken as the integers
+1, 2, ... up to the length of \code{p}.
 }
 \item{odds.ratio}{
 the odds ratio to be able to detect.  It doesn't

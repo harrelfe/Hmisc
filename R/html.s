@@ -759,25 +759,35 @@ markdown = list(
   # Works for all output formats in R markdown
   squote <- function() {    # start quote
     r <- knitr::opts_current$get('results')
-    if(length(r) && r == 'asis') cat('\n```')
+    if(length(r) && r %in% c('asis', 'markup')) cat('\n```')
     invisible()
   },
   # Function to close the quote if needed
   equote <- function() {    # end quote
     r <- knitr::opts_current$get('results')
-    if(length(r) && r == 'asis') cat('```\n\n')
+    if(length(r) && r %in% c('asis', 'markup')) cat('```\n\n')
     invisible()
   },
   # Function to print an object or inline text or both,
   # verbatim quoting if needed (results='asis') in effect in chunk
   # Inline text is printed with cat()
-  pr = function(x='', obj=NULL, inline=NULL) {
+  # Fractional numbers are rounded to the nearest dec digits for data frames
+
+  pr = function(x='', obj=NULL, inline=NULL, dec=3) {
     r <- knitr::opts_current$get('results')
-    asis <- length(r) && r == 'asis'
-    if(asis) cat('\n```')
-    if(x != '' || length(inline))
-      cat('\n', x, if(x != '') ' ', inline, '\n\n', sep='')
-	  if(length(obj)) print(obj, quote=FALSE)
+    asis <- length(r) && r %in% c('asis', 'markup')
+    if(asis) cat('\n```\n')
+    if(any(x != '') || length(inline))
+      cat('\n', x, if(any(x != '')) ' ', inline, '\n\n', sep='')
+
+    if(length(obj)) {
+      if(is.data.frame(obj))
+        for(i in 1 : length(obj)) {
+          x <- obj[[i]]
+          if(is.numeric(x)) obj[[i]] <- round(x, dec)
+        }
+      print(obj, quote=FALSE)
+      }
     if(asis) cat('```\n\n')
 	  invisible()
 	}

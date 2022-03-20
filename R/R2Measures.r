@@ -10,7 +10,8 @@
 ##' @param ess if a single number, is the effective sample size.  If a vector of numbers is assumed to be the frequency tabulation of all distinct values of the outcome variable, from which the effective sample size is computed.
 ##' @param padj set to 2 to use the classical adjusted R^2 penalty, 1 (the default) to subtract `p` from `lr`
 ##' @param inclval set to `TRUE` to include numeric R2 values in `html` and `latex` attributes, otherwise only the labels for the measures are returned
-##' @return named vector of R2 measures, with two attributes: `html` contains the character string results formatted for html, and `latex` contains a character string vector of results formatted for LaTeX.  If `inclval=TRUE` these representations contain also the numeric results rounded to 3 decimal places.  The notation for results is R^2 subscript `p, n` where the `p` component is empty for unadjusted estimates and `n` is the sample size used (actual sample size for first measures, effective sample size for remaining ones).  For indexes that are not adjusted, only `n` appears.
+##' @param markup set to `TRUE` to include `html` and `latex` attributes on the returned vector
+##' @return named vector of R2 measures, optionally with two attributes: `html` contains the character string results formatted for html, and `latex` contains a character string vector of results formatted for LaTeX.  If `inclval=TRUE` these representations contain also the numeric results rounded to 3 decimal places.  The notation for results is R^2 subscript `p, n` where the `p` component is empty for unadjusted estimates and `n` is the sample size used (actual sample size for first measures, effective sample size for remaining ones).  For indexes that are not adjusted, only `n` appears.
 ##' @author Frank Harrell
 ##' @md
 ##' @export
@@ -44,7 +45,8 @@
 ##' # MCS requires unreasonable effective sample size = minimum outcome
 ##' # frequency to get close to the 1.0 that Nagelkerke R^2 achieves
 
-R2Measures <- function(lr, p, n, ess=NULL, padj=1, inclval=FALSE) {
+R2Measures <- function(lr, p, n, ess=NULL, padj=1,
+                       inclval=FALSE, markup=FALSE) {
   R     <- numeric(0)
   r2    <- 1. - exp(- lr / n)
   adj <- function() if(padj == 1) 1. - exp(- max(lr - p, 0) / n)
@@ -77,12 +79,14 @@ R2Measures <- function(lr, p, n, ess=NULL, padj=1, inclval=FALSE) {
     z     <- g(c(r2, r2adj), c(0, p), c(n, n))
     R     <- c(R, r2, r2adj)
     name  <- c(name, z$name)
-    ltx   <- c(ltx, z$latex)
+    ltx   <- c(ltx,  z$latex)
     html  <- c(html, z$html)
   }
   names(R) <- name
-  attr(R, 'latex') <- ltx
-  attr(R, 'html')  <- html
+  if(markup) {
+    attr(R, 'latex') <- ltx
+    attr(R, 'html')  <- html
+    }
   R
 }
 

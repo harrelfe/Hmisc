@@ -4,7 +4,7 @@
 \alias{R2Measures}
 \title{R2Measures}
 \usage{
-R2Measures(lr, p, n, ess = NULL, padj = 1, inclval = FALSE)
+R2Measures(lr, p, n, ess = NULL, padj = 1, inclval = FALSE, markup = FALSE)
 }
 \arguments{
 \item{lr}{likelihoood ratio chi-square statistic}
@@ -18,9 +18,11 @@ R2Measures(lr, p, n, ess = NULL, padj = 1, inclval = FALSE)
 \item{padj}{set to 2 to use the classical adjusted R^2 penalty, 1 (the default) to subtract \code{p} from \code{lr}}
 
 \item{inclval}{set to \code{TRUE} to include numeric R2 values in \code{html} and \code{latex} attributes, otherwise only the labels for the measures are returned}
+
+\item{markup}{set to \code{TRUE} to include \code{html} and \code{latex} attributes on the returned vector}
 }
 \value{
-named vector of R2 measures, with two attributes: \code{html} contains the character string results formatted for html, and \code{latex} contains a character string vector of results formatted for LaTeX.  If \code{inclval=TRUE} these representations contain also the numeric results rounded to 3 decimal places.  The notation for results is R^2 subscript \verb{p, n} where the \code{p} component is empty for unadjusted estimates and \code{n} is the sample size used (actual sample size for first measures, effective sample size for remaining ones).  For indexes that are not adjusted, only \code{n} appears.
+named vector of R2 measures, optionally with two attributes: \code{html} contains the character string results formatted for html, and \code{latex} contains a character string vector of results formatted for LaTeX.  If \code{inclval=TRUE} these representations contain also the numeric results rounded to 3 decimal places.  The notation for results is R^2 subscript \verb{p, n} where the \code{p} component is empty for unadjusted estimates and \code{n} is the sample size used (actual sample size for first measures, effective sample size for remaining ones).  For indexes that are not adjusted, only \code{n} appears.
 }
 \description{
 Generalized R^2 Measures

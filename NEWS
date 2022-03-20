@@ -1,4 +1,4 @@
-Changes in version 4.7-0 (2022-03-19)
+Changes in version 4.7-0 (2022-03-20)
    * html.contents.data.frame: properly closed html <a>
    * simPOcuts: new function to demonstrate variation in odds ratios due to random chance
    * R2Measures: new function to compute various pseudo R^2 measures

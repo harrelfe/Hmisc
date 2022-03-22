@@ -4,7 +4,7 @@
 \alias{R2Measures}
 \title{R2Measures}
 \usage{
-R2Measures(lr, p, n, ess = NULL, padj = 1, inclval = FALSE, markup = FALSE)
+R2Measures(lr, p, n, ess = NULL, padj = 1)
 }
 \arguments{
 \item{lr}{likelihoood ratio chi-square statistic}
@@ -16,13 +16,9 @@ R2Measures(lr, p, n, ess = NULL, padj = 1, inclval = FALSE, markup = FALSE)
 \item{ess}{if a single number, is the effective sample size.  If a vector of numbers is assumed to be the frequency tabulation of all distinct values of the outcome variable, from which the effective sample size is computed.}
 
 \item{padj}{set to 2 to use the classical adjusted R^2 penalty, 1 (the default) to subtract \code{p} from \code{lr}}
-
-\item{inclval}{set to \code{TRUE} to include numeric R2 values in \code{html} and \code{latex} attributes, otherwise only the labels for the measures are returned}
-
-\item{markup}{set to \code{TRUE} to include \code{html} and \code{latex} attributes on the returned vector}
 }
 \value{
-named vector of R2 measures, optionally with two attributes: \code{html} contains the character string results formatted for html, and \code{latex} contains a character string vector of results formatted for LaTeX.  If \code{inclval=TRUE} these representations contain also the numeric results rounded to 3 decimal places.  The notation for results is R^2 subscript \verb{p, n} where the \code{p} component is empty for unadjusted estimates and \code{n} is the sample size used (actual sample size for first measures, effective sample size for remaining ones).  For indexes that are not adjusted, only \code{n} appears.
+named vector of R2 measures.  The notation for results is \code{R^2(p, n)} where the \code{p} component is empty for unadjusted estimates and \code{n} is the sample size used (actual sample size for first measures, effective sample size for remaining ones).  For indexes that are not adjusted, only \code{n} appears.
 }
 \description{
 Generalized R^2 Measures
@@ -31,6 +27,8 @@ Generalized R^2 Measures
 Computes various generalized R^2 measures related to the Maddala-Cox-Snell (MCS) R^2 for regression models fitted with maximum likelihood.  The original MCS R^2 is labeled \code{R2} in the result.  This measure uses the raw sample size \code{n} and does not penalize for the number of free parameters, so it can be rewarded for overfitting.  A measure adjusted for the number of fitted regression coefficients \code{p} uses the analogy to R^2 in linear models by computing \code{1 - exp(- lr / n) * (n-1)/(n-p-1)} if \code{padj=2}, which is approximately \code{1 - exp(- (lr - p) / n)}, the version used if \code{padj=1} (the default).  The latter measure is appealing because the expected value of the likelihood ratio chi-square statistic \code{lr} is \code{p} under the global null hypothesis of no predictors being associated with the response variable.  See \url{https://hbiostat.org/bib/r2.html} for more details.
 
 It is well known that in logistic regression the MCS R^2 cannot achieve a value of 1.0 even with a perfect model, which prompted Nagelkerke to divide the R^2 measure by its maximum attainable value.  This is not necessarily the best recalibration of R^2 throughout its range.  An alternative is to use the formulas above but to replace the raw sample size \code{n} with the effective sample size, which for data with many ties can be significantly lower than the number of observations.  As used in the \code{popower()} and \code{describe()} functions, in the context of a Wilcoxon test or the proportional odds model, the effective sample size is \code{n * (1 - f)} where \code{f} is the sums of cubes of the proportion of observations at each distict value of the response variable.  Whitehead derived this from an approximation to the variance of a log odds ratio in a proportional odds model.  To obtain R^2 measures using the effective sample size, either provide \code{ess} as a single number specifying the effective sample size, or specify a vector of frequencies of distinct Y values from which the effective sample size will be computed.  In the context of survival analysis, the single number effective sample size you may wish to specify is the number of uncensored observations.  This is exactly correct when estimating the hazard rate from a simple exponential distribution or when using the Cox PH/log-rank test.  For failure time distributions with a very high early hazard, censored observations contain enough information that the effective sample size is greater than the number of events.  See Benedetti et al, 1982.
+
+If the effective sample size equals the raw sample size, measures involving the effective sample size are set to \code{NA}.
 }
 \examples{
 x <- c(rep(0, 50), rep(1, 50))

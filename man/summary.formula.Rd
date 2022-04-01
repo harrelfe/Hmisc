@@ -98,7 +98,7 @@
 
 \method{print}{summary.formula.response}(x, vnames=c('labels','names'), prUnits=TRUE,
       abbreviate.dimnames=FALSE,
-      prefix.width, min.colwidth, formatArgs=NULL, \dots)
+      prefix.width, min.colwidth, formatArgs=NULL, markdown=FALSE, \dots)
 
 \method{plot}{summary.formula.response}(x, which = 1, vnames = c('labels','names'), xlim, xlab,
      pch = c(16, 1, 2, 17, 15, 3, 4, 5, 0), superposeStrata = TRUE,
@@ -391,6 +391,9 @@ ordTestpo(group, x)
     statistics computed on continuous variables, not to percents,
     numerators, and denominators.  The \code{round} argument may be preferred.
   }
+  \item{markdown}{for \code{print.summary.formula.response} set to
+  \code{TRUE} to use \code{knitr::kable} to produce the table in
+  markdown format rather than using raw text output created by \code{print.char.matrix}}
   \item{digits}{
     number of significant digits to print.  Default is to use the current
     value of the \code{digits} system option.

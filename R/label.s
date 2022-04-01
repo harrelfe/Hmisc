@@ -435,7 +435,9 @@ putHcap <- function(..., scap=NULL, extra=NULL, subsub=TRUE, hr=TRUE,
     lcap <- NULL
   }
   scap <- fcap(scap)
-  if(subsub) scap <- paste0('\n### ', scap)
+  scap <- if(is.logical(subsub)) paste0('\n', if(subsub) '### ', scap)
+          else if(is.character(subsub) && subsub != '') paste0(subsub, scap)
+                                                                     
   if(hr) r <- c(r, mu$hrule)
   r <- c(r, scap)
   if(length(lcap)) {

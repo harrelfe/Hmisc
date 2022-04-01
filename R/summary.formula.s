@@ -583,7 +583,7 @@ print.summary.formula.response <-
            vnames=c('labels','names'), prUnits=TRUE,
            abbreviate.dimnames=FALSE,
            prefix.width, min.colwidth,
-           formatArgs=NULL, ...)
+           formatArgs=NULL, markdown=FALSE, ...)
 {
   stats <- x
   stats <- unclass(stats)
@@ -600,14 +600,15 @@ print.summary.formula.response <-
                       paste0(vlabels,' [',atu,']'))
   }
 
-  cat(at$ylabel,
-      if(ns>1)
-        paste0(' by',
-              if(ul) at$strat.label
-              else at$strat.name),
-      '    N=',at$n,
-      if(at$nmiss) paste0(', ',at$nmiss,' Missing'),
-      '\n\n')
+  cap <- paste(at$ylabel,
+               if(ns>1)
+                 paste0(' by',
+                        if(ul) at$strat.label
+                        else at$strat.name),
+               '    N=',at$n,
+               if(at$nmiss) paste0(', ',at$nmiss,' Missing'))
+
+  if(! markdown) cat(cap, '\n\n')
 
   d <- dim(stats)
   
@@ -622,6 +623,20 @@ print.summary.formula.response <-
     ww <- c(list(stats[,j]), formatArgs)
     cstats[,j] <- do.call('format', ww)
     cstats[is.na(stats[,j]),j] <- ''
+  }
+
+  if(markdown) {
+    if(! requireNamespace("knitr", quietly=TRUE))
+      stop('markdown=TRUE requires the knitr package to be installed')
+    vlab <- if(ul) at$vlabel else at$vname
+    if(prUnits && any(at$units != ''))
+      vlab[vlab != ''] <- paste0(vlab[vlab != ''], '[', at$units, ']')
+    if(vlab[length(vlab)] == 'Overall')
+      vlab[length(vlab)] <- '**Overall**'
+    z <- cbind(vlab, rownames(x), cstats)
+    colnames(z) <- c('', '', colnames(stats))
+    return(knitr::kable(z, align=c('l', 'l', rep('r', ncol(cstats))),
+                        caption=cap))
   }
   
   is <- 1

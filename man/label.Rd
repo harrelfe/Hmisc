@@ -282,7 +282,10 @@ combineLabels(\dots)
 		extra information to appear in the long caption in a way that is
 		right-justified to the right of the flowing caption text.}
 	\item{subsub}{set to \code{FALSE} to suppress \code{"### "} from being
-		placed in front of the short caption.}
+		placed in front of the short caption.  Set it to different character
+		string to use that instead.  Set it to \code{""} to ignore short
+		captions entirely.  For example to use second-level headings for the
+	table of contents specify \code{subsub="## "}.}
 	\item{hr}{applies if a caption is present.  Specify \code{FALSE} to
 		not put a horizontal line before the caption and figure.}
 	\item{table}{set to \code{TRUE} to produce table captions instead of

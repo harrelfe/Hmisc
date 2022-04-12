@@ -34,12 +34,13 @@ knitrSet(basename=NULL, w=if(! bd) 4, h=if(! bd) 3, wo=NULL, ho=NULL,
          fig.align=if(! bd) 'center', fig.show='hold',
          fig.pos=if(! bd) 'htbp',
          fig.lp=if(! bd) paste('fig', basename, sep=':'),
-         dev=switch(lang, latex='pdf', markdown='png', blogdown=NULL),
+         dev=switch(lang, latex='pdf', markdown='png',
+                    blogdown=NULL, quarto=NULL),
          tidy=FALSE, error=FALSE,
          messages=c('messages.txt', 'console'),
          width=61, decinline=5, size=NULL, cache=FALSE,
          echo=TRUE, results='markup', capfile=NULL,
-         lang=c('latex','markdown','blogdown'))
+         lang=c('latex','markdown','blogdown','quarto'))
 
 plotlySave(x, \dots)
 }
@@ -71,10 +72,11 @@ plotlySave(x, \dots)
 		figure tags if this is the case.  If not \code{cache}ing, the user
 		should initialize the file to empty at the top of the script.}
 	\item{lang}{Default is \code{'latex'} to use LaTeX.  Set to
-		\code{'markdown'} when using R Markdown or \code{'blogdown'}.  For
-		\code{'blogdown'} \code{par} and \code{knitr} graphics-related hooks
-		are not called as this would prevent
-		\code{blogdown} from putting graphics files in the correct directory
+		\code{'markdown'} when using R Markdown or \code{'blogdown'} or
+		\code{'quarto'}.  For 
+		\code{'blogdown'} and \code{'quarto'}, \code{par} and \code{knitr}
+		graphics-related hooks are not called as this would prevent
+		writing graphics files in the correct directory
 		for the blog system.}
 	\item{x}{a \code{plotly} graphics object or a named list of such
 		objects.  The resulting \code{png} file will go in the file path

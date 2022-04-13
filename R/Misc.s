@@ -1691,8 +1691,7 @@ knitrSet <-
            fig.align = if(! bd) 'center',
            fig.show  = 'hold',
            fig.pos   = if(! bd) 'htbp',
-           fig.lp    = if(! bd)
-                         paste('fig', basename, sep=':'),
+           fig.lp    = if(! bd) paste('fig', basename, sep=':'),
            dev       = switch(lang,
                               latex='pdf', markdown='png',
                               blogdown=NULL, quarto=NULL),
@@ -1706,6 +1705,7 @@ knitrSet <-
   
   messages <- match.arg(messages)
   lang     <- match.arg(lang)
+  options(knitrSet.lang = lang)
   bd       <- lang %in% c('blogdown', 'quarto')
   
   ## Specify e.g. dev=c('pdf','png') or dev=c('pdf','postscript')
@@ -1781,8 +1781,10 @@ knitrSet <-
       
       cf <- function(before, options, envir) {
         if(before) return()
+        lang <- getOption('knitrSet.lang')
         label   <- knitr::opts_current$get('label')
-        figname <- paste0(options$fig.lp, label)
+        prefx   <- if(lang == 'quarto') '' else options$fig.lp
+        figname <- paste0(prefx, label)
         ## Quarto uses a chunk figure label convention fig-...
         ## and figures are referenced by @fig-...
         figref  <- if(grepl('^fig-', figname))

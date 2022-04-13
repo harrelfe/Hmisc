@@ -1,3 +1,5 @@
+   * knitrSet: sense figure labels of the form fig-... used by Quarto, and generate correct cross-reference
+
 Changes in version 4.7-0 (2022-04-12)
    * html.contents.data.frame: properly closed html <a>
    * simPOcuts: new function to demonstrate variation in odds ratios due to random chance

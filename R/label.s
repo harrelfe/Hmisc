@@ -172,9 +172,7 @@ labelLatex <- function(x=NULL, label='', units='', size='smaller[2]',
 
   attr(x, 'label') <- value
 
-  if('labelled' %nin% class(x)) {
-    class(x) <- c('labelled', class(x))
-  }
+  if(! inherits(x, 'labelled')) class(x) <- c('labelled', class(x))
   return(x)
 }
 
@@ -226,14 +224,14 @@ labelLatex <- function(x=NULL, label='', units='', size='smaller[2]',
 
   attr(x, "label") <- NULL
   class(x) <-
-    if(length(class(x))==1 && class(x)=='labelled')
+    if(length(class(x)) == 1 && inherits(x, 'labelled'))
       NULL
     else
       class(x)[class(x) != 'labelled']
 
   ## next line works around print bug
-  if(!length(attr(x,'class')))
-    attr(x,'class') <- NULL
+  if(! length(attr(x, 'class')))
+    attr(x, 'class') <- NULL
 
   NextMethod("print")
   invisible(x.orig)
@@ -276,7 +274,7 @@ reLabelled <- function(object)
       x <- object[[i]]
       lab <- attr(x, 'label', exact=TRUE)
       cl  <- class(x)
-      if(length(lab) && !any(cl=='labelled')) {
+      if(length(lab) && ! any(cl == 'labelled')) {
         class(x) <- c('labelled',cl)
         object[[i]] <- x
       }
@@ -332,7 +330,7 @@ prList <- function(x, lcap=NULL, htmlfig=0, after=FALSE) {
     i <- i + 1
     y <- x[[n]]
     if(length(names(y)) && length(class(y)) == 1 &&
-       class(y) == 'list' && length(y) > 1) {
+       inherits(y, 'list') && length(y) > 1) {
       for(m in names(y)) {
         if(! after) 
           cat('\n', g(paste0(n, ': ', m)), '\n', sep='')

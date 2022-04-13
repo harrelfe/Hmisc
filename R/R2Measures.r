@@ -22,11 +22,11 @@
 ##' 
 ##' Mittlbock M, Schemper M (1996): Explained variation for logistic regression.  Stat in Med 15:1987-1997.
 ##' 
-##' Date, S: R-squared, adjusted R-squared and pseudo R-squared. <https://timeseriesreasoning.com/contents/r-squared-adjusted-r-squared-pseudo-r-squared>
+##' Date, S: R-squared, adjusted R-squared and pseudo R-squared. <https://timeseriesreasoning.com/contents/r-squared-adjusted-r-squared-pseudo-r-squared/>
 ##' 
-##' UCLA: What are pseudo R-squareds? <https://stats.oarc.ucla.edu/other/mult-pkg/faq/general/faq-what-are-pseudo-r-squareds>
+##' UCLA: What are pseudo R-squareds? <https://stats.oarc.ucla.edu/other/mult-pkg/faq/general/faq-what-are-pseudo-r-squareds/>
 ##' 
-##' Allison P (2013): What's the beset R-squared for logistic regression? <https://statisticalhorizons.com/r2logistic>
+##' Allison P (2013): What's the beset R-squared for logistic regression? <https://statisticalhorizons.com/r2logistic/>
 ##' 
 ##' Menard S (2000): Coefficients of determination for multiple logistic regression analysis.  The Am Statistician 54:17-24.
 ##'

@@ -1783,7 +1783,10 @@ knitrSet <-
         if(before) return()
         label   <- knitr::opts_current$get('label')
         figname <- paste0(options$fig.lp, label)
-        figref  <- paste0('\\@ref(', figname, ')')
+        ## Quarto uses a chunk figure label convention fig-...
+        ## and figures are referenced by @fig-...
+        figref  <- if(grepl('^fig-', figname))
+                     paste0('@', figname) else paste0('\\@ref(', figname, ')')
         cap     <- options$fig.cap
         scap    <- options$fig.scap
         if(length(cap) && is.call(cap))   cap <- eval(cap)

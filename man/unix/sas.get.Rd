@@ -312,7 +312,7 @@ lower case.  Specify alternatively \code{"upper"} or \code{"preserve"}.}
   format with some of the levels undefined, \code{sas.get} will interpret those
   values as \code{NA} if you are using \code{recode}.
 
-  The \acronym{SAS} macro \file{sas\_get} uses record lengths of up to 4096 in two
+  The \acronym{SAS} macro \file{sas_get} uses record lengths of up to 4096 in two
   places.  If you are exporting records that are very long (because of
   a large number of variables and/or long character variables), you
   may want to edit these \preformatted{LRECL}s to quadruple them, for example.

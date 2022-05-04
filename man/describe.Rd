@@ -141,7 +141,7 @@ formatdescribeSingle(x, condense=c('extremes', 'frequencies', 'both', 'none'),
 \method{plot}{describe}(x, which=c('both', 'continuous', 'categorical'),
                           what=NULL,
                           sort=c('ascending', 'descending', 'none'),
-                          n.unique=10, digits=5, \dots)
+                          n.unique=10, digits=5, bvspace=2, \dots)
 }
 \arguments{
 \item{x}{
@@ -278,6 +278,9 @@ there are no variables of a given type, a single \code{ggplot2} or
 \item{n.unique}{the minimum number of distinct values a numeric variable
 	must have before \code{plot.describe} uses it in a continuous variable
 	plot}
+\item{bvspace}{the between-variable spacing for categorical variables.
+	Defaults to 2, meaning twice the amount of vertical space as what is
+	used for between-category spacing within a variable}
 \item{condense}{specifies whether to condense the output with regard to
   the 5 lowest and highest values (\code{"extremes"}) and the frequency table
 }

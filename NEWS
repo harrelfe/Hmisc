@@ -1,12 +1,15 @@
-   * knitrSet: sense figure labels of the form fig-... used by Quarto, and generate correct cross-reference
+Changes in version 4.7-1 (2022-05-04)
+   * plot.describe: added bvspace argument to control spacing between categorical variables
 
-Changes in version 4.7-0 (2022-04-12)
+Changes in version 4.7-0 (2022-04-18)
    * html.contents.data.frame: properly closed html <a>
    * simPOcuts: new function to demonstrate variation in odds ratios due to random chance
    * R2Measures: new function to compute various pseudo R^2 measures
    * putHcap: added new capabilities around the subsub argument
    * print.summary.formula.response: added markdown argument
    * knitrSet: added rudimentary quarto support
+   * knitrSet: sense figure labels of the form fig-... used by Quarto, and generate correct cross-reference
+
 
 Changes in version 4.6-0 (2021-10-05)
    * package: improved author formatting in DESCRIPTION

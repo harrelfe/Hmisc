@@ -1661,24 +1661,7 @@ getRs <- function(file=NULL,
     return(invisible(source(paste(where, file, sep='/'))))
     
   download.file.HTTPS(paste(where, file, sep='/'), file)
-  os <- Sys.info()['sysname']
-  windowsRstudio <- function() {    # Written by Cole Beck
-    RSTUDIO_BIN <- file.path('C:','Program Files','RStudio','bin','rstudio.exe')
-    if(file.access(RSTUDIO_BIN, mode=1) == -1) {
-      opts <- system("where /r c: rstudio.exe", TRUE)
-      for(i in seq_along(opts)) {
-        RSTUDIO_BIN <- opts[i]
-        if(file.access(RSTUDIO_BIN, mode=1) == 0) return(RSTUDIO_BIN)
-      }
-      stop('rstudio cannot be found')
-    }
-    RSTUDIO_BIN
-  }
-  switch(os,
-         Linux   = system2('rstudio', file),
-         Windows = system2(windowsRstudio(), file),
-         system(paste('open -a rstudio', file)) )
-         ## assume everything else is Mac
+  file.edit(file)
   invisible()
 }
 

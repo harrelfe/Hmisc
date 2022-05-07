@@ -6,14 +6,16 @@
 	\url{https://github.com/harrelfe/rscripts} contains R scripts that are
 	primarily analysis templates for teaching with RStudio.  This function
 	allows the user to print an organized list of available scripts, to
+	download a script and \code{source()} it into the current session (the
+	default), to
 	download a script and load it into an RStudio script editor window, to
 	list scripts whose major category contains a given string (ignoring
-	case), or to list all major and mino categories.
+	case), or to list all major and minor categories.
 }
 \usage{
 getRs(file=NULL, guser='harrelfe', grepo='rscripts', gdir='raw/master',
       dir=NULL, browse=c('local', 'browser'), cats=FALSE,
-      put=c('rstudio', 'source'))
+      put=c('source', 'rstudio'))
 }
 \arguments{
   \item{file}{a character string containing a script file name.
@@ -50,9 +52,9 @@ getRs(cats=TRUE)    # list available major and minor categories
 categories <- getRs(cats=TRUE)
 # likewise but store results in a list for later viewing
 getRs(cats='reg')   # list all scripts in a major category containing 'reg'
-getRs('importREDCap.r', put='source')   # source() to define a function
+getRs('importREDCap.r')   # source() to define a function
 # source() a new version of the Hmisc package's cut2 function:
-getRs('cut2.s', grepo='Hmisc', dir='R', put='source')
+getRs('cut2.s', grepo='Hmisc', dir='R')
 }
 }
 \keyword{interface}

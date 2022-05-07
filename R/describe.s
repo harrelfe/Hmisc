@@ -1063,6 +1063,7 @@ html.contents.data.frame <-
   levelType <- match.arg(levelType)
   mu <- markupSpecs$html
   lspace <- mu$lspace
+  lspace <- '&emsp;'  # override - browsers were not rendering correctly
   hrule  <- mu$hrule
   
   d      <- object$dim

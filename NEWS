@@ -1,5 +1,7 @@
 Changes in version 4.7-1 (2022-05-04)
    * plot.describe: added bvspace argument to control spacing between categorical variables
+   * getRs: changed default put argument to 'source', changed RStudio code
+   * html.contents.data.frame: changed long space to &emsp; to render in more browser
 
 Changes in version 4.7-0 (2022-04-18)
    * html.contents.data.frame: properly closed html <a>

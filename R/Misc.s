@@ -1567,7 +1567,7 @@ getRs <- function(file=NULL,
                   guser='harrelfe', grepo='rscripts',
                   gdir='raw/master', dir=NULL,
                   browse=c('local', 'browser'), cats=FALSE,
-                  put=c('rstudio', 'source')) {
+                  put=c('source', 'rstudio')) {
   
   browse <- match.arg(browse)
   put    <- match.arg(put)
@@ -1967,4 +1967,31 @@ restoreHattrib <- function(obj, attribs) {
     }
   }
   obj
+}
+
+if(FALSE) {
+Hglossary <-
+  list(Gmd=list('Gini\'s mean difference', 'a measure of dispersion defined as the mean absolute difference over all possible pairs of different observations.  It is more robust than the standard deviation.', 'https://www.researchgate.net/publication/5182211_Gini\'s_Mean_Difference_A_Superior_Measure_of_Variability_for_Non-Normal_Distributions'),
+       Info=list('Information index', 'a measure of the information content in a numeric variable relative to the information in a continuous numeric variable with no ties.  The lowest value of Info occurs in a very imbalanced binary variable.  Info comes from the approximate formula for the variance of a log odds ratio for a proportional odds model/Wilcoxon test, due to Whitehead (1993). Info is the ratio of the variance if there no ties in the data to the variance for the frequency distribution of observed values.', 'http://hbiostat.org/bib/r2.html')
+       )
+
+rHglossary <- function(x, html=TRUE, collapse=TRUE) {
+  nams <- names(Hglossary)
+  i <- which(tolower(nams) == tolower(x))
+  if(! length(i))
+    stop(paste(x, 'is not defined in Hglossary'))
+  w     <- Hglossary[[i]]
+  sname <- nams[i]
+  lname <- w[[1]]
+  def   <- w[[2]]
+  href  <- w[[3]]
+  if(html) {
+    lname <- paste0('<a href="', href[1], '">', lname, '</a>')
+    if(length(href) > 1)
+      def <- paste0(def, ' <a href="', href[2], '">More information</a>')
+  }
+  if(collapse) paste0('<details><summary>', sname, '</summary>',
+                             lname, ': ', def, '</details>')
+  else paste0(sname, ': ', lname, ', ', def)
+}
 }

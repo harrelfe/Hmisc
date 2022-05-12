@@ -758,6 +758,8 @@ html.describe <-
   mnb    <- function(x) m$color(x, col='MidnightBlue')
 
   R <- c(m$unicode, m$style())   ## define thinhr (and others not needed here)
+
+  R <- c(R, paste0('<title>', at$descript, ' Descriptives</title>'))
   
   if(length(at$dimensions)) {
     R <- c(R,
@@ -1069,11 +1071,14 @@ html.contents.data.frame <-
   d      <- object$dim
   maxnas <- object$maxnas
 
+  R <- paste0('<title>', object$dfname, ' Contents</title>')
+
   if(nshow) {
-    R <- paste0(hrule, '<h4>Data frame:', object$dfname,
+    R <- c(R,
+           paste0(hrule, '<h4>Data frame:', object$dfname,
                 '</h4>', d[1],
                 ' observations and ', d[2],
-                ' variables, maximum # NAs:',maxnas, lspace, lspace)
+                ' variables, maximum # NAs:',maxnas, lspace, lspace) )
 
     if(length(object$id))
       R <- paste0(R, 'Distinct ', object$id, ':', object$unique.ids,

@@ -495,6 +495,7 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
 #' Compute Parameters for Proportional Odds Markov Model
 #'
 #' Given a vector `intercepts` of initial guesses at the intercepts in a Markov proportional odds model, and a vector `extra` if there are other parameters, solves for the `intercepts` and `extra` vectors that yields a set of occupancy probabilities at time `t` that equal, as closely as possible, a vector of target values.
+#' @title intMarkovOrd
 #' @inheritParams simMarkovOrd
 #' @param intercepts vector of initial guesses for the intercepts
 #' @param extra an optional vector of intial guesses for other parameters passed to `g` such as regression coefficients for previous states and for general time trends.  Name the elements of `extra` for more informative output.

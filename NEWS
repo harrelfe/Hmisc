@@ -1,9 +1,10 @@
-Changes in version 4.7-1 (2022-05-12)
+Changes in version 4.7-1 (2022-05-27)
    * plot.describe: added bvspace argument to control spacing between categorical variables
    * getRs: changed default put argument to 'source', changed RStudio code
    * html.contents.data.frame: changed long space to &emsp; to render in more browser
    * .q: new quoting function, extends Cs
    * html.contents.data.frame, html.describe: added <title> to html
+   * plot.curveRep: added methods='data' so can set up for ggplot2
 
 Changes in version 4.7-0 (2022-04-18)
    * html.contents.data.frame: properly closed html <a>

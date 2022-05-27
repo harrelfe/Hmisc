@@ -138,13 +138,18 @@ print.curveRep <- function(x, ...) {
 }
 
 plot.curveRep <- function(x, which=1:length(res),
-                          method=c('all','lattice'),
+                          method=c('all','lattice','data'),
                           m=NULL, probs=c(.5,.25,.75),
                           nx=NULL, fill=TRUE,
                           idcol=NULL, freq=NULL, plotfreq=FALSE,
                           xlim=range(x), ylim=range(y),
                           xlab='x', ylab='y', colorfreq=FALSE, ...) {
   method <- match.arg(method)
+  retdat <- FALSE
+  if(method == 'data') {
+    retdat <- TRUE
+    method <- 'lattice'
+    }
   ncuts <- x$ncuts
   res <- x$res; id <- x$id; y <- x$y; k <- x$k; x <- x$x
   nng <- length(res)
@@ -158,7 +163,7 @@ plot.curveRep <- function(x, which=1:length(res),
   
   if(method=='lattice') {
     if(length(which) != 1)
-      stop('must specify one n range to plot for method="lattice"')
+      stop('must specify one n range to plot for method="lattice" or "data"')
     nres <- names(res)
     nname <- if(length(nres)==1) NULL else
       if(nres[which]=='1' & nres[which+1]=='2') 'n=1' else {
@@ -294,6 +299,9 @@ plot.curveRep <- function(x, which=1:length(res),
         panel.superpose(x, y, subscripts, groups, ...)
         textfun(subscripts, groups)
       }
+    if(retdat) return(data.frame(x=X, y=Y, distribution, cluster,
+                                 curve=curve, ninterval=nname))
+    
     if(is.character(m))
       print(xYplot(Y ~ X | distribution*cluster,
                    method='quantiles', probs=probs, nx=nx,

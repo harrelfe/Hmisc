@@ -80,8 +80,8 @@ dummy variables generated for all levels instead of omitting one for
 the first level. For \code{combine.levels}, \code{x} is a character, category,
 or factor vector (or other vector that is converted to factor).  For
 \code{plot} and \code{print}, \code{x} is an object created by
-\code{varclus}.  For \code{na.pattern}, \code{x} is a list, data frame,
-or numeric matrix.
+\code{varclus}.  For \code{na.pattern}, \code{x} is a data table, data frame,
+or matrix.
 
 For \code{plotMultSim}, is a numeric vector specifying the ordered
 unique values on the x-axis, corresponding to the third dimension of
@@ -298,8 +298,7 @@ for(m in c("ward","complete","median")) {
 naplot(naclus(df))
 n <- naclus(df)
 plot(n); naplot(n)
-na.pattern(df)      # builtin function
-
+na.pattern(df)
 
 x <- c(1, rep(2,11), rep(3,9))
 combine.levels(x)

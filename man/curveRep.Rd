@@ -198,7 +198,7 @@ curveSmooth(x, y, id, p=NULL, pr=TRUE)
 \seealso{\code{\link[cluster]{clara}},\code{\link[Hmisc]{dataRep}}}
 \examples{
 \dontrun{
-# Simulate 200 curves with pre-curve sample sizes ranging from 1 to 10
+# Simulate 200 curves with per-curve sample sizes ranging from 1 to 10
 # Make curves with odd-numbered IDs have an x-distribution that is random
 # uniform [0,1] and those with even-numbered IDs have an x-dist. that is
 # half as wide but still centered at 0.5.  Shift y values higher with

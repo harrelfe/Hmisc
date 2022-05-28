@@ -1,10 +1,10 @@
-Changes in version 4.7-1 (2022-05-27)
+Changes in version 4.7-1 (2022-05-28)
    * plot.describe: added bvspace argument to control spacing between categorical variables
    * getRs: changed default put argument to 'source', changed RStudio code
    * html.contents.data.frame: changed long space to &emsp; to render in more browser
    * .q: new quoting function, extends Cs
    * html.contents.data.frame, html.describe: added <title> to html
-   * plot.curveRep: added methods='data' so can set up for ggplot2
+   * plot.curveRep: added method='data' so can set up for ggplot2
 
 Changes in version 4.7-0 (2022-04-18)
    * html.contents.data.frame: properly closed html <a>
@@ -14,7 +14,7 @@ Changes in version 4.7-0 (2022-04-18)
    * print.summary.formula.response: added markdown argument
    * knitrSet: added rudimentary quarto support
    * knitrSet: sense figure labels of the form fig-... used by Quarto, and generate correct cross-reference
-
+   * na.pattern: greatly simplified, and added data.table support
 
 Changes in version 4.6-0 (2021-10-05)
    * package: improved author formatting in DESCRIPTION

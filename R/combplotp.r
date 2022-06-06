@@ -149,6 +149,8 @@ combplotp <- function(formula, data=NULL, subset, na.action=na.retain,
     nlongest <- nchar(longest)
     width    <- hdc(rep('X', n), per=23, low=450) + 8 * nlongest
   }
+  auto <- .Options$plotlyauto
+  if(length(auto) && auto) {height <- width <- NULL}
   P <- plotly::plot_ly(height=height, width=width)
   
   # Add grid lines to take control of their span

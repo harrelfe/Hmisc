@@ -230,15 +230,17 @@ dotchartp <-
 
   d <- data.frame(X, y=tly, ht=ht)
 
+  if(length(height) && height == 'auto')
+    height <- plotlyParm$heightDotchart(n)
+  auto <- .Options$plotlyauto
+  if(length(auto) && auto) height <- width <- NULL
   p <- plotly::plot_ly(d, x=~ X, y=~ y, mode='markers', type='scatter',
                        marker=list(symbol=symbol[1], color=col[1]),
                        text = ~ ht,
                        hoverinfo = 'text',
                        name=nx,
                        legendgroup=if(length(legendgroup)) legendgroup[1],
-                       width = width,
-                       height= if(length(height) && height == 'auto')
-                                 plotlyParm$heightDotchart(n) else height)
+                       width = width, height=height)
 
   if(nc > 1)
     for(i in 2 : nc) {

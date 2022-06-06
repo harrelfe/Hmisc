@@ -636,6 +636,7 @@ histboxp <- function(p=plotly::plot_ly(height=height),
   }
 
   height <- plotlyParm$heightDotchart(1.2 * ng) + 50 * (gmd & sd)
+  if(length(.Options$plotlyauto) && .Options$plotlyauto) height <- NULL
 
   dh$prop <- 0.6 * dh$prop / max(dh$prop)
   p <- plotly::add_segments(p, data=dh,
@@ -903,6 +904,8 @@ histboxpM <- function(p=plotly::plot_ly(height=height, width=width),
   ng <- if(length(group)) length(unique(group)) else 1
   height <- nx * (plotlyParm$heightDotchart(1.2 * ng) + 50 * (gmd & sd))
   height <- min(height, 1700)
+  auto <- .Options$plotlyauto
+  if(length(auto) && auto) height <- width <- NULL
 
   nam <- deparse(substitute(x))
   if(is.data.frame(x) && ncol(x) == 1) x <- x[[1]]
@@ -932,6 +935,9 @@ ecdfpM <- function(x, group=NULL, what=c('F','1-F','f','1-f'), q=NULL,
 
   if (!requireNamespace("plotly"))
     stop("This function requires the 'plotly' package.")
+
+  auto <- .Options$plotlyauto
+  if(length(auto) && auto) height <- width <- NULL
   
   what <- match.arg(what)
   nam <- deparse(substitute(x))

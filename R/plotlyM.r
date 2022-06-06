@@ -83,6 +83,8 @@ plotlyM <- function(data, x=~x, y=~y, xhi=~xhi, yhi=~yhi, htext=NULL,
   
   if (!requireNamespace("plotly"))
     stop("This function requires the 'plotly' package.")
+  auto <- .Options$plotlyauto
+  if(length(auto) && auto) height <- width <- NULL
   
   ylabpos <- match.arg(ylabpos)
 

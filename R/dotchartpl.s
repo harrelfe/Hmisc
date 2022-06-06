@@ -214,9 +214,10 @@ dotchartpl <- function(x, major=NULL, minor=NULL,
     if(any(d$Big)) {
     db <- subset(d, Big)  # non-stratified estimates
     ## For some reason, colors= in add_marker did not always take
-    p <- plotly::plot_ly(data=db, colors=cols,
-                         height=if(length(height)) height else
-                           plotlyParm$heightDotchart(lines), width=width)
+    if(! length(height)) height <- plotlyParm$heightDotchart(lines)
+    auto <- .Options$plotlyauto
+    if(length(auto) && auto) height <- width <- NULL
+    p <- plotly::plot_ly(data=db, colors=cols, height=height, width=width)
     
     if(limspres && length(D)) {
       ddiff <- data.frame(Diff, difflower, diffupper, Ydiff, coldiff, htdiff)

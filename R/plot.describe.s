@@ -4,6 +4,8 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
 
   which <- match.arg(which)
   pty <- grType() == 'plotly' && requireNamespace("plotly")
+  auto <- .Options$plotlyauto
+  auto <- length(auto) && auto
   
   if(length(what)) x <- x[what]
 
@@ -139,12 +141,12 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
                              color=~ Missing, mode='markers',
                              hoverinfo='text',
                              type='scatter', name='',
-                             height=plotlyParm$heightDotchart(nrow(z)))
+                             height=if(! auto) plotlyParm$heightDotchart(nrow(z)))
            else
              plotly::plot_ly(z, x=~ Proportion, y=~ cumy, text=~ text,
                              mode='markers', hoverinfo='text',
                              type='scatter', name='',
-                             height=plotlyParm$heightDotchart(nrow(z)))
+                             height=if(! auto) plotlyParm$heightDotchart(nrow(z)))
       
         pcat <-
           plotly::add_trace(pcat,
@@ -243,8 +245,8 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
       curtail <- function(x) min(1000, max(x, 350))
       pcon <- if(! pty) g
               else
-                plotly::ggplotly(g, tooltip='text', width=800,
-                               height=curtail(60 + 25 * length(unam)))
+                plotly::ggplotly(g, tooltip='text', width=if(! auto) 800,
+                               height=if(! auto) curtail(60 + 25 * length(unam)))
 
 ## If don't run plot_ly, hovering will pop up all vertical points
 #      pcon <- if(any(z$missing > 0))

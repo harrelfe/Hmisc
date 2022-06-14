@@ -570,7 +570,7 @@ histboxp <- function(p=plotly::plot_ly(height=height),
 
   ## Still do slight rounding if < bins distinct values because
   ## values extremely close to each other won't show otherwise
-  if(length(distinct) > bins ||
+  if((length(distinct) > bins) ||
      min(diff(sort(distinct))) < range(distinct) / (5 * bins)) {
     pret <- pretty(x, if(length(distinct) > bins) bins else 5 * bins)
     dist <- pret[2] - pret[1]

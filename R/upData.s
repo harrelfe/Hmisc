@@ -557,16 +557,18 @@ dataframeReduce <- function(data, fracmiss=1, maxlevels=NULL,
   }
   h <- sapply(data, g, fracmiss, maxlevels, minprev)
   if(all(h == '')) return(data)
+  info <- data.frame(Variable=names(data)[h != ''],
+                     Reason=h[h != ''], row.names=NULL, check.names=FALSE)
   if(print) {
     cat('\nVariables Removed or Modified\n\n')
-    print(data.frame(Variable=names(data)[h != ''],
-                     Reason=h[h != ''], row.names=NULL, check.names=FALSE))
+    print(info)
     cat('\n')
   }
   s <- h == 'grouped categories'
   if(any(s)) for(i in which(s))
     data[[i]] <- combine.levels(data[[i]], minlev=minprev)
-    if(any(h != '' & ! s)) data <- data[h == '' | s]
+  if(any(h != '' & ! s)) data <- data[h == '' | s]
+  attr(data, 'info') <- info
   data
 }
 

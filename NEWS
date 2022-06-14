@@ -1,4 +1,4 @@
-Changes in version 4.7-1 (2022-06-06)
+Changes in version 4.7-1 (2022-06-14)
    * plot.describe: added bvspace argument to control spacing between categorical variables
    * getRs: changed default put argument to 'source', changed RStudio code
    * html.contents.data.frame: changed long space to &emsp; to render in more browser
@@ -6,6 +6,7 @@ Changes in version 4.7-1 (2022-06-06)
    * html.contents.data.frame, html.describe: added <title> to html
    * plot.curveRep: added method='data' so can set up for ggplot2
    * combplotp, dotchart3, dotchartpl, plot.describe, plotlyM, scat1d: look at options(plotlyauto=TRUE) and if set override height and width to NULL to that plotly will use auto sizing
+   * dataframeReduce: return information about dropped variables as attribute 'info'
 
 Changes in version 4.7-0 (2022-04-18)
    * html.contents.data.frame: properly closed html <a>

@@ -48,7 +48,8 @@
   are character or categorical variables having too many levels, or
   because they are binary and have too small a prevalence in one of the
   two values.  Categorical variables can also have their levels combined
-  when a level is of low prevalence.
+  when a level is of low prevalence.  A data frame listing actions take
+  is return as attribute \code{"info"} to the main returned data frame.
 }
 \usage{
 cleanup.import(obj, labels, lowernames=FALSE, 

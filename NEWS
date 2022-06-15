@@ -7,6 +7,7 @@ Changes in version 4.7-1 (2022-06-14)
    * plot.curveRep: added method='data' so can set up for ggplot2
    * combplotp, dotchart3, dotchartpl, plot.describe, plotlyM, scat1d: look at options(plotlyauto=TRUE) and if set override height and width to NULL to that plotly will use auto sizing
    * dataframeReduce: return information about dropped variables as attribute 'info'
+   * plotCorrM: added hjust=1 if xangle is not zero
 
 Changes in version 4.7-0 (2022-04-18)
    * html.contents.data.frame: properly closed html <a>

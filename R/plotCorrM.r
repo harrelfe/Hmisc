@@ -60,7 +60,8 @@ plotCorrM <- function(r, what=c('plots', 'data'),
       guides(color = guide_legend(title=''),
              size  = guide_legend(title='r')) +
       xlab(xlab) + ylab(ylab) +
-      theme(axis.text.x=element_text(angle=xangle)) +
+      theme(axis.text.x=element_text(angle=xangle,
+                                     hjust=if(xangle != 0) 1)) +
       labs(subtitle=paste0('max |r|:', round(mx, 3),
                            '  min |r|:', round(mn, 3)))
   

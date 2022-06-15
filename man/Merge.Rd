@@ -4,7 +4,7 @@
 \alias{Merge}
 \title{Merge Multiple Data Frames or Data Tables}
 \usage{
-Merge(..., id, all = TRUE, verbose = TRUE)
+Merge(..., id = NULL, all = TRUE, verbose = TRUE)
 }
 \arguments{
 \item{\dots}{two or more dataframes or data tables}
@@ -16,7 +16,7 @@ Merge(..., id, all = TRUE, verbose = TRUE)
 \item{verbose}{set to \code{FALSE} to not print information about observations}
 }
 \description{
-Merges an arbitrarily large series of data frames or data tables containing common \code{id} variables (keys for data tables).  Information about number of observations and number of unique \code{id}s in individual and final merged datasets is printed.  The first data frame has special meaning in that all of its observations are kept whether they match \code{id}s in other data frames or not.  For all other data frames, by default non-matching observations are dropped.  The first data frame is also the one against which counts of unique \code{id}s are compared.  Sometimes \code{merge} drops variable attributes such as \code{labels} and \code{units}.  These are restored by \code{Merge}.  If all objects are of class \code{data.table}, faster merging will be done using the \code{data.table} package's join operation.  This assumes that all objects have identical key variables and those of the variables on which to merge.
+Merges an arbitrarily large series of data frames or data tables containing common \code{id} variables.  Information about number of observations and number of unique \code{id}s in individual and final merged datasets is printed.  The first data frame/table has special meaning in that all of its observations are kept whether they match \code{id}s in other data frames or not.  For all other data frames, by default non-matching observations are dropped.  The first data frame is also the one against which counts of unique \code{id}s are compared.  Sometimes \code{merge} drops variable attributes such as \code{labels} and \code{units}.  These are restored by \code{Merge}.
 }
 \examples{
 \dontrun{
@@ -24,7 +24,7 @@ a <- data.frame(sid=1:3, age=c(20,30,40))
 b <- data.frame(sid=c(1,2,2), bp=c(120,130,140))
 d <- data.frame(sid=c(1,3,4), wt=c(170,180,190))
 all <- Merge(a, b, d, id = ~ sid)
-# For data.table, first file must be the master file and must
+# First file should be the master file and must
 # contain all ids that ever occur.  ids not in the master will
 # not be merged from other datasets.
 a <- data.table(a); setkey(a, sid)

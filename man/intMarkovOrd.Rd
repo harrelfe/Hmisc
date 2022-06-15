@@ -2,7 +2,7 @@
 % Please edit documentation in R/simMarkovOrd.r
 \name{intMarkovOrd}
 \alias{intMarkovOrd}
-\title{Compute Parameters for Proportional Odds Markov Model}
+\title{intMarkovOrd}
 \usage{
 intMarkovOrd(
   y,
@@ -54,6 +54,9 @@ intMarkovOrd(
 list containing two vectors named \code{intercepts} and \code{extra} unless \code{oncrit=TRUE} in which case the best achieved sum of absolute errors is returned
 }
 \description{
+Compute Parameters for Proportional Odds Markov Model
+}
+\details{
 Given a vector \code{intercepts} of initial guesses at the intercepts in a Markov proportional odds model, and a vector \code{extra} if there are other parameters, solves for the \code{intercepts} and \code{extra} vectors that yields a set of occupancy probabilities at time \code{t} that equal, as closely as possible, a vector of target values.
 }
 \seealso{

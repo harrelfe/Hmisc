@@ -1,6 +1,6 @@
 #' Merge Multiple Data Frames or Data Tables
 #'
-#' Merges an arbitrarily large series of data frames or data tables containing common \code{id} variables (keys for data tables).  Information about number of observations and number of unique \code{id}s in individual and final merged datasets is printed.  The first data frame has special meaning in that all of its observations are kept whether they match \code{id}s in other data frames or not.  For all other data frames, by default non-matching observations are dropped.  The first data frame is also the one against which counts of unique \code{id}s are compared.  Sometimes \code{merge} drops variable attributes such as \code{labels} and \code{units}.  These are restored by \code{Merge}.  If all objects are of class \code{data.table}, faster merging will be done using the \code{data.table} package's join operation.  This assumes that all objects have identical key variables and those of the variables on which to merge.
+#' Merges an arbitrarily large series of data frames or data tables containing common \code{id} variables.  Information about number of observations and number of unique \code{id}s in individual and final merged datasets is printed.  The first data frame/table has special meaning in that all of its observations are kept whether they match \code{id}s in other data frames or not.  For all other data frames, by default non-matching observations are dropped.  The first data frame is also the one against which counts of unique \code{id}s are compared.  Sometimes \code{merge} drops variable attributes such as \code{labels} and \code{units}.  These are restored by \code{Merge}.
 #'
 #' @param \dots two or more dataframes or data tables
 #' @param id a formula containing all the identification variables such that the combination of these variables uniquely identifies subjects or records of interest.  May be omitted for data tables; in that case the \code{key} function retrieves the id variables.
@@ -13,7 +13,7 @@
 #' b <- data.frame(sid=c(1,2,2), bp=c(120,130,140))
 #' d <- data.frame(sid=c(1,3,4), wt=c(170,180,190))
 #' all <- Merge(a, b, d, id = ~ sid)
-#' # For data.table, first file must be the master file and must
+#' # First file should be the master file and must
 #' # contain all ids that ever occur.  ids not in the master will
 #' # not be merged from other datasets.
 #' a <- data.table(a); setkey(a, sid)
@@ -23,7 +23,7 @@
 #' all <- Merge(a, b, d)
 #' }
 
-Merge <- function(..., id, all=TRUE, verbose=TRUE) {
+Merge <- function(..., id=NULL, all=TRUE, verbose=TRUE) {
   
   w <- list(...)
   nams <- (as.character(sys.call())[-1])[1 : length(w)]
@@ -38,12 +38,19 @@ Merge <- function(..., id, all=TRUE, verbose=TRUE) {
     nams[i] <- gsub('(.*)\\$(.*)', '\\2', x)
   }
   d1   <- w[[1]]
-  idt  <- is.data.table(d1)
-  id   <- if(idt) key(d1) else all.vars(id)
+  idt <- 'data.table' %in% class(d1)
+  if(idt && ! requireNamespace("data.table", quietly = TRUE))
+    stop("The 'data.table' package is required to operate on data tables.")
+
+  if(length(id)) id <- all.vars(id)
+  else {
+    if(! idt) stop('must specify id if not using data.tables')
+    id <- key(d1)
+    if(! length(id)) stop('id not given and first data table has no keys')
+    }
   m <- length(w)
   va <- n <- nu <- integer(m)
   nin1 <- nnin1 <- rep(NA, m)
-  ## did <- if(idt) subdt(d1, , id, with=FALSE) else d1[id]
   did <- if(idt) d1[, id, with=FALSE] else d1[id]
   idc1 <- unique(as.character(interaction(did)))
   id.union <- id.intersection <- idc1
@@ -62,10 +69,7 @@ Merge <- function(..., id, all=TRUE, verbose=TRUE) {
     idt  <- is.data.table(d)
     M <- if(i == 1) d
     else
-      if(idt) d[M]
-    else
       merge(M, d, by=id, all.x=TRUE, all.y=all)
-    ## did <- if(idt) subdt(d, , id, with=FALSE) else d[id]
     did   <- if(idt) d[, id, with=FALSE] else d[id]
     idc   <- unique(as.character(interaction(did)))
     di    <- dim(d)
@@ -86,7 +90,7 @@ Merge <- function(..., id, all=TRUE, verbose=TRUE) {
   anych <- FALSE
   if(any(c(lab, un) != ''))
     for(i in 1 : ncol(M)) {
-      x <- M[[i]]
+      x  <- M[[i]]
       ni <- nm[i]
       changed <- FALSE
       if(lab[ni] != '' && ! length(attr(x, 'label'))) {
@@ -104,7 +108,6 @@ Merge <- function(..., id, all=TRUE, verbose=TRUE) {
   nams  <- c(nams, 'Merged')
   va    <- c(va, ncol(M))
   n     <- c(n, nrow(M))
-  ## did   <- if(is.data.table(M)) subdt(M, , id, with=FALSE) else M[id]
   did   <- if(is.data.table(M)) M[, id, with=FALSE] else M[id]
   idc   <- unique(as.character(interaction(did)))
   nu    <- c(nu, length(unique(idc)))

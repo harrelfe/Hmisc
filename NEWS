@@ -1,4 +1,4 @@
-Changes in version 4.7-1 (2022-06-15)
+Changes in version 4.7-1 (2022-06-18)
    * plot.describe: added bvspace argument to control spacing between categorical variables
    * getRs: changed default put argument to 'source', changed RStudio code
    * html.contents.data.frame: changed long space to &emsp; to render in more browser
@@ -9,6 +9,7 @@ Changes in version 4.7-1 (2022-06-15)
    * dataframeReduce: return information about dropped variables as attribute 'info'
    * plotCorrM: added hjust=1 if xangle is not zero
    * Merge: changed to rely on merge.data.table in addition to merge.data.frame
+   * formatCons used by summaryM and summary.formula: respect outer.size for html
 
 Changes in version 4.7-0 (2022-04-18)
    * html.contents.data.frame: properly closed html <a>

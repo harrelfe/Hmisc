@@ -1620,7 +1620,7 @@ formatCons <- function(stats, nam, tr, group.freq, prmsd, sep='/',
     Msdsize <- msdsize
     msdsize <- function(x) paste0('{\\', Msdsize, ' ', x, '}')
   }
-  if(lang != 'latex') outer.size <- function(x) x
+  if(lang == 'plain') outer.size <- function(x) x
   if(! is.function(outer.size)) {
     Outer.size <- outer.size
     outer.size <- function(x) paste0('{\\', Outer.size, ' ', x, '}')

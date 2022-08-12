@@ -1661,7 +1661,7 @@ getRs <- function(file=NULL,
       }
     if(browse == 'local') pc(s)
     else
-      browseURL(if(localrep) '~/R/rscripts/contents.md'
+      browseURL(if(localrepo) '~/R/rscripts/contents.md'
                 else
                   'https://github.com/harrelfe/rscripts/blob/master/contents.md')
     return(invisible(s))

@@ -34,7 +34,7 @@ importFrom(graphics, abline, arrows, axis, axis.Date,
            locator, mtext, par, plot, plot.new,
            plot.window, points, polygon, rect, segments,
            strheight, strwidth, symbols, text, title)
-importFrom(utils, browseURL, capture.output, download.file, find,
+importFrom(utils, browseURL, capture.output, download.file, file.edit, find,
            getFromNamespace, object.size, read.csv, read.table)
            
 importFrom(data.table, setDT, data.table, is.data.table, key, melt)

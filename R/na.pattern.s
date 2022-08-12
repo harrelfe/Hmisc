@@ -9,3 +9,5 @@ na.pattern <- function(x)
     }
   table(pattern)
 }
+utils::globalVariables('..i')
+

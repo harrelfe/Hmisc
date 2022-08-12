@@ -6,12 +6,12 @@
   Rank Correlation for Censored Data
 }
 \description{
-  Computes the \var{c} index and the corresponding
-  generalization of Somers' \var{Dxy} rank correlation for a censored response
+  Computes the c index and the corresponding
+  generalization of Somers' Dxy rank correlation for a censored response
   variable. Also works for uncensored and binary responses, 
   although its use of all possible pairings
-  makes it slow for this purpose.  \var{Dxy} and \var{c} are related by
-  \eqn{\var{Dxy}=2(\var{c}-0.5)}{\var{Dxy} = 2*(\var{c} - 0.5)}.
+  makes it slow for this purpose.  Dxy and c are related by
+  \eqn{Dxy=2(c-0.5)}{Dxy = 2*(c - 0.5)}.
 
   \code{rcorr.cens} handles one predictor variable.  \code{rcorrcens}
   computes rank correlation measures separately by a series of

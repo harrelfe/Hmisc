@@ -19,6 +19,9 @@
   already prepared using the \pkg{Hmisc} command
   \code{html(contents())} or to view \file{.txt} or \file{.html} data
   description files when available.
+
+	If \code{options(localHfiles=TRUE)} the scripts are read from local directory
+	\code{~/web/data/repo} instead of from the web server.
 }
 \usage{
 getHdata(file, what = c("data", "contents", "description", "all"),

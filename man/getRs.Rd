@@ -10,7 +10,9 @@
 	default), to
 	download a script and load it into an RStudio script editor window, to
 	list scripts whose major category contains a given string (ignoring
-	case), or to list all major and minor categories.
+	case), or to list all major and minor categories.  If
+	\code{options(localHfiles=TRUE)} the scripts are read from local directory
+	\code{~/R/rscripts} instead of from github.
 }
 \usage{
 getRs(file=NULL, guser='harrelfe', grepo='rscripts', gdir='raw/master',

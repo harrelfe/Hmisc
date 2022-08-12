@@ -16,11 +16,11 @@
   place the tick marks along a curve by specifying y-coordinates to go
   along with the \code{x} values.
   
-  If any two values of \code{x} are within \eqn{\code{eps}*\var{w}} of
-  each other, where \code{eps} defaults to .001 and \var{w} is the span
+  If any two values of \code{x} are within \eqn{\code{eps}*w} of
+  each other, where \code{eps} defaults to .001 and w is the span
   of the intended axis, values of \code{x} are jittered by adding a
-  value uniformly distributed in \eqn{[-\code{jitfrac}*\var{w},
-  \code{jitfrac}*\var{w}]}, where \code{jitfrac} defaults to
+  value uniformly distributed in \eqn{[-\code{jitfrac}*w,
+  \code{jitfrac}*w]}, where \code{jitfrac} defaults to
   .008. Specifying \code{preserve=TRUE} invokes \code{jitter2} with a
   different logic of jittering. Allows plotting random sub-segments to
   handle very large \code{x} vectors (see\code{tfrac}).
@@ -175,7 +175,7 @@ ecdfpM(x, group=NULL, what=c('F','1-F','f','1-f'), q=NULL,
     each point. This is useful for very large samples or ones with some
     very dense points. The default value is 1 if the number of
     non-missing observations \code{n}  is less than 125, and
-    \eqn{\max{(.1, 125/\var{n})}} otherwise.
+    \eqn{\max{(.1, 125/n)}} otherwise.
   }
   \item{eps}{
     fraction of axis for determining overlapping points in \code{x}. For
@@ -225,19 +225,19 @@ ecdfpM(x, group=NULL, what=c('F','1-F','f','1-f'), q=NULL,
   }
   \item{fill}{
     maximum fraction of the axis filled by jittered values. If \code{d}
-    are duplicated values between a lower value \var{l} and upper value
-    \var{u}, then \var{d} will be spread within
-    \eqn{\pm \code{fill}*\min{(\var{u}-\var{d},\var{d}-\var{l})}/2}{
-      +/- \code{fill}*min(\var{u}-\var{d},\var{d}-\var{l})/2}.
+    are duplicated values between a lower value l and upper value
+    u, then d will be spread within
+    \eqn{\pm \code{fill}*\min{(u-d,d-l)}/2}{
+      +/- \code{fill}*min(u-d,d-l)/2}.
   }
   \item{limit}{
     specifies a limit for maximum shift in jittered values. Duplicate
     values will be spread within
-    \eqn{\pm\code{fill}*\min{(\var{u}-\var{d},\var{d}-\var{l})}/2}{
-      +/- \code{fill}*min(\var{u}-\var{d},\var{d}-\var{l})/2}. The
+    \eqn{\pm\code{fill}*\min{(u-d,d-l)}/2}{
+      +/- \code{fill}*min(u-d,d-l)/2}. The
     default \code{TRUE} restricts jittering to the smallest
-    \eqn{\min{(\var{u}-\var{d},\var{d}-\var{l})}/2} observed and results
-    in equal amount of jittering for all \var{d}. Setting to
+    \eqn{\min{(u-d,d-l)}/2} observed and results
+    in equal amount of jittering for all d. Setting to
     \code{FALSE} allows for locally different amount of jittering, using
     maximum space available.
   }
@@ -280,7 +280,7 @@ ecdfpM(x, group=NULL, what=c('F','1-F','f','1-f'), q=NULL,
   }
   \item{presorted}{
     set to \code{TRUE} to prevent from sorting for determining the order
-    \eqn{\var{l}<\var{d}<\var{u}}. This is usefull if an existing
+    \eqn{l<d<u}. This is usefull if an existing
     meaningfull local order would be destroyed by sorting, as in
     \eqn{\sin{(\pi*\code{sort}(\code{round}(\code{runif}(1000,0,10),1)))}}.
   }
@@ -443,8 +443,8 @@ ecdfpM(x, group=NULL, what=c('F','1-F','f','1-f'), q=NULL,
 }
 \details{
   For \code{scat1d} the length of line segments used is
-  \code{frac*min(par()$pin)/par()$uin[\var{opp}]} data units, where
-  \var{opp} is the index of the opposite axis and \code{frac} defaults
+  \code{frac*min(par()$pin)/par()$uin[opp]} data units, where
+  opp is the index of the opposite axis and \code{frac} defaults
   to .02.  Assumes that \code{plot} has already been called.  Current
   \code{par("usr")} is used to determine the range of data for the axis
   of the current plot.  This range is used in jittering and in

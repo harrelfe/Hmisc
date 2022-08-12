@@ -7,8 +7,8 @@
   Response, and Integrated Discrimination Index
 }
 \description{
-  Computes U-statistics to test for whether predictor \var{X1} is more
-  concordant than predictor \var{X2}, extending \code{rcorr.cens}.  For
+  Computes U-statistics to test for whether predictor X1 is more
+  concordant than predictor X2, extending \code{rcorr.cens}.  For
   \code{method=1}, estimates the fraction of pairs for which the
   \code{x1} difference is more impressive than the \code{x2}
   difference. For \code{method=2}, estimates the fraction of pairs for

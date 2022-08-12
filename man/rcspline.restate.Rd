@@ -29,10 +29,10 @@ rcsplineFunction(knots, coef, norm=2, type=c('ordinary', 'integral'))
   }
   \item{coef}{
     vector of coefficients from the fit. If the length of \code{coef} is
-    \eqn{\var{k}-1}, where \var{k} is equal to the \code{length(knots)}, the
+    \eqn{k-1}, where k is equal to the \code{length(knots)}, the
     first coefficient must be for the linear term and remaining
     \eqn{k-2} coefficients must be for the constructed terms (e.g., from
-    \code{rcspline.eval}). If the length of \code{coef} is \var{k}, an
+    \code{rcspline.eval}). If the length of \code{coef} is k, an
     intercept is assumed to be in the first element (or a zero is
     prepended to \code{coef} for \code{rcsplineFunction}).
   }

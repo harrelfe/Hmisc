@@ -9,9 +9,9 @@
   ordinary multiple regression models.  The mean and median absolute
   errors correspond to the mean square due to regression, error, and
   total. The absolute errors computed are derived from \eqn{\hat{Y} -
-    \mbox{median($\hat{Y}$)}}{\var{Yhat} - median(\var{Yhat})},
-  \eqn{\hat{Y} - Y}{\var{Yhat} - \var{Y}}, and \eqn{Y -
-    \mbox{median($Y$)}}{\var{Y} - median(\var{Y})}.  The function also
+    \mbox{median($\hat{Y}$)}}{Yhat - median(Yhat)},
+  \eqn{\hat{Y} - Y}{Yhat - Y}, and \eqn{Y -
+    \mbox{median($Y$)}}{Y - median(Y)}.  The function also
   computes ratios that correspond to \eqn{R^2} and \eqn{1 - R^2} (but
   these ratios do not add to 1.0); the \eqn{R^2} measure is the ratio of
   mean or median absolute \eqn{\hat{Y} - \mbox{median($\hat{Y}$)}}{Yhat
@@ -29,7 +29,7 @@ abs.error.pred(fit, lp=NULL, y=NULL)
 \arguments{
   \item{fit}{
     a fit object typically from \code{\link{lm}} or \code{\link[rms]{ols}}
-    that contains a \var{y} vector (i.e., you should have specified
+    that contains a y vector (i.e., you should have specified
     \code{y=TRUE} to the fitting function) unless the \code{y} argument
     is given to \code{abs.error.pred}.  If you do not specify the
     \code{lp} argument, \code{fit} must contain \code{fitted.values} or

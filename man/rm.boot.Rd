@@ -119,7 +119,7 @@ rm.boot(time, y, id=seq(along=time), subset,
   \item{nk}{
     number of knots in the restricted cubic spline function fit.  The
     number of knots may be 0 (denoting linear regression) or an integer
-    greater than 2 in which \var{k} knots results in \eqn{\var{k} - 1}
+    greater than 2 in which k knots results in \eqn{k - 1}
     regression coefficients excluding the intercept.  The default is 6
     knots.
   }
@@ -341,12 +341,11 @@ rm.boot(time, y, id=seq(along=time), subset,
   If not all subjects have the same number of observations (after
   deleting observations containing missing values) and if
   \code{bootstrap.type="x fixed"}, bootstrapped residual vectors may
-  have a length \var{m} that is different from the number of original
-  observations \var{n}.  If \eqn{\var{m} > \var{n}} for a bootstrap
-  repetition, the first \var{n} elements of the randomly drawn residuals
-  are used. If \eqn{\var{m} < \var{n}}, the residual vector is appended
-  with a random sample with replacement of length \eqn{\var{n} -
-  \var{m}} from itself.  A warning message is issued if this happens.
+  have a length m that is different from the number of original
+  observations n.  If \eqn{m > n} for a bootstrap
+  repetition, the first n elements of the randomly drawn residuals
+  are used. If \eqn{m < n}, the residual vector is appended
+  with a random sample with replacement of length \eqn{n - m} from itself.  A warning message is issued if this happens.
   If the number of time points per subject varies, the bootstrap results
   for \code{bootstrap.type="x fixed"} can still be invalid, as this
   method assumes that a vector (over subjects) of all residuals can be

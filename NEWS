@@ -1,4 +1,4 @@
-Changes in version 4.7-1 (2022-06-18)
+Changes in version 4.7-1 (2022-07-27}
    * plot.describe: added bvspace argument to control spacing between categorical variables
    * getRs: changed default put argument to 'source', changed RStudio code
    * html.contents.data.frame: changed long space to &emsp; to render in more browser
@@ -10,6 +10,8 @@ Changes in version 4.7-1 (2022-06-18)
    * plotCorrM: added hjust=1 if xangle is not zero
    * Merge: changed to rely on merge.data.table in addition to merge.data.frame
    * formatCons used by summaryM and summary.formula: respect outer.size for html
+   * options(localHfiles=TRUE) makes `getRs` and `getHdata` read from local file directories instead of from github or our web server
+   * various .Rd files: got rid of \var{} to pass new CRAN checks
 
 Changes in version 4.7-0 (2022-04-18)
    * html.contents.data.frame: properly closed html <a>

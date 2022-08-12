@@ -51,10 +51,10 @@
   This is done by sampling \code{n.impute} residuals from the
   transformed variable, with replacement (a la bootstrapping), or by
   default, using Rubin's approximate Bayesian bootstrap, where a sample
-  of size \var{n} with replacement is selected from the residuals on
-  \var{n} non-missing values of the target variable, and then a sample
-  of size \var{m} with replacement is chosen from this sample, where
-  \var{m} is the number of missing values needing imputation for the
+  of size n with replacement is selected from the residuals on
+  n non-missing values of the target variable, and then a sample
+  of size m with replacement is chosen from this sample, where
+  m is the number of missing values needing imputation for the
   current multiple imputation  repetition.  Neither of these bootstrap
   procedures assume normality or even symmetry of residuals. For
   sometimes-missing categorical variables, optimal scores are computed
@@ -269,9 +269,9 @@ invertTabulated(x, y, freq=rep(1,length(x)),
     number of knots to use in expanding each continuous variable (not
     listed in \code{asis}) in a restricted cubic spline function.
     Default is 3 (yielding 2 parameters for a variable) if
-    \eqn{\var{n} < 30}, 4 if
-    \eqn{30 <= \var{n} < 100}{30 \eq \var{n} < 100}, and 5 if
-    \eqn{\var{n} \ge 100}{\var{n} >= 100} (4 parameters).
+    \eqn{n < 30}, 4 if
+    \eqn{30 <= n < 100}{30 \eq n < 100}, and 5 if
+    \eqn{n \ge 100}{n >= 100} (4 parameters).
   }
   \item{imputed}{
     Set to \code{TRUE} to return a list containing imputed values on the
@@ -550,8 +550,8 @@ invertTabulated(x, y, freq=rep(1,length(x)),
   \item{fit.reps}{
     set to \code{TRUE} to save all fit objects from the fit for each
     imputation in \code{fit.mult.impute}.  Then the object returned will
-    have a component \code{fits} which is a list whose \var{i}th
-    element is the \var{i}th fit object. 
+    have a component \code{fits} which is a list whose i'th
+    element is the i'th fit object. 
   }
   \item{dtrans}{
     provides an approach to creating derived variables from a single
@@ -562,7 +562,7 @@ invertTabulated(x, y, freq=rep(1,length(x)),
     record per subject data frame that is converted by \code{dtrans} to
     multiple records per subject.  The imputation can enforce
     consistency of certain variables across records so that for example
-    a missing value of \var{sex} will not be imputed as \samp{male} for
+    a missing value of sex will not be imputed as \samp{male} for
     one of the subject's records and \samp{female} as another.  An
     example of how \code{dtrans} might be specified is
     \code{dtrans=function(w) \{w$age <- w$years + w$months/12; w\}}
@@ -612,7 +612,7 @@ invertTabulated(x, y, freq=rep(1,length(x)),
    the name of the new function will be \code{prefix} placed in front of
    the variable name, and \code{suffix} placed in back of the name.  The
    default is to use names of the form \samp{.varname}, where
-   \var{varname} is the variable name.
+   varname is the variable name.
  }
  \item{pos}{
    position as in \code{\link{assign}} at which to store new functions
@@ -692,9 +692,9 @@ invertTabulated(x, y, freq=rep(1,length(x)),
   each variable from the others.  For \code{asis} variables, the scale
   is the average absolute difference about the median.  For other
   variables it is unity, since canonical variables are standardized.
-  For \code{xcoef}, row \var{i} has the coefficients to predict
-  transformed variable \var{i}, with the column for the coefficient of
-  variable \var{i} set to \code{NA}.  If \code{imputed=TRUE} was given,
+  For \code{xcoef}, row i has the coefficients to predict
+  transformed variable i, with the column for the coefficient of
+  variable i set to \code{NA}.  If \code{imputed=TRUE} was given,
   an optional element \code{imputed} also appears.  This is a list with
   the vector of imputed values (on the original scale) for each variable
   containing \code{NA}s.  Matrices rather than vectors are returned if
@@ -767,25 +767,25 @@ invertTabulated(x, y, freq=rep(1,length(x)),
   Shrinkage uses the method of
   \cite{Van Houwelingen and Le Cessie (1990)} (similar to
   \cite{Copas, 1983}).  The shrinkage factor is
-  \deqn{\frac{1-\frac{(1-\var{R2})(\var{n}-1)}{\var{n}-\var{k}-1}}{\var{R2}}}{%
-    [1 - (1 - \var{R2})(\var{n} - 1)/(\var{n} - \var{k} - 1)]/\var{R2}}
-  where \var{R2} is the apparent \eqn{R^2}{R-square}d for predicting the
-  variable, \var{n} is the number of non-missing values, and \var{k} is
+  \deqn{\frac{1-\frac{(1-R2)(n-1)}{n-k-1}}{R2}}{%
+    [1 - (1 - R2)(n - 1)/(n - k - 1)]/R2}
+  where R2 is the apparent \eqn{R^2}{R-square}d for predicting the
+  variable, n is the number of non-missing values, and k is
   the effective number of degrees of freedom (aside from intercepts).  A
-  heuristic estimate is used for \var{k}:
-  \code{\var{A} - 1 + sum(max(0,\var{Bi} - 1))/\var{m} + \var{m}}, where
-  \var{A} is the number of d.f. required to represent the variable being
-  predicted, the \var{Bi} are the number of columns required to
-  represent all the other variables, and \var{m} is the number of all
-  other variables.  Division by \var{m} is done because the
+  heuristic estimate is used for k:
+  \code{A - 1 + sum(max(0,Bi - 1))/m + m}, where
+  A is the number of d.f. required to represent the variable being
+  predicted, the Bi are the number of columns required to
+  represent all the other variables, and m is the number of all
+  other variables.  Division by m is done because the
   transformations for the other variables are fixed at their current
   transformations the last time they were being predicted.  The
-  \eqn{+ \var{m}} term comes from the number of coefficients estimated
+  \eqn{+ m} term comes from the number of coefficients estimated
   on the right hand side, whether by least squares or canonical
   variates.  If a shrinkage factor is negative, it is set to 0.  The
   shrinkage factor is the ratio of the adjusted \eqn{R^2}{R-square}d to
   the ordinary \eqn{R^2}{R-square}d. The adjusted \eqn{R^2}{R-square}d is
-  \deqn{1-\frac{(1-\var{R2})(\var{n}-1)}{\var{n}-\var{k}-1}}{
+  \deqn{1-\frac{(1-R2)(n-1)}{n-k-1}}{
     1 - (1 - R2)(n - 1)/(n - k - 1)}
   which is also set to zero if it is negative.  If \code{shrink=FALSE}
   and the adjusted \eqn{R^2}{R-square}s are much smaller than the
@@ -794,7 +794,7 @@ invertTabulated(x, y, freq=rep(1,length(x)),
  
   Canonical variates are scaled to have variance of 1.0, by multiplying
   canonical coefficients from \code{\link{cancor}} by 
-  \eqn{\sqrt{\var{n}-1}}{sqrt(\var{n} - 1)}.
+  \eqn{\sqrt{n-1}}{sqrt(n - 1)}.
 
   When specifying a non-\pkg{rms} library fitting function to
   \code{fit.mult.impute} (e.g., \code{\link{lm}}, \code{\link{glm}}),

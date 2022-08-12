@@ -40,9 +40,9 @@ rcspline.plot(x,y,model=c("logistic", "cox", "ols"), xrange, event, nk=5,
     \code{coxph.fit} function with \code{method="efron"} arguement set.
   }
   \item{xrange}{
-    range for evaluating \code{x}, default is \var{f} and
-    \eqn{1 - \var{f}} quantiles of \code{x}, where
-    \eqn{\var{f} = \frac{10}{\max{(\var{n}, 200)}}}{\var{f} = 10/max(\var{n}, 200)}
+    range for evaluating \code{x}, default is f and
+    \eqn{1 - f} quantiles of \code{x}, where
+    \eqn{f = \frac{10}{\max{(n, 200)}}}{f = 10/max(n, 200)}
   }
   \item{event}{
     event/censoring indicator if \code{model="cox"}. If \code{event} is

@@ -1220,17 +1220,18 @@ convertPdate <- function(x, fracnn=0.3, considerNA=NULL) {
 
 getHdata <-
   function(file, what=c('data','contents','description','all'),
-           where='https://hbiostat.org/data/repo')
-  {
+           where='https://hbiostat.org/data/repo') {
     what <- match.arg(what)
     fn <- as.character(substitute(file))
-    ads <-
-      scan(paste(where,'Rcontents.txt',sep='/'),list(''),quiet=TRUE)[[1]]
-    a <- unlist(strsplit(ads,'.sav|.rda'))
-    if(missing(file))
-      return(a)
+    localrepo <- .Options$localHfiles
+    localrepo <- length(localrepo) && is.logical(localrepo) && localrepo
+    if(localrepo) where <- '~/web/data/repo'
     
-    wds <- paste(substitute(file),c('rda','sav'),sep='.')
+    ads <- readLines(paste0(where, '/Rcontents.txt'))
+    a <- unlist(strsplit(ads,'.sav|.rda'))
+    if(missing(file)) return(a)
+    
+    wds <- paste(substitute(file), c('rda','sav'), sep='.')
     if(!any(wds %in% ads))
       stop(paste(paste(wds, collapse=','),
                  'are not on the web site.\nAvailable datasets:\n',
@@ -1238,7 +1239,7 @@ getHdata <-
     wds <- wds[wds %in% ads]
     if(what %in% c('contents','all')) {
       w <- paste(if(fn=='nhgh')'' else 'C',fn,'.html',sep='')
-      browseURL(paste(where,w,sep='/'))
+      browseURL(paste(where, w, sep='/'))
     }
     
     if(what %in% c('description','all')) {
@@ -1249,7 +1250,7 @@ getHdata <-
         warning(paste('No description file available for',fn))
       else {
         w <- ades[i[1]]
-        browseURL(paste(where,w,sep='/'))
+        browseURL(paste(where, w, sep='/'))
       }
     }
     
@@ -1260,6 +1261,7 @@ getHdata <-
     if(length(f) > 1)
       warning(paste('More than one file matched; using the first:',
                     paste(f, collapse=', ')))
+    if(localrepo) return(invisible(load(f, .GlobalEnv)))
     tf <- tempfile()
     download.file(f, tf, mode='wb', quiet=TRUE)
     load(tf, .GlobalEnv)
@@ -1571,8 +1573,14 @@ getRs <- function(file=NULL,
   
   browse <- match.arg(browse)
   put    <- match.arg(put)
-  where  <- paste('https://github.com', guser, grepo, gdir, sep='/')
-  if(length(dir)) where <- paste(where, dir, sep='/')
+
+  localrepo <- .Options$localHfiles
+  localrepo <- length(localrepo) && is.logical(localrepo) && localrepo
+  if(localrepo) where <- '~/R/rscripts'
+  else {
+    where  <- paste('https://github.com', guser, grepo, gdir, sep='/')
+    if(length(dir)) where <- paste(where, dir, sep='/')
+    }
   
   trim <- function(x) sub('^[[:space:]]+','',sub('[[:space:]]+$','', x))
 
@@ -1653,14 +1661,17 @@ getRs <- function(file=NULL,
       }
     if(browse == 'local') pc(s)
     else
-      browseURL('https://github.com/harrelfe/rscripts/blob/master/contents.md')
+      browseURL(if(localrep) '~/R/rscripts/contents.md'
+                else
+                  'https://github.com/harrelfe/rscripts/blob/master/contents.md')
     return(invisible(s))
   }
 
   if(put == 'source')
     return(invisible(source(paste(where, file, sep='/'))))
-    
-  download.file.HTTPS(paste(where, file, sep='/'), file)
+
+  if(localrepo) file.copy(paste(where, file, sel='/'), file)
+  else download.file.HTTPS(paste(where, file, sep='/'), file)
   file.edit(file)
   invisible()
 }

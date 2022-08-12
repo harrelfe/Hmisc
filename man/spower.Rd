@@ -86,7 +86,7 @@ Weibull2(times, surv)
 }
 \arguments{
   \item{rcontrol}{
-    a function of \var{n} which returns \var{n} random uncensored
+    a function of n which returns n random uncensored
     failure times for the control group.  \code{spower} assumes that
     non-compliance (dropin) has been taken into account by this
     function.
@@ -95,7 +95,7 @@ Weibull2(times, surv)
     similar to \code{rcontrol} but for the intervention group
   }
   \item{rcens}{
-    a function of \var{n} which returns \var{n} random censoring times.
+    a function of n which returns n random censoring times.
     It is assumed that both treatment groups have the same censoring
     distribution.
   }
@@ -167,7 +167,7 @@ Weibull2(times, surv)
     a function of time specifying the probability of an intervention
     subject dropping out to control conditions.  As a function of time,
     \code{dropout} specifies the probability that a patient is treated
-    with the control therapy at time \var{t}.  \code{dropin} and
+    with the control therapy at time t.  \code{dropin} and
     \code{dropout} form mixing proportions for control and intervention
     hazard functions.
   }

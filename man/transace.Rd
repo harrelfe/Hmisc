@@ -56,7 +56,7 @@
   are categorical (i.e., \code{factor}, \code{category}, or character
   vectors).  Specify linear transformations by enclosing variables by
   the identify function (\code{I()}), and specify monotonicity by using
-  \code{monotone(\var{variable})}.  Monotonicity restrictions are not
+  \code{monotone(variable)}.  Monotonicity restrictions are not
   allowed with \code{method="areg"}.
   
   The \code{\link{summary}} method for \code{areg.boot} computes
@@ -84,13 +84,13 @@
   \code{summary.areg.boot} or \code{predict.areg.boot}), the
   \dQuote{smearing} estimator of \cite{Duan (1983)} is used.  Here we
   estimate the mean of the untransformed response by computing the
-  arithmetic mean of \eqn{\var{ginverse}(\var{lp} + \var{residuals})},
-  where \var{ginverse} is the inverse of the nonparametric
+  arithmetic mean of \eqn{ginverse(lp + residuals)},
+  where ginverse is the inverse of the nonparametric
   transformation of the response (obtained by reverse linear
-  interpolation), \var{lp} is the linear predictor for an individual
-  observation on the transformed scale, and \var{residuals} is the
+  interpolation), lp is the linear predictor for an individual
+  observation on the transformed scale, and residuals is the
   entire vector of residuals estimated from the fitted model, on the
-  transformed scales (\var{n} residuals for \var{n} original observations).  The
+  transformed scales (n residuals for n original observations).  The
   \code{smearingEst} function computes the general smearing estimate.
   For efficiency \code{smearingEst} recognizes that quantiles are
   transformation-preserving, i.e., when one wishes to estimate a
@@ -98,8 +98,8 @@
   the inverse transformation of the transformed estimate after the
   chosen quantile of the vector of residuals is added to it. When the
   median is desired, the estimate is
-  \eqn{\var{ginverse}(\var{lp} + \mbox{median}(\var{residuals}))}{
-    \var{ginverse}(\var{lp} + median(\var{residuals}))}.
+  \eqn{ginverse(lp + \mbox{median}(residuals))}{
+    ginverse(lp + median(residuals))}.
   See the last example for how \code{smearingEst} can be used outside of
   \code{areg.boot}.
 
@@ -247,7 +247,7 @@ Quantile(object, \dots)
     \code{smearingEst}, the result (for \code{statistic="lp"}) is the
     input argument \code{transEst}.  \code{statistic="fitted"} gives
     predicted untransformed responses, i.e.,
-    \eqn{\var{ginverse}(\var{lp})}, where \var{ginverse} is the inverse
+    \eqn{ginverse(lp)}, where ginverse is the inverse
     of the estimated response transformation, estimated by reverse
     linear interpolation on the tabulated nonparametric response
     transformation or by using an explicit analytic
@@ -269,7 +269,7 @@ Quantile(object, \dots)
   }
   \item{boot}{
     set to \code{FALSE} to not plot any bootstrapped transformations.
-    Set it to an integer \var{k} to plot the first \var{k} bootstrap
+    Set it to an integer k to plot the first k bootstrap
     estimates.
   }
   \item{col.boot}{
@@ -377,7 +377,7 @@ Quantile(object, \dots)
   parameters of class \samp{labelled} so that \code{print.labelled} wil
   print a label documenting the estimate that was used (see
   \code{\link{label}}).  This label can be retrieved for other purposes
-  by using e.g. \code{label(\var{obj})}, where \var{obj} was the vector
+  by using e.g. \code{label(obj)}, where obj was the vector
   returned by \code{smearingEst}.
 }
 \details{

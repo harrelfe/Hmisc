@@ -449,7 +449,7 @@ plot.summaryM <-
                     upedge + strheight('N', cex=cex) / 2,
                     cex=cex)
           outerText(N, length(N) : 1, cex=cex)
-          par(omai)
+          par(mai=omai)
         }
         else
           stripChart(obj$data[[i]], xlab=nam)

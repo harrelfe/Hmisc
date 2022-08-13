@@ -258,6 +258,7 @@ plot.summaryM <-
   if(is.logical(prtest) && !prtest) prtest <- 'none'
 
   for(strat in names(x$results)) {
+  
     obj <- x$results[[strat]]
     test   <- obj$testresults
     if(!length(test)) prtest <- 'none'
@@ -279,8 +280,8 @@ plot.summaryM <-
      else 
        paste('Proportions',
              'Stratified by',
-             obj$group.label)
-
+             x$group.label)
+             
     pch     <- rep(pch, length.out=nw)
   
     lab <- vnd <- z <- nmiss <- vnamd <- NULL
@@ -973,6 +974,8 @@ plotpsummaryM <-
      else 1
 
     gnames <- names(obj$group.freq) 
+    
+    ggl <- obj$group.label
 
     if(! length(main)) main <-
      if(strat != '.ALL.') strat

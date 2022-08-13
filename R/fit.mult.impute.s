@@ -10,11 +10,11 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
     warning('If you use print, summary, or anova on the result, lm methods use the\nsum of squared residuals rather than the Rubin formula for computing\nresidual variance and standard errors.  It is suggested to use ols\ninstead of lm.')
   
   using.Design <- FALSE
-  fits <- if(fit.reps) vector('list', n.impute)
   used.mice <- any(class(xtrans)=='mids')
   if (used.mice && !requireNamespace("mice", quietly = TRUE))
     stop("This data requires the 'mice' package.")
   if(used.mice && missing(n.impute)) n.impute <- xtrans$m
+  fits <- if(fit.reps) vector('list', n.impute)
   stats.ok2average <- c('linear.predictors','fitted.values','stats', 'means',
                         'icoef', 'scale', 'center', 'y.imputed')
   

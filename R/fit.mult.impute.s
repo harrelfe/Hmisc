@@ -6,7 +6,7 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
 {
   call <- match.call()
 
-  if(deparse(substitute(fitter)) == 'lm')
+  if(deparse(substitute(fitter))[1] == 'lm')
     warning('If you use print, summary, or anova on the result, lm methods use the\nsum of squared residuals rather than the Rubin formula for computing\nresidual variance and standard errors.  It is suggested to use ols\ninstead of lm.')
   
   using.Design <- FALSE

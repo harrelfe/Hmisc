@@ -13,6 +13,7 @@ Changes in version 4.7-1 (2022-08-13}
    * options(localHfiles=TRUE) makes `getRs` and `getHdata` read from local file directories instead of from github or our web server
    * various .Rd files: got rid of \var{} to pass new CRAN checks
    * fit.mult.impute: fixed bug when using mice.  Thanks: Michał Krassowski https://github.com/harrelfe/Hmisc/issues/152
+   * fit.mult.impute: fixed bug with deparse(substitute(fitter)) when fitter is an anonymous function.  Thanks Thanks: Michał Krassowski https://github.com/harrelfe/Hmisc/issues/157
 
 Changes in version 4.7-0 (2022-04-18)
    * html.contents.data.frame: properly closed html <a>

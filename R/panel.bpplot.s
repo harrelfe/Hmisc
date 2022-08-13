@@ -182,7 +182,7 @@ bpplt <- function(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
   mai[2] <- mxlab
   opar <- par('mai')
   par(mai=mai)
-  on.exit(par(opar))
+  on.exit(par(mai=opar))
 
   plot.window(xlim=xlim, ylim=c(0.5,length(groups) + 0.5))
 

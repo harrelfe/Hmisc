@@ -15,6 +15,7 @@ Changes in version 4.7-1 (2022-08-13}
    * fit.mult.impute: fixed bug when using mice.  Thanks: Michał Krassowski https://github.com/harrelfe/Hmisc/issues/152
    * fit.mult.impute: fixed bug with deparse(substitute(fitter)) when fitter is an anonymous function.  Thanks Thanks: Michał Krassowski https://github.com/harrelfe/Hmisc/issues/157
    * plot.summaryM: fixed bug not fetching group label from correct place.  Thanks: Thomas tkpmep@gmail.com
+   * bpplt: fixed par(mai).  Thanks: tkpmep@gmail.com
 
 Changes in version 4.7-0 (2022-04-18)
    * html.contents.data.frame: properly closed html <a>

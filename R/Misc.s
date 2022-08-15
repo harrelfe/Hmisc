@@ -1836,7 +1836,7 @@ knitrSet <-
 
 
 grType <- function() {
-	if('plotly' %nin% utils::installed.packages()[,1]) return('base')
+  if(! length(find.package('plotly', quiet=TRUE))) return('base')
 	if(length(g <- .Options$grType) && g == 'plotly') 'plotly' else 'base'
 }
 

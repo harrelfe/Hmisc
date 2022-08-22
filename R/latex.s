@@ -569,7 +569,7 @@ latex.default <-
 
   ## pandoc used by R Markdown gets fooled by LaTeX comments
   olc <- getOption('omitlatexcom')
-  if(! length(olc) || ! olc)
+  if(length(olc) && olc)
     cat("%", deparse(sys.call()), "%\n", file=file, append=file != '', sep='')
 
   if(dcolumn) {

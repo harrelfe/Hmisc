@@ -1,5 +1,6 @@
-Changes in version 4.7-2 (2022-08-15)
-   * grType: changed to not use the slow installed.packages()
+Changes in version 4.7-2 (2022-08-22)
+   * grType: changed to use find.package() instead of the slow installed.packages() (thanks: Uwe Ligges)
+   * latex.default: changed to by default omit the LaTeX comment; specify options(omitlatexcom=FALSE) to get original behavior
 
 Changes in version 4.7-1 (2022-08-13)
    * plot.describe: added bvspace argument to control spacing between categorical variables

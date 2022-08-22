@@ -548,9 +548,9 @@ dvigv(object, \dots)
   commands which are assumed to be in the system path.
 }
 \details{
-	\command{latex.default} outputs a LaTeX comment containing the calling
-  statement.  To suppress outputting this comment, run
-  \command{options(omitlatexcom=TRUE)} before running.  This is helpful
+	\command{latex.default} optionally outputs a LaTeX comment containing the calling
+  statement.  To output this comment, run
+  \command{options(omitlatexcom=FALSE)} before running.  The default behavior or suppressing the comment is helpful
   when running RMarkdown to produce pdf output using LaTeX, as this uses
   \command{pandoc} which is fooled into try to escape the percent
   comment symbol.

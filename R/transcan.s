@@ -1288,12 +1288,18 @@ ggplot.transcan <- function(data, mapping, scale=FALSE, ..., environment)
                                        lab=lab, type='transform'))
     }
   }
+
+  # scale*manual calls are from David Norris
+  # The implicit (alphabetical) order of 'imputed' and 'transform'
+  # reverses the intended symbol & color assignments. But naming
+  # the vectors corrects this.
+ 
   ggplot(data, aes(x=x, y=y, color=type, shape=type, size=type)) + geom_point() +
        facet_wrap(~ X, scales=if(scale) 'free_x' else 'free', ...) +
        xlab(NULL) + ylab('Transformed') +
-       scale_color_manual(values=c('#00000059', '#FF000059')) +
-       scale_shape_manual(values=c(1, 3)) +
-       scale_size_manual(values=c(1.3, 2.25)) +
+       scale_color_manual(values = c(transform="#00000059", imputed="#FF000059")) +
+       scale_shape_manual(values = c(transform=1, imputed=3)) +
+       scale_size_manual(values = c(transform=1.3, imputed=2.25)) +
        theme(legend.position='none') +
        geom_text(data=adata, aes(label=lab), parse=TRUE, size=1.65, col='black')
 }

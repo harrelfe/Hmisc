@@ -46,7 +46,8 @@ Moving and hiding table of contents for Rmd HTML documents
 \details{
 \code{hidingTOC} creates a table of contents in a Rmd document that
 can be hidden at the press of a button. It also generate buttons that allow
-the hiding or unhiding of the diffrent level depths of the table of contents.
+the hiding or unhiding of the diffrent level depths of the table of
+contents.  For \code{quarto}-related methods see \url{https://stackoverflow.com/questions/73999697}.
 }
 \examples{
 \dontrun{

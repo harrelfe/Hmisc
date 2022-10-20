@@ -42,7 +42,7 @@ right-hand variable is a subject ID variable.\
 
 \code{multEventChart} uses \code{\link{ggplot2}} to plot event charts
 showing state transitions, account for absorbing states/events.  It is
-based on code written by Lucy D'Agostino McGowan posted at \url{https://livefreeordichotomize.com/2020/05/21/survival-model-detective-1}.
+based on code written by Lucy D'Agostino McGowan posted at \url{https://livefreeordichotomize.com/posts/2020-05-21-survival-model-detective-1/}.
 
 }
 \usage{

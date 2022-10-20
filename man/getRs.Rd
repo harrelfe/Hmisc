@@ -36,10 +36,7 @@ getRs(file=NULL, guser='harrelfe', grepo='rscripts', gdir='raw/master',
       minor categories available.  Specify a character string to list
       all scripts whose major category contains the string (ignoring
 			case).}
-	\item{put}{Leave at the default (\code{'rstudio'}) to load \code{file}
-		into the RStudio script editor window.  Use \code{put='source'} to
-		\code{source()} the file.  This is useful when the file just defines
-		a function you want to use in the session.}
+	\item{put}{Leave at the default (\code{'source'}) to \code{source()} the file.  This is useful when the file just defines a function you want to use in the session. Use load \code{put='rstudio'} to load the file into the RStudio script editor window using the \code{rstudioapi} \code{navigateToFile} function.  If RStudio is not running, \code{file.edit()} is used instead.}
 }
 \value{a data frame or list, depending on arguments}
 \author{Frank Harrell and Cole Beck}

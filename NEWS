@@ -1,6 +1,11 @@
-Changes in version 4.7-2 (2022-08-22)
+
+Changes in version 4.7-2 (2022-10-20)
    * grType: changed to use find.package() instead of the slow installed.packages() (thanks: Uwe Ligges)
    * latex.default: changed to by default omit the LaTeX comment; specify options(omitlatexcom=FALSE) to get original behavior
+   * ggplot.transcan: corrected color/color assignments; thanks: David Norris
+   * restoreHattrib: fixed to ignore attributes for variables that are not in obj
+   * popower: fixed URL for Live Free or Dichotomize
+   * getRs: improved to use rstudioapi to load the file into a script editor window
 
 Changes in version 4.7-1 (2022-08-13)
    * plot.describe: added bvspace argument to control spacing between categorical variables

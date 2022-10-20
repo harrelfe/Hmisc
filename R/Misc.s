@@ -1672,7 +1672,9 @@ getRs <- function(file=NULL,
 
   if(localrepo) file.copy(paste(where, file, sel='/'), file)
   else download.file.HTTPS(paste(where, file, sep='/'), file)
-  file.edit(file)
+  if(requireNamespace('rstudioapi', quietly=TRUE) &&
+     rstudioapi::isAvailable()) rstudioapi::navigateToFile(file)
+  else file.edit(file)
   invisible()
 }
 
@@ -1949,15 +1951,18 @@ keepHattrib <- function(obj) {
 }
 
 restoreHattrib <- function(obj, attribs) {
+  nam <- names(obj)
   for(n in names(attribs)) {
     a <- attribs[[n]]
     if(length(a)) {
       sv <- n == '.single.variable.'
-      x <- if(sv) obj else obj[[n]]
-      if(length(a$label)) label(x) <- a$label
-      if(length(a$units)) units(x) <- a$units
-      if(sv) return(x)
-      obj[[n]] <- x
+      if(sv || n %in% nam) {
+        x <- if(sv) obj else obj[[n]]
+        if(length(a$label)) label(x) <- a$label
+        if(length(a$units)) units(x) <- a$units
+        if(sv) return(x)
+        obj[[n]] <- x
+      }
     }
   }
   obj

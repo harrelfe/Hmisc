@@ -1,4 +1,8 @@
 #include "R.h"
+void sort2(int *np, double ra[], int rb[]);
+void crank(int *np, double w[]);
+void rank(int *np, double x[], double w[], int ix[], double r[]);
+
 
 void sort2(np,ra,rb)
 int *np;

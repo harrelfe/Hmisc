@@ -1,7 +1,6 @@
-# $Id$
 mChoice <- function(..., label='', 
                     sort.levels=c('original','alphabetic'),
-                    add.none=FALSE, drop=TRUE)
+                    add.none=FALSE, drop=TRUE, ignoreNA=TRUE)
 {
   sort.levels <- match.arg(sort.levels)
   dotlist <- list(...)
@@ -9,20 +8,18 @@ mChoice <- function(..., label='',
   if (drop)
     lev <- unique(as.character(unlist(dotlist)))
   else
-    lev <- unique(unlist(lapply(dotlist, function(x)levels(as.factor(x)))))
-
+    lev <- unique(unlist(lapply(dotlist, function(x) levels(as.factor(x)))))
+  if(ignoreNA) lev <- setdiff(lev, NA)
   if(sort.levels=='alphabetic') lev <- sort(lev)
 
   lev <- setdiff(lev,'')
 
   vcall <- as.character(sys.call())[-1]
-
-  dotlist <- lapply(dotlist, FUN=match, table=lev, nomatch=0)
-
+  dotlist <- lapply(dotlist, FUN=match, table=lev) #, nomatch=0)
+  
   g <- function(...) {
     set <- c(...)
     set <- set[!is.na(set)]
-
     if(!length(set)) return('')
 
     paste(sort(unique(set)), collapse=';')

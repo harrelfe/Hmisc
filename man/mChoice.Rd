@@ -59,7 +59,7 @@
 \usage{
 mChoice(\dots, label='',
         sort.levels=c('original','alphabetic'), 
-        add.none=FALSE, drop=TRUE)
+        add.none=FALSE, drop=TRUE, ignoreNA=TRUE)
 
 \method{format}{mChoice}(x, minlength=NULL, sep=";", \dots)
 
@@ -120,6 +120,8 @@ is.mChoice(x)
     set \code{drop=FALSE} to keep unused factor levels as columns of the matrix
     produced by \code{mChoice}
   }
+  \item{ignoreNA}{set to \code{FALSE} to keep any \code{NA}s present in
+data as a real level.  Prior to Hmisc 4.7-2 \code{FALSE} was the default.}
   \item{x}{
     an object of class \code{"mchoice"} such as that created by
     \code{mChoice}.  For \code{is.mChoice} is any object.

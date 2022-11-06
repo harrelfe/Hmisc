@@ -206,7 +206,8 @@ match.mChoice <- function(x, table, nomatch = NA,
 # inmChoice <- function(x, values) {
 #  match.mChoice(values, x, nomatch=0) > 0
 # }
-inmChoice <- function(x, values) {
+inmChoice <- function(x, values, condition=c('any', 'all')) {
+  condition <- match.arg(condition)
   lev <- attr(x, 'levels')
   if(is.character(values)) {
     v <- match(values, lev)
@@ -216,10 +217,14 @@ inmChoice <- function(x, values) {
   }
   x <- paste(';', unclass(x), ';', sep='')
   values <- paste(';', values, ';', sep='')
-  res <- rep(FALSE, length(x))
+  res <- rep(condition != 'any', length(x))
   for(j in 1:length(values)) {
     i <- grep(values[j], x)
-    if(length(i)) res[i] <- TRUE
+    if(length(i)) {
+      if(condition == 'any') res[i] <- TRUE
+      else
+        res[-i] <- FALSE
+      }
   }
   res
 }

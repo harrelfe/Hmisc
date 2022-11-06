@@ -78,7 +78,7 @@ mChoice(\dots, label='',
 
 match.mChoice(x, table, nomatch=NA, incomparables=FALSE)
 
-inmChoice(x, values)
+inmChoice(x, values, condition=c('any', 'all'))
 
 is.mChoice(x)
 
@@ -158,6 +158,9 @@ data as a real level.  Prior to Hmisc 4.7-2 \code{FALSE} was the default.}
     the choice codes, and if it is a character vector, it is assumed to
     be value labels.
   }
+  \item{condition}{set to \code{'all'} for \code{inmChoice} to require
+that all choices in \code{values} be present instead of the default of
+any of them present.}
 }
 \value{
   \code{mChoice} returns a character vector of class \code{"mChoice"}
@@ -202,10 +205,13 @@ format(Symptoms[1:5])
 inmChoice(Symptoms,'Headache')
 levels(Symptoms)
 inmChoice(Symptoms, 3)
+# Find all subjects with either of two symptoms
 inmChoice(Symptoms, c('Headache','Hangnail'))
 # Note: In this example, some subjects have the same symptom checked
 # multiple times; in practice these redundant selections would be NAs
 # mChoice will ignore these redundant selections
+# Find all subjects with both symptoms
+inmChoice(Symptoms, c('Headache', 'Hangnail'), condition='all')
 
 meanage <- N <- numeric(5)
 for(j in 1:5) {

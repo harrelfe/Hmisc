@@ -1,5 +1,5 @@
 
-Changes in version 4.7-2 (2022-11-05)
+Changes in version 4.7-2 (2022-11-06)
    * grType: changed to use find.package() instead of the slow installed.packages() (thanks: Uwe Ligges)
    * latex.default: changed to by default omit the LaTeX comment; specify options(omitlatexcom=FALSE) to get original behavior
    * ggplot.transcan: corrected color/color assignments; thanks: David Norris
@@ -7,6 +7,7 @@ Changes in version 4.7-2 (2022-11-05)
    * popower: fixed URL for Live Free or Dichotomize
    * getRs: improved to use rstudioapi to load the file into a script editor window
    * mChoice: added ignoreNA argument and made new default behavior ignoreNA=TRUE unlike the prior versions; made value (appearing with semicolons) null instead of 0 when no choice was selected, which makes option add.none finally work
+   * mChoice: added condition argument to intersect all values instead of unioning them
 
 Changes in version 4.7-1 (2022-08-13)
    * plot.describe: added bvspace argument to control spacing between categorical variables

@@ -224,9 +224,27 @@ inmChoice <- function(x, values, condition=c('any', 'all')) {
       if(condition == 'any') res[i] <- TRUE
       else
         res[-i] <- FALSE
-      }
+      } else if(condition == 'all') res[] <- FALSE
   }
   res
 }
 
+inmChoicelike <- function(x, values, condition=c('any', 'all'),
+                          ignore.case=FALSE, fixed=FALSE) {
+  condition <- match.arg(condition)
+  if(! is.character(values)) stop('values must be a character vector')
+  x <- as.character(x)
+  res <- rep(condition != 'any', length(x))
+  for(j in 1 : length(values)) {
+    i <- grep(values[j], x, ignore.case=ignore.case, fixed=fixed)
+    if(length(i)) {
+      if(condition == 'any') res[i] <- TRUE
+      else
+        res[-i] <- FALSE
+      } else if(condition == 'all') res[] <- FALSE
+  }
+  res
+}
+
+      
 is.mChoice <- function(x) inherits(x, 'mChoice')

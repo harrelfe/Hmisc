@@ -6,6 +6,7 @@
 \alias{as.character.mChoice}
 \alias{as.double.mChoice}
 \alias{inmChoice}
+\alias{inmChoicelike}
 \alias{match.mChoice}
 \alias{[.mChoice}
 \alias{print.summary.mChoice}
@@ -79,6 +80,9 @@ mChoice(\dots, label='',
 match.mChoice(x, table, nomatch=NA, incomparables=FALSE)
 
 inmChoice(x, values, condition=c('any', 'all'))
+
+inmChoicelike(x, values, condition=c('any', 'all'),
+              ignore.case=FALSE, fixed=FALSE)
 
 is.mChoice(x)
 
@@ -156,17 +160,22 @@ data as a real level.  Prior to Hmisc 4.7-2 \code{FALSE} was the default.}
   \item{values}{
     a scalar or vector.  If \code{values} is integer, it is
     the choice codes, and if it is a character vector, it is assumed to
-    be value labels.
+    be value labels.  For \code{inmChoicelike} \code{values} must be
+    character strings which are pieces of choice labels.
   }
   \item{condition}{set to \code{'all'} for \code{inmChoice} to require
 that all choices in \code{values} be present instead of the default of
 any of them present.}
+  \item{ignore.case}{set to \code{TRUE} to have \code{inmChoicelike}
+ignore case in the data when matching on \code{values}}
+  \item{fixed}{see \code{grep}}
 }
 \value{
   \code{mChoice} returns a character vector of class \code{"mChoice"}
   plus attributes \code{"levels"} and \code{"label"}.
   \code{summary.mChoice} returns an object of class
-  \code{"summary.mChoice"}.  \code{inmChoice} returns a logical vector.
+  \code{"summary.mChoice"}.  \code{inmChoice} and \code{inmChoicelike}
+  return a logical vector.
   \code{format.mChoice} returns a character vector, and
   \code{as.double.mChoice} returns a binary numeric matrix.
 }
@@ -203,6 +212,7 @@ Symptoms
 print(Symptoms, long=TRUE)
 format(Symptoms[1:5])
 inmChoice(Symptoms,'Headache')
+inmChoicelike(Symptoms, 'head', ignore.case=TRUE)
 levels(Symptoms)
 inmChoice(Symptoms, 3)
 # Find all subjects with either of two symptoms

@@ -51,8 +51,11 @@
   contains at least one of the codes or value labels in the second
   argument.
 
-  \code{match.mChoice} creats an integer vector of the indexes of all
+  \code{match.mChoice} creates an integer vector of the indexes of all
   elements in \code{table} which contain any of the speicified levels
+
+	\code{nmChoice} returns an integer vector of the number of choices
+	that were made
 
   \code{is.mChoice} returns \code{TRUE} is the argument is a multiple
   choice variable.
@@ -83,6 +86,8 @@ inmChoice(x, values, condition=c('any', 'all'))
 
 inmChoicelike(x, values, condition=c('any', 'all'),
               ignore.case=FALSE, fixed=FALSE)
+
+nmChoice(object)
 
 is.mChoice(x)
 
@@ -178,6 +183,7 @@ ignore case in the data when matching on \code{values}}
   return a logical vector.
   \code{format.mChoice} returns a character vector, and
   \code{as.double.mChoice} returns a binary numeric matrix.
+  \code{nmChoice} returns an integer vector
 }
 \author{
   Frank Harrell

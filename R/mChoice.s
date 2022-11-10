@@ -152,6 +152,13 @@ as.double.mChoice <- function(x, drop=FALSE, ...) {
   X
 }
 
+nmChoice <- function(object) {
+  y <- gsub('[^;]', '', object)
+  nchoices <- nchar(y) + 1
+  nchoices[object == ''] <- 0
+  nchoices
+}
+
 summary.mChoice <- function(object, ncombos=5, minlength=NULL,
                             drop=TRUE, ...) {
   nunique <- length(unique(object))

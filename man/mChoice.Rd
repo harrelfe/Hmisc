@@ -7,6 +7,7 @@
 \alias{as.double.mChoice}
 \alias{inmChoice}
 \alias{inmChoicelike}
+\alias{nmChoice}
 \alias{match.mChoice}
 \alias{[.mChoice}
 \alias{print.summary.mChoice}

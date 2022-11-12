@@ -9,6 +9,7 @@ Changes in version 4.7-2 (2022-11-10)
    * mChoice: added condition argument to intersect all values instead of unioning them
    * mChoicelike: new function like inmChoice but allowing matching on pieces of labels and optionally ignoring the case
    * nmChoice: new function to compute the number of choices that were made per observation
+   * describe: fixed length > 1 problem with check for timeDate class
 
 Changes in version 4.7-1 (2022-08-13)
    * plot.describe: added bvspace argument to control spacing between categorical variables

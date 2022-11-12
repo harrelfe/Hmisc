@@ -223,7 +223,7 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
     if(n.unique >= 5) {
       loandhi <- x.unique[c(1 : 5, (n.unique - 4) : n.unique)]
       extremes <-
-        if(isdot && (class(loandhi) %nin% 'timeDate')) {
+        if(isdot && all(class(loandhi) %nin% 'timeDate')) {
           formatDateTime(unclass(loandhi), at=atx, roundDay=! timeUsed)
         } else if(isnum) loandhi else format(format(loandhi), ...)
       names(extremes) <- c("L1","L2","L3","L4","L5","H5","H4","H3","H2","H1")

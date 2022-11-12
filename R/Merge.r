@@ -93,6 +93,8 @@ Merge <- function(..., id=NULL, all=TRUE, verbose=TRUE) {
       x  <- M[[i]]
       ni <- nm[i]
       changed <- FALSE
+      if(ni %nin% names(lab))
+        stop(paste('Unexpected variable:', ni))
       if(lab[ni] != '' && ! length(attr(x, 'label'))) {
         label(x) <- lab[ni]
         changed <- TRUE

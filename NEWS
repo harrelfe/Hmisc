@@ -11,6 +11,7 @@ Changes in version 4.7-2 (2022-11-10)
    * nmChoice: new function to compute the number of choices that were made per observation
    * describe: fixed length > 1 problem with check for timeDate class
    * Merge: better error message if unexpected variable from non-id-variable overlap
+   * all.is.numeric: corrected to return TRUE is the only non-NA values after converting to numeric were originally NA, addedd what='nonnum' argument
 
 Changes in version 4.7-1 (2022-08-13)
    * plot.describe: added bvspace argument to control spacing between categorical variables

@@ -237,20 +237,22 @@ lm.fit.qr.bare <- function(x, y,
   res
 }
 
-all.is.numeric <- function(x, what=c('test','vector'),
+all.is.numeric <- function(x, what=c('test','vector','nonnum'),
                            extras=c('.','NA'))
 {
   what <- match.arg(what)
   x <- sub('[[:space:]]+$', '', x)
   x <- sub('^[[:space:]]+', '', x)
-  xs <- x[x %nin% c('',extras)]
-  if(! length(xs)) return(if(what == 'test') FALSE else x)
-  isnum <- suppressWarnings(!any(is.na(as.numeric(xs))))
-  if(what=='test')
-    isnum
-  else if(isnum)
-    as.numeric(x)
-  else x
+  xs <- x[x %nin% c('', extras)]
+  if(! length(xs) || all(is.na(x)))
+    return(switch(test = FALSE, vector=x, nonnum=x[0]))
+  isnon <- suppressWarnings(! is.na(xs) & is.na(as.numeric(xs)))
+  isnum <- ! any(isnon)
+  # suppressWarnings below handles extras present in x
+  switch(what,
+         test   = isnum,
+         vector = if(isnum) suppressWarnings(as.numeric(x)) else x,
+         nonnum = xs[isnon])
 }
 
 Lag <- function(x, shift=1)

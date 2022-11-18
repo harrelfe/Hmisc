@@ -1,4 +1,4 @@
-Changes in version 4.7-2 (2022-11-10)
+Changes in version 4.7-2 (2022-11-18)
    * grType: changed to use find.package() instead of the slow installed.packages() (thanks: Uwe Ligges)
    * latex.default: changed to by default omit the LaTeX comment; specify options(omitlatexcom=FALSE) to get original behavior
    * ggplot.transcan: corrected color/color assignments; thanks: David Norris

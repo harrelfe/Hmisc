@@ -245,7 +245,7 @@ all.is.numeric <- function(x, what=c('test','vector','nonnum'),
   x <- sub('^[[:space:]]+', '', x)
   xs <- x[x %nin% c('', extras)]
   if(! length(xs) || all(is.na(x)))
-    return(switch(test = FALSE, vector=x, nonnum=x[0]))
+    return(switch(what, test = FALSE, vector=x, nonnum=x[0]))
   isnon <- suppressWarnings(! is.na(xs) & is.na(as.numeric(xs)))
   isnum <- ! any(isnon)
   # suppressWarnings below handles extras present in x

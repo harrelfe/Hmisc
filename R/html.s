@@ -546,22 +546,6 @@ markupSpecs <- list(html=list(
                                 x, '</span>'),
   unicode  = '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />',
   styles   = function(...) htmltools::HTML('
-<script type="text/javascript">
-<!--
-    function expand_collapse(id) {
-       var e = document.getElementById(id);
-       var f = document.getElementById(id+"_earrows");
-       if(e.style.display == \'none\'){
-          e.style.display = \'block\';
-          f.innerHTML = \'&#9650\';
-       }
-       else {
-          e.style.display = \'none\';
-          f.innerHTML = \'&#9660\';
-       }
-    }
-//-->
-</script>
 <style>
 .earrows {color:silver;font-size:11px;}
 

@@ -1996,3 +1996,24 @@ rHglossary <- function(x, html=TRUE, collapse=TRUE) {
   else paste0(sname, ': ', lname, ', ', def)
 }
 }
+
+
+## Function to render HTML
+## Converts argument to one character string with \n delimiters
+## If knitr is currently running, runs this string through
+## knitr::asis_output
+## Otherwise, makes it browsable HTML using htmltools so that
+## an RStudio Viewer or a new browser window will display the result
+## See https://github.com/quarto-dev/quarto-cli/discussions/4248 which
+## explains that you meed to enclose the text to keep from fooling
+## Pandoc's reader
+
+rendHTML <- function(x, html=TRUE) {
+  x <- paste(x, collapse='\n')
+
+  if(length(getOption('knitr.in.progress'))) {
+    if(html) x <- paste0('```{=html}\n', x, '\n```')
+    return(knitr::asis_output(x))
+  }
+  print(htmltools::browsable(htmltools::HTML(x)))
+}

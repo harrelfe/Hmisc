@@ -339,6 +339,9 @@ na.retain <- function(d) d
 print.describe <-
   function(x, ...)
 {
+
+  if(prType() == 'html') return(html.describe(x, ...))
+
   at <- attributes(x)
   if(length(at$dimensions)) {
     cat(at$descript,'\n\n',at$dimensions[2],' Variables     ',at$dimensions[1],
@@ -758,7 +761,7 @@ html.describe <-
   mnb    <- function(x) m$color(x, col='MidnightBlue')
 
   R <- c(m$unicode, m$style())   ## define thinhr (and others not needed here)
-
+  
   R <- c(R, paste0('<title>', at$descript, ' Descriptives</title>'))
   
   if(length(at$dimensions)) {
@@ -796,8 +799,8 @@ html.describe <-
   else
     R <- c(R, html.describe.single(object, tabular=tabular,
                                    greek=greek, size=size, ...))
-  
-  htmltools::HTML(R)
+
+  rendHTML(R)
 }
 
 html.describe.single <-
@@ -979,6 +982,11 @@ print.contents.data.frame <-
            prlevels=TRUE, maxlevels=Inf, number=FALSE, ...)
 {
   sort <- match.arg(sort)
+
+  if(prType() == 'html') 
+    return(html.contents.data.frame(x, sort=sort, prlevels=prlevels,
+                                    maxlevels=maxlevels, number=number, ...) )
+
   d <- x$dim
   maxnas <- x$maxnas
   cat('\nData frame:', x$dfname, '\t', d[1],' observations and ', d[2],
@@ -1220,7 +1228,7 @@ html.contents.data.frame <-
                 link=lab, linkCol='Variable', linkType='name', ...)
     R <- c(R, as.character(out), hrule)
   }
-  htmltools::HTML(paste0(R, '\n'))
+  rendHTML(R)
 }
 
 

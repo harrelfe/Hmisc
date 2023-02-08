@@ -74,7 +74,11 @@ Note that the latex method assumes you have the following styles
 installed in your latex installation: setspace and relsize.
 
 The \code{html} method mimics the LaTeX output.  This is useful in the
-context of Rmarkdown html and html notebook output.
+context of Quarto/Rmarkdown html and html notebook output.
+If \code{options(prType='html')} is in effect, calling \code{print} on
+an object that is the result of running \code{describe} on a data frame
+will result in rendering the HTML version.  If run from the console a
+browser window will open.
 
 The \code{plot} method is for \code{describe} objects run on data
 frames.  It produces spike histograms for a graphic of

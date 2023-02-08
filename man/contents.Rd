@@ -25,6 +25,11 @@
 
   \code{contents.list} prints a directory of datasets when
   \code{\link{sasxport.get}} imported more than one SAS dataset.
+
+	If \code{options(prType='html')} is in effect, calling \code{print} on
+	an object that is the contents of a data frame will result in
+	rendering the HTML version.  If run from the console a browser window
+	will open.
 }
 \usage{
 contents(object, \dots)

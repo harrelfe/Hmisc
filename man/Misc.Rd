@@ -17,6 +17,7 @@
 \alias{outerText}
 \alias{plotlyParm}
 \alias{plotp}
+\alias{rendHTML}
 \alias{restoreHattrib}
 \alias{sepUnitsTrans}
 \alias{strgraphwrap}
@@ -133,6 +134,18 @@
 	\code{plotp} is a generic to handle \code{plotp} methods to make
 	\code{plotly} graphics.
 
+	\code{rendHTML} renders HTML in a character vector, first converting
+	to one character string with newline delimeters.  If \code{knitr} is
+	currently running, runs this string through \code{knitr::asis_output}
+	so that the user need not include \code{results='asis'} in the chunk
+	header for R Markdown or Quarto.  If \code{knitr} is not running, uses
+	\code{htmltools::browsable} and \code{htmltools::HTML} and prints the
+	result so that an RStudio viewer (if running inside RStudio) or
+	separate browser window displays the rendered HTML.  The HTML code is
+	surrounded by yaml markup to make Pandoc not fiddle with the HTML.
+	Set the argument \code{html=FALSE} to not add this, in case you are
+	really rendering markdown.
+	
   \code{sepUnitsTrans} converts character vectors containing values such
   as \code{c("3 days","3day","4month","2 years","2weeks","7")} to
   numeric vectors 
@@ -197,6 +210,7 @@ nomiss(x)
 outerText(string, y, cex=par('cex'), \dots)
 plotlyParm
 plotp(data, ...)
+rendHTML(x, html=TRUE)
 restoreHattrib(obj, attribs)
 sepUnitsTrans(x, conversion=c(day=1, month=365.25/12, year=365.25, week=7),
               round=FALSE, digits=0)
@@ -233,6 +247,8 @@ xless(x, \dots, title)
 	\item{file}{a file name}
   \item{fun}{function to transform scale}
   \item{group}{a categorical grouping variable}
+	\item{html}{set to \code{FALSE} to tell \code{rendHTML} to not
+  surround HTML code with yaml}
 	\item{insert}{a list of 3-element lists for \code{latexBuild}.
 		The first of each 3-element
 		list is a character string with an environment name.  The second
@@ -285,7 +301,8 @@ xless(x, \dots, title)
 	components.  For \code{inverseFunction}, \code{x} and \code{y}
 	contain evaluations of the function whose inverse is needed.
 	\code{x} is typically an equally-spaced grid of 1000 points.  For
-	\code{strgraphwrap} is a character vector.}
+	\code{strgraphwrap} is a character vector.  For \code{rendHTML}
+  \code{x} is a character vector.}
   \item{xpxi}{set to \code{TRUE} to add an element to the result
 		containing the inverse of \eqn{X'X}}
 	\item{singzero}{set to \code{TRUE} to set coefficients corresponding

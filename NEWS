@@ -1,3 +1,7 @@
+Changes in version 4.8-0 (2023-02-08)
+   * rendHTML: new function to render HTML, sensing if knitr is running and if so using knitr::asis_output, otherwise htmltools
+   * contents, describe: added the use of rendHTML so that HTML can be rendered from the console, and made it so that if options(prType='html') is in effect the html method will be invoked automatically when printing
+
 Changes in version 4.7-2 (2022-11-18)
    * grType: changed to use find.package() instead of the slow installed.packages() (thanks: Uwe Ligges)
    * latex.default: changed to by default omit the LaTeX comment; specify options(omitlatexcom=FALSE) to get original behavior

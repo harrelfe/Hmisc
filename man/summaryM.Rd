@@ -4,6 +4,7 @@
 \alias{plot.summaryM}
 \alias{latex.summaryM}
 \alias{html.summaryM}
+\alias{printsummaryM}
 \title{Summarize Mixed Data Types vs. Groups}
 \description{
   \code{summaryM} summarizes the variables listed in an S formula,
@@ -16,9 +17,16 @@
   \code{latex} methods for typesetting tables using LaTeX.  The
 	\code{html} method uses \code{htmlTable::htmlTable} to typeset the
 	table in html, by passing information to the \code{latex} method with
-	\code{html=TRUE}.  This is for use with RMarkdown under RStudio.
+	\code{html=TRUE}.  This is for use with Quarto/RMarkdown.
   The \code{print} methods use the \code{print.char.matrix} function to
-  print boxed tables.
+  print boxed tables when \code{options(prType=)} has not been given or
+	when \code{prType='plain'}.  For plain tables, \code{print} calls the
+	internal function \code{printsummaryM}.  When \code{prType='latex'}
+	the \code{latex} method is invoked, and when \code{prType='html'} html
+	is rendered.  In Quarto/RMarkdown, proper rendering will result even
+	if \code{results='asis'} does not appear in the chunk header.  When
+	rendering in html at the console due to having \code{options(prType='html')}
+	the table will be rendered in a viewer.
 
 	The \code{plot} method creates \code{plotly} graphics if
 	\code{options(grType='plotly')}, otherwise base graphics are used.
@@ -63,7 +71,9 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
          conTest=conTestkw, catTest=catTestchisq,
          ordTest=ordTestpo)
 
-\method{print}{summaryM}(x, digits, prn = any(n != N),
+\method{print}{summaryM}(...)
+
+printsummaryM(x, digits, prn = any(n != N),
       what=c('proportion', '\%'), pctdig = if(what == '\%') 0 else 2,
       npct = c('numerator', 'both', 'denominator', 'none'),
       exclude1 = TRUE, vnames = c('labels', 'names'), prUnits = TRUE,
@@ -197,7 +207,9 @@ summaryM(formula, groups=NULL, data=NULL, subset, na.action=na.retain,
     optional arguments to \code{print.char.matrix}. For \code{latex} methods
     these are passed to \code{latex.default}.  For \code{html} the
 		arguments are passed the \code{latex.summaryM}, and the arguments
-		may not include \code{file}.
+		may not include \code{file}.  For \code{print} the arguments are
+		passed to \code{printsummaryM} or \code{latex.summaryM} depending on
+		\code{options(prType=)}.
   }
   \item{object}{an object created by \code{summaryM}}
   \item{quant}{
@@ -527,7 +539,9 @@ options(grType='plotly')
 pbc <- upData(pbc, moveUnits = TRUE)
 s <- summaryM(bili + albumin + alk.phos + copper + spiders + sex ~
               drug, data=pbc, test=TRUE)
-html(s)
+# Render html
+options(prType='html')
+s   # invokes print.summaryM
 a <- plot(s)
 a$Categorical
 a$Continuous

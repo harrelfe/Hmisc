@@ -466,8 +466,15 @@ plot.summaryM <-
   invisible(npages)
 }
 
-print.summaryM <- 
-  function(x, digits, prn=any(n != N),
+print.summaryM <- function(...) {
+  lang <- prType()
+  switch(lang,
+         plain = printsummaryM(...),
+         latex = latex.summaryM(...),
+         html  = latex.summaryM(..., html=TRUE) )
+  }
+         
+printsummaryM <- function(x, digits, prn=any(n != N),
            what=c('proportion', '%'), pctdig=if(what == '%') 0 else 2, 
            npct=c('numerator', 'both', 'denominator', 'none'),
            exclude1=TRUE, vnames=c("labels", "names"), prUnits=TRUE,
@@ -914,7 +921,7 @@ latex.summaryM <-
                               tfoot    = insert.bottom,
                               css.cell = cs, escape.html=FALSE)
   
-  return(htmltools::HTML(as.character(w)))
+  rendHTML(w)
 }
 
 

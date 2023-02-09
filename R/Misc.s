@@ -2019,8 +2019,7 @@ rendHTML <- function(x, html=TRUE) {
     tf <- tempfile(fileext='.Rmd')
     o  <- tempfile(fileext='.html')
     cat('---\ntitle: ""\npagetitle: x\noutput: html_document\n---\n',
-        x, '\n', sep='',
-        file=tf)
+        x, '\n', sep='', file=tf)
     rmarkdown::render(tf, output_file=o, quiet=TRUE)
     x <- readLines(o)
     }

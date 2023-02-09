@@ -24,6 +24,7 @@ importFrom(gridExtra, arrangeGrob)
 importFrom(htmlTable, htmlTable, txtRound)
 importFrom(htmltools, HTML, browsable)
 importFrom(colorspace, rainbow_hcl)
+importFrom(rmarkdown, render)
 
 ## importFrom(tables, tabular, table_options)
 ## importFrom(ggplot2, geom_segment)

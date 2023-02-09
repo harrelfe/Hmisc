@@ -144,7 +144,10 @@
 	separate browser window displays the rendered HTML.  The HTML code is
 	surrounded by yaml markup to make Pandoc not fiddle with the HTML.
 	Set the argument \code{html=FALSE} to not add this, in case you are
-	really rendering markdown.
+	really rendering markdown.  \code{html=FALSE} also invokes
+	\code{rmarkdown::render} to convert the character vector to HTML
+	before using \code{htmltools} to view, assuming the characters
+	represent RMarkdown/Quarto text other than the YAML header.
 	
   \code{sepUnitsTrans} converts character vectors containing values such
   as \code{c("3 days","3day","4month","2 years","2weeks","7")} to

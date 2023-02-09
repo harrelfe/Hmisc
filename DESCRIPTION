@@ -1,6 +1,6 @@
 Package: Hmisc
-Version: 4.8-0
-Date: 2023-02-08
+Version: 4.8-1
+Date: 2023-02-09
 Title: Harrell Miscellaneous
 Authors@R: 
     c(person(given = "Frank E",
@@ -15,7 +15,7 @@ Authors@R:
 						 comment = "contributed several functions and maintains latex functions"))
 Maintainer: Frank E Harrell Jr <fh@fharrell.com>
 Depends: lattice, survival (>= 3.1-6), Formula, ggplot2 (>= 2.2)
-Imports: methods, latticeExtra, cluster, rpart, nnet, foreign, gtable, grid, gridExtra, data.table, htmlTable (>= 1.11.0), viridis, htmltools, base64enc
+Imports: methods, latticeExtra, cluster, rpart, nnet, foreign, gtable, grid, gridExtra, data.table, htmlTable (>= 1.11.0), viridis, htmltools, base64enc, colorspace
 Suggests: acepack, chron, rms, mice, rstudioapi, tables, knitr, plotly (>= 4.5.6), rlang, plyr, VGAM
 Description: Contains many functions useful for data
 	analysis, high-level graphics, utility operations, functions for

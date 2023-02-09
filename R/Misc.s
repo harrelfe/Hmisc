@@ -2015,5 +2015,14 @@ rendHTML <- function(x, html=TRUE) {
     if(html) x <- paste0('```{=html}\n', x, '\n```')
     return(knitr::asis_output(x))
   }
+  if(! html) {  # Convert from RMarkdown to html
+    tf <- tempfile(fileext='.Rmd')
+    o  <- tempfile(fileext='.html')
+    cat('---\ntitle: ""\npagetitle: x\noutput: html_document\n---\n',
+        x, '\n', sep='',
+        file=tf)
+    rmarkdown::render(tf, output_file=o, quiet=TRUE)
+    x <- readLines(o)
+    }
   print(htmltools::browsable(htmltools::HTML(x)))
 }

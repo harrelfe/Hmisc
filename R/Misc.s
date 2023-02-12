@@ -2012,7 +2012,7 @@ rendHTML <- function(x, html=TRUE) {
   x <- paste(x, collapse='\n')
 
   if(length(getOption('knitr.in.progress'))) {
-    if(html) x <- paste0('```{=html}\n', x, '\n```')
+    if(html) x <- paste0('```{=html}\n\n', x, '\n```\n')
     return(knitr::asis_output(x))
   }
   if(! html) {  # Convert from RMarkdown to html

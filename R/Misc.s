@@ -2009,10 +2009,11 @@ rHglossary <- function(x, html=TRUE, collapse=TRUE) {
 ## Pandoc's reader
 
 rendHTML <- function(x, html=TRUE) {
-  x <- paste(x, collapse='\n')
+   x <- paste(x, collapse='\n')
 
   if(length(getOption('knitr.in.progress'))) {
-    if(html) x <- paste0('```{=html}\n\n', x, '\n```\n')
+    if(html) return(htmltools::knit_print.html(x))  # includes htmlPreserve
+    ## if(html) x <- paste0('```{=html}\n\n', x, '\n```\n')
     return(knitr::asis_output(x))
   }
   if(! html) {  # Convert from RMarkdown to html
@@ -2022,6 +2023,23 @@ rendHTML <- function(x, html=TRUE) {
         x, '\n', sep='', file=tf)
     rmarkdown::render(tf, output_file=o, quiet=TRUE)
     x <- readLines(o)
-    }
-  print(htmltools::browsable(htmltools::HTML(x)))
+  }
+   ## The following has prettier output for model fits than the kableExtra method
+   print(htmltools::browsable(htmltools::HTML(x)))
 }
+
+## See ~/r/rmarkdown/html/render.qmd
+
+## kableExtra print method did not render regression fit output
+## as nicely as print(htmltools::browsable(...)) method above
+
+## See kableExtra:::print.kableExtra
+#   class(x) <- 'kableExtra'
+#   dep <- list(rmarkdown::html_dependency_jquery(),
+#               rmarkdown::html_dependency_bootstrap(theme = "cosmo"), 
+#               kableExtra::html_dependency_kePrint(),
+#               kableExtra::html_dependency_lightable())
+#   ht <- htmltools::browsable(htmltools::HTML(as.character(x), 
+#         "<script type=\"text/x-mathjax-config\">MathJax.Hub.Config({tex2jax: {inlineMath: [[\"$\",\"$\"]]}})</script><script async src=\"https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML\"></script>"))
+#  htmltools::htmlDependencies(ht) <- dep
+#  htmltools::html_print(ht)

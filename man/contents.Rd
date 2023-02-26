@@ -115,7 +115,8 @@ contents(object, \dots)
   \email{fh@fharrell.com}
 }
 \seealso{
-  \code{\link{describe}}, \code{\link{html}}, \code{\link{upData}}
+  \code{\link{describe}}, \code{\link{html}}, \code{\link{upData}},
+  \code{\link{extractlabs}}, \code{\link{hlab}}
 }
 \examples{
 set.seed(1)

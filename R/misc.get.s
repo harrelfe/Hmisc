@@ -62,22 +62,29 @@ spss.get <- function(file, lowernames=FALSE,
 
 csv.get <- function(file, lowernames=FALSE, datevars=NULL, datetimevars=NULL,
                     dateformat='%F', fixdates=c('none','year'),
-                    comment.char = "", autodates=TRUE, allow=NULL,
+                    comment.char = "", autodate=TRUE, allow=NULL,
                     charfactor=FALSE,
-                    sep=',', skip=0, vnames=NULL, labels=NULL, ...){
+                    sep=',', skip=0, vnames=NULL, labels=NULL, text=NULL, ...){
   fixdates <- match.arg(fixdates)
-  if(length(vnames))
-    vnames <- scan(file, what=character(0), skip=vnames-1, nlines=1,
-                   sep=sep, quiet=TRUE)
-  if(length(labels))
-    labels <- scan(file, what=character(0), skip=labels-1, nlines=1,
-                   sep=sep, quiet=TRUE)
+  if(length(text) && ! missing(file)) stop('may not specify both file and text')
+  scn <- function(skip)
+    if(length(text)) scan(text=text, what=character(0), skip=skip,
+                          nlines=1, sep=sep, quiet=TRUE)
+    else
+      scan(file, what=character(0), skip=skip, nlines=1, sep=sep, quiet=TRUE)
+  rcsv <- function(...)
+    if(length(text)) read.csv(text=text, check.names=FALSE,
+                              comment.char=comment.char, sep=sep, skip=skip, ...)
+    else
+      read.csv(file, check.names=FALSE, comment.char=comment.char,
+               sep=sep, skip=skip,, ...)
+  if(length(vnames)) vnames <- scn(skip=vnames - 1)
+  if(length(labels)) labels <- scn(skip=labels - 1)
 
   w <- if(length(vnames))
-    read.csv(file, check.names=FALSE, comment.char=comment.char,
-             header=FALSE, col.names=vnames, skip=skip, sep=sep, ...)
-  else read.csv(file, check.names=FALSE, comment.char=comment.char,
-                sep=sep, skip=skip, ...)
+         rcsv(header=FALSE, col.names=vnames)
+       else
+         rcsv()
   n <- nam <- names(w)
   m <- makeNames(n, unique=TRUE, allow=allow)
   if(length(labels)) n <- labels
@@ -88,19 +95,10 @@ csv.get <- function(file, lowernames=FALSE, datevars=NULL, datetimevars=NULL,
   if(changed)
     names(w) <- m
 
-  if(autodates) {
-    tmp <- w
-    names(tmp) <- NULL
-
-    for(i in 1:length(tmp)) {
-      if(! is.character(tmp[[1]]))
-        next
-    }
-  }
   cleanup.import(w,
                  labels=if(length(labels))labels else if(changed)n else NULL,
                  datevars=datevars, datetimevars=datetimevars,
-                 dateformat=dateformat,
+                 dateformat=dateformat, autodate=autodate,
                  fixdates=fixdates, charfactor=charfactor)
 }
 

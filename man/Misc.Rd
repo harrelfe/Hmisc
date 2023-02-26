@@ -147,7 +147,10 @@
 	really rendering markdown.  \code{html=FALSE} also invokes
 	\code{rmarkdown::render} to convert the character vector to HTML
 	before using \code{htmltools} to view, assuming the characters
-	represent RMarkdown/Quarto text other than the YAML header.
+	represent RMarkdown/Quarto text other than the YAML header.  If
+	\code{options(rawmarkup=TRUE)} is in effect, \code{rendHTML} will just
+	\code{cat()} its first argument.  This is useful when rendering is
+	happening inside a Quarto margin, for example.
 	
   \code{sepUnitsTrans} converts character vectors containing values such
   as \code{c("3 days","3day","4month","2 years","2weeks","7")} to

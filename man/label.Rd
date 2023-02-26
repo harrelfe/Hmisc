@@ -301,7 +301,8 @@ combineLabels(\dots)
   \code{sas.get} copies labels over from SAS if they exist.
 }
 \seealso{
-  \code{\link{sas.get}}, \code{\link{describe}}
+  \code{\link{sas.get}}, \code{\link{describe}},
+	\code{\link{extractlabs}}, \code{\link{hlab}} 
 }
 \examples{
 age <- c(21,65,43)

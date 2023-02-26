@@ -1,9 +1,28 @@
-Changes in veersion 4.8-1 (2023-02-09)
+Changes in version 6.0-1 (2023-02-26)
+   * csv.get: changed autodates to autodate and passed to cleanup.import; implemented text=
+
+Changes in version 5.0-0 (2023-02-25)
    * rendHTML: when knitr is not running and object is not html, assumes it is RMarkdown and calls rmarkdown::render to render it to html, then displays in viewer
+   * princmp: new function to help in interpreting principal components and sparse principal components
+   * getabd: new function to fetch datasets from The Analysis of Biological Data
+   * runParallel: new function to make the parallel package easy to use and to improve structure of combined final result
+   * hashCheck: new function to run digest::digest on a series of argument to create a hash, fetch an existing result file which contains the hash of the input objects the last time an analysis was run, and to return the results stored in the file (an .rds file) if the hashes match, or NULL otherwise
+   * runifChanged: new function to re-run code if an input changed, as judged by hashChech
+   * hlab: new function to retrieve plotting-formatted variable label from a current dataset or from the object created by extractlabs (LabelsUnits, which takes priority)
+   * hlabs: new function to call ggplot2 labs() after running variable names through hlab()
+   * vlab: new function like hlab but returns text string form of label/units
+   * extractlabs: new function: for one or more data frames/tables saves a data table of all variables that had a non-blank label or units attribute.
+   * nCoincident: new function to count the number of x,y pairs that are likely to be coincident, i.e., hidden from view in a scatterplot
+   * meltData: new function to take a formula and melt a data frame/table so that all right-hand-side formula variables are played against the left-hand side variable
+   * ebpcomp: new function to compute coordinates of components of an extended box plot.  Along with spikecomp these are useful for adding things to ggplot2 graphs.
+   * spikecomp: new function to compute coordinates of components of a spike histogram
+   * movStats: new general function for estimating the relationship between a continuous variable and a response, possibly stratified by another variable
 
 Changes in version 4.8-0 (2023-02-08)
    * rendHTML: new function to render HTML, sensing if knitr is running and if so using knitr::asis_output, otherwise htmltools
    * contents, describe: added the use of rendHTML so that HTML can be rendered from the console, and made it so that if options(prType='html') is in effect the html method will be invoked automatically when printing
+   * addggLayers: new function to add extended box plot and/or spike histograms as layers to a `ggplot2` plot
+   * seqFreq: new function to find sequential counts of exclusions to do NAs in multiple variables, arranging so that the variable with the highest number of NAs is examined first, the subsequent variables' NAs are examined in observations that were not NA from previous variables' exclusions
 
 Changes in version 4.7-2 (2022-11-18)
    * grType: changed to use find.package() instead of the slow installed.packages() (thanks: Uwe Ligges)

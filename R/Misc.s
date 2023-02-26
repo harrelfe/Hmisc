@@ -2009,10 +2009,16 @@ rHglossary <- function(x, html=TRUE, collapse=TRUE) {
 ## Pandoc's reader
 
 rendHTML <- function(x, html=TRUE) {
-   x <- paste(x, collapse='\n')
+  x <- paste(x, collapse='\n')
 
-  if(length(getOption('knitr.in.progress'))) {
-    if(html) return(htmltools::knit_print.html(x))  # includes htmlPreserve
+  raw <- getOption('rawmarkup', FALSE)
+  if(raw) {
+    cat(x, '\n')
+    return(invisible())
+    }
+   if(length(getOption('knitr.in.progress'))) {
+     if(html)
+       return(htmltools::knit_print.html(x))  # includes htmlPreserve
     ## if(html) x <- paste0('```{=html}\n\n', x, '\n```\n')
     return(knitr::asis_output(x))
   }

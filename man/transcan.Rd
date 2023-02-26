@@ -1015,6 +1015,10 @@ sapply(imputed, function(x)sum(is.imputed(x)))
 sapply(imputed, function(x)sum(is.na(x)))
 }
 
+# Do single imputation and create a filled-in data frame
+z <- transcan(~x1 + I(x2), data=d, imputed=TRUE)
+imputed <- as.data.frame(impute(z, data=d, list.out=TRUE))
+
 # Example where multiple imputations are for basic variables and
 # modeling is done on variables derived from these
 

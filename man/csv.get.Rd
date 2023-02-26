@@ -13,9 +13,9 @@
 \usage{
 csv.get(file, lowernames=FALSE, datevars=NULL, datetimevars=NULL,
         dateformat='\%F',
-        fixdates=c('none','year'), comment.char="", autodates=TRUE,
+        fixdates=c('none','year'), comment.char="", autodate=TRUE,
         allow=NULL, charfactor=FALSE,
-        sep=',', skip=0, vnames=NULL, labels=NULL, \dots)
+        sep=',', skip=0, vnames=NULL, labels=NULL, text=NULL, \dots)
 }
 \arguments{
   \item{file}{the file name for import.}
@@ -48,7 +48,7 @@ csv.get(file, lowernames=FALSE, datevars=NULL, datetimevars=NULL,
   \item{comment.char}{a character vector of length one containing a
     single character or an empty string.  Use '""' to turn off the
     interpretation of comments altogether.}
-  \item{autodates}{Set to true to allow function to guess at which
+  \item{autodate}{Set to true to allow function to guess at which
     variables are dates}
   \item{allow}{a vector of characters allowed by \R that should not be
     converted to periods in variable names.  By default, underscores in
@@ -61,7 +61,11 @@ csv.get(file, lowernames=FALSE, datevars=NULL, datetimevars=NULL,
   \item{skip}{number of records to skip before data start.  Required if
 	\code{vnames} or \code{labels} is given.}
   \item{vnames}{number of row containing variable names, default is one}
-  \item{labels}{number of row containing variable labels, default is no labels}
+  \item{labels}{number of row containing variable labels, default is no
+		labels}
+	\item{text}{a character string containing the \code{.csv} file to use
+		instead of \code{file=}.  Passed to \code{read.csv} as the
+		\code{text=} argument.}
   \item{\dots}{arguments to pass to \code{read.csv} other than
 	\code{skip} and \code{sep}.}
 }

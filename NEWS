@@ -1,5 +1,7 @@
-Changes in version 6.0-1 (2023-02-26)
+Changes in version 5.1-0 (2023-02-26)
    * csv.get: changed autodates to autodate and passed to cleanup.import; implemented text=
+   * fImport: new function; front-end for `rio` package for general file import
+   * transcan.Rd: added new example for completing a data frame with single imputations
 
 Changes in version 5.0-0 (2023-02-25)
    * rendHTML: when knitr is not running and object is not html, assumes it is RMarkdown and calls rmarkdown::render to render it to html, then displays in viewer

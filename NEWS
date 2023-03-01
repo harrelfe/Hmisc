@@ -1,9 +1,8 @@
-Changes in version 5.1-0 (2023-02-26)
-   * csv.get: changed autodates to autodate and passed to cleanup.import; implemented text=
-   * fImport: new function; front-end for `rio` package for general file import
-   * transcan.Rd: added new example for completing a data frame with single imputations
+Changes in version 5.0-1 (2023-03-01)
+   * fit.mult.impute: added fun argument so user can run any function on each fit from a completed dataset, e.g., a model validation using an rms function
+   * errbar: passed argument main to last instance of plot()
 
-Changes in version 5.0-0 (2023-02-25)
+Changes in version 5.0-0 (2023-02-28)
    * rendHTML: when knitr is not running and object is not html, assumes it is RMarkdown and calls rmarkdown::render to render it to html, then displays in viewer
    * princmp: new function to help in interpreting principal components and sparse principal components
    * getabd: new function to fetch datasets from The Analysis of Biological Data
@@ -19,6 +18,10 @@ Changes in version 5.0-0 (2023-02-25)
    * ebpcomp: new function to compute coordinates of components of an extended box plot.  Along with spikecomp these are useful for adding things to ggplot2 graphs.
    * spikecomp: new function to compute coordinates of components of a spike histogram
    * movStats: new general function for estimating the relationship between a continuous variable and a response, possibly stratified by another variable
+   * csv.get: changed autodates to autodate and passed to cleanup.import; implemented text=
+   * fImport: new function; front-end for `rio` package for general file import
+   * transcan.Rd: added new example for completing a data frame with single imputations
+   * combine.levels: added plevels argument and implemented new capabilities for ordered variables, for which only consecutive levels are allowed to be combined
 
 Changes in version 4.8-0 (2023-02-08)
    * rendHTML: new function to render HTML, sensing if knitr is running and if so using knitr::asis_output, otherwise htmltools

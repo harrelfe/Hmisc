@@ -63,7 +63,7 @@ a factor variable with levels of the form \code{[a,b)} or formatted means
 a numeric vector is returned
 }
 \seealso{
-\code{\link{cut}}, \code{\link{quantile}}
+\code{\link{cut}}, \code{\link{quantile}}, \code{\link{combine.levels}}
 }
 \examples{
 set.seed(1)

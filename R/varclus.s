@@ -262,28 +262,6 @@ naplot <- function(obj, which=c('all','na per var','na per obs','mean na',
   invisible(tab)
 }
 
-
-combine.levels <- function(x, minlev=.05) {
-  x <- as.factor(x)
-  notna <- sum(! is.na(x))
-  if(notna == 0) return(rep(NA, length(x)))
-  lev <- levels(x)
-  f <- table(x) / notna
-  i <- f < minlev
-  si <- sum(i)
-  if(si == 0) return(x)
-
-  comb <- if(si == 1) names(sort(f))[1 : 2]
-  else names(f)[i]
-  
-  keepsep <- setdiff(names(f), comb)
-  names(keepsep) <- keepsep
-  w <- c(list(OTHER=comb), keepsep)
-  levels(x) <- w
-  x
-}
-
-
 plotMultSim <- function(s, x=1:dim(s)[3],
                         slim=range(pretty(c(0,max(s,na.rm=TRUE)))),
                         slimds=FALSE,

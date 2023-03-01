@@ -88,6 +88,21 @@
   \code{linear.predictors}, \code{fitted.values}, \code{stats},
   \code{means}, \code{icoef}, \code{scale}, \code{center},
   \code{y.imputed}.
+
+	By specifying \code{fun} to \code{fit.mult.impute} you can run any
+	function on the fit objects from completed datasets, with the results
+	saved in an element named \code{funresults}.  This facilitates
+	running bootstrap or cross-validation separately on each completed
+	dataset and storing all these results in a list for later processing,
+	e.g., with \code{\link[rms]{processMI}}.  Note that for
+	\code{rms}-type validation you will need to specify
+	\code{fitargs=list(x=TRUE,y=TRUE)} to \code{fit.mult.impute} and to
+	use special names for \code{fun} result components, such as
+	\code{validate} and \code{calibrate} so that the result can be
+	processed with \code{processMI}. When simultaneously running multiple
+	imputation and resampling model validation you may not need values for
+	\code{n.impute} or \code{B} (number of bootstraps) as high as usual,
+	as the total number of repetitions will be \code{n.impute * B}.
   
   The \code{\link{summary}} method for \code{transcan} prints the function
   call, \eqn{R^2} achieved in transforming each variable, and for each
@@ -181,7 +196,7 @@ transcan(x, method=c("canonical","pc"),
        list.out=FALSE, pr=TRUE, check=TRUE, \dots)
 
 fit.mult.impute(formula, fitter, xtrans, data, n.impute, fit.reps=FALSE,
-                dtrans, derived, vcovOpts=NULL, pr=TRUE, subset, \dots)
+                dtrans, derived, fun, vcovOpts=NULL, pr=TRUE, subset, fitargs)
 
 \method{predict}{transcan}(object, newdata, iter.max=50, eps=0.01, curtail=TRUE,
         type=c("transformed","original"),
@@ -483,8 +498,7 @@ invertTabulated(x, y, freq=rep(1,length(x)),
     variable was multiply imputed.
   }
   \item{\dots}{
-    arguments passed to \code{\link{scat1d}} or to the \code{fitter}
-    function (for \code{fit.mult.impute}).  For \code{ggplot.transcan},
+    arguments passed to \code{\link{scat1d}}. For \code{ggplot.transcan},
 		these arguments are passed to \code{facet_wrap}, e.g. \code{ncol=2}.
   }
   \item{long}{
@@ -585,10 +599,20 @@ invertTabulated(x, y, freq=rep(1,length(x)),
     See the example below.  Note that \code{derived} is not yet
     implemented.  
   }
+	\item{fun}{a function of a fit made on one of the completed datasets.
+		Typical uses are bootstrap model validations.  The result of
+		\code{fun} for imputation \code{i} is placed in the \code{i}th
+		element of a list that is returned in the \code{fit.mult.impute}
+		object element named \code{funresults}. See
+		\code{\link[rms]{processMI}} for help in processing these results
+		for the cases of \code{validate} and \code{calibrate}.}
 	\item{vcovOpts}{a list of named additional arguments to pass to the
 		\code{vcov} method for \code{fitter}.  Useful for \code{orm} models
 		for retaining all intercepts
-		(\code{vcovOpts=list(intercepts='all')}) instead of just the middle one.}
+		(\code{vcovOpts=list(intercepts='all')}) instead of just the middle
+		one.}
+	\item{fitargs}{a list of extra arguments to pass to \code{fitter},
+		used especially with \code{fun}}
   \item{type}{
     By default, the matrix of transformed variables is returned, with
     imputed values on the transformed scale.  If you had specified
@@ -1087,6 +1111,20 @@ par(mfrow=c(2,2))
 # cat('Click mouse on graph to proceed\n')
 # locator(1)
 }
+
+# While running multiple imputation for a logistic regression model
+# Run the rms package validate and calibrate functions and save the
+# results in w$funresults
+a <- aregImpute(~ x1 + x2 + y, data=d, n.impute=10)
+g <- function(fit)
+  list(validate=validate(fit, B=50), calibrate=calibrate(fit, B=75))
+w <- fit.mult.impute(y ~ x1 + x2, lrm, a, data=d, fun=g,
+                     fitargs=list(x=TRUE, y=TRUE))
+# Get all validate results in it's own list of length 10
+r <- w$funresults
+val <- lapply(r, function(x) x$validate)
+cal <- lapply(r, function(x) x$calibrate)
+# See rms::processMI
 }
 \keyword{smooth}
 \keyword{regression}

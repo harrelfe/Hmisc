@@ -1,8 +1,8 @@
 fit.mult.impute <- function(formula, fitter, xtrans, data,
                             n.impute=xtrans$n.impute, fit.reps=FALSE,
-                            dtrans, derived,
+                            dtrans, derived, fun,
                             vcovOpts=NULL,
-                            pr=TRUE, subset, ...)
+                            pr=TRUE, subset, fitargs)
 {
   call <- match.call()
 
@@ -17,8 +17,11 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
   fits <- if(fit.reps) vector('list', n.impute)
   stats.ok2average <- c('linear.predictors','fitted.values','stats', 'means',
                         'icoef', 'scale', 'center', 'y.imputed')
+
+  if(! missing(fun)) funresults <- vector('list', n.impute)
   
   for(i in 1 : n.impute) {
+    if(! missing(fun) && pr) cat('Imputation', i, '\r')
     if(used.mice) {
       completed.data <- mice::complete(xtrans, i)
       for(impvar in names(completed.data))
@@ -42,11 +45,16 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
     }
 
     if(using.Design) options(Design.attr=da)
-    f <- if(missing(subset)) fitter(formula, data=completed.data, ...)
-    else fitter(formula, data=completed.data[subset,], ...)
+    afit <- list(formula=formula,
+                 data=if(missing(subset)) completed.data
+                      else                completed.data[subset,])
+    if(! missing(fitargs)) afit <- c(afit, fitargs)
+    f <- do.call(fitter, afit)
     
     ## For some reason passing subset= causes model.frame bomb in R
     if(fit.reps) fits[[i]] <- f
+
+    if(! missing(fun)) funresults[[i]] <- fun(f)
 
     cof <- f$coef
     v <- do.call('vcov', c(list(object=f, intercepts='all'), vcovOpts))
@@ -164,6 +172,7 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
   f$formula <- formula
   f$assign  <- assign
   f$call    <- call
+  if(! missing(fun)) f$funresults <- funresults
   if(using.Design) options(Design.attr=NULL)
   class(f) <- c('fit.mult.impute', class(f))
   f

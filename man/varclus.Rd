@@ -4,7 +4,6 @@
 \alias{plot.varclus}
 \alias{naclus}
 \alias{naplot}
-\alias{combine.levels}
 \alias{plotMultSim}
 \alias{na.pattern}
 \title{
@@ -31,10 +30,8 @@ than variable i, for observations in which variable i is missing.  The
 
 So as to not generate too many dummy variables for multi-valued
 character or categorical predictors, \code{varclus} will automatically
-combine infrequent cells of such variables using an auxiliary
-function \code{combine.levels} that is defined here.  If all values of
-\code{x} are \code{NA}, \code{combine.levels} returns a numeric vector
-is returned that is all \code{NA}. 
+combine infrequent cells of such variables using
+\code{\link{combine.levels}}.
 
 \code{plotMultSim} plots multiple similarity matrices, with the similarity
 measure being on the x-axis of each subplot.
@@ -58,8 +55,6 @@ naclus(df, method)
 naplot(obj, which=c('all','na per var','na per obs','mean na',
                     'na per var vs mean na'), \dots)
 
-combine.levels(x, minlev=.05)
-
 plotMultSim(s, x=1:dim(s)[3],
             slim=range(pretty(c(0,max(s,na.rm=TRUE)))),
             slimds=FALSE,
@@ -77,8 +72,7 @@ a formula, \code{model.matrix} is used to convert it to a design matrix.
 If the formula excludes an intercept (e.g., \code{~ a + b -1}),
 the first categorical (\code{factor}) variable in the formula will have
 dummy variables generated for all levels instead of omitting one for
-the first level. For \code{combine.levels}, \code{x} is a character, category,
-or factor vector (or other vector that is converted to factor).  For
+the first level.  For
 \code{plot} and \code{print}, \code{x} is an object created by
 \code{varclus}.  For \code{na.pattern}, \code{x} is a data table, data frame,
 or matrix.
@@ -172,14 +166,6 @@ variables missing when the indicated variable is missing), or
 fraction of NAs in the variable and on the y-axis the mean number of
 other variables that are NA when the indicated variable is NA.
 }
-\item{minlev}{
-the minimum proportion of observations in a cell before that cell is
-combined with one or more cells.  If more than one cell has fewer than
-minlev*n observations, all such cells are combined into a new cell
-labeled \code{"OTHER"}.  Otherwise, the lowest frequency cell is combined
-with the next lowest frequency cell, and the level name is the
-combination of the two old level levels.
-}
 \item{abbrev}{
 set to \code{TRUE} to abbreviate variable names for plotting or
 printing.  Is set to \code{TRUE} automatically if \code{legend=TRUE}.
@@ -264,7 +250,7 @@ Hoeffding W. (1948): A non-parametric test of independence.  Ann Math Stat
 }
 \seealso{
 \code{\link{hclust}}, \code{\link{plclust}}, \code{\link{hoeffd}}, \code{\link{rcorr}}, \code{\link{cor}}, \code{\link{model.matrix}},
-\code{\link{locator}}, \code{\link{na.pattern}}
+\code{\link{locator}}, \code{\link{na.pattern}}, \code{\link{cut2}}, \code{\link{combine.levels}}
 }
 \examples{
 set.seed(1)
@@ -299,12 +285,6 @@ naplot(naclus(df))
 n <- naclus(df)
 plot(n); naplot(n)
 na.pattern(df)
-
-x <- c(1, rep(2,11), rep(3,9))
-combine.levels(x)
-x <- c(1, 2, rep(3,20))
-combine.levels(x)
-
 
 # plotMultSim example: Plot proportion of observations
 # for which two variables are both positive (diagonals

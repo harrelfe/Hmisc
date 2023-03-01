@@ -75,7 +75,8 @@ errbar <-
   if(add)
     points(x, y, pch=pch, type=type, ...)
   else
-    plot(x, y, ylim=ylim, xlab=xlab, ylab=ylab, pch=pch, type=type, ...)
+    plot(x, y, ylim=ylim, xlab=xlab, ylab=ylab, pch=pch, type=type,
+         main=main, ...)
   
   xcoord <- par()$usr[1:2]
   smidge <- cap * ( xcoord[2] - xcoord[1] ) / 2

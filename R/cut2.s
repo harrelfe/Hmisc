@@ -17,6 +17,7 @@ cut2 <- function(x, cuts, m=150, g, levels.mean=FALSE, digits, minmax=TRUE,
     formatfun <- getFromNamespace('as_function', 'rlang')(formatfun)
 
   }
+
   
   method <- 1 ## 20may02
   x.unique <- sort(unique(c(x[!is.na(x)],if(!missing(cuts))cuts)))
@@ -29,11 +30,9 @@ cut2 <- function(x, cuts, m=150, g, levels.mean=FALSE, digits, minmax=TRUE,
   
   ## add digits to formatfun's arguments if relevant
   format.args <- 
-    if (any(c("...","digits") %in%  names(formals(args(formatfun))))) {
-    c(digits = digits, list(...))
-  } else {
-    list(...)
-  }
+    if(any(c("...","digits") %in%  names(formals(args(formatfun)))))
+      c(digits = digits, list(...))
+    else list(...)
   
   oldopt <- options('digits')
   options(digits=digits)
@@ -150,3 +149,4 @@ cut2 <- function(x, cuts, m=150, g, levels.mean=FALSE, digits, minmax=TRUE,
   if(length(xlab)) label(y) <- xlab
   y
 }
+

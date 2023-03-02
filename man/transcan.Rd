@@ -1124,7 +1124,7 @@ w <- fit.mult.impute(y ~ x1 + x2, lrm, a, data=d, fun=g,
 r <- w$funresults
 val <- lapply(r, function(x) x$validate)
 cal <- lapply(r, function(x) x$calibrate)
-# See rms::processMI
+# See rms::processMI and https://hbiostat.org/rmsc/validate.html#sec-val-mival
 }
 \keyword{smooth}
 \keyword{regression}

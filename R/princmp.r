@@ -41,7 +41,7 @@ princmp <- function(formula, data=environment(formula),
   p  <- ncol(X)
   g  <- switch(method,
                regular = stats::princomp(X, cor=cor),
-               sparse  = pcaPP::sPCAgrid(X, k=k, method='sd',
+               sparse  = pcaPP::sPCAgrid(X, k=ncol(X)-1, method='sd',
                                   center=mean,
                                   scale=if(cor) sd else function(x) 1.,
                                   scores=TRUE, maxiter=10) )

@@ -1,4 +1,5 @@
 require(Hmisc)
+require(ggplot2)
 set.seed(1)
 p <- data.frame(x=1:10, y=1:10 + runif(10))
 d <- data.frame(x=rnorm(1000, 5, 1), y=sample(1:10, 1000, TRUE))

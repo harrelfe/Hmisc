@@ -1,9 +1,4 @@
-Changes in version 5.0-1 (2023-03-01)
-   * fit.mult.impute: added fun argument so user can run any function on each fit from a completed dataset, e.g., a model validation using an rms function
-   * errbar: passed argument main to last instance of plot()
-   * princmp: fixed sparse PC total variance explained by asking for k PCs where k is one less than number of columns
-	 
-Changes in version 5.0-0 (2023-02-28)
+Changes in version 5.0-0 (2023-03-03)
    * rendHTML: when knitr is not running and object is not html, assumes it is RMarkdown and calls rmarkdown::render to render it to html, then displays in viewer
    * princmp: new function to help in interpreting principal components and sparse principal components
    * getabd: new function to fetch datasets from The Analysis of Biological Data
@@ -23,6 +18,12 @@ Changes in version 5.0-0 (2023-02-28)
    * fImport: new function; front-end for `rio` package for general file import
    * transcan.Rd: added new example for completing a data frame with single imputations
    * combine.levels: added plevels argument and implemented new capabilities for ordered variables, for which only consecutive levels are allowed to be combined
+   * fit.mult.impute: added fun argument so user can run any function on each fit from a completed dataset, e.g., a model validation using an rms function
+   * errbar: passed argument main to last instance of plot()
+   * princmp: fixed sparse PC total variance explained by asking for k PCs where k is one less than number of columns
+   * removed dependencies for Formula (importFrom), ggplot2 (importFrom), lattice (suggests), survival (suggests)
+   * NOTE: users who depended on ggplot2 or survival being loaded by Hmisc need to require() or library() themselves
+	 
 
 Changes in version 4.8-0 (2023-02-08)
    * rendHTML: new function to render HTML, sensing if knitr is running and if so using knitr::asis_output, otherwise htmltools

@@ -20,9 +20,9 @@ spower <- function(rcontrol, rinterv, rcens, nc, ni,
     nexceed <- nexceed + (test(S, group) > crit)
     if(cox)
       {
-        fit <- coxph.fit(as.matrix(group), S, strata=NULL,
+        fit <- survival::coxph.fit(as.matrix(group), S, strata=NULL,
                          offset=NULL, init=NULL,
-                         control=coxph.control(iter.max=10, eps=.0001), 
+                         control=survival::coxph.control(iter.max=10, eps=.0001), 
                          method="efron", rownames=NULL)
         beta[i] <- fit$coefficients
       }

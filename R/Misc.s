@@ -112,10 +112,11 @@ stepfun.eval <- function(x, y, xout, type=c("left","right"))
 
 km.quick <- function(S, times, q)
 {
+  sRequire('survival')
   S <- S[!is.na(S),]
   n <- nrow(S)
   stratvar <- factor(rep(1,nrow(S)))
-  f <- survfitKM(stratvar, S, se.fit=FALSE, conf.type='none')
+  f <- survival::survfitKM(stratvar, S, se.fit=FALSE, conf.type='none')
   tt <- c(0, f$time)
   ss <- c(1, f$surv)
   if(missing(times))
@@ -201,12 +202,12 @@ mgp.axis <-
 
 trellis.strip.blank <- function()
 {
-  s.b <- trellis.par.get("strip.background")
+  s.b <- lattice::trellis.par.get("strip.background")
   s.b$col <- 0
-  trellis.par.set("strip.background", s.b)
-  s.s <- trellis.par.get("strip.shingle")
+  lattice::trellis.par.set("strip.background", s.b)
+  s.s <- lattice::trellis.par.get("strip.shingle")
   s.s$col <- 0
-  trellis.par.set("strip.shingle", s.s)
+  lattice::trellis.par.set("strip.shingle", s.s)
   invisible()
 }
 
@@ -638,7 +639,7 @@ get2rowHeads <- function(str) {
 
 ## Note: can't say f[vector of names] <- list(...) to update args
 ## In R you have to put ALL arguments in list(...) so sometimes we set
-## unneeded ones to NULL.  Ignore this assignment in S
+## unneeded ones to NULL.  Ignore this assignment in S<
 
 ## Two lists of functions, one for primitives for S+ or R (either Trellis
 ## or low-level), one for R grid
@@ -680,12 +681,13 @@ ordGridFun <- function(grid)
                     },
          axis     = function(...) axis(...))
   else {
+    sRequire('lattice')
     list(lines = function(x, y, ...)
          {
            if(is.list(x)) {
              y <- x[[2]]; x <- x[[1]]
            }
-           llines(if(is.unit(x))
+           lattice::llines(if(is.unit(x))
                     convertX(x, 'native', valueOnly=TRUE)
                   else x,
                   if(is.unit(y))
@@ -699,7 +701,7 @@ ordGridFun <- function(grid)
            if(is.list(x)) {
              y <- x[[2]]; x <- x[[1]]
            }
-           lpoints(if(is.unit(x))
+           lattice::lpoints(if(is.unit(x))
                      convertX(x, 'native', valueOnly=TRUE)
                    else x,
                    if(is.unit(y))
@@ -713,7 +715,7 @@ ordGridFun <- function(grid)
            if(is.list(x)) {
              y <- x[[2]]; x <- x[[1]]
            }
-           ltext(if(is.unit(x))
+           lattice::ltext(if(is.unit(x))
                    convertX(x, 'native', valueOnly=TRUE)
                  else x,
                  if(is.unit(y))
@@ -728,7 +730,7 @@ ordGridFun <- function(grid)
                          gp=gpar(...))
          },
        
-         arrows = function(...) larrows(...),
+         arrows = function(...) lattice::larrows(...),
 
          rect = function(xleft, ybottom, xright, ytop, density, angle,
                          border, xpd, ...)
@@ -754,7 +756,7 @@ ordGridFun <- function(grid)
            else grid.polygon(x, y, default.units='native',
                       gp=gpar(fill=col,col='transparent',...))
               },
-         abline=function(...) panel.abline(...),
+         abline=function(...) lattice::panel.abline(...),
          unit = function(x, units='native', ...) unit(x, units=units, ...),
        
          axis = function(side=1, at=NULL, labels, ticks=TRUE,
@@ -2049,3 +2051,9 @@ rendHTML <- function(x, html=TRUE) {
 #         "<script type=\"text/x-mathjax-config\">MathJax.Hub.Config({tex2jax: {inlineMath: [[\"$\",\"$\"]]}})</script><script async src=\"https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML\"></script>"))
 #  htmltools::htmlDependencies(ht) <- dep
 #  htmltools::html_print(ht)
+
+sRequire <- function(package) {
+  if(! requireNamespace(package, quietly=TRUE))
+    stop(paste('package', package, 'is required but not installed'))
+  invisible()
+}

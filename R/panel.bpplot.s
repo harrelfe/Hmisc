@@ -8,15 +8,16 @@ panel.bpplot <- function(x, y, box.ratio = 1, means=TRUE,
                          cex.means  = box.dot$cex,  col = box.dot$col,
                          nogrid=NULL, height=NULL, ...)
 {
+  sRequire('lattice')
   grid <- TRUE
   if(length(nogrid) && nogrid) grid <- FALSE
   if(missing(nloc) && !grid) nloc <- 'none'
   else nloc <- match.arg(nloc)
   
   if(grid) {
-    lines    <- llines
-    points   <- lpoints
-    segments <- lsegments
+    lines    <- lattice::llines
+    points   <- lattice::lpoints
+    segments <- lattice::lsegments
   }
 
   y <- as.numeric(y)
@@ -31,8 +32,8 @@ panel.bpplot <- function(x, y, box.ratio = 1, means=TRUE,
   probs2 <- sort(c(probs, 1 - probs))
 
   if(grid) {
-    box.dot  <- trellis.par.get("box.dot")
-    lineopts <- trellis.par.get("box.rectangle")
+    box.dot  <- lattice::trellis.par.get("box.dot")
+    lineopts <- lattice::trellis.par.get("box.rectangle")
     box.dot.par <- c(list(pch = pch, cex = cex.means, col = col,
                           font = font), ...)
   }
@@ -71,15 +72,15 @@ panel.bpplot <- function(x, y, box.ratio = 1, means=TRUE,
       mean.value <- list(x=mean(X), y=Y)
       do.call('points', c(mean.value, box.dot.par))
     }
-    xlimits <- if(grid) current.panel.limits()$xlim else par('usr')[1:2]
+    xlimits <- if(grid) lattice::current.panel.limits()$xlim else par('usr')[1:2]
     switch(nloc,
-           right= ltext(xlimits[2] - .01*diff(xlimits), Y,
+           right= lattice::ltext(xlimits[2] - .01*diff(xlimits), Y,
              paste('n=', length(X), sep=''),
              adj=c(1, .5), cex=cex.n),
-           left= ltext(xlimits[1] + .01*diff(xlimits), Y,
+           left= lattice::ltext(xlimits[1] + .01*diff(xlimits), Y,
              paste('n=', length(X), sep=''),
              adj=c(0, .5), cex=cex.n),
-           'right lower'= ltext(xlimits[2] - .01*diff(xlimits),
+           'right lower'= lattice::ltext(xlimits[2] - .01*diff(xlimits),
              Y - w * min(size.qref) / k,
              paste('n=', length(X), sep=''),
              adj=c(1, 1), cex=cex.n))
@@ -87,8 +88,10 @@ panel.bpplot <- function(x, y, box.ratio = 1, means=TRUE,
     if(datadensity)
       do.call('scat1d',c(list(x=X, y=Y, grid=grid), scat1d.opts))
 
-    if(violin)
-      do.call('panel.violin', c(list(x=X, y=Y), violin.opts))
+    if(violin) {
+      pviol <- lattice::panel.violin
+      do.call(pviol, c(list(x=X, y=Y), violin.opts))
+      }
 
     if(nout > 0) {
       ii <- if(nout < 1) {
@@ -149,9 +152,10 @@ bpplt <- function(stats, xlim, xlab='', box.ratio = 1, means=TRUE,
   probs  <- probs2[seq.int(length.out=floor(length(probs2) / 2))]
 
   if(grid) {
-    lines    <- llines
-    points   <- lpoints
-    segments <- lsegments
+    sRequire('lattice')
+    lines    <- lattice::llines
+    points   <- lattice::lpoints
+    segments <- lattice::lsegments
   }
 
   width <- box.ratio / (1 + box.ratio)
@@ -254,6 +258,8 @@ bpplotM <- function(formula=NULL, groups=NULL, data=NULL, subset=NULL,
                     nloc=c('right lower','right','left','none'),
                     vnames=c('labels', 'names'), cex.n=.7, cex.strip=1,
                     outerlabels=TRUE, ...) {
+  sRequire('lattice')
+  sRequire('latticeExtra')
   nloc   <- match.arg(nloc)
   vnames <- match.arg(vnames)
 
@@ -273,13 +279,13 @@ bpplotM <- function(formula=NULL, groups=NULL, data=NULL, subset=NULL,
                      paste(groups, collapse=' + '))
     formula <- as.formula(formula)
   }
-  form <- Formula(formula)
+  form <- Formula::Formula(formula)
   Y <- if(length(subset)) model.frame(form, data=data, subset=subset,
                                       na.action=na.action)
   else model.frame(form, data=data, na.action=na.action)
-  X <- model.part(form, data=Y, rhs=1)
+  X <- Formula::model.part(form, data=Y, rhs=1)
   if(ncol(X) == 0) X <- rep('', nrow(Y))
-  Y <- model.part(form, data=Y, lhs=1)
+  Y <- Formula::model.part(form, data=Y, lhs=1)
 
   vars <- names(Y)
   labs <- vars
@@ -307,7 +313,7 @@ bpplotM <- function(formula=NULL, groups=NULL, data=NULL, subset=NULL,
   strip <- function(which.given, which.panel, var.name, factor.levels, ...) {
     current.var <- var.name[which.given]
     levs <- if(current.var == 'time') lev else factor.levels
-    strip.default(which.given, which.panel, var.name, factor.levels=levs, ...)
+    lattice::strip.default(which.given, which.panel, var.name, factor.levels=levs, ...)
   }
   
   namx <- names(X)
@@ -315,7 +321,7 @@ bpplotM <- function(formula=NULL, groups=NULL, data=NULL, subset=NULL,
   if(length(namx) > 1) form <- paste(form, '+',
                                      paste(namx[-1], collapse= '+'))
   form <- as.formula(form)
-  d <- bwplot(form, panel=panel.bpplot, scales=scales, data=w, xlab='',
+  d <- lattice::bwplot(form, panel=panel.bpplot, scales=scales, data=w, xlab='',
               nloc=nloc, cex.n=cex.n, strip=strip,
               par.strip.text=list(cex=cex.strip), ...)
   if(outerlabels && length(dim(d)) == 2)
@@ -328,8 +334,7 @@ bppltp <- function(p=plotly::plot_ly(),
                    qref=c(.5,.25,.75), qomit=c(.025,.975),
                    teststat=NULL, showlegend=TRUE) {
 
-  if (!requireNamespace("plotly"))
-    stop("This function requires the 'plotly' package.")
+  sRequire('plotly')
   
   ## Do what segments does with broken (by NAs) lines for plotly
   segm <- function(x0, y0, x1, y1, wquan, quan, group='') {

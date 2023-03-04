@@ -89,7 +89,8 @@ summaryS(formula, fun = NULL, data = NULL, subset = NULL,
            xlim=NULL, ylim=NULL, cex.strip=1, cex.values=0.5, pch.stats=NULL,
            key=list(columns=length(groupslevels),
              x=.75, y=-.04, cex=.9,
-             col=trellis.par.get('superpose.symbol')$col, corner=c(0,1)),
+             col=lattice::trellis.par.get('superpose.symbol')$col,
+             corner=c(0,1)),
            outerlabels=TRUE, autoarrange=TRUE, scat1d.opts=NULL, \dots)
 
 \method{plotp}{summaryS}(data, formula=NULL, groups=NULL, sfun=NULL,
@@ -201,6 +202,7 @@ medvpl(x, y, groups=NULL, yvar=NULL, maintracename='y',
 \examples{
 # See tests directory file summaryS.r for more examples, and summarySp.r
 # for plotp examples
+require(survival)
 n <- 100
 set.seed(1)
 d <- data.frame(sbp=rnorm(n, 120, 10),
@@ -225,7 +227,8 @@ s <- summaryS(age + sbp + dbp ~ days + region + treat,  data=d)
 # plot(s)   # 3 pages
 plot(s, groups='treat', datadensity=TRUE,
      scat1d.opts=list(lwd=.5, nhistSpike=0))
-plot(s, groups='treat', panel=panel.loess, key=list(space='bottom', columns=2),
+plot(s, groups='treat', panel=lattice::panel.loess,
+     key=list(space='bottom', columns=2),
      datadensity=TRUE, scat1d.opts=list(lwd=.5))
 
 # To make a plotly graph when the stratification variable region is not

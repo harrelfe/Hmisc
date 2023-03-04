@@ -754,6 +754,7 @@ s <- summary(cbind(age,sysbp,diasbp) ~ x, fun=g, data=d, na.rm=FALSE)
 \dontrun{
 life.expect <- function(y) c(Years=sum(y[,1])/sum(y[,2]))
 attach(pbc)
+require(survival)
 S <- Surv(follow.up.time, death)
 s2 <- summary(S ~ age + albumin + ascites + edema + stratify(drug),
                          fun=life.expect, g=3)

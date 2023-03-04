@@ -65,8 +65,8 @@ summary.formula <-
   if(length(strat)) {
     if(method != 'response') 
       stop('stratify only allowed for method="response"')
-
-    temp <- untangle.specials(Terms,'stratify')
+    sRequire('survival')
+    temp <- survival::untangle.specials(Terms,'stratify')
     strat.name <- var.inner(Terms)[temp$terms]
     strat <- if(length(temp$vars) == 1) as.factor(X[[temp$vars]])
              else stratify(X[,temp$vars])
@@ -2645,6 +2645,7 @@ stripChart <- function(x, xlim, xlab='', pch=1,
                        lcolor='gray',
                        grid=FALSE)
 {
+  if(grid) sRequire('lattice')
   groups <- names(x)
   if(missing(xlim))
     xlim <- range(unlist(x),na.rm=TRUE)
@@ -2652,9 +2653,9 @@ stripChart <- function(x, xlim, xlab='', pch=1,
   i <- integer(0)
 
   if(grid) {
-    lines <- llines;
-    points <- lpoints;
-    segments <- lsegments
+    lines    <- lattice::llines
+    points   <- lattice::lpoints
+    segments <- lattice::lsegments
   }
 
   plot.new()

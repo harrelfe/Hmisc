@@ -1,4 +1,5 @@
-library(Hmisc)
+require(Hmisc)
+require(ggplot2)
 
 z <- 
 structure(list(x = c(-1.01157732356344, -0.844512148091014, -0.723389895873506, 
@@ -45,5 +46,3 @@ lines(a, h(a)[,1])            ## first inverse
 lines(a, h(a)[,2], col='red') ## second inverse
 a <- c(-.1, 1.01, 1.1, 1.2)
 points(a, h(a)[,1])
-
-

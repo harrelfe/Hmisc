@@ -6,7 +6,7 @@
 ##  gamma-type rank correlation)
 
 rcorr.cens <- function(x, S, outx=FALSE) {
-  if(is.Surv(S)) {
+  if(inherits(S, 'Surv')) {
     if(attr(S, 'type') != 'right')
       stop('only handles right censored times')
   } else S <- cbind(S, rep(1, length(S)))

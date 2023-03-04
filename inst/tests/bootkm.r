@@ -1,4 +1,5 @@
 require(Hmisc)
+require(survival)
 yrs <- runif(30, 0, 10)
 ev  <- sample(0:1, 30, TRUE)
 w <- bootkm(Surv(yrs, ev), times=5)

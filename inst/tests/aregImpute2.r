@@ -92,16 +92,17 @@ sd(ry)
 sd(r)
 pr  <- predict(g, cbind(x1, x2))
 pr2 <- g$linear.predictors
-describe(pr-pr2)
+length(pr); length(pr2)
 Pr <- fitted(f)
-plot(Pr,pr)   # ??
-coef(lm.fit.qr.bare(Pr,pr))
+plot(Pr,pr2)
 
+if(FALSE) {
 obs.trans <- pr + r
 plot(obs.trans, y)
 w <- lm.fit.qr.bare(obs.trans,y)
 coef(w)
 w$rsquared
+}
 
 # Strip out aregImpute code for regression imputation, force linearity,
 # no bootstrap, x1 is only variable with NAs

@@ -1,5 +1,6 @@
 bootkm <- function(S, q=.5, B=500, times, pr=TRUE)
 {
+  sRequire('survival')
   tthere <- !missing(times)
   if(tthere && length(times)>1)
     stop('presently bootkm only works for a single time')
@@ -7,7 +8,7 @@ bootkm <- function(S, q=.5, B=500, times, pr=TRUE)
   S <- S[!is.na(S),]
   n <- nrow(S)
   stratvar <- factor(rep(1,nrow(S)))
-  f <- survfitKM(stratvar, S)
+  f <- survival::survfitKM(stratvar, S)
   tt <- c(0, f$time)
   ss <- c(1, f$surv)
   if(!tthere) {
@@ -25,7 +26,7 @@ bootkm <- function(S, q=.5, B=500, times, pr=TRUE)
     if(pr && (i %% 10)==0)
       cat(i,'\r')
     
-    f <- survfitKM(stratvar, S[sample(n,n,replace=TRUE),],
+    f <- survival::survfitKM(stratvar, S[sample(n,n,replace=TRUE),],
                    se.fit=FALSE, conf.type='none')
     tt <- c(0, f$time)
     ss <- c(1, f$surv)

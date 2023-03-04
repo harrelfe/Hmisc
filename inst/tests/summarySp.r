@@ -1,4 +1,5 @@
 require(Hmisc)
+require(survival)
 
 n <- 1000
 set.seed(1)

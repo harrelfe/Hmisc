@@ -42,7 +42,8 @@ summaryRc <-
   }
 
   if(length(strat)) {
-    temp <- untangle.specials(Terms,'stratify')
+    sRequire('survival')
+    temp <- survival::untangle.specials(Terms,'stratify')
     strat.name <- var.inner(Terms)[temp$terms]
     strat <- if(length(temp$vars) == 1) as.factor(X[[temp$vars]])
     else stratify(X[,temp$vars])

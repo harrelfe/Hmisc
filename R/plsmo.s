@@ -105,7 +105,7 @@ plsmo <-
   }
   if(add) {
     if(missing(xlim))
-      xlim <- if(grid) current.panel.limits()$xlim else par('usr')[1:2]
+      xlim <- if(grid) lattice::current.panel.limits()$xlim else par('usr')[1:2]
   }
   else {
     if(missing(xlab))
@@ -175,8 +175,9 @@ panel.plsmo <- function(x, y, subscripts, groups=NULL, type='b',
                         font = superpose.symbol$font, 
                         col  = NULL, scat1d.opts=NULL, ...)
 {
-  superpose.symbol <- trellis.par.get("superpose.symbol")
-  superpose.line   <- trellis.par.get("superpose.line")
+  sRequire('lattice')
+  superpose.symbol <- lattice::trellis.par.get("superpose.symbol")
+  superpose.line   <- lattice::trellis.par.get("superpose.line")
   if(length(groups)) groups <- as.factor(groups)
   
   g  <- unclass(groups)[subscripts]
@@ -208,12 +209,12 @@ panel.plsmo <- function(x, y, subscripts, groups=NULL, type='b',
 
   if(type != 'l') {
     if(ng > 1)
-      panel.superpose(x, y, subscripts,
+      lattice::panel.superpose(x, y, subscripts,
                       as.integer(groups),
                       lwd=lwd, lty=lty, pch=pch, cex=cex, 
                       font=font, col=col)
     else
-      panel.xyplot(x, y, 
+      lattice::panel.xyplot(x, y, 
                    lwd=lwd, lty=lty, pch=pch, cex=cex, 
                    font=font, col=col)
     

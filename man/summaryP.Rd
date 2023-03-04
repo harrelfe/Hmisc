@@ -61,7 +61,7 @@ summaryP(formula, data = NULL, subset = NULL,
          text.at=NULL, cex.values = 0.5,
          key = list(columns = length(groupslevels), x = 0.75,
                     y = -0.04, cex = 0.9,
-                    col = trellis.par.get('superpose.symbol')$col,
+                    col = lattice::trellis.par.get('superpose.symbol')$col,
                     corner=c(0,1)),
          outerlabels=TRUE, autoarrange=TRUE,
          col=colorspace::rainbow_hcl, \dots)
@@ -211,6 +211,7 @@ s <- summaryP(race + sex + ynbind(x1, x2, x3, x4, x5, x6, x7, label='Exclusions'
               region + treat, data=d)
 # add exclude1=FALSE below to include female category
 plot(s, groups='treat')
+require(ggplot2)
 ggplot(s, groups='treat')
 
 plot(s, val ~ freq | region * var, groups='treat', outerlabels=FALSE)
@@ -247,10 +248,12 @@ ggplot(sb, groups='region')
 plot(s, groups='treat')
 # plot(s, groups='treat', outerlabels=FALSE) for standard lattice output
 plot(s, groups='region', key=list(columns=2, space='bottom'))
+require(ggplot2)
 colorFacet(ggplot(s))
 
 plot(summaryP(race + sex ~ region, data=d), exclude1=FALSE, col='green')
 
+require(lattice)
 # Make your own plot using data frame created by summaryP
 useOuterStrips(dotplot(val ~ freq | region * var, groups=treat, data=s,
         xlim=c(0,1), scales=list(y='free', rot=0), xlab='Fraction',

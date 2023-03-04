@@ -38,7 +38,8 @@ responseSummary <- function(formula, data, na.action=na.pass,
   ## extract stratified variables from m or create a blank
   ## strat if non exists.
   if(!is.null(attr(Terms, 'specials')$stratify)) {
-    temp <- untangle.specials(Terms, 'stratify')
+    sRequire('survival')
+    temp <- survival::untangle.specials(Terms, 'stratify')
 
     if(length(temp$vars) == 1)
       stratified <- m[[temp$vars]]

@@ -137,7 +137,7 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
             else if(sec)
               function(y, y2) {
                 # km.quick is in Hmisc
-                z <- c(1. - km.quick(Surv(y, y2), times), length(y))
+                z <- c(1. - km.quick(survival::Surv(y, y2), times), length(y))
                 names(z) <- c(paste0(movlab, times, '-', tunits), 'N')
                 as.list(z)
               }

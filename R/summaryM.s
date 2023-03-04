@@ -10,7 +10,7 @@ summaryM <- function(formula, groups=NULL, data=NULL, subset,
   marg <- length(data) && '.marginal.' %in% names(data)
   if(marg) formula <- update(formula, .~. + .marginal.)
   
-  formula <- Formula(formula)
+  formula <- Formula::Formula(formula)
   Y <- if(!missing(subset) && length(subset))
     model.frame(formula, data=data, subset=subset, na.action=na.action)
   else
@@ -25,8 +25,8 @@ summaryM <- function(formula, groups=NULL, data=NULL, subset,
 #  mf$formula <- formula
 #  Y <- eval(mf, parent.frame())
 
-   X <- model.part(formula, data=Y, rhs=1)
-   Y <- model.part(formula, data=Y, lhs=1)
+   X <- Formula::model.part(formula, data=Y, rhs=1)
+   Y <- Formula::model.part(formula, data=Y, lhs=1)
 
    getlab <- function(x, default) {
      lab <- attr(x, 'label')

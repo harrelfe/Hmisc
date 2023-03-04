@@ -3,7 +3,7 @@ nobsY <- function(formula, group=NULL,
                   matrixna=c('all', 'any')) {
   matrixna <- match.arg(matrixna)
   forig <- formula
-  formula <- Formula(formula)
+  formula <- Formula::Formula(formula)
   environment(formula) <- new.env(parent = environment(formula))
   en <- environment(formula)
   assign(envir = en, 'id', function(x) x)
@@ -18,8 +18,8 @@ nobsY <- function(formula, group=NULL,
   else
     model.frame(formula, data=data, na.action=na.action)
   
-  Y <- model.part(formula, data=mf, lhs=1)
-  X <- model.part(formula, data=mf, rhs=1)
+  Y <- Formula::model.part(formula, data=mf, lhs=1)
+  X <- Formula::model.part(formula, data=mf, rhs=1)
   ## Get id variable if present so can count unique subjects
   rhs <- terms(formula, rhs=1, specials='id')
   sr  <- attr(rhs, 'specials')

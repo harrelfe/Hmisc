@@ -149,6 +149,7 @@ plot.curveRep <- function(x, which=1:length(res),
   if(method == 'data') {
     retdat <- TRUE
     method <- 'lattice'
+    sRequire('lattice')
     }
   ncuts <- x$ncuts
   res <- x$res; id <- x$id; y <- x$y; k <- x$k; x <- x$x
@@ -289,14 +290,14 @@ plot.curveRep <- function(x, which=1:length(res),
           xx <- x[idx]; yy <- y[idx]; ccols <- idcol[g]
           if (any(idx)) { 
             switch(type, 
-                   p = lpoints(xx, yy, col = ccols), 
-                   l = llines(xx, yy, col = ccols), 
-                   b = { lpoints(xx, yy, col = ccols) 
-                         llines(xx, yy, col = ccols) }) 
+                   p = lattice::lpoints(xx, yy, col = ccols), 
+                   l = lattice::llines(xx, yy, col = ccols), 
+                   b = { lattice::lpoints(xx, yy, col = ccols) 
+                         lattice::llines(xx, yy, col = ccols) }) 
           } 
         } 
       } else function(x, y, subscripts, groups, ...) {
-        panel.superpose(x, y, subscripts, groups, ...)
+        lattice::panel.superpose(x, y, subscripts, groups, ...)
         textfun(subscripts, groups)
       }
     if(retdat) return(data.frame(x=X, y=Y, distribution, cluster,
@@ -314,7 +315,7 @@ plot.curveRep <- function(x, which=1:length(res),
                        textfun(subscripts)
                      }
                      })) else
-    print(xyplot(Y ~ X | distribution*cluster, groups=curve,
+    print(lattice::xyplot(Y ~ X | distribution*cluster, groups=curve,
                  xlab=xlab, ylab=ylab,
                  xlim=xlim, ylim=ylim,
                  type=if(nres[which]=='1')'b' else 'l',

@@ -35,6 +35,7 @@ the \code{tspar} attribute of \code{x} if any; otherwise the value
 }
 \seealso{\code{\link{label}}}
 \examples{
+require(survival)
 fail.time <- c(10,20)
 units(fail.time) <- "Day"
 describe(fail.time)

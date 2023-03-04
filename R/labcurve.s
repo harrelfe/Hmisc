@@ -486,7 +486,8 @@ labcurve <- function(curves, labels=names(curves),
 ## can't use strwidth etc. after a lattice drawing has been rendered	
 rlegendg <- function(x, y, legend, col=pr$col[1], lty=NULL,
                      lwd=NULL, pch=NULL, cex=pr$cex[1], other=NULL)
-  {
+{
+  sRequire('lattice')
     pr <- par()
     if(is.list(x)) {
       y <- x[[2]]
@@ -506,7 +507,7 @@ rlegendg <- function(x, y, legend, col=pr$col[1], lty=NULL,
     if(length(other))
       cmd <- c(cmd, other)
     
-    draw.key(cmd, draw=TRUE,
+    lattice::draw.key(cmd, draw=TRUE,
              vp=viewport(x=unit(x,'npc'),y=unit(y,'npc')))
     invisible()
   }
@@ -772,6 +773,7 @@ putKey <- function(z, labels, type=NULL,
                    transparent=TRUE, plot=TRUE, key.opts=NULL,
                    grid=FALSE)
 {
+  sRequire('lattice')
   nc <- length(labels)
   if(!length(pch)) pch <- rep(NA, nc)
   
@@ -801,7 +803,7 @@ putKey <- function(z, labels, type=NULL,
     stop("cex can not be NA for type='p' or 'b'")
   
   m <- list()
-  m[[1]] <- as.name(if(grid) 'draw.key' else 'rlegend')
+  m[[1]] <- as.name(if(grid) 'lattice::draw.key' else 'rlegend')
   
   if(!grid) {
     m$x <- z[[1]]; m$y <- z[[2]]

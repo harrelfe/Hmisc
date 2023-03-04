@@ -253,7 +253,7 @@ Ecdf(~ch | region*year, groups=sex)
 Key()           # draw a key for sex at the default location
 # Key(locator(1)) # user-specified positioning of key
 age <- rnorm(1000, 50, 10)
-Ecdf(~ch | equal.count(age), groups=sex)  # use overlapping shingles
+Ecdf(~ch | lattice::equal.count(age), groups=sex)  # use overlapping shingles
 Ecdf(~ch | sex, datadensity='hist', side=3)  # add spike histogram at top
 }
 \keyword{nonparametric}

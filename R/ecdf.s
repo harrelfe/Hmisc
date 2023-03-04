@@ -229,6 +229,8 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
                        font= plot.symbol$font, 
                        col = NULL, ...)
 {
+  sRequire('lattice')
+
   method <- match.arg(method)
   what   <- match.arg(what)
   if(length(groups)) groups <- as.factor(groups)
@@ -238,10 +240,10 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
   g <- unclass(groups)[subscripts]
   ng <- if(length(groups)) max(g, na.rm=TRUE) else 1
 
-  plot.symbol <- trellis.par.get(
+  plot.symbol <- lattice::trellis.par.get(
     if(ng > 1) "superpose.symbol" else "plot.symbol")
   
-  plot.line   <- trellis.par.get(
+  plot.line   <- lattice::trellis.par.get(
     if(ng > 1) "superpose.line" else "plot.line")
 
   qrefs <- function(x, q, col, fun, llines, grid) {
@@ -262,93 +264,94 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
                        rug=.03,
                        hist=.1,
                        density=.1),
-                     dens.opts=NULL, llines, ...)
-    {
-      ## y ignored
-      z <- wtd.Ecdf(x, type=ecdf.type, na.rm=FALSE)
-      zx <- z$x
-      y  <- z$ecdf
-      switch(what,
-             '1-F' = {y <- 1 - y},
-             'f'   = {y <- y * length(x)},
-             '1-f' = {zx <- zx[-1]
-                      y <- as.vector((1 - y[- length(y)]) * length(x)) } )
+                     dens.opts=NULL, llines, ...) {
 
+    ## y ignored
+    z <- wtd.Ecdf(x, type=ecdf.type, na.rm=FALSE)
+    zx <- z$x
+    y  <- z$ecdf
+    switch(what,
+           '1-F' = {y <- 1 - y},
+           'f'   = {y <- y * length(x)},
+           '1-f' = {zx <- zx[-1]
+             y <- as.vector((1 - y[- length(y)]) * length(x)) } )
     
-      ## For some reason S-Plus will not plot anything the following way
-      ## when lwd is a variable
-      ##llines(z$x, fun(z$ecdf), lwd = lwd, lty = lty, col = col,
-      ##       type = type, ...)
-      do.call('llines', list(zx, fun(y), lwd = lwd, lty = lty, col = col,
-                             type = type, ...))
-      if(length(q))
-        qrefs(x, q, col, fun=fun, llines=llines, grid=TRUE)
     
-      datadensity <- match.arg(datadensity)
-      if(datadensity != 'none') {
-        if(side %in% c(2,4))
-          stop('side must be 1 or 3 when datadensity is specified')
-        
-        if('frac' %nin% names(dens.opts))
-          dens.opts$frac <- frac
-        
-        if('side' %nin% names(dens.opts))
-          dens.opts$side <- side
-        
-        if('col'  %nin% names(dens.opts))
-          dens.opts$col  <- col
-        
-        if('lwd'  %nin% names(dens.opts))
-          dens.opts$lwd  <- lwd
-        
-        do.call(switch(datadensity, 
-                       rug    ='scat1d',
-                       hist='histSpike',
-                       density='histSpike'),
-                c(list(x=x, add=TRUE, grid=TRUE),
-                  if(datadensity == 'density')
+    ## For some reason S-Plus will not plot anything the following way
+    ## when lwd is a variable
+    ##llines(z$x, fun(z$ecdf), lwd = lwd, lty = lty, col = col,
+    ##       type = type, ...)
+    do.call(llines,
+            list(zx, fun(y), lwd = lwd, lty = lty, col = col,
+                 type = type, ...))
+    if(length(q))
+      qrefs(x, q, col, fun=fun, llines=llines, grid=TRUE)
+    
+    datadensity <- match.arg(datadensity)
+    if(datadensity != 'none') {
+      if(side %in% c(2,4))
+        stop('side must be 1 or 3 when datadensity is specified')
+      
+      if('frac' %nin% names(dens.opts))
+        dens.opts$frac <- frac
+      
+      if('side' %nin% names(dens.opts))
+        dens.opts$side <- side
+      
+      if('col'  %nin% names(dens.opts))
+        dens.opts$col  <- col
+      
+      if('lwd'  %nin% names(dens.opts))
+        dens.opts$lwd  <- lwd
+      
+      do.call(switch(datadensity, 
+                     rug    ='scat1d',
+                     hist='histSpike',
+                     density='histSpike'),
+              c(list(x=x, add=TRUE, grid=TRUE),
+                if(datadensity == 'density')
                   list(type='density'),
-                  dens.opts))
-      }
+                dens.opts))
     }
+  }   # end ppanel
   
   pspanel <- function(x, subscripts, groups, type, lwd, lty,
                       pch, cex, font, col, q, qrefs, 
-                      ecdf.type, fun, what, llines, ...)
-    {
-      ## y ignored
-      lev <- levels(groups)
-      groups <- as.numeric(groups)[subscripts]
-      N <- seq(along = groups)
-      curves <- list()
-    
-      for(i in 1:length(lev)) {
-        which <- N[groups == i]
-        ## sort in x
-        j <- which # no sorting
-        if(any(j)) {
-          z <- wtd.Ecdf(x[j], type=ecdf.type, na.rm=FALSE)
-          zx <- z$x
-          y  <- z$ecdf
-          switch(what,
-                 '1-F' = {y <- 1 - y},
-                 'f'   = {y <- y * length(x[j])},
-                 '1-f' = {zx <- zx[-1]
-                          y <- as.vector((1 - y[- length(y)]) * length(x[j])) } )
+                      ecdf.type, fun, what, llines, ...) {
 
-          
-          do.call('llines',
-                  list(zx, fun(y),
-                       col = col[i], lwd = lwd[i], lty = lty[i], 
-                       type = type, ...))
-          if(length(q)) qrefs(x[j], q, col[i], fun=fun, llines=llines,
-                              grid=TRUE)
-          curves[[lev[i]]] <- list(x=zx, y=fun(y))
-        }
+    ## y ignored
+    lev <- levels(groups)
+    groups <- as.numeric(groups)[subscripts]
+    N <- seq(along = groups)
+    curves <- list()
+    
+    for(i in 1:length(lev)) {
+      which <- N[groups == i]
+      ## sort in x
+      j <- which # no sorting
+      if(any(j)) {
+        z <- wtd.Ecdf(x[j], type=ecdf.type, na.rm=FALSE)
+        zx <- z$x
+        y  <- z$ecdf
+        switch(what,
+               '1-F' = {y <- 1 - y},
+               'f'   = {y <- y * length(x[j])},
+               '1-f' = {zx <- zx[-1]
+                 y <- as.vector((1 - y[- length(y)]) * length(x[j])) } )
+        
+        
+        do.call(llines,
+                list(zx, fun(y),
+                     col = col[i], lwd = lwd[i], lty = lty[i], 
+                     type = type, ...))
+        if(length(q)) qrefs(x[j], q, col[i], fun=fun, llines=llines,
+                            grid=TRUE)
+        curves[[lev[i]]] <- list(x=zx, y=fun(y))
       }
-      
-      curves
     }
+      
+    curves
+  }   # end pspanel
   
   lty  <- rep(lty, length = ng)
   lwd  <- rep(lwd, length = ng)
@@ -364,7 +367,8 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
     curves <- pspanel(x, subscripts, groups,
                       lwd=lwd, lty=lty, pch=pch, cex=cex, 
                       font=font, col=col, type=type, q=q, qrefs=qrefs, 
-                      ecdf.type=method, fun=fun, what=what, llines=llines)
+                      ecdf.type=method, fun=fun, what=what,
+                      llines=lattice::llines)
     if(!(is.logical(label.curves) && !label.curves)) {
       lc <-
         if(is.logical(label.curves))
@@ -378,7 +382,7 @@ panel.Ecdf <- function(x, y, subscripts, groups=NULL,
   }
   else ppanel(x, lwd=lwd, lty=lty, pch=pch, cex=cex, 
               font=font, col=col, type=type, q=q, qrefs=qrefs, 
-              ecdf.type=method, fun=fun, what=what, llines=llines, ...)
+              ecdf.type=method, fun=fun, what=what, llines=lattice::llines, ...)
 
   if(ng > 1) { ##set up for key() if points plotted
     .Key <- function(x=0, y=1, lev, col, lty, lwd, ...)
@@ -415,6 +419,7 @@ Ecdf.formula <- function(x, data = sys.frame(sys.parent()),
                          what=c('F', '1-F', 'f', '1-f'),
                          subset=TRUE)
 {
+  sRequire('lattice')
   what <- match.arg(what)
   vars <- all.vars(x)
   xname <- vars[1]
@@ -433,7 +438,8 @@ Ecdf.formula <- function(x, data = sys.frame(sys.parent()),
   
   subset <- eval(substitute(subset), data)
 
-  do.call("histogram",
+  lh <- lattice::histogram
+  do.call(lh,
           c(list(x, data=data, prepanel=prepanel, panel=panel,
                  ylab=ylab, xlab=xlab, fun=fun, what=what),
             if(!missing(groups))

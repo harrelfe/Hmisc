@@ -4,6 +4,7 @@ multLines <- function(x, y, pos=c('left', 'right'),
                       grid=FALSE,
                       pobj=plotly::plot_ly(), xlim,
                       name=colnames(y)[1], legendgroup=name, showlegend=TRUE, ...) {
+  if(grid) sRequire('lattice')
   pos <- match.arg(pos)
   p <- ncol(y)
   n <- nrow(y)
@@ -23,7 +24,7 @@ multLines <- function(x, y, pos=c('left', 'right'),
     xdel <- 0.005 * diff(xlim)
   }
   else if(grid) {
-    llines(x, y[, 1], col=col, lwd=lwd, lty=lty)
+    lattice::llines(x, y[, 1], col=col, lwd=lwd, lty=lty)
     xdel <- unit(0.75, 'mm')
     x    <- unit(x, 'native')
     gp   <- gpar(col=vcol, lwd=lwd.vert, lty=lty.vert)

@@ -3,14 +3,14 @@ summaryS <- function(formula, fun=NULL,
                      continuous=10,
                      ...) {
   
-  formula <- Formula(formula)
+  formula <- Formula::Formula(formula)
 
   Y <- if(length(subset))
     model.frame(formula, data=data, subset=subset, na.action=na.action)
   else
     model.frame(formula, data=data, na.action=na.action)
-  X <- model.part(formula, data=Y, rhs=1)
-  Y <- model.part(formula, data=Y, lhs=1)
+  X <- Formula::model.part(formula, data=Y, rhs=1)
+  Y <- Formula::model.part(formula, data=Y, lhs=1)
 
   nY <- NCOL(Y)
   nX <- NCOL(X)
@@ -33,7 +33,7 @@ summaryS <- function(formula, fun=NULL,
   w <- reshape(cbind(X, Y), direction='long', v.names='y',
                varying=namY, times=namY, timevar='yvar')
 
-  if(is.Surv(Y[[1]])) {
+  if(inherits(Y[[1]], 'Surv')) {
     at <- attributes(Y[[1]])
     at <- at[setdiff(names(at), c('dim', 'dimnames'))]
     attributes(w$y) <- c(attributes(w$y), at)
@@ -77,9 +77,12 @@ plot.summaryS <-
            xlim=NULL, ylim=NULL, cex.strip=1, cex.values=0.5, pch.stats=NULL,
            key=list(columns=length(groupslevels),
              x=.75, y=-.04, cex=.9,
-             col=trellis.par.get('superpose.symbol')$col, corner=c(0,1)),
+             col=lattice::trellis.par.get('superpose.symbol')$col,
+             corner=c(0,1)),
            outerlabels=TRUE, autoarrange=TRUE, scat1d.opts=NULL, ...)
 {
+  sRequire('lattice')
+  sRequire('latticeExtra')
   xtype <- attr(x, 'xtype')
   nn    <- sum(xtype == 'numeric')
   if(nn > 1) stop('does not handle more than one numeric continuous x')
@@ -144,7 +147,8 @@ plot.summaryS <-
   strip <- function(which.given, which.panel, var.name, factor.levels, ...) {
     current.var <- var.name[which.given]
     levs <- if(current.var == 'yvar') yvarlev else factor.levels
-    strip.default(which.given, which.panel, var.name, factor.levels=levs, ...)
+    lattice::strip.default(which.given, which.panel, var.name,
+                           factor.levels=levs, ...)
   }
 
   ylev <- levels(X$yvar)
@@ -166,7 +170,7 @@ plot.summaryS <-
       function(x, y, subscripts, groups=NULL, ...) {
         gp <- length(groups)
         plot.line <-
-          trellis.par.get(if(gp) "superpose.line" else "plot.line")
+          lattice::trellis.par.get(if(gp) "superpose.line" else "plot.line")
         col <- plot.line$col
         gr <- if(gp) groups[subscripts] else factor(rep('', length(x)))
         ypos <- unit(1, 'npc')
@@ -185,19 +189,19 @@ plot.summaryS <-
     xlab <- labelPlotmath(xlabels[xtype == 'numeric'],
                           xunits [xtype == 'numeric'])
     if(! length(groups)) {
-      if(! length(Panel)) Panel <- panel.xyplot
-      xyplot(form, data=X, 
+      if(! length(Panel)) Panel <- lattice::panel.xyplot
+      lattice::xyplot(form, data=X, 
              panel=function(...) {Panel(...); pan(...)},
              xlab=xlab, ylab=ylab, scales=scal, strip=strip,
              par.strip.text=pst, ...)
     } else {
       panel.groups <- if(paneldoesgroups) NULL else
-       if(length(Panel)) Panel else panel.xyplot
-      if(! paneldoesgroups) Panel <- panel.superpose
+       if(length(Panel)) Panel else lattice::panel.xyplot
+      if(! paneldoesgroups) Panel <- lattice::panel.superpose
       g <- if(length(panel.groups))
-        "xyplot(form, groups=%s, data=X, scales=scal, panel=function(...) {if(length(Panel)) Panel(..., scat1d.opts=scat1d.opts); pan(...)}, panel.groups=panel.groups, auto.key=key, xlab=xlab, ylab=ylab, strip=strip, par.strip.text=pst, ...)"
+        "lattice::xyplot(form, groups=%s, data=X, scales=scal, panel=function(...) {if(length(Panel)) Panel(..., scat1d.opts=scat1d.opts); pan(...)}, panel.groups=panel.groups, auto.key=key, xlab=xlab, ylab=ylab, strip=strip, par.strip.text=pst, ...)"
       else
-        "xyplot(form, groups=%s, data=X, scales=scal, panel=function(...) {if(length(Panel)) Panel(..., scat1d.opts=scat1d.opts); pan(...)}, auto.key=key, xlab=xlab, ylab=ylab, strip=strip, par.strip.text=pst, ...)"
+        "lattice::xyplot(form, groups=%s, data=X, scales=scal, panel=function(...) {if(length(Panel)) Panel(..., scat1d.opts=scat1d.opts); pan(...)}, auto.key=key, xlab=xlab, ylab=ylab, strip=strip, par.strip.text=pst, ...)"
       eval(parse(text=sprintf(g, groups)))
   }
  } else {  # Dot chart or xy.special
@@ -236,9 +240,9 @@ plot.summaryS <-
      
        gp <- length(groups)
        dot.symbol <-
-         trellis.par.get(if(gp)'superpose.symbol'  else 'dot.symbol')
+         lattice::trellis.par.get(if(gp)'superpose.symbol'  else 'dot.symbol')
        plot.line <-
-         trellis.par.get(if(gp) "superpose.line" else "plot.line")
+         lattice::trellis.par.get(if(gp) "superpose.line" else "plot.line")
        pch  = dot.symbol$pch
        col  = dot.symbol$col
        cex  = dot.symbol$cex
@@ -286,7 +290,7 @@ plot.summaryS <-
              if(length(pch.stats)) {
                p <- pch.stats[snames[k]]
                if(!is.na(p)) 
-                 lpoints(yoth[j, k], y[j], pch=p, cex=cex, col=col[i],
+                 lattice::lpoints(yoth[j, k], y[j], pch=p, cex=cex, col=col[i],
                          font=font)
              }
            }
@@ -298,44 +302,44 @@ plot.summaryS <-
                        gp=grid::gpar(cex=cex.values, col=col[i]))
            }
          }       
-         if(gp) panel.superpose(x, y, groups=as.numeric(groups),
+         if(gp) lattice::panel.superpose(x, y, groups=as.numeric(groups),
                                 subscripts=subscripts,
                                 pch=pch, col=col, cex=cex, font=font, ...)
          else
-           panel.dotplot(x, y, subscripts=subscripts,
+           lattice::panel.dotplot(x, y, subscripts=subscripts,
                          pch=pch, col=col, cex=cex, font=font, ...)
        }
        else {
          if(gp) 
-           panel.superpose(x, y, groups=as.numeric(groups),
+           lattice::panel.superpose(x, y, groups=as.numeric(groups),
                            subscripts=subscripts,
                            pch=pch, col=col, cex=cex,
                            font=font, ...)
          else
-           panel.dotplot(x, y, subscripts=subscripts,
+           lattice::panel.dotplot(x, y, subscripts=subscripts,
                          pch=pch, col=col, cex=cex, font=font, ...) 
        }
      }
    
      d <- if(!length(groups))
-       dotplot(form, data=X, panel=pan, strip=strip, par.strip.text=pst,
+       lattice::dotplot(form, data=X, panel=pan, strip=strip, par.strip.text=pst,
                xlab=funlabel, scale=scal, yother=yother,...)
      else eval(parse(text=
-                     sprintf("dotplot(form, groups=%s, data=X, panel=pan, strip=strip, par.strip.text=pst, auto.key=key, xlab=funlabel, scale=scal, yother=yother, ...)", groups) ))
+                     sprintf("lattice::dotplot(form, groups=%s, data=X, panel=pan, strip=strip, par.strip.text=pst, auto.key=key, xlab=funlabel, scale=scal, yother=yother, ...)", groups) ))
    }  # end ptype 'dot'
    else {  # ptype 'xy.special'
      xl <- labelPlotmath(xlabels[1], xunits[1])
      yl <- if(ylab == '') funlabel else ylab
      d <- if(!length(groups))
-       xyplot(form, data=X, panel=Panel, strip=strip,
+       lattice::xyplot(form, data=X, panel=Panel, strip=strip,
               par.strip.text=pst, xlab=xl, ylab=yl, scale=scal, yother=yother,
              ...)
      else {
        panel.groups <- if(paneldoesgroups) NULL else Panel
-       if(! paneldoesgroups) panel <- panel.superpose
+       if(! paneldoesgroups) panel <- lattice::panel.superpose
        g <- if(length(panel.groups))
-         "xyplot(form, groups=%s, data=X, panel=Panel, panel.groups=panel.groups, strip=strip, par.strip.text=pst, auto.key=key, xlab=xl, ylab=yl, scale=scal, yother=yother, ...)"
-       else "xyplot(form, groups=%s, data=X, panel=Panel, strip=strip, par.strip.text=pst, auto.key=key, xlab=xl, ylab=yl, scale=scal, yother=yother, ...)"
+         "lattice::xyplot(form, groups=%s, data=X, panel=Panel, panel.groups=panel.groups, strip=strip, par.strip.text=pst, auto.key=key, xlab=xl, ylab=yl, scale=scal, yother=yother, ...)"
+       else "lattice::xyplot(form, groups=%s, data=X, panel=Panel, strip=strip, par.strip.text=pst, auto.key=key, xlab=xl, ylab=yl, scale=scal, yother=yother, ...)"
        eval(parse(text=sprintf(g, groups)))
      }
    }
@@ -540,9 +544,10 @@ p
 }
 
 mbarclPanel <- function(x, y, subscripts, groups=NULL, yother, ...) {
+  sRequire('lattice')
   gp <- length(groups)
   plot.line <-
-    trellis.par.get(if(gp) "superpose.line" else "plot.line")
+    lattice::trellis.par.get(if(gp) "superpose.line" else "plot.line")
   yother <- yother[subscripts, , drop=FALSE]
   se     <- if('se' %in% colnames(yother)) yother[, 'se']
   yother <- yother[, colnames(yother) %nin% c('n', 'se'), drop=FALSE]
@@ -591,10 +596,11 @@ mbarclPanel <- function(x, y, subscripts, groups=NULL, yother, ...) {
 medvPanel <-
   function(x, y, subscripts, groups=NULL, violin=TRUE, quantiles=FALSE,
            ...) {
+    sRequire('lattice')
   gp <- length(groups)
   plot.line <-
-         trellis.par.get(if(gp) "superpose.line"   else "plot.line")
-  sym <- trellis.par.get(if(gp) "superpose.symbol" else "plot.symbol")
+         lattice::trellis.par.get(if(gp) "superpose.line"   else "plot.line")
+  sym <- lattice::trellis.par.get(if(gp) "superpose.symbol" else "plot.symbol")
 
   quant <- function(y) {
     probs <- c(0.05, 0.125, 0.25, 0.375)
@@ -644,9 +650,9 @@ medvPanel <-
     w <- summarize(yj, xj, quant, type='matrix', keepcolnames=TRUE)
     Y  <- w$yj
     xu <- w$xj
-    lpoints(xu, Y[,'Median'], cex=sym$cex[i], pch=sym$pch[i], col=sym$col[i],
+    lattice::lpoints(xu, Y[,'Median'], cex=sym$cex[i], pch=sym$pch[i], col=sym$col[i],
             alpha=sym$alpha[i])
-    llines(xu, Y[,'Median'], col=plot.line$col[i], lty=plot.line$lty[i],
+    lattice::llines(xu, Y[,'Median'], col=plot.line$col[i], lty=plot.line$lty[i],
            lwd=plot.line$lwd[i], alpha=plot.line$alpha)
     col <- plot.line$col[i]
     if(violin) for(xx in sort(unique(xj)))

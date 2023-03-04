@@ -1,4 +1,5 @@
 require(Hmisc)
+require(survival)
 n <- 100
 set.seed(1)
 d <- data.frame(sbp=rnorm(n, 120, 10),
@@ -37,6 +38,7 @@ plot(s, groups='treat', datadensity=TRUE,
      scat1d.opts=list(lwd=.5, nhistSpike=0))
 dev.off()
 Png(2)
+require(lattice)
 plot(s, groups='treat', panel=panel.loess,
      key=list(space='bottom', columns=2),
      datadensity=TRUE, scat1d.opts=list(lwd=.5))

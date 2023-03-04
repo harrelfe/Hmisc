@@ -50,5 +50,6 @@ a <- aregImpute(~ x + y, data=d, nk=0)
 
 dt <- function(dat) cbind(dat, ww=1:10)
 
-f <- fit.mult.impute(Surv(y) ~ x, cph, weights=ww,
+f <- fit.mult.impute(Surv(y) ~ x, cph,
+                     fitargs=list(weights=ww),
                      data=d, xtrans=a, dtrans=dt)

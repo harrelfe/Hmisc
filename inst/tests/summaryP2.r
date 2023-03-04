@@ -16,12 +16,13 @@ dm <- addMarginal(d, region)
 s <- summaryP(race + sex + smoking + hypertension ~
               region + treat,  data=dm)
 
+require(ggplot2)
 ## add exclude1=FALSE to include female category
 ggplot(s, groups='treat', exclude1=TRUE, abblen=12)
 ggplot(s, groups='region')
 
 ## plotly graphic
-source('~/R/Hmisc/R/summaryP.s');source('~/R/Hmisc/R/dotchartpl.s')
+
 options(grType='plotly')
 plot(s, groups='treat', marginVal='All', marginLabel='All Regions',
      xlim=c(0,1))

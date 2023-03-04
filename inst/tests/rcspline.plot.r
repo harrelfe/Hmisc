@@ -1,4 +1,5 @@
 library(Hmisc)
+require(survival)
 data(pbc)
 
 with(pbc, 

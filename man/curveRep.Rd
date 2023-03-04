@@ -237,6 +237,7 @@ plot(w, 3, 'lattice', m='quantiles', probs=c(.5,.1,.9), nx=2)
 
 # Use ggplot2 for one sample size interval
 z <- plot(w, 2, 'data')
+require(ggplot2)
 ggplot(z, aes(x, y, color=curve)) + geom_line() +
        facet_grid(distribution ~ cluster) +
        theme(legend.position='none') +

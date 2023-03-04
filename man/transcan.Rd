@@ -1112,10 +1112,12 @@ par(mfrow=c(2,2))
 # locator(1)
 }
 
+\dontrun{
 # While running multiple imputation for a logistic regression model
 # Run the rms package validate and calibrate functions and save the
 # results in w$funresults
 a <- aregImpute(~ x1 + x2 + y, data=d, n.impute=10)
+require(rms)
 g <- function(fit)
   list(validate=validate(fit, B=50), calibrate=calibrate(fit, B=75))
 w <- fit.mult.impute(y ~ x1 + x2, lrm, a, data=d, fun=g,
@@ -1125,6 +1127,7 @@ r <- w$funresults
 val <- lapply(r, function(x) x$validate)
 cal <- lapply(r, function(x) x$calibrate)
 # See rms::processMI and https://hbiostat.org/rmsc/validate.html#sec-val-mival
+}
 }
 \keyword{smooth}
 \keyword{regression}

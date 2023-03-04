@@ -248,11 +248,12 @@ d <- rbind(pt1, pt2, pt3, pt4)
 d$status <- factor(d$status, c('discharged', 'well', 'sick',
                                'very sick', 'coma', 'death'))
 label(d$day) <- 'Day'
+require(ggplot2)
 multEventChart(status ~ day + pt, data=d,
                absorb=c('death', 'discharged'),
                colorTitle='Status', sortbylast=TRUE) +
-theme_classic() +
-theme(legend.position='bottom')
+               theme_classic() +
+               theme(legend.position='bottom')
 }
 \keyword{htest}
 \keyword{category}

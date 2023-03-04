@@ -12,13 +12,12 @@ f2 <- glm(y ~ x1 + x2 + offset(log(z)), family=poisson)
 
 a <- aregImpute(~ y + x1 + x2)
 g1 <- fit.mult.impute(y ~ x1 + x2 , glm, a,
-	family=poisson, data=d)
+                      fitargs=list(family='poisson'), data=d)
 g2 <- fit.mult.impute(y ~ x1 + x2 + offset(log(z)), glm, a,
-	family=poisson, data=d)
+	                    fitargs=list(family='poisson'), data=d)
 # g3 <- fit.mult.impute(y ~ x1 + x2 + offset(log(z)), Glm, a, family=poisson, data=d)
 coef(g1)
 coef(g2)
 # coef(g3)
 coef(f1)
 coef(f2)
-

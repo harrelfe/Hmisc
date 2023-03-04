@@ -69,6 +69,7 @@ panel.xYplot <-
            minor.ticks = NULL, col.fill = NULL,
            size=NULL, rangeCex=c(.5,3), ...)
 {
+  sRequire('lattice')
   if(missing(method) || !is.function(method))
     method <- match.arg(method)   # was just missing() 26Nov01
 
@@ -80,10 +81,10 @@ panel.xYplot <-
   ng <- if(length(groups)) max(g)
   else 1
 
-  plot.symbol <- trellis.par.get(if(ng > 1) "superpose.symbol"
+  plot.symbol <- lattice::trellis.par.get(if(ng > 1) "superpose.symbol"
                                  else "plot.symbol")
 
-  plot.line <- trellis.par.get(if(ng > 1) "superpose.line"
+  plot.line <- lattice::trellis.par.get(if(ng > 1) "superpose.line"
                                else "plot.line")
 
   lty <- rep(lty, length = ng)
@@ -466,11 +467,11 @@ panel.xYplot <-
       rm(Key1)
     }
   
-  if(!missing(abline))
-    {
-      if(length(names(abline))) do.call("panel.abline", abline)
-      else for(i in 1:length(abline)) do.call("panel.abline", abline[[i]])
-    }
+  if(!missing(abline)) {
+    pabl <- lattice::panel.abline
+    if(length(names(abline))) do.call(pabl, abline)
+    else for(i in 1:length(abline)) do.call(pabl, abline[[i]])
+  }
   
 
   if(type == "l" && ng > 1)
@@ -504,6 +505,7 @@ xYplot <-
             panel=panel.xYplot, prepanel=prepanel.xYplot,
             scales=NULL, minor.ticks=NULL, sub=NULL, ...)
 {
+  sRequire('lattice')
   yvname <- as.character(formula[2])  # tried deparse
   y <- eval(parse(text=yvname), data)
   if(!length(ylab)) ylab <- label(y, units=TRUE, plot=TRUE,
@@ -543,17 +545,19 @@ xYplot <-
 
   ## Note: c(list(something), NULL) = list(something)
   ## The following was c(list(formula=formula,...,panel=panel),if()c(),...)
-  do.call("xyplot", c(list(x = formula, data=data, prepanel=prepanel,
-                           panel=panel),
-                      if(length(ylab))list(ylab=ylab),
-                      if(length(ylim))list(ylim=ylim),
-                      if(length(xlab))list(xlab=xlab),
-                      if(length(scales))list(scales=scales),
-                      if(length(minor.ticks))list(minor.ticks=minor.ticks),
-                      if(!missing(groups))list(groups=groups),
-                      if(!missing(subset))list(subset=subset),
-                      if(!missing(sub))   list(sub=sub),
-                      list(...)))
+  lxyp <- lattice::xyplot
+  do.call(lxyp,
+          c(list(x = formula, data=data, prepanel=prepanel,
+                 panel=panel),
+            if(length(ylab))list(ylab=ylab),
+            if(length(ylim))list(ylim=ylim),
+            if(length(xlab))list(xlab=xlab),
+            if(length(scales))list(scales=scales),
+            if(length(minor.ticks))list(minor.ticks=minor.ticks),
+            if(!missing(groups))list(groups=groups),
+            if(!missing(subset))list(subset=subset),
+            if(!missing(sub))   list(sub=sub),
+            list(...)))
 }
 
 
@@ -569,24 +573,26 @@ panel.Dotplot <- function(x, y, groups = NULL,
                           col  = dot.symbol$col, cex = dot.symbol$cex, 
                           font = dot.symbol$font, abline, ...)
 {
+  sRequire('lattice')
   gfun <- ordGridFun(TRUE) ## see Misc.s
   segmnts <- gfun$segments
+  pabl <- lattice::panel.abline
   y <- as.numeric(y)
 
   gp <- length(groups)
-  dot.symbol <- trellis.par.get(if(gp)'superpose.symbol'
+  dot.symbol <- lattice::trellis.par.get(if(gp)'superpose.symbol'
                                 else 'dot.symbol')
   
-  dot.line   <- trellis.par.get('dot.line')
-  plot.line  <- trellis.par.get(if(gp)'superpose.line'
+  dot.line   <- lattice::trellis.par.get('dot.line')
+  plot.line  <- lattice::trellis.par.get(if(gp)'superpose.line'
                                 else 'plot.line')
 
   gfun$abline(h = unique(y), lwd=dot.line$lwd, lty=dot.line$lty, 
               col=dot.line$col)
   if(!missing(abline))
     {
-      if(length(names(abline))) do.call("panel.abline", abline)
-      else for(i in 1:length(abline)) do.call("panel.abline", abline[[i]])
+      if(length(names(abline))) do.call(pabl, abline)
+      else for(i in 1:length(abline)) do.call(pabl, abline[[i]])
     }
 
   other <- attr(x,'other')
@@ -605,7 +611,7 @@ panel.Dotplot <- function(x, y, groups = NULL,
           gfun$points(other[,3], y, pch=3, cex=cex, col=col, font=font)
         }
       
-      if(gp) panel.superpose(x, y, groups=as.numeric(groups), pch=pch,
+      if(gp) lattice::panel.superpose(x, y, groups=as.numeric(groups), pch=pch,
                              col=col, cex=cex, font=font, ...)
       else
         gfun$points(x, y, pch=pch[1], cex=cex, col=col, font=font)
@@ -613,11 +619,11 @@ panel.Dotplot <- function(x, y, groups = NULL,
   else
     {
       if(gp) 
-        panel.superpose(x, y, groups=as.numeric(groups),
+        lattice::panel.superpose(x, y, groups=as.numeric(groups),
                         pch=pch, col=col, cex=cex,
                         font=font, ...)
       else
-        panel.dotplot(x, y, pch=pch, col=col, cex=cex, font=font, ...)
+        lattice::panel.dotplot(x, y, pch=pch, col=col, cex=cex, font=font, ...)
     }
   if(gp)
     {
@@ -646,6 +652,7 @@ Dotplot <-
             panel=panel.Dotplot, prepanel=prepanel.Dotplot,
             scales=NULL, xscale=NULL, ...)
 {
+  sRequire('lattice')
   yvname <- as.character(formula[2])  # tried deparse
   yv <- eval(parse(text=yvname), data)
   if(!length(ylab))
@@ -677,27 +684,30 @@ Dotplot <-
   dul <- options('drop.unused.levels')
   options(drop.unused.levels=FALSE)   ## for empty cells
   on.exit(options(dul))                      ## across some panels
-  
-  do.call("xyplot", c(list(x = formula, data=data, prepanel=prepanel,
-                           panel=panel),
-                      if(length(ylab))list(ylab=ylab),
-                      if(length(ylim))list(ylim=ylim),
-                      if(length(xlab))list(xlab=xlab),
-                      if(!missing(groups))list(groups=groups),
-                      if(!missing(subset))list(subset=subset),
-                      if(length(scales))list(scales=scales),
-                      list(...)))
+
+  lxyp <- lattice::xyplot
+  do.call(lxyp,
+          c(list(x = formula, data=data, prepanel=prepanel,
+                 panel=panel),
+            if(length(ylab))list(ylab=ylab),
+            if(length(ylim))list(ylim=ylim),
+            if(length(xlab))list(xlab=xlab),
+            if(!missing(groups))list(groups=groups),
+            if(!missing(subset))list(subset=subset),
+            if(length(scales))list(scales=scales),
+            list(...)))
 }
 
 
 setTrellis <- function(strip.blank=TRUE, lty.dot.line=2,
                        lwd.dot.line=1)
 {
+  sRequire('lattice')
   if(strip.blank) trellis.strip.blank()   # in Hmisc Misc.s
-  dot.line <- trellis.par.get('dot.line')
+  dot.line <- lattice::trellis.par.get('dot.line')
   dot.line$lwd <- lwd.dot.line
   dot.line$lty <- lty.dot.line
-  trellis.par.set('dot.line',dot.line)
+  lattice::trellis.par.set('dot.line',dot.line)
   invisible()
 }
 

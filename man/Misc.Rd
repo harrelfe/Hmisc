@@ -43,7 +43,7 @@
 
   \code{getLatestSource} fetches and \code{source}s the most recent
   source code for functions in GitHub.
-  
+
   \code{grType} retrieves the system option \code{grType}, which is
   forced to be \code{"base"} if the \code{plotly} package is not
   installed.

@@ -25,6 +25,7 @@ for(v in unique(var)) {
 }
 trt <- factor(trt)
 
+library(lattice)
 xyplot(as.integer(trt) ~ x | vn, panel=panel.bpplot, ylim=c(0,3),
        scale=list(y=list(at=1:2, labels=levels(trt)),
          x=list(relation='free', limits=list(c(0,1),c(0,13)))),

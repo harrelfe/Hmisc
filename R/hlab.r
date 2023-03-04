@@ -17,6 +17,7 @@
 ##' hlab(x)
 ##' hlab(x, html=TRUE)
 ##' hlab(z)
+##' require(ggplot2)
 ##' ggplot(d, aes(x, y)) + geom_point() + labs(x=hlab(x), y=hlab(y))
 ##' # Can use xlab(hlab(x)) + ylab(hlab(y)) also
 ##' # Store names, labels, units for all variables in d in object

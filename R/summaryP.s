@@ -3,14 +3,14 @@ summaryP <- function(formula, data=NULL,
                      sort=TRUE,
                      asna=c('unknown', 'unspecified'), ...) {
   
-  formula <- Formula(formula)
+  formula <- Formula::Formula(formula)
 
   Y <- if(length(subset))
     model.frame(formula, data=data, subset=subset, na.action=na.action)
   else
     model.frame(formula, data=data, na.action=na.action)
-  X <- model.part(formula, data=Y, rhs=1)
-  Y <- model.part(formula, data=Y, lhs=1)
+  X <- Formula::model.part(formula, data=Y, rhs=1)
+  Y <- Formula::model.part(formula, data=Y, lhs=1)
   nY <- NCOL(Y)
   nX <- NCOL(X)
   namY <- names(Y)
@@ -142,10 +142,13 @@ plot.summaryP <-
            cex.values=0.5,
            key=list(columns=length(groupslevels),
              x=.75, y=-.04, cex=.9,
-             col=trellis.par.get('superpose.symbol')$col, corner=c(0,1)),
+             col=lattice::trellis.par.get('superpose.symbol')$col,
+             corner=c(0,1)),
            outerlabels=TRUE, autoarrange=TRUE, col=colorspace::rainbow_hcl,
            ...)
 {
+  sRequire('lattice')
+  sRequire('latticeExtra')
   ## marginval: category name indicating addMarginal summaries (usually 'All')
   ## marginLabel: a fuller label for this, e.g. 'All Regions'
   X <- x
@@ -216,10 +219,11 @@ plot.summaryP <-
   pan <- function(x, y, subscripts, groups=NULL, ...) {
     y <- as.numeric(y)
     denom <- X$denom[subscripts]
-    panel.dotplot(x/denom, y, subscripts=subscripts, groups=groups, ...)
+    lattice::panel.dotplot(x/denom, y, subscripts=subscripts,
+                           groups=groups, ...)
     if(length(cex.values) && cex.values > 0) {
-      col <- if(length(groups)) trellis.par.get('superpose.symbol')$col
-       else trellis.par.get('dot.symbol')$col
+      col <- if(length(groups)) lattice::trellis.par.get('superpose.symbol')$col
+       else lattice::trellis.par.get('dot.symbol')$col
 
       longest.string <- paste(max(x), max(denom), sep='/  ')
       length.longest <- unit(1, 'strwidth', longest.string)
@@ -252,10 +256,10 @@ plot.summaryP <-
     list(limits=range(c(xlim, text.at)), at=at[at >= -0.0001 & at <= 1.0001])
   } else list(limits=xlim)
   d <- if(!length(groups))
-    dotplot(form, data=X, scales=scal, panel=pan,
+    lattice::dotplot(form, data=X, scales=scal, panel=pan,
             xlab='Proportion', ...)
   else eval(parse(text=
-                  sprintf("dotplot(form, groups=%s, data=X, scales=scal, panel=pan, auto.key=key, xlab='Proportion', ...)", groups) ))
+                  sprintf("lattice::dotplot(form, groups=%s, data=X, scales=scal, panel=pan, auto.key=key, xlab='Proportion', ...)", groups) ))
 
 #  if(outerlabels && ((nX - length(groups) + 1 == 2) ||
 #                     length(dim(d)) == 2))  d <- useOuterStrips(d)

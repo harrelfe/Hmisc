@@ -93,18 +93,18 @@ rcspline.plot <- function(x, y, model=c("logistic","cox","ols"), xrange,
   }
   
   if(model == "cox") {
-    if(! existsFunction('coxph.fit'))
-      coxph.fit <- getFromNamespace('coxph.fit', 'survival')
+    sRequire('survival')
+
     ##11mar04
     
     ## added coxph.control around iter.max, eps  11mar04
-    lllin <- coxph.fit(cbind(x, adj), cbind(y, event), strata=NULL,
+    lllin <- survival::coxph.fit(cbind(x, adj), cbind(y, event), strata=NULL,
                        offset=NULL, init=NULL,
-                       control=coxph.control(iter.max=10, eps=.0001), 
+                       control=survival::coxph.control(iter.max=10, eps=.0001), 
                        method="efron", rownames=NULL)$loglik[2]
-    b <- coxph.fit(cbind(x, xx, adj), cbind(y, event), strata=NULL,
+    b <- survival::coxph.fit(cbind(x, xx, adj), cbind(y, event), strata=NULL,
                    offset=NULL, init=NULL,
-                   control=coxph.control(iter.max=10, eps=.0001), 
+                   control=survival::coxph.control(iter.max=10, eps=.0001), 
                    method="efron", rownames=NULL)
     beta <- b$coef
     if(! noprint) {

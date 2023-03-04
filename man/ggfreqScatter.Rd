@@ -82,6 +82,7 @@ ggfreqScatter(x, y, by=NULL, bins=50, g=10, cuts=NULL,
 \author{Frank Harrell}
 \seealso{\code{\link[Hmisc]{cut2}}}
 \examples{
+require(ggplot2)
 set.seed(1)
 x <- rnorm(1000)
 y <- rnorm(1000)

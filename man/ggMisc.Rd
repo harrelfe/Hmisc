@@ -30,6 +30,7 @@ arrGrob(\dots)
 \author{Sandy Muspratt}
 \examples{
 \dontrun{
+require(ggplot2)
 s <- summaryP(age + sex ~ region + treatment)
 colorFacet(ggplot(s))   # prints directly
 # arrGrob is called by rms::ggplot.Predict and others

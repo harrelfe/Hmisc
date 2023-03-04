@@ -554,6 +554,7 @@ datadensity(dfram, group=cut2(dfram$x2,g=3))
 
 \dontrun{
 require(rms)
+require(ggplot2)
 f <- lrm(y ~ blood.pressure + sex * (age + rcs(cholesterol,4)),
          data=d)
 p <- Predict(f, cholesterol, sex)

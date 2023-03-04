@@ -4,16 +4,21 @@ useDynLib(Hmisc, .registration=TRUE, .fixes="F_")
 
 import(methods)
 import(stats)
-import(survival)
-import(Formula)
+importFrom(Formula, Formula, model.part)
 # import(grid)
-import(lattice)
-import(ggplot2)
+# import(lattice)
+importFrom(ggplot2, ggplot, guides,  geom_point, geom_text, geom_col,
+           xlab, ylab, labs, geom_tile, geom_segment, scale_size, aes,
+           facet_wrap, facet_grid, scale_color_manual, scale_shape_manual,
+           ggplotGrob, coord_flip, element_blank, element_text, geom_path,
+           geom_smooth, guide_legend, layer, layer_scales, scale_color_gradientn,
+           scale_fill_brewer, scale_size_continuous, scale_size_manual,
+           scale_x_continuous, scale_y_continuous, theme, unit, xlim, ylim)
 ## import(scales)
 
 # importFrom(acepack, ace, avas)
 importFrom(base64enc, base64encode)
-importFrom(latticeExtra, useOuterStrips, resizePanels)
+# importFrom(latticeExtra, useOuterStrips, resizePanels)
 importFrom(cluster, clara)
 importFrom(foreign, read.dta, lookup.xport, read.spss, read.xport)
 importFrom(gtable, gtable_add_grob)
@@ -44,8 +49,8 @@ importFrom(utils, browseURL, capture.output, download.file, file.edit, find,
 importFrom(data.table, setDT, set, setkey, setkeyv, setnames, data.table, is.data.table, key, melt, rbindlist, fcase)
 
 S3method(print, arrGrob)
-S3method(ggplot, transcan)
 S3method(ggplot, summaryP)
+S3method(ggplot, transcan)
 S3method(print, spower)
 S3method(print, Quantile2)
 S3method(plot, describe)

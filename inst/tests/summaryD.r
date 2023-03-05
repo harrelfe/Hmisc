@@ -30,7 +30,7 @@ summaryD(Y  ~ maj + g, fun=h, auxvar='N', symbol=sym[c(1,2,2)],
 
 png('/tmp/summaryD2.png', width=300, height=100)
 # Or: pdf('/tmp/z.pdf', width=3.5, height=1.25)
-par(mfrow=c(1,1))
+par(mfrow=c(1,1), mar=c(2,2,1,1))
 summaryD(y1 ~ maj, fmtvals=function(x) round(x,4),
          xlab=labelPlotmath('Velocity', 'm/s'))
 dev.off()

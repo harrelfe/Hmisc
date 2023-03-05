@@ -45,6 +45,7 @@ Automatically selects \code{iter=0} for \code{lowess} if \code{y} is binary, oth
 }
 \examples{
 \donttest{
+require(ggplot2)
 c <- ggplot(mtcars, aes(qsec, wt))
 c + stat_plsmo()
 c + stat_plsmo() + geom_point()

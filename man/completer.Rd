@@ -32,12 +32,16 @@ It assumes that \code{transcan} is used for single regression imputation.
 mtcars$hp[1:5]    <- NA
 mtcars$wt[1:10]   <- NA
 myrform <- ~ wt + hp + I(carb)
-mytranscan  <- transcan( myrform,  data = mtcars, imputed = TRUE, pl = FALSE, pr = FALSE, trantab = TRUE, long = TRUE)
+mytranscan  <- transcan( myrform,  data = mtcars, imputed = TRUE,
+  pl = FALSE, pr = FALSE, trantab = TRUE, long = TRUE)
 myareg      <- aregImpute(myrform, data = mtcars, x=TRUE, n.impute = 5)
 completer(mytranscan)                    # single completed dataset
-completer(myareg, 3, oneimpute = TRUE)   # single completed dataset based on the `n.impute`th set of multiple imputation
-completer(myareg, 3)       # list of completed datasets based on first `nimpute` sets of multiple imputation
-completer(myareg)          # list of completed datasets based on all available sets of multiple imputation
+completer(myareg, 3, oneimpute = TRUE)
+# single completed dataset based on the `n.impute`th set of multiple imputation
+completer(myareg, 3)
+# list of completed datasets based on first `nimpute` sets of multiple imputation
+completer(myareg)
+# list of completed datasets based on all available sets of multiple imputation
 }
 }
 \author{

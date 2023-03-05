@@ -19,6 +19,7 @@
 #' @export
 #' @examples
 #' \donttest{
+#' require(ggplot2)
 #' c <- ggplot(mtcars, aes(qsec, wt))
 #' c + stat_plsmo()
 #' c + stat_plsmo() + geom_point()

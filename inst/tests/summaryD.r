@@ -6,7 +6,7 @@ n <- sample(1:15000, 26, replace=TRUE)
 y1 <- runif(26)
 y2 <- pmax(0, y1 - runif(26, 0, .1))
 png('/tmp/summaryD.png', width=550, height=800)
-spar(mfrow=c(3,2))
+par(mfrow=c(3,2))
 f <- function(x) sprintf('%4.2f', x)
 summaryD(y1 ~ maj + g, xlab='Mean', auxtitle='', fmtvals=f)
 summaryD(y1 ~ maj + g, groupsummary=FALSE)
@@ -30,7 +30,7 @@ summaryD(Y  ~ maj + g, fun=h, auxvar='N', symbol=sym[c(1,2,2)],
 
 png('/tmp/summaryD2.png', width=300, height=100)
 # Or: pdf('/tmp/z.pdf', width=3.5, height=1.25)
-spar()
+par(mfrow=c(1,1))
 summaryD(y1 ~ maj, fmtvals=function(x) round(x,4),
          xlab=labelPlotmath('Velocity', 'm/s'))
 dev.off()

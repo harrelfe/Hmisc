@@ -8,7 +8,8 @@ label(bp) <- 'Systolic Blood Pressure'
 L <- .5*(sex == 'm') + 0.1 * (age - 50)
 y <- rbinom(500, 1, plogis(L))
 png('/tmp/summaryRc.png', height=750)
-spar(mfrow=c(3,2), top=2, cex.axis=1)
+#spar(mfrow=c(3,2), top=2, cex.axis=1)
+par(mfrow=c(3,2))
 summaryRc(y ~ age + bp)
 # For x limits use 1st and 99th percentiles to frame extended box plots
 summaryRc(y ~ age + bp, bpplot='top', datadensity=FALSE, trim=.01)

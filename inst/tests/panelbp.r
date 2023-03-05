@@ -61,7 +61,8 @@ bpl <- function(x, group, lab, cex.labels=.75) {
     outerText(sm[i,'N'], 4-i, cex=cex.labels)
 }
 
-spar(mfrow=c(2,1), left=-1,rt=3,bot=1.5, mgp=c(2.5,.6,0), tcl=-.3, ps=12)
+# spar(mfrow=c(2,1), left=-1,rt=3,bot=1.5, mgp=c(2.5,.6,0), tcl=-.3, ps=12)
+par(mfrow=c(2,1))
 set.seed(2)
 trt <- c(rep('T1',100), rep('T2',100))
 x1 <- runif(100)

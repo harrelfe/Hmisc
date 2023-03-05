@@ -138,7 +138,7 @@ dotchartp <-
             height=NULL, width=700, layoutattr=FALSE, showlegend=TRUE,
             ...) 
 {
-  if (!requireNamespace("plotly"))
+  if (!requireNamespace("plotly", quietly=TRUE))
     stop("This function requires the 'plotly' package.")
     
   auxwhere <- match.arg(auxwhere)
@@ -174,15 +174,29 @@ dotchartp <-
   glabels <- levels(groups)
   
   groups.pres <- length(groups) > 0
-  if(! groups.pres) y <- n : 1
-    else {
+  if(groups.pres && is.character(sort))
+    warning('specifying sort does not makes sense with groups present')
+  if(! groups.pres) {
+    y <- n : 1
+    if(is.character(sort) || sort) {
+      o <- if(is.character(sort)) {
+             if(sort == 'ascending') order(x[, 1])
+             else
+               order(-x[, 1])
+           }
+      x       <- x[o, , drop=FALSE]
+      labels  <- labels[o]
+      if(length(auxdata))
+        auxdata <- if(is.matrix(auxdata))
+                     auxdata[o,, drop=FALSE] else auxdata[o]
+    }
+  } else {    # groups present
       if(is.character(sort) || sort) {
         o <- if(is.character(sort)) {
                if(sort == 'ascending') order(x[, 1])
                else
                  order(-x[, 1])
              } else order(as.integer(groups)) ###, as.integer(labels))
-        
         groups  <- groups[o]
         x       <- x[o, , drop=FALSE]
         labels  <- labels[o]
@@ -197,7 +211,7 @@ dotchartp <-
       yg <- y[first.in.group] - 1
       y  <- -y
       yg <- -yg
-    }
+    }    # end groups present
 
   X <- x[, 1]
   tly <- y

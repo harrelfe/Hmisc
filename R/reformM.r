@@ -5,9 +5,11 @@
 # with variables sorted by decreasing number of NAs
 
 reformM <- function(formula, data, nperm) {
+
+  tlabels <- attr(terms(formula), "term.labels")   ## minor tweak!
   cs <- all.vars(formula)
   data <- data[, cs]
-  ismiss <- function(x) if(is.character(x)) is.na(x) | x==''  else is.na(x) 
+  ismiss <- function(x) if(is.character(x)) is.na(x) | x==''  else is.na(x)
   m <- sapply(data, ismiss)
   miss.per.obs <- apply(m, 1, sum)
   miss.per.var <- apply(m, 2, sum)
@@ -18,8 +20,8 @@ reformM <- function(formula, data, nperm) {
 
   if(missing(nperm)) {
     j <- order(miss.per.var, decreasing=TRUE) # var with highest NA freq first
-    formula <- as.formula(paste('~', paste(cs[j], collapse=' + ')))
-    }
+    formula <- as.formula(paste('~', paste(tlabels[j], collapse=' + ')))
+  }
   else {
     formula <- list()
     prev <- character(0)
@@ -28,7 +30,7 @@ reformM <- function(formula, data, nperm) {
     for(i in 1 : nperm) {
       ## Try up to 10 times to get a unique permutation
       for(j in 1 : 10) {
-        f <- paste('~', paste(sample(cs), collapse=' + '))
+        f <- paste('~', paste(sample(tlabels), collapse=' + '))
         if(f %nin% prev) {
           prev <- c(prev, f)
           formula[[i]] <- as.formula(f)
@@ -36,8 +38,8 @@ reformM <- function(formula, data, nperm) {
         }
       }
     }
-    
+
     if(nperm == 1) formula <- formula[[1]]
   }
-formula
+  formula
 }

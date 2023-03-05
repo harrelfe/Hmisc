@@ -415,7 +415,7 @@ Vanderbilt University
   }
 \seealso{
 \code{\link{fit.mult.impute}}, \code{\link{transcan}}, \code{\link{areg}}, \code{\link{naclus}}, \code{\link{naplot}}, \code{\link[mice]{mice}},
-\code{\link{dotchart3}}, \code{\link{Ecdf}}
+\code{\link{dotchart3}}, \code{\link{Ecdf}}, \code{\link{completer}}
 }
 \examples{
 # Check that aregImpute can almost exactly estimate missing values when

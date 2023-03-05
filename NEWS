@@ -23,7 +23,9 @@ Changes in version 5.0-0 (2023-03-03)
    * princmp: fixed sparse PC total variance explained by asking for k PCs where k is one less than number of columns
    * removed dependencies for Formula (importFrom), ggplot2 (importFrom), lattice (suggests), survival (suggests)
    * NOTE: users who depended on ggplot2 or survival being loaded by Hmisc need to require() or library() themselves
-	 
+   * reformM: improved by Yong Hao Pua to handle variables enclosed in functions
+   * dotchartpl: fixed bug - was not sorting if groups omitted
+   * completer: new function by Yong-Hao Pua, Singapore General Hospital that facilitates drawing of multiple imputations to get one or more completed datasets
 
 Changes in version 4.8-0 (2023-02-08)
    * rendHTML: new function to render HTML, sensing if knitr is running and if so using knitr::asis_output, otherwise htmltools

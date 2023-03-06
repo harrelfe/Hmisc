@@ -19,6 +19,9 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
                         'icoef', 'scale', 'center', 'y.imputed')
 
   if(! missing(fun)) funresults <- vector('list', n.impute)
+
+  if(! missing(data) && inherits(data, 'data.table'))
+    data <- as.data.frame(data)
   
   for(i in 1 : n.impute) {
     if(! missing(fun) && pr) cat('Imputation', i, '\r')

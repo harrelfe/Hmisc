@@ -803,7 +803,8 @@ putKey <- function(z, labels, type=NULL,
     stop("cex can not be NA for type='p' or 'b'")
   
   m <- list()
-  m[[1]] <- as.name(if(grid) 'lattice::draw.key' else 'rlegend')
+  ldk <- lattice::draw.key
+  m[[1]] <- as.name(if(grid) 'ldk' else 'rlegend')
   
   if(!grid) {
     m$x <- z[[1]]; m$y <- z[[2]]

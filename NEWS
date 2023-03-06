@@ -1,4 +1,4 @@
-Changes in version 5.0-0 (2023-03-03)
+Changes in version 5.0-0 (2023-03-06)
    * rendHTML: when knitr is not running and object is not html, assumes it is RMarkdown and calls rmarkdown::render to render it to html, then displays in viewer
    * princmp: new function to help in interpreting principal components and sparse principal components
    * getabd: new function to fetch datasets from The Analysis of Biological Data
@@ -26,6 +26,8 @@ Changes in version 5.0-0 (2023-03-03)
    * reformM: improved by Yong Hao Pua to handle variables enclosed in functions
    * dotchartpl: fixed bug - was not sorting if groups omitted
    * completer: new function by Yong-Hao Pua, Singapore General Hospital that facilitates drawing of multiple imputations to get one or more completed datasets
+   * ecdfSteps: compute coordinates of empirical CDF for a variable, with possible extension of the domain so that steps at y=0 and 1 will be visable
+   * fit.mult.impute: fixed to all data=a data table
 
 Changes in version 4.8-0 (2023-02-08)
    * rendHTML: new function to render HTML, sensing if knitr is running and if so using knitr::asis_output, otherwise htmltools

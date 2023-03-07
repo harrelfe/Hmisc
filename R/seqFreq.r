@@ -8,6 +8,7 @@
 ##' @return `factor` variable with `obs.per.numcond` attribute
 ##' @author Frank Harrell
 ##' @md
+##' @export
 seqFreq <- function(..., labels=NULL, noneNA=FALSE) {
   d <- list(...)
   k <- length(d)

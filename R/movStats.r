@@ -393,12 +393,15 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
                c(' ' = 1, 'Window Sample Sizes' = 3),
                if('eps'  %in% n) c(' ' = 1),
                if('xinc' %in% n) c(' ' = 1))
-    info <- if(discrete) knitr::kable(info)
-            else
-              info <- knitr::kable(info) |>
-                kableExtra::add_header_above(ghead) |>
-                kableExtra::kable_styling(font_size=9)
-    }
+    info <- if(discrete) {
+        knitr::kable(info)
+      } else {
+        work <- knitr::kable(info)
+        work <- kableExtra::add_header_above(work, ghead)
+        work <- kableExtra::kable_styling(work, font_size=9)
+        work
+      }
+  }
 
   if(pr == 'margin' && ! requireNamespace('qreport', quietly=TRUE))
     stop('must install qreport package when specifying pr=margin')

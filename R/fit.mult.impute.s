@@ -2,9 +2,11 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
                             n.impute=xtrans$n.impute, fit.reps=FALSE,
                             dtrans, derived, fun,
                             vcovOpts=NULL,
+                            robust=FALSE, cluster, robmethod=c('huber', 'efron'),
                             pr=TRUE, subset, fitargs)
 {
-  call <- match.call()
+  call      <- match.call()
+  robmethod <- match.arg(robmethod)
 
   if(deparse(substitute(fitter))[1] == 'lm')
     warning('If you use print, summary, or anova on the result, lm methods use the\nsum of squared residuals rather than the Rubin formula for computing\nresidual variance and standard errors.  It is suggested to use ols\ninstead of lm.')
@@ -22,6 +24,13 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
 
   if(! missing(data) && inherits(data, 'data.table'))
     data <- as.data.frame(data)
+
+  if(! missing(cluster)) robust <- TRUE
+  if(robust) {
+    if(! requireNamespace('rms', quietly=TRUE)) stop('the rms package must be installed to use robust or cluster')
+    if(missing(fitargs)) fitargs <- list(x=TRUE, y=TRUE)
+    else { fitargs$x <- fitargs$y <- TRUE }
+  }
   
   for(i in 1 : n.impute) {
     if(! missing(fun) && pr) cat('Imputation', i, '\r')
@@ -53,6 +62,9 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
                       else                completed.data[subset,])
     if(! missing(fitargs)) afit <- c(afit, fitargs)
     f <- do.call(fitter, afit)
+
+    if(robust) f <- if(missing(cluster)) rms::robcov(f,          method=robmethod)
+    else                                 rms::robcov(f, cluster, method=robmethod)
     
     ## For some reason passing subset= causes model.frame bomb in R
     if(fit.reps) fits[[i]] <- f

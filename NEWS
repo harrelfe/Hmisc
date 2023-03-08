@@ -1,4 +1,7 @@
-Changes in version 5.0-0 (2023-03-06)
+Changes in version 5.0-2 (2023-03-07)
+   * fit.mult.impute: added robust, cluster, robmethod arguments to incorporate rms::robcov to do robust sandwich covariance estimation with multiple imputation
+
+Changes in version 5.0-1 (2023-03-06)
    * rendHTML: when knitr is not running and object is not html, assumes it is RMarkdown and calls rmarkdown::render to render it to html, then displays in viewer
    * princmp: new function to help in interpreting principal components and sparse principal components
    * getabd: new function to fetch datasets from The Analysis of Biological Data

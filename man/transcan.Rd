@@ -80,7 +80,7 @@
   last imputation, with \code{coefficients} replaced by the average of
   the \code{n.impute} coefficient vectors and with a component
   \code{var} equal to the imputation-corrected variance-covariance
-  matrix.  \code{fit.mult.impute} can also use the object created by the
+  matrix using Rubin's rule.  \code{fit.mult.impute} can also use the object created by the
   \code{\link[mice]{mice}} function in the \pkg{mice} library to draw the
   multiple imputations, as well as objects created by
   \code{\link{aregImpute}}.  The following components of fit objects are
@@ -94,7 +94,7 @@
 	saved in an element named \code{funresults}.  This facilitates
 	running bootstrap or cross-validation separately on each completed
 	dataset and storing all these results in a list for later processing,
-	e.g., with \code{\link[rms]{processMI}}.  Note that for
+	e.g., with the \code{rms} package \code{processMI} function.  Note that for
 	\code{rms}-type validation you will need to specify
 	\code{fitargs=list(x=TRUE,y=TRUE)} to \code{fit.mult.impute} and to
 	use special names for \code{fun} result components, such as
@@ -104,6 +104,9 @@
 	\code{n.impute} or \code{B} (number of bootstraps) as high as usual,
 	as the total number of repetitions will be \code{n.impute * B}.
   
+  \code{fit.mult.impute} can incorporate robust sandwich variance estimates into
+  Rubin's rule if \code{robust=TRUE}.
+
   The \code{\link{summary}} method for \code{transcan} prints the function
   call, \eqn{R^2} achieved in transforming each variable, and for each
   variable the coefficients of all other transformed variables that are
@@ -196,7 +199,9 @@ transcan(x, method=c("canonical","pc"),
        list.out=FALSE, pr=TRUE, check=TRUE, \dots)
 
 fit.mult.impute(formula, fitter, xtrans, data, n.impute, fit.reps=FALSE,
-                dtrans, derived, fun, vcovOpts=NULL, pr=TRUE, subset, fitargs)
+                dtrans, derived, fun, vcovOpts=NULL,
+                robust=FALSE, cluster, robmethod=c('huber', 'efron'),
+                pr=TRUE, subset, fitargs)
 
 \method{predict}{transcan}(object, newdata, iter.max=50, eps=0.01, curtail=TRUE,
         type=c("transformed","original"),
@@ -604,15 +609,25 @@ invertTabulated(x, y, freq=rep(1,length(x)),
 		\code{fun} for imputation \code{i} is placed in the \code{i}th
 		element of a list that is returned in the \code{fit.mult.impute}
 		object element named \code{funresults}. See
-		\code{\link[rms]{processMI}} for help in processing these results
-		for the cases of \code{validate} and \code{calibrate}.}
+		the \code{rms} \code{processMI} function for help in processing
+			these results for the cases of \code{validate} and \code{calibrate}.}
 	\item{vcovOpts}{a list of named additional arguments to pass to the
 		\code{vcov} method for \code{fitter}.  Useful for \code{orm} models
 		for retaining all intercepts
 		(\code{vcovOpts=list(intercepts='all')}) instead of just the middle
 		one.}
+  \item{robust}{set to \code{TRUE} to have \code{fit.mult.impute} call the
+    \code{rms} package \code{robcov} function on each fit on a
+    completed dataset.  When \code{cluster} is given, \code{robust} is
+    forced to \code{TRUE}.}
+  \item{cluster}{a vector of cluster IDs that is the same length of the number
+    of rows in the dataset being analyzed.  When specified, \code{robust} is
+    assumed to be \code{TRUE}, and the \code{rms} \code{robcov} function is 
+    called with the \code{cluster} vector given as its second argument.}
+  \item{robmethod}{see the \code{robcov} function's \code{method} argument}
 	\item{fitargs}{a list of extra arguments to pass to \code{fitter},
-		used especially with \code{fun}}
+		used especially with \code{fun}.  When \code{robust=TRUE} the arguments
+    \code{x=TRUE, y=TRUE} are automatically added to \code{fitargs}.}
   \item{type}{
     By default, the matrix of transformed variables is returned, with
     imputed values on the transformed scale.  If you had specified
@@ -1126,7 +1141,15 @@ w <- fit.mult.impute(y ~ x1 + x2, lrm, a, data=d, fun=g,
 r <- w$funresults
 val <- lapply(r, function(x) x$validate)
 cal <- lapply(r, function(x) x$calibrate)
-# See rms::processMI and https://hbiostat.org/rmsc/validate.html#sec-val-mival
+# See rms processMI and https://hbiostat.org/rmsc/validate.html#sec-val-mival
+}
+
+\dontrun{
+# Account for within-subject correlation using the robust cluster sandwich
+# covariance estimate in conjunction with Rubin's rule for multiple imputation
+# rms package must be installed
+a <- aregImpute(..., data=d)
+f <- fit.mult.impute(y ~ x1 + x2, lrm, a, n.impute=30, data=d, cluster=d$id)
 }
 }
 \keyword{smooth}

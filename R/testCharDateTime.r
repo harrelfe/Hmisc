@@ -6,6 +6,7 @@
 ##' @param p minimum proportion of non-missing non-blank values of `x` for which the format is one of the formats described before considering `x` to be of that type
 ##' @param m if greater than 0, a test is applied: the number of distinct illegal values of `x` (values containing a letter or underscore) must not exceed `m`, or type `character` will be returned.  `p` is set to `1.0` when `m` > 0.
 ##' @param convert set to `TRUE` to convert the variable under the dominant format
+##' @param existing set to `TRUE` to return a character string with the current type of variable without examining pattern matches
 ##' @return if `convert=FALSE`, a single character string with the type of `x`: `"character", "datetime", "date", "time"`.  If `convert=TRUE`, a list with components named `type`, `x` (converted to `POSIXct`, `Date`, or `chron` times format), and `numna`, the number of originally non-`NA` values of `x` that could not be converted to the predominant format.    
 ##' @md
 ##' @author Frank Harrell
@@ -18,15 +19,17 @@
 ##'   print(testCharDateTime(c('3/11/2023', '4/11/2023', 'a', 'b'), convert=conv))
 ##' }
 
-testCharDateTime <- function(x, p=0.5, m=0, convert=FALSE) {
+testCharDateTime <- function(x, p=0.5, m=0, convert=FALSE, existing=FALSE) {
   ret <- function(type, x, numna=0)
-    return(if(convert) list(type=type, x=x, numna=numna) else type)
+    if(convert) list(type=type, x=x, numna=numna) else type
 
   cl <- class(x)
-  if(any(cl %in% c('POSIXt', 'POSIXct', 'chron'))) ret('datetime', x)
-  if(any(cl %in% c('Date', 'dates')))              ret('date',     x)
-  if(any(cl == 'times'))                           ret('time',     x)
-  if(! is.character(x))                            ret('notcharacter', x)
+  if(any(cl %in% c('POSIXt', 'POSIXct', 'chron'))) return(ret('datetime', x))
+  if(any(cl %in% c('Date', 'dates')))              return(ret('date',     x))
+  if(any(cl == 'times'))                           return(ret('time',     x))
+  if(! is.character(x))                            return(ret('notcharacter', x))
+
+  if(existing) return('character')
   
   y                <- x
   y[trimws(y) == ''] <- NA
@@ -38,9 +41,9 @@ testCharDateTime <- function(x, p=0.5, m=0, convert=FALSE) {
     uchar  <- unique(x[ischar])
     lu     <- length(uchar)
     if(lu) {
-      if(lu > m) ret('character', y) # more than m unique char values
-      x <- x[- ischar]               # values with no alpha characters
-      if(! length(x)) ret('character', y)
+      if(lu > m) return(ret('character', y)) # more than m unique char values
+      x <- x[- ischar]                       # values with no alpha characters
+      if(! length(x)) return(ret('character', y))
     }
   }
   rex <- c(

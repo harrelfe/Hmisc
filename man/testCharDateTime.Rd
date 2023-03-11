@@ -4,7 +4,7 @@
 \alias{testCharDateTime}
 \title{testCharDateTime}
 \usage{
-testCharDateTime(x, p = 0.5, m = 0, convert = FALSE)
+testCharDateTime(x, p = 0.5, m = 0, convert = FALSE, existing = FALSE)
 }
 \arguments{
 \item{x}{input vector of any type, but interesting cases are for character \code{x}}
@@ -14,6 +14,8 @@ testCharDateTime(x, p = 0.5, m = 0, convert = FALSE)
 \item{m}{if greater than 0, a test is applied: the number of distinct illegal values of \code{x} (values containing a letter or underscore) must not exceed \code{m}, or type \code{character} will be returned.  \code{p} is set to \code{1.0} when \code{m} > 0.}
 
 \item{convert}{set to \code{TRUE} to convert the variable under the dominant format}
+
+\item{existing}{set to \code{TRUE} to return a character string with the current type of variable without examining pattern matches}
 }
 \value{
 if \code{convert=FALSE}, a single character string with the type of \code{x}: \verb{"character", "datetime", "date", "time"}.  If \code{convert=TRUE}, a list with components named \code{type}, \code{x} (converted to \code{POSIXct}, \code{Date}, or \code{chron} times format), and \code{numna}, the number of originally non-\code{NA} values of \code{x} that could not be converted to the predominant format.

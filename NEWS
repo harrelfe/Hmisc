@@ -1,5 +1,6 @@
-Changes in version 5.0-2 (2023-03-07)
+Changes in version 5.0-2 (2023-03-11)
    * fit.mult.impute: added robust, cluster, robmethod arguments to incorporate rms::robcov to do robust sandwich covariance estimation with multiple imputation
+   * testCharDateTime: new function
 
 Changes in version 5.0-1 (2023-03-06)
    * rendHTML: when knitr is not running and object is not html, assumes it is RMarkdown and calls rmarkdown::render to render it to html, then displays in viewer

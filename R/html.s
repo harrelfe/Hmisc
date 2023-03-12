@@ -639,7 +639,20 @@ cssbutton = function(color='DarkBlue', background='LightBlue', size='115%')
 ## Usage: `r cssbutton()` ... `r hideDetails('button text', ...)` ... </details>
 hideDetails = function(txt)
  htmltools::HTML('
-<details><summary><p class="rbutton">', txt, '</p></summary>')
+<details><summary><p class="rbutton">', txt, '</p></summary>'),
+
+totxt = function(txt, full=FALSE) {
+  if(full) {
+    if(! requireNamespace('htm2txt', quietly=FALSE))
+      stop('markupSpecs$html$totxt with full=TRUE requires htm2txt package')
+    return(htm2txt::htm2txt(txt))
+    }
+  rem <- c('<p>', '</p>', '</div>', '</span>', '<p .*?>', '<div .*?>',
+           '<span .*?>', '<br>', '<br />', '\\n', 'strong>', '</strong>',
+           '<tbody>', '</tbody>', '<tr>', '</tr>', '<td.*?>', '<font.*?>',
+           '<u>', '</u>')
+  for(a in rem) txt <- gsub(a, '', txt)
+  }
 ),
 
 latex = list(

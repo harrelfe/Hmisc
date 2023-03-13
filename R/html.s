@@ -652,6 +652,7 @@ totxt = function(txt, full=FALSE) {
            '<tbody>', '</tbody>', '<tr>', '</tr>', '<td.*?>', '<font.*?>',
            '<u>', '</u>')
   for(a in rem) txt <- gsub(a, '', txt)
+  txt
   }
 ),
 

@@ -650,7 +650,9 @@ totxt = function(txt, full=FALSE) {
   rem <- c('<p>', '</p>', '</div>', '</span>', '<p .*?>', '<div .*?>',
            '<span .*?>', '<br>', '<br />', '\\n', 'strong>', '</strong>',
            '<tbody>', '</tbody>', '<tr>', '</tr>', '<td.*?>', '<font.*?>',
-           '<u>', '</u>')
+           '<u>', '</u>', '<ul>', '</ul>', '<li>', '</li>', '</td>',
+           '<h[1-9] .*?>', '</h[1-9]>', '<b>', '</b>', '<table>', '</table>',
+           '<em>', '</em>')
   for(a in rem) txt <- gsub(a, '', txt)
   txt
   }

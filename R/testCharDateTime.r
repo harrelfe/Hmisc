@@ -54,10 +54,12 @@ testCharDateTime <- function(x, p=0.5, m=0, convert=FALSE, existing=FALSE) {
     '^[0-2][0-9]:[0-5][0-9]:[0-5][0-9]$',
     '^[0-2][0-9]:[0-5][0-9]$' )
   types <- c('datetime', 'datetime', 'date', 'date', 'time', 'time')
+  nx <- length(x)
   for(i in 1 : 6) {
     ty <- types[i]
     rx <- rex[i]
-    if(mean(grepl(rx, x)) >= p) {
+    ngood <- sum(grepl(rx, x))
+    if(ngood / nx >= p) {
       if(! convert) return(ty)
       j <- ! is.na(y) & grepl(rx, y)
       z <- rep(NA, length(y))
@@ -75,7 +77,7 @@ testCharDateTime <- function(x, p=0.5, m=0, convert=FALSE, existing=FALSE) {
       if(lab != '') label(z) <- lab
       un                     <- units(y)
       if(un  != '') units(z) <- un
-      return(list(type=ty, x=z, numna=sum(is.na(z)) - sum(is.na(x))))
+      return(list(type=ty, x=z, numna=nx - ngood))
     }
   }
   ret('character', y)

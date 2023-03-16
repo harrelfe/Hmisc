@@ -18,13 +18,17 @@ testCharDateTime(x, p = 0.5, m = 0, convert = FALSE, existing = FALSE)
 \item{existing}{set to \code{TRUE} to return a character string with the current type of variable without examining pattern matches}
 }
 \value{
-if \code{convert=FALSE}, a single character string with the type of \code{x}: \verb{"character", "datetime", "date", "time"}.  If \code{convert=TRUE}, a list with components named \code{type}, \code{x} (converted to \code{POSIXct}, \code{Date}, or \code{chron} times format), and \code{numna}, the number of originally non-\code{NA} values of \code{x} that could not be converted to the predominant format.
+if \code{convert=FALSE}, a single character string with the type of \code{x}: \verb{"character", "datetime", "date", "time"}.  If \code{convert=TRUE}, a list with components named \code{type}, \code{x} (converted to \code{POSIXct}, \code{Date}, or \code{chron} times format), and \code{numna}, the number of originally non-\code{NA} values of \code{x} that could not be converted to the predominant format.  If there were any non-covertible dates/times,
+the returned vector is given an additional class \code{special.miss} and an
+attribute \code{special.miss} which is a list with original character values
+(\code{codes}) and observation numbers (\code{obs}).  These are summarized by
+\code{describe()}.
 }
 \description{
 Test Character Variables for Dates and Times
 }
 \details{
-For a vector \code{x}, if it is already a date-time, date, or time variable, the type is returned if \code{convert=FALSE}, or a list with that type, the original vector, and \code{numna=0} is returned.  Otherwise if \code{x} is not a character vector, a type of \code{notcharacter} is returned, or a list that includes the original \code{x} and \code{type='notcharacter'}.  When \code{x} is character, the main logic is applied.  The default logic (when \code{m=0}) is to consider \code{x} a date-time variable when its format is YYYY-MM-DD HH:MM:SS (:SS is optional) in more than 1/2 of the non-missing observations.  It is considered to be a date if its format is YYYY-MM-DD or MM/DD/YYYY in more than 1/2 of the non-missing observations.  A time variable has the format HH:MM:SS or HH:MM.  Blank values of \code{x} (after trimming) are set to \code{NA} before proceeding.
+For a vector \code{x}, if it is already a date-time, date, or time variable, the type is returned if \code{convert=FALSE}, or a list with that type, the original vector, and \code{numna=0} is returned.  Otherwise if \code{x} is not a character vector, a type of \code{notcharacter} is returned, or a list that includes the original \code{x} and \code{type='notcharacter'}.  When \code{x} is character, the main logic is applied.  The default logic (when \code{m=0}) is to consider \code{x} a date-time variable when its format is YYYY-MM-DD HH:MM:SS (:SS is optional) in more than 1/2 of the non-missing observations.  It is considered to be a date if its format is YYYY-MM-DD or MM/DD/YYYY or DD-MMM-YYYY in more than 1/2 of the non-missing observations (MMM=3-letter month).  A time variable has the format HH:MM:SS or HH:MM.  Blank values of \code{x} (after trimming) are set to \code{NA} before proceeding.
 }
 \examples{
 for(conv in c(FALSE, TRUE)) {
@@ -34,6 +38,9 @@ for(conv in c(FALSE, TRUE)) {
   print(testCharDateTime(c('2023-03-11 11:12', '2023-04-11 11:13', 'a', 'b'), convert=conv))
   print(testCharDateTime(c('3/11/2023', '4/11/2023', 'a', 'b'), convert=conv))
 }
+x <- c(paste0('2023-03-0', 1:9), 'a', 'a', 'a', 'b')
+y <- testCharDateTime(x, convert=TRUE)$x
+describe(y)  # note counts of special missing values a, b
 }
 \author{
 Frank Harrell

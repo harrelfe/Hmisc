@@ -40,6 +40,7 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
     fmt <- paste(as.character(fmt[[1]]), as.character(fmt[[2]]))
   
   present <- if(all(is.na(x))) rep(FALSE, length(x))
+  else if(is.mChoice(x))  trimws(as.character(x)) != '' & ! is.na(x)
   else if(is.character(x)) x != "" & x != " " & ! is.na(x)
   else ! is.na(x)
   
@@ -382,12 +383,12 @@ formatdescribeSingle <-
   vs       <- if(lang == 'latex' && lspace[2] != 0)
                 function() cat('\\vspace{', -lspace[2], 'ex}\n',
                                sep='') else function() {}
-
   vbtm <- if(lang == 'html')
-            function(x, omit1b=FALSE, ...)
+            function(x, omit1b=FALSE, prlabel, ...)
               htmlVerbatim(x, size=size, omit1b=omit1b, ...)
           else
-            function(x, omit1b=NULL) capture.output(print(x, quote=FALSE, ...))
+            function(x, omit1b=NULL, prlabel)
+              capture.output(print(x, quote=FALSE, ...))
 
   R <- character(0)
   

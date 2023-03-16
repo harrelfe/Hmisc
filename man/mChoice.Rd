@@ -131,7 +131,8 @@ is.mChoice(x)
     produced by \code{mChoice}
   }
   \item{ignoreNA}{set to \code{FALSE} to keep any \code{NA}s present in
-data as a real level.  Prior to Hmisc 4.7-2 \code{FALSE} was the default.}
+data as a real level.  Prior to Hmisc 4.7-2 \code{FALSE} was the
+default.}
   \item{x}{
     an object of class \code{"mchoice"} such as that created by
     \code{mChoice}.  For \code{is.mChoice} is any object.

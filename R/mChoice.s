@@ -4,6 +4,8 @@ mChoice <- function(..., label='',
 {
   sort.levels <- match.arg(sort.levels)
   dotlist <- list(...)
+  if(label == '') label <- label(dotlist[[1]])
+  if(label == '') label <- as.character(sys.call())[2]
 
   if (drop)
     lev <- unique(as.character(unlist(dotlist)))
@@ -12,16 +14,13 @@ mChoice <- function(..., label='',
   if(ignoreNA) lev <- setdiff(lev, NA)
   if(sort.levels=='alphabetic') lev <- sort(lev)
 
-  lev <- setdiff(lev,'')
-
-  vcall <- as.character(sys.call())[-1]
+  lev <- lev[trimws(lev) != '']
   dotlist <- lapply(dotlist, FUN=match, table=lev) #, nomatch=0)
-  
+
   g <- function(...) {
     set <- c(...)
     set <- set[!is.na(set)]
-    if(!length(set)) return('')
-
+    if(! length(set)) return(NA)   # was return('')
     paste(sort(unique(set)), collapse=';')
   }
   
@@ -33,15 +32,11 @@ mChoice <- function(..., label='',
     lev <- c(lev, 'none')
     Y[Y==''] <- as.character(length(lev))
   }
-  
-  if(label == '')
-    label <- attr(dotlist[[1]],'label')
-  
-  if(!length(label)) {
-    label <- vcall[1]
-    if(length(nn <- names(dotlist)[1]))
-      label <- nn
+  if(add.none && any(is.na(Y)) && 'none' %nin% lev) {
+    lev <- c(lev, 'none')
+    Y[is.na(Y)] <- as.character(length(lev))
   }
+
   
   structure(Y, label=label, levels=lev, class=c('mChoice','labelled'))
 }

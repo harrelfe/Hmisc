@@ -121,7 +121,8 @@ intended to be called by the user.
 \usage{
 \method{describe}{vector}(x, descript, exclude.missing=TRUE, digits=4,
          listunique=0, listnchar=12,
-         weights=NULL, normwt=FALSE, minlength=NULL, shortmChoice=TRUE, \dots)
+         weights=NULL, normwt=FALSE, minlength=NULL, shortmChoice=TRUE,
+         rmhtml=FALSE, \dots)
 \method{describe}{matrix}(x, descript, exclude.missing=TRUE, digits=4, \dots)
 \method{describe}{data.frame}(x, descript, exclude.missing=TRUE,
     digits=4, \dots)
@@ -193,7 +194,9 @@ formatdescribeSingle(x, condense=c('extremes', 'frequencies', 'both', 'none'),
 \item{minlength}{value passed to summary.mChoice}
 \item{shortmChoice}{set to \code{FALSE} to have summary of
 	\code{mChoice} variables use actual levels everywhere, instead of
-	abbreviating to integers and printing of all original labels at the top}
+	abbreviating to integers and printing of all original labels at the
+	top}
+\item{rmhtml}{set to \code{TRUE} to strip html from variable labels}
 \item{normwt}{
   The default, \code{normwt=FALSE} results in the use of \code{weights} as
   weights in computing various statistics.  In this case the sample size

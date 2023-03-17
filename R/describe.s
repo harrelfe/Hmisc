@@ -15,7 +15,7 @@ describe.default <- function(x, descript, ...) {
 describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
                             listunique=0, listnchar=12,
                             weights=NULL, normwt=FALSE, minlength=NULL,
-                            shortmChoice=TRUE, ...)
+                            shortmChoice=TRUE, rmhtml=FALSE,  ...)
 {
   oldopt <- options('digits')
   options(digits=digits)
@@ -25,7 +25,8 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
   if(! weighted) weights <- rep(1, length(x))
   
   special.codes <- attr(x, "special.miss")$codes
-  labx <- attr(x,"label")
+  labx <- attr(x, "label")
+  if(rmhtml) labx <- markupSpecs$html$totxt(labx)
   
   if(missing(descript)) descript <- as.character(sys.call())[2]
 

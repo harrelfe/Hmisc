@@ -27,6 +27,9 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
   special.codes <- attr(x, "special.miss")$codes
   labx <- attr(x, "label")
   if(rmhtml) labx <- markupSpecs$html$totxt(labx)
+  # Remove trailing blank or .
+  labx <- trimws(labx)
+  labx <- trimws(sub('\\.$', '', labx))
   
   if(missing(descript)) descript <- as.character(sys.call())[2]
 

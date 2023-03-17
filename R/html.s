@@ -230,12 +230,16 @@ htmlVerbatim <- function(..., size = 75, width = 85,
   propts <- c(propts, list(quote=FALSE))
   for(x in list(...)) {
     z <- capture.output(do.call('print', c(list(x), propts)))
-    if(omit1b && gsub(' ', '', z[1]) == '') z <- z[-1]
+    if(omit1b && trimws(z[1]) == '')         z <- z[-1]
+    if(omit1b) z[length(z)] <- sub('\n$', '', z[length(z)])
     w <- c(w, z)
     }
   options(op)
-  w <- c(w, if(scroll) '</textarea>' else '</pre>')
-  w <- paste0(w, '\n')
+
+  ## Remove trailing \n which is not needed since </pre> will follow
+  lw <- length(w)
+  if(lw > 1) w[-lw] <- paste0(w[-lw], '\n')
+  w <- c(w, if(scroll) '</textarea>\n' else '</pre>\n')
   htmltools::HTML(w)
 }
 

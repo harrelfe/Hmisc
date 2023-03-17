@@ -112,7 +112,7 @@ writing to the console.
 \item{propts}{options, besides \code{quote=FALSE} to pass to the
 	\code{print} method, for \code{htmlVerbatim}}
 \item{omit1b}{for \code{htmlVerbatim} if \code{TRUE} causes an initial
-	line of output that is all blank to be deleted}
+	and a final line of output that is all blank to be deleted}
 }
 \author{
 Frank E. Harrell, Jr.

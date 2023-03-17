@@ -344,9 +344,7 @@ describe.formula <- function(x, descript, data, subset, na.action,
 na.retain <- function(d) d
 
 
-print.describe <-
-  function(x, ...)
-{
+print.describe <- function(x, ...) {
 
   if(prType() == 'html') return(html.describe(x, ...))
 
@@ -413,7 +411,7 @@ formatdescribeSingle <-
     print.freq <- sum(nchar(altv)) <= 200
   } else print.freq <- FALSE
   
-  print.ext   <- length(x$extremes) ## && ! print.freq
+  print.ext   <- length(x$extremes) && ! print.freq  ## && ! print.freq then ignored print.freq
   if(print.ext) {
     val  <- format(x$extremes)
     w    <- nchar(paste(val, collapse=' '))

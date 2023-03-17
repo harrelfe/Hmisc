@@ -233,7 +233,8 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
       extremes <-
         if(isdot && all(class(loandhi) %nin% 'timeDate')) {
           formatDateTime(unclass(loandhi), at=atx, roundDay=! timeUsed)
-        } else if(isnum) loandhi else format(format(loandhi), ...)
+        } else if(isnum) loandhi
+          else format(format(loandhi), ...)
       names(extremes) <- c("L1","L2","L3","L4","L5","H5","H4","H3","H2","H1")
       z$extremes <- extremes
       }
@@ -413,7 +414,15 @@ formatdescribeSingle <-
   
   print.ext   <- length(x$extremes) && ! print.freq  ## && ! print.freq then ignored print.freq
   if(print.ext) {
-    val  <- format(x$extremes)
+    ## For printing 5 highest and lowest values
+    ntrans <- function(x) {
+      if(! is.numeric(x)) return(format(x))
+      y <- x[! is.na(x)]   # leave alone if integer
+      if(! length(x)) return(x)
+      if(all(y == round(y))) format(x) else format(as.character(signif(x)))
+    }
+
+    val  <- ntrans(x$extremes)
     w    <- nchar(paste(val, collapse=' '))
     R <- c(R, bv()); verb <- 1
     if(condense %in% c('extremes', 'both')) {

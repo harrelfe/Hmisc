@@ -14,7 +14,8 @@ describe.default <- function(x, descript, ...) {
 
 describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
                             listunique=0, listnchar=12,
-                            weights=NULL, normwt=FALSE, minlength=NULL, ...)
+                            weights=NULL, normwt=FALSE, minlength=NULL,
+                            shortmChoice=TRUE, ...)
 {
   oldopt <- options('digits')
   options(digits=digits)
@@ -188,8 +189,14 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
 
   values <- NULL
   if(! x.binary) {
-    if(inherits(x,'mChoice'))
+    mch <- is.mChoice(x)
+    if(mch) {
+      if(shortmChoice) {
+        z$levels  <- levels(x)
+        levels(x) <- paste0('(', 1 : length(levels(x)), ')')
+        }
       z$mChoice <- summary(x, minlength=minlength)
+      }
     else
       if(n.unique <= listunique && ! isnum && ! is.factor(x) &&
          max(nchar(x)) > listnchar)
@@ -221,7 +228,7 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
       }
     z$values <- values
     
-    if(n.unique >= 5) {
+    if(n.unique >= 5 && ! mch) {
       loandhi <- x.unique[c(1 : 5, (n.unique - 4) : n.unique)]
       extremes <-
         if(isdot && all(class(loandhi) %nin% 'timeDate')) {
@@ -352,7 +359,7 @@ print.describe <-
     w <- paste(rep('-', .Options$width), collapse='')
     cat(w, '\n', sep='')
     for(z in x) {
-      if(length(z)==0)
+      if(length(z) == 0)
         next
       print.describe.single(z, ...)
       cat(w, '\n', sep='')
@@ -384,11 +391,12 @@ formatdescribeSingle <-
                 function() cat('\\vspace{', -lspace[2], 'ex}\n',
                                sep='') else function() {}
   vbtm <- if(lang == 'html')
-            function(x, omit1b=FALSE, prlabel, ...)
-              htmlVerbatim(x, size=size, omit1b=omit1b, ...)
+            function(x, omit1b=FALSE, prlabel=NULL, ...)
+              htmlVerbatim(x, size=size, omit1b=omit1b,
+                           propts=list(prlabel=prlabel), ...)
           else
-            function(x, omit1b=NULL, prlabel)
-              capture.output(print(x, quote=FALSE, ...))
+            function(x, omit1b=NULL, prlabel=NULL)
+              capture.output(print(x, quote=FALSE, prlabel=prlabel, ...))
 
   R <- character(0)
   
@@ -507,9 +515,7 @@ formatdescribeSingle <-
 }
 
 
-print.describe.single <-
-  function(x, ...)
-{
+print.describe.single <- function(x, ...) {
   wide <- .Options$width
   des  <- x$descript
   
@@ -522,6 +528,12 @@ print.describe.single <-
   cat(des,'\n')
   
   print(x$counts, quote=FALSE)
+
+  ## Print mChoice levels if levels is present
+  if(length(lev <- x$levels)) {
+    lev <- paste(paste0('(', 1 : length(lev), ') ', lev), collapse='; ')
+    cat('', strwrap(lev), sep='\n')
+    }
 
   R <- formatdescribeSingle(x, lang='plain', ...)
   cat(R, sep='\n')
@@ -804,10 +816,8 @@ html.describe <-
   rendHTML(R)
 }
 
-html.describe.single <-
-  function(object, size=85,
-           tabular=TRUE, greek=TRUE, ...)
-{
+html.describe.single <- function(object, size=85, tabular=TRUE,
+                                 greek=TRUE, ...) {
   m <- markupSpecs$html
   center <- m$center
   bold   <- m$bold
@@ -887,7 +897,15 @@ html.describe.single <-
   else
     R <- c(R, htmlVerbatim(object$counts, size=sz))
 
-  
+  # See if mChoice levels are there
+  if(length(lev <- object$levels)) {
+    lev <- paste(paste0('(', 1 : length(lev), ') ', lev), collapse='; ')
+    sz <- size
+    ml <- nchar(lev)
+    sz <- if(nchar(lev) > 120) round(0.875 * size) else size
+    R <- c(R, paste('<p style="font-size:', sz, '%;">', lev, '</p>'))
+    }
+
   R <- c(R, formatdescribeSingle(object, lang='html', ...))
   R
 }

@@ -1,9 +1,9 @@
-Changes in version 5.0-2 (2023-03-16)
+Changes in version 5.0-2 (2023-03-17)
    * fit.mult.impute: added robust, cluster, robmethod arguments to incorporate rms::robcov to do robust sandwich covariance estimation with multiple imputation
    * testCharDateTime: new function
    * added totxt function in markupSpecs$html to convert html to plain text
-   * describe.vector: fixed for mChoice variables with plain output, fixed NA dection for mChoice in general
-   * mChoice: changed result to NA instead of '' if no choices are made and add.note=FALSE; fixed label
+   * describe.vector: fixed for mChoice variables with plain output, fixed NA dection for mChoice in general; added shortmChoice option, now defaulting to printing mChoice summary using numeric codes, and printing levels once up front
+   * mChoice: changed result to NA instead of '' if no choices are made and add.note=FALSE; fixed label; improved print.summary.mChoice formatting
 
 Changes in version 5.0-1 (2023-03-06)
    * rendHTML: when knitr is not running and object is not html, assumes it is RMarkdown and calls rmarkdown::render to render it to html, then displays in viewer

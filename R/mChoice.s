@@ -160,7 +160,7 @@ summary.mChoice <- function(object, ncombos=5, minlength=NULL,
   y <- gsub('[^;]', '', object)
   nchoices <- nchar(y) + 1
   nchoices[object == ''] <- 0
-  nchoices <- table(nchoices)
+  nchoices <- table(nchoices, dnn=NULL)
   
   X <- as.numeric(object, drop=drop)
   if(length(minlength))
@@ -178,12 +178,13 @@ summary.mChoice <- function(object, ncombos=5, minlength=NULL,
 }
 
 print.summary.mChoice <- function(x, prlabel=TRUE, ...) {
-  if(prlabel) cat(x$label, '   ', x$nunique, ' unique combinations\n', sep='')
+  cat(x$nunique, ' unique combinations\n\n', sep='')
+  if(prlabel) cat(x$label, '\n\n', sep='')
   cat('Frequencies of Numbers of Choices Per Observation\n\n')
   print(x$nchoices)
   crosstab <-format(x$crosstab)
   crosstab[lower.tri(crosstab)] <- ''
-  cat('\nPairwise Frequencies (Diagonal Contains Marginal Frequencies)\n')
+  cat('\nPairwise Frequencies (Diagonal Contains Marginal Frequencies)\n\n')
   print(crosstab, quote=FALSE)
   s <- if(length(x$combos)==x$nunique) 'Frequencies of All Combinations' else
    paste('Frequencies of Top', length(x$combos), 'Combinations')

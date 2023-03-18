@@ -518,7 +518,9 @@ formatdescribeSingle <-
   
   if(length(x$mChoice)) {
     R <- c(R, bv()); verb <- 1
-    R <- c(R, '', vbtm(x$mChoice, prlabel=FALSE))
+    ## print.summary.mChoice when options(prType='html') returns
+    ## html character string
+    R <- c(R, '', print(x$mChoice))
   }
 
   if(lang == 'latex' && verb) R <- c(R, '\\end{verbatim}')
@@ -908,13 +910,21 @@ html.describe.single <- function(object, size=85, tabular=TRUE,
   else
     R <- c(R, htmlVerbatim(object$counts, size=sz))
 
-  # See if mChoice levels are there
+  # See if mChoice levels are there; make 2-column html table
   if(length(lev <- object$levels)) {
-    lev <- paste(paste0('(', 1 : length(lev), ') ', lev), collapse='; ')
-    sz <- size
-    ml <- nchar(lev)
-    sz <- if(nchar(lev) > 120) round(0.875 * size) else size
-    R <- c(R, paste('<p style="font-size:', sz, '%;">', lev, '</p>'))
+    lev <- paste0('(', 1 : length(lev), ') ', lev)
+    ml <- max(nchar(lev))
+    sz <- if(ml > 45) round(0.825 * size) else size
+    half <- ceiling(length(lev) / 2)
+    left <- lev[1 : half]
+    rt   <- lev[(half + 1) : length(lev)]
+    if(length(rt) < length(left)) rt <- c(rt, '')
+    tab <- paste0('<tr><td>', left,
+                  '</td><td>&nbsp;</td><td>', rt,
+                  '</td></tr>')
+    tab <- paste0('<table style="font-size: ', sz, '%";>',
+                  paste(tab, collapse=' '), '</table>')
+    R <- c(R, tab)
     }
 
   R <- c(R, formatdescribeSingle(object, lang='html', ...))

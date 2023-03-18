@@ -45,7 +45,10 @@
   frequencies of the top 5 combinations, information about which other
   choices are present when each given choice is present, and the
   frequency distribution of the number of choices per observation.  This
-  \code{summary} output is used in the \code{describe} function.
+  \code{summary} output is used in the \code{describe} function.  The
+  \code{print} method returns an html character string if
+  \code{options(prType='html')} is in effect, instead of printing.  This
+  is used by \code{print.describe}.
 
   \code{in.mChoice} creates a logical vector the same length as \code{x}
   whose elements are \code{TRUE} when the observation in \code{x}
@@ -162,7 +165,7 @@ default.}
   \item{prlabel}{
     set to \code{FALSE} to keep
     \code{print.summary.mChoice} from printing the variable label and
-    number of unique values
+    number of unique values.  Ignore for html output.
   }
   \item{values}{
     a scalar or vector.  If \code{values} is integer, it is
@@ -185,7 +188,9 @@ ignore case in the data when matching on \code{values}}
   return a logical vector.
   \code{format.mChoice} returns a character vector, and
   \code{as.double.mChoice} returns a binary numeric matrix.
-  \code{nmChoice} returns an integer vector
+  \code{nmChoice} returns an integer vector.
+  \code{print.summary.mChoice} returns an html character string if
+  \code{options(prType='html')} is in effect.
 }
 \author{
   Frank Harrell

@@ -178,16 +178,27 @@ summary.mChoice <- function(object, ncombos=5, minlength=NULL,
 }
 
 print.summary.mChoice <- function(x, prlabel=TRUE, ...) {
+  crosstab <-format(x$crosstab)
+  crosstab[lower.tri(crosstab)] <- ''
+  s <- if(length(x$combos)==x$nunique) 'Frequencies of All Combinations' else
+   paste('Frequencies of Top', length(x$combos), 'Combinations')
+
+  if(prType() == 'html') {
+    y <- list('', x$nchoices, crosstab, x$combos)
+    names(y) <- c(paste(x$nunique, 'unique combinatons'),
+                  'Frequencies of Numbers of Choices Per Observations',
+                  'Pairwise Frequencies (Diagonal Contains Marginal Frequencies)',
+                  s)
+    R <- do.call(htmltabv, y)
+    return(R)
+  }
+  
   cat(x$nunique, ' unique combinations\n\n', sep='')
   if(prlabel) cat(x$label, '\n\n', sep='')
   cat('Frequencies of Numbers of Choices Per Observation\n\n')
   print(x$nchoices)
-  crosstab <-format(x$crosstab)
-  crosstab[lower.tri(crosstab)] <- ''
   cat('\nPairwise Frequencies (Diagonal Contains Marginal Frequencies)\n\n')
   print(crosstab, quote=FALSE)
-  s <- if(length(x$combos)==x$nunique) 'Frequencies of All Combinations' else
-   paste('Frequencies of Top', length(x$combos), 'Combinations')
   cat('\n', s, '\n')
   print(x$combos)
   invisible()

@@ -47,8 +47,9 @@
   frequency distribution of the number of choices per observation.  This
   \code{summary} output is used in the \code{describe} function.  The
   \code{print} method returns an html character string if
-  \code{options(prType='html')} is in effect, instead of printing.  This
-  is used by \code{print.describe}.
+  \code{options(prType='html')} is in effect if \code{render=FALSE} or
+  renders the html otherwise.  This is used by \code{print.describe} and
+  is most effective when \code{short=TRUE} is specified to \code{summary}.
 
   \code{in.mChoice} creates a logical vector the same length as \code{x}
   whose elements are \code{TRUE} when the observation in \code{x}
@@ -78,9 +79,10 @@ mChoice(\dots, label='',
 
 \method{as.character}{mChoice}(x, ...)
 
-\method{summary}{mChoice}(object, ncombos=5, minlength=NULL, drop=TRUE, ...)
+\method{summary}{mChoice}(object, ncombos=5, minlength=NULL,
+  drop=TRUE, short=FALSE, ...)
 
-\method{print}{summary.mChoice}(x, prlabel=TRUE, ...)
+\method{print}{summary.mChoice}(x, prlabel=TRUE, render=TRUE, ...)
 
 \method{[}{mChoice}(x, ..., drop=FALSE)
 
@@ -159,14 +161,18 @@ default.}
     \code{format} and \code{summary}.  Specify a positive integer to use
     abbreviation in those functions.  See \code{\link{abbreviate}}.
   }
-  \item{sep}{
-    character to use to separate levels when formatting
-  }
+  \item{short}{set to \code{TRUE} to have \code{summary.mChoice} use
+integer choice numbers in its tables, and to print the choice level
+definitions at the top}
+  \item{sep}{character to use to separate levels when formatting}
   \item{prlabel}{
     set to \code{FALSE} to keep
     \code{print.summary.mChoice} from printing the variable label and
     number of unique values.  Ignore for html output.
   }
+  \item{render}{applies of \code{options(prType='html')} is in
+  effect. Set to \code{FALSE} to return the html text instead of
+  rendering the html.}
   \item{values}{
     a scalar or vector.  If \code{values} is integer, it is
     the choice codes, and if it is a character vector, it is assumed to

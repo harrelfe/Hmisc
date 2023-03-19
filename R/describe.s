@@ -194,13 +194,8 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
   values <- NULL
   if(! x.binary) {
     mch <- is.mChoice(x)
-    if(mch) {
-      if(shortmChoice) {
-        z$levels  <- levels(x)
-        levels(x) <- paste0('(', 1 : length(levels(x)), ')')
-        }
-      z$mChoice <- summary(x, minlength=minlength)
-      }
+    if(mch)
+      z$mChoice <- summary(x, short=shortmChoice, minlength=minlength)
     else
       if(n.unique <= listunique && ! isnum && ! is.factor(x) &&
          max(nchar(x)) > listnchar)
@@ -520,7 +515,7 @@ formatdescribeSingle <-
     R <- c(R, bv()); verb <- 1
     ## print.summary.mChoice when options(prType='html') returns
     ## html character string
-    R <- c(R, '', print(x$mChoice))
+    R <- c(R, '', print(x$mChoice, render=FALSE))
   }
 
   if(lang == 'latex' && verb) R <- c(R, '\\end{verbatim}')
@@ -541,12 +536,6 @@ print.describe.single <- function(x, ...) {
   cat(des,'\n')
   
   print(x$counts, quote=FALSE)
-
-  ## Print mChoice levels if levels is present
-  if(length(lev <- x$levels)) {
-    lev <- paste(paste0('(', 1 : length(lev), ') ', lev), collapse='; ')
-    cat('', strwrap(lev), sep='\n')
-    }
 
   R <- formatdescribeSingle(x, lang='plain', ...)
   cat(R, sep='\n')
@@ -910,24 +899,7 @@ html.describe.single <- function(object, size=85, tabular=TRUE,
   else
     R <- c(R, htmlVerbatim(object$counts, size=sz))
 
-  # See if mChoice levels are there; make 2-column html table
-  if(length(lev <- object$levels)) {
-    lev <- paste0('(', 1 : length(lev), ') ', lev)
-    ml <- max(nchar(lev))
-    sz <- if(ml > 45) round(0.825 * size) else size
-    half <- ceiling(length(lev) / 2)
-    left <- lev[1 : half]
-    rt   <- lev[(half + 1) : length(lev)]
-    if(length(rt) < length(left)) rt <- c(rt, '')
-    tab <- paste0('<tr><td>', left,
-                  '</td><td>&nbsp;</td><td>', rt,
-                  '</td></tr>')
-    tab <- paste0('<table style="font-size: ', sz, '%";>',
-                  paste(tab, collapse=' '), '</table>')
-    R <- c(R, tab)
-    }
-
-  R <- c(R, formatdescribeSingle(object, lang='html', ...))
+   R <- c(R, formatdescribeSingle(object, lang='html', ...))
   R
 }
 

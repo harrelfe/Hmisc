@@ -155,7 +155,14 @@ nmChoice <- function(object) {
 }
 
 summary.mChoice <- function(object, ncombos=5, minlength=NULL,
-                            drop=TRUE, ...) {
+                            drop=TRUE, short=FALSE, ...) {
+
+  levels <- NULL
+  if(short) {
+    levels <- attr(object, 'levels')
+    attr(object, 'levels') <- paste0('(', 1 : length(levels), ')')
+    }
+
   nunique <- length(unique(object))
   y <- gsub('[^;]', '', object)
   nchoices <- nchar(y) + 1
@@ -173,27 +180,51 @@ summary.mChoice <- function(object, ncombos=5, minlength=NULL,
   
   structure(list(nunique=nunique, nchoices=nchoices,
                  crosstab=crosstab, combos=combos,
-                 label=label(object)),
+                 label=label(object), levels=levels),
             class='summary.mChoice')
 }
 
-print.summary.mChoice <- function(x, prlabel=TRUE, ...) {
+print.summary.mChoice <- function(x, prlabel=TRUE, render=TRUE, ...) {
+  levels <- x$levels
   crosstab <-format(x$crosstab)
   crosstab[lower.tri(crosstab)] <- ''
   s <- if(length(x$combos)==x$nunique) 'Frequencies of All Combinations' else
    paste('Frequencies of Top', length(x$combos), 'Combinations')
 
+  R <- character(0)
+
   if(prType() == 'html') {
+    lev <- x$levels
+    if(length(lev)) {   # short was in effect
+      lev <- paste0('(', 1 : length(lev), ') ', lev)
+      ml <- max(nchar(lev))
+      sz <- if(ml > 45) round(0.825 * 85) else 85
+      half <- ceiling(length(lev) / 2)
+      left <- lev[1 : half]
+      rt   <- lev[(half + 1) : length(lev)]
+      if(length(rt) < length(left)) rt <- c(rt, '')
+      tab <- paste0('<tr><td>', left,
+                    '</td><td>&nbsp;</td><td>', rt,
+                    '</td></tr>')
+      R <- paste0('<table style="font-size: ', sz, '%";>',
+                  paste(tab, collapse=' '), '</table>')
+      }
+    
     y <- list('', x$nchoices, crosstab, x$combos)
     names(y) <- c(paste(x$nunique, 'unique combinatons'),
-                  'Frequencies of Numbers of Choices Per Observations',
+                  'Frequencies of Numbers of Choices Per Observation',
                   'Pairwise Frequencies (Diagonal Contains Marginal Frequencies)',
                   s)
-    R <- do.call(htmltabv, y)
-    return(R)
+    R <- c(R, do.call(htmltabv, y))
+    return(if(render) rendHTML(R) else htmltools::HTML(R))
   }
-  
-  cat(x$nunique, ' unique combinations\n\n', sep='')
+
+  if(length(levels)) {
+    lev <- paste(paste0('(', 1 : length(levels), ') ', levels), collapse='; ')
+    cat('', strwrap(lev), '', sep='\n')
+    }
+
+  cat('\n', x$nunique, ' unique combinations\n\n', sep='')
   if(prlabel) cat(x$label, '\n\n', sep='')
   cat('Frequencies of Numbers of Choices Per Observation\n\n')
   print(x$nchoices)

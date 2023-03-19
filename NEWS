@@ -6,7 +6,8 @@ Changes in version 5.0-2 (2023-03-18)
    * mChoice: changed result to NA instead of '' if no choices are made and add.note=FALSE; fixed label; improved print.summary.mChoice formatting
    * htmlVerbatim: removed blank line before </pre>
    * htmltabv: new function to make simple html table of a series of verbatim outputs from print() of objects
-   * print.summary.Choice: if options(prType='html') is in effect, calls htmltabv to compose output in a space-savings 2-column html table
+   * summary.mChoice: added short= argument
+   * print.summary.mChoice: if options(prType='html') is in effect, calls htmltabv to compose output in a space-savings 2-column html table, and renders entire output in html
 	 
 Changes in version 5.0-1 (2023-03-06)
    * rendHTML: when knitr is not running and object is not html, assumes it is RMarkdown and calls rmarkdown::render to render it to html, then displays in viewer

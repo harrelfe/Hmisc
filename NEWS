@@ -1,4 +1,4 @@
-Changes in version 5.0-2 (2023-03-18)
+Changes in version 5.1-0 (2023-03-24)
    * fit.mult.impute: added robust, cluster, robmethod arguments to incorporate rms::robcov to do robust sandwich covariance estimation with multiple imputation
    * testCharDateTime: new function
    * added totxt function in markupSpecs$html to convert html to plain text
@@ -8,7 +8,10 @@ Changes in version 5.0-2 (2023-03-18)
    * htmltabv: new function to make simple html table of a series of verbatim outputs from print() of objects
    * summary.mChoice: added short= argument
    * print.summary.mChoice: if options(prType='html') is in effect, calls htmltabv to compose output in a space-savings 2-column html table, and renders entire output in html
-	 
+   * describe: retrieved format* attribute of variables
+   * vlab: fixed bug
+   * dotchartp: fixed bug when sort was logical resulting in o=NULL; changes in R made x[NULL,] quit working
+
 Changes in version 5.0-1 (2023-03-06)
    * rendHTML: when knitr is not running and object is not html, assumes it is RMarkdown and calls rmarkdown::render to render it to html, then displays in viewer
    * princmp: new function to help in interpreting principal components and sparse principal components

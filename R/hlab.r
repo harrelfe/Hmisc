@@ -83,7 +83,7 @@ hlabs <- function(x, y, html=FALSE) {
 ##' @seealso [hlab()]
 vlab <- function(x, name=NULL) {
   xname <- if(length(name)) name else as.character(substitute(x))
-  ldef  <- label(x, units=TRUE, default=xname)
+  ldef  <- xname
   lu    <- if(exists('LabelsUnits')) LabelsUnits
   if(length(lu)) {
     if(xname %nin% lu$name) return(ldef)

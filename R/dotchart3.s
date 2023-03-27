@@ -140,7 +140,7 @@ dotchartp <-
 {
   if (!requireNamespace("plotly", quietly=TRUE))
     stop("This function requires the 'plotly' package.")
-    
+
   auxwhere <- match.arg(auxwhere)
   
   fmt <- if(length(dec)) function(x) format(round(x, dec))
@@ -178,12 +178,9 @@ dotchartp <-
     warning('specifying sort does not makes sense with groups present')
   if(! groups.pres) {
     y <- n : 1
-    if(is.character(sort) || sort) {
-      o <- if(is.character(sort)) {
-             if(sort == 'ascending') order(x[, 1])
-             else
-               order(-x[, 1])
-           }
+    if(is.logical(sort)) sort <- if(sort) 'descending' else 'none'
+    if(sort != 'none') {
+      o <- order(if(sort == 'ascending') x[, 1] else - x[, 1])
       x       <- x[o, , drop=FALSE]
       labels  <- labels[o]
       if(length(auxdata))
@@ -241,7 +238,6 @@ dotchartp <-
   ht <- if(nx == '')   fmt(X)
         else paste(nx, '<br>', fmt(X))
   if(auxh && any(auxd != '')) ht <- paste0(ht, '<br>', auxd) # <br> was lspace
-
   d <- data.frame(X, y=tly, ht=ht)
 
   if(length(height) && height == 'auto')

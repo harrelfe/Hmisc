@@ -23,9 +23,11 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
 
   weighted <- length(weights) > 0
   if(! weighted) weights <- rep(1, length(x))
-  
-  special.codes <- attr(x, "special.miss")$codes
-  labx <- attr(x, "label")
+
+  atx <- attributes(x)
+
+  special.codes   <- atx$special.miss$codes
+  labx            <- atx$label
   if(rmhtml) labx <- markupSpecs$html$totxt(labx)
   # Remove trailing blank or .
   labx <- trimws(labx)
@@ -35,10 +37,11 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
 
   if(length(labx) && labx != descript) descript <- paste(descript,":",labx)
 
-  un <- attr(x, "units")
+  un <- atx$units
   if(length(un) && un == '') un <- NULL
 
-  fmt <- attr(x, 'format')
+  
+  fmt <- atx$format
   if(length(fmt) && (is.function(fmt) || fmt == '')) fmt <- NULL
   
   if(length(fmt) > 1)
@@ -63,7 +66,6 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
     return(structure(list(), class="describe"))
   
   missing <- sum(weights[! present], na.rm=TRUE)
-  atx <- attributes(x)
   atx$names <- atx$dimnames <- atx$dim <- atx$special.miss <- NULL  
   
   atx$class <- atx$class[atx$class != 'special.miss']

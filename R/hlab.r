@@ -1,12 +1,13 @@
 ##' Easy Extraction of Labels/Units Expressions for Plotting
 ##'
-##' Given a single unquoted variable, first looks to see if a non-`NULL` `LabelUnits` object exists (produced by `extractlabs()`).  When `LabelUnits` does not exist or is `NULL`, looks up the attributes in the current dataset, which defaults to `d` or may be specified by `options(current_ds='name of the data frame/table')`.  When a variable is not found in either source or has a blank `label` and `units`, an `expression()` with the variable name alone is returned.  If `html=TRUE`, HTML strings are constructed instead, suitable for `plotly` graphics.
+##' Given a single unquoted variable, first looks to see if a non-`NULL` `LabelsUnits` object exists (produced by `extractlabs()`).  When `LabelsUnits` does not exist or is `NULL`, looks up the attributes in the current dataset, which defaults to `d` or may be specified by `options(current_ds='name of the data frame/table')`.  Finally the existence of a variable of the given name in the global environment is checked. When a variable is not found in any of these three sources or has a blank `label` and `units`, an `expression()` with the variable name alone is returned.  If `html=TRUE`, HTML strings are constructed instead, suitable for `plotly` graphics.
 ##'
 ##' The result is useful for `xlab` and `ylab` in base plotting functions or in `ggplot2`, along with being useful for `labs` in `ggplot2`.  See example.
 ##' @title hlab
 ##' @param x a single variable name, unquoted
 ##' @param name a single character string providing an alternate way to name `x` that is useful when `hlab` is called from another function such as `hlabs`
 ##' @param html set to `TRUE` to return HTML strings instead of `plotmath` expressions
+##' @param plotmath set to `FALSE` to use plain text instead of plotmath
 ##' @return an expression created by `labelPlotmath` with `plotmath=TRUE`
 ##' @author Frank Harrell
 ##' @seealso [label()], [units()], [contents()], [hlabs()], [extractlabs()], [plotmath]
@@ -29,21 +30,31 @@
 ##' # d2 instead of the default d
 ##' rm(LabelsUnits)
 ##' options(current_ds='d2')
-hlab <- function(x, name=NULL, html=FALSE) {
+hlab <- function(x, name=NULL, html=FALSE, plotmath=TRUE) {
   xname <- if(length(name)) name else as.character(substitute(x))
-  ldef  <- labelPlotmath(xname, html=html)
+  ldef  <- labelPlotmath(xname, html=html, plotmath=plotmath)
+
   lu    <- if(exists('LabelsUnits')) LabelsUnits
   if(length(lu)) {
     if(xname %nin% lu$name) return(ldef)
     lu <- lu[xname][1]
-    return(labelPlotmath(lu$label, lu$units, html=html))
+    if(lu$label != '' || lu$units != '')
+      return(labelPlotmath(lu$label, lu$units, html=html, plotmath=plotmath))
   }
   
   currds <- getOption('current_ds', 'd')
-  if(! exists(currds)) return(ldef)
-  d <- get(currds)
-  if(xname %nin% names(d)) return(ldef)
-  label(d[[xname]], plot=TRUE, default=xname, html=html)
+  if(exists(currds)) {
+    d <- get(currds)
+    if(xname %in% names(d)) {
+      xx <- d[[xname]]
+      at <- attributes(xx)
+      if(length(c(at$label, at$units)) > 0)
+        return(label(xx, plot=plotmath, default=xname, html=html))
+    }
+  }
+
+  if(exists(xname, envir=parent.frame()))
+    label(x, plot=plotmath, default=xname, html=html) else ldef
 }
 
 ##' Front-end to ggplot2 labs Function
@@ -63,12 +74,12 @@ hlab <- function(x, name=NULL, html=FALSE) {
 ##' # to specify only the x-axis label use hlabs(x), or to
 ##' # specify only the y-axis label use hlabs(y=...)
 hlabs <- function(x, y, html=FALSE) {
-  x <- as.character(substitute(x))   # results in '' if no x
-  y <- as.character(substitute(y))
-  if(y == '')      labs(x=hlab(name=x, html=html))
-  else if(x == '') labs(y=hlab(name=y, html=html))
-  else             labs(x=hlab(name=x, html=html),
-                        y=hlab(name=y, html=html))
+  xname <- as.character(substitute(x))   # results in '' if no x
+  yname <- as.character(substitute(y))
+  if(yname == '')      labs(x=hlab(x, name=xname, html=html))
+  else if(xname == '') labs(y=hlab(y, name=yname, html=html))
+  else                 labs(x=hlab(x, name=xname, html=html),
+                            y=hlab(y, name=yname, html=html))
 }
 
 ##' Easily Retrieve Text Form of Labels/Units
@@ -83,19 +94,7 @@ hlabs <- function(x, y, html=FALSE) {
 ##' @seealso [hlab()]
 vlab <- function(x, name=NULL) {
   xname <- if(length(name)) name else as.character(substitute(x))
-  ldef  <- xname
-  lu    <- if(exists('LabelsUnits')) LabelsUnits
-  if(length(lu)) {
-    if(xname %nin% lu$name) return(ldef)
-    lu <- lu[xname][1]
-    return(labelPlotmath(lu$label, lu$units, plotmath=FALSE))
-  }
-  
-  currds <- getOption('current_ds', 'd')
-  if(! exists(currds)) return(ldef)
-  d <- get(currds)
-  if(xname %nin% names(d)) return(ldef)
-  label(d[[xname]], units=TRUE, default=xname)
+  hlab(x, name=xname, html=FALSE, plotmath=FALSE)
 }
 
 

@@ -24,13 +24,15 @@ the result of running \code{fun}
 Re-run Code if an Input Changed
 }
 \details{
-Uses \code{hashCheck} to run a function and save the results if specified inputs have changed, otherwise to retrieve results from a file.  This makes it easy to see if any objects changed that require re-running a long simulation, and reports on any changes.  The file name is taken as the chunk name appended with \code{.rds} unless it is given as \verb{file=}.  \code{fun} has no arguments.  Set \code{.inclfun.=FALSE} to not include \code{fun} in the hash check (for legacy uses).  The typical workflow is as follows.\preformatted{f <- function(       ) \{
+Uses \code{hashCheck} to run a function and save the results if specified inputs have changed, otherwise to retrieve results from a file.  This makes it easy to see if any objects changed that require re-running a long simulation, and reports on any changes.  The file name is taken as the chunk name appended with \code{.rds} unless it is given as \verb{file=}.  \code{fun} has no arguments.  Set \code{.inclfun.=FALSE} to not include \code{fun} in the hash check (for legacy uses).  The typical workflow is as follows.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{f <- function(       ) \{
 # . . . do the real work with multiple function calls ...
 \}
 seed <- 3
 set.seed(seed)
 w <- runifChanged(f, seed, obj1, obj2, ....)
-}
+}\if{html}{\out{</div>}}
 
 \verb{seed, obj1, obj2}, ... are all the objects that \code{f()} uses that if changed
 would give a different result of \code{f()}.  This can include functions such as

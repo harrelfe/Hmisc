@@ -16,8 +16,8 @@ completer(a, nimpute, oneimpute = FALSE, mydata)
 \item{mydata}{A data frame in which its missing values will be imputed.}
 }
 \value{
-\preformatted{      A single or a list of completed dataset(s).
-}
+\if{html}{\out{<div class="sourceCode">}}\preformatted{      A single or a list of completed dataset(s).
+}\if{html}{\out{</div>}}
 }
 \description{
 Create imputed dataset(s) using \code{transcan} and \code{aregImpute} objects
@@ -45,6 +45,6 @@ completer(myareg)
 }
 }
 \author{
-\preformatted{      Yong-Hao Pua, Singapore General Hospital
-}
+\if{html}{\out{<div class="sourceCode">}}\preformatted{      Yong-Hao Pua, Singapore General Hospital
+}\if{html}{\out{</div>}}
 }

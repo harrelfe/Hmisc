@@ -46,24 +46,38 @@ ebpcomp <- function(x, qref=c(.5, .25, .75),
 ##' Derives the line segment coordinates need to draw a spike histogram.  This is useful for adding elements to `ggplot2` plots.
 ##' @title spikecomp
 ##' @param x a numeric variable
-##' @return a list with element `segments` which has elements `x`, `y1`, `y2` 
+##' @param count default is `"table"` to use `table` resulting in no zero cells; use `"tabulate"` to compute counts over a rigid grid, suitable for bar charts with sparklines.  
+##' @param normalize set to `FALSE` to not divide frequencies by maximum frequency
+##' @return a list with element `segments` which has elements `x`, `y1`, `y2` if `count='table'`, otherwise a list with elements `x` and `y`
 ##' @author Frank Harrell
 ##' @md
 ##' @examples
 ##' spikecomp(1:1000)
-spikecomp <- function(x) {
-  x <- x[! is.na(x)]
-  n.unique <- length(unique(x))
-  if(n.unique >= 100 ||
+spikecomp <- function(x, count=c('table', 'tabulate'), normalize=TRUE) {
+  count <- match.arg(count)
+  x        <- x[! is.na(x)]
+  ux       <- sort(unique(x))
+  n.unique <- length(ux)
+  
+  if(count == 'tabulate' || (n.unique >= 100 ||
      (n.unique > 20 && 
-      min(diff(sort(unique(x)))) < diff(range(x)) / 500)) {
-    pret <- pretty(x, if(n.unique >= 100) 100 else 500)
-    dist <- pret[2] - pret[1]
+      min(diff(ux)) < diff(range(x)) / 500))) {
+    pret <- pretty(ux, if(n.unique >= 100 || count == 'tabulate') 100 else 500)
+    incr <- pret[2] - pret[1]
     r    <- range(pret)
-    x     <- r[1] + dist * round((x - r[1]) / dist)
+    xi   <- 1 + round((x - r[1]) / incr)
+    x    <- r[1] + (xi - 1.) * incr
   }
-  f <- table(x)
-  x <- as.numeric(names(f))
-  y <- unname(f / max(f))
-  list(segments=list(x=x, y1=0, y2=y))
+  if(count == 'table') {
+    f <- table(x)
+    x <- as.numeric(names(f))
+    y <- unname(f / (if(normalize) max(f) else 1.))
+    return(list(segments=list(x=x, y1=0, y2=y)))
+  }
+  if(any(xi < 1))                  stop('program logic error 1')
+  f <- tabulate(xi)
+  if(length(f) > length(pret))     stop('program logic error 2')
+  if(length(f) < length(pret) - 1) stop('program logic error 3')
+  pret <- pret[1 : length(f)]
+  list(x=pret, y=f / (if(normalize) max(f) else 1.))
 }

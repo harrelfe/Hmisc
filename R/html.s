@@ -95,7 +95,7 @@ html.data.frame <-
            col.header='Black', border=2,
            width=NULL, size=100, translate=FALSE,
            append=FALSE, link=NULL, linkCol=1,
-           linkType=c('href','name'), ...)
+           linkType=c('href','name'), disableq=FALSE, ...)
 {
   linkType <- match.arg(linkType)
   mu <- markupSpecs$html
@@ -105,6 +105,8 @@ html.data.frame <-
   align.header <- tr[align.header]
 
   trans <- if(translate) htmlTranslate else function(x) x
+
+  disableq <- if(disableq) ' data-quarto-disable-processing="true"' else ''
   
   x   <- as.matrix(object)
 #  for(i in 1:ncol(x)) {
@@ -141,7 +143,7 @@ html.data.frame <-
            '}',
            '</style>')
           
-  R <- c(sty, paste0('<table class="', sn, '"',
+  R <- c(sty, paste0('<table', disableq, ' class="', sn, '"',
                      if(length(width) == 1)
                        paste0(' width="', width, '"'),
                      if(border == 1) ' border="0"',

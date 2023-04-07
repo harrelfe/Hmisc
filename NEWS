@@ -1,4 +1,4 @@
-Changes in version 5.1-0 (2023-03-24)
+Changes in version 5.1-0 (2023-04-07)
    * fit.mult.impute: added robust, cluster, robmethod arguments to incorporate rms::robcov to do robust sandwich covariance estimation with multiple imputation
    * testCharDateTime: new function
    * added totxt function in markupSpecs$html to convert html to plain text
@@ -11,7 +11,13 @@ Changes in version 5.1-0 (2023-03-24)
    * describe: retrieved format* attribute of variables
    * vlab: fixed bug
    * dotchartp: fixed bug when sort was logical resulting in o=NULL; changes in R made x[NULL,] quit working
-
+   * vlab, hlab, hlabs: improved logic and also look in global environment
+   * spikecomp: added new options that facilitate sparklines
+   * html.data.frame: added new argument disableq to disable Quarto table style
+   * describe: for html use disableq for html.data.frame
+   * added gt, sparkline, jsonlite packages to SUGGESTS
+   * added which= argument to print.describe
+	 * html_describe_cat, html_describe_con: new internal functions to print gt tables when which= is given to print.describe
 
 Changes in version 5.0-1 (2023-03-06)
    * rendHTML: when knitr is not running and object is not html, assumes it is RMarkdown and calls rmarkdown::render to render it to html, then displays in viewer

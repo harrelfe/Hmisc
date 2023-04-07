@@ -4,13 +4,17 @@
 \alias{spikecomp}
 \title{spikecomp}
 \usage{
-spikecomp(x)
+spikecomp(x, count = c("table", "tabulate"), normalize = TRUE)
 }
 \arguments{
 \item{x}{a numeric variable}
+
+\item{count}{default is \code{"table"} to use \code{table} resulting in no zero cells; use \code{"tabulate"} to compute counts over a rigid grid, suitable for bar charts with sparklines.}
+
+\item{normalize}{set to \code{FALSE} to not divide frequencies by maximum frequency}
 }
 \value{
-a list with element \code{segments} which has elements \code{x}, \code{y1}, \code{y2}
+a list with element \code{segments} which has elements \code{x}, \code{y1}, \code{y2} if \code{count='table'}, otherwise a list with elements \code{x} and \code{y}
 }
 \description{
 Compute Elements of a Spike Histogram

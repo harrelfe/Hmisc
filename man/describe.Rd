@@ -78,7 +78,12 @@ context of Quarto/Rmarkdown html and html notebook output.
 If \code{options(prType='html')} is in effect, calling \code{print} on
 an object that is the result of running \code{describe} on a data frame
 will result in rendering the HTML version.  If run from the console a
-browser window will open.
+browser window will open.  When \code{which} is specified to
+\code{print}, a \code{gt} package table will be produced containing only
+the types of variables requested.  When \code{which='both'} a list with
+element names \code{Continuous} and \code{Categorical} is produced,
+making it convenient for the user to print as desired, or to pass the
+list directed to the \code{qreport} \code{maketabs} function when using Quarto.
 
 The \code{plot} method is for \code{describe} objects run on data
 frames.  It produces spike histograms for a graphic of
@@ -128,7 +133,7 @@ intended to be called by the user.
     digits=4, \dots)
 \method{describe}{formula}(x, descript, data, subset, na.action,
     digits=4, weights, \dots)
-\method{print}{describe}(x, \dots)
+\method{print}{describe}(x, which = c('both', 'categorical', 'continuous'), \dots)
 \method{latex}{describe}(object, title=NULL,
       file=paste('describe',first.word(expr=attr(object,'descript')),'tex',sep='.'),
       append=FALSE, size='small', tabular=TRUE, greek=TRUE,
@@ -230,7 +235,14 @@ formatdescribeSingle(x, condense=c('extremes', 'frequencies', 'both', 'none'),
   information.  For \code{plot} methods, \dots is ignored.
   For \code{html} and \code{latex} methods, \dots is used to pass
 	optional arguments to \code{formatdescribeSingle}, especially the
-	\code{condense} argument.
+	\code{condense} argument.  For the \code{print} method when
+	\code{which=} is given and \code{options(prType='html')}, possible
+	arguments to use for tabulating continuous variable output are
+	\code{w} (the width of the spike histogram 	sparkline in pixels,
+	defaulting to 175), \code{qcondense} (set to \code{FALSE} to devote
+	separate columns to all quantiles), \code{extremes} (set to
+	\code{TRUE} to print the 5 lowest and highest values in the table of
+	continuous variables). 
 	}
 \item{file}{
 name of output file (should have a suffix of .tex).  Default name is
@@ -274,11 +286,14 @@ the output.
 	scrollable box}
 \item{vname}{unused argument in \code{latex.describe.single}}
 \item{which}{specifies whether to plot numeric continuous or
-	binary/categorical variables, or both.  When \code{"both"} a list with 
-two elements is created.  Each element is a \code{ggplot2} or
-\code{plotly} object.  If 
-there are no variables of a given type, a single \code{ggplot2} or
-\code{plotly} object is returned, ready to print.} 
+	binary/categorical variables, or both.  When \code{"both"} a list with
+	two elements is created.  Each element is a \code{ggplot2} or
+	\code{plotly} object.  If there are no variables of a given type, a
+	single \code{ggplot2} or \code{plotly} object is returned, ready to
+	print.  For \code{print.describe} with \code{options(prType='html')}
+	in effect may be \code{"categorical"} or \code{"continuous"}, causing
+	a \code{gt} table to be created with the categorical or continuous
+	variable \code{describe} results.}  
 \item{what}{character or numeric vector specifying which variables to
 	plot; default is to plot all}
 \item{sort}{specifies how and whether variables are sorted in order of

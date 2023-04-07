@@ -4,7 +4,7 @@
 \alias{hlab}
 \title{hlab}
 \usage{
-hlab(x, name = NULL, html = FALSE)
+hlab(x, name = NULL, html = FALSE, plotmath = TRUE)
 }
 \arguments{
 \item{x}{a single variable name, unquoted}
@@ -12,6 +12,8 @@ hlab(x, name = NULL, html = FALSE)
 \item{name}{a single character string providing an alternate way to name \code{x} that is useful when \code{hlab} is called from another function such as \code{hlabs}}
 
 \item{html}{set to \code{TRUE} to return HTML strings instead of \code{plotmath} expressions}
+
+\item{plotmath}{set to \code{FALSE} to use plain text instead of plotmath}
 }
 \value{
 an expression created by \code{labelPlotmath} with \code{plotmath=TRUE}
@@ -20,7 +22,7 @@ an expression created by \code{labelPlotmath} with \code{plotmath=TRUE}
 Easy Extraction of Labels/Units Expressions for Plotting
 }
 \details{
-Given a single unquoted variable, first looks to see if a non-\code{NULL} \code{LabelUnits} object exists (produced by \code{extractlabs()}).  When \code{LabelUnits} does not exist or is \code{NULL}, looks up the attributes in the current dataset, which defaults to \code{d} or may be specified by \code{options(current_ds='name of the data frame/table')}.  When a variable is not found in either source or has a blank \code{label} and \code{units}, an \code{expression()} with the variable name alone is returned.  If \code{html=TRUE}, HTML strings are constructed instead, suitable for \code{plotly} graphics.
+Given a single unquoted variable, first looks to see if a non-\code{NULL} \code{LabelsUnits} object exists (produced by \code{extractlabs()}).  When \code{LabelsUnits} does not exist or is \code{NULL}, looks up the attributes in the current dataset, which defaults to \code{d} or may be specified by \code{options(current_ds='name of the data frame/table')}.  Finally the existence of a variable of the given name in the global environment is checked. When a variable is not found in any of these three sources or has a blank \code{label} and \code{units}, an \code{expression()} with the variable name alone is returned.  If \code{html=TRUE}, HTML strings are constructed instead, suitable for \code{plotly} graphics.
 
 The result is useful for \code{xlab} and \code{ylab} in base plotting functions or in \code{ggplot2}, along with being useful for \code{labs} in \code{ggplot2}.  See example.
 }

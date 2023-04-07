@@ -346,10 +346,27 @@ describe.formula <- function(x, descript, data, subset, na.action,
 na.retain <- function(d) d
 
 
-print.describe <- function(x, ...) {
+print.describe <-
+  function(x, which = c('both', 'categorical', 'continuous'), ...) {
 
-  if(prType() == 'html') return(html.describe(x, ...))
+    mwhich <- missing(which)
+    which  <- match.arg(which)
+    
+  if(prType() == 'html') {
+    if(mwhich) return(html.describe(x, ...))
+    if(! requireNamespace('gt', quietly=TRUE))
+      stop('gt package must be installed to print describe results with which=')
 
+    return(
+      switch(which,
+             both        = list(Continuous =html_describe_con(x, ...),
+                                Categorical=html_describe_cat(x, ...)),
+             categorical = html_describe_cat(x, ...),
+             continuous  = html_describe_con(x, ...) )   )
+  }
+
+  if(! mwhich) stop("which may only be specified when options(prType='html')")
+  
   at <- attributes(x)
   if(length(at$dimensions)) {
     cat(at$descript,'\n\n',at$dimensions[2],' Variables     ',at$dimensions[1],
@@ -444,7 +461,8 @@ formatdescribeSingle <-
                             e4=val[9], e5=val[10])
           tab <- html(rbind(low, hi, make.row.names=FALSE),
                       align='r',
-                      header=NULL, border=0, size=size, file=FALSE)
+                      header=NULL, border=0, size=size, file=FALSE,
+                      disableq=TRUE)
           R <- c(R, tab)
         }
       }  # end lang='html'
@@ -895,7 +913,7 @@ html.describe.single <- function(object, size=85, tabular=TRUE,
     tab <- html(d, file=FALSE, align='c',
                 align.header='c', bold.header=FALSE,
                 col.header='MidnightBlue', border=0,
-                translate=TRUE, size=sz)
+                translate=TRUE, size=sz, disableq=TRUE)
     R <- c(R, tab)
   }
   else
@@ -1227,7 +1245,8 @@ html.contents.data.frame <-
       z <- cbind(Variable=lab, Levels=lev)
       out <- html(z, file=FALSE,
                   link=ifelse(lab=='','',paste('levels',v,sep='.')),
-                  linkCol='Variable', linkType='name', border=2,...)
+                  linkCol='Variable', linkType='name', border=2,
+                  ...)
       R <- c(R, as.character(out), hrule)
     }
   }
@@ -1239,7 +1258,8 @@ html.contents.data.frame <-
     lab <- paste('longlab', nam, sep='.')
     z <- cbind(Variable=nam, 'Long Label'=longlab[i])
     out <- html(z, file=FALSE,
-                link=lab, linkCol='Variable', linkType='name', ...)
+                link=lab, linkCol='Variable', linkType='name',
+                ...)
     R <- c(R, as.character(out), hrule)
   }
   rendHTML(R)
@@ -1294,4 +1314,244 @@ print.contents.list <-
   
   print(cont)
   invisible()
+}
+
+
+html_describe_con <- function(x, w=175, qcondense=TRUE, extremes=FALSE, ...) {
+
+  at    <- attributes(x)
+  title <- paste0(at$descript, ' Descriptives')
+  con   <- sapply(x, function(u) '.05' %in% names(u$counts))
+  if(! any(con)) {
+    message('no continuous variables in describe result')
+    return(invisible())
+  }
+  
+  subtitle <- paste(sum(con), 'Continous Variables of',
+                    at$dimensions[2], 'Variables,',
+                    at$dimensions[1], 'Observations')
+  if(! requireNamespace('sparkline', quietly=TRUE))
+    stop("printing describe results with options(prType='html') and ",
+         "which='continuous' requires installing the sparkline package")
+
+  x <- x[con]
+
+  subs <- function(a) {
+    a <- strsplit(a, ';')
+    s <- function(a) {
+      a <- paste0(' ', a, ' ')
+      # sprintf('<sub><sub><sub>%s</sub>%s</sub>%s</sub><large>%s</large><sub>%s<sub>%s<sub>%s</sub></sub></sub>', a[1], a[2], a[3], a[4], a[5], a[6], a[7])
+     sprintf('<font size="1">%s</font><font size="2">%s</font><font size="3">%s</font><font size="4"><strong>%s</strong></font><font size="3">%s</font><font size="2">%s</font><font size="1">%s</font>', a[1], a[2], a[3], a[4], a[5], a[6], a[7])
+      
+      }
+    sapply(a, s)
+  }
+  
+  g <- function(u) {
+    h <- function(z) if(length(z)) z else ''
+    a <- function(m) as.numeric(k[m])
+    r <- if(qcondense) function(m) as.numeric(k[m]) else function(m) k[m]
+    first  <- function(z) if(grepl(' : ', z)) sub(' :.*$', '', z) else z
+    second <- function(z) if(grepl(' : ', z)) sub('.*? : ','', z) else ''
+    ntrans <- function(x)
+      if(all(x == round(x))) format(x) else format(as.character(signif(x, 5)))
+    k <- u$counts
+    ext <- ntrans(u$extremes)
+    b <- data.frame(
+               Variable = first(u$descript),
+               Label    = second(u$descript),
+               Units    = h(u$units),
+               Format   = h(u$format),
+               n        = a('n'),
+               Missing  = a('missing'),
+               Distinct = a('distinct'),
+               Info     = a('Info'),
+               Mean     = k['Mean'],
+               Gmd      = k['Gmd'],
+               ' '      = ''      ,    # place for sparkline
+               '.05'    = r('.05'),
+               '.10'    = r('.10'),
+               '.25'    = r('.25'),
+               '.50'    = r('.50'),
+               '.75'    = r('.75'),
+               '.90'    = r('.90'),
+               '.95'    = r('.95'),
+               check.names=FALSE)
+    if(extremes)
+      b <- cbind(b, 
+                 Lower    = paste(ext[1:5], collapse=' '),
+                 Upper    = paste(ext[1:5], collapse=' ') )
+    b
+  }
+
+  u <- lapply(x, g)
+  a <- do.call('rbind', u)
+  if(all(a$Units  == ''))  a$Units  <- NULL
+  if(all(a$Format == ''))  a$Format <- NULL
+
+  if(qcondense) {
+    quantcols <- grep('^\\.', names(a))
+    Q <- rep('', nrow(a))
+    for(v in quantcols) Q <- paste0(Q, if(v > quantcols[1]) ';',
+                                    ' ', trimws(a[, v]), ' ')
+    a$Quantiles <- Q
+    a <- a[, - quantcols]
+  }
+  else a$Quantiles <- NULL
+
+  ## For each variable $values$value and $values$frequency defines a
+  ## frequency distribution that can be transformed to make a sparkline
+  ## bar chart.  But such sparklines need equally spaced x-values, so
+  ## transform the values and frequencies to accomplish that.
+  ## If all x values are already equally spaced, just use them.
+
+  transf <- function(values) {
+    x <- values$value
+    y <- values$frequency
+    if(length(unique(diff(x))) == 1) return(list(x=x, y=y))
+
+    p <- pretty(range(x), 100)
+    r <- range(p)
+    delta <- p[2] - p[1]
+    xg <- seq(r[1], r[2], by=delta)
+    xi <- 1 + round((x - r[1]) / delta)
+    if(any(xi < 1))
+      warning('possible logic error in transf in html_describe_cont')
+    f  <- tabulate(rep(xi, y))
+    l <- min(length(f), length(xg))
+    list(x=xg[1:l], y=f[1:l])
+    }
+
+  ## Define javascript function to construct the tooltip
+  tt <- function(tip)
+    htmlwidgets::JS(
+                   sprintf(
+                     "function(sparkline, options, field){
+       debugger;
+       return %s[field[0].offset];
+       }",
+       jsonlite::toJSON(tip) ) )
+
+  ## Function to create a sparkline spike histogram
+  spikespark <- function(x, y, ttlow, ttupper, w=w) {
+    tip <- paste0('x=', format(x), '<br>', round(y / sum(y), 4),
+                  ' (', y, ')')
+    tip[y == 0] <- ''
+    n   <- length(x)
+    if(! missing(ttlow))   tip[1] <- paste0(ttlow,   '<br><br>', tip[1])
+    if(! missing(ttupper)) tip[n] <- paste0(ttupper, '<br><br>', tip[n])
+    
+    htmltools::HTML(sparkline::spk_chr(values=y,
+                                       type='bar',
+                            chartRangeMin=0, zeroColor='lightgray',
+                            barWidth=1, barSpacing=1, width=w,
+                            tooltipFormatter=tt(tip)))
+  }
+
+  ## Create sparkline for every variable, adding extremes in tooltips
+  g <- function(x) {
+    ext <- x$extremes
+    lo  <- paste(c('Lowest values:',  format(ext[1:5 ])), collapse='<br>')
+    hi  <- paste(c('Highest values:', format(ext[6:10])), collapse='<br>')
+    f   <- transf(x$values)
+    spikespark(f$x, f$y, lo, hi, w)
+  }
+
+  sparks <- sapply(x, g)
+  quantcols <- grep('^\\.', names(a))
+  
+  b <- gt::gt(a) |>
+    gt::tab_header(title=title, subtitle=subtitle)         |>
+    gt::tab_style(style=gt::cell_text(size='small'),
+                  locations=gt::cells_body(columns=Label)) |>
+    gt::text_transform(locations=cells_body(columns=' '),
+                       fn=function(x) sparks)
+  if(qcondense) b <- b |>
+    gt::text_transform(locations=cells_body(columns=Quantiles),
+                       fn=function(x) subs(x))             |>
+    gt::cols_label(Quantiles = gt::html(paste0('Quantiles<br>',
+                                     subs('.05;.10;.25;.50;.75;.90;.95')))) |>
+    gt::cols_align(align='center', columns=Quantiles)
+
+  else b <- b |>
+    gt::tab_style(style=cell_text(size='small'),
+                  locations=gt::cells_body(columns=quantcols))
+
+  if('Units' %in% names(a))
+    b <- b |> gt::tab_style(style=cell_text(size='small', style='italic'),
+                            locations=cells_body(columns=Units))
+  b
+}
+
+
+html_describe_cat <- function(x, ...) {
+
+  at    <- attributes(x)
+  title <- paste0(at$descript, ' Descriptives')
+  con   <- sapply(x, function(u) '.05' %in% names(u$counts))
+  if(all(con)) {
+    message('no categorical variables in describe result')
+    return(invisible())
+  }
+  
+  subtitle <- paste(sum(! con), 'Categorical Variables of',
+                    at$dimensions[2], 'Variables,',
+                    at$dimensions[1], 'Observations')
+
+  x <- x[! con]
+  
+  g <- function(u) {
+    h <- function(z) if(length(z)) z else ''
+    a <- function(m) if(m %in% names(k)) as.numeric(k[m]) else NA
+    p <- function(m) if(m %in% names(k)) k[m] else NA
+    first  <- function(z) if(grepl(' : ', z)) sub(' :.*$', '', z) else z
+    second <- function(z) if(grepl(' : ', z)) sub('.*? : ','', z) else ''
+    k <- u$counts
+    x <- u$value$value
+    y <- u$value$frequency
+    if(! length(x)) tab <- ''
+    else { ## Create little markdown table
+      tab <- c('| Category | Frequency | Proportion |',
+               '|:---------|----------:|-----------:|',
+               paste0('| ', x, ' | ', y, ' | ',
+                      format(round(y / sum(y), 3)), '|'))
+      tab <- paste(tab, collapse='\n')
+    }
+
+    b <- data.frame(
+      Variable = first(u$descript),
+      Label    = second(u$descript),
+      Units    = h(u$units),
+      Format   = h(u$format),
+      n        = a('n'),
+      Missing  = a('missing'),
+      Distinct = a('distinct'),
+      Info     = a('Info'),
+      Sum      = a('Sum'),
+      Mean     = p('Mean'),
+      Gmd      = p('Gmd'),
+      ' '      = tab,
+      check.names=FALSE)
+    b
+  }
+
+  u <- lapply(x, g)
+  a <- do.call('rbind', u)
+
+  for(i in c('Units', 'Format', 'Sum', 'Mean', 'Info', 'Gmd'))
+    if(all(a[[i]] == '')) a[[i]] <- NULL
+
+  b <- gt::gt(a) |>
+    gt::tab_header(title=title, subtitle=subtitle)         |>
+    gt::tab_style(style=gt::cell_text(size='small'),
+                  locations=gt::cells_body(columns=Label)) |>
+    gt::tab_style(style=gt::cell_text(size='x-small'),
+                  locations=gt::cells_body(columns=' '))   |>
+    gt::fmt_markdown(columns=' ')                          |>
+    gt::sub_missing(missing_text='')
+
+  if('Units' %in% names(a))
+    b <- b |> gt::tab_style(style=cell_text(size='small', style='italic'),
+                            locations=cells_body(columns=Units))
+  b
 }

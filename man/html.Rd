@@ -32,7 +32,7 @@ html(object, \dots)
      bold.header=TRUE, col.header='Black',
      border=2, width=NULL, size=100, translate=FALSE,
      append=FALSE, link=NULL, linkCol=1,
-     linkType=c('href','name'), \dots) 
+     linkType=c('href','name'), disableq=FALSE, \dots) 
 \method{html}{default}(object,
      file=paste(first.word(deparse(substitute(object))),'html',sep='.'),
      append=FALSE, link=NULL, linkCol=1, linkType=c('href','name'), \dots)
@@ -103,6 +103,8 @@ writing to the console.
 \item{linkCol}{column number of \code{object} to which hyperlinks are
   attached.  Defaults to first column.}
 \item{linkType}{defaults to \code{"href"}}
+\item{disableq}{set to \code{TRUE} to add code to the html table tag
+	that makes Quarto not use its usual table style}
 \item{\dots}{ignored except for \code{htmlVerbatim} - is a list of
 	objects to \code{print()}}
 \item{scroll}{set to \code{TRUE} to put the html in a scrollable

@@ -1418,6 +1418,9 @@ html_describe_con <- function(x, w=175, qcondense=TRUE, extremes=FALSE, ...) {
   ## spikecomp with y= specified does this for us.
 
   ## Define javascript function to construct the tooltip
+  if(! requireNamespace('htmlwidgets', quietly=TRUE))
+    stop('htmlwidgets package needed for sparklines with describe()')
+  
   tt <- function(tip)
     htmlwidgets::JS(
                    sprintf(
@@ -1561,3 +1564,5 @@ html_describe_cat <- function(x, ...) {
                             locations=gt::cells_body(columns=Units))
   b
 }
+
+utils::globalVariables(c('Units', 'Quantiles'))

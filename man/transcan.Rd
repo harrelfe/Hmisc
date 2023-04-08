@@ -675,7 +675,7 @@ invertTabulated(x, y, freq=rep(1,length(x)),
  \item{regcoef.only}{
    set to \code{TRUE} to make \code{vcov.default} delete positions in
    the covariance matrix for any non-regression coefficients (e.g., log
-   scale parameter from \code{\link[rms]{psm}} or \code{\link{survreg}})
+   scale parameter from \code{\link[rms]{psm}} or \code{\link[survival]{survreg}})
  }
  \item{intercepts}{this is primarily for \code{\link[rms]{orm}}
 	 objects.  Set to \code{"none"} to discard all intercepts from the

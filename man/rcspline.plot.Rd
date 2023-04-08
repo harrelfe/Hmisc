@@ -10,7 +10,7 @@
   interactions as do \code{\link[rms]{lrm}} and \code{\link[rms]{cph}}, but it can
   provide detailed output for checking spline fits. This function uses
   the \code{\link{rcspline.eval}}, \code{\link[rms]{lrm.fit}}, and Therneau's
-  \code{\link{coxph.fit}} functions and plots the estimated spline
+  \code{\link[survival:survival-internal]{coxph.fit}} functions and plots the estimated spline
   regression and confidence limits, placing summary statistics on the
   graph. If there are no adjustment variables, \code{rcspline.plot} can
   also plot two alternative estimates of the regression function when

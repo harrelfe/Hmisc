@@ -9,7 +9,7 @@
   rather than \code{missing()}, so it's easier to deal with
   non-applicable parameters.  But when \pkg{grid} is in effect, the
   preferred function to use is \code{rlegendg}, which calls the
-  \pkg{lattice} \code{\link{draw.key}} function.
+  \pkg{lattice} \code{\link[lattice]{draw.key}} function.
 }
 \usage{
 rlegend(x, y, legend, fill, col = "black", lty = NULL, lwd = NULL,
@@ -35,7 +35,7 @@ rlegendg(x, y, legend, col=pr$col[1], lty=NULL,
   \item{\dots}{see \code{\link{legend}}}
   \item{other}{
     a list containing other arguments to pass to
-    \code{draw.key}.  See the help file for \code{\link{xyplot}}.
+    \code{draw.key}.  See the help file for \code{\link[lattice]{xyplot}}.
   }
 }
 \value{
@@ -44,6 +44,6 @@ rlegendg(x, y, legend, col=pr$col[1], lty=NULL,
 }
 \author{Frank Harrell and R-Core}
 \seealso{
-  \code{\link{legend}}, \code{\link[lattice]{draw.key}}, \code{\link{xyplot}}
+  \code{\link{legend}}, \code{\link[lattice]{draw.key}}, \code{\link[lattice]{xyplot}}
 }
 \keyword{aplot}

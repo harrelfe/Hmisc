@@ -20,6 +20,7 @@ Changes in version 5.1-0 (2023-04-07)
 	 * html_describe_cat, html_describe_con: new internal functions to print gt tables when which= is given to print.describe
    * describe: for date/time variables use lowest observed value for leftmost point of first bin, instead of pretty()
    * describe: compute min, max, mean no. of characters (after trimming white space) for character variables that are not tabulated because of too many levels; used by html_describe_cat; also added mode and its count for this situation
+   * htmlwidgets: added to SUGGESTS
 
 Changes in version 5.0-1 (2023-03-06)
    * rendHTML: when knitr is not running and object is not html, assumes it is RMarkdown and calls rmarkdown::render to render it to html, then displays in viewer

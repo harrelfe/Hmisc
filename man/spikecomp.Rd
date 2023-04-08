@@ -4,23 +4,25 @@
 \alias{spikecomp}
 \title{spikecomp}
 \usage{
-spikecomp(x, count = c("table", "tabulate"), normalize = TRUE)
+spikecomp(x, count = c("table", "tabulate"), normalize = TRUE, y)
 }
 \arguments{
 \item{x}{a numeric variable}
 
-\item{count}{default is \code{"table"} to use \code{table} resulting in no zero cells; use \code{"tabulate"} to compute counts over a rigid grid, suitable for bar charts with sparklines.}
+\item{count}{default is \code{"table"} to use \code{table} resulting in no zero cells; use \code{"tabulate"} to compute counts over a rigid grid, suitable for bar charts with sparklines}
 
 \item{normalize}{set to \code{FALSE} to not divide frequencies by maximum frequency}
+
+\item{y}{a vector of frequencies corresponding to \code{x} if you want the (\code{x}, \code{y}) pairs to be taken as a possibly irregular-spaced frequency tabulation for which you want to convert to a regularly-spaced tabulation like \code{count='tabulate'} produces.  If there is a constant gap between \code{x} values, the original pairs are return, with possible removal of \code{NA}s.}
 }
 \value{
-a list with element \code{segments} which has elements \code{x}, \code{y1}, \code{y2} if \code{count='table'}, otherwise a list with elements \code{x} and \code{y}
+a list with element \code{segments} which has elements \code{x}, \code{y1}, \code{y2} if \code{count='table'} and \code{y} is not specified, otherwise a list with elements \code{x} and \code{y}
 }
 \description{
 Compute Elements of a Spike Histogram
 }
 \details{
-Derives the line segment coordinates need to draw a spike histogram.  This is useful for adding elements to \code{ggplot2} plots.
+Derives the line segment coordinates need to draw a spike histogram.  This is useful for adding elements to \code{ggplot2} plots.  Date/time variables are handled by doing calculations on the underlying numeric scale then converting back to the original class.  For them the left endpoint of the first bin is taken as the minimal data value instead of rounded using \code{pretty()}.
 }
 \examples{
 spikecomp(1:1000)

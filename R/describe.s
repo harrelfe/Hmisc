@@ -85,8 +85,8 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
 
   z <- list(descript=descript, units=un, format=fmt)
 
-  counts <- c(n,missing)
-  lab <- c("n","missing")
+  counts <- c( n,   missing)
+  lab    <- c("n", "missing")
 
   if(length(special.codes)) {
     tabsc <- table(special.codes)
@@ -112,7 +112,7 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
     
     if((nn <- length(pd$both)) > 0) {
       counts <- c(counts, nn)
-      lab <- c(lab,"missing month,day")
+      lab <- c(lab, "missing month,day")
     }
   }
 
@@ -154,9 +154,6 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
     if(! weighted) {
       gmd <- format(GiniMd(xnum), ...)
       counts <- c(counts, gmd)
-#      counts <- c(counts, if(isdot) formatDateTime(gmd, atx, ! timeUsed)
-#                          else
-#                            format(gmd, ...))
       lab <- c(lab, "Gmd")
     }
   } else if(n.unique == 1) {
@@ -210,15 +207,11 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
               min(diff(sort(unique(xnum)))) < diff(range(xnum)) / 500)) {
             pret <- pretty(xnum, if(n.unique >= 100) 100 else 500)
             dist <- pret[2] - pret[1]
-            r    <- range(pret)
+            r    <- if(isdot) range(xnum) else range(pret)
             xnum <- r[1] + dist * round((xnum - r[1]) / dist)
             z$roundedTo <- dist
           }
         }
-#        values <- wtd.table(if(isnum) xnum else if(isdat) format(x) else x,
-#                            weights, normwt=FALSE, na.rm=FALSE)
-#        values <- wtd.table(if(isdot) format(x) else if(isnum) xnum else x,
-#                            weights, normwt=FALSE, na.rm=FALSE)
         values <- wtd.table(if(isnum) xnum else x,
                             weights, normwt=FALSE, na.rm=FALSE)
         vx <- values$x
@@ -228,6 +221,18 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
         values <- list(value=vx, frequency=unname(values$sum.of.weights))
       }
     z$values <- values
+    if(! isnum && ! length(values)) {
+      xtr <- trimws(x)
+      nc  <- nchar(xtr)
+      z$nchar <- c(min=min(nc), max=max(nc), mean=mean(nc))
+      xtab    <- table(xtr)
+      if(max(xtab) > 1) {
+        mxf <- max(xtab)
+        if(sum(xtab == mxf) == 1)
+          wm     <- which.max(xtab)
+          z$mode <- c(names(xtab)[wm], paste0('n=', xtab[wm]))
+        }
+      }
     
     if(n.unique >= 5 && ! mch) {
       loandhi <- x.unique[c(1 : 5, (n.unique - 4) : n.unique)]
@@ -357,6 +362,9 @@ print.describe <-
     if(! requireNamespace('gt', quietly=TRUE))
       stop('gt package must be installed to print describe results with which=')
 
+    if(! inherits(x[[1]], 'describe'))
+      stop('print(which=...) may only be used on describe results for a whole data frame')
+    
     return(
       switch(which,
              both        = list(Continuous =html_describe_con(x, ...),
@@ -1341,21 +1349,24 @@ html_describe_con <- function(x, w=175, qcondense=TRUE, extremes=FALSE, ...) {
     s <- function(a) {
       a <- paste0(' ', a, ' ')
       # sprintf('<sub><sub><sub>%s</sub>%s</sub>%s</sub><large>%s</large><sub>%s<sub>%s<sub>%s</sub></sub></sub>', a[1], a[2], a[3], a[4], a[5], a[6], a[7])
-     sprintf('<font size="1">%s</font><font size="2">%s</font><font size="3">%s</font><font size="4"><strong>%s</strong></font><font size="3">%s</font><font size="2">%s</font><font size="1">%s</font>', a[1], a[2], a[3], a[4], a[5], a[6], a[7])
-      
+      sprintf('<font size="1">%s</font><font size="2">%s</font><font size="3">%s</font><font size="4"><strong>%s</strong></font><font size="3">%s</font><font size="2">%s</font><font size="1">%s</font>',
+              a[1], a[2], a[3], a[4], a[5], a[6], a[7])
       }
     sapply(a, s)
   }
   
   g <- function(u) {
+    k <- u$counts
     h <- function(z) if(length(z)) z else ''
     a <- function(m) as.numeric(k[m])
-    r <- if(qcondense) function(m) as.numeric(k[m]) else function(m) k[m]
+    r <- if(qcondense && is.numeric(k))
+              function(m) as.numeric(k[m])
+         else function(m) k[m]
     first  <- function(z) if(grepl(' : ', z)) sub(' :.*$', '', z) else z
     second <- function(z) if(grepl(' : ', z)) sub('.*? : ','', z) else ''
     ntrans <- function(x)
-      if(all(x == round(x))) format(x) else format(as.character(signif(x, 5)))
-    k <- u$counts
+      if(! is.numeric(x) || all(x == round(x))) format(x)
+      else format(as.character(signif(x, 5)))
     ext <- ntrans(u$extremes)
     b <- data.frame(
                Variable = first(u$descript),
@@ -1404,23 +1415,7 @@ html_describe_con <- function(x, w=175, qcondense=TRUE, extremes=FALSE, ...) {
   ## bar chart.  But such sparklines need equally spaced x-values, so
   ## transform the values and frequencies to accomplish that.
   ## If all x values are already equally spaced, just use them.
-
-  transf <- function(values) {
-    x <- values$value
-    y <- values$frequency
-    if(length(unique(diff(x))) == 1) return(list(x=x, y=y))
-
-    p <- pretty(range(x), 100)
-    r <- range(p)
-    delta <- p[2] - p[1]
-    xg <- seq(r[1], r[2], by=delta)
-    xi <- 1 + round((x - r[1]) / delta)
-    if(any(xi < 1))
-      warning('possible logic error in transf in html_describe_cont')
-    f  <- tabulate(rep(xi, y))
-    l <- min(length(f), length(xg))
-    list(x=xg[1:l], y=f[1:l])
-    }
+  ## spikecomp with y= specified does this for us.
 
   ## Define javascript function to construct the tooltip
   tt <- function(tip)
@@ -1453,33 +1448,34 @@ html_describe_con <- function(x, w=175, qcondense=TRUE, extremes=FALSE, ...) {
     ext <- x$extremes
     lo  <- paste(c('Lowest values:',  format(ext[1:5 ])), collapse='<br>')
     hi  <- paste(c('Highest values:', format(ext[6:10])), collapse='<br>')
-    f   <- transf(x$values)
+    f   <- spikecomp(x=x$values$value, y=x$values$frequency)
     spikespark(f$x, f$y, lo, hi, w)
   }
 
   sparks <- sapply(x, g)
   quantcols <- grep('^\\.', names(a))
   
-  b <- gt::gt(a) |>
+  b <- gt::gt(a)                                           |>
     gt::tab_header(title=title, subtitle=subtitle)         |>
     gt::tab_style(style=gt::cell_text(size='small'),
                   locations=gt::cells_body(columns=Label)) |>
-    gt::text_transform(locations=cells_body(columns=' '),
+    gt::text_transform(locations=gt::cells_body(columns=' '),
                        fn=function(x) sparks)
-  if(qcondense) b <- b |>
-    gt::text_transform(locations=cells_body(columns=Quantiles),
-                       fn=function(x) subs(x))             |>
+
+  if(qcondense) b <- b                                                      |>
+    gt::text_transform(locations=gt::cells_body(columns=Quantiles),
+                       fn=function(x) subs(x))                              |>
     gt::cols_label(Quantiles = gt::html(paste0('Quantiles<br>',
                                      subs('.05;.10;.25;.50;.75;.90;.95')))) |>
     gt::cols_align(align='center', columns=Quantiles)
 
   else b <- b |>
-    gt::tab_style(style=cell_text(size='small'),
+    gt::tab_style(style=gt::cell_text(size='small'),
                   locations=gt::cells_body(columns=quantcols))
 
   if('Units' %in% names(a))
-    b <- b |> gt::tab_style(style=cell_text(size='small', style='italic'),
-                            locations=cells_body(columns=Units))
+    b <- b |> gt::tab_style(style=gt::cell_text(size='small', style='italic'),
+                            locations=gt::cells_body(columns=Units))
   b
 }
 
@@ -1509,7 +1505,17 @@ html_describe_cat <- function(x, ...) {
     k <- u$counts
     x <- u$value$value
     y <- u$value$frequency
-    if(! length(x)) tab <- ''
+    if(! length(x)) {
+      ext <- u$extremes[c(1, 10)]
+      nc  <- u$nchar
+      if(length(nc)) {
+        nc  <- paste0('Min/Max/Mean Width: ', nc[1], ' / ', nc[2],
+                      ' / ', round(nc[3], 1))
+        tab <- paste0(ext[1], ' -  \n', ext[2], '  \n', nc)
+        if(length(u$mode))
+          tab <- paste0(tab, '  \nMode:', u$mode[1], ' (', u$mode[2], ')')
+        } else  tab <- paste(ext, collapse=' -  \n')
+      }
     else { ## Create little markdown table
       tab <- c('| Category | Frequency | Proportion |',
                '|:---------|----------:|-----------:|',
@@ -1551,7 +1557,7 @@ html_describe_cat <- function(x, ...) {
     gt::sub_missing(missing_text='')
 
   if('Units' %in% names(a))
-    b <- b |> gt::tab_style(style=cell_text(size='small', style='italic'),
-                            locations=cells_body(columns=Units))
+    b <- b |> gt::tab_style(style=gt::cell_text(size='small', style='italic'),
+                            locations=gt::cells_body(columns=Units))
   b
 }

@@ -43,18 +43,46 @@ ebpcomp <- function(x, qref=c(.5, .25, .75),
 
 ##' Compute Elements of a Spike Histogram
 ##'
-##' Derives the line segment coordinates need to draw a spike histogram.  This is useful for adding elements to `ggplot2` plots.
+##' Derives the line segment coordinates need to draw a spike histogram.  This is useful for adding elements to `ggplot2` plots.  Date/time variables are handled by doing calculations on the underlying numeric scale then converting back to the original class.  For them the left endpoint of the first bin is taken as the minimal data value instead of rounded using `pretty()`.
 ##' @title spikecomp
 ##' @param x a numeric variable
-##' @param count default is `"table"` to use `table` resulting in no zero cells; use `"tabulate"` to compute counts over a rigid grid, suitable for bar charts with sparklines.  
+##' @param count default is `"table"` to use `table` resulting in no zero cells; use `"tabulate"` to compute counts over a rigid grid, suitable for bar charts with sparklines
 ##' @param normalize set to `FALSE` to not divide frequencies by maximum frequency
-##' @return a list with element `segments` which has elements `x`, `y1`, `y2` if `count='table'`, otherwise a list with elements `x` and `y`
+##' @param y a vector of frequencies corresponding to `x` if you want the (`x`, `y`) pairs to be taken as a possibly irregular-spaced frequency tabulation for which you want to convert to a regularly-spaced tabulation like `count='tabulate'` produces.  If there is a constant gap between `x` values, the original pairs are return, with possible removal of `NA`s.
+##' @return a list with element `segments` which has elements `x`, `y1`, `y2` if `count='table'` and `y` is not specified, otherwise a list with elements `x` and `y`
 ##' @author Frank Harrell
 ##' @md
 ##' @examples
 ##' spikecomp(1:1000)
-spikecomp <- function(x, count=c('table', 'tabulate'), normalize=TRUE) {
+spikecomp <- function(x, count=c('table', 'tabulate'),
+                      normalize=TRUE, y) {
   count <- match.arg(count)
+
+  cx <- intersect(class(x),
+                  c("Date", "POSIXt", "POSIXct", "dates", "times", "chron"))
+  reclass <- if(length(cx)) function(x) structure(x, class=cx)
+  else function(x) x
+  
+  if(length(cx)) x <- unclass(x)
+
+  if(! missing(y)) {
+    i <- ! is.na(x + y)
+    x <- x[i]; y <- y[i]
+    if(length(unique(diff(sort(x)))) == 1)
+      return(list(x=reclass(x), y=y))
+    if(! all(y == round(y))) stop('y must be integer for spikecomp')
+    p <- pretty(range(x), 100)
+    r <- if(length(cx)) range(x) else range(p)
+    delta <- p[2] - p[1]
+    xg <- seq(r[1], r[2], by=delta)
+    xi <- 1 + round((x - r[1]) / delta)
+    if(any(xi < 1))
+      warning('possible logic error in spikecomp when y was specified')
+    f <- tabulate(rep(xi, y))
+    l <- min(length(f), length(xg))
+    return(list(x=reclass(xg[1:l]), y=f[1:l]))
+  }
+  
   x        <- x[! is.na(x)]
   ux       <- sort(unique(x))
   n.unique <- length(ux)
@@ -64,7 +92,7 @@ spikecomp <- function(x, count=c('table', 'tabulate'), normalize=TRUE) {
       min(diff(ux)) < diff(range(x)) / 500))) {
     pret <- pretty(ux, if(n.unique >= 100 || count == 'tabulate') 100 else 500)
     incr <- pret[2] - pret[1]
-    r    <- range(pret)
+    r    <- if(length(cx)) range(x) else range(pret)
     xi   <- 1 + round((x - r[1]) / incr)
     x    <- r[1] + (xi - 1.) * incr
   }
@@ -72,12 +100,12 @@ spikecomp <- function(x, count=c('table', 'tabulate'), normalize=TRUE) {
     f <- table(x)
     x <- as.numeric(names(f))
     y <- unname(f / (if(normalize) max(f) else 1.))
-    return(list(segments=list(x=x, y1=0, y2=y)))
+    return(list(segments=list(x=reclass(x), y1=0, y2=y)))
   }
   if(any(xi < 1))                  stop('program logic error 1')
   f <- tabulate(xi)
   if(length(f) > length(pret))     stop('program logic error 2')
   if(length(f) < length(pret) - 1) stop('program logic error 3')
   pret <- pret[1 : length(f)]
-  list(x=pret, y=f / (if(normalize) max(f) else 1.))
+  list(x=reclass(pret), y=f / (if(normalize) max(f) else 1.))
 }

@@ -1457,13 +1457,19 @@ html_describe_con <- function(x, w=175, qcondense=TRUE, extremes=FALSE, ...) {
 
   sparks <- sapply(x, g)
   quantcols <- grep('^\\.', names(a))
+
+  ## Need to leave extra space around sparkline or tooltip will not
+  ## show on the right end
+  ## col_width(' ' ~ gt::px(w + 15)) will not find w even with .list
+  sparkw <- as.formula(paste0("' ' ~ gt::px(", w + 15, ")"))
   
-  b <- gt::gt(a)                                           |>
-    gt::tab_header(title=title, subtitle=subtitle)         |>
+  b <- gt::gt(a)                                             |>
+    gt::tab_header(title=title, subtitle=subtitle)           |>
     gt::tab_style(style=gt::cell_text(size='small'),
-                  locations=gt::cells_body(columns=Label)) |>
+                  locations=gt::cells_body(columns=Label))   |>
     gt::text_transform(locations=gt::cells_body(columns=' '),
-                       fn=function(x) sparks)
+                       fn=function(x) sparks)                |>
+    gt::cols_width(sparkw)
 
   if(qcondense) b <- b                                                      |>
     gt::text_transform(locations=gt::cells_body(columns=Quantiles),
@@ -1477,7 +1483,9 @@ html_describe_con <- function(x, w=175, qcondense=TRUE, extremes=FALSE, ...) {
                   locations=gt::cells_body(columns=quantcols))
 
   if('Units' %in% names(a))
-    b <- b |> gt::tab_style(style=gt::cell_text(size='small', style='italic'),
+    b <- b |> gt::text_transform(locations=gt::cells_body(columns=Units),
+                                 fn=htmlTranslate) |>
+      gt::tab_style(style=gt::cell_text(size='small', style='italic'),
                             locations=gt::cells_body(columns=Units))
   b
 }
@@ -1548,7 +1556,7 @@ html_describe_cat <- function(x, ...) {
   a <- do.call('rbind', u)
 
   for(i in c('Units', 'Format', 'Sum', 'Mean', 'Info', 'Gmd'))
-    if(all(a[[i]] == '')) a[[i]] <- NULL
+    if(all(is.na(a[[i]])) || all(a[[i]] == '')) a[[i]] <- NULL
 
   b <- gt::gt(a) |>
     gt::tab_header(title=title, subtitle=subtitle)         |>

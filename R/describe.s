@@ -228,9 +228,10 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
       xtab    <- table(xtr)
       if(max(xtab) > 1) {
         mxf <- max(xtab)
-        if(sum(xtab == mxf) == 1)
+        if(sum(xtab == mxf) == 1) {
           wm     <- which.max(xtab)
           z$mode <- c(names(xtab)[wm], paste0('n=', xtab[wm]))
+          }
         }
       }
     
@@ -352,7 +353,8 @@ na.retain <- function(d) d
 
 
 print.describe <-
-  function(x, which = c('both', 'categorical', 'continuous'), ...) {
+  function(x, which = c('both', 'categorical', 'continuous'),
+           ...) {
 
     mwhich <- missing(which)
     which  <- match.arg(which)
@@ -362,8 +364,14 @@ print.describe <-
     if(! requireNamespace('gt', quietly=TRUE))
       stop('gt package must be installed to print describe results with which=')
 
-    if(! inherits(x[[1]], 'describe'))
-      stop('print(which=...) may only be used on describe results for a whole data frame')
+    if(! inherits(x[[1]], 'describe')) {
+      ## Enclose describe() for an individual variable inside a list
+      ## so that html_describe_* will work
+      nx <- sub(' :.*$', '', x$descript)
+      x <- structure(list(x),
+                     names      = nx,
+                     descript   = '')
+      }
     
     return(
       switch(which,
@@ -467,7 +475,7 @@ formatdescribeSingle <-
                             e4=val[4], e5=val[5])
           hi  <- data.frame(name=bhi, e1=val[6], e2=val[7], e3=val[8],
                             e4=val[9], e5=val[10])
-          tab <- html(rbind(low, hi, make.row.names=FALSE),
+          tab <- Hmisc::html(rbind(low, hi, make.row.names=FALSE),
                       align='r',
                       header=NULL, border=0, size=size, file=FALSE,
                       disableq=TRUE)
@@ -918,7 +926,7 @@ html.describe.single <- function(object, size=85, tabular=TRUE,
   if(tabular) {
     d <- as.data.frame(as.list(object$counts))
     colnames(d) <- names(object$counts)
-    tab <- html(d, file=FALSE, align='c',
+    tab <- Hmisc::html(d, file=FALSE, align='c',
                 align.header='c', bold.header=FALSE,
                 col.header='MidnightBlue', border=0,
                 translate=TRUE, size=sz, disableq=TRUE)
@@ -1189,7 +1197,7 @@ html.contents.data.frame <-
     link <- link[, colnames(link) != 'NAs', drop=FALSE]
     adj <- adj[names(adj) != 'NAs']
   }
-  out <- html(cont, file=FALSE, rownames=TRUE,
+  out <- Hmisc::html(cont, file=FALSE, rownames=TRUE,
               link=link, border=2,
               col.just=adj, ...)
   R <- c(R, as.character(out), hrule)
@@ -1251,7 +1259,7 @@ html.contents.data.frame <-
         lev <- c(lev, l)
       }
       z <- cbind(Variable=lab, Levels=lev)
-      out <- html(z, file=FALSE,
+      out <- Hmisc::html(z, file=FALSE,
                   link=ifelse(lab=='','',paste('levels',v,sep='.')),
                   linkCol='Variable', linkType='name', border=2,
                   ...)
@@ -1265,7 +1273,7 @@ html.contents.data.frame <-
     names(longlab) <- NULL
     lab <- paste('longlab', nam, sep='.')
     z <- cbind(Variable=nam, 'Long Label'=longlab[i])
-    out <- html(z, file=FALSE,
+    out <- Hmisc::html(z, file=FALSE,
                 link=lab, linkCol='Variable', linkType='name',
                 ...)
     R <- c(R, as.character(out), hrule)
@@ -1327,20 +1335,20 @@ print.contents.list <-
 
 html_describe_con <- function(x, w=175, qcondense=TRUE, extremes=FALSE, ...) {
 
-  at    <- attributes(x)
-  title <- paste0(at$descript, ' Descriptives')
   con   <- sapply(x, function(u) '.05' %in% names(u$counts))
   if(! any(con)) {
     message('no continuous variables in describe result')
     return(invisible())
   }
+  at    <- attributes(x)
+  if(at$descript == '') title <- subtitle <- ''
+  else {
+    title <- paste0('**`', at$descript, '` Descriptives**')
   
-  subtitle <- paste(sum(con), 'Continous Variables of',
-                    at$dimensions[2], 'Variables,',
-                    at$dimensions[1], 'Observations')
-  if(! requireNamespace('sparkline', quietly=TRUE))
-    stop("printing describe results with options(prType='html') and ",
-         "which='continuous' requires installing the sparkline package")
+    subtitle <- paste(sum(con), 'Continous Variables of',
+                      at$dimensions[2], 'Variables,',
+                      at$dimensions[1], 'Observations')
+    }
 
   x <- x[con]
 
@@ -1417,34 +1425,7 @@ html_describe_con <- function(x, w=175, qcondense=TRUE, extremes=FALSE, ...) {
   ## If all x values are already equally spaced, just use them.
   ## spikecomp with y= specified does this for us.
 
-  ## Define javascript function to construct the tooltip
-  if(! requireNamespace('htmlwidgets', quietly=TRUE))
-    stop('htmlwidgets package needed for sparklines with describe()')
-  
-  tt <- function(tip)
-    htmlwidgets::JS(
-                   sprintf(
-                     "function(sparkline, options, field){
-       debugger;
-       return %s[field[0].offset];
-       }",
-       jsonlite::toJSON(tip) ) )
 
-  ## Function to create a sparkline spike histogram
-  spikespark <- function(x, y, ttlow, ttupper, w=w) {
-    tip <- paste0('x=', format(x), '<br>', round(y / sum(y), 4),
-                  ' (', y, ')')
-    tip[y == 0] <- ''
-    n   <- length(x)
-    if(! missing(ttlow))   tip[1] <- paste0(ttlow,   '<br><br>', tip[1])
-    if(! missing(ttupper)) tip[n] <- paste0(ttupper, '<br><br>', tip[n])
-    
-    htmltools::HTML(sparkline::spk_chr(values=y,
-                                       type='bar',
-                            chartRangeMin=0, zeroColor='lightgray',
-                            barWidth=1, barSpacing=1, width=w,
-                            tooltipFormatter=tt(tip)))
-  }
 
   ## Create sparkline for every variable, adding extremes in tooltips
   g <- function(x) {
@@ -1452,7 +1433,7 @@ html_describe_con <- function(x, w=175, qcondense=TRUE, extremes=FALSE, ...) {
     lo  <- paste(c('Lowest values:',  format(ext[1:5 ])), collapse='<br>')
     hi  <- paste(c('Highest values:', format(ext[6:10])), collapse='<br>')
     f   <- spikecomp(x=x$values$value, y=x$values$frequency)
-    spikespark(f$x, f$y, lo, hi, w)
+    spikespark(f$x, f$y, lo, hi, w, xpre='x=')
   }
 
   sparks <- sapply(x, g)
@@ -1464,7 +1445,7 @@ html_describe_con <- function(x, w=175, qcondense=TRUE, extremes=FALSE, ...) {
   sparkw <- as.formula(paste0("' ' ~ gt::px(", w + 15, ")"))
   
   b <- gt::gt(a)                                             |>
-    gt::tab_header(title=title, subtitle=subtitle)           |>
+    gt::tab_header(title=gt::md(title), subtitle=subtitle)   |>
     gt::tab_style(style=gt::cell_text(size='small'),
                   locations=gt::cells_body(columns=Label))   |>
     gt::text_transform(locations=gt::cells_body(columns=' '),
@@ -1491,19 +1472,24 @@ html_describe_con <- function(x, w=175, qcondense=TRUE, extremes=FALSE, ...) {
 }
 
 
-html_describe_cat <- function(x, ...) {
+html_describe_cat <- function(x, w=175, freq=c('chart', 'table'),
+                              sort=TRUE, ...) {
+  freq <- match.arg(freq)
 
-  at    <- attributes(x)
-  title <- paste0(at$descript, ' Descriptives')
   con   <- sapply(x, function(u) '.05' %in% names(u$counts))
   if(all(con)) {
     message('no categorical variables in describe result')
     return(invisible())
   }
+  at    <- attributes(x)
+  if(at$descript == '') title <- subtitle <- ''
+  else {
+    title <- paste0('**`', at$descript, '` Descriptives**')
   
-  subtitle <- paste(sum(! con), 'Categorical Variables of',
-                    at$dimensions[2], 'Variables,',
-                    at$dimensions[1], 'Observations')
+    subtitle <- paste(sum(! con), 'Categorical Variables of',
+                      at$dimensions[2], 'Variables,',
+                      at$dimensions[1], 'Observations')
+    }
 
   x <- x[! con]
   
@@ -1516,6 +1502,7 @@ html_describe_cat <- function(x, ...) {
     k <- u$counts
     x <- u$value$value
     y <- u$value$frequency
+    type <- 'md'
     if(! length(x)) {
       ext <- u$extremes[c(1, 10)]
       nc  <- u$nchar
@@ -1527,14 +1514,21 @@ html_describe_cat <- function(x, ...) {
           tab <- paste0(tab, '  \nMode:', u$mode[1], ' (', u$mode[2], ')')
         } else  tab <- paste(ext, collapse=' -  \n')
       }
-    else { ## Create little markdown table
-      tab <- c('| Category | Frequency | Proportion |',
-               '|:---------|----------:|-----------:|',
-               paste0('| ', x, ' | ', y, ' | ',
-                      format(round(y / sum(y), 3)), '|'))
-      tab <- paste(tab, collapse='\n')
-    }
-
+    else { ## Create little markdown table or sparkline
+        if(freq == 'chart') {
+          type <- 'spark'
+          if(sort && ! is.numeric(x)) { i <- order(-y); x <- x[i]; y <- y[i] }
+          wi <- min(w, 5 + length(x) * (3 + 2))
+          tab <- spikespark(x, y, w=wi, barw=3, barspace=2)
+          } else {
+            tab <- c('| Category | Frequency | Proportion |',
+                     '|:---------|----------:|-----------:|',
+                     paste0('| ', x, ' | ', y, ' | ',
+                            format(round(y / sum(y), 3)), '|'))
+            tab <- paste(tab, collapse='\n')
+          }
+      }
+    
     b <- data.frame(
       Variable = first(u$descript),
       Label    = second(u$descript),
@@ -1547,30 +1541,79 @@ html_describe_cat <- function(x, ...) {
       Sum      = a('Sum'),
       Mean     = p('Mean'),
       Gmd      = p('Gmd'),
-      ' '      = tab,
+      tab      = tab,
+      type     = type,
       check.names=FALSE)
     b
   }
 
   u <- lapply(x, g)
   a <- do.call('rbind', u)
+  ## For sparklines, change tab to a blank and move the html code to
+  ## vector spik
+  spik                     <- a$tab[a$type == 'spark']
+  a$tab[a$type == 'spark'] <- ''
 
   for(i in c('Units', 'Format', 'Sum', 'Mean', 'Info', 'Gmd'))
     if(all(is.na(a[[i]])) || all(a[[i]] == '')) a[[i]] <- NULL
 
   b <- gt::gt(a) |>
-    gt::tab_header(title=title, subtitle=subtitle)         |>
+    gt::tab_header(title=gt::md(title), subtitle=subtitle) |>
     gt::tab_style(style=gt::cell_text(size='small'),
                   locations=gt::cells_body(columns=Label)) |>
     gt::tab_style(style=gt::cell_text(size='x-small'),
-                  locations=gt::cells_body(columns=' '))   |>
-    gt::fmt_markdown(columns=' ')                          |>
+                  locations=gt::cells_body(columns=tab))   |>
+    gt::fmt_markdown(columns=tab, rows=type=='md')         |>
+    gt::text_transform(
+          fn=function(x) spik,
+          locations=gt::cells_body(columns=tab,
+                                   rows=type=='spark'))    |>
+    gt::cols_hide(columns=type)                            |>
+    gt::cols_align(align='left', columns=tab)              |>
+    gt::cols_label(tab = ' ')                              |>
     gt::sub_missing(missing_text='')
 
   if('Units' %in% names(a))
     b <- b |> gt::tab_style(style=gt::cell_text(size='small', style='italic'),
                             locations=gt::cells_body(columns=Units))
   b
+}
+
+## Function to create a sparkline spike histogram
+spikespark <- function(x, y, ttlow, ttupper,
+                       w=175, barw=1, barspace=1, xpre='') {
+
+  if(! requireNamespace('sparkline', quietly=TRUE))
+    stop('sparkline packaged needed for sparklines with ',
+         'print(describe(), which=)')
+  if(! requireNamespace('htmlwidgets', quietly=TRUE))
+    stop('htmlwidgets package needed for sparklines with ',
+         'print(describe(), which=)')
+  
+  ## Define javascript function to construct the tooltip
+  ## tip is assumed to be the complete tooltip including x value if wanted
+  tt <- function(tip)
+    htmlwidgets::JS(
+                   sprintf(
+                     "function(sparkline, options, field){
+       debugger;
+       return %s[field[0].offset];
+       }",
+       jsonlite::toJSON(tip) ) )
+  
+  tip <- paste0(xpre, format(x), '<br>', round(y / sum(y), 4),
+                ' (', y, ')')
+  tip[y == 0] <- ''
+  n   <- length(x)
+  if(! missing(ttlow))   tip[1] <- paste0(ttlow,   '<br><br>', tip[1])
+  if(! missing(ttupper)) tip[n] <- paste0(ttupper, '<br><br>', tip[n])
+  
+  htmltools::HTML(
+               sparkline::spk_chr(values=y,
+                                  type='bar',
+                                  chartRangeMin=0, zeroColor='lightgray',
+                                  barWidth=barw, barSpacing=barspace, width=w,
+                                  tooltipFormatter=tt(tip)) )
 }
 
 utils::globalVariables(c('Units', 'Quantiles'))

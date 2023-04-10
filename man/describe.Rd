@@ -242,7 +242,14 @@ formatdescribeSingle(x, condense=c('extremes', 'frequencies', 'both', 'none'),
 	defaulting to 175), \code{qcondense} (set to \code{FALSE} to devote
 	separate columns to all quantiles), \code{extremes} (set to
 	\code{TRUE} to print the 5 lowest and highest values in the table of
-	continuous variables). 
+	continuous variables).  For categorical variable output, the argument
+	\code{freq} can be used to specify how frequency tables are rendered:
+	\code{'chart'} (the default; an interactive sparkline frequency bar chart) or
+	\code{freq='table'} for small tables.  \code{sort} is another argument
+	passed to \code{html_describe_cat}.  For sparkline frequency charts
+	the default is to sort non-numeric categories in descending order of
+	frequency. 	Set \code{code=FALSE} to use the original data order.  The
+	\code{w} argument also applies to categorical variable output.
 	}
 \item{file}{
 name of output file (should have a suffix of .tex).  Default name is

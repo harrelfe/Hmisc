@@ -21,7 +21,8 @@ Changes in version 5.1-0 (2023-04-07)
    * describe: for date/time variables use lowest observed value for leftmost point of first bin, instead of pretty()
    * describe: compute min, max, mean no. of characters (after trimming white space) for character variables that are not tabulated because of too many levels; used by html_describe_cat; also added mode and its count for this situation
    * htmlwidgets: added to SUGGESTS
-
+   * html.describe: changed html to Hmisc::html to avoid conflicts with gt
+	 
 Changes in version 5.0-1 (2023-03-06)
    * rendHTML: when knitr is not running and object is not html, assumes it is RMarkdown and calls rmarkdown::render to render it to html, then displays in viewer
    * princmp: new function to help in interpreting principal components and sparse principal components

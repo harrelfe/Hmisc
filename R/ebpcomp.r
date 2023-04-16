@@ -46,28 +46,51 @@ ebpcomp <- function(x, qref=c(.5, .25, .75),
 ##' Derives the line segment coordinates need to draw a spike histogram.  This is useful for adding elements to `ggplot2` plots.  Date/time variables are handled by doing calculations on the underlying numeric scale then converting back to the original class.  For them the left endpoint of the first bin is taken as the minimal data value instead of rounded using `pretty()`.
 ##' @title spikecomp
 ##' @param x a numeric variable
-##' @param count default is `"table"` to use `table` resulting in no zero cells; use `"tabulate"` to compute counts over a rigid grid, suitable for bar charts with sparklines
+##' @param method specifies the binning and output method.  The default is `'tryactual'` and is intended to be used for spike histograms plotted in a way that allows for random x-coordinates and data gaps.  No binning is done if there are less than 100 distinct values and the closest distinct `x` values are distinguishable (not with 1/500th of the data range of each other).  Binning uses `pretty`.  When `trans` is specified to transform `x` to reduce long tails due to outliers, `pretty` rounding is not done, and `lumptails` is ignored.  `method='grid'` is intended for sparkline spike histograms drawn with bar charts, where plotting is done in a way that x-coordinates must be equally spaced.  For this method, extensive binning information is returned.  For either `'tryactual'` or `'grid'`, the default if `trans` is omitted is to put all values beyond the 0.01 or 0.99 quantiles into a single bin so that outliers will not create long nearly empty tails.  When `y` is specified, `method` is ignored.
+##' @param lumptails the quantile to use for lumping values into a single left and a single right bin for two of the methods
 ##' @param normalize set to `FALSE` to not divide frequencies by maximum frequency
 ##' @param y a vector of frequencies corresponding to `x` if you want the (`x`, `y`) pairs to be taken as a possibly irregular-spaced frequency tabulation for which you want to convert to a regularly-spaced tabulation like `count='tabulate'` produces.  If there is a constant gap between `x` values, the original pairs are return, with possible removal of `NA`s.
-##' @return a list with element `segments` which has elements `x`, `y1`, `y2` if `count='table'` and `y` is not specified, otherwise a list with elements `x` and `y`
+##' @param trans a list with three elements: the name of a transformation to make on `x`, the transformation function, and the inverse transformation function.  The latter is used for `method='grid'`.  When `trans` is given `lumptails` is ignored.  `trans` applies only to `method='tryactual'`.
+##' @return when `y` is specified, a list with elements `x` and `y`.  When `method='tryactual'`, element `x` containing binned original `x` after removing `NA`s, and scalar element `roundedTo`.  For `method='grid'`, a list with elements `x` and `y` and scalar element `roundedTo` containing the typical bin width.  Here `x` is a character string.
 ##' @author Frank Harrell
 ##' @md
 ##' @examples
 ##' spikecomp(1:1000)
-spikecomp <- function(x, count=c('table', 'tabulate'),
-                      normalize=TRUE, y) {
-  count <- match.arg(count)
+##' spikecomp(1:1000, method='grid')
+spikecomp <- function(x, method=c('tryactual', 'simple', 'grid'),
+                      lumptails=0.01, normalize=TRUE, y, trans=NULL) {
 
+  method <- match.arg(method)
+  
   cx <- intersect(class(x),
                   c("Date", "POSIXt", "POSIXct", "dates", "times", "chron"))
-  reclass <- if(length(cx)) function(x) structure(x, class=cx)
-  else function(x) x
-  
+  isdot <- testDateTime(x, 'either')    # date, time, or date-time var.
   if(length(cx)) x <- unclass(x)
+  reclass <-
+    if(length(cx)) function(x) structure(x, class=cx) else function(x) x
+
+  ## floor(x) accounting for inexact decimal arithmetic, e.g.
+  ## (0.58 - 0.48) / 0.01 = 0.99999999999998, signif -> 10.0
+  floors <- function(x) floor(signif(x, 12))
+  
+  tpres  <- length(trans)
+  ftrans <- itrans <- function(x) x
+  if(tpres) {
+    ftrans <- trans[[2]]
+    itrans <- trans[[3]]
+    lumptails <- 0.0
+  }
 
   if(! missing(y)) {
     i <- ! is.na(x + y)
     x <- x[i]; y <- y[i]
+    } else x <- x[! is.na(x)]
+
+  xo <- x           # original x before rounding/curtailing/trans
+  x  <- ftrans(unclass(x))
+  
+  ## y is specified; re-align a grid
+  if(! missing(y)) {
     if(length(unique(diff(sort(x)))) == 1)
       return(list(x=reclass(x), y=y))
     if(! all(y == round(y))) stop('y must be integer for spikecomp')
@@ -80,32 +103,99 @@ spikecomp <- function(x, count=c('table', 'tabulate'),
       warning('possible logic error in spikecomp when y was specified')
     f <- tabulate(rep(xi, y))
     l <- min(length(f), length(xg))
-    return(list(x=reclass(xg[1:l]), y=f[1:l]))
+    return(list(x=reclass(itrans(xg[1:l])), y=f[1:l]))
   }
   
-  x        <- x[! is.na(x)]
-  ux       <- sort(unique(x))
-  n.unique <- length(ux)
+  ux      <- sort(unique(x))
+  nd      <- length(ux)  # no. distinct x
+  closest <- min(diff(ux))
+  qu      <- quantile(x, c(lumptails, 1. - lumptails))
+  ## ux curtailed by outer quantiles:
+  uxc     <- if(lumptails == 0.) ux else ux[ux > qu[1] & ux < qu[2]]
+
+  if(method == 'tryactual') {
+    r <- range(x)
+    d <- diff(r) / 100.
+    if(tpres) p <- seq(r[1], r[2], d)
+    else if(nd >= 100 || (nd > 20 && closest < d / 5.)) {
+      p <- pretty(uxc, 100)
+      d <- p[2] - p[1]
+      r <- range(p)
+    }
+    ix <- 1 + floors((x - r[1]) / d)
+    x  <- r[1] + (ix - 1) * d
+    return(list(x=reclass(itrans(x)), roundedTo=d))
+  }
+
+  ## method = 'grid'
+
+  p <- pretty(uxc, 100)
+  r <- range(p)
+  ## If a pretty limit on curtailed data is at or interior to a quantile,
+  ## ignore that quantile
+  if(qu[1] >= r[1]) uxc <- c(uxc, ux[ux <= qu[1]])
+  if(qu[2] <= r[2]) uxc <- c(uxc, ux[ux >= qu[2]])
+  p <- pretty(uxc, 100)
+  r <- range(p)
+  d <- p[2] - p[1]
+  ## Make last bin upper limit be inclusive
+  mx   <- length(p) - 1
+  ix   <- pmin(mx, 1 + floors((x - r[1]) / d))
+  loc <- rep('main', length(ix))
+  if(lumptails > 0.) {
+    ## If outer quantile equals first or last p, don't
+    ## make special outer intervals
+    loc[qu[1] < r[1] & xo <= qu[1]] <- 'left'
+    loc[qu[2] > r[2] & xo >= qu[2]] <- 'right'
+  }
+  iuse <- loc == 'main'
+  ix <- ifelse(loc=='left', 1,
+        ifelse(loc=='main', ix +          any(loc=='left'),
+               mx + 1 +      any(loc=='left')) )
+  freq <- tabulate(ix)
   
-  if(count == 'tabulate' || (n.unique >= 100 ||
-     (n.unique > 20 && 
-      min(diff(ux)) < diff(range(x)) / 500))) {
-    pret <- pretty(ux, if(n.unique >= 100 || count == 'tabulate') 100 else 500)
-    incr <- pret[2] - pret[1]
-    r    <- if(length(cx)) range(x) else range(pret)
-    xi   <- 1 + round((x - r[1]) / incr)
-    x    <- r[1] + (xi - 1.) * incr
+  gr <- function(x) {
+    lu <- length(unique(x))
+    if(lu <= 10) {
+      tab <- table(if(isdot) x else signif(x, 6))
+      paste(paste0(names(tab),
+                   ifelse(tab == 1, '', paste0(' (', tab, ')'))),
+            collapse='; ')
+    }
+    else {
+      xr <- if(isdot) range(x) else signif(range(x), 6)
+      if(xr[1] == xr[2]) xr[1]
+      else paste0(xr[1], ' - ', xr[2], ' (',
+                  lu, ' distinct)')
+    }
   }
-  if(count == 'table') {
-    f <- table(x)
-    x <- as.numeric(names(f))
-    y <- unname(f / (if(normalize) max(f) else 1.))
-    return(list(segments=list(x=reclass(x), y1=0, y2=y)))
+  
+  class(xo)    <- cx
+  fqu          <- if(isdot) itrans(qu) else signif(itrans(qu))
+  class(fqu)   <- cx
+  fp           <- if(isdot) itrans(p) else signif(itrans(p))
+  class(fp)    <- cx
+  xrange       <- rep('', length(freq))
+  xrnz         <- as.vector(tapply(xo, ix, gr))
+  xrange[freq != 0] <- xrnz
+  closep <- rep(')', length(fp) - 1)
+  lf <- any(loc == 'left')
+  rt <- any(loc == 'right')
+  if(! rt) closep[length(closep)] <- ']'
+  bins <- c(if(lf)
+              paste0('[', min(xo), ', ', fqu[1], ']'),
+            paste0('[', fp[-length(fp)], ', ', fp[-1], closep),
+            if(rt)
+              paste0('[', fqu[2], ', ', max(xo), ']') )
+  xrange <- paste0('Bin: ', bins, '<br>Observed:<br>', xrange)
+  quf <- paste0('Q<sub>', c(lumptails, 1. - lumptails), '</sub>:',
+                if(isdot) fqu else signif(fqu))
+  if(lf) xrange[1] <- paste0(quf[1], '<br>', xrange[1])
+  if(rt) xrange[length(xrange)] <-
+           paste0(quf[2], '<br>', xrange[length(xrange)])
+  if(length(xrange) != length(freq))
+    stop('program logic error in spikecomp; lengths: ',
+         length(xrange), ' ', length(freq))
+  list(x=xrange, y=freq / (if(normalize) max(freq) else 1.),
+       roundedTo=d)
   }
-  if(any(xi < 1))                  stop('program logic error 1')
-  f <- tabulate(xi)
-  if(length(f) > length(pret))     stop('program logic error 2')
-  if(length(f) < length(pret) - 1) stop('program logic error 3')
-  pret <- pret[1 : length(f)]
-  list(x=reclass(pret), y=f / (if(normalize) max(f) else 1.))
-}

@@ -1,4 +1,4 @@
-Changes in version 5.1-0 (2023-04-07)
+Changes in version 5.1-0 (2023-04-16)
    * fit.mult.impute: added robust, cluster, robmethod arguments to incorporate rms::robcov to do robust sandwich covariance estimation with multiple imputation
    * testCharDateTime: new function
    * added totxt function in markupSpecs$html to convert html to plain text
@@ -22,7 +22,9 @@ Changes in version 5.1-0 (2023-04-07)
    * describe: compute min, max, mean no. of characters (after trimming white space) for character variables that are not tabulated because of too many levels; used by html_describe_cat; also added mode and its count for this situation
    * htmlwidgets: added to SUGGESTS
    * html.describe: changed html to Hmisc::html to avoid conflicts with gt
-	 
+   * describe: added trans argument to transform x for the purpose of making spike histograms
+   * spikecomp: generalized, describe now calls it
+
 Changes in version 5.0-1 (2023-03-06)
    * rendHTML: when knitr is not running and object is not html, assumes it is RMarkdown and calls rmarkdown::render to render it to html, then displays in viewer
    * princmp: new function to help in interpreting principal components and sparse principal components

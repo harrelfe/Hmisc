@@ -51,16 +51,19 @@ ebpcomp <- function(x, qref=c(.5, .25, .75),
 ##' @param normalize set to `FALSE` to not divide frequencies by maximum frequency
 ##' @param y a vector of frequencies corresponding to `x` if you want the (`x`, `y`) pairs to be taken as a possibly irregular-spaced frequency tabulation for which you want to convert to a regularly-spaced tabulation like `count='tabulate'` produces.  If there is a constant gap between `x` values, the original pairs are return, with possible removal of `NA`s.
 ##' @param trans a list with three elements: the name of a transformation to make on `x`, the transformation function, and the inverse transformation function.  The latter is used for `method='grid'`.  When `trans` is given `lumptails` is ignored.  `trans` applies only to `method='tryactual'`.
-##' @return when `y` is specified, a list with elements `x` and `y`.  When `method='tryactual'`, element `x` containing binned original `x` after removing `NA`s, and scalar element `roundedTo`.  For `method='grid'`, a list with elements `x` and `y` and scalar element `roundedTo` containing the typical bin width.  Here `x` is a character string.
+##' @param tresult applies only to `method='tryactual'`.  The default `'list'` returns a list with elements `x`, `y`, and `roundedTo`.  `method='roundeddata'` returns a list with elements `x` (non-tabulated rounded data vector after excluding `NA`s) and vector `roundedTo`.
+##' @return when `y` is specified, a list with elements `x` and `y`.  When `method='tryactual'` the returned value depends on `tresult`.  For `method='grid'`, a list with elements `x` and `y` and scalar element `roundedTo` containing the typical bin width.  Here `x` is a character string.
 ##' @author Frank Harrell
 ##' @md
 ##' @examples
 ##' spikecomp(1:1000)
 ##' spikecomp(1:1000, method='grid')
 spikecomp <- function(x, method=c('tryactual', 'simple', 'grid'),
-                      lumptails=0.01, normalize=TRUE, y, trans=NULL) {
+                      lumptails=0.01, normalize=TRUE, y, trans=NULL,
+                      tresult=c('list', 'roundeddata')) {
 
-  method <- match.arg(method)
+  method  <- match.arg(method)
+  tresult <- match.arg(tresult)
   
   cx <- intersect(class(x),
                   c("Date", "POSIXt", "POSIXct", "dates", "times", "chron"))
@@ -124,7 +127,14 @@ spikecomp <- function(x, method=c('tryactual', 'simple', 'grid'),
     }
     ix <- 1 + floors((x - r[1]) / d)
     x  <- r[1] + (ix - 1) * d
-    return(list(x=reclass(itrans(x)), roundedTo=d))
+    if(tresult == 'roundeddata')
+      return(list(x = reclass(itrans(x)), roundedTo=d))
+
+    tab <- table(x)
+    y   <- unname(tab)
+    return(list(x = reclass(itrans(as.numeric(names(tab)))),
+                y = y / (if(normalize) max(y) else 1.),
+                roundedTo = d) )
   }
 
   ## method = 'grid'
@@ -132,9 +142,13 @@ spikecomp <- function(x, method=c('tryactual', 'simple', 'grid'),
   p <- pretty(uxc, 100)
   r <- range(p)
   ## If a pretty limit on curtailed data is at or interior to a quantile,
-  ## ignore that quantile
-  if(qu[1] >= r[1]) uxc <- c(uxc, ux[ux <= qu[1]])
-  if(qu[2] <= r[2]) uxc <- c(uxc, ux[ux >= qu[2]])
+  ## ignore that quantile.  Also ignore if the width of outer quantile
+  ## interval is less than 1/20th of the inter-quantile range
+  iqrwidth <- diff(qu)
+  lshort <- min(xo) > qu[1] - iqrwidth / 20.
+  rshort <- max(xo) < qu[2] + iqrwidth / 20.
+  if(qu[1] >= r[1] || lshort) uxc <- c(uxc, ux[ux <= qu[1]])
+  if(qu[2] <= r[2] || rshort) uxc <- c(uxc, ux[ux >= qu[2]])
   p <- pretty(uxc, 100)
   r <- range(p)
   d <- p[2] - p[1]
@@ -145,8 +159,8 @@ spikecomp <- function(x, method=c('tryactual', 'simple', 'grid'),
   if(lumptails > 0.) {
     ## If outer quantile equals first or last p, don't
     ## make special outer intervals
-    loc[qu[1] < r[1] & xo <= qu[1]] <- 'left'
-    loc[qu[2] > r[2] & xo >= qu[2]] <- 'right'
+    loc[! lshort & qu[1] < r[1] & xo <= qu[1]] <- 'left'
+    loc[! rshort & qu[2] > r[2] & xo >= qu[2]] <- 'right'
   }
   iuse <- loc == 'main'
   ix <- ifelse(loc=='left', 1,

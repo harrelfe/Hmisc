@@ -204,7 +204,8 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
     else
       if(isnum || n.unique <= 100) {
         if(isnum && n.unique > 2) {
-          binnedx      <- spikecomp(x, lumptails=lumptails, trans=trans)
+          binnedx      <- spikecomp(x, lumptails=lumptails, trans=trans,
+                                    tresult='roundeddata')
           xnum         <- unclass(binnedx$x)
           z$roundedTo  <- binnedx$roundedTo
           shist        <- spikecomp(x, method='grid', lumptails=lumptails,

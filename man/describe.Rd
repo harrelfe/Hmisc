@@ -379,7 +379,8 @@ Vanderbilt University
 \email{fh@fharrell.com}
 }
 \seealso{
-\code{\link{sas.get}}, \code{\link{quantile}}, \code{\link{GiniMd}},
+\code{\link{spikecomp}}, \code{\link{sas.get}}, \code{\link{quantile}},
+\code{\link{GiniMd}},
 \code{\link{table}}, \code{\link{summary}},
 \code{\link{model.frame.default}}, 
 \code{\link{naprint}}, \code{\link{lapply}}, \code{\link{tapply}},

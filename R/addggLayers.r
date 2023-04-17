@@ -14,6 +14,7 @@
 ##' @param pos position for added plot
 ##' @param showN sete to `FALSE` to not show sample sizes
 ##' @return the original `ggplot` object with more layers added
+##' @seealso `spikecomp()`
 ##' @author Frank Harrell
 ##' @md
 addggLayers <- function(g, data,
@@ -32,10 +33,18 @@ addggLayers <- function(g, data,
     }
   data.table::setnames(d, c(by, value), c('.by.', '.value.'))
 
+  scomp <- function(x) {
+    z    <- spikecomp(x, normalize=TRUE)
+    z$y1 <- rep(0., length(z$y))
+    z$y2 <- z$y
+    z$y  <- NULL
+    list(segments = z)
+    }
+    
   comp <- switch(type,
                  ebp   = ebpcomp,
-                 spike = spikecomp)
-  
+                 spike = scomp)
+
   vars <- d[, unique(.by.)]
   r    <- list()
   for(v in vars) {

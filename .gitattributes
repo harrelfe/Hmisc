@@ -1,0 +1,4 @@
+# The .s files are for R
+*.s linguist-language=R
+# The files in ratfor/ are Fortran
+src/ratfor/*.r linguist-language=Fortran

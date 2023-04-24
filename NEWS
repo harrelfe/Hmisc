@@ -23,7 +23,7 @@ Changes in version 5.1-0 (2023-04-24)
    * htmlwidgets: added to SUGGESTS
    * html.describe: changed html to Hmisc::html to avoid conflicts with gt
    * describe: added trans argument to transform x for the purpose of making spike histograms
-   * spikecomp: generalized, describe.vector now calls it
+   * spikecomp: generalized, describe.vector now calls it, changed how addggLayers calls it
    * fit.mult.impute: added method= including stacking to facilitate likelihood ratio tests with rms::processMI
 
 Changes in version 5.0-1 (2023-03-06)

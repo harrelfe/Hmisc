@@ -255,6 +255,7 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
     f$funresults <- funresults
     }
   f$stats <- st
+  f$x <- f$y <- NULL
   class(f) <- c('fit.mult.impute', class(f))
   f
 }

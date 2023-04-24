@@ -10,7 +10,8 @@ spikecomp(
   lumptails = 0.01,
   normalize = TRUE,
   y,
-  trans = NULL
+  trans = NULL,
+  tresult = c("list", "segments", "roundeddata")
 )
 }
 \arguments{
@@ -25,9 +26,11 @@ spikecomp(
 \item{y}{a vector of frequencies corresponding to \code{x} if you want the (\code{x}, \code{y}) pairs to be taken as a possibly irregular-spaced frequency tabulation for which you want to convert to a regularly-spaced tabulation like \code{count='tabulate'} produces.  If there is a constant gap between \code{x} values, the original pairs are return, with possible removal of \code{NA}s.}
 
 \item{trans}{a list with three elements: the name of a transformation to make on \code{x}, the transformation function, and the inverse transformation function.  The latter is used for \code{method='grid'}.  When \code{trans} is given \code{lumptails} is ignored.  \code{trans} applies only to \code{method='tryactual'}.}
+
+\item{tresult}{applies only to \code{method='tryactual'}.  The default \code{'list'} returns a list with elements \code{x}, \code{y}, and \code{roundedTo}.  \code{method='segments'} returns a list suitable for drawing line segments, with elements \verb{x, y1, y2}.  \code{method='roundeddata'} returns a list with elements \code{x} (non-tabulated rounded data vector after excluding \code{NA}s) and vector \code{roundedTo}.}
 }
 \value{
-when \code{y} is specified, a list with elements \code{x} and \code{y}.  When \code{method='tryactual'}, element \code{x} containing binned original \code{x} after removing \code{NA}s, and scalar element \code{roundedTo}.  For \code{method='grid'}, a list with elements \code{x} and \code{y} and scalar element \code{roundedTo} containing the typical bin width.  Here \code{x} is a character string.
+when \code{y} is specified, a list with elements \code{x} and \code{y}.  When \code{method='tryactual'} the returned value depends on \code{tresult}.  For \code{method='grid'}, a list with elements \code{x} and \code{y} and scalar element \code{roundedTo} containing the typical bin width.  Here \code{x} is a character string.
 }
 \description{
 Compute Elements of a Spike Histogram

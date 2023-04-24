@@ -1,5 +1,4 @@
 require(Hmisc)
-source('~/R/Hmisc/R/gbayes.s')
 d <- 1:3
 x <- c(-.5, 0, .5)
 v <- c(1, .5, .25)

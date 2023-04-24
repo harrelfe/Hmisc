@@ -201,6 +201,8 @@ transcan(x, method=c("canonical","pc"),
 fit.mult.impute(formula, fitter, xtrans, data, n.impute, fit.reps=FALSE,
                 dtrans, derived, fun, vcovOpts=NULL,
                 robust=FALSE, cluster, robmethod=c('huber', 'efron'),
+                method=c('ordinary', 'stack', 'only stack'),
+                funstack=TRUE, lrt=FALSE,
                 pr=TRUE, subset, fitargs)
 
 \method{predict}{transcan}(object, newdata, iter.max=50, eps=0.01, curtail=TRUE,
@@ -266,7 +268,17 @@ invertTabulated(x, y, freq=rep(1,length(x)),
     use \code{method="canonical"} or any abbreviation thereof, to use
     canonical variates (the default). \code{method="pc"} transforms a
     variable instead so as to maximize the correlation with the first
-    principal component of the other variables.
+    principal component of the other variables.  For
+		\code{fit.mult.impute}, \code{method} specifies whether to use
+		standard multiple imputation (the default \code{method='ordinary'})
+		or whether to get final coefficients from stacking all 
+		completed datasets and fitting one model.  Stacking is required if
+		likelihood ratio tests accounting for imputation are to be done.
+		\code{method='stack'} means to do regular MI and stacking, which
+		results in more valid standard errors of coefficient estimates.
+		\code{method='only stack'} means that model fits are not done on
+		individual completed datasets, and standard errors will not be very
+		accurate.
   }
   \item{categorical}{
     a character vector of names of variables in \code{x} which are
@@ -624,7 +636,14 @@ invertTabulated(x, y, freq=rep(1,length(x)),
     of rows in the dataset being analyzed.  When specified, \code{robust} is
     assumed to be \code{TRUE}, and the \code{rms} \code{robcov} function is 
     called with the \code{cluster} vector given as its second argument.}
-  \item{robmethod}{see the \code{robcov} function's \code{method} argument}
+  \item{robmethod}{see the \code{robcov} function's \code{method}
+		argument}
+	\item{funstack}{set to \code{FALSE} to not run \code{fun} on the
+		stacked dataset, making an \code{n.impute}+1 element of
+		\code{funresults}}
+	\item{lrt}{set to \code{TRUE} to have \code{method, fun, fitargs} set
+		appropriately automatically so that \code{processMI} can be used to
+		get likelihood ratio tests}
 	\item{fitargs}{a list of extra arguments to pass to \code{fitter},
 		used especially with \code{fun}.  When \code{robust=TRUE} the arguments
     \code{x=TRUE, y=TRUE} are automatically added to \code{fitargs}.}
@@ -952,7 +971,8 @@ invertTabulated(x, y, freq=rep(1,length(x)),
   \code{\link[acepack]{avas}}, \code{\link{cancor}},
   \code{\link{prcomp}}, \code{\link{rcspline.eval}},
   \code{\link{lsfit}}, \code{\link{approx}}, \code{\link{datadensity}},
-  \code{\link[mice]{mice}}, \code{\link[ggplot2]{ggplot}}
+  \code{\link[mice]{mice}}, \code{\link[ggplot2]{ggplot}},
+	\code{\link[rms]{processMI}}
 }
 \examples{
 \dontrun{
@@ -1150,6 +1170,10 @@ cal <- lapply(r, function(x) x$calibrate)
 # rms package must be installed
 a <- aregImpute(..., data=d)
 f <- fit.mult.impute(y ~ x1 + x2, lrm, a, n.impute=30, data=d, cluster=d$id)
+# Get likelihood ratio chi-square tests accounting for missingness
+a <- aregImpute(..., data=d)
+h <- fit.mult.impute(y ~ x1 + x2, lrm, a, n.impute=40, data=d, lrt=TRUE)
+processMI(h, which='anova')   # processMI is in rms
 }
 }
 \keyword{smooth}
@@ -1158,4 +1182,3 @@ f <- fit.mult.impute(y ~ x1 + x2, lrm, a, n.impute=30, data=d, cluster=d$id)
 \keyword{methods}
 \keyword{models}
 \concept{bootstrap}
-% Converted by Sd2Rd version 1.21.

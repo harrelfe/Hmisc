@@ -51,7 +51,7 @@ ebpcomp <- function(x, qref=c(.5, .25, .75),
 ##' @param normalize set to `FALSE` to not divide frequencies by maximum frequency
 ##' @param y a vector of frequencies corresponding to `x` if you want the (`x`, `y`) pairs to be taken as a possibly irregular-spaced frequency tabulation for which you want to convert to a regularly-spaced tabulation like `count='tabulate'` produces.  If there is a constant gap between `x` values, the original pairs are return, with possible removal of `NA`s.
 ##' @param trans a list with three elements: the name of a transformation to make on `x`, the transformation function, and the inverse transformation function.  The latter is used for `method='grid'`.  When `trans` is given `lumptails` is ignored.  `trans` applies only to `method='tryactual'`.
-##' @param tresult applies only to `method='tryactual'`.  The default `'list'` returns a list with elements `x`, `y`, and `roundedTo`.  `method='roundeddata'` returns a list with elements `x` (non-tabulated rounded data vector after excluding `NA`s) and vector `roundedTo`.
+##' @param tresult applies only to `method='tryactual'`.  The default `'list'` returns a list with elements `x`, `y`, and `roundedTo`.  `method='segments'` returns a list suitable for drawing line segments, with elements `x, y1, y2`.  `method='roundeddata'` returns a list with elements `x` (non-tabulated rounded data vector after excluding `NA`s) and vector `roundedTo`.
 ##' @return when `y` is specified, a list with elements `x` and `y`.  When `method='tryactual'` the returned value depends on `tresult`.  For `method='grid'`, a list with elements `x` and `y` and scalar element `roundedTo` containing the typical bin width.  Here `x` is a character string.
 ##' @author Frank Harrell
 ##' @md
@@ -60,7 +60,7 @@ ebpcomp <- function(x, qref=c(.5, .25, .75),
 ##' spikecomp(1:1000, method='grid')
 spikecomp <- function(x, method=c('tryactual', 'simple', 'grid'),
                       lumptails=0.01, normalize=TRUE, y, trans=NULL,
-                      tresult=c('list', 'roundeddata')) {
+                      tresult=c('list', 'segments', 'roundeddata')) {
 
   method  <- match.arg(method)
   tresult <- match.arg(tresult)
@@ -132,9 +132,13 @@ spikecomp <- function(x, method=c('tryactual', 'simple', 'grid'),
 
     tab <- table(x)
     y   <- unname(tab)
-    return(list(x = reclass(itrans(as.numeric(names(tab)))),
-                y = y / (if(normalize) max(y) else 1.),
-                roundedTo = d) )
+    if(normalize) y <- y / max(y)
+    x   <- reclass(itrans(as.numeric(names(tab))))
+    return(
+    switch(tresult,
+           list     = list(x = x, y = y, roundedTo = d),
+           segments = list(x = x, y1 = rep(0., length(y)), y2 = y,
+                           roundedTo = d) ) )
   }
 
   ## method = 'grid'

@@ -1,6 +1,5 @@
 # Usage: After running R, run latex on /tmp/z.tex
 require(Hmisc)
-source('~/R/Hmisc/R/latexTherm.s')
 f <- '/tmp/lt.tex'
 cat('', file='/tmp/z.tex'); cat('', file=f)
 ct <- function(...) cat(..., sep='', file='/tmp/z.tex', append=TRUE)

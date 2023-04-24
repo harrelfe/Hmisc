@@ -7,7 +7,6 @@ delta <- .5
 sd <- 1
 require(pwr)
 power.t.test(n = n / 2, delta=delta, sd=sd, type='two.sample')  # 0.70
-source('~/R/Hmisc/R/popower.s')
 set.seed(1)
 w <- simRegOrd(n, delta=delta, sigma=sd, pr=TRUE)     # 0.686
 

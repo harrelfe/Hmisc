@@ -237,7 +237,7 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
   ns <- length(st)
   sn <- intersect(names(st),
                   c('Model L.R.', 'Obs', 'Events', 'error d.f.',
-                    'Sum of Weights'))
+                    'Sum of Weights', 'n'))
   if(length(sn)) for(s in sn) st[s] <- st[s] / M
   lr <- st['Model L.R.']
   if('Model L.R.' %in% sn)

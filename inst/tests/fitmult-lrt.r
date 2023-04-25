@@ -12,7 +12,6 @@ a <- aregImpute(~ y + x1 + x2, n.impute=50, data=d)
 
 f <- fit.mult.impute(y ~ x1 + x2, lrm, a, data=d)
 f
-coef(f)
 anova(f)
 
 h <- fit.mult.impute(y ~ x1 + x2, lrm, a, data=d, lrt=TRUE)

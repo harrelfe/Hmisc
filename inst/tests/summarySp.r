@@ -85,7 +85,6 @@ plotp(s, groups='region', sfun=mbarclpl)
 # Similar but use back-to-back spike histograms
 s <- summaryS(sbp + dbp ~ days + region, data=d)
 plotp(s, groups='region', sfun=medvpl, alphaSegments=0.6)
-### ???
 
 ## Show Wilson confidence intervals for proportions, and confidence
 ## intervals for difference in two proportions

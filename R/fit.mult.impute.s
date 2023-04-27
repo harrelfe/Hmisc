@@ -13,7 +13,8 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
   method    <- match.arg(method)
 
   if(lrt) {
-    fitargs <- list(x=TRUE, y=TRUE)
+    if(missing(fitargs)) fitargs <- list(x=TRUE, y=TRUE)
+    else {fitargs$x <- fitargs$y <- TRUE}
     method  <- 'stack'
     fun     <- function(fit) list(anova = anova(fit, test='LR'))
     }

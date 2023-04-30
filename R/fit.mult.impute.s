@@ -246,6 +246,9 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
   if('freq' %in% names(f)) f$freq <- f$freq / M
   if('clusterInfo' %in% names(f)) f$clusterInfo$n <- f$clusterInfo$n / M
 
+  ## For ols fits make the residual d.f. "real"
+  if(inherits(f, 'ols')) f$df.residual <- unname(st['n'] - st['d.f.'] - 1)
+
   f$fmimethod <- method
   f$n.impute  <- n.impute
   if(! missing(fun)) {

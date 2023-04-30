@@ -107,6 +107,13 @@
   \code{fit.mult.impute} can incorporate robust sandwich variance estimates into
   Rubin's rule if \code{robust=TRUE}.
 
+	For \code{ols} models fitted by \code{fit.mult.impute} with stacking,
+	the \eqn{R^2} measure in the stacked model fit is OK, and
+	\code{print.ols} computes adjusted \eqn{R^2} using the real sample
+	size so it is also OK because \code{fit.mult.compute} corrects the
+	stacked error degrees of freedom in the stacked fit object to reflect
+	the real sample size. 
+
   The \code{\link{summary}} method for \code{transcan} prints the function
   call, \eqn{R^2} achieved in transforming each variable, and for each
   variable the coefficients of all other transformed variables that are

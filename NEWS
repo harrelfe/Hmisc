@@ -1,4 +1,4 @@
-Changes in version 5.1-0 (2023-04-27)
+Changes in version 5.1-0 (2023-04-30)
    * fit.mult.impute: added robust, cluster, robmethod arguments to incorporate rms::robcov to do robust sandwich covariance estimation with multiple imputation
    * testCharDateTime: new function
    * added totxt function in markupSpecs$html to convert html to plain text
@@ -26,6 +26,7 @@ Changes in version 5.1-0 (2023-04-27)
    * spikecomp: generalized, describe.vector now calls it, changed how addggLayers calls it
    * fit.mult.impute: added method= including stacking to facilitate likelihood ratio tests with rms::processMI
    * histboxp, dhistboxp: fixed bugs where range() should have been diff(range())
+   * fit.mult.impute: for stacked ols fits correct residual d.f.
 
 Changes in version 5.0-1 (2023-03-06)
    * rendHTML: when knitr is not running and object is not html, assumes it is RMarkdown and calls rmarkdown::render to render it to html, then displays in viewer

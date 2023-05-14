@@ -19,7 +19,7 @@ spikecomp(
 
 \item{method}{specifies the binning and output method.  The default is \code{'tryactual'} and is intended to be used for spike histograms plotted in a way that allows for random x-coordinates and data gaps.  No binning is done if there are less than 100 distinct values and the closest distinct \code{x} values are distinguishable (not with 1/500th of the data range of each other).  Binning uses \code{pretty}.  When \code{trans} is specified to transform \code{x} to reduce long tails due to outliers, \code{pretty} rounding is not done, and \code{lumptails} is ignored.  \code{method='grid'} is intended for sparkline spike histograms drawn with bar charts, where plotting is done in a way that x-coordinates must be equally spaced.  For this method, extensive binning information is returned.  For either \code{'tryactual'} or \code{'grid'}, the default if \code{trans} is omitted is to put all values beyond the 0.01 or 0.99 quantiles into a single bin so that outliers will not create long nearly empty tails.  When \code{y} is specified, \code{method} is ignored.}
 
-\item{lumptails}{the quantile to use for lumping values into a single left and a single right bin for two of the methods}
+\item{lumptails}{the quantile to use for lumping values into a single left and a single right bin for two of the methods.  When outer quantiles using \code{lumptails} equal outer quantiles using \code{2*lumptails}, \code{lumptails} is ignored as this indicates a large number of ties in the tails of the distribution.}
 
 \item{normalize}{set to \code{FALSE} to not divide frequencies by maximum frequency}
 
@@ -36,7 +36,7 @@ when \code{y} is specified, a list with elements \code{x} and \code{y}.  When \c
 Compute Elements of a Spike Histogram
 }
 \details{
-Derives the line segment coordinates need to draw a spike histogram.  This is useful for adding elements to \code{ggplot2} plots.  Date/time variables are handled by doing calculations on the underlying numeric scale then converting back to the original class.  For them the left endpoint of the first bin is taken as the minimal data value instead of rounded using \code{pretty()}.
+Derives the line segment coordinates need to draw a spike histogram.  This is useful for adding elements to \code{ggplot2} plots and for the \code{describe} function to construct spike histograms.  Date/time variables are handled by doing calculations on the underlying numeric scale then converting back to the original class.  For them the left endpoint of the first bin is taken as the minimal data value instead of rounded using \code{pretty()}.
 }
 \examples{
 spikecomp(1:1000)

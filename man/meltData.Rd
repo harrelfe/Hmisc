@@ -4,7 +4,14 @@
 \alias{meltData}
 \title{meltData}
 \usage{
-meltData(formula, data, vnames = c("labels", "names"))
+meltData(
+  formula,
+  data,
+  tall = c("right", "left"),
+  vnames = c("labels", "names"),
+  sepunits = FALSE,
+  ...
+)
 }
 \arguments{
 \item{formula}{a formula}
@@ -12,6 +19,10 @@ meltData(formula, data, vnames = c("labels", "names"))
 \item{data}{data frame or table}
 
 \item{vnames}{set to \code{names} to always use variable names instead of labels for X}
+
+\item{sepunits}{set to \code{TRUE} to create a separate variable \code{Units} to hold units of measurement.  The variable is not created if no original variables have a non-blank \code{units} attribute.}
+
+\item{...}{passed to \code{label()}}
 }
 \value{
 data table
@@ -20,12 +31,15 @@ data table
 Melt a Dataset To Examine All Xs vs Y
 }
 \details{
-Uses a formula with a single left hand side variable (Y) and one or more numeric right hand side variables (X).  Uses \code{\link[data.table:melt.data.table]{data.table::melt()}} to melt \code{data} so that each X is played against the same Y.  The resulting data table has variables Y with its original name, \code{variable}, and \code{value}.  By default \code{variable} is taken as \code{label()}s of X variables.
+Uses a formula with one or more left hand side variables (Y) and one or more right hand side variables (X).  Uses \code{\link[data.table:melt.data.table]{data.table::melt()}} to melt \code{data} so that each X is played against the same Y if \code{tall='right'} (the default) or each Y is played against the same X combination if \code{tall='left'}.  The resulting data table has variables Y with their original names (if \code{tall='right'}) or variables X with their original names (if \code{tall='left'}), \code{variable}, and \code{value}.  By default \code{variable} is taken as \code{label()}s of the \code{tall} variables.
 }
 \examples{
-d <- data.frame(y=(1:10)/10, x1=1:10, x2=101:110)
+d <- data.frame(y1=(1:10)/10, y2=(1:10)/100, x1=1:10, x2=101:110)
 label(d$x1) <- 'X1'
-m=meltData(y ~ x1 + x2, data=d)
+units(d$x1) <- 'mmHg'
+m=meltData(y1 + y2 ~ x1 + x2, data=d, units=TRUE) # consider also html=TRUE
+print(m)
+m=meltData(y1 + y2 ~ x1 + x2, data=d, tall='left')
 print(m)
 }
 \seealso{

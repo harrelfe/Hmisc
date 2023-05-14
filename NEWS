@@ -1,4 +1,9 @@
-Changes in version 5.1-0 (2023-04-30)
+Changes in version 5.1-1 (2023-05-13)
+   * meltData: generalized to allow melting on either left or right side of formula, added ... arguments passed to label(), made variable a factor to keep original order
+   * formatCons: fixed bug where lang != 'latex' should have been lang == 'plain' which made msdsize to be ignored for html output
+   * spikecomp: made more reliable by not assuming as much about pretty() boundaries
+
+Changes in version 5.1-0 (2023-05-04)
    * fit.mult.impute: added robust, cluster, robmethod arguments to incorporate rms::robcov to do robust sandwich covariance estimation with multiple imputation
    * testCharDateTime: new function
    * added totxt function in markupSpecs$html to convert html to plain text

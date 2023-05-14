@@ -1615,10 +1615,11 @@ formatCons <- function(stats, nam, tr, group.freq, prmsd, sep='/',
   plminus <- specs$plminus
   math    <- specs$math
 
-  if(lang != 'latex' || ! length(msdsize)) msdsize <- function(x) x
+  if(lang == 'plain' || ! length(msdsize)) msdsize <- function(x) x
   if(! is.function(msdsize)) {
     Msdsize <- msdsize
-    msdsize <- function(x) paste0('{\\', Msdsize, ' ', x, '}')
+    if(lang == 'latex')
+      msdsize <- function(x) paste0('{\\', Msdsize, ' ', x, '}')
   }
   if(lang == 'plain') outer.size <- function(x) x
   if(! is.function(outer.size)) {

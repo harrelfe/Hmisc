@@ -790,6 +790,13 @@ invertTabulated(x, y, freq=rep(1,length(x)),
   \code{"fit.mult.impute"} is prepended to the other classes produced by
   the fitting function.
 
+	When \code{method} is not \code{'ordinary'}, i.e., stacking is used,
+	\code{fit.mult.impute} returns a modified fit object that is computed
+	on all completed datasets combined, with most all statistics that are
+	functions of the sample size corrected to the real sample size.
+	Elements in the fit such as \code{residuals} will have length equal to
+	the real sample size times the number of imputations.
+
 	\code{fit.mult.impute} stores \code{intercepts} attributes in the
 	coefficient matrix and in \code{var} for \code{orm} fits.
 }

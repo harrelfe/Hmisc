@@ -1466,7 +1466,7 @@ html_describe_con <- function(x, sparkwidth=200,
   if('Units' %in% names(a))
     b <- b |> gt::text_transform(locations=gt::cells_body(columns=Units),
                                  fn=htmlTranslate) |>
-      gt::tab_style(style=gt::cell_text(size='small', style='italic'),
+      gt::tab_style(style=gt::cell_text(size='small', font='arial'),
                             locations=gt::cells_body(columns=Units))
   b
 }
@@ -1579,7 +1579,7 @@ html_describe_cat <- function(x, w=200, freq=c('chart', 'table'),
     gt::sub_missing(missing_text='')
 
   if('Units' %in% names(a))
-    b <- b |> gt::tab_style(style=gt::cell_text(size='small', style='italic'),
+    b <- b |> gt::tab_style(style=gt::cell_text(size='small', font='arial'),
                             locations=gt::cells_body(columns=Units))
   if('Gmd' %in% names(a))
     b <- b |>

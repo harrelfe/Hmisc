@@ -4,7 +4,8 @@
 \title{Redundancy Analysis}
 \description{
 Uses flexible parametric additive models (see \code{\link{areg}} and its
-use of regression splines) to
+use of regression splines), or alternatively to run a regular regression
+after replacing continuous variables with ranks, to
 determine how well each variable can be predicted from the remaining
 variables.  Variables are dropped in a stepwise fashion, removing the
 most predictable variable at each step. The remaining variables are used
@@ -13,11 +14,16 @@ of predictors can be predicted with an \eqn{R^2} or adjusted \eqn{R^2}
 of at least \code{r2} or until dropping the variable with the highest
 \eqn{R^2} (adjusted or ordinary) would cause a variable that was dropped
 earlier to no longer be predicted at least at the \code{r2} level from
-the now smaller list of predictors.  
+the now smaller list of predictors.
+
+There is also an option \code{qrank} to expand each variable into two
+columns containing the rank and square of the rank.  Whenever ranks are
+used, they are computed as fractional ranks for numerical reasons.
 }
 \usage{
 redun(formula, data=NULL, subset=NULL, r2 = 0.9,
       type = c("ordinary", "adjusted"), nk = 3, tlinear = TRUE,
+      rank=qrank, qrank=FALSE,
       allcat=FALSE, minfreq=0, iterms=FALSE, pc=FALSE, pr = FALSE, ...)
 \method{print}{redun}(x, digits=3, long=TRUE, ...)
 }
@@ -36,6 +42,10 @@ redun(formula, data=NULL, subset=NULL, r2 = 0.9,
   they are being predictors) are automatically transformed, using
   regression splines.  Estimating transformations for target (dependent)
   variables causes more overfitting than doing so for predictors.}
+  \item{rank}{set to \code{TRUE} to replace non-categorical varibles
+		with ranks before running the analysis.  This causes \code{nk} to be
+		set to zero.}
+	\item{qrank}{}
   \item{allcat}{set to \code{TRUE} to ensure that all categories of
 	categorical variables having more than two categories are redundant
 	(see details below)}
@@ -107,6 +117,8 @@ redun(~x1+x2+x3+x4+x5+x6, r2=.8)
 redun(~x1+x2+x3+x4+x5+x6, r2=.8, minfreq=40)
 redun(~x1+x2+x3+x4+x5+x6, r2=.8, allcat=TRUE)
 # x5 is no longer redundant but x6 is
+redun(~x1+x2+x3+x4+x5+x6, r2=.8, rank=TRUE)
+redun(~x1+x2+x3+x4+x5+x6, r2=.8, qrank=TRUE)
 }
 \keyword{smooth}
 \keyword{regression}

@@ -1,6 +1,7 @@
 redun <- function(formula, data=NULL, subset=NULL,
                   r2=.9, type=c('ordinary','adjusted'),
-                  nk=3, tlinear=TRUE, allcat=FALSE, minfreq=0,
+                  nk=3, tlinear=TRUE, rank=qrank, qrank=FALSE,
+                  allcat=FALSE, minfreq=0,
                   iterms=FALSE, pc=FALSE,
                   pr=FALSE, ...)
 {
@@ -27,8 +28,10 @@ redun <- function(formula, data=NULL, subset=NULL,
 
   cat.levels <- vector('list',p)
   names(cat.levels) <- nam
-  vtype <- rep('s', p); names(vtype) <- nam
+  vtype <- rep(if(qrank) 'q' else if(rank) 'r' else 's', p)
+  names(vtype) <- nam
   enough <- rep(TRUE, p)
+  if(rank) nk <- 0
 
   for(i in 1:p)
     {
@@ -65,7 +68,7 @@ redun <- function(formula, data=NULL, subset=NULL,
           if(minfreq > 0 && length(u)==2 && sum(table(xi) >= minfreq) < 2)
             enough[i] <- FALSE
           if(nk==0 || length(u) < 3 || ni %in% linear)
-            vtype[ni] <- 'l'
+            vtype[ni] <- if(vtype[ni] == 'q') 'r' else 'l'
         }
   }
 
@@ -79,11 +82,11 @@ redun <- function(formula, data=NULL, subset=NULL,
       data  <- data[enough]
     }
 
-  xdf <- ifelse(vtype=='l', 1, nk-1)
-  j <- vtype=='c'
+  dfs <- c(l=1, s=nk - 1, r=1, q=2, c=0)
+  xdf <- dfs[vtype]
+  j   <- vtype=='c'
   if(any(j)) for(i in which(j)) xdf[i] <- length(cat.levels[[i]]) - 1
   names(xdf) <- nam
-
   orig.df <- sum(xdf)
   X <- matrix(NA, nrow=n, ncol=orig.df)
   st <- en <- integer(p)
@@ -91,14 +94,18 @@ redun <- function(formula, data=NULL, subset=NULL,
   for(i in 1:p)
     {
       xi <- data[[i]]
-      x <- aregTran(xi, vtype[i], nk)
+      if(vtype[i] %in% c('r', 'q')) {
+        xi <- rank(xi) / length(xi)
+        x  <- if(vtype[i] == 'q') cbind(xi, xi ^ 2) else as.matrix(xi)
+        }
+      else x <- aregTran(xi, vtype[i], nk)
       st[i] <- start
       nc    <- ncol(x)
       xdf[i]<- nc
       end   <- start + nc - 1
       en[i] <- end
       if(end > orig.df) stop('program logic error')
-      X[,start:end] <- x
+      X[, start : end] <- x
       start <- end + 1
     }
 
@@ -110,17 +117,17 @@ redun <- function(formula, data=NULL, subset=NULL,
     {
       ## Get all subscripts for variables in the right hand side
       k <- rep(FALSE, ncol(X))
-      for(i in ix) k[st[i]:en[i]] <- TRUE
-      ytype <- if(tlinear && vtype[iy]=='s')'l' else vtype[iy]
-      Y <- if(ytype=='l') X[,st[iy],drop=FALSE] else
-       X[,st[iy]:en[iy],drop=FALSE]
+      for(i in ix) k[st[i] : en[i]] <- TRUE
+      ytype <- if(tlinear && vtype[iy] %in% c('s', 'q')) 'l' else vtype[iy]
+      Y <- if(ytype=='l') X[, st[iy], drop=FALSE] else
+       X[, st[iy] : en[iy], drop=FALSE]
       d <- dim(Y); n <- d[1]; ny <- d[2]
-      f <- cancor(X[,k,drop=FALSE], Y)
+      f <- cancor(X[, k, drop=FALSE], Y)
       R2 <- f$cor[1]^2
       if(type=='adjusted')
         {
           dof <- sum(k) + ny - 1
-          R2 <- max(0, 1 - (1 - R2)*(n-1)/(n-dof-1))
+          R2  <- max(0, 1 - (1 - R2) * (n  -1) / (n - dof - 1))
         }
     ## If variable to possibly remove is categorical with more than 2
     ## categories (more than one dummy variable) make sure ALL frequent
@@ -129,12 +136,12 @@ redun <- function(formula, data=NULL, subset=NULL,
     ## minimum R^2 over predicting each dummy variable.
     if(R2 > r2 && allcat && ytype=='c' && (en[iy] > st[iy]))
       {
-        for(j in st[iy]:en[iy])
+        for(j in st[iy] : en[iy])
           {
-            y <- X[,j,drop=FALSE]
-            if(sum(y) >= minfreq && n-sum(y) >= minfreq)
+            y <- X[, j, drop=FALSE]
+            if(sum(y) >= minfreq && n - sum(y) >= minfreq)
               {
-                f <- cancor(X[,k,drop=FALSE], y)
+                f <- cancor(X[, k, drop=FALSE], y)
                 R2c <- f$cor[1]^2
                 if(type=='adjusted')
                   {
@@ -219,7 +226,8 @@ redun <- function(formula, data=NULL, subset=NULL,
   structure(list(call=acall, formula=formula,
                  In=nam[In], Out=nam[Out], toofew=toofew,
                  rsquared=r2r, r2later=r2l, rsq1=Rsq1,
-                 n=n, p=p, na.action=na.action,
+                 n=n, p=p, rank=rank, qrank=qrank,
+                 na.action=na.action,
                  vtype=vtype, tlinear=tlinear,
                  allcat=allcat, minfreq=minfreq, nk=nk, df=xdf,
                  cat.levels=cat.levels,
@@ -229,6 +237,8 @@ redun <- function(formula, data=NULL, subset=NULL,
 
 print.redun <- function(x, digits=3, long=TRUE, ...)
 {
+  prcvec <- function(w) cat(strwrap(paste(w, collapse=' ')), '', sep='\n')
+
   cat("\nRedundancy Analysis\n\n")
   dput(x$call)
   cat("\n")
@@ -236,9 +246,15 @@ print.redun <- function(x, digits=3, long=TRUE, ...)
   cat('\nNumber of NAs:\t', length(x$na.action$omit), '\n')
   a <- x$na.action
   if(length(a)) naprint(a)
+
+  ranks <- 'rank' %in% names(x) && x$rank
+  if(ranks)
+    cat('\nAnalysis used ranks',
+        if(x$qrank) 'and square of ranks', '\n')
   
   if(x$tlinear)
-    cat('\nTransformation of target variables forced to be linear\n')
+    cat('\nTransformation of target variables forced to be',
+        if(ranks) 'linear in the ranks\n' else 'linear\n')
   if(x$allcat)
     cat('\nAll levels of a categorical variable had to be redundant before the\nvariable was declared redundant\n')
   if(x$minfreq > 0)
@@ -262,9 +278,9 @@ print.redun <- function(x, digits=3, long=TRUE, ...)
       return(invisible())
     }
   cat('\nRendundant variables:\n\n')
-  cat(x$Out)
-  cat('\n\nPredicted from variables:\n\n')
-  cat(x$In, '\n\n')
+  prcvec(x$Out)
+  cat('\nPredicted from variables:\n\n')
+  prcvec(x$In)
   w <- x$r2later
   vardel <- names(x$rsquared)
   if(!long)

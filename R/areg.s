@@ -1,4 +1,3 @@
-# $Id$
 areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
                  B=0, na.rm=TRUE,
                  tolerance=NULL, crossval=NULL) {

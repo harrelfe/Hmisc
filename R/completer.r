@@ -26,6 +26,9 @@
 ##' # list of completed datasets based on first `nimpute` sets of multiple imputation
 ##' completer(myareg)
 ##' # list of completed datasets based on all available sets of multiple imputation
+##' # To get a stacked data frame of all completed datasets use
+##' # do.call(rbind, completer(myareg, data=mydata))
+##' # or use rbindlist in data.table
 ##' }
 completer <- function (a, nimpute, oneimpute = FALSE, mydata) {
 

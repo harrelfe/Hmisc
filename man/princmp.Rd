@@ -11,14 +11,6 @@ princmp(
   k = min(5, p),
   kapprox = min(5, k),
   cor = TRUE,
-  offset = 0.8,
-  col = 1,
-  adj = 0,
-  scoef = TRUE,
-  orig = TRUE,
-  pl = TRUE,
-  ylim = NULL,
-  add = FALSE,
   sw = FALSE,
   nvmax = 5
 )
@@ -36,34 +28,20 @@ princmp(
 
 \item{cor}{set to \code{FALSE} to compute PCs on the original data scale, which is useful if all variables have the same units of measurement}
 
-\item{offset}{controls positioning of text labels for cumulative fraction of variance explained}
-
-\item{col}{color of plotted text}
-
-\item{adj}{angle for plotting text}
-
-\item{scoef}{set to \code{FALSE} to not print coefficients (loadings) of standardized variables}
-
-\item{orig}{set to \code{FALSE} to not show coefficients on the original scale}
-
-\item{pl}{set to \code{FALSE} to not make the scree plot}
-
-\item{ylim}{y-axis plotting limits, a 2-vector}
-
-\item{add}{set to \code{TRUE} to add to an existing plot}
-
 \item{sw}{set to \code{TRUE} to run stepwise regression PC prediction/approximation}
 
 \item{nvmax}{maximum number of predictors to allow in stepwise regression PC approximations}
 }
 \value{
-a k-column matrix with principal component scores, with \code{NA}s when the input data had an \code{NA}.  If \code{k=1} the result is a vector.
+a list of class \code{princmp} with elements \code{scores}, a k-column matrix with principal component scores, with \code{NA}s when the input data had an \code{NA}, and other components useful for printing and plotting.  If \code{k=1} \code{scores} is a vector.  Other components include \code{vars} (vector of variances explained), \code{method}, \code{k}.
 }
 \description{
 Enhanced Output for Principal and Sparse Principal Components
 }
 \details{
 Expands any categorical predictors into indicator variables, and calls \code{princomp} (if \code{method='regular'} (the default)) or \code{sPCAgrid} in the \code{pcaPP} package (\code{method='sparse'}) to compute lasso-penalized sparse principal components.  By default all variables are first scaled by their standard deviation after observations with any \code{NA}s on any variables in \code{formula} are removed.  Loadings of standardized variables, and if \code{orig=TRUE} loadings on the original data scale are printed.  If \code{pl=TRUE} a scree plot is drawn with text added to indicate cumulative proportions of variance explained.  If \code{sw=TRUE}, the \code{leaps} package \code{regsubsets} function is used to approximate the PCs using forward stepwise regression with the original variables as individual predictors.
+
+A \code{print} method prints the results and a \code{plot} method plots the scree plot of variance explained.
 }
 \author{
 Frank Harrell

@@ -182,6 +182,9 @@ S3method(predict,areg.boot)
 S3method(predict,dataRep)
 S3method(predict,transcan)
 
+S3method(print,princmp)
+S3method(plot,princmp)
+
 S3method(print,abs.error.pred)
 S3method(print,areg)
 S3method(print,areg.boot)

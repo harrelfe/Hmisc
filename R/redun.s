@@ -240,7 +240,7 @@ print.redun <- function(x, digits=3, long=TRUE, ...)
   prcvec <- function(w) cat(strwrap(paste(w, collapse=' ')), '', sep='\n')
 
   cat("\nRedundancy Analysis\n\n")
-  dput(x$call)
+  print(x$formula)
   cat("\n")
   cat('n:',x$n,'\tp:',x$p, '\tnk:',x$nk,'\n')
   cat('\nNumber of NAs:\t', length(x$na.action$omit), '\n')

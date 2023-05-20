@@ -4,29 +4,45 @@
 \alias{plot.princmp}
 \title{plot.princmp}
 \usage{
-\method{plot}{princmp}(x, offset = 0.8, col = 1, adj = 0, ylim = NULL, add = FALSE)
+\method{plot}{princmp}(
+  x,
+  which = c("scree", "loadings"),
+  k = x$k,
+  offset = 0.8,
+  col = 1,
+  adj = 0,
+  ylim = NULL,
+  add = FALSE,
+  abbrev = 25
+)
 }
 \arguments{
 \item{x}{results of `princmp`}
 
+\item{which}{'`scree`' or '`loadings'`}
+
+\item{k}{number of components to show, default is `k` specified to `princmp`}
+
 \item{offset}{controls positioning of text labels for cumulative fraction of variance explained}
 
-\item{col}{color of plotted text}
+\item{col}{color of plotted text in scree plot}
 
-\item{adj}{angle for plotting text}
+\item{adj}{angle for plotting text in scree plot}
 
-\item{ylim}{y-axis plotting limits, a 2-vector}
+\item{ylim}{y-axis scree plotting limits, a 2-vector}
 
-\item{add}{set to `TRUE` to add a line to an existing plot without drawing axes}
+\item{add}{set to `TRUE` to add a line to an existing scree plot without drawing axes}
+
+\item{abbrev}{an integer specifying the variable name length above which names are passed through [abbreviate(..., minlength=abbrev)]}
 }
 \value{
-nothing
+`ggplot2` object if `which='loadings'`
 }
 \description{
-Scree Plot for princmp
+Plot Method for princmp
 }
 \details{
-Uses base graphics to plot the scree plot from a [princmp()] result, showing cumultive proportion of variance explained
+Uses base graphics to by default plot the scree plot from a [princmp()] result, showing cumultive proportion of variance explained.  Alternatively the standardized PC loadings are shown in a `ggplot2` bar chart.
 }
 \author{
 Frank Harrell

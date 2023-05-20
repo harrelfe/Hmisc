@@ -4,14 +4,14 @@
 \alias{print.princmp}
 \title{print.princmp}
 \usage{
-\method{print}{princmp}(x, scoef = TRUE, orig = TRUE)
+\method{print}{princmp}(x, which = c("none", "standardized", "original", "both"), k = x$k)
 }
 \arguments{
 \item{x}{results of \code{princmp}}
 
-\item{scoef}{set to \code{FALSE} to not print coefficients (loadings) of standardized variables}
+\item{which}{specifies which loadings to print, the default being \code{'none'} and other values being \code{'standardized'}, \code{'original'}, or \code{'both'}}
 
-\item{orig}{set to \code{FALSE} to not show coefficients on the original scale}
+\item{k}{number of components to show, defaults to \code{k} specified to \code{princmp}}
 }
 \value{
 nothing

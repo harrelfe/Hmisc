@@ -91,18 +91,20 @@ princmp <- function(formula, data=environment(formula),
 ##' Simple print method for [princmp()]
 ##' @title print.princmp
 ##' @param x results of `princmp`
-##' @param scoef set to `FALSE` to not print coefficients (loadings) of standardized variables
-##' @param orig set to `FALSE` to not show coefficients on the original scale
+##' @param which specifies which loadings to print, the default being `'none'` and other values being `'standardized'`, `'original'`, or `'both'`
+##' @param k number of components to show, defaults to `k` specified to `princmp`
 ##' @return nothing
 ##' @author Frank Harrell
 ##' @export
 ##' @md
-print.princmp <- function(x, scoef=TRUE, orig=TRUE) {
+print.princmp <- function(x,
+                          which=c('none', 'standardized', 'original', 'both'),
+                          k=x$k) {
+  which <- match.arg(which)
   prz <- function(x, m) {
     x <- format(round(x, m), zero.print=FALSE)
     print(x, quote=FALSE)
   }
-  k <- x$k
   method  <- x$method
   type <- switch(method,
                  regular = '',
@@ -112,12 +114,12 @@ print.princmp <- function(x, scoef=TRUE, orig=TRUE) {
     cat('Used', x$n, 'observations with no NAs out of', x$ndata, '\n')
 
   co <- x$scoef
-  if(scoef) {
+  if(which %in% c('standardized', 'both')) {
     cat('\n', type, 'PC Coefficients of Standardized Variables\n', sep='')
     prz(co[, 1 : k], 3)
   }
   p <- ncol(x$coef)
-  if(orig) {
+  if(which %in% c('original', 'both')) {
     sds <- x$scale
     cat('\n', type, 'PC Coefficients of Original Variables\n', sep='')
     co <- co / matrix(rep(sds, p), nrow=length(sds))
@@ -139,22 +141,29 @@ print.princmp <- function(x, scoef=TRUE, orig=TRUE) {
   invisible()
 }
 
-##' Scree Plot for princmp
+##' Plot Method for princmp
 ##'
-##' Uses base graphics to plot the scree plot from a [princmp()] result, showing cumultive proportion of variance explained
+##' Uses base graphics to by default plot the scree plot from a [princmp()] result, showing cumultive proportion of variance explained.  Alternatively the standardized PC loadings are shown in a `ggplot2` bar chart.
 ##' @title plot.princmp
 ##' @param x results of `princmp`
+##' @param which '`scree`' or '`loadings'`
+##' @param k number of components to show, default is `k` specified to `princmp`
 ##' @param offset controls positioning of text labels for cumulative fraction of variance explained
-##' @param col color of plotted text
-##' @param adj angle for plotting text
-##' @param ylim y-axis plotting limits, a 2-vector
-##' @param add set to `TRUE` to add a line to an existing plot without drawing axes
-##' @return nothing
+##' @param col color of plotted text in scree plot
+##' @param adj angle for plotting text in scree plot
+##' @param ylim y-axis scree plotting limits, a 2-vector
+##' @param add set to `TRUE` to add a line to an existing scree plot without drawing axes
+##' @param abbrev an integer specifying the variable name length above which names are passed through [abbreviate(..., minlength=abbrev)]
+##' @return `ggplot2` object if `which='loadings'`
 ##' @export
 ##' @author Frank Harrell
-plot.princmp <- function(x, offset=0.8, col=1, adj=0, ylim=NULL, add=FALSE) {
+plot.princmp <- function(x, which=c('scree', 'loadings'),
+                         k=x$k, offset=0.8, col=1, adj=0,
+                         ylim=NULL, add=FALSE, abbrev=25) {
+  which <- match.arg(which)
+  if(which == 'scree') {
   vars <- x$vars
-  k    <- x$k
+
   cumv <- cumsum(vars) / sum(vars)
   if(add) lines(1:k, vars[1:k], type='b', col=col)
   else {
@@ -167,4 +176,33 @@ plot.princmp <- function(x, offset=0.8, col=1, adj=0, ylim=NULL, add=FALSE) {
   text(1:k, vars[1:k] + offset * par('cxy')[2],
        as.character(round(cumv[1:k], 2)),
        srt=45, adj=adj, cex=.65, xpd=NA, col=col)
+  return(invisible())
+  }
+
+  co    <- x$scoef[, 1 : k, drop=FALSE]
+  xname <- abbreviate(rownames(co), minlength=abbrev)
+  p     <- length(xname)
+  b     <- as.vector(co)
+  r     <- range(abs(b))
+  sub   <- paste0('Range of |loading|:', round(r[1], 3),
+                  ' - ', round(r[2], 3))
+  d <- data.frame(b    = abs(b),
+                  y    = as.vector(p + 1 - row(co)),
+                  comp = factor(as.vector(col(co)),
+                                levels=1 : k,
+                                labels=paste0('PC[', 1 : k, ']')),
+                  x    = 1,
+                  sign = ifelse(b >= 0., '+', '-'))
+  g <- ggplot(d,  aes(x=x, y=y, color=sign)) +
+    geom_segment(aes(x=x, y=y, xend=x + 0.9 * b / r[2], yend=y),
+                 size=3) +
+    facet_wrap(~ comp, label='label_parsed') +
+    scale_x_continuous(breaks = 1 : k,
+                       labels=as.expression(sapply(1 : k,
+                                 function(x) bquote(PC[.(x)])))) +
+    scale_y_continuous(breaks = 1 : p, labels=rev(xname)) +
+    guides(x='none', color = guide_legend(title='')) +
+    xlab('Standardized Loading (Absolute)') + ylab('') + labs(caption=sub) +
+    theme(legend.position='bottom')
+  g
 }

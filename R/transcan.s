@@ -31,8 +31,7 @@ transcan <-
   inverse     <- match.arg(inverse)
   rhsImp      <- match.arg(rhsImp)
 
-  if(missing(n.impute))
-    n.impute <- 0
+  if(missing(n.impute))  n.impute <- 0
   
   if(n.impute > 0) {
     imputed <- TRUE
@@ -42,14 +41,10 @@ transcan <-
     warning('transcan provides only an approximation to true multiple imputation.\nA better approximation is provided by the aregImpute function.\nThe MICE and other S libraries provide imputations from Bayesian posterior distributions.')
   }
 
-  if(imputed.actual!='none')
-    imputed <- TRUE
+  if(imputed.actual!='none') imputed <- TRUE
 
 #  if(impcat=='multinom') require(nnet)
 #  if(impcat=='rpart') require(rpart)
-
-  if(missing(data))
-    stop('Must specify data= when using R')
 
   formula <- nact <- NULL
 
@@ -723,31 +718,19 @@ summary.transcan <- function(object, long=FALSE, digits=6, ...)
   else cat("\nStarting estimates for imputed values:\n\n")
   
   print(signif(object$fillin, digits))
-  
   invisible()
 }
 
 
-print.transcan <- function(x, long=FALSE, ...)
-{
-  ## Check for old style
-  if(!is.list(x))
-    {
-      trans <- x
-      cal   <- attr(x, 'call')
-    }
-  else
-    {
-      trans <- x$transformed
-      cal   <- x$call
-    }
+print.transcan <- function(x, long=FALSE, ...) {
+  trans <- x$transformed
+  form  <- x$formula
   
-  dput(cal); cat("\n")
-  if(length(trans))
-    {
-      if(long) print(unclass(x))
-      else print.default(trans)
-    }
+  print(form, showEnv=FALSE); cat("\n")
+  if(length(trans)) {
+    if(long) print(unclass(x))
+    else print.default(trans)
+  }
 
   invisible()
 }
@@ -1293,15 +1276,17 @@ ggplot.transcan <- function(data, mapping, scale=FALSE, ..., environment)
   # The implicit (alphabetical) order of 'imputed' and 'transform'
   # reverses the intended symbol & color assignments. But naming
   # the vectors corrects this.
- 
-  ggplot(data, aes(x=x, y=y, color=type, shape=type, size=type)) + geom_point() +
+
+  g <- ggplot(data, aes(x=x, y=y, color=type, shape=type, size=type)) + geom_point() +
        facet_wrap(~ X, scales=if(scale) 'free_x' else 'free', ...) +
        xlab(NULL) + ylab('Transformed') +
        scale_color_manual(values = c(transform="#00000059", imputed="#FF000059")) +
        scale_shape_manual(values = c(transform=1, imputed=3)) +
        scale_size_manual(values = c(transform=1.3, imputed=2.25)) +
-       theme(legend.position='none') +
-       geom_text(data=adata, aes(label=lab), parse=TRUE, size=1.65, col='black')
+    theme(legend.position='none')
+  if(length(adata))
+    g <- g + geom_text(data=adata, aes(label=lab), parse=TRUE, size=1.65, col='black')
+  g
 }
 
 

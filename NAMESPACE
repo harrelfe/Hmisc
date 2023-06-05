@@ -7,7 +7,7 @@ import(stats)
 importFrom(Formula, Formula, model.part)
 # import(grid)
 # import(lattice)
-importFrom(ggplot2, ggplot, guides,  geom_point, geom_text, geom_col,
+importFrom(ggplot2, ggplot, guides,  geom_line, geom_point, geom_text, geom_col,
            xlab, ylab, labs, geom_tile, geom_segment, scale_size, aes,
            facet_wrap, facet_grid, scale_color_manual, scale_shape_manual,
            ggplotGrob, coord_flip, element_blank, element_text, geom_path,
@@ -51,8 +51,10 @@ importFrom(data.table, setDT, set, setkey, setkeyv, setnames, data.table, is.dat
 S3method(print, arrGrob)
 S3method(ggplot, summaryP)
 S3method(ggplot, transcan)
+S3method(ggplot, transace)
 S3method(print, spower)
 S3method(print, Quantile2)
+S3method(print, transace)
 S3method(plot, describe)
 S3method(plot, Quantile2)
 S3method(plot, summaryP)

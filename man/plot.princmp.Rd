@@ -13,7 +13,8 @@
   adj = 0,
   ylim = NULL,
   add = FALSE,
-  abbrev = 25
+  abbrev = 25,
+  nrow = NULL
 )
 }
 \arguments{
@@ -34,6 +35,8 @@
 \item{add}{set to `TRUE` to add a line to an existing scree plot without drawing axes}
 
 \item{abbrev}{an integer specifying the variable name length above which names are passed through [abbreviate(..., minlength=abbrev)]}
+
+\item{nrow}{number of rows to use in plotting loadings.  Defaults to the `ggplot2` `facet_wrap` default.}
 }
 \value{
 `ggplot2` object if `which='loadings'`

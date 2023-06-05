@@ -29,8 +29,12 @@ redun(formula, data=NULL, subset=NULL, r2 = 0.9,
 }
 \arguments{
   \item{formula}{a formula.  Enclose a variable in \code{I()} to force
-	linearity.}
-  \item{data}{a data frame}
+	linearity.  Alternately, can be a numeric matrix, in which case the
+	data are not run through \code{dataframeReduce}.  This is useful when
+	running the data through \code{transcan} first for nonlinearly
+	transforming the data.}
+  \item{data}{a data frame, which must be omitted if \code{formula} is a
+	matrix}
   \item{subset}{usual subsetting expression}
   \item{r2}{ordinary or adjusted \eqn{R^2} cutoff for redundancy}
   \item{type}{specify \code{"adjusted"} to use adjusted \eqn{R^2}}
@@ -45,7 +49,8 @@ redun(formula, data=NULL, subset=NULL, r2 = 0.9,
   \item{rank}{set to \code{TRUE} to replace non-categorical varibles
 		with ranks before running the analysis.  This causes \code{nk} to be
 		set to zero.}
-	\item{qrank}{}
+	\item{qrank}{set to \code{TRUE} to also include squares of ranks to
+		allow for non-monotonic transformations}
   \item{allcat}{set to \code{TRUE} to ensure that all categories of
 	categorical variables having more than two categories are redundant
 	(see details below)}

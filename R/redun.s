@@ -8,23 +8,32 @@ redun <- function(formula, data=NULL, subset=NULL,
   acall   <- match.call()
   type    <- match.arg(type)
 
-  if(!inherits(formula,'formula'))
-    stop('formula must be a formula')
+  if(inherits(formula, 'formula')) {
+    a <- as.character(formula)
+    if(length(a) == 2 && a[1] == '~' && a[2] == '.' &&
+       length(list(...))) data <- dataframeReduce(data, ...)
 
-  a <- as.character(formula)
-  if(length(a)==2 && a[1]=='~' && a[2]=='.' &&
-     length(list(...))) data <- dataframeReduce(data, ...)
-
-  Terms <- terms(formula, specials='I', data=data)
-  m <- list(formula=formula, data=data, subset=subset, na.action=na.delete)
-  data <- do.call('model.frame', m)
-  nam <- names(data)
-  linear <- nam[attr(Terms,'specials')$I]
+    Terms <- terms(formula, specials='I', data=data)
+    m     <- list(formula=formula, data=data, subset=subset,
+                  na.action=na.delete)
+    data      <- do.call('model.frame', m)
+    nam       <- names(data)
+    linear    <- nam[attr(Terms,'specials')$I]
+    na.action <- attr(data, 'na.action')
+    if(pr) cat(n, 'observations used in analysis\n')
+  } else {
+    if(! is.matrix(formula))
+      stop("formula must be a numeric matrix when it's not an actual formula")
+    data      <- as.data.frame(formula)
+    formula   <- NULL
+    na.action <- NULL
+    nam       <- names(data)
+    p         <- length(data)
+    linear    <- rep(FALSE, length(data))
+  }
+  
   p <- length(data)
   n <- nrow(data)
-  at <- attributes(data)
-  na.action <- at$na.action
-  if(pr) cat(n, 'observations used in analysis\n')
 
   cat.levels <- vector('list',p)
   names(cat.levels) <- nam
@@ -240,8 +249,10 @@ print.redun <- function(x, digits=3, long=TRUE, ...)
   prcvec <- function(w) cat(strwrap(paste(w, collapse=' ')), '', sep='\n')
 
   cat("\nRedundancy Analysis\n\n")
-  print(x$formula)
-  cat("\n")
+  if(length(x$formula)) {
+    print(x$formula)
+    cat("\n")
+    }
   cat('n:',x$n,'\tp:',x$p, '\tnk:',x$nk,'\n')
   cat('\nNumber of NAs:\t', length(x$na.action$omit), '\n')
   a <- x$na.action

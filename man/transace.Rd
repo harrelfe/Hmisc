@@ -1,5 +1,7 @@
 \name{transace}
 \alias{transace}
+\alias{ggplot.transace}
+\alias{print.transace}
 \alias{areg.boot}
 \alias{print.areg.boot}
 \alias{plot.areg.boot}
@@ -18,9 +20,12 @@
 }
 \description{
   \code{transace} is \code{\link[acepack]{ace}} packaged for easily automatically
-  transforming all variables in a matrix.  \code{transace} is a fast
+  transforming all variables in a formula without a left-hand side.
+	\code{transace} is a fast 
   one-iteration version of \code{\link{transcan}} without imputation of
-  \code{NA}s.
+  \code{NA}s.  The \code{ggplot} method makes nice transformation plots
+	using \code{ggplot2}.  Binary variables are automatically kept linear,
+	and character or factor variables are automatically treated as categorical.
 
   \code{areg.boot} uses \code{\link{areg}} or
   \code{\link[acepack]{avas}} to fit additive regression models allowing
@@ -120,7 +125,11 @@
   example on hypothetical data).
 }
 \usage{
-transace(x, monotonic=NULL, categorical=NULL, binary=NULL, pl=TRUE)
+transace(formula, trim=0.01, data=environment(formula))
+
+\method{print}{transace}(x, \dots)
+
+\method{ggplot}{transace}(data, mapping, ..., environment, nrow=NULL)
 
 areg.boot(x, data, weights, subset, na.action=na.delete, 
           B=100, method=c("areg","avas"), nk=4, evaluation=100, valrsq=TRUE, 
@@ -158,11 +167,18 @@ Quantile(object, \dots)
 \method{Quantile}{areg.boot}(object, q=.5, \dots)
 }
 \arguments{
+	\item{formula}{a formula without a left-hand-side variable.  Variables
+		may be enclosed in \code{monotone(), linear(), categorical()} to
+		make certain assumptions about transformations.  \code{categorical}
+		and \code{linear} need not be specified if they can be summized from
+		the variable values.}
   \item{x}{
-    for \code{transace} a numeric matrix.  For \code{areg.boot} \code{x}
+    for \code{areg.boot} \code{x} 
     is a formula.  For \code{print} or \code{plot}, an object created by
-    \code{areg.boot}.  For \code{print.summary.areg.boot}, and object
-    created by \code{summary.areg.boot}.
+    \code{areg.boot} or \code{transace}.  For
+		\code{print.summary.areg.boot}, and object 
+    created by \code{summary.areg.boot}.  For \code{ggplot} is
+		the result of \code{transace}.
   }
   \item{object}{
     an object created by \code{areg.boot}, or a model fit object
@@ -179,19 +195,16 @@ Quantile(object, \dots)
     from the transformed values to untransformed values.  Linear
     interpolation is used in this case to obtain untransform values.
   }
-  \item{binary, categorical, monotonic}{
-    These are vectors of variable names specifying what to assume about
-    each column of \code{x} for \code{transace}.  Binary variables are not
-    transformed, of course.
-  }
-  \item{pl}{
-    set \code{pl=FALSE} to prevent \code{transace} from plotting each
-    fitted transformation
-  }
+	\item{trim}{quantile to which to trim original and transformed values
+		for continuous variables for purposes of plotting the
+		transformations with \code{ggplot.transace}}
+	\item{nrow}{the number of rows to graph for \code{transace}
+		transformations, with the default chosen by \code{ggplot2}}
   \item{data}{
     data frame to use if \code{x} is a formula and variables are not
-    already in the search list
+    already in the search list.  For \code{ggplot} is a \code{transace} object.
   }
+	\item{environment,mapping}{ignored}
   \item{weights}{
     a numeric vector of observation weights.  By default, all
     observations are weighted equally.
@@ -345,15 +358,22 @@ Quantile(object, \dots)
 	See \code{\link{assign}}.
   }
   \item{\dots}{
-    arguments passed to other functions
+    arguments passed to other functions.  Ignored for
+		\code{print.transace} and \code{ggplot.transace}.
   }
 }
 \value{
-  \code{transace} returns a matrix like \code{x} but containing
-  transformed values.  This matrix has attributes \code{rsq} (vector of
-  \eqn{R^2} with which each variable can be predicted from the others)
-  and \code{omitted} (row numbers of \code{x} that were deleted due to
-  \code{NA}s).
+  \code{transace} returns a list of class \code{'transace'} containing
+	these elements: \code{n} (number of non-missing observations used), \code{transformed} (a matrix like \code{x} but containing
+  transformed values), \code{rsq} (vector of \eqn{R^2} with which each
+	variable can be predicted from the others), \code{omitted} (row
+	numbers of \code{x} that were deleted due to \code{NA}s),
+	\code{trantab} (compact transformation lookups), \code{levels}
+	(original levels of character and factor	varibles if the input was a
+	data frame), \code{trim} (value of \code{trim} passed to
+	\code{transace}), \code{limits} (the limits for plotting raw and
+	transformed variables, computed from \code{trim}), and \code{type} (a
+	vector of transformation types used for the variables).}
   
   \code{areg.boot} returns a list of class \samp{areg.boot} containing
   many elements, including (if \code{valrsq} is \code{TRUE})
@@ -453,10 +473,9 @@ transformation in the transform-both-sides regression model.  JASA
 See \code{\link[acepack]{avas}}, \code{\link[acepack]{ace}} for primary references.
 }
 \examples{
-# xtrans <- transace(cbind(age,sex,blood.pressure,race.code),
-#                    binary='sex', monotonic='age',
-#                    categorical='race.code')
-
+# xtrans <- transace(~ monotone(age) + sex + blood.pressure + categorical(race.code))
+# print(xtrans)  # show R^2s and a few other things
+# ggplot(xtrans) # show transformations
 
 # Generate random data from the model y = exp(x1 + epsilon/3) where
 # x1 and epsilon are Gaussian(0,1)

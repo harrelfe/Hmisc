@@ -4,6 +4,7 @@
 ##' @title meltData
 ##' @param formula a formula
 ##' @param data data frame or table
+##' @param tall see above
 ##' @param vnames set to `names` to always use variable names instead of labels for X
 ##' @param sepunits set to `TRUE` to create a separate variable `Units` to hold units of measurement.  The variable is not created if no original variables have a non-blank `units` attribute.
 ##' @param ... passed to `label()`

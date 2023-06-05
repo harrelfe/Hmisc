@@ -18,6 +18,8 @@ meltData(
 
 \item{data}{data frame or table}
 
+\item{tall}{see above}
+
 \item{vnames}{set to \code{names} to always use variable names instead of labels for X}
 
 \item{sepunits}{set to \code{TRUE} to create a separate variable \code{Units} to hold units of measurement.  The variable is not created if no original variables have a non-blank \code{units} attribute.}

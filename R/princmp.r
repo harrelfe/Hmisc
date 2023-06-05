@@ -18,7 +18,7 @@
 ##' @md
 princmp <- function(formula, data=environment(formula),
                     method=c('regular', 'sparse'),
-                    k=min(5, p), kapprox=min(5, k),
+                    k=min(5, p - 1), kapprox=min(5, k),
                     cor=TRUE, sw=FALSE, nvmax=5) {
   method <- match.arg(method)
   if(method == 'sparse')
@@ -27,7 +27,6 @@ princmp <- function(formula, data=environment(formula),
 
   isf <- inherits(formula, 'formula')
   X <- if(isf) model.matrix.lm(formula, data) else as.matrix(formula)
-
   
   if(isf) X  <- X[, -1, drop=FALSE]  # remove intercept
   p  <- ncol(X)
@@ -35,30 +34,35 @@ princmp <- function(formula, data=environment(formula),
               method=method, k=k, kapprox=kapprox, cor=cor, nvmax=nvmax)
   g  <- switch(method,
                regular = stats::princomp(X, cor=cor),
-               sparse  = pcaPP::sPCAgrid(X, k=ncol(X)-1, method='sd',
+               sparse  = pcaPP::sPCAgrid(X, k=ncol(X) - 1, method='sd',
                                   center=mean,
                                   scale=if(cor) sd else function(x) 1.,
                                   scores=TRUE, maxiter=10) )
   
-  co <- unclass(g$loadings)
-  type <- switch(method, regular='', sparse='Sparse ')
-  res$coef  <- co
-  res$scale <- g$scale
-  p   <- ncol(co)
-  sds <- g$scale
-  co  <- co / matrix(rep(sds, p), nrow=length(sds))
+  co        <- unclass(g$loadings)
+  type      <- switch(method, regular='', sparse='Sparse ')
   res$scoef <- co
-  vars <- g$sdev^2
-  res$vars <- vars
+  res$scale <- g$scale
+  p         <- ncol(co)
+  sds       <- g$scale
+  co        <- co / matrix(rep(sds, p), nrow=length(sds))
+  res$coef  <- co
+  vars      <- g$sdev^2
+  res$vars  <- vars
 
   if(sw) {
     if(! requireNamespace('leaps', quietly=TRUE))
       stop('You must install the leaps package when sw=TRUE')
     swa <- list()
+
     for(j in 1 : kapprox) {
       fchar <- capture.output(  # don't allow regular output
         f <- leaps::regsubsets(X, g$scores[, j], method='forward',
-                        nbest=1, nvmax=min(p - 1, nvmax)))
+                               nbest=1, nvmax=min(p - 1, nvmax)))
+      debug <- getOption('princmpdebug', FALSE)
+      if(debug) cat('Debugging turned on\n')
+      if(j == 1 && debug)
+        saveRDS(list(X=X, g=g, f=f), file='/tmp/princmp.rds')
       s <- summary(f)
       w <- s$which[, -1, drop=FALSE]   # omit intercept
       xnm <- colnames(w)
@@ -80,7 +84,8 @@ princmp <- function(formula, data=environment(formula),
   ## original variables NA
   ## See https://stackoverflow.com/questions/5616210
   if(isf) X  <- model.matrix.lm(formula, data, na.action=na.pass)
-  pcs <- predict(g, newdata=X)[, 1 : k]
+  pcs        <- predict(g, newdata=X)
+  pcs        <- pcs[, 1 : min(k, ncol(pcs)), drop=FALSE]
   res$scores <- pcs
   class(res) <- 'princmp'
   res
@@ -127,9 +132,10 @@ print.princmp <- function(x,
   }
   sw <- x$sw
   lsw <- length(sw)
-  if(lsw) for(j in 1 : lsw) {
-            cat('\nStepwise Approximations to PC ', j,
-                ' With Cumulative R^2\n', sep='')
+  if(lsw) {
+    cat('\nStepwise Approximations to PCs With Cumulative R^2\n')
+    for(j in 1 : lsw) {
+      cat('\nPC', j, '\n')
       rsq <- sw[[j]]
       fw <- character(0)
       xadded <- names(rsq)
@@ -138,6 +144,7 @@ print.princmp <- function(x,
                      ' (', round(rsq[l], 3), ')')
       cat(strwrap(fw), sep='\n')
     }
+  }
   invisible()
 }
 
@@ -154,12 +161,13 @@ print.princmp <- function(x,
 ##' @param ylim y-axis scree plotting limits, a 2-vector
 ##' @param add set to `TRUE` to add a line to an existing scree plot without drawing axes
 ##' @param abbrev an integer specifying the variable name length above which names are passed through [abbreviate(..., minlength=abbrev)]
+##' @param nrow number of rows to use in plotting loadings.  Defaults to the `ggplot2` `facet_wrap` default.
 ##' @return `ggplot2` object if `which='loadings'`
 ##' @export
 ##' @author Frank Harrell
 plot.princmp <- function(x, which=c('scree', 'loadings'),
                          k=x$k, offset=0.8, col=1, adj=0,
-                         ylim=NULL, add=FALSE, abbrev=25) {
+                         ylim=NULL, add=FALSE, abbrev=25, nrow=NULL) {
   which <- match.arg(which)
   if(which == 'scree') {
   vars <- x$vars
@@ -167,10 +175,12 @@ plot.princmp <- function(x, which=c('scree', 'loadings'),
   cumv <- cumsum(vars) / sum(vars)
   if(add) lines(1:k, vars[1:k], type='b', col=col)
   else {
-    plot(1:k, vars[1:k], type='b', ylab='Variance', xlab='',
+    plot(1:k, vars[1:k], type='b', ylab='Variance',
+         xlab=if(k <= 10) '' else 'Component',
          axes=FALSE, col=col, ylim=ylim)
     axis(1, at=1:k,
-         labels = as.expression(sapply(1 : k, function(x) bquote(PC[.(x)]))))
+         labels = if(k > 10) 1 : k else
+                  as.expression(sapply(1 : k, function(x) bquote(PC[.(x)]))))
     axis(2)
     }
   text(1:k, vars[1:k] + offset * par('cxy')[2],
@@ -180,6 +190,7 @@ plot.princmp <- function(x, which=c('scree', 'loadings'),
   }
 
   co    <- x$scoef[, 1 : k, drop=FALSE]
+  
   xname <- abbreviate(rownames(co), minlength=abbrev)
   p     <- length(xname)
   b     <- as.vector(co)
@@ -196,7 +207,7 @@ plot.princmp <- function(x, which=c('scree', 'loadings'),
   g <- ggplot(d,  aes(x=x, y=y, color=sign)) +
     geom_segment(aes(x=x, y=y, xend=x + 0.9 * b / r[2], yend=y),
                  size=3) +
-    facet_wrap(~ comp, label='label_parsed') +
+    facet_wrap(~ comp, labeller='label_parsed', nrow=nrow) +
     scale_x_continuous(breaks = 1 : k,
                        labels=as.expression(sapply(1 : k,
                                  function(x) bquote(PC[.(x)])))) +

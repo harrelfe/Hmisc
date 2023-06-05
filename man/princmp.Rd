@@ -8,7 +8,7 @@ princmp(
   formula,
   data = environment(formula),
   method = c("regular", "sparse"),
-  k = min(5, p),
+  k = min(5, p - 1),
   kapprox = min(5, k),
   cor = TRUE,
   sw = FALSE,

@@ -1,57 +1,134 @@
-# $Id$
-transace <- function(x, monotonic=NULL, categorical=NULL, binary=NULL,
-                     pl=TRUE)
-{
-  ## require(acepack)  # provides ace, avas
-  if (!requireNamespace("acepack", quietly = TRUE))
+transace <- function(formula, trim=0.01, data=environment(formula)) {
+  if (! requireNamespace("acepack", quietly = TRUE))
     stop("This function requires the 'acepack' package.")
 
-  nam <- dimnames(x)[[2]]
-  omit <- is.na(x %*% rep(1,ncol(x)))
-  omitted <- (1:nrow(x))[omit]
-  if(length(omitted)) x <- x[!omit,]
-  p <- ncol(x)
-  xt <- x  # binary variables retain original coding
-  if(!length(nam))
-    stop("x must have column names")
+  monotonic <- categorical <- linear <- NULL
+  trms <- terms(formula, data=data,
+                specials=c('monotone', 'categorical', 'linear'))
+  nam  <- all.vars(formula)
+  s <- attr(trms, 'specials')
+  mono <- s$monotone
+  if(length(mono)) monotonic   <- nam[mono]
+  catg <- s$categorical
+  if(length(catg)) categorical <- nam[catg]
+  lin  <- s$linear
+  if(length(lin))  linear      <- nam[lin]
+  if(is.environment(data)) data <- as.list(data)
+  x <- data[nam]
+  if(! is.data.frame(x)) x <- as.data.frame(x)
   
-  rsq <- rep(NA, p)
-  names(rsq) <- nam
-
-  for(i in (1:p)[!(nam %in% binary)]) {
-    lab <- nam[-i]
-    w <- 1:(p-1)
-    im <- w[lab %in% monotonic]
-    ic <- w[lab %in% categorical]
-    if(nam[i] %in% monotonic)
-      im <- c(0, im)
-
-    if(nam[i] %in% categorical)
-      ic <- c(0, ic)
-    m <- 10*(length(im)>0)+(length(ic)>0)
-    if(m==11)
-      a <- acepack::ace(x[,-i], x[,i], mon=im, cat=ic)
-    else if (m==10)
-      a <- acepack::ace(x[,-i], x[,i], mon=im)
-    else if(m==1)
-      a <- acepack::ace(x[,-i], x[,i], cat=ic)
-    else
-      a <- acepack::ace(x[,-i], x[,i])
-
-    xt[,i] <- a$ty
-    rsq[i] <- a$rsq
-    if(pl)
-      plot(x[,i], xt[,i], xlab=nam[i], ylab='')
+  Levels <- list()
+  nam <- names(x)
+  for(n in nam) {
+    z                     <- x[[n]]
+    if(is.character(z)) z <- as.factor(z)
+    if(is.factor(z)) {
+      categorical         <- unique(c(categorical, n))
+      Levels[[n]]         <- levels(z)
+      z                   <- as.integer(z)
+    }
+    else {
+      u <- unique(z[! is.na(z)])
+      if(length(u) < 3) {
+        u           <- sort(u)
+        linear      <- unique(c(linear, n))
+        z           <- 1 * (z == u[length(u)])
+        Levels[[n]] <- u
+      }
+    }
+    x[[n]] <- z
   }
 
-  cat("R-squared achieved in predicting each variable:\n\n")
-  print(rsq)
+  x <- as.matrix(x)
+  if(is.character(x)) stop('transace requires a numeric matrix x')
+  
+  omit <- is.na(x %*% rep(1, ncol(x)))
+  omitted <- (1 : nrow(x))[omit]
+  if(length(omitted)) x <- x[! omit, ]
+  p  <- ncol(x)
+  xt <- x  # linear variables retain original coding
+  if(!length(nam)) stop("x must have column names")
+  
+  rsq        <- rep(NA, p)
+  names(rsq) <- nam
 
-  attr(xt, "rsq") <- rsq
-  attr(xt, "omitted") <- omitted
-  invisible(xt)
+  Tr        <- vector('list', p)
+  names(Tr) <- nam
+  Trim      <- list()
+  for(i in (1 : p)[! (nam %in% linear)]) {
+    n   <- nam[i]
+    lab <- nam[-i]
+    w <- 1 : (p - 1)
+    im <- if(any(lab %in% monotonic))   w[lab %in% monotonic]
+    ic <- if(any(lab %in% categorical)) w[lab %in% categorical]
+    il <- if(any(lab %in% linear))      w[lab %in% linear]
+    if(n %in% monotonic)   im <- c(0, im)
+    if(n %in% categorical) ic <- c(0, ic)
+    a  <- acepack::ace(x[, - i], x[, i], cat=ic, mon=im, lin=il)
+    j  <- ! duplicated(a$y)
+    y  <- a$y [j]
+    ty <- a$ty[j]
+    j  <- order(y)
+    y  <- y[j]
+    ty <- ty[j]
+    if(trim != 0.0 && n %nin% c(linear, categorical)) {
+      ylim      <- quantile(a$y,  c(trim, 1. - trim))
+      tylim     <- quantile(a$ty, c(trim, 1. - trim))
+      Trim[[n]] <- list(ylim=ylim, tylim=tylim)
+      }
+    Tr[[n]] <- list(y=y, ty=ty)
+    xt[,i]  <- a$ty
+    rsq[i]  <- a$rsq
+  }
+
+  type <- structure(rep('general', length(nam)), names=nam)
+  type[monotonic]   <- 'monotone'
+  type[categorical] <- 'categorical'
+  type[linear]      <- 'linear'
+  res <- list(formula=formula, n=nrow(x),
+              rsq=rsq, omitted=omitted, trantab=Tr, levels=Levels,
+              trim=trim, limits=Trim, transformed=xt, type=type)
+  class(res) <- 'transace'
+  res
 }
 
+print.transace <- function(x, ...) {
+  cat('\ntransace Results\n\n')
+  print(x$formula)
+  cat('\nn=', x$n)
+  if(length(x$omitted))
+    cat(length(omitted), 'observations deleted due to NAs\n')
+  cat('\n\nTransformations:\n\n')
+  print(x$type, quote=FALSE)
+  cat("\n\nR-squared achieved in predicting each variable:\n\n")
+  print(x$rsq, digits=3)
+  invisible()
+  }
+ 
+ggplot.transace <- function(data, mapping, ..., environment, nrow=NULL) {
+  w      <- data$trantab
+  trim   <- data$trim
+  limits <- data$limits
+  if(length(trim) && trim != 0.0)
+    for(n in names(w)) {
+      z   <- w[[n]]
+      lim <- limits[[n]]
+      if(length(lim)) {
+        ylim  <- lim$ylim
+        tylim <- lim$tylim
+        j     <- z$y  >= ylim [1] & z$y  <= ylim [2] &
+                 z$ty >= tylim[1] & z$ty <= tylim[2]
+        z$y [! j] <- NA
+        z$ty[! j] <- NA
+        w[[n]] <- z
+      }
+    }
+                   
+  w  <- data.table::rbindlist(w, idcol='v')
+  ggplot(w, aes(x=y, y=ty))  + geom_line() +
+       facet_wrap(~ v, scales='free', nrow=nrow) +
+       xlab(NULL) + ylab('Transformed')
+  }
 
 areg.boot <- function(x, data, weights, subset, na.action=na.delete,
                       B = 100, method=c('areg','avas'), nk=4, evaluation=100, 
@@ -748,3 +825,5 @@ smearingEst <- function(transEst, inverseTrans, res,
                 inverseTrans(transEst+quantile(res,q)))
   structure(y, class='labelled', label=label)
 }
+
+utils::globalVariables(c('ty'))

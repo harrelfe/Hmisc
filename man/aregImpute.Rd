@@ -412,6 +412,11 @@ Vanderbilt University
   White IR, Royston P, Wood AM.  Multiple imputation using chained
   equations: Issues and guidance for practice.  Stat Med 30:377-399,
   2011.
+
+	Curnow E, Carpenter JR, Heron JE, et al: Multiple imputation of
+  missing data under missing at random: compatible imputation models are
+  not sufficient to avoid bias if they are mis-specified. J Clin Epi
+  June 9, 2023.  DOI:10.1016/j.jclinepi.2023.06.011. 
   }
 \seealso{
 \code{\link{fit.mult.impute}}, \code{\link{transcan}}, \code{\link{areg}}, \code{\link{naclus}}, \code{\link{naplot}}, \code{\link[mice]{mice}},

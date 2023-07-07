@@ -23,7 +23,8 @@ transace <- function(formula, trim=0.01, data=environment(formula)) {
     z                     <- x[[n]]
     if(is.character(z)) z <- as.factor(z)
     if(is.factor(z)) {
-      categorical         <- unique(c(categorical, n))
+      if(n %nin% c(monotonic, linear))
+        categorical         <- unique(c(categorical, n))
       Levels[[n]]         <- levels(z)
       z                   <- as.integer(z)
     }
@@ -93,7 +94,7 @@ transace <- function(formula, trim=0.01, data=environment(formula)) {
 }
 
 print.transace <- function(x, ...) {
-  cat('\ntransace Results\n\n')
+  cat('\nTransformations Using Alternating Conditional Expectation\n\n')
   print(x$formula)
   cat('\nn=', x$n)
   if(length(x$omitted))

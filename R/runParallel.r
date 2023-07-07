@@ -35,7 +35,7 @@
 ##' customize printing.
 ##'
 ##' If any of the objects appearing as list elements produced by onecore
-##' are multi-dimensional arrays, you must specify an integer value fo
+##' are multi-dimensional arrays, you must specify an integer value for
 ##' `along`.  This specifies to the `abind` package `abind` function
 ##' the dimension along which to bind the arrays.  For example, if the
 ##' first dimension of the array corresponding to repetitions, you would

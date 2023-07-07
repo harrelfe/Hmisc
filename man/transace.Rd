@@ -363,17 +363,16 @@ Quantile(object, \dots)
   }
 }
 \value{
-  \code{transace} returns a list of class \code{'transace'} containing
-	these elements: \code{n} (number of non-missing observations used), \code{transformed} (a matrix like \code{x} but containing
-  transformed values), \code{rsq} (vector of \eqn{R^2} with which each
+  \code{transace} returns a list of class \code{transace} containing
+	these elements: \code{n} (number of non-missing observations used), \code{transformed} (a matrix containing transformed values), \code{rsq} (vector of \eqn{R^2} with which each
 	variable can be predicted from the others), \code{omitted} (row
-	numbers of \code{x} that were deleted due to \code{NA}s),
+	numbers of data that were deleted due to \code{NA}s),
 	\code{trantab} (compact transformation lookups), \code{levels}
 	(original levels of character and factor	varibles if the input was a
 	data frame), \code{trim} (value of \code{trim} passed to
 	\code{transace}), \code{limits} (the limits for plotting raw and
 	transformed variables, computed from \code{trim}), and \code{type} (a
-	vector of transformation types used for the variables).}
+	vector of transformation types used for the variables).
   
   \code{areg.boot} returns a list of class \samp{areg.boot} containing
   many elements, including (if \code{valrsq} is \code{TRUE})

@@ -164,7 +164,7 @@ fit.mult.impute <- function(formula, fitter, xtrans, data,
     }   # end main loop i over n.impute
 
   if(method == 'only stack')
-    warning("standard errors for frequently missing variables will",
+    warning("standard errors for frequently missing variables will ",
             "be underestimated with method='only stack'")
   else {
     vavg <- vavg / n.impute    ## matrix \bar{U} in Rubin's notation

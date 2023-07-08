@@ -1,6 +1,6 @@
 Package: Hmisc
 Version: 5.1-1
-Date: 2023-06-08
+Date: 2023-07-08
 Title: Harrell Miscellaneous
 Authors@R: 
     c(person(given = "Frank E",
@@ -15,13 +15,13 @@ Authors@R:
 						 comment = "contributed several functions and maintains latex functions"))
 Maintainer: Frank E Harrell Jr <fh@fharrell.com>
 Imports: methods, ggplot2, cluster, rpart, nnet, foreign, gtable, grid, gridExtra, data.table, htmlTable (>= 1.11.0), viridis, htmltools, base64enc, colorspace, rmarkdown, knitr, Formula
-Suggests: survival, qreport, acepack, chron, rms, mice, rstudioapi, tables, plotly (>= 4.5.6), rlang, plyr, VGAM, leaps, pcaPP, digest, parallel, polspline, abind, kableExtra, rio, lattice, latticeExtra, gt, sparkline, jsonlite, htmlwidgets
+Suggests: survival, qreport, acepack, chron, rms, mice, rstudioapi, tables, plotly (>= 4.5.6), rlang, plyr, VGAM, leaps, pcaPP, digest, parallel, polspline, abind, kableExtra, rio, lattice, latticeExtra, gt, sparkline, jsonlite, htmlwidgets, qs, getPass, keyring
 Description: Contains many functions useful for data
 	analysis, high-level graphics, utility operations, functions for
 	computing sample size and power, simulation, importing and annotating datasets,
 	imputing missing values, advanced table making, variable clustering,
 	character string manipulation, conversion of R objects to LaTeX and html code,
-	recoding variables, caching, simplified parallel computing, general moving window statistical estimation, and assistance in interpreting principal component analysis.
+	recoding variables, caching, simplified parallel computing, encrypting and decrypting data using a safe workflow, general moving window statistical estimation, and assistance in interpreting principal component analysis.
 License: GPL (>= 2)
 LazyLoad: Yes
 URL: https://hbiostat.org/R/Hmisc/

@@ -68,7 +68,7 @@ return the file name for holding progress information if you want to
 customize printing.
 
 If any of the objects appearing as list elements produced by onecore
-are multi-dimensional arrays, you must specify an integer value fo
+are multi-dimensional arrays, you must specify an integer value for
 \code{along}.  This specifies to the \code{abind} package \code{abind} function
 the dimension along which to bind the arrays.  For example, if the
 first dimension of the array corresponding to repetitions, you would

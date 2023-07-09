@@ -4,20 +4,22 @@
 \alias{qcrypt}
 \title{qcrypt}
 \usage{
-qcrypt(obj, base, service = "R-keyring-service")
+qcrypt(obj, base, service = "R-keyring-service", file)
 }
 \arguments{
-\item{obj}{an R object to write to disk and encrypt (if \code{base} is specified) or the base file name to read and uncrypted (if \code{base} is not specified)}
+\item{obj}{an R object to write to disk and encrypt (if \code{base} is specified) or the base file name to read and uncrypted (if \code{base} is not specified).  Not used when \code{file} is given.}
 
-\item{base}{base file name when creating a file}
+\item{base}{base file name when creating a file.  Not used when \code{file} is given.}
 
 \item{service}{a fairly arbitrary \code{keyring} service name.  The default is almost always OK unless you need to use different passwords for different files.}
+
+\item{file}{full name of file to encrypt or decrypt}
 }
 \value{
-(invisibly) the full encrypted file name if writing the file, or the restored R object if reading the file
+(invisibly) the full encrypted file name if writing the file, or the restored R object if reading the file.  When decrypting a general file with \verb{file=}, the returned value is the full path to a temporary file containing the decrypted data.
 }
 \description{
-Store and Encrypt R Objects or Read and Decrypt Them
+Store and Encrypt R Objects or Files or Read and Decrypt Them
 }
 \details{
 \code{qcrypt} is used to protect sensitive information on a user's computer or when transmitting a copy of the file to another R user.  Unencrypted information only exists for a moment, and the encryption password does not appear in the user's script but instead is managed by the \code{keyring} package to remember the password across R sessions, and the \code{getPass} package, which pops up a password entry window and does not allow the password to be visible.  The password is requested only once, except perhaps when the user logs out of their operating system session or reboots.
@@ -25,6 +27,8 @@ Store and Encrypt R Objects or Read and Decrypt Them
 \code{qcrypt} writes R objects to disk in a temporary file using the \code{qs} package \code{qsave} function.  The file is quickly encrypted using the \code{safer} package, and the temporary unencrypted \code{qs} file is deleted.  When reading an encrypted file the process is reversed.
 
 To save an object in an encrypted file, specify the object as the first argument \code{obj} and specify a base file name as a character string in the second argument \code{base}.  The full \code{qs} file name will be of the form \code{base.qs.encrypted} in the user's current working directory.  To unencrypt the file into a short-lived temporary file and use \code{qs::qread} to read it, specify the base file name as a character string with the first argument, and do not specify the \code{base} argument.
+
+Alternatively, \code{qcrypt} can be used to encrypt or decrypt existing files of any type using the same password and keyring mechanism.  The former is done by specifying \code{file} that does not end in \code{'.encrypted'} and the latter is done by ending \code{file} with \code{'.encrypted'}.  When \code{file} does not contain a path it is assumed to be in the current working directory.  When a file is encrypted the original file is removed.  Files are decrypted into a temporary directory created by \code{tempdir()}, with the name of the file being the value of \code{file} with \code{'.encrypted'} removed.
 
 Interactive password provision works when running \code{R}, \code{Rscript}, \code{RStudio}, or \code{Quarto} but does not work when running \verb{R CMD BATCH}.
 }
@@ -38,6 +42,11 @@ qcrypt(x, 'x')   # creates x.qs.encrypted in current working directory
 x <- qcrypt('x') # unencrypts x.qs.encrypted into a temporary
                  # directory, uses qs::qread to read it, and
                  # stores the result in x
+# Encrypt a general file using a different password
+qcrypt(file='report.pdf', service='pdfkey')
+# Decrypt that file
+fi <- qcrypt(file='report.pdf.encrypted', service='pdfkey')
+fi contains the full unencrypted file name which is in a temporary directory
 }
 }
 \author{

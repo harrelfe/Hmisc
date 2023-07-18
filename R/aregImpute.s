@@ -2,7 +2,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
                        group=NULL, nk=3, tlinear=TRUE,
                        type=c('pmm','regression','normpmm'), pmmtype=1,
                        match=c('weighted','closest','kclosest'),
-                       kclosest=3, fweighted=0.2, curtail=TRUE,
+                       kclosest=3, fweighted=0.2, curtail=TRUE, constraint=NULL,
                        boot.method=c('simple', 'approximate bayesian'),
                        burnin=3, x=FALSE,
                        pr=TRUE, plotTrans=FALSE,
@@ -19,6 +19,8 @@ aregImpute <- function(formula, data, subset, n.impute=5,
     stop('group makes no sense when type="normpmm"')
   if(type == 'normpmm' && ! tlinear)
     stop('type="normpmm" not implemented when tlinear=FALSE because no covariance matrix is available for right hand side beta for first canonical variate')
+  if(length(constraint) && type != 'pmm')
+    stop("constraint only works with type='pmm'")
   
   if(! inherits(formula,'formula'))
     stop('formula must be a formula')
@@ -30,7 +32,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
   m$formula <- formula
   m$match <- m$fweighted <- m$curtail <- m$x <- m$n.impute <- m$nk <-
     m$tlinear <- m$burnin <- m$type <- m$pmmtype <- m$group <- m$pr <-
-      m$plotTrans <- m$tolerance <- m$boot.method <- m$B <- NULL
+      m$plotTrans <- m$tolerance <- m$boot.method <- m$B <- m$constraint <- NULL
   m$na.action <- na.retain
 
   m[[1]] <- as.name("model.frame")
@@ -118,9 +120,71 @@ aregImpute <- function(formula, data, subset, n.impute=5,
     xf[,i] <- xi
     
     ## Initialize imputed values to random sample of non-missings
-    if(nnai > 0) xf[nai,i] <-
+    if(nnai > 0) xf[nai, i] <-
       sample(xi[! nai], nnai, replace=nnai > (n-nnai))
   }
+
+  Countqual <- NULL
+  if(length(constraint)) {
+    ## Define a list of lists of vectors
+    ## For each target variable references in constraint, make a list
+    ## having as each of its elements corresponding to missing observations
+    ## on the target variable, with the element containing a list of
+    ## row numbers of the set of non-missing target variables with
+    ## corresponding original data meeting the constraint
+    ## Expressions within constraint must reference a single target (recipient)
+    ## observation using r$ followed by original variable names (and
+    ## expecting their original coding) and vectors of donor observation
+    ## variable values using d$ followed by original variable names (and
+    ## expecting their original coding also).
+    cons <- Countqual <- vector('list', length(constraint))
+    ncons <- names(constraint)
+    names(cons) <- names(Countqual) <- ncons
+    if(any(duplicated(ncons)))
+      stop('constraint contains duplicate entries for a variable')
+
+    for(v in ncons) {
+      if(v %nin% names(z)) stop('variable ', v, ' in constraint not in data')
+      xi   <- z[, v]
+      nai  <- which(is.na(xi))
+      nnai <- length(nai)
+      if(! nnai) warning('variable ', v, ' is in constraints but has no NAs')
+      j <- which(! is.na(xi))
+      if(! length(j)) stop('variable ', v, ' has no non-missing values')
+      w <- vector('list', nnai)
+      ## Get data frame of donors
+      d <- z[- nai, , drop=FALSE]
+      countqual <- integer(nnai)
+      jj <- 0
+      conv <- constraint[[v]]
+      for(l in nai) {
+        jj <- jj + 1
+        r <- z[l, , drop=FALSE]   # single original data row
+        qual <- eval(conv)  # must evaluate to have # rows = # non-NA on xi
+        if(! is.logical(qual) || (length(qual) != nrow(d)))
+          stop('result of constraint expression for ', v,
+               ' is not a logical vector of length equal to number of ',
+               ' rows in donor data frame d')
+        if(any(is.na(qual)))
+          stop('result of constraint expression for ', v, ' contains an NA')
+        countqual[jj] <- sum(qual)
+        if(! any(qual)) {
+          cat('\nFor the following observation with a missing target variable value\n\n')
+          print(r)
+          stop('No observations meet the constraint for variable ', v,
+               ' with constraint ', conv)
+        }
+        ## w elements are indexed 1, 2, 3, ... for 1st, 2nd, 3rd, ...
+        ## row where target xi was NA
+        ## Vector value of a w element is indexed to row numbers of
+        ## dataset after removing ALL rows with NA in xi
+        w[[jj]] <- which(qual)
+      }
+      cons[[v]]      <- w
+      Countqual[[v]] <- countqual
+    }
+  }
+  
   z <- NULL
   wna <- (1:p)[nna > 0]
   if(length(wna) < 2 && missing(burnin)) burnin <- 0
@@ -135,11 +199,57 @@ aregImpute <- function(formula, data, subset, n.impute=5,
   if(curtail) xrange <- apply(xf, 2, range)
   fits <- NULL
   
+  ## Compute vector of subscripts of the first argument corresponding
+  ## to closest match of values of second argument, for PMM
+  ## Both arguments represent predicted transformed values
+  ## Returned vector has length = length(precip)
+  nearest <-
+    switch(match,
+           kclosest = function(x, y) whichClosek (x, y, k=kclosest),
+           closest  = function(x, y) whichClosest(x, y),
+           weighted = function(x, y) whichClosePW(x, y, f=fweighted) )
+   
+  findclose <- function(pdonor, precip, v) {
+    if(! length(constraint) || v %nin% names(constraint))
+      return(nearest(pdonor, precip))
+
+    ## When constraint is to be applied, different target observations
+    ## may have different donor observations taken out of consideration
+    ## due to constraints, so we need to find closest matches
+    ## individually by target (missing) observations
+    ## Non-qualifying donor observations have 1000 replacing their
+    ## predicted values so that they will not be found as nearest
+    ## matches
+    co <- cons[[v]]
+    nrecipients <- length(precip)
+    found       <- integer(nrecipients)
+    ## Elements of co are indexed by 1, 2, 3, ... for 1st, 2nd, 3rd, ...
+    ## row in which target variable was NA
+    ## Values of an element of co are row numbers after subsetting
+    ## original dataset to non-NA target variable values
+    for(i in 1 : nrecipients) {
+      qualifying <- co[[i]]
+      pd <- pdonor
+      pd[- qualifying] <- 1000.
+      found[i] <- nearest(pd, precip[i])
+    }
+    if(any(pdonor[found] == 1000.)) {
+      z <- list(pdonor=pdonor, precip=precip, v=v, qualifying=qualifying)
+      tf <- tempfile()
+      saveRDS(z, file=tf)
+      stop('program logic error 5 for constrained variable ', v,
+           ' data saved in file ', tf)
+      }
+    found
+  }
+
+
   for(iter in 1:(burnin + n.impute)) {
     if(pr) cat('Iteration',iter,'\r')
-    for(i in wna) {
-      nai <- na[[i]]      ## subscripts of NAs on xf[i,]
-      j <- (1:n)[-nai]    ## subscripts of non-NAs on xf[i,]
+    ## wna = indexes of variables with > 0 NAs
+    for(i in wna) {       ## i=target variable (recipient)
+      nai <- na[[i]]      ## subscripts of NAs on xf[,i]
+      j <- (1:n)[-nai]    ## subscripts of non-NAs on xf[,i]
       npr <- length(j)
       ytype <- if(tlinear && vtype[i] == 's')'l' else vtype[i]
       
@@ -151,7 +261,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
                 'Bootstrap bias-corrected median |error|',
                 '10-fold cross-validated  median |error|')
         racc <- matrix(NA, nrow=6, ncol=length(nk),
-                       dimnames=list(rn, paste('nk=',nk,sep='')))
+                       dimnames=list(rn, paste('nk=', nk, sep='')))
         jj <- 0
         for(k in nk) {
           jj <- jj + 1
@@ -178,6 +288,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
       else { ## sample of non-NAs
         if(type == 'normpmm') s <- j
         else {
+          # Sample subscripts of all non-NA xi
           s <- sample(j, npr, replace=TRUE)
           if(boot.method == 'approximate bayesian') {
             sorig <- s
@@ -199,7 +310,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
         }
       }
           
-      X <- xf[,-i,drop=FALSE]
+      X <- xf[,-i,drop=FALSE]   # non-target variables (donors)
 
       ## If there is only one variable that has any NAs, fits on
       ## non-bootstrapped samples will not vary across multiple imputations.
@@ -214,7 +325,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
       }
       else f <- areg(X[s,], xf[s,i], xtype=vtype[-i], ytype=ytype,
                      nk=min(nk), na.rm=FALSE, tolerance=tolerance)
-      xdf <- f$xdf
+      xdf          <- f$xdf
       dof[nam[-i]] <- xdf
       dof[nami]    <- f$ydf
       
@@ -224,7 +335,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
       ## residuals off of transformed predicted values
       res <- f$residuals
 
-      pti <- predict(f, X)  # predicted transformed xf[,i]
+      pti <- predict(f, X)  # predicted transformed xf[,i], all observations
       ## if type is normpmm only those elements corresponding to
       ## complete cases are used
 
@@ -241,8 +352,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
         if(pmmtype %in% c(1,3)) {
           ## Match predicted complete cases using non-bootstrap
           ## beta with incomplete cases using bootstrap beta
-          ## Foro pmmtype=3 use bootstrap vs. sample w/replacement bootstrap
-
+          ## For pmmtype=3 use bootstrap vs. sample w/replacement bootstrap
           ss <- if(pmmtype == 1) j else sorig
           g <- areg(X[ss,], xf[ss,i], xtype=vtype[-i], ytype=ytype,
                     nk=min(nk), na.rm=FALSE, tolerance=tolerance)
@@ -251,24 +361,17 @@ aregImpute <- function(formula, data, subset, n.impute=5,
           pti[j] <- predict(g, X[j,])
         }
       }
+      
       if(type != 'regression') {
-        if(ytype == 'l') pti <- (pti - mean(pti))/sqrt(var(pti))
-        whichclose <-
-          if(match == 'kclosest') j[whichClosek(pti[j], pti[nai], k=kclosest)]
-          else if(match == 'closest') {
-          ## Jitter predicted transformed values for non-NAs to randomly
-          ## break ties in matching with predictions for NAs in xf[,i]
-          ## Because of normalization used by fitter, pti usually ranges
-          ## from about -4 to 4
-          pti[j] <- pti[j] + runif(npr,-.0001,.0001)
-          
-          ## For each orig. missing xf[,i] impute with non-missing xf[,i]
-          ## that has closest predicted transformed value
-          j[whichClosest(pti[j], pti[nai])]  ## see Misc.s
-        }
-        else
-          j[whichClosePW(pti[j], pti[nai], f=fweighted)]
-        impi <- xf[whichclose,i]
+        if(ytype == 'l') pti <- (pti - mean(pti)) / sqrt(var(pti))
+        ## Jitter predicted transformed values for non-NAs to randomly
+        ## break ties in matching with predictions for NAs in xf[,i]
+        ## Because of normalization used by fitter, pti usually ranges
+        ## from about -4 to 4
+        if(match == 'closest') pti[j] <- pti[j] + runif(npr,-.0001,.0001)
+        whichclose <- j[findclose(pti[j], pti[nai], nami)]
+        ## j = non-NA rows   nai = NA rows on xi
+        impi <- xf[whichclose, i]
       }
       else {  ## type='regression'
         ## predicted transformed target var + random sample of res,
@@ -292,6 +395,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
   
   structure(list(call=acall, formula=formula,
                  match=match, fweighted=fweighted, pmmtype=pmmtype,
+                 constraint=constraint, countqual=Countqual,
                  n=n, p=p, na=na, nna=nna,
                  type=vtype, tlinear=tlinear, nk=min(nk),
                  cat.levels=cat.levels, df=dof,
@@ -326,6 +430,15 @@ print.aregImpute <- function(x, digits=3, ...) {
     }
     cat('\n')
   }
+  cq <- x$countqual
+  if(length(cq)) {
+    cat('\nFrequency distributions of number of potential donor observations\nmeeting constraints\n\n')
+    for(v in names(cq)) {
+      cat(v, '\n')
+      print(table(cq[[v]]))
+      cat('\n')
+      }
+    }
   invisible()
 }
 

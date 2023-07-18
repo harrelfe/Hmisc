@@ -49,7 +49,11 @@ likelihood fitting for binary and categorical variables, and without the
 need for computing residuals or for curtailing imputed values to be in
 the range of actual data.  Predictive mean matching is especially
 attractive when the variable being imputed is also being transformed
-automatically.  See Details below for more information about the
+automatically.  Constraints may be placed on variables being imputed
+with predictive mean matching, e.g., a missing hospital discharge date
+may be required to be imputed from a donor observation whose discharge
+date is before the recipient subject's first post-discharge visit date.
+See Details below for more information about the
 algorithm.  A \code{"regression"} method is also available that is
 similar to that used in \code{transcan}.  This option should be used
 when mechanistic missingness requires the use of extrapolation during
@@ -80,7 +84,8 @@ aregImpute(formula, data, subset, n.impute=5, group=NULL,
            nk=3, tlinear=TRUE, type=c('pmm','regression','normpmm'),
            pmmtype=1, match=c('weighted','closest','kclosest'),
            kclosest=3, fweighted=0.2,
-           curtail=TRUE, boot.method=c('simple', 'approximate bayesian'),
+           curtail=TRUE, constraint=NULL,
+           boot.method=c('simple', 'approximate bayesian'),
            burnin=3, x=FALSE, pr=TRUE, plotTrans=FALSE, tolerance=NULL, B=75)
 \method{print}{aregImpute}(x, digits=3, \dots)
 \method{plot}{aregImpute}(x, nclass=NULL, type=c('ecdf','hist'),
@@ -214,6 +219,16 @@ recommended but 10 or more doesn't hurt.
 \item{curtail}{applies if \code{type='regression'}, causing imputed
   values to be curtailed at the observed range of the target variable.
   Set to \code{FALSE} to allow extrapolation outside the data range.}
+\item{constraint}{for predictive mean matching \code{constraint} is a
+	named list specifying R \code{expression()}s encoding constaints on
+	which donor observations are allowed to be used, based on variables
+	that are not missing, i.e., based on donor observations and/or
+	recipient observations as long as the target variable being imputed is
+	not used for the recipients.  The expressions must evaluate to a
+	logical vector with no \code{NA}s and whose length is the number of
+	rows in the donor observations.  The expressions refer to donor
+	observations by prefixing variable names by \code{d$}, and to a single
+	recipient observation by prefixing variables names by \code{r$}.}
 \item{boot.method}{By default, simple boostrapping is used in which the
   target variable is predicted using a sample with replacement from the
   observations with non-missing target variable.  Specify
@@ -596,6 +611,14 @@ d <- data.frame(x1=rnorm(50), x2=c(rep(NA, 10), runif(40)),
 reformM(~ x1 + x2 + x3, data=d)
 reformM(~ x1 + x2 + x3, data=d, nperm=2)
 # Give result or one of the results as the first argument to aregImpute
+
+# Constrain imputed values for two variables
+# Require imputed values for x2 to be above 0.2
+# Assume x1 is never missing and require imputed values for
+# x3 to be less than the recipient's value of x1
+a <- aregImpute(~ x1 + x2 + x3, data=d,
+                constraint=list(x2 = expression(d$x2 > 0.2),
+                                x3 = expression(d$x3 < r$x1)))
 }
 \keyword{smooth}
 \keyword{regression}

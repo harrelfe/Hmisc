@@ -30,7 +30,9 @@ To save an object in an encrypted file, specify the object as the first argument
 
 Alternatively, \code{qcrypt} can be used to encrypt or decrypt existing files of any type using the same password and keyring mechanism.  The former is done by specifying \code{file} that does not end in \code{'.encrypted'} and the latter is done by ending \code{file} with \code{'.encrypted'}.  When \code{file} does not contain a path it is assumed to be in the current working directory.  When a file is encrypted the original file is removed.  Files are decrypted into a temporary directory created by \code{tempdir()}, with the name of the file being the value of \code{file} with \code{'.encrypted'} removed.
 
-Interactive password provision works when running \code{R}, \code{Rscript}, \code{RStudio}, or \code{Quarto} but does not work when running \verb{R CMD BATCH}.
+Interactive password provision works when running \code{R}, \code{Rscript}, \code{RStudio}, or \code{Quarto} but does not work when running \verb{R CMD BATCH}.  \code{getPass} fails under \code{RStudio} on Macs.
+
+See \href{https://hbiostat.org/rflow/fcreate.html#sec-fcreate-secure}{R Workflow} for more information.
 }
 \examples{
 \dontrun{

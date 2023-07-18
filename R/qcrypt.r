@@ -8,7 +8,9 @@
 ##'
 ##' Alternatively, `qcrypt` can be used to encrypt or decrypt existing files of any type using the same password and keyring mechanism.  The former is done by specifying `file` that does not end in `'.encrypted'` and the latter is done by ending `file` with `'.encrypted'`.  When `file` does not contain a path it is assumed to be in the current working directory.  When a file is encrypted the original file is removed.  Files are decrypted into a temporary directory created by `tempdir()`, with the name of the file being the value of `file` with `'.encrypted'` removed.
 ##'
-##' Interactive password provision works when running `R`, `Rscript`, `RStudio`, or `Quarto` but does not work when running `R CMD BATCH`.
+##' Interactive password provision works when running `R`, `Rscript`, `RStudio`, or `Quarto` but does not work when running `R CMD BATCH`.  `getPass` fails under `RStudio` on Macs.
+##'
+##' See [R Workflow](https://hbiostat.org/rflow/fcreate.html#sec-fcreate-secure) for more information.
 ##' @title qcrypt
 ##' @param obj an R object to write to disk and encrypt (if `base` is specified) or the base file name to read and uncrypted (if `base` is not specified).  Not used when `file` is given.
 ##' @param base base file name when creating a file.  Not used when `file` is given.
@@ -79,7 +81,7 @@ qcrypt <- function(obj, base, service='R-keyring-service', file) {
 
   f <- paste0(obj, '.qs.encrypted')
   safer::decrypt_file(f, key=pw, outfile=tf)
-  x <- qread(tf)
-  unlink(tf)    # quickly remove unencrypted filed
+  x <- qs::qread(tf)
+  unlink(tf)    # quickly remove unencrypted file
   x 
 }

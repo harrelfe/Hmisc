@@ -3,7 +3,7 @@ describe.default <- function(x, descript, ...) {
   if(missing(descript)) {
     descript <- deparse(substitute(x))
   }
-  
+
   if(is.matrix(x)) {
     describe.matrix(x, descript, ...)
   } else {
@@ -33,27 +33,27 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
   # Remove trailing blank or .
   labx <- trimws(labx)
   labx <- trimws(sub('\\.$', '', labx))
-  
+
   if(missing(descript)) descript <- as.character(sys.call())[2]
 
   if(length(labx) && labx != descript) descript <- paste(descript,":",labx)
 
   un <- atx$units
   if(length(un) && un == '') un <- NULL
-  
+
   fmt <- atx$format
   if(length(fmt) && (is.function(fmt) || fmt == '')) fmt <- NULL
-  
+
   if(length(fmt) > 1)
     fmt <- paste(as.character(fmt[[1]]), as.character(fmt[[2]]))
-  
+
   present <- if(all(is.na(x))) rep(FALSE, length(x))
   else if(is.mChoice(x))  trimws(as.character(x)) != '' & ! is.na(x)
   else if(is.character(x)) x != "" & x != " " & ! is.na(x)
   else ! is.na(x)
-  
+
   present <- present & ! is.na(weights)
-  
+
   if(length(weights) != length(x))
     stop('length of weights must equal length of x')
 
@@ -64,14 +64,14 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
 
   if(exclude.missing && n==0)
     return(structure(list(), class="describe"))
-  
+
   missing <- sum(weights[! present], na.rm=TRUE)
-  atx$names <- atx$dimnames <- atx$dim <- atx$special.miss <- NULL  
-  
+  atx$names <- atx$dimnames <- atx$dim <- atx$special.miss <- NULL
+
   atx$class <- atx$class[atx$class != 'special.miss']
   cx <- intersect(atx$class,
                   c("Date", "POSIXt", "POSIXct", "dates", "times", "chron"))
-  
+
   isdot <- testDateTime(x,'either') # is date or time var
   isdat <- testDateTime(x,'both')   # is date and time combo var
 
@@ -95,23 +95,23 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
     counts <- c(counts, tabsc)
     lab <- c(lab, names(tabsc))
   }
-  
+
   if(length(atx$imputed)) {
     counts <- c(counts, length(atx$imputed))
     lab <- c(lab, "imputed")
   }
-  
+
   if(length(pd <- atx$partial.date)) {
     if((nn <- length(pd$month)) > 0) {
       counts <- c(counts, nn)
       lab <- c(lab, "missing month")
     }
-    
+
     if((nn <- length(pd$day)) > 0) {
       counts <- c(counts, nn)
       lab <- c(lab,"missing day")
     }
-    
+
     if((nn <- length(pd$both)) > 0) {
       counts <- c(counts, nn)
       lab <- c(lab, "missing month,day")
@@ -138,20 +138,20 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
     counts <- c(counts, round(reff, 3))
     lab    <- c(lab, 'Info')
   }
-  
+
   x.binary <- n.unique == 2 && isnum && x.unique[1] == 0 && x.unique[2] == 1
   if(x.binary) {
     counts <- c(counts, sum(weights[x == 1]))
     lab <- c(lab, "Sum")
   }
-  
+
   if(isnum) {
     if(isdot) {
       dd <- sum(weights * xnum)  / sum(weights)
       fval <- formatDateTime(dd, atx, ! timeUsed)
       counts <- c(counts, fval)
     } else counts <- c(counts, format(sum(weights * x) / sum(weights), ...))
-    
+
     lab <- c(lab, "Mean")
     if(! weighted) {
       gmd    <- format(GiniMd(xnum), ...)
@@ -175,7 +175,7 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
     fval <-
       if(isdot) formatDateTime(q, atx, ! timeUsed)
       else format(q,...)
-    
+
     counts <- c(counts, fval)
     lab <- c(lab,".05",".10",".25",".50",".75",".90",".95")
   }
@@ -220,7 +220,7 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
       }
     z$values <- values
     if(length(trans)) z$trans <- trans
-    
+
     if(! isnum && ! length(values)) {
       xtr <- trimws(x)
       nc  <- nchar(xtr)
@@ -234,7 +234,7 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
           }
         }
       }
-    
+
     if(n.unique >= 5 && ! mch) {
       loandhi <- x.unique[c(1 : 5, (n.unique - 4) : n.unique)]
       extremes <-
@@ -270,7 +270,7 @@ describe.matrix <- function(x, descript, exclude.missing=TRUE,
                          digits=digits, ...)
     Z[[i]] <- z
     if(exclude.missing && length(z)==0)
-      missing.vars <- c(missing.vars, nam[i]) 
+      missing.vars <- c(missing.vars, nam[i])
   }
 
   attr(Z, 'descript') <- descript
@@ -298,13 +298,13 @@ describe.data.frame <- function(x, descript, exclude.missing=TRUE,
     xnam <- nam[i]
     tran <- if(length(trans) && (xnam %in% names(trans))) trans[[xnam]]
     z <-
-      if(mat) 
+      if(mat)
         describe.matrix(xx, xnam, exclude.missing=exclude.missing,
                         digits=digits, trans=tran, ...)
-      else	  
+      else
         describe.vector(xx, xnam, exclude.missing=exclude.missing,
                         digits=digits, trans=tran, ...)
-    
+
     all.missing <- length(z)==0
     if(exclude.missing && all.missing)
       missing.vars <- c(missing.vars, xnam)
@@ -322,7 +322,7 @@ describe.data.frame <- function(x, descript, exclude.missing=TRUE,
 }
 
 
-describe.formula <- function(x, descript, data, subset, na.action, 
+describe.formula <- function(x, descript, data, subset, na.action,
                              digits=4, weights, ...)
 {
   mf <- match.call(expand.dots=FALSE)
@@ -330,11 +330,11 @@ describe.formula <- function(x, descript, data, subset, na.action,
   mf$x <- mf$descript <- mf$file <- mf$append <- mf$... <- mf$digits <- NULL
   if(missing(na.action))
     mf$na.action <- na.retain
-  
+
   mf[[1]] <- as.name("model.frame")
   mf <- eval(mf, sys.parent())
   weights <- model.extract(mf, weights)
-		
+
   if(missing(descript)) {
     ter <- attr(mf,"terms")
     d <- as.character(x)
@@ -346,7 +346,7 @@ describe.formula <- function(x, descript, data, subset, na.action,
 
   Z <- describe.data.frame(mf, descript, digits=digits, weights=weights, ...)
   if(length(z <- attr(mf,"na.action")))
-    attr(Z,'naprint') <- naprint(z) 
+    attr(Z,'naprint') <- naprint(z)
 
   Z
 }
@@ -358,7 +358,7 @@ print.describe <-
   function(x, which = c('both', 'categorical', 'continuous'), ...) {
     mwhich <- missing(which)
     which  <- match.arg(which)
-    
+
     if(prType() == 'html' && mwhich) return(html.describe(x, ...))
 
     if(! mwhich) {
@@ -385,7 +385,7 @@ print.describe <-
   if(length(at$dimensions)) {
     cat(at$descript,'\n\n',at$dimensions[2],' Variables     ',at$dimensions[1],
         ' Observations\n')
-    
+
     if(length(at$naprint)) cat('\n',at$naprint,'\n')
     w <- paste(rep('-', .Options$width), collapse='')
     cat(w, '\n', sep='')
@@ -400,7 +400,7 @@ print.describe <-
       print(at$missing.vars, quote=FALSE)
     }
   } else print.describe.single(x, ...)
-  
+
   invisible()
 }
 
@@ -430,7 +430,7 @@ formatdescribeSingle <-
               capture.output(print(x, quote=FALSE, prlabel=prlabel, ...))
 
   R <- character(0)
-  
+
   v <- x$values
 
   is.standard <- length(v) && is.list(v) &&
@@ -443,7 +443,7 @@ formatdescribeSingle <-
     # check total width
     print.freq <- sum(nchar(altv)) <= 200
   } else print.freq <- FALSE
-  
+
   print.ext   <- length(x$extremes) && ! print.freq  ## && ! print.freq then ignored print.freq
   if(print.ext) {
     ## For printing 5 highest and lowest values
@@ -509,14 +509,14 @@ formatdescribeSingle <-
       lval  <- nchar(fval[1])
       lfreq <- nchar(ffreq[1])
       lprop <- nchar(fprop[1])
-      
+
       m     <- max(lval, lfreq, lprop)
       ## Right justify entries in each row
       bl    <- '                                         '
       fval  <- paste0(substring(bl, 1, m - lval ), fval)
       ffreq <- paste0(substring(bl, 1, m - lfreq), ffreq)
       fprop <- paste0(substring(bl, 1, m - lprop), fprop)
-      
+
       w <- rbind(Value=fval, Frequency=ffreq, Proportion=fprop)
       colnames(w) <- rep('', ncol(w))
       out <- capture.output(print(w, quote=FALSE))
@@ -541,10 +541,10 @@ formatdescribeSingle <-
       R <- c(R, '',
              paste('For the frequency table, variable is rounded to the nearest',
                    format(x$roundedTo, scientific=3)))
-    
+
   } else if(length(v) && ! is.standard)
     R <- c(R, '', vbtm(v))
-  
+
   if(length(x$mChoice)) {
     R <- c(R, bv()); verb <- 1
     ## print.summary.mChoice when options(prType='html') returns
@@ -560,15 +560,15 @@ formatdescribeSingle <-
 print.describe.single <- function(x, ...) {
   wide <- .Options$width
   des  <- x$descript
-  
+
   if(length(x$units))
     des <- paste0(des, ' [', x$units, ']')
-  
+
   if(length(x$format))
     des <- paste0(des, '  Format:', x$format)
-  
+
   cat(des,'\n')
-  
+
   print(x$counts, quote=FALSE)
 
   R <- formatdescribeSingle(x, lang='plain', ...)
@@ -611,7 +611,7 @@ latex.describe <-
        '~Observations}\\end{center}\n', file=file, append=TRUE)
     if(length(at$naprint))
       ct(at$naprint,'\\\\\n', file=file, append=TRUE)
-    
+
     ct('\\smallskip\\hrule\\smallskip{\\',size,'\n',
        sep='', file=file, append=TRUE)
     vnames <- at$names
@@ -636,7 +636,7 @@ latex.describe <-
       ct('\\smallskip\\hrule\\smallskip\n', file=file, append=TRUE)
       if(dovbox) cat('}\n', file=file, append=TRUE)
     }
-    
+
     if(length(mv <- at$missing.vars)) {
       ct('\\smallskip\\noindent Variables with all observations missing:\\ \\smallskip\n',
          file=file, append=TRUE)
@@ -664,7 +664,7 @@ latex.describe <-
     spc <- if(spacing == 0) '\n' else '\\end{spacing}\n'
     ct(spc, file=file, append=TRUE)
   }
-  
+
   structure(list(file=file,  style=c('setspace','relsize')),
             class='latex')
 }
@@ -680,11 +680,11 @@ latex.describe.single <-
     else cat(..., file=file, append=append)
     invisible()
   }
-  
+
   oldw <- options('width')
   options(width=if(size == 'small') 95 else 85)
   on.exit(options(oldw))
-  
+
   wide <- switch(size,
                  normalsize = 73,  # was 66
                  small      = 95,  # was 73
@@ -707,21 +707,21 @@ latex.describe.single <-
     rem <- paste(sp[-1], collapse=':')
     paste0('\\textbf{', vnm, '}: ', rem)
   }
-  
+
   if(length(object$units))
     des <- paste0(des, '{\\smaller[1] [',
                  latexTranslate(object$units),']}')
-  
+
   if(length(object$format))
     des <- paste0(des, '{\\smaller~~Format:', latexTranslate(object$format),
                  '}')
-  
+
   desbas <- paste(object$descript,
                   if(length(object$units))
                   paste0(' [', object$units, ']'),
                   if(length(object$format))
                   paste0('  Format:', object$format))
-  
+
   ct('\\noindent', des, sep='', file=file, append=append)
   lco <- if(length(Values)) length(Values$frequency) else 0
   if(lco > 2) {
@@ -746,10 +746,10 @@ latex.describe.single <-
          max(1, round(1000 * counts[i] / maxcounts * .1)), '}}\n',
          sep='', file=file, append=TRUE)
     }
-    
+
     ct('\\end{picture}\n', file=file, append=TRUE)
   } else ct('\n', file=file, append=TRUE)
-  
+
   sz <- ''
   if(tabular) {
     ml <- nchar(paste(object$counts, collapse='  '))
@@ -758,7 +758,7 @@ latex.describe.single <-
     else if(ml > 80)
       sz <- '[2]'
   }
-  
+
   ct('\n{\\smaller', sz, '\n', sep='', file=file, append=TRUE)
   if(tabular) {
     if(lspace[1] != 0)
@@ -810,31 +810,31 @@ html.describe <-
   mnb    <- function(x) m$color(x, col='MidnightBlue')
 
   R <- c(m$unicode, m$style())   ## define thinhr (and others not needed here)
-  
+
   R <- c(R, paste0('<title>', at$descript, ' Descriptives</title>'))
-  
+
   if(length(at$dimensions)) {
     R <- c(R,
            mnb(center(bold(paste(htmlTranslate(at$descript), sskip,
                                  at$dimensions[2], ' Variables', lspace,
                                  at$dimensions[1],' Observations')))))
-    
+
     if(length(at$naprint)) R <- c(R, '', at$naprint)
-    
+
     R <- c(R, hrule)
-    
+
     vnames <- at$names
     i <- 0
     for(z in object) {
       i <- i + 1
       if(! length(z))
         next
-      
+
       r <- html.describe.single(z, ## vname=vnames[i],
                                 tabular=tabular, greek=greek, size=size, ...)
       R <- c(R, r, hrule)
     }
-    
+
     if(length(mv <- at$missing.vars)) {
       R <- c(R, sskip, 'Variables with all observations missing:',
              br, sskip)
@@ -869,7 +869,7 @@ html.describe.single <- function(object, size=85, tabular=TRUE,
   oldw <- options('width')
   options(width=if(size < 90) 95 else 85)
   on.exit(options(oldw))
-  
+
   wide <- if(size >= 90) 73 else if(size >= 75) 95 else 110
 
   z   <- htmlTranslate(object$descript, greek=greek)
@@ -881,10 +881,10 @@ html.describe.single <- function(object, size=85, tabular=TRUE,
       rem <- paste(sp[-1], collapse=':')
       paste0(bold(vnm), ': ', rem)
     }
-  
+
   if(length(object$units))
     des <- m$varlabel(des, htmlTranslate(object$units))
-  
+
   if(length(object$format))
     des <- paste0(des, lspace,
                   smaller(paste0('Format:',
@@ -911,7 +911,7 @@ html.describe.single <- function(object, size=85, tabular=TRUE,
   }
 
   R <- des
-  
+
   sz <- size
   if(tabular) {
     ml <- nchar(paste(object$counts, collapse='  '))
@@ -971,14 +971,14 @@ contents.data.frame <- function(object, sortlevels=FALSE,
     at <- attributes(x)
     if(length(at$label))     lab[i]     <- at$label
     if(length(at$longlabel)) longlab[i] <- at$longlabel
-    
+
     if(length(at$units))     un[i] <- at$units
-    
+
     atl <- at$levels
     fl[i] <- length(atl)
     cli <- at$class[at$class %nin% c('labelled', 'factor')]
     if(length(cli)) cl[i] <- cli[1]
-    
+
     sm[i] <- storage.mode(x)
     nas[i] <- sum(is.na(x))
     if(length(atl)) {
@@ -987,22 +987,22 @@ contents.data.frame <- function(object, sortlevels=FALSE,
         w <- Lev[[j]]
         if(! is.name(w) && is.logical(all.equal(w, atl))) {
           atl <- as.name(names(Lev)[j])
-          break   
+          break
         }
       }
       Lev[[nam[i]]] <- atl
     }
   }
-  
+
   w <- list(Labels = if(any(lab != '')) lab,
             Units  = if(any(un != ''))  un,
             Levels = if(any(fl > 0))    fl,
             Class  = if(any(cl != ''))  cl,
             Storage=                    sm,
             NAs    = if(any(nas > 0))   nas )
-  
+
   w <- w[sapply(w, function(x)length(x) > 0)]
-  
+
   ## R does not remove NULL elements from a list
   structure(list(contents=data.frame(w, row.names=nam),
                  dim=d, maxnas=max(nas),
@@ -1029,7 +1029,7 @@ print.contents.data.frame <-
 {
   sort <- match.arg(sort)
 
-  if(prType() == 'html') 
+  if(prType() == 'html')
     return(html.contents.data.frame(x, sort=sort, prlevels=prlevels,
                                     maxlevels=maxlevels, number=number, ...) )
 
@@ -1050,7 +1050,7 @@ print.contents.data.frame <-
            cont <- cont[order(nam),,drop=FALSE]
          },
          labels={
-           if(length(cont$Labels)) 
+           if(length(cont$Labels))
              cont <-  cont[order(cont$Labels, nam),, drop=FALSE]
          },
          NAs={
@@ -1089,7 +1089,7 @@ print.contents.data.frame <-
     print.char.matrix(z, col.txt.align='left', col.name.align='left',
                       row.names=TRUE, col.names=TRUE)
   }
-  
+
   longlab <- x$longLabels
   if(length(longlab)) {
     if(existsFunction('strwrap'))
@@ -1104,7 +1104,7 @@ print.contents.data.frame <-
     print.char.matrix(z, col.names=TRUE, row.names=FALSE,
                       cell.align='left')
   }
-  
+
   invisible()
 }
 
@@ -1121,7 +1121,7 @@ html.contents.data.frame <-
   lspace <- mu$lspace
   lspace <- '&emsp;'  # override - browsers were not rendering correctly
   hrule  <- mu$hrule
-  
+
   d      <- object$dim
   maxnas <- object$maxnas
 
@@ -1144,11 +1144,11 @@ html.contents.data.frame <-
       R <- paste0(R, object$valuesvar, ':', object$values,
                   lspace, lspace)
     R <- c(R, hrule)
-    
+
   } else
     R <- paste0(hrule, '<h4>Data frame:', object$dfname,
         '</h4>', ' Variables:', d[2], hrule)
-  
+
   cont <- object$contents
   nam <- row.names(cont)
   if(number) {
@@ -1161,22 +1161,22 @@ html.contents.data.frame <-
   switch(sort,
          names={cont <- cont[order(nam),,drop=FALSE]},
          labels={
-           if(length(cont$Labels)) 
+           if(length(cont$Labels))
              cont <-  cont[order(cont$Labels, nam),,drop=FALSE]
          },
          NAs={
            if(maxnas>0) cont <- cont[order(cont$NAs,nam),,drop=FALSE]
          })
-  
+
   link <- matrix('', nrow=nrow(cont), ncol=1+ncol(cont),
                  dimnames=list(dimnames(cont)[[1]], c('Name', dimnames(cont)[[2]])))
-  
+
   longlab <- object$longLabels
   if(length(longlab)) {
     longlab <- longlab[longlab != '']
     link[names(longlab),'Name'] <- paste('#longlab',names(longlab),sep='.')
   }
-  
+
   L <- object$Levels
   Lnames <- names(L)
   if(length(cont$Levels)) {
@@ -1199,7 +1199,7 @@ html.contents.data.frame <-
               link=link, border=2,
               col.just=adj, ...)
   R <- c(R, as.character(out), hrule)
-    
+
   if(prlevels && length(L) > 0) {
     if(levelType=='list') {
       R <- c(R, '<h5>Category Levels</h5>')
@@ -1216,7 +1216,7 @@ html.contents.data.frame <-
         for(k in l) R <- c(R,  paste0('<li>', k, '</li>\n'))
       }
     }
-    else {  
+    else {
       ## Function to split a character vector x as evenly as
       ## possible into n elements, pasting multiple elements
       ## together when needed
@@ -1238,7 +1238,7 @@ html.contents.data.frame <-
         }
         ## Take evasive action if needed
         if(m == n) indent(y) else if(m < n)
-          c(indent(y), rep('', n - m)) else 
+          c(indent(y), rep('', n - m)) else
         c(paste(x, collapse=', '), rep('', n - 1))
       }
       nam <- names(L)
@@ -1264,7 +1264,7 @@ html.contents.data.frame <-
       R <- c(R, as.character(out), hrule)
     }
   }
-  
+
   i <- longlab != ''
   if(any(i)) {
     nam <- names(longlab)[i]
@@ -1286,7 +1286,7 @@ contents.list <- function(object, dslabels=NULL, ...) {
     dslabels <- dslabels[nam]
     names(dslabels) <- NULL
   }
-  
+
   g <- function(w) {
     if(length(w)==0 || is.null(w))
       c(Obs=0, Var=if(is.null(w))
@@ -1298,7 +1298,7 @@ contents.list <- function(object, dslabels=NULL, ...) {
       c(Obs=length(w[[1]]), Var=length(w),
         Var.NA=sum(sapply(w, function(x) sum(is.present(x))==0)))
   }
-  
+
   v <- t(sapply(object, g))
   structure(list(contents=if(length(dslabels))
                  data.frame(Label=dslabels,Obs=v[,'Obs'],
@@ -1325,7 +1325,7 @@ print.contents.list <-
                       vars=order(cont$Var),
                       labels=order(cont$Label, nam),
                       NAs=order(cont$Var.NA,nam)),]
-  
+
   print(cont)
   invisible()
 }
@@ -1343,7 +1343,7 @@ html_describe_con <- function(x, sparkwidth=200,
   if(at$descript == '') title <- subtitle <- ''
   else {
     title <- paste0('**`', at$descript, '` Descriptives**')
-  
+
     subtitle <- paste(sum(con), 'Continous Variables of',
                       at$dimensions[2], 'Variables,',
                       at$dimensions[1], 'Observations')
@@ -1361,7 +1361,7 @@ html_describe_con <- function(x, sparkwidth=200,
       }
     sapply(a, s)
   }
-  
+
   g <- function(u) {
     k <- u$counts
     h <- function(z) if(length(z)) z else ''
@@ -1396,7 +1396,7 @@ html_describe_con <- function(x, sparkwidth=200,
                '.95'    = r('.95'),
                check.names=FALSE)
     if(extremes)
-      b <- cbind(b, 
+      b <- cbind(b,
                  Lower    = paste(ext[1:5], collapse=' '),
                  Upper    = paste(ext[1:5], collapse=' ') )
     b
@@ -1420,12 +1420,12 @@ html_describe_con <- function(x, sparkwidth=200,
   ## Using gridvalues, create sparkline for every variable
   ## If the variable was transformed, also put in the leftmost tooltip
   ## the name of the transformation
-  
+
   g <- function(x) {
     trans <- x$trans
     lo <- if(length(trans))
             paste0('Transformation for<br>histogram:', trans[[1]])
-    
+
     gv <- x$gridvalues
     val <- gsub('; ', '<br>', gv$values)
     spikespark(val, gv$frequency, ttlow=lo, w=sparkwidth, cumulative=TRUE,
@@ -1439,35 +1439,72 @@ html_describe_con <- function(x, sparkwidth=200,
   ## show on the right end
   ## col_width(' ' ~ gt::px(w + 20)) will not find w even with .list
   sparkw <- as.formula(paste0("' ' ~ gt::px(", sparkwidth + 20, ")"))
-  
-  b <- gt::gt(a)                                             |>
-    gt::tab_header(title=gt::md(title), subtitle=subtitle)   |>
-    gt::tab_style(style=gt::cell_text(align='center'),
-                  locations=gt::cells_column_labels(
-                    columns=c(n, Missing, Distinct, Info, Mean, Gmd))) |>
-    gt::tab_style(style=gt::cell_text(size='small'),
-                  locations=gt::cells_body(columns=Label))   |>
-    gt::text_transform(locations=gt::cells_body(columns=' '),
-                       fn=function(x) sparks)                |>
-    gt::cols_width(sparkw)
 
-  if(qcondense) b <- b                                                      |>
-    gt::text_transform(locations=gt::cells_body(columns=Quantiles),
-                       fn=function(x) subs(x))                              |>
-    gt::cols_label(Quantiles = gt::html(paste0('Quantiles<br>',
-                                        subs('.05;.10;.25;.50;.75;.90;.95'))),
-                   Gmd       = gt::html("Gini\u2009<span style=\"text-decoration: overline\">|\u394|</span>"))  |>
-    gt::cols_align(align='center', columns=Quantiles)
+  b <- gt::gt(a)
+  b <- gt::tab_header(data = b,
+                      title = gt::md(title),
+                      subtitle = subtitle)
+  b <- gt::tab_style(
+    data = b,
+    style = gt::cell_text(align = 'center'),
+    locations = gt::cells_column_labels(columns = c(n, Missing, Distinct, Info, Mean, Gmd))
+  )
+  b <- gt::tab_style(
+    data = b,
+    style = gt::cell_text(size = 'small'),
+    locations = gt::cells_body(columns = Label)
+  )
+  b <- gt::text_transform(
+    data = b,
+    locations = gt::cells_body(columns = ' '),
+    fn = function(x)
+      sparks
+  )
+  b <- gt::cols_width(data = b, sparkw)
 
-  else b <- b |>
-    gt::tab_style(style=gt::cell_text(size='small'),
-                  locations=gt::cells_body(columns=quantcols))
 
-  if('Units' %in% names(a))
-    b <- b |> gt::text_transform(locations=gt::cells_body(columns=Units),
-                                 fn=htmlTranslate) |>
-      gt::tab_style(style=gt::cell_text(size='small', font='arial'),
-                            locations=gt::cells_body(columns=Units))
+  if (qcondense) {
+    b <- gt::text_transform(
+      data = b,
+      locations = gt::cells_body(columns = Quantiles),
+      fn = function(x)
+        subs(x)
+    )
+    b <- gt::cols_label(
+      data = b,
+      Quantiles = gt::html(paste0(
+        'Quantiles<br>',
+        subs('.05;.10;.25;.50;.75;.90;.95')
+      )),
+      Gmd  = gt::html(
+        "Gini\u2009<span style=\"text-decoration: overline\">|\u394|</span>"
+      )
+    )
+    b <-
+      gt::cols_align(data = b,
+                     align = 'center',
+                     columns = Quantiles)
+  } else {
+    b <- gt::tab_style(
+      data = b,
+      style = gt::cell_text(size = 'small'),
+      locations = gt::cells_body(columns = quantcols)
+    )
+  }
+
+  if ('Units' %in% names(a)) {
+    b <- gt::text_transform(
+      data = b,
+      locations = gt::cells_body(columns = Units),
+      fn = htmlTranslate
+    )
+    b <- gt::tab_style(
+      data = b,
+      style = gt::cell_text(size = 'small', font = 'arial'),
+      locations = gt::cells_body(columns = Units)
+    )
+  }
+
   b
 }
 
@@ -1485,14 +1522,14 @@ html_describe_cat <- function(x, w=200, freq=c('chart', 'table'),
   if(at$descript == '') title <- subtitle <- ''
   else {
     title <- paste0('**`', at$descript, '` Descriptives**')
-  
+
     subtitle <- paste(sum(! con), 'Categorical Variables of',
                       at$dimensions[2], 'Variables,',
                       at$dimensions[1], 'Observations')
     }
 
   x <- x[! con]
-  
+
   g <- function(u) {
     h <- function(z) if(length(z)) z else ''
     a <- function(m) if(m %in% names(k)) as.numeric(k[m]) else NA
@@ -1528,7 +1565,7 @@ html_describe_cat <- function(x, w=200, freq=c('chart', 'table'),
             tab <- paste(tab, collapse='\n')
           }
       }
-    
+
     b <- data.frame(
       Variable = first(u$descript),
       Label    = second(u$descript),
@@ -1559,31 +1596,55 @@ html_describe_cat <- function(x, w=200, freq=c('chart', 'table'),
 
   center_cols <- intersect(names(a),
                   c('n', 'Missing', 'Distinct', 'Info', 'Sum', 'Mean', 'Gmd'))
-  
-  b <- gt::gt(a) |>
-    gt::tab_header(title=gt::md(title), subtitle=subtitle) |>
-    gt::tab_style(style=gt::cell_text(align='center'),
-            locations=gt::cells_column_labels(columns=center_cols)) |>
-    gt::tab_style(style=gt::cell_text(size='small'),
-                  locations=gt::cells_body(columns=Label)) |>
-    gt::tab_style(style=gt::cell_text(size='x-small'),
-                  locations=gt::cells_body(columns=tab))   |>
-    gt::fmt_markdown(columns=tab, rows=type=='md')         |>
-    gt::text_transform(
-          fn=function(x) spik,
-          locations=gt::cells_body(columns=tab,
-                                   rows=type=='spark'))    |>
-    gt::cols_hide(columns=type)                            |>
-    gt::cols_align(align='left', columns=tab)              |>
-    gt::cols_label(tab = ' ')                              |>
-    gt::sub_missing(missing_text='')
 
-  if('Units' %in% names(a))
-    b <- b |> gt::tab_style(style=gt::cell_text(size='small', font='arial'),
-                            locations=gt::cells_body(columns=Units))
-  if('Gmd' %in% names(a))
-    b <- b |>
-      gt::cols_label(Gmd ~ gt::html("Gini\u2009<span style=\"text-decoration: overline\">|\u394|</span>"))
+  b <- gt::gt(a)
+  b <- gt::tab_header(b, title = gt::md(title), subtitle = subtitle)
+  b <- gt::tab_style(
+    b,
+    style = gt::cell_text(align = 'center'),
+    locations = gt::cells_column_labels(columns = center_cols)
+  )
+  b <- gt::tab_style(
+    b,
+    style = gt::cell_text(size = 'small'),
+    locations = gt::cells_body(columns = Label)
+  )
+  b <- gt::tab_style(
+    b,
+    style = gt::cell_text(size = 'x-small'),
+    locations = gt::cells_body(columns = tab)
+  )
+  b <- gt::fmt_markdown(b, columns = tab, rows = type == 'md')
+  b <- gt::text_transform(
+    b,
+    fn = function(x)
+      spik,
+    locations = gt::cells_body(columns = tab,
+                               rows = type == 'spark')
+  )
+  b <- gt::cols_hide(b, columns = type)
+  b <- gt::cols_align(b, align = 'left', columns = tab)
+  b <- gt::cols_label(b, tab = ' ')
+  b <- gt::sub_missing(b, missing_text = '')
+
+  if ('Units' %in% names(a)) {
+    b <-
+      gt::tab_style(
+        b,
+        style = gt::cell_text(size = 'small', font = 'arial'),
+        locations = gt::cells_body(columns = Units)
+      )
+  }
+
+  if ('Gmd' %in% names(a)) {
+    b <-
+      gt::cols_label(
+        b,
+        Gmd ~ gt::html(
+          "Gini\u2009<span style=\"text-decoration: overline\">|\u394|</span>"
+        )
+      )
+  }
 
   b
 }

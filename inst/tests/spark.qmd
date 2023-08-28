@@ -164,9 +164,19 @@ a <- data.frame(x1=3, ' '=' ', x2=5, check.names=FALSE)
 
 ::: {.column-page}
 ```{r}
-gt(a) |> text_transform(locations=cells_body(columns=' '),
-                       fn=function(x) w) |>
-    cols_width(' ' ~ px(195))
+local({
+  r <- gt(a)
+  
+  r <- text_transform(r,
+      locations = cells_body(columns = ' '),
+      fn = function(x)
+        w
+    )
+  
+  r <- cols_width(' ' ~ px(195))
+  
+  r
+})
 ```
 :::
 

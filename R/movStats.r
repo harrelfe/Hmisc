@@ -1,5 +1,5 @@
 ##' Moving Estimates Using Overlapping Windows
-##' 
+##'
 ##' Function to compute moving averages and other statistics as a function
 ##' of a continuous variable, possibly stratified by other variables.
 ##' Estimates are made by creating overlapping moving windows and
@@ -45,11 +45,11 @@
 ##' @param k number of knots to use for ols and/or qreg rcspline
 ##' @param tau quantile numbers to estimate with quantile regression
 ##' @param melt set to TRUE to melt data table and derive Type and Statistic
-##' @param data 
+##' @param data
 ##' @param pr defaults to no printing of window information.  Use `pr='plain'` to print in the ordinary way, `pr='kable` to convert the object to `knitr::kable` and print, or `pr='margin'` to convert to `kable` and place in the `Quarto` right margin.  For the latter two `results='asis'` must be in the chunk header.
 ##' @param data data.table or data.frame, default is calling frame
 ##' @return a data table, with attribute `infon` which is a data frame with rows corresponding to strata and columns `N`, `Wmean`, `Wmin`, `Wmax` if `stat` computed `N`.  These summarize the number of observations used in the windows.  If `varyeps=TRUE` there is an additional column `eps` with the computed per-stratum `eps`.  When `space='n'` and `xinc` is not given, the computed `xinc` also appears as a column.  An additional attribute `info` is a `kable` object ready for printing to describe the window characteristics.
-##' 
+##'
 movStats <- function(formula, stat=NULL, discrete=FALSE,
                      space=c('n', 'x'),
                      eps =if(space=='n') 15, varyeps=FALSE,
@@ -80,7 +80,7 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
   if(ols || qreg || lrm)
     if(! requireNamespace('rms', quietly=TRUE))
       stop('rms package must be installed if using ols, qreg, or lrm')
-  
+
   if(pr %in% c('kable', 'margin'))
     if(! requireNamespace('kableExtra', quietly=TRUE))
       stop('must install kableExtra package if pr is kable or margin')
@@ -98,7 +98,7 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
     stop('loess, ols, qreg, lrm, orm do not apply when dependent variable has two columns')
   if(varyeps && space == 'x')
     stop('varyeps applies only to space="n"')
-  
+
   if(sec) {
     if(hare) if(! requireNamespace('polspline', quietly=TRUE))
                stop('polspline package must be installed if hare=TRUE')
@@ -141,11 +141,11 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
                 names(z) <- c(paste0(movlab, times, '-', tunits), 'N')
                 as.list(z)
               }
-             else 
+             else
               function(y) {
                 if(! length(y)) return(list(Mean=NA, Median=NA, Q1=NA, Q3=NA))
                 qu <- quantile(y, (1:3)/4)
-                
+
                 z <- list('Mean'   = mean(y),
                      'Median' = qu[2],
                      'Q1'     = qu[1],
@@ -174,9 +174,9 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
                    ncol=5 + needxinc,
                    dimnames=list(uby, c('N', 'Wmean', 'Wmin', 'Wmax',
                                         'eps', if(needxinc) 'xinc')))
-  
+
   if(discrete) xlev <- if(is.factor(X)) levels(X) else sort(unique(X))
-  
+
   for(by in uby) {
     j <- By == by
     if(sum(j) < 10) {
@@ -231,7 +231,7 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
       if(lowesteps < eps) ep <- lowesteps
       info[by, 'eps'] <- ep
       }
-    
+
     if(discrete) m <- data.table::data.table(x, y, y2, tx=xv)
     else {
       s <- data.table::data.table(x, y, y2, xv)
@@ -370,13 +370,13 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
       }
       R[, incidence := addlab(incidence)]
     }
-    
+
     R[, Type      := sub (' .*', '', Statistic)]
     R[, Statistic := sub ('.* ', '', Statistic)]
     R[, Type      := gsub('~', ' ',  Type)]
     R[, Statistic := gsub('~', ' ',  Statistic)]
   }
-  
+
   if('eps' %in% colnames(info) && all(is.na(info[, 'eps'])))
     info <- info[, setdiff(colnames(info), 'eps'), drop=FALSE]
   if(! bythere) row.names(info) <- NULL
@@ -393,16 +393,17 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
                c(' ' = 1, 'Window Sample Sizes' = 3),
                if('eps'  %in% n) c(' ' = 1),
                if('xinc' %in% n) c(' ' = 1))
-    if (discrete) info <- knitr::kable(info)
-            else
-              info <- knitr::kable(info) |>
-                kableExtra::add_header_above(ghead) |>
-                kableExtra::kable_styling(font_size=9)
+
+    info <- knitr::kable(info)
+    if (!discrete) {
+      info <- kableExtra::add_header_above(info, header = ghead)
+      info <- kableExtra::kable_styling(info, font_size = 9)
     }
+  }
 
   if(pr == 'margin' && ! requireNamespace('qreport', quietly=TRUE))
     stop('must install qreport package when specifying pr=margin')
-  
+
   switch(pr,
          plain  = print(info),
          kable  = cat(info),
@@ -410,7 +411,7 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
 
   attr(R, 'infon') <- infon
   attr(R, 'info')  <- info
-  
+
   R
   }
 

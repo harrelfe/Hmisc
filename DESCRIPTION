@@ -1,29 +1,74 @@
 Package: Hmisc
+Title: Harrell Miscellaneous
 Version: 5.1-1
 Date: 2023-07-18
-Title: Harrell Miscellaneous
-Authors@R: 
-    c(person(given = "Frank E",
-           family = "Harrell Jr",
-           role = c("aut", "cre"),
-           email = "fh@fharrell.com",
+Authors@R: c(
+    person("Frank E", "Harrell Jr", , "fh@fharrell.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-8271-5493")),
-			person(given = "Charles",
-			       family = "Dupont",
-						 role = "ctb",
-						 email = "charles.dupont@vumc.org",
-						 comment = "contributed several functions and maintains latex functions"))
+    person("Charles", "Dupont", , "charles.dupont@vumc.org", role = "ctb",
+           comment = "contributed several functions and maintains latex functions")
+  )
 Maintainer: Frank E Harrell Jr <fh@fharrell.com>
-Imports: methods, ggplot2, cluster, rpart, nnet, foreign, gtable, grid, gridExtra, data.table, htmlTable (>= 1.11.0), viridis, htmltools, base64enc, colorspace, rmarkdown, knitr, Formula
-Suggests: survival, qreport, acepack, chron, rms, mice, rstudioapi, tables, plotly (>= 4.5.6), rlang, plyr, VGAM, leaps, pcaPP, digest, parallel, polspline, abind, kableExtra, rio, lattice, latticeExtra, gt, sparkline, jsonlite, htmlwidgets, qs, getPass, keyring
-Description: Contains many functions useful for data
-	analysis, high-level graphics, utility operations, functions for
-	computing sample size and power, simulation, importing and annotating datasets,
-	imputing missing values, advanced table making, variable clustering,
-	character string manipulation, conversion of R objects to LaTeX and html code,
-	recoding variables, caching, simplified parallel computing, encrypting and decrypting data using a safe workflow, general moving window statistical estimation, and assistance in interpreting principal component analysis.
+Description: Contains many functions useful for data analysis, high-level
+    graphics, utility operations, functions for computing sample size and
+    power, simulation, importing and annotating datasets, imputing missing
+    values, advanced table making, variable clustering, character string
+    manipulation, conversion of R objects to LaTeX and html code, recoding
+    variables, caching, simplified parallel computing, encrypting and
+    decrypting data using a safe workflow, general moving window
+    statistical estimation, and assistance in interpreting principal
+    component analysis.
 License: GPL (>= 2)
-LazyLoad: Yes
 URL: https://hbiostat.org/R/Hmisc/
+Imports: 
+    base64enc,
+    cluster,
+    colorspace,
+    data.table,
+    foreign,
+    Formula,
+    ggplot2,
+    grid,
+    gridExtra,
+    gtable,
+    htmlTable (>= 1.11.0),
+    htmltools,
+    knitr,
+    methods,
+    nnet,
+    rmarkdown,
+    rpart,
+    viridis
+Suggests: 
+    abind,
+    acepack,
+    chron,
+    digest,
+    getPass,
+    gt,
+    htmlwidgets,
+    jsonlite,
+    kableExtra,
+    keyring,
+    lattice,
+    latticeExtra,
+    leaps,
+    mice,
+    parallel,
+    pcaPP,
+    plotly (>= 4.5.6),
+    plyr,
+    polspline,
+    qreport,
+    qs,
+    rio,
+    rlang,
+    rms,
+    rstudioapi,
+    sparkline,
+    survival,
+    tables,
+    VGAM
 Encoding: UTF-8
+LazyLoad: Yes
 RoxygenNote: 7.2.3

@@ -393,7 +393,7 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
                c(' ' = 1, 'Window Sample Sizes' = 3),
                if('eps'  %in% n) c(' ' = 1),
                if('xinc' %in% n) c(' ' = 1))
-    info <- if(discrete) knitr::kable(info)
+    if (discrete) info <- knitr::kable(info)
             else
               info <- knitr::kable(info) |>
                 kableExtra::add_header_above(ghead) |>

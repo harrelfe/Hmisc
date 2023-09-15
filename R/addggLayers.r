@@ -1,6 +1,6 @@
 ##' Add Spike Histograms and Extended Box Plots to `ggplot`
 ##'
-##' For an example see [this](http://hbiostat.org/rflow/analysis.html#fig-table1).  Note that it was not possible to just create the layers needed to be added, as creating these particular layers in isolation resulted in a `ggplot` error.
+##' For an example see [this](https://hbiostat.org/rflow/analysis.html#fig-table1).  Note that it was not possible to just create the layers needed to be added, as creating these particular layers in isolation resulted in a `ggplot` error.
 ##' @title addggLayers
 ##' @param g a `ggplot` object
 ##' @param data data frame/table containing raw data

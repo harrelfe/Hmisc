@@ -232,10 +232,8 @@ formatdescribeSingle(x, condense=c('extremes', 'frequencies', 'both', 'none'),
 }
 \item{object}{a result of \code{describe}}
 \item{title}{unused}
-\item{data}{
-}
-\item{subset}{
-}
+\item{data}{a data frame, data table, or list}
+\item{subset}{a subsetting expression}
 \item{na.action}{
   These are used if a formula is specified.  \code{na.action} defaults to
   \code{na.retain} which does not delete any \code{NA}s from the data frame.

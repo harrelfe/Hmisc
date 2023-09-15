@@ -169,8 +169,7 @@ Setting \code{labels=FALSE} will suppress drawing any labels (for
 For \code{putKey} and \code{putKeyEmpty} is a vector of character strings
 specifying group labels
 }
-\item{x}{
-}
+\item{x}{see below}
 \item{y}{
 for \code{putKeyEmpty} and \code{largest.empty}, \code{x} and \code{y}
 are same-length vectors specifying points that have been plotted.
@@ -183,8 +182,7 @@ in this way.  For \code{Abline} these may be any arguments to
 \code{abline}. 
 For \code{labcurve}, other parameters to pass to \code{text}.
 }
-\item{width}{
-}
+\item{width}{see below}
 \item{height}{
 for \code{largest.empty}, specifies the minimum allowable width in
 \code{x} units and the minimum allowable height in \code{y} units
@@ -332,8 +330,7 @@ lines are not drawn in the key.
 vector of line widths which were used to draw the curves.
 This is only used when keys are drawn.  See \code{lty} also.
 }
-\item{col.}{
-}
+\item{col.}{vector of integer color numbers}
 \item{col}{
 vector of integer color numbers for use in curve labels, symbols,
 lines, and legends.  Default is \code{par("col")} for all curves.
@@ -366,8 +363,7 @@ a list of extra arguments you wish to pass to \code{key()}, e.g.,
 \code{key.opts=list(background=1, between=3)}.  
 The argument names must be spelled out in full.
 }
-\item{empty.method}{
-}
+\item{empty.method}{see below}
 \item{numbins}{
 These two arguments are passed to the \code{largest.empty} function's
 \code{method} and \code{numbins} arguments (see below).
@@ -399,8 +395,7 @@ Here \code{ylim} defaults to the same as above, i.e., the range
 of the y-axis of an open plot from \code{par}.  For \code{drawPlot} the default
 is \code{c(0,1)}.
 }
-\item{xlab}{
-}
+\item{xlab}{see below}
 \item{ylab}{
 x-axis and y-axis labels when \code{pl=TRUE} and \code{add=FALSE} or for
 \code{drawPlot}.

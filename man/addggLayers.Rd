@@ -48,7 +48,7 @@ the original \code{ggplot} object with more layers added
 Add Spike Histograms and Extended Box Plots to \code{ggplot}
 }
 \details{
-For an example see \href{http://hbiostat.org/rflow/analysis.html#fig-table1}{this}.  Note that it was not possible to just create the layers needed to be added, as creating these particular layers in isolation resulted in a \code{ggplot} error.
+For an example see \href{https://hbiostat.org/rflow/analysis.html#fig-table1}{this}.  Note that it was not possible to just create the layers needed to be added, as creating these particular layers in isolation resulted in a \code{ggplot} error.
 }
 \seealso{
 \code{spikecomp()}

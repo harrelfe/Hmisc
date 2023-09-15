@@ -20,7 +20,7 @@ seqFreq(..., labels = NULL, noneNA = FALSE)
 Find Sequential Exclusions Due to NAs
 }
 \details{
-Finds the variable with the highest number of \code{NA}s.  From the non-\code{NA}s on that variable find the next variable from those remaining with the highest number of \code{NA}s.  Proceed in like fashion.  The resulting variable summarizes sequential exclusions in a hierarchical fashion.  See \href{http://hbiostat.org/rflow/doverview.html#sec-doverview-filter}{this} for more information.
+Finds the variable with the highest number of \code{NA}s.  From the non-\code{NA}s on that variable find the next variable from those remaining with the highest number of \code{NA}s.  Proceed in like fashion.  The resulting variable summarizes sequential exclusions in a hierarchical fashion.  See \href{https://hbiostat.org/rflow/doverview.html#sec-doverview-filter}{this} for more information.
 }
 \author{
 Frank Harrell

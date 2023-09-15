@@ -116,10 +116,8 @@ By default, it is assumed to be a data matrix.
 see \code{hclust}.  The default, for both \code{varclus} and \code{naclus}, is
 \code{"compact"} (for \R it is \code{"complete"}).
 }
-\item{data}{
-}
-\item{subset}{
-}
+\item{data}{a data frame, data table, or list}
+\item{subset}{a standard subsetting expression}
 \item{na.action}{
 These may be specified if \code{x} is a formula.  The default
 \code{na.action} is \code{na.retain}, defined by \code{varclus}.  This
@@ -180,11 +178,7 @@ off-diagonals separately}
 set to \code{TRUE} to add similarities to an existing plot (usually
 specifying \code{lty} or \code{col})
 }
-\item{lty}{
-}
-\item{col}{
-}
-\item{lwd}{
+\item{lty, col, lwd}{
 line type, color, or line thickness for \code{plotMultSim}
 }
 \item{vname}{

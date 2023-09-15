@@ -14,7 +14,8 @@
   ylim = NULL,
   add = FALSE,
   abbrev = 25,
-  nrow = NULL
+  nrow = NULL,
+  ...
 )
 }
 \arguments{
@@ -37,6 +38,8 @@
 \item{abbrev}{an integer specifying the variable name length above which names are passed through [abbreviate(..., minlength=abbrev)]}
 
 \item{nrow}{number of rows to use in plotting loadings.  Defaults to the `ggplot2` `facet_wrap` default.}
+
+\item{...}{unused}
 }
 \value{
 `ggplot2` object if `which='loadings'`

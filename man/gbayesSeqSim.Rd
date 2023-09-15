@@ -67,7 +67,7 @@ attr(z, 'asserts')
 # was hit (set to infinity if never hit)
 require(data.table)
 z <- data.table(z)
-u <- z[, .(first=min(p1 > 0.95])), by=.(parameter, sim)]
+u <- z[, .(first=min(p1 > 0.95)), by=.(parameter, sim)]
 # Compute the proportion of simulations that ever hit the target and
 # that hit it by the 100th subject
 u[, .(ever=mean(first < Inf)),  by=.(parameter)]

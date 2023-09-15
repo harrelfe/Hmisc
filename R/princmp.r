@@ -98,13 +98,14 @@ princmp <- function(formula, data=environment(formula),
 ##' @param x results of `princmp`
 ##' @param which specifies which loadings to print, the default being `'none'` and other values being `'standardized'`, `'original'`, or `'both'`
 ##' @param k number of components to show, defaults to `k` specified to `princmp`
+##' @param ... unused
 ##' @return nothing
 ##' @author Frank Harrell
 ##' @export
 ##' @md
 print.princmp <- function(x,
                           which=c('none', 'standardized', 'original', 'both'),
-                          k=x$k) {
+                          k=x$k, ...) {
   which <- match.arg(which)
   prz <- function(x, m) {
     x <- format(round(x, m), zero.print=FALSE)
@@ -162,12 +163,14 @@ print.princmp <- function(x,
 ##' @param add set to `TRUE` to add a line to an existing scree plot without drawing axes
 ##' @param abbrev an integer specifying the variable name length above which names are passed through [abbreviate(..., minlength=abbrev)]
 ##' @param nrow number of rows to use in plotting loadings.  Defaults to the `ggplot2` `facet_wrap` default.
+##' @param ... unused
 ##' @return `ggplot2` object if `which='loadings'`
 ##' @export
 ##' @author Frank Harrell
 plot.princmp <- function(x, which=c('scree', 'loadings'),
                          k=x$k, offset=0.8, col=1, adj=0,
-                         ylim=NULL, add=FALSE, abbrev=25, nrow=NULL) {
+                         ylim=NULL, add=FALSE, abbrev=25, nrow=NULL,
+                         ...) {
   which <- match.arg(which)
   if(which == 'scree') {
   vars <- x$vars

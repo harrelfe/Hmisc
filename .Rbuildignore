@@ -11,3 +11,6 @@ tests/\.Rhistory
 
 ^.*\.Rproj$
 ^\.Rproj\.user$
+
+publish
+

@@ -4,7 +4,7 @@
 \alias{print.princmp}
 \title{print.princmp}
 \usage{
-\method{print}{princmp}(x, which = c("none", "standardized", "original", "both"), k = x$k)
+\method{print}{princmp}(x, which = c("none", "standardized", "original", "both"), k = x$k, ...)
 }
 \arguments{
 \item{x}{results of \code{princmp}}
@@ -12,6 +12,8 @@
 \item{which}{specifies which loadings to print, the default being \code{'none'} and other values being \code{'standardized'}, \code{'original'}, or \code{'both'}}
 
 \item{k}{number of components to show, defaults to \code{k} specified to \code{princmp}}
+
+\item{...}{unused}
 }
 \value{
 nothing

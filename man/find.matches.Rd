@@ -48,16 +48,12 @@ a numeric matrix or the result of \code{find.matches}
 \item{y}{
 a numeric matrix with same number of columns as \code{x}
 }
-\item{xcase}{
-}
-\item{xcontrol}{
-vectors, not necessarily of the same length, specifying a numeric
-variable used to match cases and control
-}
-\item{ycase}{
-}
+\item{xcase}{numeric vector to match on for cases}
+\item{xcontrol}{numeric vector to match on for controls, not necessarily
+           the same length as \code{xcase}}
+\item{ycase}{a vector or matrix}
 \item{ycontrol}{
-vectors or matrices, not necessarily having the same number of rows,
+\code{ycase} and \code{ycontrol} are vectors or matrices, not necessarily having the same number of rows,
 specifying a variable to carry along from cases and matching
 controls.  If you instead want to carry along rows from a data frame,
 let \code{ycase} and \code{ycontrol} be non-overlapping integer subscripts of
@@ -79,13 +75,11 @@ maximum number of controls to match with a case (default is 20).  If more than
 replacement of \code{maxmatch} controls is used (if \code{which="random"}).
 }
 \item{object}{an object created by \code{find.matches}}
-\item{digits}{
-number of digits to use in printing distances
-}
-\item{idcase}{
-}
+\item{digits}{number of digits to use in printing distances}
+\item{idcase}{vector the same length as \code{xcase}}
 \item{idcontrol}{
-vectors the same length as \code{xcase} and \code{xcontrol} respectively,
+\code{idcase} and \code{idcontrol} are vectors the same length as
+           \code{xcase} and \code{xcontrol} respectively, 
 specifying the id of cases and controls.  Defaults are integers
 specifying original element positions within each of cases and
 controls.

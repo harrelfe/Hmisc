@@ -58,33 +58,21 @@ population probability in the group 1
 \item{p2}{
 probability for group 2
 }
-\item{odds.ratio}{
-}
-\item{percent.reduction}{
-}
+\item{odds.ratio}{odds ratio to detect}
+\item{percent.reduction}{percent reduction in risk to detect}
 \item{n}{
 total sample size over the two groups.  If you omit this for
 \code{ballocation}, the \code{fraction} which optimizes power will not be
 returned.
 }
-\item{n1}{
+\item{n1}{sample size in group 1}
+\item{n2}{sample size in group 2.  \code{bpower}, if \code{n} is given,
+\code{n1} and \code{n2} are set to \code{n/2}.}
+\item{alpha}{type I assertion probability}
+\item{fraction}{fraction of observations in group 1}
+\item{power}{the desired probability of detecting a difference}
+\item{nsim}{number of simulations of binomial responses}
 }
-\item{n2}{
-the individual group sample sizes.  For \code{bpower}, if \code{n} is given,
-\code{n1} and \code{n2} are set to \code{n/2}.
-}
-\item{alpha}{
-type I error
-}
-\item{fraction}{
-fraction of observations in group 1
-}
-\item{power}{
-the desired probability of detecting a difference
-}
-\item{nsim}{
-number of simulations of binomial responses
-}}
 \value{
 for \code{bpower}, the power estimate; for \code{bsamsize}, a vector containing
 the sample sizes in the two groups; for \code{ballocation}, a vector with

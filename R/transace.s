@@ -98,7 +98,7 @@ print.transace <- function(x, ...) {
   print(x$formula)
   cat('\nn=', x$n)
   if(length(x$omitted))
-    cat(length(omitted), 'observations deleted due to NAs\n')
+    cat(length(x$omitted), 'observations deleted due to NAs\n')
   cat('\n\nTransformations:\n\n')
   print(x$type, quote=FALSE)
   cat("\n\nR-squared achieved in predicting each variable:\n\n")

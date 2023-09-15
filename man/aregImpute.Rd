@@ -606,7 +606,9 @@ abline(v=.2,   lty=2)  # default value of fweighted
 abline(h=rmse, lty=2)  # root MSE of residuals from linear regression
 }
 
-d <- data.frame(x1=rnorm(50), x2=c(rep(NA, 10), runif(40)),
+
+set.seed(2)
+d <- data.frame(x1=runif(50), x2=c(rep(NA, 10), runif(40)),
                 x3=c(runif(4), rep(NA, 11), runif(35)))
 reformM(~ x1 + x2 + x3, data=d)
 reformM(~ x1 + x2 + x3, data=d, nperm=2)
@@ -619,6 +621,7 @@ reformM(~ x1 + x2 + x3, data=d, nperm=2)
 a <- aregImpute(~ x1 + x2 + x3, data=d,
                 constraint=list(x2 = expression(d$x2 > 0.2),
                                 x3 = expression(d$x3 < r$x1)))
+a
 }
 \keyword{smooth}
 \keyword{regression}

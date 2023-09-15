@@ -127,7 +127,7 @@ aregImpute <- function(formula, data, subset, n.impute=5,
   Countqual <- NULL
   if(length(constraint)) {
     ## Define a list of lists of vectors
-    ## For each target variable references in constraint, make a list
+    ## For each target variable referenced in constraint, make a list
     ## having as each of its elements corresponding to missing observations
     ## on the target variable, with the element containing a list of
     ## row numbers of the set of non-missing target variables with

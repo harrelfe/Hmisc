@@ -1,4 +1,4 @@
-Changes in version 5.1-1 (2023-07-18)
+Changes in version 5.1-1 (2023-09-11)
    * meltData: generalized to allow melting on either left or right side of formula, added ... arguments passed to label(), made variable a factor to keep original order
    * formatCons: fixed bug where lang != 'latex' should have been lang == 'plain' which made msdsize to be ignored for html output
    * spikecomp: made more reliable by not assuming as much about pretty() boundaries
@@ -10,7 +10,7 @@ Changes in version 5.1-1 (2023-07-18)
    * transace: added trantab result, added as.matrix(x) so can run on data frames of all numeric variables; added automatic setting of binary, category, etc. if x is a data frame/table; non-downward-compatible change: made returned object of class transace with different format; remove pr and pl arguments from transace.  Changed first argument to a formula and required monotone(), categorical(), linear() to wrap variables in the formula instead of specifying with separate arguments
    * runParallel: put in NAMESPACE
    * qcrypt: new function for encrypting and decrypting data with a safe workflow
-   * aregImpute: added constrain argument to allow general constraints on values imputed with predictive mean matching
+   * aregImpute: added constraint argument to allow general constraints on values imputed with predictive mean matching
 
 Changes in version 5.1-0 (2023-05-04)
    * fit.mult.impute: added robust, cluster, robmethod arguments to incorporate rms::robcov to do robust sandwich covariance estimation with multiple imputation

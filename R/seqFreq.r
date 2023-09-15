@@ -1,6 +1,6 @@
 ##' Find Sequential Exclusions Due to NAs
 ##'
-##' Finds the variable with the highest number of `NA`s.  From the non-`NA`s on that variable find the next variable from those remaining with the highest number of `NA`s.  Proceed in like fashion.  The resulting variable summarizes sequential exclusions in a hierarchical fashion.  See [this](http://hbiostat.org/rflow/doverview.html#sec-doverview-filter) for more information.
+##' Finds the variable with the highest number of `NA`s.  From the non-`NA`s on that variable find the next variable from those remaining with the highest number of `NA`s.  Proceed in like fashion.  The resulting variable summarizes sequential exclusions in a hierarchical fashion.  See [this](https://hbiostat.org/rflow/doverview.html#sec-doverview-filter) for more information.
 ##' @title seqFreq
 ##' @param ... any number of variables
 ##' @param labels if specified variable labels will be used in place of variable names

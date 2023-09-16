@@ -88,7 +88,6 @@ dotchartpl <- function(x, major=NULL, minor=NULL,
     if(length(htext)) htext <- htext[i]
     }    # end if(rgpres && ...
 
-
   ht <- htext
   if(numlabel != '')   numlabel   <- paste0(' ', numlabel)
   if(denomlabel != '') denomlabel <- paste0(' ', denomlabel)
@@ -251,7 +250,7 @@ dotchartpl <- function(x, major=NULL, minor=NULL,
 
     ## tracename and limitstracename are used if groups not used
 
-    if(limspres && ! length(D) && length(ugroup) == 2)
+    if(limspres && ! length(D)) ##  && length(ugroup) == 2) why ??
       p <- if(grouppres)
              plotly::add_segments(p, data=db,
                                   x=~ Lower, xend=~ Upper,
@@ -264,7 +263,7 @@ dotchartpl <- function(x, major=NULL, minor=NULL,
                                   text= ~ Htextl,
                                   color=I('lightgray'), hoverinfo='text',
                                   name=limitstracename)
-    
+
     p <- if(grouppres)
            plotly::add_markers(p, x=~ X, y=~ Y,
                                color=~ Group, text=~ Htext,
@@ -321,11 +320,10 @@ dotchartpl <- function(x, major=NULL, minor=NULL,
   leftmargin <- plotlyParm$lrmargin(ytnb)
   tickvals <- pretty(fun(xlim), n=10)
   xaxis <- list(title=xlab, range=xlim, zeroline=FALSE,
-                tickvals=ifun(tickvals), ticktext=tickvals)
+                tickvals=ifun(tickvals), ticktext=format(tickvals))
   yaxis <- list(title='',
                 range=c(min(Y) - 0.2, 0.2),
                 zeroline=FALSE, tickvals=yl, ticktext=yt)
-  
   p <- plotly::layout(p,
                  xaxis=xaxis,
                  yaxis=yaxis,

@@ -3,7 +3,7 @@
 \title{Enhanced Version of dotchart Function for plotly}
 \description{
 	This function produces a \code{plotly} interactive graphic and accepts
-	a different format of data input than the other \code{dotchart}x
+	a different format of data input than the other \code{dotchart}
 	functions.  It was written to handle a hierarchical data structure
 	including strata that further subdivide the main classes.  Strata,
 	indicated by the \code{mult} variable, are shown  on the same

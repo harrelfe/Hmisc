@@ -1,3 +1,7 @@
+Changes in version 5.1-2 (2023-09-16)
+   * dotchartpl: remove length(ugroup) criterion (unsure what this was doing and made lower and upper be not plotted)
+   * dotchartpl: got around new bug in plotly when numeric vectors were given to axis ticktext; changed to character via format()
+
 Changes in version 5.1-1 (2023-09-11)
    * meltData: generalized to allow melting on either left or right side of formula, added ... arguments passed to label(), made variable a factor to keep original order
    * formatCons: fixed bug where lang != 'latex' should have been lang == 'plain' which made msdsize to be ignored for html output

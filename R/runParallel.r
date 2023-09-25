@@ -53,9 +53,9 @@
 ##' @param onecore function to run the analysis on one core
 ##' @param reps total number of repetitions
 ##' @param seed species the base random number seed.  The seed used for core i will be `seed` + `i`.
-##' @param cores number of cores to use, defaulting to one less than the numbmer available
+##' @param cores number of cores to use, defaulting to one less than the number available
 ##' @param simplify set to FALSE to not create an outer list if a `onecore` result has only one element
-##' @param along see above
+##' @param along see Details
 ##' @return result from combining all the parallel runs, formatting as similar to the result produced from one run as possible
 ##' @author Frank Harrell
 ##' @md

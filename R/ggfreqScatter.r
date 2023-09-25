@@ -102,7 +102,7 @@ ggfreqScatter <- function(x, y, by=NULL, bins=50, g=10, cuts=NULL,
            scale_color_gradientn(colors=fcolors,
                                  breaks=if(few) ufreq else 1 : length(levels(k$fg)),
                                  labels=if(few) ufreq else levels(k$fg)) +
-           guides(alpha = FALSE, 
+           guides(alpha = 'none', 
                   color = guide_legend(title='Frequency')) +
            xlab(xlab) + ylab(ylab)
 

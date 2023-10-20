@@ -11,8 +11,9 @@ GiniMd<- function(x, na.rm=FALSE) {
     k <- is.na(x)
     if(any(k)) x <- x[! k]
   }
-  n <-length(x)
-  if(n < 2) return(NA)
+  n <- length(x)
+  if(n < 2 || any(is.na(x))) return(NA)
   w <- 4 * ((1 : n) - (n - 1) / 2) / n / (n - 1)
+  # sum returns 0 if x is empty, so NA was returned above to intercept this
   sum(w * sort(x - mean(x)))  ## center for numerical stability only
 }

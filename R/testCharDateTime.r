@@ -5,7 +5,7 @@
 ##' @param x input vector of any type, but interesting cases are for character `x`
 ##' @param p minimum proportion of non-missing non-blank values of `x` for which the format is one of the formats described before considering `x` to be of that type
 ##' @param m if greater than 0, a test is applied: the number of distinct illegal values of `x` (values containing a letter or underscore) must not exceed `m`, or type `character` will be returned.  `p` is set to `1.0` when `m` > 0.
-##' @param convert set to `TRUE` to convert the variable under the dominant format
+##' @param convert set to `TRUE` to convert the variable under the dominant format.  If all values are `NA`, `type` will be set to `'character'`.
 ##' @param existing set to `TRUE` to return a character string with the current type of variable without examining pattern matches
 ##' @return if `convert=FALSE`, a single character string with the type of `x`: `"character", "datetime", "date", "time"`.  If `convert=TRUE`, a list with components named `type`, `x` (converted to `POSIXct`, `Date`, or `chron` times format), and `numna`, the number of originally non-`NA` values of `x` that could not be converted to the predominant format.  If there were any non-covertible dates/times,
 ##' the returned vector is given an additional class `special.miss` and an
@@ -41,7 +41,7 @@ testCharDateTime <- function(x, p=0.5, m=0, convert=FALSE, existing=FALSE) {
   y                <- x
   y[trimws(y) == ''] <- NA
   x                <- x[! is.na(x)]
-  if(! length(x)) return('character')
+  if(! length(x)) return(ret('character', y, numna=length(y)))
   if(m > 0) {
     p      <- 1.0
     ischar <- grep('[a-z,A-Z,_]', x)
@@ -96,10 +96,8 @@ testCharDateTime <- function(x, p=0.5, m=0, convert=FALSE, existing=FALSE) {
       if(lab != '') label(z) <- lab
       un                     <- units(y)
       if(un  != '') units(z) <- un
-      prn(bad)
       if(any(bad)) {
         class(z) <- c('special.miss', class(z))
-        prn(class(z))
         attr(z, 'special.miss') <- list(codes=y[bad], obs=which(bad))
         }
       return(list(type=ty, x=z, numna=nx - ngood))

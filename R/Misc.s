@@ -1293,7 +1293,7 @@ hdquantile <- function(x, probs=seq(0, 1, 0.25), se=FALSE,
 
   a <- outer((0:n)/n, ps,
              function(x,p,m) pbeta(x, p*m, (1-p)*m), m=m)
-  w <- a[-1,] - a[-m,]
+  w <- a[-1,,drop=FALSE] - a[-m,,drop=FALSE]
 
   r <- drop(x %*% w)
   rp <- range(probs)
@@ -1321,7 +1321,7 @@ if(weights)
   l <- n - 1
   a <- outer((0:l)/l, ps,
              function(x,p,m) pbeta(x, p*m, (1-p)*m), m=m)
-  w <- a[-1,] - a[-n,]
+  w <- a[-1,,drop=FALSE] - a[-n,,drop=FALSE]
 
   storage.mode(x) <- 'double'
   storage.mode(w) <- 'double'

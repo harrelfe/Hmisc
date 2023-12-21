@@ -7,4 +7,5 @@ src/*.so
 src/*.dll
 Hmisc.Rproj
 publish
+.DS_Store
 

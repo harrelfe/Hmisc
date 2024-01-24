@@ -4,7 +4,7 @@
 ##' of a continuous variable, possibly stratified by other variables.
 ##' Estimates are made by creating overlapping moving windows and
 ##' computing the statistics defined in the stat function for each window.
-##' The default method, `space='n'` creates varying-width intervals each having a sample size of `2*eps +1`, and the smooth estimates are made every `xinc` observations.  Outer intervals are not symmetric in sample size (but the mean x in those intervals will reflect that) unless `eps=10`, as outer intervals are centered at observations 10 and n - 10 + 1.  The mean x-variable within each windows is taken to represent that window.  If `trans` and `itrans` are given, x means are computed on the `trans(x)` scale and then `itrans`'d.  For `space='x'`, by default estimates are made on to the 10th smallest to the 10th largest
+##' The default method, `space='n'` creates varying-width intervals each having a sample size of `2*eps +1`, and the smooth estimates are made every `xinc` observations.  Outer intervals are not symmetric in sample size (but the mean x in those intervals will reflect that) unless `eps=nignore`, as outer intervals are centered at observations `nignore` and `n - nignore + 1` where the default for `nignore` is 10.  The mean x-variable within each windows is taken to represent that window.  If `trans` and `itrans` are given, x means are computed on the `trans(x)` scale and then `itrans`'d.  For `space='x'`, by default estimates are made on to the `nignore` smallest to the `nignore` largest
 ##' observed values of the x variable to avoid extrapolation and to
 ##' help getting the moving statistics off on an adequate start for
 ##' the left tail.  Also by default the moving estimates are smoothed using `supsmu`.
@@ -23,8 +23,9 @@
 ##' @param space defines whether intervals used fixed width or fixed sample size
 ##' @param eps tolerance for window (half width of window).  For `space='x'` is in data units, otherwise is the sample size for half the window, not counting the middle target point.
 ##' @param varyeps applies to `space='n'` and causes a smaller `eps` to be used in strata with fewer than `` observations so as to arrive at three x points
+##' @nignore see description, default is to exclude `nignore=10` points on the left and right tails from estimation and plotting
 ##' @param xinc increment in x to evaluate stats, default is xlim range/100 for `space='x'`.  For `space='n'` `xinc` defaults to m observations, where m = max(n/200, 1).
-##' @param xlim 2-vector of limits to evaluate if `space='x'` (default is 10th to 10th)
+##' @param xlim 2-vector of limits to evaluate if `space='x'` (default is `nignore` smallest to `nignore` largest)
 ##' @param times vector of times for evaluating one minus Kaplan-Meier estimates
 ##' @param tunits time units when `times` is given
 ##' @param msmooth set to `'smoothed'` or `'both'` to compute `lowess`-smooth moving estimates. `msmooth='both'` will display both.  `'raw'` will display only the moving statistics.  `msmooth='smoothed'` (the default) will display only he smoothed moving estimates.
@@ -52,7 +53,7 @@
 ##' 
 movStats <- function(formula, stat=NULL, discrete=FALSE,
                      space=c('n', 'x'),
-                     eps =if(space=='n') 15, varyeps=FALSE,
+                     eps =if(space=='n') 15, varyeps=FALSE, nignore=10,
                      xinc=NULL, xlim=NULL,
                      times=NULL, tunits='year',
                      msmooth=c('smoothed', 'raw', 'both'),
@@ -179,8 +180,8 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
   
   for(by in uby) {
     j <- By == by
-    if(sum(j) < 10) {
-      warning(paste('Stratum', by, 'has < 10 observations and is ignored'))
+    if(sum(j) < nignore) {
+      warning(paste('Stratum', by, 'has <', nignore, 'observations and is ignored'))
       next
     }
     x  <- X [j]
@@ -198,7 +199,7 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
              xl <- xlim
              if(! length(xl)) {
                xs <- sort(x)
-               xl <- c(xs[10], xs[n - 10 + 1])
+               xl <- c(xs[nignore], xs[n - nignore + 1])
                if(diff(xl) >= 25) xl <- round(xl)
              }
              xinc <- Xinc
@@ -216,7 +217,7 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
                xinc <- max(floor(n / 200.), 1)
                info[by, 'xinc'] <- xinc
                }
-             xseq <- seq(10, n - 10 + 1, by=xinc)
+             xseq <- seq(nignore, n - nignore + 1, by=xinc)
              xv   <- 1 : n
              } )
 

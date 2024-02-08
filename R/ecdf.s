@@ -192,7 +192,7 @@ Ecdf.data.frame <- function(x, group=rep(1, nrows),
     }
     
     if(automf && interactive() && 
-       names(dev.list()) %nin% c('postscript','win.printer') &&
+       all(names(dev.list()) %nin% c('postscript','win.printer')) &&
        (i %% prod(mf)==0)) {
       cat("click left mouse button to proceed\n")
       locator(1)

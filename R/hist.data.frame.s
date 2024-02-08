@@ -83,9 +83,9 @@ hist.data.frame <- function(x, n.unique=3, nclass="compute", na.big=FALSE,
 
         if(rugs)
           scat1d(v, ...)
-        
+
         if(automf && interactive() &&
-           names(dev.list())!='postscript' &&
+           all(names(dev.list()) %nin% c('postscript')) && # add win.printer?
            (i %% prod(mf)==0)) {
           if(is.character(mtitl))
             mtitle(mtitl)

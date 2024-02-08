@@ -13,7 +13,7 @@ testCharDateTime(x, p = 0.5, m = 0, convert = FALSE, existing = FALSE)
 
 \item{m}{if greater than 0, a test is applied: the number of distinct illegal values of \code{x} (values containing a letter or underscore) must not exceed \code{m}, or type \code{character} will be returned.  \code{p} is set to \code{1.0} when \code{m} > 0.}
 
-\item{convert}{set to \code{TRUE} to convert the variable under the dominant format}
+\item{convert}{set to \code{TRUE} to convert the variable under the dominant format.  If all values are \code{NA}, \code{type} will be set to \code{'character'}.}
 
 \item{existing}{set to \code{TRUE} to return a character string with the current type of variable without examining pattern matches}
 }

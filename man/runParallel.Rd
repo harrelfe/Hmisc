@@ -20,11 +20,11 @@ runParallel(
 
 \item{seed}{species the base random number seed.  The seed used for core i will be \code{seed} + \code{i}.}
 
-\item{cores}{number of cores to use, defaulting to one less than the numbmer available}
+\item{cores}{number of cores to use, defaulting to one less than the number available}
 
 \item{simplify}{set to FALSE to not create an outer list if a \code{onecore} result has only one element}
 
-\item{along}{see above}
+\item{along}{see Details}
 }
 \value{
 result from combining all the parallel runs, formatting as similar to the result produced from one run as possible

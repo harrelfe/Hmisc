@@ -11,6 +11,7 @@ movStats(
   space = c("n", "x"),
   eps = if (space == "n") 15,
   varyeps = FALSE,
+  nignore = 10,
   xinc = NULL,
   xlim = NULL,
   times = NULL,
@@ -50,9 +51,11 @@ movStats(
 
 \item{varyeps}{applies to \code{space='n'} and causes a smaller \code{eps} to be used in strata with fewer than `` observations so as to arrive at three x points}
 
+\item{nignore}{see description, default is to exclude \code{nignore=10} points on the left and right tails from estimation and plotting}
+
 \item{xinc}{increment in x to evaluate stats, default is xlim range/100 for \code{space='x'}.  For \code{space='n'} \code{xinc} defaults to m observations, where m = max(n/200, 1).}
 
-\item{xlim}{2-vector of limits to evaluate if \code{space='x'} (default is 10th to 10th)}
+\item{xlim}{2-vector of limits to evaluate if \code{space='x'} (default is \code{nignore} smallest to \code{nignore} largest)}
 
 \item{times}{vector of times for evaluating one minus Kaplan-Meier estimates}
 
@@ -109,7 +112,7 @@ Function to compute moving averages and other statistics as a function
 of a continuous variable, possibly stratified by other variables.
 Estimates are made by creating overlapping moving windows and
 computing the statistics defined in the stat function for each window.
-The default method, \code{space='n'} creates varying-width intervals each having a sample size of \code{2*eps +1}, and the smooth estimates are made every \code{xinc} observations.  Outer intervals are not symmetric in sample size (but the mean x in those intervals will reflect that) unless \code{eps=10}, as outer intervals are centered at observations 10 and n - 10 + 1.  The mean x-variable within each windows is taken to represent that window.  If \code{trans} and \code{itrans} are given, x means are computed on the \code{trans(x)} scale and then \code{itrans}'d.  For \code{space='x'}, by default estimates are made on to the 10th smallest to the 10th largest
+The default method, \code{space='n'} creates varying-width intervals each having a sample size of \code{2*eps +1}, and the smooth estimates are made every \code{xinc} observations.  Outer intervals are not symmetric in sample size (but the mean x in those intervals will reflect that) unless \code{eps=nignore}, as outer intervals are centered at observations \code{nignore} and \code{n - nignore + 1} where the default for \code{nignore} is 10.  The mean x-variable within each windows is taken to represent that window.  If \code{trans} and \code{itrans} are given, x means are computed on the \code{trans(x)} scale and then \code{itrans}'d.  For \code{space='x'}, by default estimates are made on to the \code{nignore} smallest to the \code{nignore} largest
 observed values of the x variable to avoid extrapolation and to
 help getting the moving statistics off on an adequate start for
 the left tail.  Also by default the moving estimates are smoothed using \code{supsmu}.

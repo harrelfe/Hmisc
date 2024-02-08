@@ -23,7 +23,7 @@
 ##' @param space defines whether intervals used fixed width or fixed sample size
 ##' @param eps tolerance for window (half width of window).  For `space='x'` is in data units, otherwise is the sample size for half the window, not counting the middle target point.
 ##' @param varyeps applies to `space='n'` and causes a smaller `eps` to be used in strata with fewer than `` observations so as to arrive at three x points
-##' @nignore see description, default is to exclude `nignore=10` points on the left and right tails from estimation and plotting
+##' @param nignore see description, default is to exclude `nignore=10` points on the left and right tails from estimation and plotting
 ##' @param xinc increment in x to evaluate stats, default is xlim range/100 for `space='x'`.  For `space='n'` `xinc` defaults to m observations, where m = max(n/200, 1).
 ##' @param xlim 2-vector of limits to evaluate if `space='x'` (default is `nignore` smallest to `nignore` largest)
 ##' @param times vector of times for evaluating one minus Kaplan-Meier estimates

@@ -147,7 +147,7 @@ spikecomp <- function(x, method=c('tryactual', 'simple', 'grid'),
     return(
     switch(tresult,
            list     = list(x = x, y = y, roundedTo = d),
-           segments = list(x = x, y1 = rep(0., length(y)), y2 = y,
+           segments = list(x = as.vector(x), y1 = rep(0., length(y)), y2 = as.vector(y),
                            roundedTo = d) ) )
   }
 

@@ -41,6 +41,13 @@ Derives the line segment coordinates need to draw a spike histogram.  This is us
 \examples{
 spikecomp(1:1000)
 spikecomp(1:1000, method='grid')
+\dontrun{
+On a data.table d use ggplot2 to make spike histograms by country and sex groups
+s <- d[, spikecomp(x, tresult='segments'), by=.(country, sex)]
+ggplot(s) + geom_segment(aes(x=x, y=y1, xend=x, yend=y2, alpha=I(0.3))) +
+   scale_y_continuous(breaks=NULL, labels=NULL) + ylab('') +
+   facet_grid(country ~ sex)
+}
 }
 \author{
 Frank Harrell

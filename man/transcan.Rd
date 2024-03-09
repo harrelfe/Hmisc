@@ -650,7 +650,7 @@ invertTabulated(x, y, freq=rep(1,length(x)),
 		\code{funresults}}
 	\item{lrt}{set to \code{TRUE} to have \code{method, fun, fitargs} set
 		appropriately automatically so that \code{processMI} can be used to
-		get likelihood ratio tests}
+		get likelihood ratio tests.  When doing this, \code{fun} may not be specified by the user.}
 	\item{fitargs}{a list of extra arguments to pass to \code{fitter},
 		used especially with \code{fun}.  When \code{robust=TRUE} the arguments
     \code{x=TRUE, y=TRUE} are automatically added to \code{fitargs}.}

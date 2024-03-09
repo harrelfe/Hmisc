@@ -190,7 +190,7 @@
 
   \code{xless} is a function for Linux/Unix users to invoke the system
   \code{xless} command to pop up a window to display the result of
-  \code{print}ing an object.
+  \code{print}ing an object.  For MacOS \code{xless} uses the system \code{open} command to pop up a \code{TextEdit} window.
 }
 \usage{
 confbar(at, est, se, width, q = c(0.7, 0.8, 0.9, 0.95, 0.99), 
@@ -291,7 +291,7 @@ xless(x, \dots, title)
   \item{string}{a character string vector}
   \item{ticks}{set to \code{TRUE} to draw lines between rectangles}
   \item{times}{a numeric vector of times}
-  \item{title}{a character string to title a window or plot}
+  \item{title}{a character string to title a window or plot.  Ignored for \code{xless} under MacOs.}
   \item{tolerance}{tolerance for judging singularity in matrix}
   \item{type}{\code{"v"} for vertical, \code{"h"} for horizontal.}
   \item{w}{a numeric vector}

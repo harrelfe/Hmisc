@@ -1,4 +1,4 @@
-Changes in version 5.1-2 (2024-02-23)
+Changes in version 5.1-2 (2024-03-09)
    * dotchartpl: remove length(ugroup) criterion (unsure what this was doing and made lower and upper be not plotted)
    * dotchartpl: got around new bug in plotly when numeric vectors were given to axis ticktext; changed to character via format()
    * cut2: fixed to handle large g values (Thanks Cole Beck https://github.com/harrelfe/Hmisc/pull/170)
@@ -9,6 +9,7 @@ Changes in version 5.1-2 (2024-02-23)
    * movStats: added nignore argument, defaults to 10 (the previous behavior)
    * history.data.frame, ecdf: fixed dev issue https://github.com/harrelfe/Hmisc/issues/181
    * spikecomp: for tresult='segments' removed attributes from vectors to make data.table compliant
+   * xless: adapted for MacOS using open system command
 
 Changes in version 5.1-1 (2023-09-11)
    * meltData: generalized to allow melting on either left or right side of formula, added ... arguments passed to label(), made variable a factor to keep original order

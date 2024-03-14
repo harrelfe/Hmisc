@@ -26,7 +26,7 @@
 	result) plus the overall cross-classification variables excluding
 	\code{groups}.  If \code{options(grType='plotly')} is in effect, the
 	\code{plot} method makes an entirely different display using
-	\code{Hmisc::dotchartpl} with code{plotly} if \code{marginVal} is
+	\code{Hmisc::dotchartpl} with \code{plotly} if \code{marginVal} is
 	specified, whereby a stratification
 	variable causes more finely stratified estimates to be shown slightly
 	below the lines, with smaller and translucent symbols if \code{data}

@@ -1,3 +1,8 @@
+Changes in version 5.1-3 (2024-03-14)
+   * areg.boot: intercepted use of xlim when y is categorical; need to improve logic on xout=
+   * redun: stored scores matrix in returned object, suitable for r2describe
+   * r2describe: new function to list strongest predictors of each variable in a matrix, from all the other columns
+
 Changes in version 5.1-2 (2024-03-09)
    * dotchartpl: remove length(ugroup) criterion (unsure what this was doing and made lower and upper be not plotted)
    * dotchartpl: got around new bug in plotly when numeric vectors were given to axis ticktext; changed to character via format()

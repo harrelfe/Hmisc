@@ -254,7 +254,8 @@ areg.boot <- function(x, data, weights, subset, na.action=na.delete,
   neval <- rep(evaluation, k)
   for(i in 1:k) {
     iscat <- if(i==1) ytype=='c' else xtype[i-1]=='c'
-    if(iscat) neval[i] <- xlim[2,i]
+    if(i > 1 && iscat) neval[i] <- xlim[2,i]   # i > 1 2024-03-14
+    if(neval[i] != round(neval[i])) stop('program logic error')
     ## Note: approx will return NAs even when rule=3 if x coordinate
     ## contains duplicates, so sort by x and remove dups (fctn in Misc.s)
     fit[[i]] <-
@@ -294,6 +295,7 @@ areg.boot <- function(x, data, weights, subset, na.action=na.delete,
 
     X <- Xo[s,]
     trans <- cbind(g$ty, g$tx)
+    # May have to improve code for y=categorical to use only observed levels in xout
     for(i in 1:k)
       boot[1:neval[i],b,i] <-
         if(i==1) approxExtrap(trans[,1],X[,1],
@@ -302,7 +304,7 @@ areg.boot <- function(x, data, weights, subset, na.action=na.delete,
           approxExtrap(X[,i], trans[,i],
                        xout=seq(xlim[1,i],xlim[2,i],
                                 length=neval[i]))$y
-
+    
     if(valrsq) {
       rsq.boot <- f.ols$rsquared
       yxt.orig <- matrix(NA,nrow=n,ncol=k)

@@ -79,7 +79,7 @@ redun(formula, data=NULL, subset=NULL, r2 = 0.9,
 	from printing the \eqn{R^2} history and the original \eqn{R^2} with
 	which each variable can be predicted from ALL other variables.}
 }
-\value{an object of class \code{"redun"}}
+\value{an object of class \code{"redun"} including an element \code{"scores"}, a numeric matrix with all transformed values when each variable was the dependent variable and the first canonical variate was computed }
 \details{
 A categorical variable is deemed
 redundant if a linear combination of dummy variables representing it can
@@ -107,7 +107,7 @@ Vanderbilt University
 \email{fh@fharrell.com}
 }
 \seealso{\code{\link{areg}}, \code{\link{dataframeReduce}},
-  \code{\link{transcan}}, \code{\link{varclus}},
+  \code{\link{transcan}}, \code{\link{varclus}}, \code{\link{r2describe}},
   \code{subselect::genetic}}
 \examples{
 set.seed(1)
@@ -124,6 +124,10 @@ redun(~x1+x2+x3+x4+x5+x6, r2=.8, allcat=TRUE)
 # x5 is no longer redundant but x6 is
 redun(~x1+x2+x3+x4+x5+x6, r2=.8, rank=TRUE)
 redun(~x1+x2+x3+x4+x5+x6, r2=.8, qrank=TRUE)
+
+# To help decode which variables made a particular variable redundant:
+# r <- redun(...)
+# r2describe(r$scores)
 }
 \keyword{smooth}
 \keyword{regression}

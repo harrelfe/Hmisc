@@ -81,7 +81,7 @@ redun <- function(formula, data=NULL, subset=NULL,
         }
   }
 
-  toofew <- nam[!enough]
+  toofew <- nam[! enough]
   if(length(toofew))
     {
       p <- sum(enough)
@@ -136,8 +136,10 @@ redun <- function(formula, data=NULL, subset=NULL,
       if(type=='adjusted')
         {
           dof <- sum(k) + ny - 1
-          R2  <- max(0, 1 - (1 - R2) * (n  -1) / (n - dof - 1))
+          R2  <- max(0, 1 - (1 - R2) * (n - 1) / (n - dof - 1))
         }
+      ycoef  <- f$ycoef[, 1]
+      yscore <- matxv(Y, ycoef) * sqrt(n - 1) - sum(ycoef * f$ycenter)
     ## If variable to possibly remove is categorical with more than 2
     ## categories (more than one dummy variable) make sure ALL frequent
     ## categories are redundant (not just the linear combination of
@@ -161,7 +163,7 @@ redun <- function(formula, data=NULL, subset=NULL,
               }
           }
       }
-      R2
+      list(R2=R2, yscore=yscore)
     }
 
   if(iterms)
@@ -186,21 +188,23 @@ redun <- function(formula, data=NULL, subset=NULL,
 
   In <- 1:p; Out <- integer(0)
   r2r <- numeric(0)
-  r2l <- list()
+  r2l <- scores <- list()
 
   for(i in 1:p) {
     if(pr) cat('Step',i,'of a maximum of', p, '\r')
     ## For each variable currently on the right hand side ("In")
     ## find out how well it can be predicted from all the other "In" variables
     if(length(In) < 2) break
-    Rsq <- In*0
+    Rsq <- In * 0
     l <- 0
     for(j in In)
       {
         l <- l + 1
         k <- setdiff(In, j)
-        Rsq[l] <- fcan(k, j, X, st, en, vtype, tlinear, type,
+        fc <- fcan(k, j, X, st, en, vtype, tlinear, type,
                        allcat, r2, minfreq)
+        Rsq[l] <- fc$R2
+        if(! length(scores[[nam[j]]])) scores[[nam[j]]] <- fc$yscore
       }
     if(i==1) {Rsq1 <- Rsq; names(Rsq1) <- nam[In]}
     if(max(Rsq) < r2) break
@@ -217,9 +221,10 @@ redun <- function(formula, data=NULL, subset=NULL,
         l <- 0
         for(j in Out)
           {
-            l <- l+1
-            r2later[l] <-
-              fcan(k, j, X, st, en, vtype, tlinear, type, allcat, r2, minfreq)
+            l  <- l+1
+            fc <- fcan(k, j, X, st, en, vtype, tlinear, type, allcat, r2, minfreq)
+            r2later[l] <- fc$R2
+            if(! length(scores[[nam[j]]])) scores[[nam[j]]] <- fc$yscore
           }
         if(min(r2later) < r2) break
       }
@@ -240,7 +245,7 @@ redun <- function(formula, data=NULL, subset=NULL,
                  vtype=vtype, tlinear=tlinear,
                  allcat=allcat, minfreq=minfreq, nk=nk, df=xdf,
                  cat.levels=cat.levels,
-                 r2=r2, type=type),
+                 r2=r2, type=type, scores=do.call('cbind', scores)),
             class='redun')
 }
 
@@ -294,7 +299,7 @@ print.redun <- function(x, digits=3, long=TRUE, ...)
   prcvec(x$In)
   w <- x$r2later
   vardel <- names(x$rsquared)
-  if(!long)
+  if(! long)
     {
       print(data.frame('Variable Deleted'=vardel,
                        'R^2'=round(x$rsquared,digits),

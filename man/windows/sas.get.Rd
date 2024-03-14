@@ -315,7 +315,7 @@ code.levels(object)
 
   When \code{sas.get} needs to run \acronym{SAS} it is run in iconized form.
 
-  The \acronym{SAS} macro \file{sas\_get} uses record lengths of up to 4096 in two
+  The \acronym{SAS} macro \file{sas_get} uses record lengths of up to 4096 in two
   places.  If you are exporting records that are very long (because of
   a large number of variables and/or long character variables), you
   may want to edit these \samp{LRECL}s to quadruple them, for example.

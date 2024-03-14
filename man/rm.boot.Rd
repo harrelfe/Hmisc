@@ -382,7 +382,7 @@ rm.boot(time, y, id=seq(along=time), subset,
   Tibshirani R, Knight K (1997):Model search and inference by bootstrap 
   "bumping".  Technical Report, Department of Statistics, University of Toronto.
   \cr
-  \url{http://statweb.stanford.edu/~tibs/}. Presented at the Joint Statistical
+  \url{https://www.jstor.org/stable/1390820}. Presented at the Joint Statistical
   Meetings, Chicago, August 1996.
 
 

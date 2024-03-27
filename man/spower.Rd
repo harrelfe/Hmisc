@@ -40,7 +40,7 @@
   
   The \code{logrank} function is intended to be used with \code{spower}
   but it can be used by itself.  It returns the 1 degree of freedom
-  chi-square statistic, with the hazard ratio estimate as an attribute.
+  chi-square statistic, with the associated Pike hazard ratio estimate as an attribute.
 
   The \code{Weibull2} function accepts as input two vectors, one
   containing two times and one containing two survival probabilities, and
@@ -238,7 +238,7 @@ Weibull2(times, surv)
   intervention:control hazard ratio function with and without
   contamination, and dropin and dropout functions.
 
-  \code{logrank} returns a single chi-square statistic.
+  \code{logrank} returns a single chi-square statistic and an attribute \code{hr} which is the Pike hazard ratio estimate.
 
   \code{Weibull2}, \code{Lognorm2} and \code{Gompertz2} return an \R
   function with three arguments, only the first of which (the vector of

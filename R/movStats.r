@@ -42,6 +42,7 @@
 ##' @param lrm set to TRUE to include logistic regression estimates w rcspline
 ##' @param orm set to TRUE to include ordinal logistic regression estimates w rcspline (mean + quantiles in `tau`)
 ##' @param hare set to TRUE to include hazard regression estimtes of incidence at `times`, using the `polspline` package
+##' @param lrm_args a `list` of optional arguments to pass to `lrm` when `lrm=TRUE`, e.g., `list(maxit=20)`
 ##' @param family link function for ordinal regression (see `rms::orm`)
 ##' @param k number of knots to use for ols and/or qreg rcspline
 ##' @param tau quantile numbers to estimate with quantile regression
@@ -62,7 +63,8 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
                      trans=function(x) x, itrans=function(x) x,
                      loess=FALSE,
                      ols=FALSE, qreg=FALSE, lrm=FALSE,
-                     orm=FALSE, hare=FALSE, family='logistic',
+                     orm=FALSE, hare=FALSE, 
+                     lrm_args=NULL, family='logistic',
                      k=5, tau=(1:3)/4, melt=FALSE,
                      data=environment(formula),
                      pr=c('none', 'kable', 'plain', 'margin')) {
@@ -297,7 +299,9 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
     }
 
     if(lrm) {
-      f <- rms::lrm(y ~ rms::rcs(x, .knots.), data=s)
+      f <- if(length(lrm_args))
+        do.call(rms::lrm, c(list(y ~ rms::rcs(x, .knots.), data=s), lrm_args)) else
+        rms::lrm(y ~ rms::rcs(x, .knots.), data=s)
       pc <- predict(f, dat, type='fitted')
       w[, 'LR Proportion' := pc]
     }

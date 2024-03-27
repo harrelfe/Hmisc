@@ -80,7 +80,6 @@ redun <- function(formula, data=NULL, subset=NULL,
             vtype[ni] <- if(vtype[ni] == 'q') 'r' else 'l'
         }
   }
-
   toofew <- nam[! enough]
   if(length(toofew))
     {

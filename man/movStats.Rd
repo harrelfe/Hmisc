@@ -30,6 +30,7 @@ movStats(
   lrm = FALSE,
   orm = FALSE,
   hare = FALSE,
+  lrm_args = NULL,
   family = "logistic",
   k = 5,
   tau = (1:3)/4,
@@ -88,6 +89,8 @@ movStats(
 \item{orm}{set to TRUE to include ordinal logistic regression estimates w rcspline (mean + quantiles in \code{tau})}
 
 \item{hare}{set to TRUE to include hazard regression estimtes of incidence at \code{times}, using the \code{polspline} package}
+
+\item{lrm_args}{a \code{list} of optional arguments to pass to \code{lrm} when \code{lrm=TRUE}, e.g., \code{list(maxit=20)}}
 
 \item{family}{link function for ordinal regression (see \code{rms::orm})}
 

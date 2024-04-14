@@ -1,6 +1,8 @@
 ##' Store and Encrypt R Objects or Files or Read and Decrypt Them
 ##'
 ##' `qcrypt` is used to protect sensitive information on a user's computer or when transmitting a copy of the file to another R user.  Unencrypted information only exists for a moment, and the encryption password does not appear in the user's script but instead is managed by the `keyring` package to remember the password across R sessions, and the `getPass` package, which pops up a password entry window and does not allow the password to be visible.  The password is requested only once, except perhaps when the user logs out of their operating system session or reboots.
+##'
+##' The keyring can be bypassed and the password entered in a popup window by specifying `service=NA`.  This is the preferred approach when sending an encrypted file to a user on a different computer.
 ##' 
 ##' `qcrypt` writes R objects to disk in a temporary file using the `qs` package `qsave` function.  The file is quickly encrypted using the `safer` package, and the temporary unencrypted `qs` file is deleted.  When reading an encrypted file the process is reversed.
 ##'
@@ -35,23 +37,33 @@
 ##' # Decrypt that file
 ##' fi <- qcrypt(file='report.pdf.encrypted', service='pdfkey')
 ##' fi contains the full unencrypted file name which is in a temporary directory
+##' # Encrypt without using a keyring
+##' qcrypt(x, 'x', service=NA)
+##' x <- qcrypt('x', service=NA)
 ##' }
 qcrypt <- function(obj, base, service='R-keyring-service', file) {
-  if(! requireNamespace('keyring', quietly=TRUE))
-    stop('you must install the keyring package to use qcrypt')
+  if(! is.na(service) && ! requireNamespace('keyring', quietly=TRUE))
+    stop('you must install the keyring package to use qcrypt with service != NA')
   if(! requireNamespace('getPass', quietly=TRUE))
     stop('you must install the getPass package to use qcrypt')
   if(! requireNamespace('qs', quietly=TRUE))
     stop('you must install the qs package to use qcrypt')
-  pw <- tryCatch(keyring::key_get(service), error = function(...) '')
 
-  if(pw == '') {
+  if(is.na(service)) {
     prompt <- if(! missing(base)) 'Define password for storing encrypted data: '
     else 'Enter password previously used to store data: '
     pw <- getPass::getPass(msg = prompt, noblank=TRUE)
-    keyring::key_set_with_value(service, password=pw)
-  }
-  pw <- keyring::key_get(service)
+   } else {
+    pw <- tryCatch(keyring::key_get(service), error = function(...) '')
+
+    if(pw == '') {
+      prompt <- if(! missing(base)) 'Define password for storing encrypted data: '
+      else 'Enter password previously used to store data: '
+      pw <- getPass::getPass(msg = prompt, noblank=TRUE)
+      keyring::key_set_with_value(service, password=pw)
+    }
+    pw <- keyring::key_get(service)
+   }
   tf <- tempfile()
 
   if(! missing(file)) {

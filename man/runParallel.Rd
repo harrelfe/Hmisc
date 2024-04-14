@@ -41,7 +41,7 @@ on your machine.
 reps is divided as evenly as possible over these cores, and batches
 are run on the cores using the \code{parallel} package \code{mclapply} function.
 The current per-core repetition number is continually updated in
-your system's temporary directory (/tmp for Linux, TEMP for Windows)
+your system's temporary directory (/tmp for Linux and Mac, TEMP for Windows)
 in a file name progressX.log where X is the core number.
 The random number seed is set for each core and is equal to
 the scalar \code{seed} - core number + 1.  The default seed is a random

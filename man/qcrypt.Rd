@@ -24,6 +24,8 @@ Store and Encrypt R Objects or Files or Read and Decrypt Them
 \details{
 \code{qcrypt} is used to protect sensitive information on a user's computer or when transmitting a copy of the file to another R user.  Unencrypted information only exists for a moment, and the encryption password does not appear in the user's script but instead is managed by the \code{keyring} package to remember the password across R sessions, and the \code{getPass} package, which pops up a password entry window and does not allow the password to be visible.  The password is requested only once, except perhaps when the user logs out of their operating system session or reboots.
 
+The keyring can be bypassed and the password entered in a popup window by specifying \code{service=NA}.  This is the preferred approach when sending an encrypted file to a user on a different computer.
+
 \code{qcrypt} writes R objects to disk in a temporary file using the \code{qs} package \code{qsave} function.  The file is quickly encrypted using the \code{safer} package, and the temporary unencrypted \code{qs} file is deleted.  When reading an encrypted file the process is reversed.
 
 To save an object in an encrypted file, specify the object as the first argument \code{obj} and specify a base file name as a character string in the second argument \code{base}.  The full \code{qs} file name will be of the form \code{base.qs.encrypted} in the user's current working directory.  To unencrypt the file into a short-lived temporary file and use \code{qs::qread} to read it, specify the base file name as a character string with the first argument, and do not specify the \code{base} argument.
@@ -49,6 +51,9 @@ qcrypt(file='report.pdf', service='pdfkey')
 # Decrypt that file
 fi <- qcrypt(file='report.pdf.encrypted', service='pdfkey')
 fi contains the full unencrypted file name which is in a temporary directory
+# Encrypt without using a keyring
+qcrypt(x, 'x', service=NA)
+x <- qcrypt('x', service=NA)
 }
 }
 \author{

@@ -149,7 +149,8 @@ improveProb(x1, x2, y)
 }
 \seealso{
   \code{\link{rcorr.cens}}, \code{\link{somers2}},
-  \code{\link[survival]{Surv}}, \code{\link[rms]{val.prob}}
+  \code{\link[survival]{Surv}}, \code{\link[rms]{val.prob}},
+  \code{\link[survival]{concordance}}
 }
 \examples{
 set.seed(1)

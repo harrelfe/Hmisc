@@ -1,4 +1,4 @@
-Changes in version 5.1-3 (2024-04-14)
+Changes in version 5.1-3 (2024-05-18)
    * areg.boot: intercepted use of xlim when y is categorical; need to improve logic on xout=
    * redun: stored scores matrix in returned object, suitable for r2describe
    * r2describe: new function to list strongest predictors of each variable in a matrix, from all the other columns
@@ -6,6 +6,8 @@ Changes in version 5.1-3 (2024-04-14)
    * logrank (in spower.s): removed non-working non-executed code for stratified log rank, change hazard ratio estimate to Pike's estimator.  Previous hazard ratio calculation was incorrect.
    * qcrypt: added service=NA to bypass keyring
    * runParallel: changed progress directory explicitly to /tmp for Mac
+   * printL: new function
+   * redun: got around model.frame problem so that negated variables are omitted from analysis; also fixed printing of missing values
 
 Changes in version 5.1-2 (2024-03-09)
    * dotchartpl: remove length(ugroup) criterion (unsure what this was doing and made lower and upper be not plotted)

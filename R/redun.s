@@ -14,13 +14,23 @@ redun <- function(formula, data=NULL, subset=NULL,
        length(list(...))) data <- dataframeReduce(data, ...)
 
     Terms <- terms(formula, specials='I', data=data)
+    # model.frame does not remove variables with a minus sign in front
+    # of their names, but these are not in term.labels
+    allvars  <- setdiff(as.character(attr(Terms, 'variables')), 'list')
+    keptvars <- attr(Terms, 'term.labels')
+    if(length(allvars) > length(keptvars)) {
+      formula <- as.formula(paste('~', paste(keptvars, collapse='+')))
+      Terms   <- terms(formula, specials='I', data=data)
+    }
+
     m     <- list(formula=formula, data=data, subset=subset,
                   na.action=na.delete)
     data      <- do.call('model.frame', m)
+    data      <- data[attr(Terms, 'term.labels')]
     nam       <- names(data)
     linear    <- nam[attr(Terms,'specials')$I]
     na.action <- attr(data, 'na.action')
-    if(pr) cat(n, 'observations used in analysis\n')
+    if(pr) naprint(na.action)
   } else {
     if(! is.matrix(formula))
       stop("formula must be a numeric matrix when it's not an actual formula")

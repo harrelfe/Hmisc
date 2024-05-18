@@ -21,7 +21,7 @@ prn(x, txt, file)
 prints
 }
 \seealso{
-\code{\link{print}}, \code{\link{cat}}
+\code{\link{print}}, \code{\link{cat}}, \code{\link{printL}}
 }
 \examples{
 x <- 1:5

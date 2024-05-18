@@ -94,7 +94,7 @@ Vanderbilt University
 \email{fh@fharrell.com}
 }
 \seealso{
-\code{\link{somers2}}, \code{\link{biVar}}, \code{\link{rcorrp.cens}}
+\code{\link[survival]{concordance}}, \code{\link{somers2}}, \code{\link{biVar}}, \code{\link{rcorrp.cens}}
 }
 \references{
 Newson R: Confidence intervals for rank statistics: Somers' D and extensions.  Stata Journal 6:309-334; 2006.

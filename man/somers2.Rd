@@ -53,7 +53,7 @@ Vanderbilt University School of Medicine
 \email{fh@fharrell.com}
 }
 \seealso{
-\code{\link{rcorr.cens}}, \code{\link{rank}}, \code{\link{wtd.rank}}, 
+\code{\link[survival]{concordance}}, \code{\link{rcorr.cens}}, \code{\link{rank}}, \code{\link{wtd.rank}}, 
 }
 \examples{
 set.seed(1)

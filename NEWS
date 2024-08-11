@@ -1,5 +1,6 @@
 Changes in version 5.1-4 (2024-08-11)
-   * Added requireNamespace for safer in qcrypt
+   * dded requireNamespace for safer in qcrypt
+   * require R 4.2.0 or later, to handle pipes
 
 Changes in version 5.1-3 (2024-05-18)
    * areg.boot: intercepted use of xlim when y is categorical; need to improve logic on xout=

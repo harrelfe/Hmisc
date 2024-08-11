@@ -14,7 +14,7 @@ Authors@R:
 						 email = "charles.dupont@vumc.org",
 						 comment = "contributed several functions and maintains latex functions"))
 Maintainer: Frank E Harrell Jr <fh@fharrell.com>
-Depends: R (>= 4.1.0)
+Depends: R (>= 4.2.0)
 Imports: methods, ggplot2, cluster, rpart, nnet, foreign, gtable, grid, gridExtra, data.table, htmlTable (>= 1.11.0), viridis, htmltools, base64enc, colorspace, rmarkdown, knitr, Formula
 Suggests: survival, qreport, acepack, chron, rms, mice, rstudioapi, tables, plotly (>= 4.5.6), rlang, plyr, VGAM, leaps, pcaPP, digest, parallel, polspline, abind, kableExtra, rio, lattice, latticeExtra, gt, sparkline, jsonlite, htmlwidgets, qs, getPass, keyring, safer, htm2txt
 Description: Contains many functions useful for data

@@ -48,6 +48,9 @@ qcrypt <- function(obj, base, service='R-keyring-service', file) {
     stop('you must install the getPass package to use qcrypt')
   if(! requireNamespace('qs', quietly=TRUE))
     stop('you must install the qs package to use qcrypt')
+if(! requireNamespace('safer', quietly=TRUE))
+    stop('you must install the safer package to use qcrypt')
+      
 
   if(is.na(service)) {
     prompt <- if(! missing(base)) 'Define password for storing encrypted data: '

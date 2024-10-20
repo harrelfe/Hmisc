@@ -115,8 +115,8 @@ Note: As discussed in Cox and Longton (2008), Stata Technical Bulletin 8(4)
 pp. 557, the term "unique" has been replaced with "distinct" in the
 output (but not in parameter names).
 
-When \code{weights} are not used, Gini's mean difference is computed for
-numeric variables.  This is a robust measure of dispersion that is the
+When \code{weights} are not used, the pseudomedian and Gini's mean difference are computed for
+numeric variables.  The pseudomedian is labeled \code{pMedian} and is the median of all possible pairwise averages.  It is a robust and efficient measure of location that equals the mean and median for symmetric distributions.  It is also called the Hodges-Lehmann one-sample estimator.  Gini's mean difference is a robust measure of dispersion that is the
 mean absolute difference between any pairs of observations.  In simple
 output Gini's difference is labeled \code{Gmd}.
 
@@ -378,7 +378,7 @@ Vanderbilt University
 }
 \seealso{
 \code{\link{spikecomp}}, \code{\link{sas.get}}, \code{\link{quantile}},
-\code{\link{GiniMd}},
+\code{\link{GiniMd}}, \code{\link{pMedian}},
 \code{\link{table}}, \code{\link{summary}},
 \code{\link{model.frame.default}}, 
 \code{\link{naprint}}, \code{\link{lapply}}, \code{\link{tapply}},

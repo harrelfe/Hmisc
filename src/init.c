@@ -22,6 +22,7 @@ extern void F77_NAME(rcorr)(void *, void *, void *, void *, void *, void *, void
 /* extern void F77_NAME(wcidxy)(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *); */
 extern void F77_NAME(wclosepw)(void *, void *, void *, void *, void *, void *, void *, void *);
 extern void F77_NAME(wclosest)(void *, void *, void *, void *, void *);
+extern void F77_NAME(hlqest)(void *, void *, void *, void *, void *, void *, void *);
 
 static const R_CallMethodDef CallEntries[] = {
     {"do_mchoice_match", (DL_FUNC) &do_mchoice_match, 3},
@@ -40,6 +41,7 @@ static const R_FortranMethodDef FortranEntries[] = {
 /*    {"wcidxy",   (DL_FUNC) &F77_NAME(wcidxy),   11}, */
     {"wclosepw", (DL_FUNC) &F77_NAME(wclosepw),  8},
     {"wclosest", (DL_FUNC) &F77_NAME(wclosest),  5},
+    {"hlqest",   (DL_FUNC) &F77_NAME(hlqest),    7},
     {NULL, NULL, 0}
 };
 

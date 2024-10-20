@@ -360,7 +360,7 @@ invertTabulated(x, y, freq=rep(1,length(x)),
 	slower approach is to 
     use \code{impcat="multinom"} to fit a multinomial logistic model to
     the categorical variable, at the last iteraction of the
-    \code{transcan} algorithm.  This uses the \code{\link{multinom}}
+    \code{transcan} algorithm.  This uses the \code{\link[nnet]{multinom}}
     function in the \pkg{nnet} library of the \pkg{MASS} package (which
     is assumed to have been installed by the user) to fit a polytomous
     logistic model to the current working transformations of all the

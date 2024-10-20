@@ -28,19 +28,19 @@ differences in mean or median on the original scale.
 a PO model to demonstrate the natural sampling variability that causes
 estimated odds ratios to vary over cutoffs of Y.
 
-\code{propsPO} uses \code{\link{ggplot2}} to plot a stacked bar chart of
+\code{propsPO} uses \code{ggplot2} to plot a stacked bar chart of
 proportions stratified by a grouping variable (and optionally a stratification variable), with an optional
 additional graph showing what the proportions would be had proportional
 odds held and an odds ratio was applied to the proportions in a
 reference group.  If the result is passed to \code{ggplotly}, customized
 tooltip hover text will appear.
 
-\code{propsTrans} uses \code{\link{ggplot2}} to plot all successive
+\code{propsTrans} uses \code{ggplot2} to plot all successive
 transition proportions.  \code{formula} has the state variable on the
 left hand side, the first right-hand variable is time, and the second
 right-hand variable is a subject ID variable.\
 
-\code{multEventChart} uses \code{\link{ggplot2}} to plot event charts
+\code{multEventChart} uses \code{ggplot2} to plot event charts
 showing state transitions, account for absorbing states/events.  It is
 based on code written by Lucy D'Agostino McGowan posted at \url{https://livefreeordichotomize.com/posts/2020-05-21-survival-model-detective-1/}.
 

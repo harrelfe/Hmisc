@@ -7,6 +7,14 @@
 #include <Rdefines.h>
 #include "R_ext/Error.h"
 
+#ifdef __cplusplus
+#define EXTERNC extern "C"
+#else
+#define EXTERNC
+#endif
+
+#undef EXTERNC
+
 #ifdef _SPLUS_
 #  define STRING_ELT(x,i) (CHARACTER_POINTER(x)[i])
 #  define TO_CHAR(x) (x)

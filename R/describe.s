@@ -153,10 +153,11 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
     } else counts <- c(counts, format(sum(weights * x) / sum(weights), ...))
     
     lab <- c(lab, "Mean")
-    if(! weighted) {
-      gmd    <- format(GiniMd(xnum), ...)
-      counts <- c(counts, gmd)
-      lab    <- c(lab, "Gmd")
+    if(! weighted & n.unique > 2) {
+      pmedian <- format(pMedian(xnum))
+      gmd     <- format(GiniMd(xnum), ...)
+      counts  <- c(counts, pmedian, gmd)
+      lab     <- c(lab, "pMedian", "Gmd")
     }
   } else if(n.unique == 1) {
     counts <- c(counts, format(x.unique))
@@ -1384,6 +1385,7 @@ html_describe_con <- function(x, sparkwidth=200,
                Distinct = a('distinct'),
                Info     = a('Info'),
                Mean     = k['Mean'],
+               pMedian  = k['pMedian'],
                Gmd      = k['Gmd'],
                ' '      = ''      ,    # place for sparkline
                '.05'    = r('.05'),
@@ -1443,7 +1445,7 @@ html_describe_con <- function(x, sparkwidth=200,
     gt::tab_header(title=gt::md(title), subtitle=subtitle)   |>
     gt::tab_style(style=gt::cell_text(align='center'),
                   locations=gt::cells_column_labels(
-                    columns=c(n, Missing, Distinct, Info, Mean, Gmd))) |>
+                    columns=c(n, Missing, Distinct, Info, Mean, pMedian, Gmd))) |>
     gt::tab_style(style=gt::cell_text(size='small'),
                   locations=gt::cells_body(columns=Label))   |>
     gt::text_transform(locations=gt::cells_body(columns=' '),
@@ -1539,6 +1541,7 @@ html_describe_cat <- function(x, w=200, freq=c('chart', 'table'),
       Info     = a('Info'),
       Sum      = a('Sum'),
       Mean     = p('Mean'),
+      pMedian  = p('pMedian'),
       Gmd      = p('Gmd'),
       tab      = tab,
       type     = type,
@@ -1553,11 +1556,11 @@ html_describe_cat <- function(x, w=200, freq=c('chart', 'table'),
   spik                     <- a$tab[a$type == 'spark']
   a$tab[a$type == 'spark'] <- ''
 
-  for(i in c('Units', 'Format', 'Sum', 'Mean', 'Info', 'Gmd'))
+  for(i in c('Units', 'Format', 'Sum', 'Mean', 'Info', 'pMedian', 'Gmd'))
     if(all(is.na(a[[i]])) || all(a[[i]] == '')) a[[i]] <- NULL
 
   center_cols <- intersect(names(a),
-                  c('n', 'Missing', 'Distinct', 'Info', 'Sum', 'Mean', 'Gmd'))
+                  c('n', 'Missing', 'Distinct', 'Info', 'Sum', 'Mean', 'pMedian', 'Gmd'))
   
   b <- gt::gt(a) |>
     gt::tab_header(title=gt::md(title), subtitle=subtitle) |>
@@ -1577,13 +1580,14 @@ html_describe_cat <- function(x, w=200, freq=c('chart', 'table'),
     gt::cols_label(tab = ' ')                              |>
     gt::sub_missing(missing_text='')
 
+
   if('Units' %in% names(a))
     b <- b |> gt::tab_style(style=gt::cell_text(size='small', font='arial'),
                             locations=gt::cells_body(columns=Units))
   if('Gmd' %in% names(a))
     b <- b |>
       gt::cols_label(Gmd ~ gt::html("Gini\u2009<span style=\"text-decoration: overline\">|\u394|</span>"))
-
+saveRDS(b, '/tmp/b.rds')
   b
 }
 

@@ -83,6 +83,7 @@
 \alias{F_rcorr}
 \alias{F_wclosepw}
 \alias{F_wclosest}
+\alias{F_hlqest}
 
 \description{Internal Hmisc functions.}
 \details{These are not to be called by the user or are undocumented.}

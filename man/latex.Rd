@@ -40,7 +40,7 @@ commands that are similar to those in the
 \code{S.to.latex} procedure in the \code{s.to.latex} package (Chambers
 and Hastie, 1993).  \code{latex.function} can also produce
 \code{verbatim} output or output that works with the \code{Sweavel}
-LaTeX style at \url{https://biostat.app.vumc.org/wiki/Main/SweaveTemplate}.
+LaTeX style.
 
 \code{latex.list} calls \code{latex} recursively for each element in the argument.
 
@@ -462,7 +462,7 @@ dvigv(object, \dots)
 		\code{center="none"} to use no 
     centering.  \code{centerline} can be useful when objects besides a
 		\code{tabular} are enclosed in a single \code{table} environment.
-		This option was implemented by Markus Jäntti
+		This option was implemented by Markus Jï¿½ntti
     \email{markus.jantti@iki.fi} of Abo Akademi University.
   }
   \item{landscape}{

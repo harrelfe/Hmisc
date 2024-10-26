@@ -3,6 +3,7 @@ Changes in version 5.2-0 (2024-10-19)
    * require R 4.2.0 or later, to handle pipes
    * new function pMedian for pseudomedian (Hodges-Lehmann one-sample estimator)
    * added pMedian to describe function
+   * Converted all Ratfor code to Fortran 2018
 
 Changes in version 5.1-3 (2024-05-18)
    * areg.boot: intercepted use of xlim when y is categorical; need to improve logic on xout=

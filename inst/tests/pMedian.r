@@ -71,6 +71,11 @@ system.time(g('uniroot', 1000))
 system.time(g('cpp'))
 system.time(g('fortran'))
 
+x <- runif(5e6)
+system.time(a <- pm(x, 'cpp'))
+system.time(b <- pm(x, 'fortran'))
+a; b
+
 set.seed(1)
 N <- integer(1000); dif <- numeric(1000)
 for(i in 1 : 1000) {

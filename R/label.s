@@ -299,14 +299,12 @@ llist <- function(..., labels=TRUE)
 
       ## R barked at setting vname[i] to NULL
       lab <- vname[i]
-      if(labels)
+      if(labels && ! is.null(dotlist[[i]]))
         {
           lab <- attr(dotlist[[i]],'label', exact=TRUE)
-          if(length(lab) == 0)
-            lab <- vname[i]
+          if(length(lab) == 0) lab <- vname[i]
+          label(dotlist[[i]]) <- lab
         }
-
-      label(dotlist[[i]]) <- lab
     }
 
   names(dotlist) <- vname[1:length(dotlist)]

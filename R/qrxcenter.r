@@ -3,6 +3,7 @@
 #' For a numeric matrix `x` (or a numeric vector that is automatically changed to a one-column matrix), computes column means and subtracts them from `x` columns, and passes this matrix to [base::qr()] to orthogonalize columns.  Columns of the transformed `x` are negated as needed so that original directions are preserved (which are arbitrary with QR decomposition).  Instead of the default `qr` operation for which sums of squares of column values are 1.0, `qrxcenter` makes all the transformed columns have standard deviation of 1.0.
 #' @title qrxcenter
 #' @param x a numeric matrix or vector with at least 2 rows
+#' @param ... passed to [base::qr()]
 #'
 #' @return a list with components `x` (transformed data matrix), `R` (the matrix that can be used to transform raw `x` and to transform regression coefficients computed on transformed `x` back to the original space), `Ri` (transforms transformed `x` back to original scale except for `xbar`), and `xbar` (vector of means of original `x` columns`)
 #' @export
@@ -20,7 +21,8 @@
 #' sweep(x, 2, w$xbar) %*% w$R
 #' # Reproduce x from w$x
 #' sweep(w$x %*% w$Ri, 2, w$xbar, FUN='+')
-qrxcenter <- function(x) {
+#' # See also https://hbiostat.org/r/examples/gtrans/gtrans#sec-splinebasis
+qrxcenter <- function(x, ...) {
   if(! is.matrix(x)) x <- is.matrix(x)
   d    <- dim(x)
   n    <- d[1]
@@ -29,7 +31,7 @@ qrxcenter <- function(x) {
 
   x    <- scale(x, center=TRUE, scale=FALSE)
   xbar <- as.vector(attr(x, 'scaled:center'))  
-  QR   <- qr(x)
+  QR   <- qr(x, ...)
   Q    <- qr.Q(QR)
   RR   <- qr.R(QR)
   sgns <- sign(diag(RR))

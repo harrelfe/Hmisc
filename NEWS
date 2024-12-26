@@ -1,6 +1,11 @@
-Changes in version 5.2-1 (2024-11-18)
+Changes in version 5.2-2 (2025-01-01)
+   * cutGn: new function to group a numeric variable into interals guaranteeing a minimum group size; uses new Fortran subroutine cutgn
+
+Changes in version 5.2-1 (2024-11-30)
    * re-wrote rcorr Fortran subroutine using vectorization and improved numerical algorithm
    * added function qrxcenter
+   * fixed llist so that label is not applied at the end if labels=FALSE, and labels are not applied to NULLs
+   * added type to returned value for rcorr
 
 Changes in version 5.2-0 (2024-10-19)
    * added requireNamespace for safer in qcrypt

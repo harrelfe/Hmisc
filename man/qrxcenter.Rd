@@ -4,10 +4,12 @@
 \alias{qrxcenter}
 \title{qrxcenter}
 \usage{
-qrxcenter(x)
+qrxcenter(x, ...)
 }
 \arguments{
 \item{x}{a numeric matrix or vector with at least 2 rows}
+
+\item{...}{passed to \code{\link[base:qr]{base::qr()}}}
 }
 \value{
 a list with components \code{x} (transformed data matrix), \code{R} (the matrix that can be used to transform raw \code{x} and to transform regression coefficients computed on transformed \code{x} back to the original space), \code{Ri} (transforms transformed \code{x} back to original scale except for \code{xbar}), and \code{xbar} (vector of means of original \code{x} columns`)
@@ -30,4 +32,5 @@ w
 sweep(x, 2, w$xbar) \%*\% w$R
 # Reproduce x from w$x
 sweep(w$x \%*\% w$Ri, 2, w$xbar, FUN='+')
+# See also https://hbiostat.org/r/examples/gtrans/gtrans#sec-splinebasis
 }

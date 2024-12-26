@@ -258,6 +258,11 @@ v    # invokes print.varclus
 print(round(v$sim,2))
 plot(v)
 
+# Convert the dendrogram to be horizontal
+v <- as.dendrogram(v$hclust)
+plot(v, horiz=TRUE, axes=FALSE, xlab=expression(paste('Spearman ', rho^2)))
+rh <- seq(0, 1, by=0.1)  # re-label x-axis re:similarity not distance
+axis(1, at=1 - rh, labels=format(rh))
 
 # plot(varclus(~ age + sys.bp + dias.bp + country - 1), abbrev=TRUE)
 # the -1 causes k dummies to be generated for k countries

@@ -30,7 +30,7 @@ rcorr <- function(x, y, type=c("pearson","spearman"))
   P[abs(h) == 1] <- 0
   diag(P) <- NA
   dimnames(P) <- list(nam, nam)
-  structure(list(r=h, n=npair, P=P), class="rcorr")
+  structure(list(r=h, n=npair, P=P, type=type), class="rcorr")
 }
 
 print.rcorr <- function(x, ...)

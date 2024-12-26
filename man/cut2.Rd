@@ -1,19 +1,24 @@
 \name{cut2}
 \alias{cut2}
+\alias{cutGn}
 \title{Cut a Numeric Variable into Intervals}
 \description{
-Function like cut but left endpoints are inclusive and labels are of
+\code{cut2} is a function like \code{cut} but left endpoints are inclusive and labels are of
 the form \code{[lower, upper)}, except that last interval is \code{[lower,upper]}.  
 If cuts are given, will by default make sure that cuts include entire
 range of \code{x}.
 Also, if cuts are not given, will cut \code{x} into quantile groups 
 (\code{g} given) or groups
 with a given minimum number of observations (\code{m}).  Whereas cut creates a
-category object, \code{cut2} creates a factor object.
+category object, \code{cut2} creates a factor object.  \code{m} is not guaranteed but is a target.
+
+\code{cutGn} guarantees that the grouped variable will have a minimum of \code{m} observations in any group.  This is done by an exhaustive algorithm that runs fast due to being coded in Fortran.
 }
 \usage{
 cut2(x, cuts, m=150, g, levels.mean=FALSE, digits, minmax=TRUE,
 oneval=TRUE, onlycuts=FALSE, formatfun=format, \dots)
+
+cutGn(x, m, what=c('mean', 'factor', 'summary'), rcode=FALSE) 
 }
 \arguments{
 \item{x}{
@@ -56,6 +61,8 @@ interval endpoints, unless \code{oneval=FALSE}
 \item{\dots}{
   additional arguments passed to \code{formatfun}
 }
+\item{what}{specifies the kind of vector values to return from \code{cutGn}, the default being like \code{'levels.mean'} of \code{cut2}.  Specify \code{'summary'} to return a numeric 3-column matrix that summarizes the intervals satisfying the \code{m} requirement.}
+\item{rcode}{set to \code{TRUE} to run the \code{cutgn} algorithm in R.  This is useful for speed comparisons with the default compiled code.}
 }
 \value{
 a factor variable with levels of the form \code{[a,b)} or formatted means
@@ -72,6 +79,14 @@ z <- cut2(x, c(10,20,30))
 table(z)
 table(cut2(x, g=10))      # quantile groups
 table(cut2(x, m=50))      # group x into intevals with at least 50 obs.
+
+table(cutGn(x, m=50, what='factor'))
+\dontrun{
+  x <- round(runif(200000), 3)
+  system.time(a <- cutGn(x, m=20))              # 0.02s
+  system.time(b <- cutGn(x, m=20, rcode=TRUE))  # 1.51s
+  identical(a, b)
+}
 }
 \keyword{category}
 \keyword{nonparametric}

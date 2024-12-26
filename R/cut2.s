@@ -1,4 +1,3 @@
-# $Id$
 ## Function like cut but left endpoints are inclusive and labels are of
 ## the form [lower, upper), except that last interval is [lower,upper].
 ## F. Harrell  3 Dec 90, modified 7 Mar 92, mod 30May95 (more efficient digits)
@@ -7,6 +6,7 @@
 ## Modified 1Jul95 - if specified cuts, mindif would cause improper
 ##   categorization if a cut was close to but not equal an actual value
 ## Modified 21oct18 - added formatfun
+## Added cutGn 2024-12-25
 
 cut2 <- function(x, cuts, m=150, g, levels.mean=FALSE, digits, minmax=TRUE,
 		 oneval=TRUE, onlycuts=FALSE, formatfun = format, ...)
@@ -150,3 +150,83 @@ cut2 <- function(x, cuts, m=150, g, levels.mean=FALSE, digits, minmax=TRUE,
   y
 }
 
+cutGn <- function(x, m, what=c('mean', 'factor', 'summary'), rcode=FALSE) {
+  what  <- match.arg(what) 
+  notna <- which(! is.na(x))
+  y <- x[notna]
+  n <- length(y)
+  if(n <= m) stop('number of non-NA observations must exceed m')
+  # Create a group for every m observations in ascending order
+  io <- order(y)
+  s  <- y[io]
+  ie <- 0
+  g  <- 0
+  G  <- rep(0L, n)
+  if(rcode) {
+  while(TRUE) {
+    is     <- ie + 1
+    lte    <- is + m - 1   # last targeted observation in group
+    # Just use the insufficient group < m obs.; pool it with previous group
+    # by not incrementing g
+    if(lte > n) {
+      G[is : n] <- g
+      break
+    }
+    # If the mth observation is the nth of the non-NAs, finish with
+    # the current group as the final group
+    g <- g + 1
+    if(lte == n) {
+      G[is : n] <- g
+      break
+    }
+    # There are observations beyond the last of the m in the current group
+    # See if the values beyond the mth current group's value are tied
+    # with the last value in the current group.  If so, pool observations
+    # into the current group up intil the observation that differs from
+    # the last of the m
+    lastval <- s[lte]
+    if(s[lte + 1] == lastval) {
+      # See how far the tied values go, and consume all of those tied at lastval
+      k  <- rle(as.vector(s)[(lte + 1) : n])$lengths[1]
+      ie <- lte + k
+      G[is : ie] <- g
+    } else {
+      ie <- lte
+      G[is : ie] <- g
+    }
+    if(ie > n) stop('logic problem')
+    if(ie == n) break
+  }
+  }   # end if(rcode)
+  else {
+    storage.mode(s) <- 'double'
+    G <- .Fortran(F_cutgn, s, n, as.integer(m), G=G)$G
+  }
+
+  # Put data in original x order
+  j <- order(io)
+  s <- s[j]
+  G <- G[j]
+
+  g <- max(G)
+  if(what == 'mean') {
+    smean    <- tapply(s, G, mean)
+    x[notna] <- smean[G]
+    return(x)
+  }
+
+  # For each group get min and max original y
+  ymin  <- tapply(s, G, min)
+  ymax  <- tapply(s, G, max)
+
+  if(what == 'summary') {
+    count <- tapply(s, G, length)
+    return(cbind(min=ymin, max=ymax, n=count))
+  }
+
+  # Create factor variable with character string interval labels
+  # When an interval is a point just use the point
+  lev <- ifelse(ymin == ymax, format(ymin),
+                paste0('[', format(ymin), ',', format(ymax), ']'))
+  factor(G, 1 : max(G), lev)
+}

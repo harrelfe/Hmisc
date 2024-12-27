@@ -23,7 +23,7 @@ Plot smoothed estimates
 	\code{method='intervals'} is often used when y is binary, as it may be
 	tricky to specify a reasonable smoothing parameter to \code{lowess} or
 	\code{supsmu} in this case.  The \code{'intervals'} method uses the
-	\code{cut2} function to form intervals of x containing a target of
+	\code{cutGn} function to form intervals of x containing a minimum of
 	\code{mobs} observations.  For each interval the \code{ifun} function
 	summarizes y, with the default being the mean (proportions for binary
 	y).  The results are plotted as step functions, with vertical
@@ -125,7 +125,7 @@ iter parameter if \code{method="lowess"}, default=0 if \code{y} is binary, and 3
 bass parameter if \code{method="supsmu"}, default=0.
 }
 \item{f}{passed to the \code{lowess} function, for \code{method="lowess"}}
-\item{mobs}{for \code{method='intervals'}, the target number of
+\item{mobs}{for \code{method='intervals'}, the minimum number of
             observations per interval}
 \item{trim}{
 only plots smoothed estimates between trim and 1-trim quantiles
@@ -205,7 +205,7 @@ plots, and \code{panel.plsmo} creates the \code{Key} function in the session fra
 	\code{\link{quantile}}, \code{\link{labcurve}}, \code{\link{scat1d}},
 	\code{\link[lattice]{xyplot}}, \code{\link[lattice]{panel.superpose}},
 	\code{\link[lattice]{panel.xyplot}}, \code{\link{stat_plsmo}},
-	\code{\link{histSpikeg}}
+	\code{\link{histSpikeg}}, \code{\link{cutGn}}
 }
 \examples{
 set.seed(1)

@@ -8,9 +8,9 @@ xy.group <- function(x,y,m=150,g,fun=mean,result="list")
   x <- x[k]
   y <- y[k]
   if(missing(m))
-    q <- cut2(x,g=g,levels.mean=TRUE,digits=7)
+    q <- cut2(x, g=g, levels.mean=TRUE, digits=7)
   else
-    q <- cut2(x,m=m,levels.mean=TRUE,digits=7)
+    q <- cutGn(x, m=m)
 
   n <- table(q)
   x.mean <- as.single(levels(q))

@@ -150,7 +150,8 @@ cut2 <- function(x, cuts, m=150, g, levels.mean=FALSE, digits, minmax=TRUE,
   y
 }
 
-cutGn <- function(x, m, what=c('mean', 'factor', 'summary'), rcode=FALSE) {
+cutGn <- function(x, m, what=c('mean', 'factor', 'summary', 'cuts'),
+                  rcode=FALSE) {
   what  <- match.arg(what) 
   notna <- which(! is.na(x))
   y <- x[notna]
@@ -218,6 +219,8 @@ cutGn <- function(x, m, what=c('mean', 'factor', 'summary'), rcode=FALSE) {
   # For each group get min and max original y
   ymin  <- tapply(s, G, min)
   ymax  <- tapply(s, G, max)
+
+  if(what == 'cuts') return(unique(c(ymin, max(ymax))))
 
   if(what == 'summary') {
     count <- tapply(s, G, length)

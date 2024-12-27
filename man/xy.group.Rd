@@ -5,7 +5,7 @@ Mean x vs. function of y in groups of x
 }
 \description{
 Compute mean x vs. a function of y (e.g. median) by quantile
-groups of x or by x grouped to have a given average number of
+groups of x or by x grouped to have a given minimum number of
 observations.  Deletes NAs in x and y before doing computations.
 }
 \usage{

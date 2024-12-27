@@ -12,11 +12,11 @@ plsmo <-
   method <- match.arg(method)
   if(method == 'intervals')
     doint <- function(x, y, m, ifun, fun) {
-      g <- cut2(x, m=m)
+      g <- cutGn(x, m=m)
       if(length(levels(g)) < 2)
         stop(paste('number of observations not large enough for',
                    m, 'observations per interval'))
-      w <- cut2(x, m=m, onlycuts=TRUE)
+      w <- cutGn(x, m=m, what='cuts')
       p <- fun(tapply(y, g, ifun, na.rm=TRUE))
       seg1 <- list(x1=w[- length(w)], y1=p, x2=w[-1], y2=p)
       ne <- 2 : (length(w) - 1)

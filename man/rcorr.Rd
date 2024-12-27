@@ -36,7 +36,7 @@ rcorr(x, y, type=c("pearson","spearman"))
 \code{rcorr} returns a list with elements \code{r}, the
 matrix of correlations, \code{n} the
 matrix of number of observations used in analyzing each pair of variables,
-and \code{P}, the asymptotic P-values.
+\code{P}, the asymptotic P-values, and \code{type}.
 Pairs with fewer than 2 non-missing values have the r values set to NA.
 The diagonals of \code{n} are the number of non-NAs for the single variable
 corresponding to that row and column.

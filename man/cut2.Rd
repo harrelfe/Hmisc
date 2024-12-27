@@ -18,7 +18,7 @@ category object, \code{cut2} creates a factor object.  \code{m} is not guarantee
 cut2(x, cuts, m=150, g, levels.mean=FALSE, digits, minmax=TRUE,
 oneval=TRUE, onlycuts=FALSE, formatfun=format, \dots)
 
-cutGn(x, m, what=c('mean', 'factor', 'summary'), rcode=FALSE) 
+cutGn(x, m, what=c('mean', 'factor', 'summary', 'cuts'), rcode=FALSE) 
 }
 \arguments{
 \item{x}{
@@ -61,7 +61,7 @@ interval endpoints, unless \code{oneval=FALSE}
 \item{\dots}{
   additional arguments passed to \code{formatfun}
 }
-\item{what}{specifies the kind of vector values to return from \code{cutGn}, the default being like \code{'levels.mean'} of \code{cut2}.  Specify \code{'summary'} to return a numeric 3-column matrix that summarizes the intervals satisfying the \code{m} requirement.}
+\item{what}{specifies the kind of vector values to return from \code{cutGn}, the default being like \code{'levels.mean'} of \code{cut2}.  Specify \code{'summary'} to return a numeric 3-column matrix that summarizes the intervals satisfying the \code{m} requirement. Use \code{what='cuts'} to only return the vector of computed cutpoints.}
 \item{rcode}{set to \code{TRUE} to run the \code{cutgn} algorithm in R.  This is useful for speed comparisons with the default compiled code.}
 }
 \value{

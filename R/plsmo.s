@@ -12,7 +12,7 @@ plsmo <-
   method <- match.arg(method)
   if(method == 'intervals')
     doint <- function(x, y, m, ifun, fun) {
-      g <- cutGn(x, m=m)
+      g <- cutGn(x, m=m, what='factor')
       if(length(levels(g)) < 2)
         stop(paste('number of observations not large enough for',
                    m, 'observations per interval'))

@@ -36,11 +36,13 @@ if result="matrix", matrix with rows corresponding to x-groups and columns named
 n, x, and y.
 }
 \seealso{
-\code{\link{cut2}}, \code{\link{tapply}}
+\code{\link{cut2}}, \code{\link{cutGn}}, \code{\link{tapply}}
 }
 \examples{
-# plot(xy.group(x, y, g=10))	#Plot mean y by deciles of x
-# xy.group(x, y, m=100, result="matrix")	#Print table, 100 obs/group
+  \dontrun{
+plot(xy.group(x, y, g=10))	#Plot mean y by deciles of x
+xy.group(x, y, m=100, result="matrix")	#Print table, 100 obs/group
+  }
 }
 \keyword{category}
 \keyword{nonparametric}

@@ -1,8 +1,8 @@
 subroutine cutgn(x, n, m, g)
   use ISO_FORTRAN_ENV
   implicit none
-  real(real64),   intent(in)  :: x(n)
   integer(int32), intent(in)  :: n, m
+  real(real64),   intent(in)  :: x(n)
   integer(int32), intent(out) :: g(n)
   integer(int32)              :: is, ie, ng, k, i, lte
   real(real64)                :: lastval

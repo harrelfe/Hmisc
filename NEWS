@@ -1,6 +1,7 @@
-Changes in version 5.2-2 (2025-01-01)
+Changes in version 5.2-2 (2025-01-10)
    * cutGn: new function to group a numeric variable into interals guaranteeing a minimum group size; uses new Fortran subroutine cutgn
    * plsmo, xy.group.s: use cutGn instead of cut2
+   * num.intercepts: look at fit$info.matrix if fit$var is empty
 
 Changes in version 5.2-1 (2024-11-30)
    * re-wrote rcorr Fortran subroutine using vectorization and improved numerical algorithm

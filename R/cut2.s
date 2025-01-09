@@ -150,7 +150,7 @@ cut2 <- function(x, cuts, m=150, g, levels.mean=FALSE, digits, minmax=TRUE,
   y
 }
 
-cutGn <- function(x, m, what=c('mean', 'factor', 'summary', 'cuts'),
+cutGn <- function(x, m, what=c('mean', 'factor', 'summary', 'cuts', 'function'),
                   rcode=FALSE) {
   what  <- match.arg(what) 
   notna <- which(! is.na(x))
@@ -210,10 +210,10 @@ cutGn <- function(x, m, what=c('mean', 'factor', 'summary', 'cuts'),
   G <- G[j]
 
   g <- max(G)
-  if(what == 'mean') {
+  if(what %in% c('mean', 'function')) {
     smean    <- tapply(s, G, mean)
     x[notna] <- smean[G]
-    return(x)
+    if(what == 'mean') return(x)
   }
 
   # For each group get min and max original y
@@ -231,5 +231,19 @@ cutGn <- function(x, m, what=c('mean', 'factor', 'summary', 'cuts'),
   # When an interval is a point just use the point
   lev <- ifelse(ymin == ymax, format(ymin),
                 paste0('[', format(ymin), ',', format(ymax), ']'))
-  factor(G, 1 : max(G), lev)
+  if(what == 'factor') return(factor(G, 1 : max(G), lev))
+
+  h <- function(x, lower, upper, means, levels, what) {
+    what <- match.arg(what)
+    nint <- length(lower)
+    u <- unique(c(lower, max(upper)))
+    y <- approx(u, 1 : length(u), xout=x, method='constant')$y
+    # y values > # intervals are equal to last upper and need -1
+    y[! is.na(y) & y > nint] <- nint
+    if(what== 'mean') means[y] else factor(y, 1 : nint, levels)
+  }
+  formals(h) <- list(x=numeric(0), lower=unname(ymin),
+                     upper=unname(ymax), means=unname(smean),
+                     levels=unname(lev), what=c('mean', 'factor'))
+  h
 }

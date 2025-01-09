@@ -18,7 +18,7 @@ category object, \code{cut2} creates a factor object.  \code{m} is not guarantee
 cut2(x, cuts, m=150, g, levels.mean=FALSE, digits, minmax=TRUE,
 oneval=TRUE, onlycuts=FALSE, formatfun=format, \dots)
 
-cutGn(x, m, what=c('mean', 'factor', 'summary', 'cuts'), rcode=FALSE) 
+cutGn(x, m, what=c('mean', 'factor', 'summary', 'cuts', 'function'), rcode=FALSE) 
 }
 \arguments{
 \item{x}{
@@ -61,7 +61,7 @@ interval endpoints, unless \code{oneval=FALSE}
 \item{\dots}{
   additional arguments passed to \code{formatfun}
 }
-\item{what}{specifies the kind of vector values to return from \code{cutGn}, the default being like \code{'levels.mean'} of \code{cut2}.  Specify \code{'summary'} to return a numeric 3-column matrix that summarizes the intervals satisfying the \code{m} requirement. Use \code{what='cuts'} to only return the vector of computed cutpoints.}
+\item{what}{specifies the kind of vector values to return from \code{cutGn}, the default being like \code{'levels.mean'} of \code{cut2}.  Specify \code{'summary'} to return a numeric 3-column matrix that summarizes the intervals satisfying the \code{m} requirement. Use \code{what='cuts'} to only return the vector of computed cutpoints. To create a function that will recode the variable in play using the same intervals as computed by \code{cutGn}, specify \code{what='function'}.  This function will have a \code{what} argument to allow the user to decide later whether to recode into interval means or into a \code{factor} variable.}
 \item{rcode}{set to \code{TRUE} to run the \code{cutgn} algorithm in R.  This is useful for speed comparisons with the default compiled code.}
 }
 \value{
@@ -81,6 +81,10 @@ table(cut2(x, g=10))      # quantile groups
 table(cut2(x, m=50))      # group x into intevals with at least 50 obs.
 
 table(cutGn(x, m=50, what='factor'))
+f <- cutGn(x, m=50, what='function')
+f
+f(c(-1, 2, 10), what='mean')
+f(c(-1, 2, 10), what='factor')
 \dontrun{
   x <- round(runif(200000), 3)
   system.time(a <- cutGn(x, m=20))              # 0.02s

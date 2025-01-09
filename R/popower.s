@@ -156,9 +156,11 @@ simRegOrd <- function(n, nsim=1000, delta=0, odds.ratio=1, sigma,
 
     f <- rms::orm.fit(X, y, maxit=20)
     if(! f$fail) {
-      betas[i] <- coef(f)[length(coef(f))]   ## coef of treatment
-      k        <- nrow(f$var)
-      se[i]    <- sqrt(f$var[k, k])
+      k <- length(coef(f))
+      betas[i] <- coef(f)[k]   ## coef of treatment
+      vv       <- vcov(f, intercepts='none')
+      k        <- nrow(vv)
+      se[i]    <- sqrt(vv[k, k])
       }
   }
   if(pr) cat('\n')

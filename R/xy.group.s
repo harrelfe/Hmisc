@@ -10,7 +10,7 @@ xy.group <- function(x,y,m=150,g,fun=mean,result="list")
 
   if(missing(m)) {
     q      <- cut2(x, g=g, levels.mean=TRUE, digits=7)
-    x.mean <- as.numerix(levels(q))
+    x.mean <- as.numeric(levels(q))
   }
   else {
     q      <- cutGn(x, m=m)

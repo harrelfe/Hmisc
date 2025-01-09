@@ -17,7 +17,7 @@ num.intercepts(fit, type=c('fit', 'var', 'coef'))
     return the actual number in the fitted coefficients.  The former will be
     less than the number fitted for \code{\link[rms]{orm}} fits, and the
     latter for \code{orm} fits passed through
-    \code{\link{fit.mult.impute}}
+    \code{\link{fit.mult.impute}}.  If the \code{var} object is not present, the number of intercepts is determined from the \code{ab} element of the \code{info.matrix} object if it is present.
   }
 }
 \value{

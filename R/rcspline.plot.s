@@ -81,7 +81,7 @@ rcspline.plot <- function(x, y, model=c("logistic","cox","ols"), xrange,
       stop("The 'logistic' model requires the 'rms' package.")
     b <- rms::lrm.fit(cbind(x, xx, adj),  y)
     beta <- b$coef
-    cov <- b$var
+    cov  <- vcov(b)
     model.lr <- b$stats["Model L.R."]
     offset <- 1 	#to skip over intercept parameter
     ylabl <-
@@ -113,15 +113,15 @@ rcspline.plot <- function(x, y, model=c("logistic","cox","ols"), xrange,
     }
     
     beta <- b$coef
-    cov <- b$var
-    model.lr<-2*(b$loglik[2]-b$loglik[1])
+    cov <- vcov(b)
+    model.lr <- 2*(b$loglik[2]-b$loglik[1])
     offset <- 0
     ylabl <- "log Relative Hazard"
     sampled <- paste("Cox Regression Model, n=",n," events=",sum(event),
                      sep="")
   }
   
-  if(model == "logistic"|model == "cox") {
+  if(model == "logistic" | model == "cox") {
     model.df <- nk - 1 + nadj
     model.aic <- model.lr-2.*model.df
     v <- solve(cov[(1 + offset) : (nk + offset - 1), (1 + offset) : (nk + offset - 1)])

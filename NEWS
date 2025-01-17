@@ -1,4 +1,7 @@
-`Changes in version 5.2-2 (2025-01-10)
+Changes in version 5.2-3 (2025-01-)
+   * rcspline.plot: fixed to use vcov instead of $var for lrm.fit and coxph
+
+Changes in version 5.2-2 (2025-01-10)
    * cutGn: new function to group a numeric variable into interals guaranteeing a minimum group size; uses new Fortran subroutine cutgn
    * ordGroupBoot: new function to group a numeric variable minimally so that bootstrap samples will cover all the original distinct data values
    * plsmo, xy.group.s: use cutGn instead of cut2

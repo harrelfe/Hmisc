@@ -83,9 +83,12 @@
 	running \code{data.table}.  \code{restoreHattrib} restores these attributes.
 
   \code{km.quick} provides a fast way to invoke \code{survfitKM} in the
-  \code{survival} package to get Kaplan-Meier estimates for a
+  \code{survival} package to efficiently get Kaplan-Meier or Fleming-Harrington estimates for a
   single stratum for a vector of time points (if \code{times} is given) or to
-  get a vector of survival time quantiles (if \code{q} is given).
+  get a vector of survival time quantiles (if \code{q} is given).  If neither is given,
+  the whole curve is returned in a list with objects \code{time} and \code{surv}, and
+  there is an option to consider an interval as pertaining to greater than or equal
+  to a specific time instead of the traditional greater than.
 
 	\code{latexBuild} takes pairs of character strings and produces a
 	single character string containing concatenation of all of them, plus

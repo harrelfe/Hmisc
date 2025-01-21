@@ -1,5 +1,6 @@
-Changes in version 5.2-3 (2025-01-)
+Changes in version 5.2-3 (2025-01-21)
    * rcspline.plot: fixed to use vcov instead of $var for lrm.fit and coxph
+   * km.quick: return entire curve if times and q are both missing, new arguments type and interval
 
 Changes in version 5.2-2 (2025-01-10)
    * cutGn: new function to group a numeric variable into interals guaranteeing a minimum group size; uses new Fortran subroutine cutgn

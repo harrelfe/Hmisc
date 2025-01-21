@@ -110,13 +110,22 @@ stepfun.eval <- function(x, y, xout, type=c("left","right"))
 }
 
 
-km.quick <- function(S, times, q)
+km.quick <- function(S, times, q, type=c('kaplan-meier', 'fleming-harrington', 'fh2'),
+                     interval=c('>', '>='))
 {
   sRequire('survival')
-  S <- S[!is.na(S),]
+  type     <- match.arg(type)
+  interval <- match.arg(interval)
+  S <- S[!is.na(S), ]
   n <- nrow(S)
-  stratvar <- factor(rep(1,nrow(S)))
-  f <- survival::survfitKM(stratvar, S, se.fit=FALSE, conf.type='none')
+  stratvar <- factor(rep(1, nrow(S)))
+  f <- survival::survfitKM(stratvar, S, se.fit=FALSE, conf.type='none', type=type)
+  if(missing(times) & missing(q)) {
+    time <- f$time
+    surv <- f$surv
+    if(interval == '>=') surv <- c(1e0, surv[-length(surv)])
+    return(list(time=time, surv=surv))
+  }
   tt <- c(0, f$time)
   ss <- c(1, f$surv)
   if(missing(times))

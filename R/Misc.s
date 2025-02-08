@@ -111,27 +111,35 @@ stepfun.eval <- function(x, y, xout, type=c("left","right"))
 
 
 km.quick <- function(S, times, q, type=c('kaplan-meier', 'fleming-harrington', 'fh2'),
-                     interval=c('>', '>='))
+                     interval=c('>', '>='), method=c('constant', 'linear'), fapprox=0, n.risk=FALSE)
 {
   sRequire('survival')
   type     <- match.arg(type)
   interval <- match.arg(interval)
-  S <- S[!is.na(S), ]
-  n <- nrow(S)
+  method   <- match.arg(method)
+
+  S <- S[! is.na(S), ]
   stratvar <- factor(rep(1, nrow(S)))
-  f <- survival::survfitKM(stratvar, S, se.fit=FALSE, conf.type='none', type=type)
+  f <- if(attr(S, 'type') == 'right')
+    survival::survfitKM(stratvar, S, se.fit=FALSE, conf.type='none', type=type)
+    else survival::survfit(S ~ stratvar, se.fit=FALSE, conf.type='none')
+  nr <- if(n.risk) list(time=f$time, n.risk=f$n.risk)
   if(missing(times) & missing(q)) {
-    time <- f$time
-    surv <- f$surv
+    time <- f$time[f$n.event > 1e-10]    # survfit.formula for left censoring
+    surv <- f$surv[f$n.event > 1e-10]    # creates a tiny nonzero value for n.event
     if(interval == '>=') surv <- c(1e0, surv[-length(surv)])
-    return(list(time=time, surv=surv))
+    res <- list(time=time, surv=surv)
+  } else {
+    tt <- c(0, f$time)
+    ss <- c(1, f$surv)
+    if(missing(times)) res <- min(tt[ss <= q])
+    else {
+      if(interval == '>=') {tt <- f$time; ss <- ss[-length(ss)]}
+      res <- approxExtrap(tt, ss, xout=times, method=method, f=fapprox)$y
+    }
   }
-  tt <- c(0, f$time)
-  ss <- c(1, f$surv)
-  if(missing(times))
-    min(tt[ss <= q])
-  else
-    approx(tt, ss, xout=times, method='constant', f=0)$y
+if(n.risk) attr(res, 'n.risk') <- nr
+res
 }
 
 oPar <- function()

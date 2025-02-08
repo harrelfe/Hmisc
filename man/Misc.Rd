@@ -88,7 +88,8 @@
   get a vector of survival time quantiles (if \code{q} is given).  If neither is given,
   the whole curve is returned in a list with objects \code{time} and \code{surv}, and
   there is an option to consider an interval as pertaining to greater than or equal
-  to a specific time instead of the traditional greater than.
+  to a specific time instead of the traditional greater than.  If the censoring is not 
+  right censoring, the more general \code{survfit} is called by \code{km.quick}.
 
 	\code{latexBuild} takes pairs of character strings and produces a
 	single character string containing concatenation of all of them, plus
@@ -211,7 +212,9 @@ htmlSpecialType()
 inverseFunction(x, y)
 james.stein(y, group)
 keepHattrib(obj)
-km.quick(S, times, q)
+km.quick(S, times, q,
+        type = c("kaplan-meier", "fleming-harrington", "fh2"),
+        interval = c(">", ">="), method=c('constant', 'linear'), fapprox=0, n.risk=FALSE)
 latexBuild(\dots, insert, sep='')
 lm.fit.qr.bare(x, y, tolerance, intercept=TRUE, xpxi=FALSE, singzero=FALSE)
 matxv(a, b, kint=1, bmat=FALSE)

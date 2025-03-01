@@ -3,6 +3,7 @@ Changes in version 5.2-3 (2025-02-28)
    * km.quick: return entire curve if times and q are both missing, new arguments type and interval; when times= is specified, now uses approxExtrap instead of approx
    * geom_stepconfint: new function, taken from the utile.visuals package by Eric Finnesgard (originally from the survminer package)
    * rmClose: new function for removing values that are close to neighboring values; useful for removing axis breaks that will overlap when plotting
+   * Import viridisLite instead of viridis
 
 Changes in version 5.2-2 (2025-01-10)
    * cutGn: new function to group a numeric variable into interals guaranteeing a minimum group size; uses new Fortran subroutine cutgn

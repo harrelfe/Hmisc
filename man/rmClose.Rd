@@ -4,12 +4,12 @@
 \alias{rmClose}
 \title{rmClose}
 \usage{
-rmClose(x, mindist = diff(range(x))/20)
+rmClose(x, minfrac = 0.05)
 }
 \arguments{
 \item{x}{a numeric vector with no \code{NA}s}
 
-\item{mindist}{minimum allowed spacing between consecutive ordered \code{x}}
+\item{minfrac}{minimum allowed spacing between consecutive ordered \code{x}, as a fraction of the range of \code{x}}
 }
 \value{
 a sorted numeric vector of non-close values of \code{x}

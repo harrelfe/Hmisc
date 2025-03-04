@@ -14,6 +14,8 @@ also given a \code{label}, subsetting (using \code{[.labelled}) will
 retain the \code{"units"} attribute.  For a \code{Surv} object,
 \code{units} first looks for an overall \code{"units"} attribute, then
 it looks for \code{units} for the \code{time2} variable then for \code{time1}.
+When setting \code{"units"}, \code{value} is changed to lower case and any "s" at
+the end is removed.
 }
 \usage{
 units(x, \dots)
@@ -43,7 +45,9 @@ S <- Surv(fail.time)
 units(S)
 
 label(fail.time) <- 'Failure Time'
+units(fail.time) <- 'Days'
 fail.time
+
 }
 \keyword{utilities}
 \keyword{interface}

@@ -3,6 +3,7 @@ units <- function(x, ...)
 
 "units<-.default"  <- function(x, value)
 {
+  value <- sub('s$', '', tolower(value))
   attr(x, "units") <- value
   x
 }

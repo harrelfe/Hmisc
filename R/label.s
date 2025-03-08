@@ -219,7 +219,7 @@ labelLatex <- function(x=NULL, label='', units='', size='smaller[2]',
 
   cat(attr(x, "label", exact=TRUE),
       if(length(u))
-        paste('[', u, ']', sep=''),
+        paste('[', paste0(u, 's'), ']', sep=''),
       "\n")
 
   attr(x, "label") <- NULL

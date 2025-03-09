@@ -7,7 +7,7 @@ ggfreqScatter <- function(x, y, by=NULL, bins=50, g=10, cuts=NULL,
                           yminor  = NULL,
                           xlab=as.character(substitute(x)),
                           ylab=as.character(substitute(y)),
-                          fcolors=viridis::viridis(10),
+                          fcolors=viridisLite::viridis(10),
                           nsize=FALSE, stick=FALSE,
                           html=FALSE, prfreq=FALSE, ...) {
 

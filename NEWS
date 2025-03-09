@@ -6,6 +6,7 @@ Changes in version 5.2-3 (2025-03-09)
    * units <- : value is changed to lower case and any "s" at the end is removed
    * prn: added argument "head"
    * Fdebug: new function to create a debugging helper function that is a dummy function if a given option is not set
+   * Non-downward-compatible change: upData no longer automatially sets all variables with a label attribute to be of class labelled; the old behavior can be had by specifying classlab=TRUE
 
 Changes in version 5.2-2 (2025-01-10)
    * cutGn: new function to group a numeric variable into interals guaranteeing a minimum group size; uses new Fortran subroutine cutgn

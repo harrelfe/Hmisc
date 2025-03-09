@@ -118,7 +118,7 @@ cleanup.import <-
         if(length(illegal.not.ignored) < sum(! ignore) * fracnn) {
           labx <- attr(x, 'label')
           x <- xn
-          label(x) <- labx
+          attr(x, 'label') <- labx   # was label(x) <- 2025-03-09
           attr(x, 'special.miss') <-
             list(codes=xc[illegal], obs=which(illegal))
           class(x) <- c(class(x), 'special.miss')
@@ -135,7 +135,7 @@ cleanup.import <-
       if(all.is.numeric(lev)) {
         labx <- attr(x,'label')
         x <- as.numeric(as.character(x))
-        label(x) <- labx
+        attr(x, 'label') <- labx    # was label(x) <- 2025-03-09
         modif <- TRUE
       }
     }
@@ -197,7 +197,7 @@ cleanup.import <-
 upData <- function(object, ...,
                    subset, rename=NULL, drop=NULL, keep=NULL,
                    labels=NULL, units=NULL, levels=NULL,
-                   force.single=TRUE, lowernames=FALSE, caplabels=FALSE,
+                   force.single=TRUE, lowernames=FALSE, caplabels=FALSE, classlab=FALSE,
                    moveUnits=FALSE, charfactor=FALSE, print=TRUE, html=FALSE) {
 
   if(html) print <- FALSE
@@ -235,7 +235,7 @@ upData <- function(object, ...,
   ## using the haven package
   
   j <- which(vinfo['labpres', ] == 'TRUE' & vinfo['labclass', ] == 'FALSE')
-  if(length(j))
+  if(classlab && length(j))
     for(i in j) {
       x <- object[[i]]
       class(x) <- c('labelled', class(x))

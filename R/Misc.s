@@ -8,19 +8,18 @@ if(!exists("NCOL", mode='function')) {
     if (is.array(x) && length(dim(x)) > 1 || is.data.frame(x)) ncol(x) else as.integer(1)
 }
 
-prn <- function(x, txt, file='')
+prn <- function(x, txt, file='', head=deparse(substitute(x), width.cutoff=500)[1])
 {
-  calltext <- as.character(sys.call())[2]
   if(file != '') sink(file, append=TRUE)
   
   if(!missing(txt)) {
-    if(nchar(txt) + nchar(calltext) +3 > .Options$width)
-      calltext <- paste('\n\n  ',calltext,sep='')
+    if(nchar(txt) + nchar(head) +3 > .Options$width)
+      head <- paste('\n\n  ', head, sep='')
     else
       txt <- paste(txt, '   ', sep='')
-    cat('\n', txt, calltext, '\n\n', sep='') 
+    cat('\n', txt, head, '\n\n', sep='') 
   }
-  else cat('\n',calltext,'\n\n',sep='')
+  else cat('\n', head, '\n\n',sep='')
   print(x)
   if(file != '') sink()
   invisible()

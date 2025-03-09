@@ -62,7 +62,7 @@ cleanup.import(obj, labels, lowernames=FALSE,
 
 upData(object, \dots, 
        subset, rename, drop, keep, labels, units, levels, force.single=TRUE,
-       lowernames=FALSE, caplabels=FALSE, moveUnits=FALSE,
+       lowernames=FALSE, caplabels=FALSE, classlab=FALSE, moveUnits=FALSE,
        charfactor=FALSE, print=TRUE, html=FALSE)
 
 dataframeReduce(data, fracmiss=1, maxlevels=NULL,  minprev=0, print=TRUE)
@@ -201,6 +201,11 @@ dataframeReduce(data, fracmiss=1, maxlevels=NULL,  minprev=0, print=TRUE)
 	set to \code{TRUE} to capitalize the first letter of each word in
 	each variable label
 	}
+  \item{classlab}{
+    set to \code{TRUE} (the old default behavior) to automatically have \code{upData} make variables having
+    a \code{"label"} attribute have \code{class} of \code{"labelled"}.  Note that when the \code{labels}
+    argument to \code{upData} is given, these create \code{labelled}-class variables as always.
+  }
   \item{moveUnits}{
     set to \code{TRUE} to look for units of measurements in variable
     labels and move them to a \code{"units"} attribute.  If an expression

@@ -299,7 +299,8 @@ xless(x, \dots, title)
   \item{times}{a numeric vector of times}
   \item{title}{a character string to title a window or plot.  Ignored for \code{xless} under MacOs.}
   \item{tolerance}{tolerance for judging singularity in matrix}
-  \item{type}{\code{"v"} for vertical, \code{"h"} for horizontal.}
+  \item{type}{\code{"v"} for vertical, \code{"h"} for horizontal. 
+  For \code{km.quick} specifies the type of survival estimator.}
   \item{w}{a numeric vector}
   \item{width}{width of confidence rectanges in user units, or see
 	\code{\link{strwrap}}} 
@@ -324,6 +325,10 @@ xless(x, \dots, title)
   \item{indent, exdent, prefix}{see \code{\link{strwrap}}}
   \item{simplify}{see \code{\link{sapply}}}
   \item{units}{see \code{\link{par}}}
+  \item{interval}{specifies whether to deal with probabilities of exceeding a value
+  (the default) or of exceeding or equalling the value}
+  \item{method,fapprox}{see \code{approx}}
+  \item{n.risk}{set to \code{TRUE} to include the number at risk in the result}
   \item{\dots}{arguments passed through to another function.  For
 		\code{latexBuild} represents pairs, with odd numbered elements being
 		character strings containing LaTeX code or a zero-length object to

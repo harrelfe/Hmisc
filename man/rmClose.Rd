@@ -18,7 +18,7 @@ a sorted numeric vector of non-close values of \code{x}
 Remove close values from a numeric vector that are not at the outer limtis.  This is useful for removing axis breaks that overlap when plotting.
 }
 \examples{
-rmClose(c(1, 2, 4, 47, 48, 49, 50), mindist=3)
+rmClose(c(1, 2, 4, 47, 48, 49, 50), minfrac=0.07)
 }
 \author{
 Frank Harrell

@@ -1,4 +1,4 @@
-Changes in version 5.2-3 (2025-03-09)
+Changes in version 5.2-3 (2025-03-12)
    * rcspline.plot: fixed to use vcov instead of $var for lrm.fit and coxph
    * km.quick: return entire curve if times and q are both missing, new arguments type and interval; when times= is specified, now uses approxExtrap instead of approx
    * geom_stepconfint: new function, taken from the utile.visuals package by Eric Finnesgard (originally from the survminer package)
@@ -7,6 +7,7 @@ Changes in version 5.2-3 (2025-03-09)
    * prn: added argument "head"
    * Fdebug: new function to create a debugging helper function that is a dummy function if a given option is not set
    * Non-downward-compatible change: upData no longer automatially sets all variables with a label attribute to be of class labelled; the old behavior can be had by specifying classlab=TRUE
+   * histSpikeg: changed parsed character strings to true ggplot2 layers
 
 Changes in version 5.2-2 (2025-01-10)
    * cutGn: new function to group a numeric variable into interals guaranteeing a minimum group size; uses new Fortran subroutine cutgn

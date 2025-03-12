@@ -137,12 +137,10 @@ histSpikeg <- function(formula=NULL, predictions=NULL, data, plotly=NULL,
       }
     return(P)
   }
-  
-  res <- eval(parse(text=sprintf('ggplot2::geom_segment(data=tab,
-                        aes(x=%s, xend=%s,
-                            y=.ylo., yend=.yhi.), size=.25 %s)', X, X, hcol)))
-  if(lowess) res <- list(hist=res, lowess=eval(parse(text=
-         sprintf('ggplot2::geom_line(data=p, aes(x=%s, y=%s))', X, yv))))
+  res <- list(hist=geom_segment(data=tab, aes(x=.data[[X]], xend=.data[[X]],
+                                              y=.data$.ylo., yend=.data$.yhi.),
+                                          size=0.25, col=histcol),
+              lowess=if(lowess) geom_line(data=p, aes(x=.data[[X]], y=.data[[yv]])) )
   res
 }
 

@@ -37,6 +37,6 @@ Fdebug <- function(opt) {
   formals(deb)$txt <- opt
   formals(deb)$callingfun <- as.character(sys.call(-1)[1])
   }
-  else deb <- function(...) {NULL}
+  else deb <- function(x, txt, callingfun, file) {NULL}
   deb
 }

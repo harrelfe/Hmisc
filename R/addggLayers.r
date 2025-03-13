@@ -86,4 +86,4 @@ addggLayers <- function(g, data,
   g
   }
 
-utils::globalVariables(c('.by.','.N','.value.','N','..v','.SD','variable'))
+utils::globalVariables(c('y', '.by.','.N','.value.','N','..v','.SD','variable'))

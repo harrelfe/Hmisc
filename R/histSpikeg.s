@@ -54,7 +54,7 @@ histSpikeg <- function(formula=NULL, predictions=NULL, data, plotly=NULL,
     if(length(p)) tab$.yy. <- approxExtrap(p[[X]], p[[yv]], xout=tab[[X]])$y
   } else {  ## grouping variable(s) present
     tab <- as.data.frame(do.call(table, data[xv]))
-    tab <- subset(tab, Freq > 0)
+    tab <- tab[tab$Freq > 0, ]
     tab[[X]] <- as.numeric(as.character(tab[[X]]))
     if(length(xr)) tab    <- tab[tab[[X]] >= xr[1] & tab[[X]] <= xr[2], ]
     tab$.yy. <- rep(NA, nrow(tab))
@@ -105,7 +105,6 @@ histSpikeg <- function(formula=NULL, predictions=NULL, data, plotly=NULL,
 
   tab$.yhi. <- if(length(p)) tab$.yy. + tab$.rf.
                else if(side == 1) ylim[1] + tab$.rf. else ylim[2] - tab$.rf.
-  hcol <- if(histcol == 'default') '' else sprintf(', col="%s"', histcol)
 
   P <- plotly
   if(! is.null(P) && requireNamespace("plotly")) {
@@ -144,4 +143,4 @@ histSpikeg <- function(formula=NULL, predictions=NULL, data, plotly=NULL,
   res
 }
 
-utils::globalVariables(c('aes', 'Freq', '.ylo.', '.yhi.', 'x', 'y'))
+# utils::globalVariables(c('aes', 'Freq', '.ylo.', '.yhi.', 'x', 'y'))

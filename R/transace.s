@@ -126,8 +126,8 @@ ggplot.transace <- function(data, mapping, ..., environment, nrow=NULL) {
     }
                    
   w  <- data.table::rbindlist(w, idcol='v')
-  ggplot(w, aes(x=y, y=ty))  + geom_line() +
-       facet_wrap(~ v, scales='free', nrow=nrow) +
+  ggplot(w, aes(x=.data$y, y=.data$ty))  + geom_line() +
+       facet_wrap(~ .data$v, scales='free', nrow=nrow) +
        xlab(NULL) + ylab('Transformed')
   }
 

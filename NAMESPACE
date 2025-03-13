@@ -14,7 +14,7 @@ importFrom(ggplot2, ggplot, guides,  geom_line, geom_point, geom_text, geom_col,
            geom_smooth, guide_legend, layer, layer_scales, scale_color_gradientn,
            scale_fill_brewer, scale_size_continuous, scale_size_manual,
            scale_x_continuous, scale_y_continuous, theme, unit, xlim, ylim,
-           ggproto, GeomRibbon)
+           ggproto, GeomRibbon, .data)
 ## import(scales)
 
 # importFrom(acepack, ace, avas)

@@ -8,7 +8,7 @@
 #' @return a scalar numeric value
 #' @export
 #' @md
-#' @seealso <https://dl.acm.org/doi/10.1145/1271.319414>, <https://www4.stat.ncsu.edu/~monahan/jul10/>
+#' @seealso <https://dl.acm.org/toc/toms/1984/10/3/>, <https://www4.stat.ncsu.edu/~monahan/jul10/>
 #' @examples
 #' x <- c(1:4, 10000)
 #' pMedian(x)

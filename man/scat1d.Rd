@@ -434,7 +434,9 @@ ecdfpM(x, group=NULL, what=c('F','1-F','f','1-f'), q=NULL,
 \item{nrows,ncols}{passed to \code{plotly::subplot}}
 }
 \value{
-  \code{histSpike} returns the actual range of \code{x} used in its binning
+  \code{histSpike} returns the actual range of \code{x} used in its binning. 
+  \code{histSpikeg} returns a list of \code{ggplot2} layers that \code{ggplot2}
+  will easily add with \code{+}.
 }
 \section{Side Effects}{
   \code{scat1d} adds line segments to plot.

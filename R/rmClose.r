@@ -10,7 +10,7 @@
 #' @md
 #' @author Frank Harrell
 #' @examples
-#' rmClose(c(1, 2, 4, 47, 48, 49, 50), mindist=3)
+#' rmClose(c(1, 2, 4, 47, 48, 49, 50), minfrac=0.07)
 rmClose <- function(x, minfrac=0.05) {
   x <- unique(sort(x))
   mindist <- minfrac * diff(range(x)) 

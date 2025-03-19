@@ -7,7 +7,7 @@
 Fdebug(opt)
 }
 \arguments{
-\item{opt}{an unquoted option name}
+\item{opt}{character string containing an option name}
 }
 \value{
 a function
@@ -23,14 +23,15 @@ is called, \code{\link[=prn]{prn()}} output will be appended to that file name i
 At any time, set \code{options(debug_file='')} to resume printing to the console.
 }
 \examples{
-dfun <- Fdebug(my_option_name)   # my_option_name not currently set
+dfun <- Fdebug('my_option_name')   # my_option_name not currently set
 dfun
 dfun(sqrt(2))
 options(my_option_name=TRUE)
-dfun <- Fdebug(my_option_name)
+dfun <- Fdebug('my_option_name')
 dfun
 dfun(sqrt(2))
 # options(debug_file='/tmp/z') to append output to /tmp/z
+options(my_option_name=NULL)
 }
 \author{
 Fran Harrell

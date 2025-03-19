@@ -207,10 +207,10 @@ plot.princmp <- function(x, which=c('scree', 'loadings'),
                                 labels=paste0('PC[', 1 : k, ']')),
                   x    = 1,
                   sign = ifelse(b >= 0., '+', '-'))
-  g <- ggplot(d,  aes(x=x, y=y, color=sign)) +
-    geom_segment(aes(x=x, y=y, xend=x + 0.9 * b / r[2], yend=y),
+  g <- ggplot(d,  aes(x=.data$x, y=.data$y, color=.data$sign)) +
+    geom_segment(aes(x=.data$x, y=.data$y, xend=.data$x + 0.9 * .data$b / r[2], yend=.data$y),
                  size=3) +
-    facet_wrap(~ comp, labeller='label_parsed', nrow=nrow) +
+    facet_wrap(~ .data$comp, labeller='label_parsed', nrow=nrow) +
     scale_x_continuous(breaks = 1 : k,
                        labels=as.expression(sapply(1 : k,
                                  function(x) bquote(PC[.(x)])))) +

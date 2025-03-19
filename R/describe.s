@@ -543,8 +543,17 @@ formatdescribeSingle <-
              paste('For the frequency table, variable is rounded to the nearest',
                    format(x$roundedTo, scientific=3)))
     
-  } else if(length(v) && ! is.standard)
-    R <- c(R, '', vbtm(v))
+  } else if(length(v) && ! is.standard) {
+    if(inherits(v, 'table')) {
+      fval <- names(v)
+      freq <- unname(v)
+      prop <- round(freq / sum(freq), 3)
+      w <- sprintf('%s (%s, %s)', names(v), format(freq), format(prop))
+      R <- c(R, '', w)
+    } else {
+      R <- c(R, '', vbtm(v))
+    }
+  }
   
   if(length(x$mChoice)) {
     R <- c(R, bv()); verb <- 1

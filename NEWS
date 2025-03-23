@@ -1,3 +1,7 @@
+Changes in version 5.2-4 (2025-03-23)
+   * xless: improved by using capture.output which hopefully won't leave so many hanging sink()s
+
+
 Changes in version 5.2-3 (2025-03-16)
    * rcspline.plot: fixed to use vcov instead of $var for lrm.fit and coxph
    * km.quick: return entire curve if times and q are both missing, new arguments type and interval; when times= is specified, now uses approxExtrap instead of approx

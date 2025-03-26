@@ -1095,19 +1095,19 @@ if(FALSE) {
 }
 
 xless <-
-  function(x, ..., title=substring(deparse(substitute(x)),1,40))
+  function(x, ..., title=substring(deparse(substitute(x)), 1, 40))
 {
   ## Usage: xless(x) - uses print method for x, puts in persistent window with
   ## xless using name of x as title (unless title= is specified)
   ## If running under MacOS, use the system open command instead of xless
-	file <- tempfile()
-  	sink(file)
-  	print(x, ...)
-  	sink()
-  	cmd <- if(Sys.info()['sysname'] == 'Darwin') paste('open -a TextEdit', file) else
-    paste('xless -title "',title,'" -geometry "90x40" "',
-               file,'" &',sep='')
-    system(cmd)
+  mac <- Sys.info()['sysname'] == 'Darwin'
+	file <- if(mac) paste(tempdir(), makeNames(title), sep='/') else tempfile()
+  capture.output(x, ..., file=file)
+  cmd <- if(mac)
+           paste('open -a TextEdit', file) else
+           paste('xless -title "', title, '" -geometry "90x40" "',
+                  file, '" &', sep='')
+  system(cmd)
 invisible()
 }
 

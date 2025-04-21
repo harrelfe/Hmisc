@@ -1,7 +1,8 @@
-Changes in version 5.2-4 (2025-03-24)
+Changes in version 5.2-4 (2025-04-20)
    * xless: improved by using capture.output which hopefully won't leave so many hanging sink()s
    * describe: incorporated this fix: https://github.com/harrelfe/Hmisc/pull/194, thanks Cole Beck
    * pMedian: takes a random sample of 1 million values if n > 1M
+   * movStats: added parameter ordsurv
 
 Changes in version 5.2-3 (2025-03-16)
    * rcspline.plot: fixed to use vcov instead of $var for lrm.fit and coxph

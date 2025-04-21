@@ -42,6 +42,7 @@
 ##' @param lrm set to TRUE to include logistic regression estimates w rcspline
 ##' @param orm set to TRUE to include ordinal logistic regression estimates w rcspline (mean + quantiles in `tau`)
 ##' @param hare set to TRUE to include hazard regression estimtes of incidence at `times`, using the `polspline` package
+##' @param ordsurv set to TRUE to include ordinal regression estimates of incidence at `times`, using the `rms` package `adapt_orm` and `survest.orm` functions
 ##' @param lrm_args a `list` of optional arguments to pass to `lrm` when `lrm=TRUE`, e.g., `list(maxit=20)`
 ##' @param family link function for ordinal regression (see `rms::orm`)
 ##' @param k number of knots to use for ols and/or qreg rcspline
@@ -63,7 +64,7 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
                      trans=function(x) x, itrans=function(x) x,
                      loess=FALSE,
                      ols=FALSE, qreg=FALSE, lrm=FALSE,
-                     orm=FALSE, hare=FALSE, 
+                     orm=FALSE, hare=FALSE, ordsurv=FALSE,
                      lrm_args=NULL, family='logistic',
                      k=5, tau=(1:3)/4, melt=FALSE,
                      data=environment(formula),
@@ -105,6 +106,9 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
   if(sec) {
     if(hare) if(! requireNamespace('polspline', quietly=TRUE))
                stop('polspline package must be installed if hare=TRUE')
+    if(ordsurv) if(! requireNamespace('rms', quietly=TRUE))
+               stop('rms package must be installed if ordsurv=TRUE')
+
     Y2 <- Y[, 2]
     Y  <- Y[, 1]
     } else Y2 <- rep(1, nrow(mf))
@@ -338,6 +342,15 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
       for(ti in times) {
         inc <- polspline::phare(ti, dat$x, f)
         newname <- paste0('HARE ', ti, '-', tunits)
+        w[, (newname) := inc]
+      }
+    }
+
+    if(ordsurv) {
+      f <- rms::adapt_orm(x, rms::Ocens(y, ifelse(y2 == 1, y, Inf)))
+      for(ti in times) {
+        inc     <- 1 - survest(f, dat, times=ti, conf.int=0)$surv
+        newname <- paste0('orm ', ti, '-', tunits)
         w[, (newname) := inc]
       }
     }

@@ -97,7 +97,7 @@ movStats(
 
 \item{family}{link function for ordinal regression (see \code{rms::orm})}
 
-\item{k}{number of knots to use for ols and/or qreg rcspline}
+\item{k}{number of knots to use for ols, lrm,  qreg restricted cubic splines.  Linearity is forced for binary \code{y} when the minimum of the number of events and number of non-events is below 10 for a by-group.}
 
 \item{tau}{quantile numbers to estimate with quantile regression}
 

@@ -121,7 +121,7 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
                         size=2.5, hjust=1) +
               scale_y_continuous(breaks=tly, labels=un) +
               scale_x_continuous(breaks=pretty(r)) +
-              scale_color_gradientn(colors=viridis::viridis(10)) +
+              scale_color_gradientn(colors=viridisLite::viridis(10)) +
               ylab(NULL) +
               theme(panel.grid.minor.y = element_blank())
           else
@@ -223,7 +223,7 @@ plot.describe <- function(x, which=c('both', 'continuous', 'categorical'),
                geom_segment(aes(x=X, xend=X, y=yy, yend=yy + Proportion,
                                 color=Missing)) +
                scale_y_continuous(breaks=1 : length(unam), labels=unam) +
-               scale_color_gradientn(colors=viridis::viridis(10)) +
+               scale_color_gradientn(colors=viridisLite::viridis(10)) +
                xlab(NULL) + ylab(NULL) +
                theme(axis.text.x = element_blank(),
                      panel.grid.major.x = element_blank(),

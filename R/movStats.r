@@ -45,7 +45,7 @@
 ##' @param ordsurv set to TRUE to include ordinal regression estimates of incidence at `times`, using the `rms` package `adapt_orm` and `survest.orm` functions
 ##' @param lrm_args a `list` of optional arguments to pass to `lrm` when `lrm=TRUE`, e.g., `list(maxit=20)`
 ##' @param family link function for ordinal regression (see `rms::orm`)
-##' @param k number of knots to use for ols and/or qreg rcspline
+##' @param k number of knots to use for ols, lrm,  qreg restricted cubic splines.  Linearity is forced for binary `y` when the minimum of the number of events and number of non-events is below 10 for a by-group.  For `ordsurv=TRUE` is the maximum number of knots tried and is passed as argument `maxk` to [rms::adapt_orm()].
 ##' @param tau quantile numbers to estimate with quantile regression
 ##' @param melt set to TRUE to melt data table and derive Type and Statistic
 ##' @param data 
@@ -303,9 +303,10 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
     }
 
     if(lrm) {
-      f <- if(length(lrm_args))
-        do.call(rms::lrm, c(list(y ~ rms::rcs(x, .knots.), data=s), lrm_args)) else
-        rms::lrm(y ~ rms::rcs(x, .knots.), data=s)
+      f <- if(min(s[, sum(y == 1)], s[, sum(y == 0)]) < 10) f <- rms::lrm(y ~ x, data=s)
+      else if(length(lrm_args))
+        do.call(rms::lrm, c(list(y ~ rms::rcs(x, .knots.), data=s), lrm_args))
+        else rms::lrm(y ~ rms::rcs(x, .knots.), data=s)
       pc <- predict(f, dat, type='fitted')
       w[, 'LR Proportion' := pc]
     }
@@ -347,7 +348,7 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
     }
 
     if(ordsurv) {
-      f <- rms::adapt_orm(x, rms::Ocens(y, ifelse(y2 == 1, y, Inf)))
+      f <- rms::adapt_orm(x, rms::Ocens(y, ifelse(y2 == 1, y, Inf)), maxk=k)
       for(ti in times) {
         inc     <- 1 - survest(f, dat, times=ti, conf.int=0)$surv
         newname <- paste0('orm ', ti, '-', tunits)

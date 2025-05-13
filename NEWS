@@ -1,9 +1,10 @@
-Changes in version 5.2-4 (2025-04-20)
+Changes in version 5.2-4 (2025-04-29)
    * xless: improved by using capture.output which hopefully won't leave so many hanging sink()s
    * describe: incorporated this fix: https://github.com/harrelfe/Hmisc/pull/194, thanks Cole Beck
    * pMedian: takes a random sample of 1 million values if n > 1M
    * Import viridisLite instead of viridis
-   * movStats: added parameter ordsurv
+   * movStats: added parameter ordsurv, force linearity for lrm=TRUE when < 10 events
+   * movStats: passed k argument to adapt_orm as maxk argument
 
 Changes in version 5.2-3 (2025-03-16)
    * rcspline.plot: fixed to use vcov instead of $var for lrm.fit and coxph

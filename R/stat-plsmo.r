@@ -65,7 +65,7 @@ StatPlsmo <- ggplot2::ggproto("StatPlsmo", ggplot2::Stat,
   required_aes = c("x", "y"),
 
   setup_data = function(data, params) {
-    rows <- tapply(data$x, data$group, function(x) length(unique(x)))
+    rows <- tapply(data$x, data$group, \(x) length(unique(x)))
 
     if (all(rows == 1) && length(rows) > 1) {
       message("geom_plsmo: Only one unique x value each group.",

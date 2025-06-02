@@ -65,9 +65,10 @@ StatPlsmo <- ggplot2::ggproto("StatPlsmo", ggplot2::Stat,
   required_aes = c("x", "y"),
 
   setup_data = function(data, params) {
-    if (!requireNamespace("plyr", quietly = TRUE))
-      stop("This function requires the 'plyr' package.")
-    rows <- plyr::daply(data, "group", function(df) length(unique(df$x)))
+    rows <- tapply(data$x, data$group, \(x) length(unique(x)))
+    if (anyNA(data$group)) {
+      rows <- c(length(unique(data$x[is.na(data$group)])), rows)
+    }
 
     if (all(rows == 1) && length(rows) > 1) {
       message("geom_plsmo: Only one unique x value each group.",

@@ -1,7 +1,7 @@
 Changes in version 5.2-4 (2025-07-15)
    * xless: improved by using capture.output which hopefully won't leave so many hanging sink()s
    * describe: incorporated this fix: https://github.com/harrelfe/Hmisc/pull/194, thanks Cole Beck
-   * pMedian: takes a random sample of 250000 million values if n > 250000
+   * pMedian: takes a random sample of 250,000 values if n > 250000
    * movStats: added parameter ordsurv, force linearity for lrm=TRUE when < 10 events
    * movStats: passed k argument to adapt_orm as maxk argument
    * simMarkovOrd: removed dual-use of ..., addresses https://github.com/harrelfe/Hmisc/issues/199; this is a breaking change, users should apply `cbind` to return value for similar behavior

@@ -6,7 +6,7 @@
 \alias{format.special.miss}
 \alias{sas.codes}
 \alias{code.levels}
-alias{timePOSIXt}
+\alias{timePOSIXt}
 \title{Convert a SAS Dataset to an S Data Frame}
 \description{
   Converts a \acronym{SAS} dataset into an S data frame.  

@@ -1934,7 +1934,7 @@ plotlyParm = list(
   },
 
   ## Colors for ordered levels
-  colOrdered = function(n=5, col=viridis::viridis) {
+  colOrdered = function(n=5, col=viridisLite::viridis) {
     if(! is.function(col)) rep(col, length.out=n)
     else col(n)
   },

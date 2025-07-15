@@ -42,7 +42,7 @@ simMarkovOrd(
 \item{...}{additional arguments to pass to \code{g} such as a regresson coefficient}
 }
 \value{
-data frame with one row per subject per time, and columns id, time, yprev, y, values in ...
+data frame with one row per subject per time, and columns id, time, gap, yprev, y
 }
 \description{
 Simulate Ordinal Markov Process

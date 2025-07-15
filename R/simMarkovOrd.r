@@ -13,7 +13,7 @@
 ##' @param carry set to `TRUE` to carry absorbing state forward after it is first hit; the default is to end records for the subject once the absorbing state is hit
 ##' @param rdsample an optional function to do response-dependent sampling.  It is a function of these arguments, which are vectors that stop at any absorbing state: `times` (ascending measurement times for one subject), `y` (vector of ordinal outcomes at these times for one subject.  The function returns `NULL` if no observations are to be dropped, returns the vector of new times to sample.
 ##' @param ... additional arguments to pass to `g` such as a regresson coefficient
-##' @return data frame with one row per subject per time, and columns id, time, yprev, y, values in ...
+##' @return data frame with one row per subject per time, and columns id, time, gap, yprev, y
 ##' @author Frank Harrell
 ##' @seealso <https://hbiostat.org/R/Hmisc/markov/>
 ##' @export
@@ -113,8 +113,11 @@ simMarkovOrd <- function(n=1, y, times, initial, X=NULL, absorb=NULL,
   yyp <- YYprev[1 : ie]
   if(ychar) yyp <- factor(yyp, levels=setdiff(y, absorb))
 
+  ## thanks: MoserGitHub (GH issue #199)
+  ## prior to v5.2-4, ... passed to data.frame when primary intention
+  ## was to pass ... to `g`; this could result in errors
   res <- data.frame(id=ID[1 : ie], time=Time[1 : ie], gap=Gap[1 : ie],
-                    yprev=yyp, y=yy, ...)
+                    yprev=yyp, y=yy)
   attr(res, 'times.saved.per.subject') <- times.saved / n
     
   ## Handle case where X is a constant vector to distribute to all obs

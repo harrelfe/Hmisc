@@ -20,7 +20,7 @@ Pseudomedian
 \details{
 Uses fast Fortran code to compute the pseudomedian of a numeric vector.  The pseudomedian is the median of all possible midpoints of two observations.  The pseudomedian is also called the Hodges-Lehmann one-sample estimator.  The Fortran code is was originally from JF Monahan, and was converted to C++ in the \code{DescTools} package.  It has been converted to Fortran 2018 here.
 
-If n > 1,000,000 a random sample of 1,000,000 values of \code{x} is used.
+If n > 250,000 a random sample of 250,000 values of \code{x} is used to limit execution time.
 }
 \examples{
 x <- c(1:4, 10000)

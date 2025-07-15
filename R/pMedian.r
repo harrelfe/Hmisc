@@ -2,7 +2,7 @@
 #' 
 #' Uses fast Fortran code to compute the pseudomedian of a numeric vector.  The pseudomedian is the median of all possible midpoints of two observations.  The pseudomedian is also called the Hodges-Lehmann one-sample estimator.  The Fortran code is was originally from JF Monahan, and was converted to C++ in the `DescTools` package.  It has been converted to Fortran 2018 here.
 #' 
-#' If n > 1,000,000 a random sample of 1,000,000 values of `x` is used.
+#' If n > 250,000 a random sample of 250,000 values of `x` is used to limit execution time.
 #' 
 #' @title pMedian
 #' @param x a numeric vector
@@ -25,10 +25,11 @@ pMedian <- function(x, na.rm = FALSE) {
   n <- length(x)
   if(n == 0) return(NA_real_)
   if(n == 1) return(as.double(x))
-  if(n > 1000000L) {
-    n <- 1000000L
-    x <- sample(x, 1000000L)
-    warning('n > 1000000; pMedian is using a random sample of 1000000 values')
+  nmax <- 250000L
+  if(n > nmax) {
+    n <- nmax
+    x <- sample(x, nmax)
+    warning('n > 250000; pMedian is using a random sample of 250000 values')
   }
   .Fortran(F_hlqest, as.double(sort(x)), as.double(runif(1000)), as.integer(n), result=double(1))$result
 

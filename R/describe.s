@@ -1596,7 +1596,6 @@ html_describe_cat <- function(x, w=200, freq=c('chart', 'table'),
   if('Gmd' %in% names(a))
     b <- b |>
       gt::cols_label(Gmd ~ gt::html("Gini\u2009<span style=\"text-decoration: overline\">|\u394|</span>"))
-saveRDS(b, '/tmp/b.rds')
   b
 }
 

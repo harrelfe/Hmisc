@@ -350,7 +350,7 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
     if(ordsurv) {
       f <- rms::adapt_orm(x, rms::Ocens(y, ifelse(y2 == 1, y, Inf)), maxk=k)
       for(ti in times) {
-        inc     <- 1 - survest(f, dat, times=ti, conf.int=0)$surv
+        inc     <- 1 - rms::survest(f, dat, times=ti, conf.int=0)$surv
         newname <- paste0('orm ', ti, '-', tunits)
         w[, (newname) := inc]
       }

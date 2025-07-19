@@ -25,6 +25,7 @@ pMedian <- function(x, na.rm = FALSE) {
   n <- length(x)
   if(n == 0) return(NA_real_)
   if(n == 1) return(as.double(x))
+  if(! na.rm && anyNA(x)) return(NA_real_)
   nmax <- 250000L
   if(n > nmax) {
     n <- nmax

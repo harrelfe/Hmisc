@@ -13,6 +13,7 @@ Authors@R:
 						 role = "ctb",
 						 email = "charles.dupont@vumc.org",
 						 comment = "contributed several functions and maintains latex functions"))
+Author: Frank E Harrell Jr <fh@fharrell.com>
 Maintainer: Frank E Harrell Jr <fh@fharrell.com>
 Depends: R (>= 4.2.0)
 Imports: methods, ggplot2, cluster, rpart, nnet, foreign, gtable, grid, gridExtra, data.table, htmlTable (>= 1.11.0), viridisLite, htmltools, base64enc, colorspace, rmarkdown, knitr, Formula

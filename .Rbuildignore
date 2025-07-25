@@ -2,6 +2,7 @@ copyright
 www
 \.git
 \.gitignore
+\.gitattributes
 \.Rhistory
 R/\.Rhistory
 tests/\.Rhistory

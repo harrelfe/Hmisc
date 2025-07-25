@@ -1,4 +1,4 @@
-Changes in version 5.2-4 (2025-07-19)
+Changes in version 5.2-4 (2025-07-24)
    * xless: improved by using capture.output which hopefully won't leave so many hanging sink()s
    * describe: incorporated this fix: https://github.com/harrelfe/Hmisc/pull/194, thanks Cole Beck
    * Import viridisLite instead of viridis; thanks @oliveroy https://github.com/harrelfe/Hmisc/pull/192/
@@ -8,6 +8,7 @@ Changes in version 5.2-4 (2025-07-19)
    * simMarkovOrd: removed dual-use of ..., addresses https://github.com/harrelfe/Hmisc/issues/199; this is a breaking change, users should apply `cbind` to return value for similar behavior
    * html_describe_cat: remove saveRDS('/tmp/b.rds') which was used for debugging
    * pMedian: return NA if na.rm=FALSE but any NAs are present
+   * dualSD: new function to compute SD separately for upper and lower half of distribution
 
 Changes in version 5.2-3 (2025-03-16)
    * rcspline.plot: fixed to use vcov instead of $var for lrm.fit and coxph

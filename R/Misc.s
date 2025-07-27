@@ -122,6 +122,8 @@ km.quick <- function(S, times, q, type=c('kaplan-meier', 'fleming-harrington', '
   f <- if(attr(S, 'type') == 'right')
     survival::survfitKM(stratvar, S, se.fit=FALSE, conf.type='none', type=type)
     else survival::survfit(S ~ stratvar, se.fit=FALSE, conf.type='none')
+  t0 <- f$t0
+  if(! length(t0)) t0 <- 0e0
   nr <- if(n.risk) list(time=f$time, n.risk=f$n.risk)
   if(missing(times) & missing(q)) {
     time <- f$time[f$n.event > 1e-10]    # survfit.formula for left censoring
@@ -129,7 +131,7 @@ km.quick <- function(S, times, q, type=c('kaplan-meier', 'fleming-harrington', '
     if(interval == '>=') surv <- c(1e0, surv[-length(surv)])
     res <- list(time=time, surv=surv)
   } else {
-    tt <- c(0, f$time)
+    tt <- c(t0, f$time)
     ss <- c(1, f$surv)
     if(missing(times)) res <- min(tt[ss <= q])
     else {

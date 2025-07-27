@@ -1,17 +1,1 @@
-copyright
-www
-\.git
-\.gitignore
-\.gitattributes
-\.Rhistory
-R/\.Rhistory
-tests/\.Rhistory
-\.Rproj\.user
-.*.Rproj
-
-
-^.*\.Rproj$
-^\.Rproj\.user$
-
-publish
-
+/Users/harrelfe/Library/Mobile Documents/com~apple~CloudDocs/dotfiles/.R/.Rbuildignore

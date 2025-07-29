@@ -368,6 +368,8 @@ do this using for example
 \code{\\usepackage{etoolbox}\\makeatletter\\preto{\\@verbatim}{\\topsep=-1.4pt
 	\\partopsep=0pt}\\preto{\\@tabular}{\\parskip=2pt
 	\\parsep=0pt}\\makeatother} in the LaTeX preamble.
+
+Multiple choice (\code{mChoice}) variables' \code{describe} output renders well in html but not when included in a \code{Quarto} document.
 }
 \author{
 Frank Harrell

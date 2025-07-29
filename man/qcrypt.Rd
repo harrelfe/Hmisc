@@ -4,16 +4,18 @@
 \alias{qcrypt}
 \title{qcrypt}
 \usage{
-qcrypt(obj, base, service = "R-keyring-service", file)
+qcrypt(obj, base, service = "R-keyring-service", file, pw)
 }
 \arguments{
 \item{obj}{an R object to write to disk and encrypt (if \code{base} is specified) or the base file name to read and uncrypted (if \code{base} is not specified).  Not used when \code{file} is given.}
 
 \item{base}{base file name when creating a file.  Not used when \code{file} is given.}
 
-\item{service}{a fairly arbitrary \code{keyring} service name.  The default is almost always OK unless you need to use different passwords for different files.}
+\item{service}{a fairly arbitrary \code{keyring} service name.  The default is almost always OK unless you need to use different passwords for different files.  \code{service} is ignored if \code{pw} is specified as an argument.}
 
 \item{file}{full name of file to encrypt or decrypt}
+
+\item{pw}{a single character string containing an actual password}
 }
 \value{
 (invisibly) the full encrypted file name if writing the file, or the restored R object if reading the file.  When decrypting a general file with \verb{file=}, the returned value is the full path to a temporary file containing the decrypted data.
@@ -33,6 +35,8 @@ To save an object in an encrypted file, specify the object as the first argument
 Alternatively, \code{qcrypt} can be used to encrypt or decrypt existing files of any type using the same password and keyring mechanism.  The former is done by specifying \code{file} that does not end in \code{'.encrypted'} and the latter is done by ending \code{file} with \code{'.encrypted'}.  When \code{file} does not contain a path it is assumed to be in the current working directory.  When a file is encrypted the original file is removed.  Files are decrypted into a temporary directory created by \code{tempdir()}, with the name of the file being the value of \code{file} with \code{'.encrypted'} removed.
 
 Interactive password provision works when running \code{R}, \code{Rscript}, \code{RStudio}, or \code{Quarto} but does not work when running \verb{R CMD BATCH}.  \code{getPass} fails under \code{RStudio} on Macs.
+
+It is also possible to pass the password as the \code{pw} argument.  This is only safe if running interactively and the password is defined by typing e.g. \code{pw <- 'whateverpassword'} in the console, then running the script interactively with \code{pw=pw} added to the \code{qcrypt} call.
 
 See \href{https://hbiostat.org/rflow/fcreate.html#sec-fcreate-secure}{R Workflow} for more information.
 }
@@ -54,6 +58,9 @@ fi contains the full unencrypted file name which is in a temporary directory
 # Encrypt without using a keyring
 qcrypt(x, 'x', service=NA)
 x <- qcrypt('x', service=NA)
+
+pw <- 'somepassword'     # run this in the console
+x <- qcrypt('x', pw=pw)  # interactively run this in a script
 }
 }
 \author{

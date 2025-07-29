@@ -12,12 +12,15 @@
 ##'
 ##' Interactive password provision works when running `R`, `Rscript`, `RStudio`, or `Quarto` but does not work when running `R CMD BATCH`.  `getPass` fails under `RStudio` on Macs.
 ##'
+##' It is also possible to pass the password as the `pw` argument.  This is only safe if running interactively and the password is defined by typing e.g. `pw <- 'whateverpassword'` in the console, then running the script interactively with `pw=pw` added to the `qcrypt` call.
+##'
 ##' See [R Workflow](https://hbiostat.org/rflow/fcreate.html#sec-fcreate-secure) for more information.
 ##' @title qcrypt
 ##' @param obj an R object to write to disk and encrypt (if `base` is specified) or the base file name to read and uncrypted (if `base` is not specified).  Not used when `file` is given.
 ##' @param base base file name when creating a file.  Not used when `file` is given.
-##' @param service a fairly arbitrary `keyring` service name.  The default is almost always OK unless you need to use different passwords for different files.
+##' @param service a fairly arbitrary `keyring` service name.  The default is almost always OK unless you need to use different passwords for different files.  `service` is ignored if `pw` is specified as an argument.
 ##' @param file full name of file to encrypt or decrypt
+##' @param pw a single character string containing an actual password
 ##' @return (invisibly) the full encrypted file name if writing the file, or the restored R object if reading the file.  When decrypting a general file with `file=`, the returned value is the full path to a temporary file containing the decrypted data.
 ##' @author Frank Harrell
 ##' @md
@@ -40,33 +43,37 @@
 ##' # Encrypt without using a keyring
 ##' qcrypt(x, 'x', service=NA)
 ##' x <- qcrypt('x', service=NA)
+##'
+##' pw <- 'somepassword'     # run this in the console
+##' x <- qcrypt('x', pw=pw)  # interactively run this in a script
 ##' }
-qcrypt <- function(obj, base, service='R-keyring-service', file) {
-  if(! is.na(service) && ! requireNamespace('keyring', quietly=TRUE))
-    stop('you must install the keyring package to use qcrypt with service != NA')
-  if(! requireNamespace('getPass', quietly=TRUE))
-    stop('you must install the getPass package to use qcrypt')
-  if(! requireNamespace('qs', quietly=TRUE))
-    stop('you must install the qs package to use qcrypt')
-if(! requireNamespace('safer', quietly=TRUE))
-    stop('you must install the safer package to use qcrypt')
-      
+qcrypt <- function(obj, base, service='R-keyring-service', file, pw) {
+  if(missing(pw)) {
+    if(! is.na(service) && ! requireNamespace('keyring', quietly=TRUE))
+      stop('you must install the keyring package to use qcrypt with service != NA')
+    if(! requireNamespace('getPass', quietly=TRUE))
+      stop('you must install the getPass package to use qcrypt')
+    if(! requireNamespace('qs', quietly=TRUE))
+      stop('you must install the qs package to use qcrypt')
+    if(! requireNamespace('safer', quietly=TRUE))
+      stop('you must install the safer package to use qcrypt')
 
-  if(is.na(service)) {
-    prompt <- if(! missing(base)) 'Define password for storing encrypted data: '
-    else 'Enter password previously used to store data: '
-    pw <- getPass::getPass(msg = prompt, noblank=TRUE)
-   } else {
-    pw <- tryCatch(keyring::key_get(service), error = function(...) '')
-
-    if(pw == '') {
+    if(is.na(service)) {
       prompt <- if(! missing(base)) 'Define password for storing encrypted data: '
       else 'Enter password previously used to store data: '
       pw <- getPass::getPass(msg = prompt, noblank=TRUE)
-      keyring::key_set_with_value(service, password=pw)
+      } else {
+      pw <- tryCatch(keyring::key_get(service), error = function(...) '')
+
+      if(pw == '') {
+        prompt <- if(! missing(base)) 'Define password for storing encrypted data: '
+        else 'Enter password previously used to store data: '
+        pw <- getPass::getPass(msg = prompt, noblank=TRUE)
+        keyring::key_set_with_value(service, password=pw)
+      }
+      pw <- keyring::key_get(service)
     }
-    pw <- keyring::key_get(service)
-   }
+  }
   tf <- tempfile()
 
   if(! missing(file)) {

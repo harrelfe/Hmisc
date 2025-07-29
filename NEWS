@@ -10,6 +10,7 @@ Changes in version 5.2-4 (2025-07-29)
    * pMedian: return NA if na.rm=FALSE but any NAs are present
    * dualSD: new function to compute SD separately for upper and lower half of distribution
    * km.quick: handle negative times; past calculations were wrong
+   * qcrypt: added pw argument
 
 Changes in version 5.2-3 (2025-03-16)
    * rcspline.plot: fixed to use vcov instead of $var for lrm.fit and coxph

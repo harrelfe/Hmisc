@@ -4,7 +4,7 @@
 \alias{dualSD}
 \title{Dual Standard Deviations}
 \usage{
-dualSD(x, na.rm = FALSE, nmin = 10, center = pMedian(x))
+dualSD(x, na.rm = FALSE, nmin = 10, center = xbar)
 }
 \arguments{
 \item{x}{a numeric vector}
@@ -13,13 +13,13 @@ dualSD(x, na.rm = FALSE, nmin = 10, center = pMedian(x))
 
 \item{nmin}{the minimum number of non-\code{NA} obesrvations that must be present for two SDs to be computed.  If the mumber of non-missing values falls below \code{nmin}, the regular SD is duplicated in the result.}
 
-\item{center}{center point for making the two subsets}
+\item{center}{center point for making the two subsets.  The sample mean is used to compute the two SDs no matter what is specified for \code{center}.}
 }
 \value{
 a 2-vector of SDs with names \code{bottom} and \code{top}
 }
 \description{
-Computes one standard deviation for the lower half of the distribution of a numeric vector and another SD for the upper half.  By default the center of the distribution for purposes of splitting into "halves" is the pseudo-median.  The user may override this with \code{center}.  When splitting into halves, observations equal to the \code{center} value are included in both subsets.
+Computes one standard deviation for the lower half of the distribution of a numeric vector and another SD for the upper half.  By default the center of the distribution for purposes of splitting into "halves" is the mean.  The user may override this with \code{center}.  When splitting into halves, observations equal to the \code{center} value are included in both subsets.
 }
 \details{
 The purpose of dual SDs is to describe variability for asymmetric distributions.  Symmetric distributions are also handled, though slightly less efficiently than a single SD does.
@@ -36,7 +36,7 @@ s1
 s2
 quantile(y, c(0.025, 0.975))
 mean(y) + 1.96 * c(-1, 1) * s1
-pMedian(y) + 1.96 * c(- s2['bottom'], s2['top'])
+mean(y) + 1.96 * c(- s2['bottom'], s2['top'])
 c(mean=mean(y), pseudomedian=pMedian(y), median=median(y))
 }
 \seealso{

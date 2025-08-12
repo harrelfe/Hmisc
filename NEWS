@@ -1,4 +1,4 @@
-Changes in version 5.2-4 (2025-07-29)
+Changes in version 5.2-4 (2025-08-12)
    * xless: improved by using capture.output which hopefully won't leave so many hanging sink()s
    * describe: incorporated this fix: https://github.com/harrelfe/Hmisc/pull/194, thanks Cole Beck
    * Import viridisLite instead of viridis; thanks @oliveroy https://github.com/harrelfe/Hmisc/pull/192/

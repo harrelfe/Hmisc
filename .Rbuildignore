@@ -1,1 +1,18 @@
-/Users/harrelfe/Library/Mobile Documents/com~apple~CloudDocs/dotfiles/.R/.Rbuildignore
+copyright
+www
+\.git
+\.gitignore
+src/\.gitignore
+\.gitattributes
+\.Rhistory
+R/\.Rhistory
+tests/\.Rhistory
+\.Rproj\.user
+.*.Rproj
+
+
+^.*\.Rproj$
+^\.Rproj\.user$
+
+publish
+

@@ -47,6 +47,12 @@
 ##' first (and only) list element rather than the list if there is only one
 ##' element.
 ##'
+##' When `onecore` returns a `data.table`, `runParallel` simplifies all this and merely
+##' rbinds all the per-core data tables into one large data table.  In that case when you
+##' have `onecore` include a column containing a simulation number, it is wise to prepend
+##' that number with the core number so that you will have unique simulation IDs when
+##' all the cores' results are combined.
+##'
 ##' See [here](https://hbiostat.org/rflow/parallel.html) for examples.
 ##'
 ##' @title runParallel
@@ -102,6 +108,11 @@ runParallel <- function(onecore, reps, seed=round(runif(1, 0, 10000)),
   cat('\nRun time:', format(etime - stime), 'using', cores, 'cores\n')
   ## Separately for each element of each list in w, stack the results so
   ## the use can treat them as if from a single run
+  ## If the result of onecore is a data table, just rbind all the data tables
+  ## The user may want to concatenate the core number to the simulation number in that case
+  
+  if(data.table::is.data.table(v1)) return(data.table::rbindlist(v))
+
   m <- length(v1)   # number of elements in a per-core list
   R <- vector('list', m)
   names(R) <- names(v1)

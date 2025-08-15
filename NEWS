@@ -1,4 +1,4 @@
-Changes in version 5.2-4 (2025-08-12)
+Changes in version 5.2-4 (2025-08-15)
    * xless: improved by using capture.output which hopefully won't leave so many hanging sink()s
    * describe: incorporated this fix: https://github.com/harrelfe/Hmisc/pull/194, thanks Cole Beck
    * Import viridisLite instead of viridis; thanks @oliveroy https://github.com/harrelfe/Hmisc/pull/192/
@@ -11,6 +11,7 @@ Changes in version 5.2-4 (2025-08-12)
    * dualSD: new function to compute SD separately for upper and lower half of distribution
    * km.quick: handle negative times; past calculations were wrong
    * qcrypt: added pw argument
+   * runParallel: when user-provided `onecore` function returns a data.table, the results over all the cores are merely rbind'd into a large data.table
 
 Changes in version 5.2-3 (2025-03-16)
    * rcspline.plot: fixed to use vcov instead of $var for lrm.fit and coxph

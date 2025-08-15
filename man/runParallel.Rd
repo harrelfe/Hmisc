@@ -80,6 +80,12 @@ onecore produces only one list element.  The default returns the
 first (and only) list element rather than the list if there is only one
 element.
 
+When \code{onecore} returns a \code{data.table}, \code{runParallel} simplifies all this and merely
+rbinds all the per-core data tables into one large data table.  In that case when you
+have \code{onecore} include a column containing a simulation number, it is wise to prepend
+that number with the core number so that you will have unique simulation IDs when
+all the cores' results are combined.
+
 See \href{https://hbiostat.org/rflow/parallel.html}{here} for examples.
 }
 \author{

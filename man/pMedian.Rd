@@ -4,27 +4,42 @@
 \alias{pMedian}
 \title{pMedian}
 \usage{
-pMedian(x, na.rm = FALSE)
+pMedian(
+  x,
+  na.rm = FALSE,
+  conf.int = 0,
+  B = 1000,
+  type = c("percentile", "bca")
+)
 }
 \arguments{
 \item{x}{a numeric vector}
 
 \item{na.rm}{set to \code{TRUE} to exclude \code{NA}s before computing the pseudomedian}
+
+\item{conf.int}{confidence level, defaulting to 0 so that no confidence limits are computed.  Set to a number between 0 and 1 to compute bootstrap confidence limits}
+
+\item{B}{number of bootstrap samples if \code{conf.int > 0}}
+
+\item{type}{type of bootstrap interval, defaulting to \code{'percentile'}; may also be \code{'bca'}}
 }
 \value{
-a scalar numeric value
+a scalar numeric value if \code{conf.int = 0}, or a 3-vector otherwise, with named elements \verb{estimate, lower, upper}.  If the number of non-missing values is less than 5, \code{NA} is returned for both lower and upper limits.
 }
 \description{
 Pseudomedian
 }
 \details{
-Uses fast Fortran code to compute the pseudomedian of a numeric vector.  The pseudomedian is the median of all possible midpoints of two observations.  The pseudomedian is also called the Hodges-Lehmann one-sample estimator.  The Fortran code is was originally from JF Monahan, and was converted to C++ in the \code{DescTools} package.  It has been converted to Fortran 2018 here.
+Uses fast Fortran code to compute the pseudomedian of a numeric vector.  The pseudomedian is the median of all possible midpoints of two observations.  The pseudomedian is also called the Hodges-Lehmann one-sample estimator.  The Fortran code is was originally from JF Monahan, and was converted to C++ in the \code{DescTools} package.  It has been converted to Fortran 2018 here.  Bootstrap confidence intervals are optionally computed.
 
-If n > 250,000 a random sample of 250,000 values of \code{x} is used to limit execution time.
+If n > 250,000 a random sample of 250,000 values of \code{x} is used to limit execution time.  For n > 1,000 only the percentile bootstrap confidence interval is computed.
+
+Bootstrapping uses the Fortran subroutine directly, for efficiency.
 }
 \examples{
 x <- c(1:4, 10000)
 pMedian(x)
+pMedian(x, conf.int=0.95)
 # Compare with brute force calculation and with wilcox.test
 w <- outer(x, x, '+')
 median(w[lower.tri(w, diag=TRUE)]) / 2

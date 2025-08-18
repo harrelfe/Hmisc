@@ -21,10 +21,10 @@ pMedian(
 
 \item{B}{number of bootstrap samples if \code{conf.int > 0}}
 
-\item{type}{type of bootstrap interval, defaulting to \code{'percentile'}; may also be \code{'bca'}}
+\item{type}{type of bootstrap interval, defaulting to \code{'percentile'} for n >= 150 or \code{'bca'} for n < 150}
 }
 \value{
-a scalar numeric value if \code{conf.int = 0}, or a 3-vector otherwise, with named elements \verb{estimate, lower, upper}.  If the number of non-missing values is less than 5, \code{NA} is returned for both lower and upper limits.
+a scalar numeric value if \code{conf.int = 0}, or a 3-vector otherwise, with named elements \verb{estimate, lower, upper} and attribute \code{type}.  If the number of non-missing values is less than 5, \code{NA} is returned for both lower and upper limits.
 }
 \description{
 Pseudomedian
@@ -46,5 +46,5 @@ median(w[lower.tri(w, diag=TRUE)]) / 2
 wilcox.test(x, conf.int=TRUE)
 }
 \seealso{
-\url{https://dl.acm.org/toc/toms/1984/10/3/}, \url{https://www4.stat.ncsu.edu/~monahan/jul10/}
+\url{https://dl.acm.org/toc/toms/1984/10/3/}, \url{https://www4.stat.ncsu.edu/~monahan/jul10/}, \url{https://fharrell.com/post/aci/}
 }

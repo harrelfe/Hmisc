@@ -538,7 +538,7 @@ formatdescribeSingle <-
       w <- strwrap(paste(w, collapse=', '), width=wide)
       R <- c(R, '', w)
     }
-    if(length(x$roundedTo))
+    if(length(x$roundedTo) && x$roundedTo != 0)
       R <- c(R, '',
              paste('For the frequency table, variable is rounded to the nearest',
                    format(x$roundedTo, scientific=3)))

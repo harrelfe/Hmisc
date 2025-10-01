@@ -46,5 +46,5 @@ median(w[lower.tri(w, diag=TRUE)]) / 2
 wilcox.test(x, conf.int=TRUE)
 }
 \seealso{
-\url{https://dl.acm.org/toc/toms/1984/10/3/}, \url{https://www4.stat.ncsu.edu/~monahan/jul10/}, \url{https://fharrell.com/post/aci/}
+\url{https://dl.acm.org/toc/toms/1984/10/3/}, \url{https://www4.stat.ncsu.edu/~monahan/jul10/}, \url{https://www.fharrell.com/post/aci/}
 }

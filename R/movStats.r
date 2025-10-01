@@ -45,7 +45,7 @@
 ##' @param ordsurv set to TRUE to include ordinal regression estimates of incidence at `times`, using the `rms` package `adapt_orm` and `survest.orm` functions
 ##' @param lrm_args a `list` of optional arguments to pass to `lrm` when `lrm=TRUE`, e.g., `list(maxit=20)`
 ##' @param family link function for ordinal regression (see `rms::orm`)
-##' @param k number of knots to use for ols, lrm,  qreg restricted cubic splines.  Linearity is forced for binary `y` when the minimum of the number of events and number of non-events is below 10 for a by-group.  For `ordsurv=TRUE` is the maximum number of knots tried and is passed as argument `maxk` to [rms::adapt_orm()].
+##' @param k number of knots to use for ols, lrm,  qreg restricted cubic splines.  Linearity is forced for binary `y` when the minimum of the number of events and number of non-events is below 10 for a by-group.  For `ordsurv=TRUE` is the maximum number of knots tried and is passed as argument `maxk` to the `rms` `adapt_orm` function.
 ##' @param tau quantile numbers to estimate with quantile regression
 ##' @param melt set to TRUE to melt data table and derive Type and Statistic
 ##' @param data 
@@ -348,7 +348,8 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
     }
 
     if(ordsurv) {
-      f <- rms::adapt_orm(x, rms::Ocens(y, ifelse(y2 == 1, y, Inf)), maxk=k)
+      aorm <- getFromNamespace('adapt_orm', 'rms')
+      f <- aorm(x, rms::Ocens(y, ifelse(y2 == 1, y, Inf)), maxk=k)
       for(ti in times) {
         inc     <- 1 - rms::survest(f, dat, times=ti, conf.int=0)$surv
         newname <- paste0('orm ', ti, '-', tunits)

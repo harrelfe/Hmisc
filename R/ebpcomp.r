@@ -179,7 +179,9 @@ spikecomp <- function(x, method=c('tryactual', 'simple', 'grid'),
   ux       <- sgn(ux)
   uxinside <- if(lf) ux[ux > lims[1]] else ux
   if(rt) uxinside <- uxinside[uxinside < lims[2]]
-  p <- sgn(pretty(uxinside, 100))
+  p    <- pretty(uxinside, 100)
+  psgn <- sgn(p)
+  if(psgn[1] != psgn[2]) p <- psgn  
   r <- range(p)
   if(lf && r[1] <= lims[1]) {
     p <- p[p > lims[1]]

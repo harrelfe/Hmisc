@@ -1,6 +1,6 @@
 Package: Hmisc
 Version: 5.2-4
-Date: 2025-08-17
+Date: 2025-09-30
 Title: Harrell Miscellaneous
 Authors@R: 
     c(person(given = "Frank E",
@@ -28,4 +28,4 @@ License: GPL (>= 2)
 LazyLoad: Yes
 URL: https://hbiostat.org/R/Hmisc/
 Encoding: UTF-8
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3

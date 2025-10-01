@@ -16,7 +16,7 @@
 #' @return a scalar numeric value if `conf.int = 0`, or a 3-vector otherwise, with named elements `estimate, lower, upper` and attribute `type`.  If the number of non-missing values is less than 5, `NA` is returned for both lower and upper limits.
 #' @export
 #' @md
-#' @seealso <https://dl.acm.org/toc/toms/1984/10/3/>, <https://www4.stat.ncsu.edu/~monahan/jul10/>, <https://fharrell.com/post/aci/>
+#' @seealso <https://dl.acm.org/toc/toms/1984/10/3/>, <https://www4.stat.ncsu.edu/~monahan/jul10/>, <https://www.fharrell.com/post/aci/>
 #' @examples
 #' x <- c(1:4, 10000)
 #' pMedian(x)

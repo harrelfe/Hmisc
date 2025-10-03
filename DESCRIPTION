@@ -1,20 +1,20 @@
 Package: Hmisc
 Version: 5.2-4
-Date: 2025-09-30
+Date: 2025-10-02
 Title: Harrell Miscellaneous
 Authors@R: 
-    c(person(given = "Frank E",
-           family = "Harrell Jr",
-           role = c("aut", "cre"),
-           email = "fh@fharrell.com",
-           comment = c(ORCID = "0000-0002-8271-5493")),
-			person(given = "Charles",
-			       family = "Dupont",
-						 role = "ctb",
-						 email = "charles.dupont@vumc.org",
-						 comment = "contributed several functions and maintains latex functions"))
-Author: Frank E Harrell Jr <fh@fharrell.com>
-Maintainer: Frank E Harrell Jr <fh@fharrell.com>
+    c(person(given   = "Frank E",
+             family  = "Harrell Jr",
+             role    = c("aut", "cre"),
+             email   = "fh@fharrell.com",
+             comment = c(ORCID = "0000-0002-8271-5493")),
+      person(given   = "Cole",
+             family  = "Beck",
+             role    = c("ctb"),
+             email   = "cole.beck@vumc.org" ),
+			person(given   = "Charles",
+			       family  = "Dupont",
+						 role    = "ctb") )
 Depends: R (>= 4.2.0)
 Imports: methods, ggplot2, cluster, rpart, nnet, foreign, gtable, grid, gridExtra, data.table, htmlTable (>= 1.11.0), viridisLite, htmltools, base64enc, colorspace, rmarkdown, knitr, Formula
 Suggests: survival, qreport, acepack, chron, rms, mice, rstudioapi, tables, plotly (>= 4.5.6), rlang, VGAM, leaps, pcaPP, digest, parallel, polspline, abind, kableExtra, rio, lattice, latticeExtra, gt, sparkline, jsonlite, htmlwidgets, qs, getPass, keyring, safer, htm2txt, boot

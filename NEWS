@@ -1,3 +1,6 @@
+Changes in version 5.2-5 (2025-10-24)
+   * num.intercepts: handled case where there is an info.matrix in the fit but it had only one intercept and was not partitioned; also cleaned up logic
+
 Changes in version 5.2-4 (2025-10-02)
    * xless: improved by using capture.output which hopefully won't leave so many hanging sink()s
    * describe: incorporated this fix: https://github.com/harrelfe/Hmisc/pull/194, thanks Cole Beck

@@ -2,19 +2,23 @@ num.intercepts <- function(fit, type=c('fit', 'var', 'coef'))
 {
   type <- match.arg(type)
   nrp <- fit$non.slopes
-  if(!length(nrp))  {
+  if(! length(nrp))  {
     nm1 <- names(fit$coef)[1]
-    nrp <- 1*(nm1=="Intercept" | nm1=="(Intercept)")
+    nrp <- 1 * (nm1 == "Intercept" | nm1 == "(Intercept)")
   }
   if(type == 'fit') return(nrp)
-  v <- fit$var
-  if(! length(v)) {
-    v <- fit$info.matrix
-    attr(v, 'intercepts') <- if(length(v) && length(v$ab)) nrow(v$ab)
+
+  w <- if(type == 'coef') fit$coefficients else {
+    v <- fit[['var']]
+    if(! length(v)) {
+      v <- fit$info.matrix
+      # If there is only one intercept for lrm or orm, info matrix may be non-partitioned
+      if(length(v) && ('ab' %in% names(v))) attr(v, 'intercepts') <- nrow(v$ab)
+    }
+    v
   }
-  w <- if(type == 'var') fit$var else fit$coefficients
-  i <- attr(w, 'intercepts')
+  i  <- attr(w, 'intercepts')
   li <- length(i)
-  if(!li) return(nrp)
+  if(! li) return(nrp)
   if(li == 1 && i == 0) 0 else li
 }

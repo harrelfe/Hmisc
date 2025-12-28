@@ -1,6 +1,6 @@
 Package: Hmisc
 Version: 5.2-5
-Date: 2025-10-02
+Date: 2025-12-28
 Title: Harrell Miscellaneous
 Authors@R: 
     c(person(given   = "Frank E",

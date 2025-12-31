@@ -1431,12 +1431,12 @@ html_describe_con <- function(x, sparkwidth=200,
   ## If the variable was transformed, also put in the leftmost tooltip
   ## the name of the transformation
   
-  g <- function(x) {
-    trans <- x$trans
+  g <- function(u) {
+    trans <- u$trans
     lo <- if(length(trans))
             paste0('Transformation for<br>histogram:', trans[[1]])
     
-    gv <- x$gridvalues
+    gv <- u$gridvalues
     val <- gsub('; ', '<br>', gv$values)
     spikespark(val, gv$frequency, ttlow=lo, w=sparkwidth, cumulative=TRUE,
                xpre='')

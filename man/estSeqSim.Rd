@@ -30,7 +30,7 @@ Simulates sequential clinical trials.  Looks are done sequentially at observatio
 }
 \examples{
 if (requireNamespace("rms", quietly = TRUE)) {
-  # Run 100 simulations, 5 looks, 2 true parameter values
+  # Run 50 simulations, 5 looks, 2 true parameter values
   # Total simulation time: 2s
   lfit <- function(x, y) {
   f <- rms::lrm.fit(x, y)
@@ -51,7 +51,7 @@ if (requireNamespace("rms", quietly = TRUE)) {
   set.seed(1)
   est <- estSeqSim(c(0, log(0.7)), looks=c(50, 75, 95, 100, 200),
                     gendat=gdat,
-                    fitter=lfit, nsim=100)
+                    fitter=lfit, nsim=50)
   head(est)
 }
 }

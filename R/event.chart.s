@@ -397,7 +397,7 @@ event.chart <-
   if (x.axis == "auto") {
     if (x.julian == FALSE) {
       x.axis.auto.at <-
-        round(seq(x.axis.left, x.axis.right, length = 5))
+        round(seq(x.axis.left, x.axis.right, length.out= 5))
       x.axis.auto.labels <-
         paste(month.day.year(x.axis.auto.at, origin = date.orig)$month, "/",
               month.day.year(x.axis.auto.at, origin = date.orig)$day, "/",

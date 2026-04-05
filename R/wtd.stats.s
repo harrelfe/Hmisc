@@ -240,7 +240,7 @@ wtd.loess.noiter <- function(x, y, weights=rep(1,n),
          },
          evaluate={
            r <- range(x, na.rm=na.rm)
-           approx(x, y, xout=seq(r[1], r[2], length=evaluation))
+           approx(x, y, xout=seq(r[1], r[2], length.out=evaluation))
          })
 }
 

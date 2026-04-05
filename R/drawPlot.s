@@ -61,7 +61,7 @@ drawPlot <- function(..., xlim=c(0,1), ylim=c(0,1), xlab='', ylab='',
     redraw <- TRUE
     
     if(isfun) {
-      x <- seq(xlim[1], xlim[2], length=evaluation)
+      x <- seq(xlim[1], xlim[2], length.out=evaluation)
       pts <- list(x=as.numeric(x), y=as.numeric(type(x)))
       lines(pts, lty=lty, lwd=lwd, col=col)
     }
@@ -90,7 +90,7 @@ drawPlot <- function(..., xlim=c(0,1), ylim=c(0,1), xlab='', ylab='',
         for(i in 1:degree) x[,i] <- pts$x^i
         f <- lm.fit.qr.bare(x, pts$y)
         x <- matrix(NA, nrow=evaluation, ncol=degree)
-        x[,1] <- seq(min(pts$x),max(pts$x), length=evaluation)
+        x[,1] <- seq(min(pts$x),max(pts$x), length.out=evaluation)
         if(degree > 1)
           for(i in 1:degree) x[,i] <- x[,1]^i
         
@@ -102,7 +102,7 @@ drawPlot <- function(..., xlim=c(0,1), ylim=c(0,1), xlab='', ylab='',
 
       if(type == 'loess') {
         w <- lowess(pts$x, pts$y, f=.25)
-        pts <- approx(w, xout=seq(min(pts$x), max(pts$x), length=evaluation))
+        pts <- approx(w, xout=seq(min(pts$x), max(pts$x), length.out=evaluation))
         if(redraw) lines(pts, lty=lty, lwd=lwd, col=col)
       }
       
@@ -117,7 +117,7 @@ drawPlot <- function(..., xlim=c(0,1), ylim=c(0,1), xlab='', ylab='',
         delta <- diff(pts$x[-2])/2
         htavg <- sum(pts$y[-2])/2
         htmax <- pts$y[2]
-        x <- seq(xlim[1], xlim[2], length=evaluation)
+        x <- seq(xlim[1], xlim[2], length.out=evaluation)
         b2 <- delta^2 / log(htmax/htavg)
         y <- htmax * exp(-(x-mu)^2/b2)
         i <- y > 1e-4
@@ -192,10 +192,10 @@ drawPlot <- function(..., xlim=c(0,1), ylim=c(0,1), xlab='', ylab='',
     curves[[i]] <- if(!key || isfun) w$points
     else switch(w$type,
                 step = approx(w$points,
-                  xout=seq(min(w$points$x), max(w$points$x), length=50),
+                  xout=seq(min(w$points$x), max(w$points$x), length.out=50),
                   method='constant', f=0),
                 linear = approx(w$points,
-                  xout=seq(min(w$points$x), max(w$points$x), length=50)),
+                  xout=seq(min(w$points$x), max(w$points$x), length.out=50)),
                 w$points)
     
     label[i] <- w$label
@@ -257,7 +257,7 @@ bezier <- function(x, y, xlim, evaluation=100) {
   
   n <- length(x)
   X <- Y <- single(evaluation)
-  Z <- seq(0, 1, length=evaluation)
+  Z <- seq(0, 1, length.out=evaluation)
   X[1] <- x[1];
   X[evaluation] <- x[n]
   Y[1] <- y[1];

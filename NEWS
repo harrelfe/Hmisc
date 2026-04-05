@@ -1,3 +1,6 @@
+Changes in version 5.2-6 (2026-04-05)
+   * Changed all length= to length.out= in seq() calls to avoid warnings
+
 Changes in version 5.2-5 (2026-01-08)
    * num.intercepts: handled case where there is an info.matrix in the fit but it had only one intercept and was not partitioned; also cleaned up logic
 

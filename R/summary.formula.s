@@ -1254,14 +1254,14 @@ dotchart2 <-
       mgp.axis(1, axistitle=xlab, at=axisat, labels=axislabels)
     
     delt <- ( - (tusr[4] - tusr[3]))/den
-    ypos <- seq(tusr[4], by = delt, length = ndata)
+    ypos <- seq(tusr[4], by = delt, length.out= ndata)
   }
   else {
     if(!add)
       mgp.axis(2, axistitle=xlab, at=axisat, labels=axislabels)
     
     delt <- (tusr[2] - tusr[1])/den
-    ypos <- seq(tusr[1], by = delt, length = ndata)
+    ypos <- seq(tusr[1], by = delt, length.out= ndata)
   }
   
   if(!missing(groups)) {

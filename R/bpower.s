@@ -49,7 +49,7 @@ ballocation <- function(p1, p2, n, alpha=.05)
          fraction.group1.min.var.logodds=1-f.minvar.diff)
 
   if(!missing(n)) {
-    possf <- seq(.001,.999,length=1000)
+    possf <- seq(.001,.999,length.out=1000)
     pow <- bpower(p1, p2, n1=n*possf, n2=n*(1-possf), alpha=alpha)
     ## fun <- function(f, n, p1, p2, alpha) bpower(p1, p2, n1=f*n, n2=(1-f)*n, alpha=alpha)
     ## f.maxpow <- optimize(fun, lower=.01, upper=.99, maximum=T,

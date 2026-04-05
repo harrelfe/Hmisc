@@ -7,7 +7,7 @@ na.delete <- function(frame)
   y.detail <- na.detail.response(frame)
   n <- length(frame)
   omit <- FALSE
-  vars <- seq(length = n)
+  vars <- seq(length.out= n)
   nmiss <- rep(0,n)
   storage.mode(nmiss) <- "integer"
   for(j in vars) {

@@ -261,10 +261,10 @@ areg.boot <- function(x, data, weights, subset, na.action=na.delete,
     fit[[i]] <-
       if(i==1)
         approxExtrap(trans[,1],y,
-                     xout=seq(xlim[1,i],xlim[2,i],length=neval[i]))
+                     xout=seq(xlim[1,i],xlim[2,i],length.out=neval[i]))
       else
         approxExtrap(Xo[,i], trans[,i],
-                     xout=seq(xlim[1,i],xlim[2,i],length=neval[i]))
+                     xout=seq(xlim[1,i],xlim[2,i],length.out=neval[i]))
   }
 
   if(max(neval) > evaluation) 
@@ -299,7 +299,7 @@ areg.boot <- function(x, data, weights, subset, na.action=na.delete,
     for(i in 1:k)
       boot[1:neval[i],b,i] <-
         if(i==1) approxExtrap(trans[,1],X[,1],
-                              xout=seq(xlim[1,i],xlim[2,i],length=neval[i]))$y
+                              xout=seq(xlim[1,i],xlim[2,i],length.out=neval[i]))$y
         else
           approxExtrap(X[,i], trans[,i],
                        xout=seq(xlim[1,i],xlim[2,i],
@@ -744,7 +744,7 @@ Quantile <- function(object, ...) UseMethod("Quantile")
 Mean.areg.boot <- function(object, evaluation=200, ...)
 {
   r <- range(object$linear.predictors)
-  lp <- seq(r[1], r[2], length=evaluation)
+  lp <- seq(r[1], r[2], length.out=evaluation)
   res <- object$residuals
   ytrans <- object$fit[[1]]
   asing <- function(x)x

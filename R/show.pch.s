@@ -37,7 +37,7 @@ character.table <- function(font=1)
   v <- 40:377
   v <- v[v %% 100 < 80 & v %% 10 < 8]
   opar <- par(mar = c(5, 5, 4, 2) + 0.1, xpd=NA)
-  plot(0:7, seq(4, 31, length = 8), type = "n", axes = FALSE, xlab = "",
+  plot(0:7, seq(4, 31, length.out= 8), type = "n", axes = FALSE, xlab = "",
        ylab = "")
   k <- 1
   for(i in 4:31)

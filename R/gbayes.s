@@ -32,7 +32,7 @@ plot.gbayes <- function(x, xlim, ylim, name.stat='z', ...) {
   if(missing(xlim))
     xlim <- obj$mean.post + c(-6,6)*sqrt(obj$var.post)
 
-  x <- seq(xlim[1], xlim[2], length=200)
+  x <- seq(xlim[1], xlim[2], length.out=200)
   y1 <- dnorm(x,obj$mean.prior,sqrt(obj$var.prior))
   y2 <- dnorm(x,obj$mean.post, sqrt(obj$var.post))
   plot(x, y1, xlab=name.stat, ylab='Density',type='l',lty=1,

@@ -82,12 +82,12 @@ rcspline.eval <- function(x, knots=NULL, nk=5, inclx=FALSE, knots.only=FALSE,
       else {
         if(nxu <= nke) knots <- xu
         else {
-          p <- if(nke == 2) seq(.5, 1.0 - outer, length=nke)
+          p <- if(nke == 2) seq(.5, 1.0 - outer, length.out=nke)
           else
-            seq(outer, 1.0 - outer, length=nke)
+            seq(outer, 1.0 - outer, length.out=nke)
           knots <- quantile(xx, p)
           if(length(unique(knots)) < min(nke, 3)) {
-            knots <- quantile(xx, seq(outer, 1.0 - outer, length=2 * nke))
+            knots <- quantile(xx, seq(outer, 1.0 - outer, length.out=2 * nke))
             if(length(firstknot) && length(unique(knots)) < 3) {
               midval <- if(length(firstknot) && length(lastknot))
                 (firstknot + lastknot) / 2. else median(xx)

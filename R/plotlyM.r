@@ -174,7 +174,7 @@ plotlyM <- function(data, x=~x, y=~y, xhi=~xhi, yhi=~yhi, htext=NULL,
     g  <- as.factor(g)
     d  <- data.frame(x, y, g)
     Dp <- NULL
-    xgrid <- seq(min(x, na.rm=TRUE), max(x, na.rm=TRUE), length=150)
+    xgrid <- seq(min(x, na.rm=TRUE), max(x, na.rm=TRUE), length.out=150)
     dx <- data.frame(x = xgrid)
     for(gv in levels(g)) {
       f  <- fitter(y ~ x, data=subset(d, g == gv))

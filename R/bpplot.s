@@ -14,7 +14,7 @@ bpplot <- function(..., name = TRUE,
   }
   
   n <- length(all.x)
-  centers <- seq(from = 0, by = 1.2, length = n)
+  centers <- seq(from = 0, by = 1.2, length.out= n)
   ymax <- max(sapply(all.x, max, na.rm=TRUE))  ## na.rm=T FEH
   ymin <- min(sapply(all.x, min, na.rm=TRUE))
   xmax <- max(centers) + 0.5

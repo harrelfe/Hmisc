@@ -3,7 +3,7 @@ rm.boot <- function(time, y, id=seq(along=time), subset=TRUE,
                     bootstrap.type=c('x fixed','x random'),
                     nk=6, knots, B=500, smoother=supsmu, 
                     xlab, xlim, ylim=range(y), 
-                    times=seq(min(time),max(time),length=100),
+                    times=seq(min(time),max(time),length.out=100),
                     absorb.subject.effects=FALSE, rho=0,
                     cor.pattern=c('independent','estimate'), ncor=10000,
                     ...)

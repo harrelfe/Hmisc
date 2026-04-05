@@ -24,8 +24,8 @@ confbar <- function(at, est, se, width,
     stop("q and col must have same length")
   
   q <- c(1-rev(q), .5, q)
-  ##qe <- seq(.01, .99, length=n)
-  ##col <- seq(.8,.01, length=n/2)
+  ##qe <- seq(.01, .99, length.out=n)
+  ##col <- seq(.8,.01, length.out=n/2)
   col <- c(rev(col), col)
   w <- width/2
   if(type=="v") {

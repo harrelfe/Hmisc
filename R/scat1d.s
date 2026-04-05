@@ -414,7 +414,7 @@ histSpike <-
       x <- as.numeric(names(f))
     } else {
       ncut <- nint + 1
-      if(! length(bins)) bins <- seq(xlim[1], xlim[2], length = ncut)
+      if(! length(bins)) bins <- seq(xlim[1], xlim[2], length.out= ncut)
       delta <- (bins[2] - bins[1]) / 2
       f <- table(cut(x, c(bins[1] - delta, bins)))
       

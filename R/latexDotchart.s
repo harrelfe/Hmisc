@@ -129,7 +129,7 @@ latexDotchart <-
   den <- ndata + 2 * length(glabels) + 1
 
   delt <- ( - (yl[2] - yl[1]))/den
-  ypos <- seq(yl[2], by = delt, length = ndata)
+  ypos <- seq(yl[2], by = delt, length.out= ndata)
 
   if(! missing(groups)) {
     ypos1 <- ypos + 2 * delt * (if(length(groups)>1)

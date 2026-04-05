@@ -192,7 +192,7 @@ areg <- function(x, y, xtype=NULL, ytype=NULL, nk=4,
     
     if(!length(yinv)) {
       ## spline transformation, need coef to get inverse y transform
-      yy   <- seq(min(y), max(y), length=1000)
+      yy   <- seq(min(y), max(y), length.out=1000)
       tyy  <- ytrans(yy, coef=cof)
       yinv <- inverseFunction(yy, tyy)
       need2getinv <- TRUE

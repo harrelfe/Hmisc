@@ -148,7 +148,7 @@ rcspline.plot <- function(x, y, model=c("logistic","cox","ols"), xrange,
   }
 
   ## Evaluate xbeta for expanded x at desired range
-  xe <- seq(xrange[1], xrange[2], length=600)
+  xe <- seq(xrange[1], xrange[2], length.out=600)
   if(model == "cox")
     xx <- rcspline.eval(xe, knots, inclx=TRUE)
   else

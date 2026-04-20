@@ -1,8 +1,8 @@
 Package: Hmisc
 Version: 5.2-6
-Date: 2026-04-05
+Date: 2026-04-20
 Title: Harrell Miscellaneous
-Authors@R: 
+Authors@R:
     c(person(given   = "Frank E",
              family  = "Harrell Jr",
              role    = c("aut", "cre"),

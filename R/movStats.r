@@ -1,5 +1,5 @@
 ##' Moving Estimates Using Overlapping Windows
-##' 
+##'
 ##' Function to compute moving averages and other statistics as a function
 ##' of a continuous variable, possibly stratified by other variables.
 ##' Estimates are made by creating overlapping moving windows and
@@ -48,11 +48,11 @@
 ##' @param k number of knots to use for ols, lrm,  qreg restricted cubic splines.  Linearity is forced for binary `y` when the minimum of the number of events and number of non-events is below 10 for a by-group.  For `ordsurv=TRUE` is the maximum number of knots tried and is passed as argument `maxk` to the `rms` `adapt_orm` function.
 ##' @param tau quantile numbers to estimate with quantile regression
 ##' @param melt set to TRUE to melt data table and derive Type and Statistic
-##' @param data 
+##' @param data data frame or data table to analyze
 ##' @param pr defaults to no printing of window information.  Use `pr='plain'` to print in the ordinary way, `pr='kable` to convert the object to `knitr::kable` and print, or `pr='margin'` to convert to `kable` and place in the `Quarto` right margin.  For the latter two `results='asis'` must be in the chunk header.
 ##' @param data data.table or data.frame, default is calling frame
 ##' @return a data table, with attribute `infon` which is a data frame with rows corresponding to strata and columns `N`, `Wmean`, `Wmin`, `Wmax` if `stat` computed `N`.  These summarize the number of observations used in the windows.  If `varyeps=TRUE` there is an additional column `eps` with the computed per-stratum `eps`.  When `space='n'` and `xinc` is not given, the computed `xinc` also appears as a column.  An additional attribute `info` is a `kable` object ready for printing to describe the window characteristics.
-##' 
+##'
 movStats <- function(formula, stat=NULL, discrete=FALSE,
                      space=c('n', 'x'),
                      eps =if(space=='n') 15, varyeps=FALSE, nignore=10,
@@ -76,6 +76,8 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
     msmooth <- 'raw'
     movlab  <- ''
     }
+  else sform <- eval(bquote(y ~ rcs(x, .(k))))
+
   tsmooth <- match.arg(tsmooth)
   pr      <- match.arg(pr)
 
@@ -84,13 +86,10 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
   if(ols || qreg || lrm)
     if(! requireNamespace('rms', quietly=TRUE))
       stop('rms package must be installed if using ols, qreg, or lrm')
-  
+
   if(pr %in% c('kable', 'margin'))
     if(! requireNamespace('kableExtra', quietly=TRUE))
       stop('must install kableExtra package if pr is kable or margin')
-
-  envi <- .GlobalEnv
-  if(! discrete) assign('.knots.', k, envir=envi)
 
   mf   <- model.frame(formula, data=data)
   v    <- names(mf)
@@ -102,7 +101,7 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
     stop('loess, ols, qreg, lrm, orm do not apply when dependent variable has two columns')
   if(varyeps && space == 'x')
     stop('varyeps applies only to space="n"')
-  
+
   if(sec) {
     if(hare) if(! requireNamespace('polspline', quietly=TRUE))
                stop('polspline package must be installed if hare=TRUE')
@@ -148,11 +147,11 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
                 names(z) <- c(paste0(movlab, times, '-', tunits), 'N')
                 as.list(z)
               }
-             else 
+             else
               function(y) {
                 if(! length(y)) return(list(Mean=NA, Median=NA, Q1=NA, Q3=NA))
                 qu <- quantile(y, (1:3)/4)
-                
+
                 z <- list('Mean'   = mean(y),
                      'Median' = qu[2],
                      'Q1'     = qu[1],
@@ -181,9 +180,9 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
                    ncol=5 + needxinc,
                    dimnames=list(uby, c('N', 'Wmean', 'Wmin', 'Wmax',
                                         'eps', if(needxinc) 'xinc')))
-  
+
   if(discrete) xlev <- if(is.factor(X)) levels(X) else sort(unique(X))
-  
+
   for(by in uby) {
     j <- By == by
     if(sum(j) < nignore) {
@@ -238,7 +237,7 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
       if(lowesteps < eps) ep <- lowesteps
       info[by, 'eps'] <- ep
       }
-    
+
     if(discrete) m <- data.table::data.table(x, y, y2, tx=xv)
     else {
       s <- data.table::data.table(x, y, y2, xv)
@@ -297,7 +296,7 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
     }
 
     if(ols) {
-      f <- rms::ols(y ~ rms::rcs(x, .knots.), data=s)
+      f <- rms::ols(sform, data=s)
       pc <- predict(f, dat)
       w[, `OLS Mean` := pc]
     }
@@ -305,14 +304,14 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
     if(lrm) {
       f <- if(min(s[, sum(y == 1)], s[, sum(y == 0)]) < 10) f <- rms::lrm(y ~ x, data=s)
       else if(length(lrm_args))
-        do.call(rms::lrm, c(list(y ~ rms::rcs(x, .knots.), data=s), lrm_args))
-        else rms::lrm(y ~ rms::rcs(x, .knots.), data=s)
+        do.call(rms::lrm, c(list(sform, data=s), lrm_args))
+        else rms::lrm(sform, data=s)
       pc <- predict(f, dat, type='fitted')
       w[, 'LR Proportion' := pc]
     }
 
     if(orm) {
-      f <- rms::orm(y ~ rms::rcs(x, .knots.), data=s, family=family)
+      f <- rms::orm(sform, data=s, family=family)
       pc <- predict(f, dat, type='mean')
       w[, 'ORM Mean' := pc]
       if(length(tau)) {
@@ -328,7 +327,7 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
 
     if(qreg)
       for(ta in tau) {
-        f  <- rms::Rq(y ~ rms::rcs(x, .knots.), tau=ta, data=s)
+        f  <- rms::Rq(sform, tau=ta, data=s)
         pc <- predict(f, dat)
         w[, qrest := pc]
         cta <- qformat(ta)
@@ -390,13 +389,13 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
       }
       R[, incidence := addlab(incidence)]
     }
-    
+
     R[, Type      := sub (' .*', '', Statistic)]
     R[, Statistic := sub ('.* ', '', Statistic)]
     R[, Type      := gsub('~', ' ',  Type)]
     R[, Statistic := gsub('~', ' ',  Statistic)]
   }
-  
+
   if('eps' %in% colnames(info) && all(is.na(info[, 'eps'])))
     info <- info[, setdiff(colnames(info), 'eps'), drop=FALSE]
   if(! bythere) row.names(info) <- NULL
@@ -422,7 +421,7 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
 
   if(pr == 'margin' && ! requireNamespace('qreport', quietly=TRUE))
     stop('must install qreport package when specifying pr=margin')
-  
+
   switch(pr,
          plain  = print(info),
          kable  = cat(info),
@@ -430,7 +429,7 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
 
   attr(R, 'infon') <- infon
   attr(R, 'info')  <- info
-  
+
   R
   }
 

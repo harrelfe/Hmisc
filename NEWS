@@ -1,5 +1,6 @@
-Changes in version 5.2-6 (2026-04-05)
+Changes in version 5.2-6 (2026-04-20)
    * Changed all length= to length.out= in seq() calls to avoid warnings
+   * Improved movStats to avoid global variable for knots
 
 Changes in version 5.2-5 (2026-01-08)
    * num.intercepts: handled case where there is an info.matrix in the fit but it had only one intercept and was not partitioned; also cleaned up logic
@@ -248,7 +249,7 @@ Changes in version 4.4-2 (2020-11-25)
    * added estSeqSim and gbayesSeqSim functions
    * ggfreqScatter: stopped varying alpha and just varied color, as alpha collided with the color scheme
    * histSpike: added minimal=TRUE and bins arguments
-	 
+
 Changes in version 4.4-1 (2020-08-07)
    * popower: added approximate S.E. of log(OR) in results
    * propsPO: new function for exploring proportional odds
@@ -271,7 +272,7 @@ Changes in version 4.4-0 (2020-03-22)
    * plotlyM: fixed bug where need to unlist if only one graph produced
    * plotlyM: added ECDF support through fitter='ecdf'
    * keepHattrib, restoreHattrib: new functions for saving Hmisc attributes that can be restored later, e.g., after data.table processes a data frame
-	 
+
 Changes in version 4.3-1 (2020-02-07)
    * Depend on survival >= 3.1-6
    * pomodm: checked that x is sorted
@@ -292,7 +293,7 @@ Changes in version 4.3-0 (2019-11-07)
    * summaryDp: new function for plotly dotcharts stratifying separately on a series of variables
    * dotchartpl: added height argument
    * html.describe: fixed but where markupSpecs$html utility function last arguments were not named in calls
-	 
+
 Changes in version 4.2-0 (2019-01-25)
    * putHcap: new function
    * inst/tests/example.Rmd: changed to html document, replaced putHfig calls with new putHcap
@@ -328,7 +329,7 @@ Changes in version 4.2-0 (2019-01-25)
    * latex.default: fixed midfules for booktabs with ctable: https://github.com/harrelfe/Hmisc/pull/100
    * formatTestStats: trapped logical length mismatch
    * latex.default: checks options(omitlatexcom) and if TRUE suppresses emitting LaTeX comments; keeps Rmarkdown/pandoc from trying to escape LaTeX comment characters, putting the comments in the final output
-	 
+
 Changes in version 4.1-1 (2018-01-03)
    * describe: quit rounding values when <= 20 distinct values no matter how far apart any two values are spaced.  https://stackoverflow.com/questions/47679551
    * summaryM: fixed to handle character variables properly, by converting them to factors.  Thanks: Matt Shotwell
@@ -367,7 +368,7 @@ Changes in version 4.1-0 (2017-12-19)
    * NAMESPACE: removed exportPattern("^([^.]|\\..+\\.)") and explicitly exported everything, stopping export of methods
    * round.POSIXt,trunc.POSIXt: changed to roundPOSIXt, truncPOSIXt to avoid conflicts with R base
    * asNumericMatrix, matrix2dataFrame: changed to respect original storage.mode.  Thanks: Andre Mikulec
-	 
+
 Changes in version 4.0-3 (2017-04-30)
    * bpplot: added plotopts argument
    * describe, histboxp: improved logic to still slighty round numeric variables with fewer than 100 distinct values, in case some values are really close, when computing frequency distribution (for spike histograms in plot.describe)
@@ -386,7 +387,7 @@ Changes in version 4.0-3 (2017-04-30)
    * plot.summaryS: separated xlim and ylim to fix bug where xlim was ignored
    * plsmo: stop on error if no. observations not large enough for m with method='intervals'
    * Fortran calls: registered all Fortran functions, removed package name and quotes in first argument in .Fortran(), added F_ to entry point name in those calls, changed useDynLib call in NAMESPACE, added \alias{} for all F_ entries
-   	 
+
 Changes in version 4.0-2 (2016-12-30)
    * pngNeedle: fixed bug in html.describe under Windows by not specifying /tmp as the temporary file directory - https://github.com/harrelfe/Hmisc/issues/63; used tempdir() instead of tempfile()
    * html.describe.single: reuse the same temporary file for intermediate png output for spike histograms

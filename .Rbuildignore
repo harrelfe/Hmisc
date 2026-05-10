@@ -16,3 +16,5 @@ tests/\.Rhistory
 
 publish
 
+^\.positai$
+^\.claude$

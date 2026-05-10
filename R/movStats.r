@@ -76,7 +76,7 @@ movStats <- function(formula, stat=NULL, discrete=FALSE,
     msmooth <- 'raw'
     movlab  <- ''
     }
-  else sform <- eval(bquote(y ~ rcs(x, .(k))))
+  else sform <- eval(bquote(y ~ rms::rcs(x, .(k))))
 
   tsmooth <- match.arg(tsmooth)
   pr      <- match.arg(pr)

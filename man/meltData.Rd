@@ -33,7 +33,7 @@ data table
 Melt a Dataset To Examine All Xs vs Y
 }
 \details{
-Uses a formula with one or more left hand side variables (Y) and one or more right hand side variables (X).  Uses \code{\link[data.table:melt.data.table]{data.table::melt()}} to melt \code{data} so that each X is played against the same Y if \code{tall='right'} (the default) or each Y is played against the same X combination if \code{tall='left'}.  The resulting data table has variables Y with their original names (if \code{tall='right'}) or variables X with their original names (if \code{tall='left'}), \code{variable}, and \code{value}.  By default \code{variable} is taken as \code{label()}s of the \code{tall} variables.
+Uses a formula with one or more left hand side variables (Y) and one or more right hand side variables (X).  Uses \code{\link[data.table:melt]{data.table::melt()}} to melt \code{data} so that each X is played against the same Y if \code{tall='right'} (the default) or each Y is played against the same X combination if \code{tall='left'}.  The resulting data table has variables Y with their original names (if \code{tall='right'}) or variables X with their original names (if \code{tall='left'}), \code{variable}, and \code{value}.  By default \code{variable} is taken as \code{label()}s of the \code{tall} variables.
 }
 \examples{
 d <- data.frame(y1=(1:10)/10, y2=(1:10)/100, x1=1:10, x2=101:110)

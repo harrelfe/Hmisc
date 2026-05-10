@@ -1,4 +1,4 @@
-Changes in version 5.2-6 (2026-04-20)
+Changes in version 5.2-6 (2026-05-09)
    * Changed all length= to length.out= in seq() calls to avoid warnings
    * Improved movStats to avoid global variable for knots
 

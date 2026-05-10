@@ -8,4 +8,4 @@ cat('\\documentclass[convert={density=600,outext=.png}]{standalone}\n\\begin{doc
 w <- latex(s, npct='both', center='none', table.env=FALSE, insert.bottom = FALSE, file=f, append=TRUE)
 cat('\\end{document}\n', file=f, append=TRUE)
 
-system('cd /tmp; latex -shell-escape z; display /tmp/z.png')
+system('cd /tmp; latex -shell-escape z; open /tmp/z.png')

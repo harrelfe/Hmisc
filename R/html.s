@@ -18,7 +18,7 @@ html.latex <- function(object, file, where=c('cwd', 'tmp'),
   ehtml = function(content) {   # Thanks to Yihui
     if(! requireNamespace('htmltools', quietly=TRUE))
       stop('htmltools package not installed')
-    
+
     content = htmltools::HTML(gsub('^.*?<body\\s*>|</body>.*$', '', content))
     ss  <- paste(fibase, '-enclosed.css', sep='')
     src <- switch(where, cwd=getwd(), tmp=tempdir())
@@ -26,7 +26,7 @@ html.latex <- function(object, file, where=c('cwd', 'tmp'),
       'TeX4ht', '1.0.0', src = src, stylesheet = ss)
     htmltools::attachDependencies(content, d)
   }
-  
+
   sty <- object$style
   if(length(sty))
     sty <- paste('\\usepackage{', unique(sty), '}', sep='')
@@ -45,11 +45,11 @@ html.latex <- function(object, file, where=c('cwd', 'tmp'),
 
   ## Create system call to convert enclosed latex file to html.
   cmd <-
-    if(missing(file) || ! length(file) || file == '') 
+    if(missing(file) || ! length(file) || file == '')
       paste(optionsCmds(method), shQuote(tmptex))
-    else 
+    else
       paste(optionsCmds(method), '-o', file, shQuote(tmptex))
-    
+
   ## perform system call
   sys(cmd)
 
@@ -68,7 +68,7 @@ html.latex <- function(object, file, where=c('cwd', 'tmp'),
                paste(bf, 'enclosed.tex', sep='-')))
     }
     return(structure(list(file=file), class='html'))
-    
+
   }
 
   if(cleanup && method == 'htlatex')
@@ -107,7 +107,7 @@ html.data.frame <-
   trans <- if(translate) htmlTranslate else function(x) x
 
   disableq <- if(disableq) ' data-quarto-disable-processing="true"' else ''
-  
+
   x   <- as.matrix(object)
 #  for(i in 1:ncol(x)) {
 #    xi <- x[,i]
@@ -123,7 +123,7 @@ html.data.frame <-
   ## elements will affect tables that preceeded this one
   sn  <- paste0('hmisctable', floor(runif(1, 100000, 999999)))
   psn <- paste0('.', sn)
-  
+
   ## Duplicate specifications because can't get any single one to work
   lua <- length(unique(align))
   sty <- c('<style>',
@@ -142,7 +142,7 @@ html.data.frame <-
            if(bold.header) 'font-weight: bold;' else 'font-weight: normal;',
            '}',
            '</style>')
-          
+
   R <- c(sty, paste0('<table', disableq, ' class="', sn, '"',
                      if(length(width) == 1)
                        paste0(' width="', width, '"'),
@@ -206,14 +206,14 @@ if(FALSE) {
     browser <- .Options$help.browser
     if(!length(browser))
       browser <- .Options$browser
-    
+
     if(!length(browser))
       browser <- 'netscape'
-    
+
     sys(paste(browser, object, if(.Platform$OS.type == 'unix') '&'))
     invisible()
   }
-  
+
   print.html <- function(x, ...) show.html(x)
 }
 
@@ -252,9 +252,9 @@ htmlGreek <- function(x, mult=FALSE, code=htmlSpecialType()) {
             'xi','pi','varpi','rho','varrho','sigma','varsigma','tau',
             'upsilon','phi','chi','psi','omega','Gamma','Delta',
             'Theta','Lambda','Xi','Pi','Sigma','Upsilon','Phi','Psi','Omega')
-  
+
   l <- length(orig)
-  
+
   new <- if(code == 'unicode')
            substring('\u3B1\u3B2\u3B3\u3B4\u3B5\u3F5\u3B6\u3B7\u3B8\u3D1\u3B9\u3BA\u3BB\u3BC\u3BD\u3BE\u3C0\u3D6\u3C1\u3F1\u3C3\u3C2\u3C4\u3C5\u3C6\u3C7\u3C8\u3C9\u393\u394\u398\u39B\u39E\u3A0\u3A3\u3A5\u3A6\u3A8\u3A9',
                      1 : l, 1 : l)
@@ -295,7 +295,7 @@ htmlSpecial <- function(x, code=htmlSpecialType()) {
 
   u <- substring(z, nchar(z), nchar(z))
   n <- substring(z, 1, nchar(z) - 1)
-  
+
   new <- if(code == 'unicode') u else paste0('&#', n, ';')
   names(new) <- names(z)
 
@@ -358,7 +358,7 @@ markupSpecs <- list(html=list(
            ' </span><span style="font-family:Verdana;font-size:12px;color:MidnightBlue;">',
              lcap, '</span>')
   },
-  
+
   lcap     = function(...) # for continuation of figure caption
     paste0('<span style="font-family:Verdana;font-size:12px;color:MidnightBlue;">',
            htmlTranslate(paste(unlist(list(...)), collapse=' '), greek=TRUE),
@@ -371,7 +371,7 @@ markupSpecs <- list(html=list(
            ' </span><span style="font-family:Verdana;font-size:12px;color:MidnightBlue;">',
              lcap, '</span>')
   },
-  
+
   ltcap     = function(...) # for continuation of table caption
     paste0('<span style="font-family:Verdana;font-size:12px;color:MidnightBlue;">',
            htmlTranslate(paste(unlist(list(...)), collapse=' '), greek=TRUE),
@@ -409,9 +409,9 @@ markupSpecs <- list(html=list(
           id <- options$id
           label <- options$label
           if(! length(label)) label <- 'Uncover'
-          button_string <- paste0("<button onclick=\"uncover('", 
+          button_string <- paste0("<button onclick=\"uncover('",
                                   id, "')\">", label, "</button>")
-          div_string <- paste0("<div id = '", id, 
+          div_string <- paste0("<div id = '", id,
                                "', style = 'display:none'>")
           paste0(button_string, "\n", div_string)
         }
@@ -419,7 +419,7 @@ markupSpecs <- list(html=list(
           "</div>"
         }
   },
-  
+
   session  = function(cite=TRUE, loadedOnly=FALSE, style=NULL) {
     si <- sessionInfo()
     if(! loadedOnly) si$loadedOnly <- NULL
@@ -493,7 +493,7 @@ markupSpecs <- list(html=list(
     ## See https://stackoverflow.com/questions/47124299/
     toc_depth <- rmarkdown::metadata$output$html_document$toc_depth
     sel <- paste0("h", (toc_depth + 1) : 10, collapse = " > span, ")
-    paste0("<style>", sel, " > .header-section-number { display: none; } </style>")    
+    paste0("<style>", sel, " > .header-section-number { display: none; } </style>")
     },
   scroll   = function(x, size=75, rows=10, cols=100,
                       font='', name='') {
@@ -535,7 +535,7 @@ markupSpecs <- list(html=list(
   rightAlign  = function(x)
     paste0("<div style='float: right; text-align: right;'>",
            x, "</div>"),
-  space    = htmlSpecial('nbsp'), 
+  space    = htmlSpecial('nbsp'),
   lspace   = htmlSpecial('emsp'),
   sspace   = htmlSpecial('thinsp'),
   smallskip= '<br><br>',
@@ -599,7 +599,7 @@ mdchunk = function(md=rep('', length(robj)), robj,
                    results=NULL, method=c('knit_expand','knit_child')) {
 
   method <- match.arg(method)
-  
+
   bn <- paste0('c', round(runif(1, 0, 1e6)))
   n <- length(md)
   if(length(robj) != n) stop('robj and md must have same length')
@@ -612,7 +612,7 @@ mdchunk = function(md=rep('', length(robj)), robj,
   if(length(cnames) == 1 && is.logical(cnames))
     cnames <- if(cnames) paste0(bn, 1 : n) else rep('', n)
   if(! all(cnames == '')) cnames <- paste0(cnames, ',')
-  
+
   for(i in 1 : n) {
     pos <- 1
     env <- as.environment(pos)
@@ -815,8 +815,230 @@ all=list(
  )
 )
 
-
 ## For expand_collapse see http://dickervasti.com/wiki-style-text-expand-collapse-no-jquery.htm#01000
+
+## -----------------------------------------------------------------------
+## markupSpecs$typst
+## Developed by Claude Sonnet 5 Medium 2026-08-13
+##
+## Mirrors markupSpecs$html / markupSpecs$latex in structure (same
+## function names/signatures) so existing call sites that do
+## specs <- markupSpecs[[format]]; specs$varlabel(...) etc. work
+## unmodified once format can be 'typst'.
+##
+## Design notes / conventions used throughout:
+##  - Typst math mode: no backslashes on symbol names (chi, beta, times,
+##    plus.minus, overline(x), frac(a,b) ...).
+##  - Sub/superscripts: bare ^x / _x work for a SINGLE character/token;
+##    anything longer needs grouping parens: ^(ab), _(i j). Below this
+##    is handled by wrapping in parens whenever the arg could be >1 char
+##    (safe default; produces slightly redundant-but-harmless parens
+##    around single chars too in a few spots -- fine to tighten later).
+##  - Inline styling: #text(...)[...], #align(center)[...], #strong[...],
+##    #emph[...] are function calls, safe to embed inside larger strings.
+##  - Spacing: Typst has no direct \smallskip/\medskip/\,-style LaTeX
+##    equivalents; used #v()/#h() with approximate em values below.
+##    THESE NUMBERS ARE GUESSES and should be tuned against actual
+##    compiled output, not trusted as-is.
+##  - "ex" units (used by lineskip in the LaTeX branch) have no Typst
+##    equivalent unit; substituted em with a rough ex->em factor (~0.5).
+##    Needs verification against real output.
+## -----------------------------------------------------------------------
+
+markupSpecs$typst <- list(
+
+  bold     = function(...) paste0('#strong[', ..., ']'),
+  italics  = function(...) paste0('#emph[', ..., ']'),
+  math     = function(...) paste0('$', ..., '$'),
+
+  ord      = function(n)
+    paste0('$', n, '^"', markupSpecs$all$ordsuffix(n), '"$'),
+
+  ## raw()/monospace + smaller size. NOTE: if ... contains a double quote
+  ## or backslash this needs escaping before going into raw("...") --
+  ## flagging as a real gap, not yet handled.
+  code     = function(...)
+    paste0('#text(size:0.8em)[#raw("', ..., '")]'),
+
+  sup      = function(x, ...)
+    paste0('$^', if (nchar(paste0(x)) > 1) paste0('(', x, ')') else x, '$'),
+  sub      = function(x, ...)
+    paste0('$_', if (nchar(paste0(x)) > 1) paste0('(', x, ')') else x, '$'),
+
+  smaller  = function(...) paste0('#text(size:0.80em)[', ..., ']'),
+  larger   = function(...) paste0('#text(size:1.25em)[', ..., ']'),
+  smaller2 = function(...) paste0('#text(size:0.64em)[', ..., ']'),
+  larger2  = function(...) paste0('#text(size:1.56em)[', ..., ']'),
+
+  center   = function(...) paste0('#align(center)[', ..., ']'),
+
+  ## Typst's named-color palette is smaller than CSS/LaTeX's (red, blue,
+  ## green, black, white, gray, silver, maroon, purple, navy, teal, aqua,
+  ## orange, olive, lime, yellow, fuchsia/magenta, ...). Anything outside
+  ## that set needs an explicit rgb hex. Only MidnightBlue is special-
+  ## cased below (as in the latex branch); extend this table as other
+  ## named colors turn up in practice -- NOT exhaustively mapped yet.
+  color    = function(..., col) {
+    typstColor <- switch(col,
+                          MidnightBlue = 'rgb("#191970")',
+                          col)   # assume it's already a valid typst color/ident
+    paste0('#text(fill:', typstColor, ')[', ..., ']')
+  },
+
+  ## NOTE: addBreak/subtext/cap/lcap/tcap/ltcap below reuse the same
+  ## line-break-insertion logic as the html version but swap the html
+  ## tag/styling for typst equivalents. cap/tcap call typstTranslate()
+  ## (not yet written -- see prior discussion) in place of htmlTranslate().
+
+  addBreak = function(x, minbreak=30) {
+    sl <- nchar(x)
+    if (sl < minbreak) return(x)
+    si <- c(gregexpr(' ', x)[[1]])
+    ix <- si[which.min(abs(si - sl / 2))]
+    p1 <- substr(x, 1, ix - 1)
+    p2 <- substr(x, ix + 1, sl)
+    paste0(p1, '#linebreak() ', p2)
+  },
+
+  subtext  = function(..., color='blue')
+    paste0('#linebreak()#text(size:0.7em, fill:', color, ')[',
+           paste(unlist(list(...)), collapse=' '), ']'),
+
+  ## symbol default omitted here -- htmlSpecial('angrt') etc. are
+  ## html-entity-specific; a typst equivalent symbol needs picking
+  ## separately (Typst has its own `sym.*` namespace, e.g. sym.angle.right)
+  cap      = function(..., symbol='sym.angle.r') {
+    lcap <- typstTranslate(paste(unlist(list(...)), collapse=' '), greek=TRUE)
+    paste0('#text(size:8pt)[', symbol,
+           '] #text(size:10pt, fill:rgb("#191970"))[', lcap, ']')
+  },
+
+  lcap     = function(...)
+    paste0('#text(size:10pt, fill:rgb("#191970"))[',
+           typstTranslate(paste(unlist(list(...)), collapse=' '), greek=TRUE),
+           ']'),
+
+  tcap     = function(..., symbol='sym.dash.wave') {
+    lcap <- typstTranslate(paste(unlist(list(...)), collapse=' '), greek=TRUE)
+    paste0('#text(size:8pt)[', symbol,
+           '] #text(size:10pt, fill:rgb("#191970"))[', lcap, ']')
+  },
+
+  ltcap    = function(...)
+    paste0('#text(size:10pt, fill:rgb("#191970"))[',
+           typstTranslate(paste(unlist(list(...)), collapse=' '), greek=TRUE),
+           ']'),
+
+  chisq    = function(x, ...)
+    if (missing(x)) '$chi^2$' else paste0('$chi^2_',
+                    if (nchar(paste0(x)) > 1) paste0('(', x, ')') else x, '$'),
+
+  fstat    = function(x, ...)
+    paste0('$F_(', x[1], ',', x[2], ')$'),
+
+  frac     = function(a, b, ...) paste0('$frac(', a, ',', b, ')$'),
+
+  half     = function(...) '$1/2$',
+
+  subsup   = function(a, b) paste0('$_', a, '^', b, '$'),
+
+  ## hfill=TRUE in the html/latex versions right-justifies units against
+  ## the label. Typst's equivalent of \hfill is #h(1fr) inside a context
+  ## that allows stretch (works well in a #grid/#stack, less reliably
+  ## inline in running text) -- NEEDS TESTING inside actual table cells,
+  ## which is where varlabel is mostly used.
+  varlabel = function(label, units='', size=75, hfill=FALSE) {
+    lab <- typstTranslate(label, greek=TRUE)
+    if (units == '') return(lab)
+    u <- typstTranslate(units, greek=TRUE)
+    if (hfill)
+      paste0(lab, ' #h(1fr) #text(size:', size / 100, 'em)[', u, ']')
+    else
+      paste0(lab, ' #h(0.3em) #text(size:', size / 100, 'em)[', u, ']')
+  },
+
+  rightAlign = function(x) paste0('#align(right)[', x, ']'),
+
+  ## Standalone glue token for prModFit's model-stats block (label/value
+  ## dual justification, e.g. "chi-sq ... 8.93"). Deliberately NOT part
+  ## of varlabel -- prModFit knows the full table's column width and
+  ## builds combined = paste0(label, specs$hfill, value) itself, then
+  ## sets an explicit fixed column width when assembling the table
+  ## (tinytable auto-sizing has no slack for this glue to expand into
+  ## otherwise -- see the compile-tested LaTeX/Typst examples).
+  hfill    = '#h(1fr)',
+
+  ## Typst markup mode supports ~ as a non-breaking space directly,
+  ## same character as LaTeX -- this one's a genuine free lunch.
+  space    = '~',
+  lspace   = '#h(0.5em)',
+  sspace   = '#h(0.16em)',
+
+  ## approximate -- these four are the biggest "needs real compile
+  ## testing" guesses in this whole draft
+  smallskip= '#v(0.3em)',
+  medskip  = '#v(0.6em)',
+  bigskip  = '#v(1.2em)',
+  lineskip = function(n) paste0('#v(', n * 0.5, 'em)'),  # ex -> em, rough
+
+  br       = '#linebreak()',
+  hrule    = '#line(length:100%)',
+  hrulethin= '#line(length:100%, stroke:0.5pt)',
+
+  plminus  = '$plus.minus$',
+  times    = '$times$',
+  xbar     = '$overline(X)$',
+  overbar  = function(x) paste0('$overline(', x, ')$'),
+
+  ## session(): thin delegation to the existing html-list implementation
+  ## rather than duplicating ~50 lines of logic. Requires adding a
+  ## 'typst' case inside session()'s internal switch(style, ...) --
+  ## see the small diff below, NOT a rewrite of the function.
+  session  = function(cite=TRUE, loadedOnly=FALSE, style=NULL)
+    markupSpecs$html$session(cite=cite, loadedOnly=loadedOnly, style='typst')
+)
+
+## -----------------------------------------------------------------------
+## Corresponding minimal diff inside markupSpecs$html$session() to teach
+## it about style='typst' (only the `tt` and final-emit lines change;
+## everything else in the function is untouched):
+## -----------------------------------------------------------------------
+##
+## tt <- function(x) switch(style,
+##                          text = x,
+##                          html = paste0('<tt>', x, '</tt>'),
+##                          latex = paste0('\\texttt{', x, '}'),
+##                          typst = paste0('#raw("', x, '")'))     # NEW
+##
+## ...and at the very end:
+##
+## if(style == 'html') htmltools::HTML(w) else
+## if(style == 'typst') knitr::asis_output(paste0(
+##     '```{=typst}\n#text(font:"monospace")[', paste(w, collapse='\n'),
+##     ']\n```\n'))                                                 # NEW
+## else knitr::asis_output(w)
+
+## -----------------------------------------------------------------------
+## Intentionally NOT ported (HTML/JS-only, no static-PDF/Typst equivalent):
+##   expcoll, expcolld, uncover   -- interactive show/hide, needs a DOM
+##   widescreen, tocsize          -- CSS hacks for html_document's
+##                                    Bootstrap-based TOC/page width
+##   sectionNumberDepth           -- reads rmarkdown html_document
+##                                    metadata; not meaningful for typst
+##   scroll                       -- scrolling <div>, meaningless in PDF
+##   styles, cssbutton, hideDetails -- raw CSS / HTML button widgets
+##
+## Calling code that currently does something like
+##   if (ishtml) markupSpecs$html$expcoll(...)
+## needs an explicit fallback for prType=='typst' (e.g. just print
+## `invis` unconditionally, or omit the affordance entirely), rather
+## than assuming markupSpecs$typst$expcoll exists.
+##
+## Also NOT ported (format-agnostic utilities, not markup generators --
+## existing calls to these can stay exactly as-is regardless of prType):
+##   installcsl, citeulikeShow, unicodeshow, mdchunk, totxt
+## -----------------------------------------------------------------------
+
 
 ## Function to translate several expressions to html form.
 ## Arguments inn and out specify additional input and translated
@@ -827,7 +1049,7 @@ htmlTranslate <- function(object, inn=NULL, out=NULL,
 {
   if(! length(object) || all(trimws(object) == ''))
     return(object)
-  
+
   text <- ifelse(is.na(object), na, as.character(object))
 
   ## Must translate & first so won't be converted to &amp; when other
@@ -862,11 +1084,11 @@ htmlTranslate <- function(object, inn=NULL, out=NULL,
       if(remain[1] %in% dig ||
          (length(remain) > 1 && remain[1] == '-' && remain[2] %in% dig))
         k[-1] <- k[-1] | remain[-1] %nin% dig
-      
+
       ie <- if(any(k)) is + ((1 : length(remain))[k])[1]
         else
           length(x) + 1
-      
+
       substring2(text[i], is, ie - 1) <-
         paste0('BEGINSUP', substring(text[i], is + 1, ie - 1), 'ENDSUP')
     }

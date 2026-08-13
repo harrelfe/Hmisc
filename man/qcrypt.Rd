@@ -28,9 +28,9 @@ Store and Encrypt R Objects or Files or Read and Decrypt Them
 
 The keyring can be bypassed and the password entered in a popup window by specifying \code{service=NA}.  This is the preferred approach when sending an encrypted file to a user on a different computer.
 
-\code{qcrypt} writes R objects to disk in a temporary file using the \code{qs} package \code{qsave} function.  The file is quickly encrypted using the \code{safer} package, and the temporary unencrypted \code{qs} file is deleted.  When reading an encrypted file the process is reversed.
+\code{qcrypt} writes R objects to disk in a temporary file using the \code{qs2} package \code{qs_save} function.  The file is quickly encrypted using the \code{safer} package, and the temporary unencrypted \code{qs2} file is deleted.  When reading an encrypted file the process is reversed and uses \code{qs2::qs_read}.
 
-To save an object in an encrypted file, specify the object as the first argument \code{obj} and specify a base file name as a character string in the second argument \code{base}.  The full \code{qs} file name will be of the form \code{base.qs.encrypted} in the user's current working directory.  To unencrypt the file into a short-lived temporary file and use \code{qs::qread} to read it, specify the base file name as a character string with the first argument, and do not specify the \code{base} argument.
+To save an object in an encrypted file, specify the object as the first argument \code{obj} and specify a base file name as a character string in the second argument \code{base}.  The full \code{qs2} file name will be of the form \code{base.qs2.encrypted} in the user's current working directory.  To unencrypt the file into a short-lived temporary file and use \code{qs2::qs_read} to read it, specify the base file name as a character string with the first argument, and do not specify the \code{base} argument.
 
 Alternatively, \code{qcrypt} can be used to encrypt or decrypt existing files of any type using the same password and keyring mechanism.  The former is done by specifying \code{file} that does not end in \code{'.encrypted'} and the latter is done by ending \code{file} with \code{'.encrypted'}.  When \code{file} does not contain a path it is assumed to be in the current working directory.  When a file is encrypted the original file is removed.  Files are decrypted into a temporary directory created by \code{tempdir()}, with the name of the file being the value of \code{file} with \code{'.encrypted'} removed.
 
@@ -46,9 +46,9 @@ See \href{https://hbiostat.org/rflow/fcreate.html#sec-fcreate-secure}{R Workflow
 # The first time qcrypt is run with a service a password will
 # be requested.  It will be remembered across sessions thanks to
 # the keyring package
-qcrypt(x, 'x')   # creates x.qs.encrypted in current working directory
-x <- qcrypt('x') # unencrypts x.qs.encrypted into a temporary
-                 # directory, uses qs::qread to read it, and
+qcrypt(x, 'x')   # creates x.qs2.encrypted in current working directory
+x <- qcrypt('x') # unencrypts x.qs2.encrypted into a temporary
+                 # directory, uses qs2::qs_read to read it, and
                  # stores the result in x
 # Encrypt a general file using a different password
 qcrypt(file='report.pdf', service='pdfkey')

@@ -1,6 +1,10 @@
-Changes in version 5.2-6 (2026-05-09)
+Changes in version 5.2-7 (2026-08-13)
+   * Added markupSpecs$typst to begin formal Typst support
+
+Changes in version 5.2-6 (2026-06-18)
    * Changed all length= to length.out= in seq() calls to avoid warnings
    * Improved movStats to avoid global variable for knots
+   * Changed qcrypt to use qs2 package instead of qs
 
 Changes in version 5.2-5 (2026-01-08)
    * num.intercepts: handled case where there is an info.matrix in the fit but it had only one intercept and was not partitioned; also cleaned up logic

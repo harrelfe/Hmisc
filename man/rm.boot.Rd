@@ -16,7 +16,7 @@
   are used as the basis of the bootstrap distribution.  For the latter,
   samples are taken jointly from the time, subject ID, and response
   vectors to obtain unconditional distributions.
-  
+
   If a subject \code{id} variable is given, the bootstrap sampling will
   be based on samples with replacement from subjects rather than from
   individual data points.  In other words, either none or all of a given
@@ -30,7 +30,7 @@
   of observation times vary greatly from subject to subject), the
   resulting analysis will be a robust, efficient repeated measures
   analysis for the one-sample problem.
-  
+
   Predicted values of the fitted models are evaluated by default at a
   grid of 100 equally spaced time points ranging from the minimum to
   maximum observed time points.  Predictions are for the average subject
@@ -56,7 +56,7 @@
   computed at the time grid, and minima and maxima of these curves are
   computed separately at each time point toderive the final
   simultaneous confidence band.
-  
+
   By default, the log likelihoods that are computed for obtaining the
   simultaneous confidence band assume independence within subject.  This
   will cause problems unless such log likelihoods have very high rank
@@ -68,16 +68,16 @@
 rm.boot(time, y, id=seq(along=time), subset,
         plot.individual=FALSE,
         bootstrap.type=c('x fixed','x random'),
-        nk=6, knots, B=500, smoother=supsmu, 
-        xlab, xlim, ylim=range(y), 
-        times=seq(min(time), max(time), length=100),
-        absorb.subject.effects=FALSE, 
+        nk=6, knots, B=500, smoother=supsmu,
+        xlab, xlim, ylim=range(y),
+        times=seq(min(time), max(time), length.out=100),
+        absorb.subject.effects=FALSE,
         rho=0, cor.pattern=c('independent','estimate'), ncor=10000,
         \dots)
 
 
 \method{plot}{rm.boot}(x, obj2, conf.int=.95,
-     xlab=x$xlab, ylab=x$ylab, 
+     xlab=x$xlab, ylab=x$ylab,
      xlim, ylim=x$ylim,
      individual.boot=FALSE,
      pointwise.band=FALSE,
@@ -111,7 +111,7 @@ rm.boot(time, y, id=seq(along=time), subset,
   \item{plot.individual}{
     set to \code{TRUE} to plot nonparametrically smoothed time-response
     curves for each subject
-  }  
+  }
   \item{bootstrap.type}{
     specifies whether to treat the time and subject ID variables as
     fixed or random
@@ -125,7 +125,7 @@ rm.boot(time, y, id=seq(along=time), subset,
   }
   \item{knots}{
     vector of knot locations.  May be specified if \code{nk} is
-    omitted. 
+    omitted.
   }
   \item{B}{
     number of bootstrap repetitions.  Default is 500.
@@ -336,7 +336,7 @@ rm.boot(time, y, id=seq(along=time), subset,
   unconditional confidence intervals are only slightly wider than
   conditional ones.  For moderate to small sample sizes, the
   \code{bootstrap.type="x random"} method can be fairly conservative.
-    
+
 
   If not all subjects have the same number of observations (after
   deleting observations containing missing values) and if
@@ -379,7 +379,7 @@ rm.boot(time, y, id=seq(along=time), subset,
   Feng Z, McLerran D, Grizzle J (1996): A comparison of statistical methods for
   clustered data analysis with Gaussian error.  Stat in Med 15:1793--1806.
 
-  Tibshirani R, Knight K (1997):Model search and inference by bootstrap 
+  Tibshirani R, Knight K (1997):Model search and inference by bootstrap
   "bumping".  Technical Report, Department of Statistics, University of Toronto.
   \cr
   \url{https://www.jstor.org/stable/1390820}. Presented at the Joint Statistical
@@ -445,14 +445,14 @@ nt    <- length(times)
 rho   <- .7
 
 
-        
-set.seed(19)        
+
+set.seed(19)
 errors <- mvrnorm(n, p=nt, S=diag(rep(1-rho,nt))+rho)
 # Note:  first random number seed used gave rise to mean(errors)=0.24!
 
 
 # Add E[Y], error components, and subject effects
-y      <- matrix(rep(ey,n), ncol=nt, byrow=TRUE) + errors + 
+y      <- matrix(rep(ey,n), ncol=nt, byrow=TRUE) + errors +
           matrix(rep(sub,nt), ncol=nt)
 
 
@@ -488,15 +488,15 @@ lines(ts, g(ts)+mean(sub), lwd=3)
 
 \dontrun{
 #
-# Handle a 2-sample problem in which curves are fitted 
+# Handle a 2-sample problem in which curves are fitted
 # separately for males and females and we wish to estimate the
-# difference in the time-response curves for the two sexes.  
-# The objective criterion will be taken by plot.rm.boot as the 
+# difference in the time-response curves for the two sexes.
+# The objective criterion will be taken by plot.rm.boot as the
 # total of the two sums of squared errors for the two models
 #
 knots <- rcspline.eval(c(time.f,time.m), nk=6, knots.only=TRUE)
-# Use same knots for both sexes, and use a times vector that 
-# uses a range of times that is included in the measurement 
+# Use same knots for both sexes, and use a times vector that
+# uses a range of times that is included in the measurement
 # times for both sexes
 #
 tm <- seq(max(min(time.f),min(time.m)),
@@ -507,12 +507,12 @@ f.female <- rm.boot(time.f, bp.f, id.f, knots=knots, times=tm)
 f.male   <- rm.boot(time.m, bp.m, id.m, knots=knots, times=tm)
 plot(f.female)
 plot(f.male)
-# The following plots female minus male response, with 
+# The following plots female minus male response, with
 # a sequence of shaded confidence band for the difference
 plot(f.female,f.male,multi=TRUE)
 
 
-# Do 1000 simulated analyses to check simultaneous coverage 
+# Do 1000 simulated analyses to check simultaneous coverage
 # probability.  Use a null regression model with Gaussian errors
 
 
@@ -529,7 +529,7 @@ for(i in 1:1000) {
 #  Add the following line and add ,id=id to rm.boot to use clustering
 #  id   <- sort(rep(1:n.pt, n.per.pt))
 #  Because we are ignoring patient id, this simulation is effectively
-#  using 1 point from each of 300 patients, with times 1,2,3,,,30 
+#  using 1 point from each of 300 patients, with times 1,2,3,,,30
 
 
   f <- rm.boot(time, y, B=500, nk=5, bootstrap.type='x fixed')
@@ -539,7 +539,7 @@ for(i in 1:1000) {
 }
 
 
-# Simulation Results: 905/1000 simultaneous confidence bands 
+# Simulation Results: 905/1000 simultaneous confidence bands
 # fully contained the horizontal line at zero
 }
 }

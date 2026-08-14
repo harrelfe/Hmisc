@@ -1,6 +1,6 @@
 Package: Hmisc
 Version: 5.2-7
-Date: 2026-08-13
+Date: 2026-08-14
 Title: Harrell Miscellaneous
 Authors@R:
     c(person(given   = "Frank E",
@@ -22,7 +22,7 @@ Description: Contains many functions useful for data
 	analysis, high-level graphics, utility operations, functions for
 	computing sample size and power, simulation, importing and annotating datasets,
 	imputing missing values, advanced table making, variable clustering,
-	character string manipulation, conversion of R objects to LaTeX and html code,
+	character string manipulation, conversion of R objects to Typst, LaTeX, and html code,
 	recoding variables, caching, simplified parallel computing, encrypting and decrypting data using a safe workflow, general moving window statistical estimation, and assistance in interpreting principal component analysis.
 License: GPL (>= 2)
 LazyLoad: Yes

@@ -1,4 +1,4 @@
-mChoice <- function(..., label='', 
+mChoice <- function(..., label='',
                     sort.levels=c('original','alphabetic'),
                     add.none=FALSE, drop=TRUE, ignoreNA=TRUE)
 {
@@ -23,7 +23,7 @@ mChoice <- function(..., label='',
     if(! length(set)) return(NA)   # was return('')
     paste(sort(unique(set)), collapse=';')
   }
-  
+
   Y <- do.call(mapply,
                c(list(FUN=g, SIMPLIFY=TRUE, USE.NAMES=FALSE, MoreArgs=NULL),
                  dotlist))
@@ -37,7 +37,7 @@ mChoice <- function(..., label='',
     Y[is.na(Y)] <- as.character(length(lev))
   }
 
-  
+
   structure(Y, label=label, levels=lev, class=c('mChoice','labelled'))
 }
 
@@ -168,7 +168,7 @@ summary.mChoice <- function(object, ncombos=5, minlength=NULL,
   nchoices <- nchar(y) + 1
   nchoices[object == ''] <- 0
   nchoices <- table(nchoices, dnn=NULL)
-  
+
   X <- as.numeric(object, drop=drop)
   if(length(minlength))
     dimnames(X)[[2]] <- abbreviate(dimnames(X)[[2]],minlength)
@@ -177,13 +177,109 @@ summary.mChoice <- function(object, ncombos=5, minlength=NULL,
   combos <- table(format(object, minlength))
   i <- order(-combos)
   combos <- combos[i[1:min(ncombos,length(combos))]]
-  
+
   structure(list(nunique=nunique, nchoices=nchoices,
                  crosstab=crosstab, combos=combos,
                  label=label(object), levels=levels),
             class='summary.mChoice')
 }
 
+## -----------------------------------------------------------------------
+## Typst rendering support for print.summary.mChoice().
+##
+## Depends on (assumed already present elsewhere in Hmisc):
+##   - markupSpecs$typst  (bold used here)
+##   - typstTranslate()
+##   - typstAsis()
+##
+## Contains:
+##   NEW helper   psum_typst_freq_table    (1-D table/named vector ->
+##                                           native Typst #table(), no
+##                                           tinytable dependency, same
+##                                           convention as desc.r's
+##                                           typst_counts_table)
+##   NEW helper   psum_typst_matrix_table  (2-D matrix with row/col
+##                                          dimnames -> native Typst
+##                                          #table() with a blank corner
+##                                          cell and row/column headers
+##                                          -- needed for the pairwise
+##                                          crosstab, which
+##                                          typst_counts_table's flat
+##                                          vector shape can't handle)
+##   MODIFIED     print.summary.mChoice    (one new branch, marked below,
+##                                          parallel to the existing
+##                                          prType()=='html' branch)
+##
+## Naming: the two new helpers use underscores, not dots, per the
+## convention established for desc.r's new functions -- so they read
+## unambiguously as plain functions, not S3 methods.
+##
+## Note on render=FALSE: this matters specifically because
+## formatdescribeSingle (in desc.r) calls
+## print(x$mChoice, render=FALSE) when a describe()'d variable is an
+## mChoice column -- it needs back a plain, unfenced Typst markup
+## string to append into its own accumulating character vector (which
+## typst_describe() later wraps in exactly ONE outer typstAsis() call),
+## not an immediately-emitted asis object. This mirrors exactly how the
+## existing html branch returns htmltools::HTML(R) (classed, not yet
+## emitted) for render=FALSE vs. rendHTML(R) (immediately asis-emitted)
+## for render=TRUE. Before this fix, calling this function with
+## render=FALSE under prType()=='typst' fell through to the plain-text
+## fallback, which cat()s directly to the console and returns nothing
+## usable -- a real bug for the typst path, not just a missing feature.
+## -----------------------------------------------------------------------
+
+
+## =========================================================================
+## NEW: psum_typst_freq_table
+## Renders a simple 1-D table/named vector (x$nchoices, x$combos) as a
+## native Typst table: one header row of names, one row of values.
+## =========================================================================
+psum_typst_freq_table <- function(tab) {
+  nms  <- names(tab)
+  if(! length(nms)) nms <- as.character(seq_along(tab))
+  nms  <- typstTranslate(nms)
+  vals <- typstTranslate(as.character(unclass(tab)))
+  k    <- length(tab)
+  cols <- paste(rep('auto', k), collapse = ', ')
+  header <- paste(paste0('[*', nms,  '*]'), collapse = ', ')
+  body   <- paste(paste0('[',  vals, ']'),  collapse = ', ')
+  paste0('#table(\n  columns: (', cols, '),\n  align: center,\n  ',
+         header, ',\n  ', body, '\n)')
+}
+
+
+## =========================================================================
+## NEW: psum_typst_matrix_table
+## Renders a matrix with row/column dimnames (the pairwise crosstab) as
+## a native Typst table: blank corner cell, column headers across the
+## top, row headers down the left. Values are used as-is (already
+## formatted/character, including the blanked-out lower triangle) --
+## this function only builds table structure, not numeric formatting.
+## =========================================================================
+psum_typst_matrix_table <- function(m) {
+  rn <- typstTranslate(rownames(m))
+  cn <- typstTranslate(colnames(m))
+  k  <- ncol(m)
+  cols <- paste(rep('auto', k + 1), collapse = ', ')
+  header <- paste(c('[ ]', paste0('[*', cn, '*]')), collapse = ', ')
+  rows <- character(nrow(m))
+  for(i in seq_len(nrow(m))) {
+    cellvals <- typstTranslate(trimws(m[i, ]))
+    cells <- c(paste0('[*', rn[i], '*]'), paste0('[', cellvals, ']'))
+    rows[i] <- paste(cells, collapse = ', ')
+  }
+  paste0('#table(\n  columns: (', cols, '),\n  align: center,\n  ',
+         header, ',\n  ', paste(rows, collapse = ',\n  '), '\n)')
+}
+
+
+## =========================================================================
+## MODIFIED: print.summary.mChoice
+## Change from the existing version: one new branch (marked below),
+## parallel to the existing prType()=='html' branch. Everything else
+## (the html branch itself, and the plain-text fallback) is unchanged.
+## =========================================================================
 print.summary.mChoice <- function(x, prlabel=TRUE, render=TRUE, ...) {
   levels <- x$levels
   crosstab <-format(x$crosstab)
@@ -209,7 +305,7 @@ print.summary.mChoice <- function(x, prlabel=TRUE, render=TRUE, ...) {
       R <- paste0('<table style="font-size: ', sz, '%";>',
                   paste(tab, collapse=' '), '</table>')
       }
-    
+
     y <- list('', x$nchoices, crosstab, x$combos)
     names(y) <- c(paste(x$nunique, 'unique combinatons'),
                   'Frequencies of Numbers of Choices Per Observation',
@@ -218,6 +314,38 @@ print.summary.mChoice <- function(x, prlabel=TRUE, render=TRUE, ...) {
     R <- c(R, do.call(htmltabv, y))
     return(if(render) rendHTML(R) else htmltools::HTML(R))
   }
+
+  ## --- NEW: typst branch, parallel to the html branch above ---
+  if(prType() == 'typst') {
+    m   <- markupSpecs$typst
+    lev <- x$levels
+    if(length(lev)) {   # short was in effect
+      lev  <- paste0('(', 1 : length(lev), ') ', typstTranslate(lev))
+      half <- ceiling(length(lev) / 2)
+      left <- lev[1 : half]
+      rt   <- lev[(half + 1) : length(lev)]
+      if(length(rt) < length(left)) rt <- c(rt, '')
+      rows <- paste0('[', left, '], [', rt, ']')
+      R <- c(R, paste0('#table(\n  columns: (auto, auto),\n  ',
+                       paste(rows, collapse = ',\n  '), '\n)'))
+    }
+
+    R <- c(R,
+           paste0(x$nunique, ' unique combinations'),
+           '',
+           m$bold('Frequencies of Numbers of Choices Per Observation'),
+           psum_typst_freq_table(x$nchoices),
+           '',
+           m$bold('Pairwise Frequencies (Diagonal Contains Marginal Frequencies)'),
+           psum_typst_matrix_table(crosstab),
+           '',
+           m$bold(s),
+           psum_typst_freq_table(x$combos))
+
+    content <- paste(R, collapse = '\n\n')
+    return(if(render) typstAsis(content) else content)
+  }
+  ## ---------------------------------------------------------------
 
   if(length(levels)) {
     lev <- paste(paste0('(', 1 : length(levels), ') ', levels), collapse='; ')
@@ -291,5 +419,5 @@ inmChoicelike <- function(x, values, condition=c('any', 'all'),
   res
 }
 
-      
+
 is.mChoice <- function(x) inherits(x, 'mChoice')

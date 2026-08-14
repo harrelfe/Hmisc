@@ -3,7 +3,7 @@
 ## labels, titles, etc.) so they display correctly as literal text in
 ## Typst markup, with optional math-mode handling for superscripts and
 ## Greek letter names -- the Typst analog of latexTranslate().
-##
+## 
 ## Deliberately simpler than latexTranslate() in several ways:
 ##
 ##  - Built entirely on vectorized base gsub() calls, not sedit()/

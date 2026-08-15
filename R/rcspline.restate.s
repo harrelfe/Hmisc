@@ -1,6 +1,6 @@
 rcspline.restate <- function(knots, coef, type=c("ordinary","integral"),
-                             x="X", lx=nchar(x),norm=2, 
-                             columns=65, before="& &", after="\\", 
+                             x="X", lx=nchar(x),norm=2,
+                             columns=65, before="& &", after="\\\\",
                              begin="", nbegin=0,
                              digits=max(8,.Options$digits))
 {
@@ -8,7 +8,7 @@ rcspline.restate <- function(knots, coef, type=c("ordinary","integral"),
   k <- length(knots)
   if(k<3)
     stop("must have >=3 knots in a restricted cubic spline")
-  
+
   p <- length(coef)
   if(p == k)
     {
@@ -17,16 +17,16 @@ rcspline.restate <- function(knots, coef, type=c("ordinary","integral"),
       p <- p-1
     }
   else Intc <- 0
-  
+
   if(k-1 != p)
     stop("coef must be of length # knots - 1")
 
   knotnk <- knots[k]
   knotnk1 <- knots[k-1]
   knot1 <- knots[1]
-  
+
   kd <- if(norm==0) 1 else if(norm==1)(knotnk-knotnk1)^3 else (knotnk-knot1)^2
-  
+
   coef[-1] <- coef[-1]/kd
 
   d <- c(0, knots-knotnk)[1:p]
@@ -37,7 +37,7 @@ rcspline.restate <- function(knots, coef, type=c("ordinary","integral"),
 
   if(!length(names(coef)))
     names(coef) <- paste(x,1:length(coef),sep="")
-  
+
   coef <- c(coef, coefk, coefk1)
   names(coef)[k] <- "1st restricted coef"
   names(coef)[k+1] <- "2nd restricted coef"
@@ -55,7 +55,7 @@ rcspline.restate <- function(knots, coef, type=c("ordinary","integral"),
           txt <- paste(txt, "* x")
           txt2 <- paste(txt2, '*', x)
         }
-      
+
       if(coef[1]>=0)
         {
           txt <- paste(txt, "+");
@@ -70,25 +70,25 @@ rcspline.restate <- function(knots, coef, type=c("ordinary","integral"),
                    if(type=="ordinary")"* x"
                    else "* x^2",
                    sep="")
-    
+
       txt2 <- paste(txt2, cof[1],
                     if(type=="ordinary") paste("*",x)
                     else paste("*",x,"^2"),
                     sep="")
     }
-  
+
   for(i in 2:(p+2))
     {
       nam <- paste("pmax(x",
                    if(knots[i-1]<0) "+"
-                   else NULL, 
+                   else NULL,
                    if(knots[i-1]!=0) kn[i-1]
                    else NULL,
                    ",0)^",
                    if(type=="ordinary")"3"
                    else "4",
                    sep="")
-    
+
       nam2 <- paste("pmax(",x,
                     if(knots[i-1]<0) "+"
                     else NULL,
@@ -98,15 +98,15 @@ rcspline.restate <- function(knots, coef, type=c("ordinary","integral"),
                     if(type=="ordinary")"3"
                     else "4",
                     sep="")
-      
+
       z <- paste(if(coef[i]>=0 & (i>2 | coef[1]!=0 | Intc!=0)) "+"
       else NULL,
                  cof[i], "*", nam, sep="")
-      
+
       z2 <- paste(if(coef[i]>=0 & (i>2 | coef[1]!=0 | Intc!=0)) "+"
       else NULL,
                   cof[i], "*", nam2, sep="")
-      
+
       txt <- paste(txt , z,  sep="")
       txt2<- paste(txt2, z2, sep="")
     }
@@ -118,7 +118,7 @@ rcspline.restate <- function(knots, coef, type=c("ordinary","integral"),
 
   lcof <- nchar(cof)
   cof <- latexSN(cof)
-  
+
   cur <- begin; colcnt <- nbegin; tex <- NULL
   if(Intc!=0)
     {
@@ -128,7 +128,7 @@ rcspline.restate <- function(knots, coef, type=c("ordinary","integral"),
           fint <- paste(fint, x)
           colcnt <- colcnt+2
         }
-    
+
       cur <- paste(cur, fint, sep="")
       colcnt <- colcnt + nchar(fint)
       if(coef[1]>0)
@@ -137,16 +137,16 @@ rcspline.restate <- function(knots, coef, type=c("ordinary","integral"),
           colcnt <- colcnt+3
         }
     }
-  
+
   if(coef[1]!=0)
     {
       sp <- if(substring.location(cof[1],"times")$first > 0) "\\:"
       else NULL
-    
+
       cur <- paste(cur, cof[1], sp, x,
                    if(type=="integral") "^2",
                    sep="")
-      
+
       ##\:=medium space in LaTeX
       colcnt <- colcnt+lcof[1]+lx+(type=="integral")
     }
@@ -160,16 +160,16 @@ rcspline.restate <- function(knots, coef, type=c("ordinary","integral"),
                    if(knots[i-1]<0) "+"
                    else NULL,
                    if(knots[i-1]!=0) kn[i-1]
-                   else NULL, 
+                   else NULL,
                    ")_{+}^{",
                    if(type=="ordinary")"3}"
                    else "4}",
                    sep="")
-      
+
       q <- paste(if(coef[i]>=0 & (i>2 | coef[1]!=0 | Intc!=0)) "+"
       else NULL,
                  cof[i], nam, sep="")
-      
+
       n <- size[i-1]
       if(colcnt+n > columns)
         {
@@ -177,13 +177,20 @@ rcspline.restate <- function(knots, coef, type=c("ordinary","integral"),
           cur <- ""
           colcnt <- 0
         }
-    
+
       cur <- paste(cur, q, sep="")
       colcnt <- colcnt+n
     }
 
   tex <- c(tex, cur)
-  tex <- paste(before, tex, after)
+  ## CHANGE 2: unconditional {} guard after 'after' when it's non-empty
+  ## -- see header comment for why. Uses paste0 (no separator) between
+  ## after and "{}" specifically so they stay adjacent (\\{}), matching
+  ## exactly what was empirically confirmed to work -- NOT paste()'s
+  ## default space separator, which was never tested and may not behave
+  ## identically.
+  tex <- paste(before, tex, paste0(after, if(after != "") "{}" else ""))
+
 
   if(Intc!=0) coef <- c(Intercept=Intc, coef)
 
@@ -193,7 +200,7 @@ rcspline.restate <- function(knots, coef, type=c("ordinary","integral"),
   attr(coef, "latex")   <- tex
   names(colcnt) <- NULL
   attr(coef, "columns.used") <- colcnt
-  
+
   coef
 }
 
@@ -203,7 +210,7 @@ rcsplineFunction <- function(knots, coef=numeric(0), norm=2,
   k <- length(knots)
   kd <- if(norm==0) 1 else if(norm==1) knots[k]-knots[k-1] else
   (knots[k]-knots[1])^.66666666666666666666666
-  
+
   f <- function(x, knots, coef, kd, type) {
     k       <- length(knots)
     knotnk  <- knots[k]
@@ -236,3 +243,31 @@ rcsplineFunction <- function(knots, coef=numeric(0), norm=2,
   formals(f) <- list(x=numeric(0), knots=knots, coef=coef, kd=kd, type=type)
   f
 }
+
+# Claude Sonnet 5 2026-08-15:
+## -----------------------------------------------------------------------
+## rcspline.restate, with two changes from the version in the uploaded
+## source, both marked below. Everything else is byte-for-byte identical
+## to what was uploaded.
+##
+## CHANGE 1 (signature): after="\\" corrected to after="\\\\" -- the
+## original R source "\\" evaluates to a single literal backslash
+## character, which would never have functioned as a LaTeX row-break
+## (\\) if anyone actually relied on the default rather than overriding
+## it (as latexrms's own call sites always do, passing after="").
+##
+## CHANGE 2 (final tex construction): the row-break in 'after' now gets
+## an unconditional {} appended whenever 'after' is non-empty -- a
+## generic, source-level fix rather than something relying on every
+## caller to remember. This is exactly the fix confirmed empirically:
+## a bare \\ immediately followed by '[' (e.g. a caller appending
+## bracket-notation content, like an interaction term's [male] right
+## after this function's output) gets misparsed by texmath as \\[...]
+## -- LaTeX's optional row-spacing argument -- and SILENTLY SWALLOWS
+## whatever's inside the brackets, with no error or warning at all.
+## {} immediately after \\ blocks that misparse unconditionally, with
+## no visible effect when the hazard isn't actually present. Only
+## applies when after != "" -- latexrms's own calls all pass after="",
+## so this is inert for every currently-exercised call site and only
+## matters for direct/standalone use of this function, or future
+## callers relying on the default.

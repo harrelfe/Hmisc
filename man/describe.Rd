@@ -19,13 +19,13 @@
 \description{
 \code{describe} is a generic method that invokes \code{describe.data.frame},
 \code{describe.matrix}, \code{describe.vector}, or
-\code{describe.formula}. \code{describe.vector} is the basic 
+\code{describe.formula}. \code{describe.vector} is the basic
 function for handling a single variable.
 This function determines whether the variable is character, factor,
 category, binary, discrete numeric, and continuous numeric, and prints
 a concise statistical summary according to each. A numeric variable is
 deemed discrete if it has <= 10 distinct values. In this case,
-quantiles are not printed. A frequency table is printed 
+quantiles are not printed. A frequency table is printed
 for any non-binary variable if it has no more than 20 distinct
 values.  For any variable for which the frequency table is not printed,
 the 5 lowest and highest values are printed.  This behavior can be
@@ -61,12 +61,13 @@ highly skewed binary variable.  \code{Info} is reported to
 two decimal places.
 
 A latex method exists for converting the \code{describe} object to a
-LaTeX file.  For numeric variables having more than 20 distinct values,
+LaTeX file, and Typst is also supported, triggered by \code{options(prType='typst')}.
+For numeric variables having more than 20 distinct values,
 \code{describe} saves in its returned object the frequencies of 100
 evenly spaced bins running from minimum observed value to the maximum.
 When there are less than or equal to 20 distinct values, the original
 values are maintained.
-\code{latex} and \code{html} insert a spike histogram displaying these
+\code{latex}, \code{html}, and \code{typst} insert a spike histogram displaying these
 frequency counts in the tabular material using the LaTeX picture
 environment.  For example output see
 \url{https://hbiostat.org/doc/rms/book/chapter7edition1.pdf}.
@@ -80,7 +81,7 @@ an object that is the result of running \code{describe} on a data frame
 will result in rendering the HTML version.  If run from the console a
 browser window will open.  When \code{which} is specified to
 \code{print}, whether or not \code{prType='html'} is in effect, a
-\code{gt} package html table will be produced containing only 
+\code{gt} package html table will be produced containing only
 the types of variables requested.  When \code{which='both'} a list with
 element names \code{Continuous} and \code{Categorical} is produced,
 making it convenient for the user to print as desired, or to pass the
@@ -156,7 +157,7 @@ formatdescribeSingle(x, condense=c('extremes', 'frequencies', 'both', 'none'),
 }
 \arguments{
 \item{x}{
-  a data frame, matrix, vector, or formula.  For a data frame, the 
+  a data frame, matrix, vector, or formula.  For a data frame, the
   \code{describe.data.frame}
   function is automatically invoked.  For a matrix, \code{describe.matrix} is
   called.  For a formula, describe.data.frame(model.frame(x))
@@ -179,7 +180,7 @@ formatdescribeSingle(x, condense=c('extremes', 'frequencies', 'both', 'none'),
 \item{digits}{
   number of significant digits to print.  For \code{plot.describe} is
 	the number of significant digits to put in hover text for
-	\code{plotly} when showing raw variable values.} 
+	\code{plotly} when showing raw variable values.}
 \item{listunique}{
   For a character variable that is not an \code{mChoice} variable, that
   has its longest string length greater than \code{listnchar}, and that
@@ -224,7 +225,7 @@ formatdescribeSingle(x, condense=c('extremes', 'frequencies', 'both', 'none'),
   The default, \code{normwt=FALSE} results in the use of \code{weights} as
   weights in computing various statistics.  In this case the sample size
   is assumed to be equal to the sum of \code{weights}.  Specify
-  \code{normwt=TRUE} to divide 
+  \code{normwt=TRUE} to divide
   \code{weights} by a constant so that \code{weights} sum to the number of
   observations (length of vectors specified to \code{describe}).  In this
   case the number of observations is taken to be the actual number of
@@ -315,7 +316,7 @@ the output.
 	single \code{ggplot2} or \code{plotly} object is returned, ready to
 	print.  For \code{print.describe} may be \code{"categorical"} or
 	\code{"continuous"}, causing a \code{gt} table to be created with the
-	categorical or continuous variable \code{describe} results.}  
+	categorical or continuous variable \code{describe} results.}
 \item{what}{character or numeric vector specifying which variables to
 	plot; default is to plot all}
 \item{sort}{specifies how and whether variables are sorted in order of
@@ -337,7 +338,7 @@ the output.
 \value{
 a list containing elements \code{descript}, \code{counts},
 \code{values}.  The list  is of class \code{describe}.  If the input
-object was a matrix or a data 
+object was a matrix or a data
 frame, the list is a list of lists, one list for each variable
 analyzed. \code{latex} returns a standard \code{latex} object.  For numeric
 variables having at least 20 distinct values, an additional component
@@ -355,7 +356,7 @@ the response variable are printed separately for missing and non-missing
 values of each predictor.  The default summary function returns
 the number of non-missing response values and the mean of the last
 column of the response values, with a \code{names} attribute of
-\code{c("N","Mean")}. 
+\code{c("N","Mean")}.
 When the response is a \code{Surv} object and the mean is used, this will
 result in the crude proportion of events being used to summarize
 the response.  The actual summary function can be designated through
@@ -382,10 +383,10 @@ Vanderbilt University
 \code{\link{spikecomp}}, \code{\link{sas.get}}, \code{\link{quantile}},
 \code{\link{GiniMd}}, \code{\link{pMedian}},
 \code{\link{table}}, \code{\link{summary}},
-\code{\link{model.frame.default}}, 
+\code{\link{model.frame.default}},
 \code{\link{naprint}}, \code{\link{lapply}}, \code{\link{tapply}},
 \code{\link[survival]{Surv}}, \code{\link{na.delete}},
-\code{\link{na.keep}}, 
+\code{\link{na.keep}},
 \code{\link{na.detail.response}}, \code{\link{latex}}
 }
 \examples{
@@ -411,12 +412,12 @@ describe(relig)  #Has special missing values .D .F .M .R .T
                  #attr(relig,"label") is "Religious preference"
 
 #relig : Religious preference  Format:relig
-#    n missing  D  F M R T distinct 
+#    n missing  D  F M R T distinct
 # 4038     263 45 33 7 2 1        8
 #
-#0:none (251, 6\%), 1:Jewish (372, 9\%), 2:Catholic (1230, 30\%) 
-#3:Jehovah's Witnes (25, 1\%), 4:Christ Scientist (7, 0\%) 
-#5:Seventh Day Adv (17, 0\%), 6:Protestant (2025, 50\%), 7:other (111, 3\%) 
+#0:none (251, 6\%), 1:Jewish (372, 9\%), 2:Catholic (1230, 30\%)
+#3:Jehovah's Witnes (25, 1\%), 4:Christ Scientist (7, 0\%)
+#5:Seventh Day Adv (17, 0\%), 6:Protestant (2025, 50\%), 7:other (111, 3\%)
 
 
 # Method for describing part of a data frame:
@@ -426,9 +427,9 @@ describe(relig)  #Has special missing values .D .F .M .R .T
 
  fit <- lrm(y ~ age*sex + log(height))
  describe(formula(fit))
- describe(y ~ age*sex, na.action=na.delete)   
+ describe(y ~ age*sex, na.action=na.delete)
 # report on number deleted for each variable
- options(na.detail.response=TRUE)  
+ options(na.detail.response=TRUE)
 # keep missings separately for each x, report on dist of y by x=NA
  describe(y ~ age*sex)
  options(na.fun.response="quantile")
@@ -471,4 +472,3 @@ describe(relig)  #Has special missing values .D .F .M .R .T
 \keyword{robust}
 \keyword{models}
 \keyword{hplot}
-

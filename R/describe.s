@@ -3,7 +3,7 @@ describe.default <- function(x, descript, ...) {
   if(missing(descript)) {
     descript <- deparse(substitute(x))
   }
-  
+
   if(is.matrix(x)) {
     describe.matrix(x, descript, ...)
   } else {
@@ -33,27 +33,27 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
   # Remove trailing blank or .
   labx <- trimws(labx)
   labx <- trimws(sub('\\.$', '', labx))
-  
+
   if(missing(descript)) descript <- as.character(sys.call())[2]
 
   if(length(labx) && labx != descript) descript <- paste(descript,":",labx)
 
   un <- atx$units
   if(length(un) && un == '') un <- NULL
-  
+
   fmt <- atx$format
   if(length(fmt) && (is.function(fmt) || fmt == '')) fmt <- NULL
-  
+
   if(length(fmt) > 1)
     fmt <- paste(as.character(fmt[[1]]), as.character(fmt[[2]]))
-  
+
   present <- if(all(is.na(x))) rep(FALSE, length(x))
   else if(is.mChoice(x))  trimws(as.character(x)) != '' & ! is.na(x)
   else if(is.character(x)) x != "" & x != " " & ! is.na(x)
   else ! is.na(x)
-  
+
   present <- present & ! is.na(weights)
-  
+
   if(length(weights) != length(x))
     stop('length of weights must equal length of x')
 
@@ -64,14 +64,14 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
 
   if(exclude.missing && n==0)
     return(structure(list(), class="describe"))
-  
+
   missing <- sum(weights[! present], na.rm=TRUE)
-  atx$names <- atx$dimnames <- atx$dim <- atx$special.miss <- NULL  
-  
+  atx$names <- atx$dimnames <- atx$dim <- atx$special.miss <- NULL
+
   atx$class <- atx$class[atx$class != 'special.miss']
   cx <- intersect(atx$class,
                   c("Date", "POSIXt", "POSIXct", "dates", "times", "chron"))
-  
+
   isdot <- testDateTime(x,'either') # is date or time var
   isdat <- testDateTime(x,'both')   # is date and time combo var
 
@@ -95,23 +95,23 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
     counts <- c(counts, tabsc)
     lab <- c(lab, names(tabsc))
   }
-  
+
   if(length(atx$imputed)) {
     counts <- c(counts, length(atx$imputed))
     lab <- c(lab, "imputed")
   }
-  
+
   if(length(pd <- atx$partial.date)) {
     if((nn <- length(pd$month)) > 0) {
       counts <- c(counts, nn)
       lab <- c(lab, "missing month")
     }
-    
+
     if((nn <- length(pd$day)) > 0) {
       counts <- c(counts, nn)
       lab <- c(lab,"missing day")
     }
-    
+
     if((nn <- length(pd$both)) > 0) {
       counts <- c(counts, nn)
       lab <- c(lab, "missing month,day")
@@ -138,20 +138,20 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
     counts <- c(counts, round(reff, 3))
     lab    <- c(lab, 'Info')
   }
-  
+
   x.binary <- n.unique == 2 && isnum && x.unique[1] == 0 && x.unique[2] == 1
   if(x.binary) {
     counts <- c(counts, sum(weights[x == 1]))
     lab <- c(lab, "Sum")
   }
-  
+
   if(isnum) {
     if(isdot) {
       dd <- sum(weights * xnum)  / sum(weights)
       fval <- formatDateTime(dd, atx, ! timeUsed)
       counts <- c(counts, fval)
     } else counts <- c(counts, format(sum(weights * x) / sum(weights), ...))
-    
+
     lab <- c(lab, "Mean")
     if(! weighted & n.unique > 2) {
       pmedian <- format(pMedian(xnum))
@@ -176,7 +176,7 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
     fval <-
       if(isdot) formatDateTime(q, atx, ! timeUsed)
       else format(q,...)
-    
+
     counts <- c(counts, fval)
     lab <- c(lab,".05",".10",".25",".50",".75",".90",".95")
   }
@@ -221,7 +221,7 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
       }
     z$values <- values
     if(length(trans)) z$trans <- trans
-    
+
     if(! isnum && ! length(values)) {
       xtr <- trimws(x)
       nc  <- nchar(xtr)
@@ -235,7 +235,7 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
           }
         }
       }
-    
+
     if(n.unique >= 5 && ! mch) {
       loandhi <- x.unique[c(1 : 5, (n.unique - 4) : n.unique)]
       extremes <-
@@ -271,7 +271,7 @@ describe.matrix <- function(x, descript, exclude.missing=TRUE,
                          digits=digits, ...)
     Z[[i]] <- z
     if(exclude.missing && length(z)==0)
-      missing.vars <- c(missing.vars, nam[i]) 
+      missing.vars <- c(missing.vars, nam[i])
   }
 
   attr(Z, 'descript') <- descript
@@ -299,13 +299,13 @@ describe.data.frame <- function(x, descript, exclude.missing=TRUE,
     xnam <- nam[i]
     tran <- if(length(trans) && (xnam %in% names(trans))) trans[[xnam]]
     z <-
-      if(mat) 
+      if(mat)
         describe.matrix(xx, xnam, exclude.missing=exclude.missing,
                         digits=digits, trans=tran, ...)
-      else	  
+      else
         describe.vector(xx, xnam, exclude.missing=exclude.missing,
                         digits=digits, trans=tran, ...)
-    
+
     all.missing <- length(z)==0
     if(exclude.missing && all.missing)
       missing.vars <- c(missing.vars, xnam)
@@ -323,7 +323,7 @@ describe.data.frame <- function(x, descript, exclude.missing=TRUE,
 }
 
 
-describe.formula <- function(x, descript, data, subset, na.action, 
+describe.formula <- function(x, descript, data, subset, na.action,
                              digits=4, weights, ...)
 {
   mf <- match.call(expand.dots=FALSE)
@@ -331,11 +331,11 @@ describe.formula <- function(x, descript, data, subset, na.action,
   mf$x <- mf$descript <- mf$file <- mf$append <- mf$... <- mf$digits <- NULL
   if(missing(na.action))
     mf$na.action <- na.retain
-  
+
   mf[[1]] <- as.name("model.frame")
   mf <- eval(mf, sys.parent())
   weights <- model.extract(mf, weights)
-		
+
   if(missing(descript)) {
     ter <- attr(mf,"terms")
     d <- as.character(x)
@@ -347,20 +347,30 @@ describe.formula <- function(x, descript, data, subset, na.action,
 
   Z <- describe.data.frame(mf, descript, digits=digits, weights=weights, ...)
   if(length(z <- attr(mf,"na.action")))
-    attr(Z,'naprint') <- naprint(z) 
+    attr(Z,'naprint') <- naprint(z)
 
   Z
 }
 
 na.retain <- function(d) d
 
-
+## =========================================================================
+## MODIFIED: print.describe
+## Only change from the existing version: one new branch (marked below)
+## paralleling the existing html.describe branch, so a bare describe(x)
+## auto-renders correctly under options(prType='typst') the same way it
+## already does under options(prType='html').
+## =========================================================================
 print.describe <-
   function(x, which = c('both', 'categorical', 'continuous'), ...) {
     mwhich <- missing(which)
     which  <- match.arg(which)
-    
+
     if(prType() == 'html' && mwhich) return(html.describe(x, ...))
+
+    ## --- NEW: typst branch, mirrors the html branch immediately above ---
+    if(prType() == 'typst' && mwhich) return(typst_describe(x, ...))
+    ## ----------------------------------------------------------------
 
     if(! mwhich) {
       if(! requireNamespace('gt', quietly=TRUE))
@@ -386,7 +396,7 @@ print.describe <-
   if(length(at$dimensions)) {
     cat(at$descript,'\n\n',at$dimensions[2],' Variables     ',at$dimensions[1],
         ' Observations\n')
-    
+
     if(length(at$naprint)) cat('\n',at$naprint,'\n')
     w <- paste(rep('-', .Options$width), collapse='')
     cat(w, '\n', sep='')
@@ -401,15 +411,24 @@ print.describe <-
       print(at$missing.vars, quote=FALSE)
     }
   } else print.describe.single(x, ...)
-  
+
   invisible()
 }
 
-## Function to format part of describe.single output after description & counts
-## verb=1 means verbatim mode open
+## =========================================================================
+## MODIFIED: formatdescribeSingle
+## Changes from the existing version, each marked below:
+##   1. lang gains 'typst' as an allowed value
+##   2. vbtm gains a typst branch (via new typst_verbatim())
+##   3. the extremes condense block gains a typst branch, parallel to
+##      the existing html one, using typst_counts_table() for the
+##      doesn't-fit-on-one-line case instead of Hmisc::html()
+## Everything else is unchanged from the existing version.
+## =========================================================================
 formatdescribeSingle <-
   function(x, condense=c('extremes', 'frequencies', 'both', 'none'),
-           lang=c('plain', 'latex', 'html'), verb=0, lspace=c(0, 0),
+           lang=c('plain', 'latex', 'html', 'typst'),   ## CHANGED: added 'typst'
+           verb=0, lspace=c(0, 0),
            size=85, ...)
 {
   condense <- match.arg(condense)
@@ -422,16 +441,23 @@ formatdescribeSingle <-
   vs       <- if(lang == 'latex' && lspace[2] != 0)
                 function() cat('\\vspace{', -lspace[2], 'ex}\n',
                                sep='') else function() {}
+
+  ## --- CHANGED: vbtm gains a typst branch ---
   vbtm <- if(lang == 'html')
             function(x, omit1b=FALSE, prlabel=NULL, ...)
               htmlVerbatim(x, size=size, omit1b=omit1b,
                            propts=list(prlabel=prlabel), ...)
+          else if(lang == 'typst')
+            function(x, omit1b=FALSE, prlabel=NULL, ...)
+              typst_verbatim(x, size=size, omit1b=omit1b,
+                             prlabel=prlabel, ...)
           else
             function(x, omit1b=NULL, prlabel=NULL)
               capture.output(print(x, quote=FALSE, prlabel=prlabel, ...))
+  ## -------------------------------------------
 
   R <- character(0)
-  
+
   v <- x$values
 
   is.standard <- length(v) && is.list(v) &&
@@ -444,7 +470,7 @@ formatdescribeSingle <-
     # check total width
     print.freq <- sum(nchar(altv)) <= 200
   } else print.freq <- FALSE
-  
+
   print.ext   <- length(x$extremes) && ! print.freq  ## && ! print.freq then ignored print.freq
   if(print.ext) {
     ## For printing 5 highest and lowest values
@@ -481,6 +507,23 @@ formatdescribeSingle <-
           R <- c(R, tab)
         }
       }  # end lang='html'
+      ## --- NEW: typst branch, parallel to the html one above ---
+      else if(lang == 'typst') {
+        mnb <- function(x) specs$color(x, col='MidnightBlue')
+        spc <- specs$space
+        blo <- paste0(mnb('lowest'), spc, ':')
+        bhi <- paste0(mnb('highest'), ':')
+        if(w + 2 <= wide) {
+          low <- paste(blo, paste(val[1: 5], collapse=' '))
+          hi  <- paste(bhi, paste(val[6:10], collapse=' '))
+          R <- c(R, paste0(low, ', ', hi))
+        } else {
+          lowhi <- val[1:10]
+          names(lowhi) <- c('L1','L2','L3','L4','L5','H5','H4','H3','H2','H1')
+          R <- c(R, typst_counts_table(lowhi))
+        }
+      }  # end lang='typst'
+      ## -----------------------------------------------------------
       else {  # lang='plain' or 'latex'
         low <- paste('lowest :', paste(val[1: 5], collapse=' '))
         hi  <- paste('highest:', paste(val[6:10], collapse=' '))
@@ -510,15 +553,15 @@ formatdescribeSingle <-
       lval  <- nchar(fval[1])
       lfreq <- nchar(ffreq[1])
       lprop <- nchar(fprop[1])
-      
+
       m     <- max(lval, lfreq, lprop)
       ## Right justify entries in each row
       bl    <- '                                         '
       fval  <- paste0(substring(bl, 1, m - lval ), fval)
       ffreq <- paste0(substring(bl, 1, m - lfreq), ffreq)
       fprop <- paste0(substring(bl, 1, m - lprop), fprop)
-      
-      w <- rbind(Value=fval, Frequency=ffreq, Proportion=fprop)
+
+      w     <- rbind(Value=fval, Frequency=ffreq, Proportion=fprop)
       colnames(w) <- rep('', ncol(w))
       out <- capture.output(print(w, quote=FALSE))
       if(length(out) <= 8) {
@@ -542,7 +585,7 @@ formatdescribeSingle <-
       R <- c(R, '',
              paste('For the frequency table, variable is rounded to the nearest',
                    format(x$roundedTo, scientific=3)))
-    
+
   } else if(length(v) && ! is.standard) {
     if(inherits(v, 'table')) {
       fval <- names(v)
@@ -554,11 +597,13 @@ formatdescribeSingle <-
       R <- c(R, '', vbtm(v))
     }
   }
-  
+
   if(length(x$mChoice)) {
     R <- c(R, bv()); verb <- 1
     ## print.summary.mChoice when options(prType='html') returns
     ## html character string
+    ## NOTE: not yet extended for prType='typst' -- depends on
+    ## print.summary.mChoice itself gaining typst support separately
     R <- c(R, '', print(x$mChoice, render=FALSE))
   }
 
@@ -570,15 +615,15 @@ formatdescribeSingle <-
 print.describe.single <- function(x, ...) {
   wide <- .Options$width
   des  <- x$descript
-  
+
   if(length(x$units))
     des <- paste0(des, ' [', x$units, ']')
-  
+
   if(length(x$format))
     des <- paste0(des, '  Format:', x$format)
-  
+
   cat(des,'\n')
-  
+
   print(x$counts, quote=FALSE)
 
   R <- formatdescribeSingle(x, lang='plain', ...)
@@ -621,7 +666,7 @@ latex.describe <-
        '~Observations}\\end{center}\n', file=file, append=TRUE)
     if(length(at$naprint))
       ct(at$naprint,'\\\\\n', file=file, append=TRUE)
-    
+
     ct('\\smallskip\\hrule\\smallskip{\\',size,'\n',
        sep='', file=file, append=TRUE)
     vnames <- at$names
@@ -646,7 +691,7 @@ latex.describe <-
       ct('\\smallskip\\hrule\\smallskip\n', file=file, append=TRUE)
       if(dovbox) cat('}\n', file=file, append=TRUE)
     }
-    
+
     if(length(mv <- at$missing.vars)) {
       ct('\\smallskip\\noindent Variables with all observations missing:\\ \\smallskip\n',
          file=file, append=TRUE)
@@ -674,7 +719,7 @@ latex.describe <-
     spc <- if(spacing == 0) '\n' else '\\end{spacing}\n'
     ct(spc, file=file, append=TRUE)
   }
-  
+
   structure(list(file=file,  style=c('setspace','relsize')),
             class='latex')
 }
@@ -690,11 +735,11 @@ latex.describe.single <-
     else cat(..., file=file, append=append)
     invisible()
   }
-  
+
   oldw <- options('width')
   options(width=if(size == 'small') 95 else 85)
   on.exit(options(oldw))
-  
+
   wide <- switch(size,
                  normalsize = 73,  # was 66
                  small      = 95,  # was 73
@@ -717,21 +762,21 @@ latex.describe.single <-
     rem <- paste(sp[-1], collapse=':')
     paste0('\\textbf{', vnm, '}: ', rem)
   }
-  
+
   if(length(object$units))
     des <- paste0(des, '{\\smaller[1] [',
                  latexTranslate(object$units),']}')
-  
+
   if(length(object$format))
     des <- paste0(des, '{\\smaller~~Format:', latexTranslate(object$format),
                  '}')
-  
+
   desbas <- paste(object$descript,
                   if(length(object$units))
                   paste0(' [', object$units, ']'),
                   if(length(object$format))
                   paste0('  Format:', object$format))
-  
+
   ct('\\noindent', des, sep='', file=file, append=append)
   lco <- if(length(Values)) length(Values$frequency) else 0
   if(lco > 2) {
@@ -756,10 +801,10 @@ latex.describe.single <-
          max(1, round(1000 * counts[i] / maxcounts * .1)), '}}\n',
          sep='', file=file, append=TRUE)
     }
-    
+
     ct('\\end{picture}\n', file=file, append=TRUE)
   } else ct('\n', file=file, append=TRUE)
-  
+
   sz <- ''
   if(tabular) {
     ml <- nchar(paste(object$counts, collapse='  '))
@@ -768,7 +813,7 @@ latex.describe.single <-
     else if(ml > 80)
       sz <- '[2]'
   }
-  
+
   ct('\n{\\smaller', sz, '\n', sep='', file=file, append=TRUE)
   if(tabular) {
     if(lspace[1] != 0)
@@ -820,31 +865,31 @@ html.describe <-
   mnb    <- function(x) m$color(x, col='MidnightBlue')
 
   R <- c(m$unicode, m$style())   ## define thinhr (and others not needed here)
-  
+
   R <- c(R, paste0('<title>', at$descript, ' Descriptives</title>'))
-  
+
   if(length(at$dimensions)) {
     R <- c(R,
            mnb(center(bold(paste(htmlTranslate(at$descript), sskip,
                                  at$dimensions[2], ' Variables', lspace,
                                  at$dimensions[1],' Observations')))))
-    
+
     if(length(at$naprint)) R <- c(R, '', at$naprint)
-    
+
     R <- c(R, hrule)
-    
+
     vnames <- at$names
     i <- 0
     for(z in object) {
       i <- i + 1
       if(! length(z))
         next
-      
+
       r <- html.describe.single(z, ## vname=vnames[i],
                                 tabular=tabular, greek=greek, size=size, ...)
       R <- c(R, r, hrule)
     }
-    
+
     if(length(mv <- at$missing.vars)) {
       R <- c(R, sskip, 'Variables with all observations missing:',
              br, sskip)
@@ -879,7 +924,7 @@ html.describe.single <- function(object, size=85, tabular=TRUE,
   oldw <- options('width')
   options(width=if(size < 90) 95 else 85)
   on.exit(options(oldw))
-  
+
   wide <- if(size >= 90) 73 else if(size >= 75) 95 else 110
 
   z   <- htmlTranslate(object$descript, greek=greek)
@@ -891,10 +936,10 @@ html.describe.single <- function(object, size=85, tabular=TRUE,
       rem <- paste(sp[-1], collapse=':')
       paste0(bold(vnm), ': ', rem)
     }
-  
+
   if(length(object$units))
     des <- m$varlabel(des, htmlTranslate(object$units))
-  
+
   if(length(object$format))
     des <- paste0(des, lspace,
                   smaller(paste0('Format:',
@@ -921,7 +966,7 @@ html.describe.single <- function(object, size=85, tabular=TRUE,
   }
 
   R <- des
-  
+
   sz <- size
   if(tabular) {
     ml <- nchar(paste(object$counts, collapse='  '))
@@ -981,14 +1026,14 @@ contents.data.frame <- function(object, sortlevels=FALSE,
     at <- attributes(x)
     if(length(at$label))     lab[i]     <- at$label
     if(length(at$longlabel)) longlab[i] <- at$longlabel
-    
+
     if(length(at$units))     un[i] <- at$units
-    
+
     atl <- at$levels
     fl[i] <- length(atl)
     cli <- at$class[at$class %nin% c('labelled', 'factor')]
     if(length(cli)) cl[i] <- cli[1]
-    
+
     sm[i] <- storage.mode(x)
     nas[i] <- sum(is.na(x))
     if(length(atl)) {
@@ -997,22 +1042,22 @@ contents.data.frame <- function(object, sortlevels=FALSE,
         w <- Lev[[j]]
         if(! is.name(w) && is.logical(all.equal(w, atl))) {
           atl <- as.name(names(Lev)[j])
-          break   
+          break
         }
       }
       Lev[[nam[i]]] <- atl
     }
   }
-  
+
   w <- list(Labels = if(any(lab != '')) lab,
             Units  = if(any(un != ''))  un,
             Levels = if(any(fl > 0))    fl,
             Class  = if(any(cl != ''))  cl,
             Storage=                    sm,
             NAs    = if(any(nas > 0))   nas )
-  
+
   w <- w[sapply(w, function(x)length(x) > 0)]
-  
+
   ## R does not remove NULL elements from a list
   structure(list(contents=data.frame(w, row.names=nam),
                  dim=d, maxnas=max(nas),
@@ -1039,7 +1084,7 @@ print.contents.data.frame <-
 {
   sort <- match.arg(sort)
 
-  if(prType() == 'html') 
+  if(prType() == 'html')
     return(html.contents.data.frame(x, sort=sort, prlevels=prlevels,
                                     maxlevels=maxlevels, number=number, ...) )
 
@@ -1060,7 +1105,7 @@ print.contents.data.frame <-
            cont <- cont[order(nam),,drop=FALSE]
          },
          labels={
-           if(length(cont$Labels)) 
+           if(length(cont$Labels))
              cont <-  cont[order(cont$Labels, nam),, drop=FALSE]
          },
          NAs={
@@ -1099,7 +1144,7 @@ print.contents.data.frame <-
     print.char.matrix(z, col.txt.align='left', col.name.align='left',
                       row.names=TRUE, col.names=TRUE)
   }
-  
+
   longlab <- x$longLabels
   if(length(longlab)) {
     if(existsFunction('strwrap'))
@@ -1114,7 +1159,7 @@ print.contents.data.frame <-
     print.char.matrix(z, col.names=TRUE, row.names=FALSE,
                       cell.align='left')
   }
-  
+
   invisible()
 }
 
@@ -1131,7 +1176,7 @@ html.contents.data.frame <-
   lspace <- mu$lspace
   lspace <- '&emsp;'  # override - browsers were not rendering correctly
   hrule  <- mu$hrule
-  
+
   d      <- object$dim
   maxnas <- object$maxnas
 
@@ -1154,11 +1199,11 @@ html.contents.data.frame <-
       R <- paste0(R, object$valuesvar, ':', object$values,
                   lspace, lspace)
     R <- c(R, hrule)
-    
+
   } else
     R <- paste0(hrule, '<h4>Data frame:', object$dfname,
         '</h4>', ' Variables:', d[2], hrule)
-  
+
   cont <- object$contents
   nam <- row.names(cont)
   if(number) {
@@ -1171,22 +1216,22 @@ html.contents.data.frame <-
   switch(sort,
          names={cont <- cont[order(nam),,drop=FALSE]},
          labels={
-           if(length(cont$Labels)) 
+           if(length(cont$Labels))
              cont <-  cont[order(cont$Labels, nam),,drop=FALSE]
          },
          NAs={
            if(maxnas>0) cont <- cont[order(cont$NAs,nam),,drop=FALSE]
          })
-  
+
   link <- matrix('', nrow=nrow(cont), ncol=1+ncol(cont),
                  dimnames=list(dimnames(cont)[[1]], c('Name', dimnames(cont)[[2]])))
-  
+
   longlab <- object$longLabels
   if(length(longlab)) {
     longlab <- longlab[longlab != '']
     link[names(longlab),'Name'] <- paste('#longlab',names(longlab),sep='.')
   }
-  
+
   L <- object$Levels
   Lnames <- names(L)
   if(length(cont$Levels)) {
@@ -1209,7 +1254,7 @@ html.contents.data.frame <-
               link=link, border=2,
               col.just=adj, ...)
   R <- c(R, as.character(out), hrule)
-    
+
   if(prlevels && length(L) > 0) {
     if(levelType=='list') {
       R <- c(R, '<h5>Category Levels</h5>')
@@ -1226,7 +1271,7 @@ html.contents.data.frame <-
         for(k in l) R <- c(R,  paste0('<li>', k, '</li>\n'))
       }
     }
-    else {  
+    else {
       ## Function to split a character vector x as evenly as
       ## possible into n elements, pasting multiple elements
       ## together when needed
@@ -1248,7 +1293,7 @@ html.contents.data.frame <-
         }
         ## Take evasive action if needed
         if(m == n) indent(y) else if(m < n)
-          c(indent(y), rep('', n - m)) else 
+          c(indent(y), rep('', n - m)) else
         c(paste(x, collapse=', '), rep('', n - 1))
       }
       nam <- names(L)
@@ -1274,7 +1319,7 @@ html.contents.data.frame <-
       R <- c(R, as.character(out), hrule)
     }
   }
-  
+
   i <- longlab != ''
   if(any(i)) {
     nam <- names(longlab)[i]
@@ -1296,7 +1341,7 @@ contents.list <- function(object, dslabels=NULL, ...) {
     dslabels <- dslabels[nam]
     names(dslabels) <- NULL
   }
-  
+
   g <- function(w) {
     if(length(w)==0 || is.null(w))
       c(Obs=0, Var=if(is.null(w))
@@ -1308,7 +1353,7 @@ contents.list <- function(object, dslabels=NULL, ...) {
       c(Obs=length(w[[1]]), Var=length(w),
         Var.NA=sum(sapply(w, function(x) sum(is.present(x))==0)))
   }
-  
+
   v <- t(sapply(object, g))
   structure(list(contents=if(length(dslabels))
                  data.frame(Label=dslabels,Obs=v[,'Obs'],
@@ -1335,7 +1380,7 @@ print.contents.list <-
                       vars=order(cont$Var),
                       labels=order(cont$Label, nam),
                       NAs=order(cont$Var.NA,nam)),]
-  
+
   print(cont)
   invisible()
 }
@@ -1353,7 +1398,7 @@ html_describe_con <- function(x, sparkwidth=200,
   if(at$descript == '') title <- subtitle <- ''
   else {
     title <- paste0('**`', at$descript, '` Descriptives**')
-  
+
     subtitle <- paste(sum(con), 'Continous Variables of',
                       at$dimensions[2], 'Variables,',
                       at$dimensions[1], 'Observations')
@@ -1370,7 +1415,7 @@ html_describe_con <- function(x, sparkwidth=200,
       }
     sapply(a, s)
   }
-  
+
   g <- function(u) {
     k <- u$counts
     h <- function(z) if(length(z)) z else ''
@@ -1406,7 +1451,7 @@ html_describe_con <- function(x, sparkwidth=200,
                '.95'    = r('.95'),
                check.names=FALSE)
     if(extremes)
-      b <- cbind(b, 
+      b <- cbind(b,
                  Lower    = paste(ext[1:5], collapse=' '),
                  Upper    = paste(ext[1:5], collapse=' ') )
     b
@@ -1430,12 +1475,12 @@ html_describe_con <- function(x, sparkwidth=200,
   ## Using gridvalues, create sparkline for every variable
   ## If the variable was transformed, also put in the leftmost tooltip
   ## the name of the transformation
-  
+
   g <- function(x) {
     trans <- x$trans
     lo <- if(length(trans))
             paste0('Transformation for<br>histogram:', trans[[1]])
-    
+
     gv <- x$gridvalues
     val <- gsub('; ', '<br>', gv$values)
     spikespark(val, gv$frequency, ttlow=lo, w=sparkwidth, cumulative=TRUE,
@@ -1449,7 +1494,7 @@ html_describe_con <- function(x, sparkwidth=200,
   ## show on the right end
   ## col_width(' ' ~ gt::px(w + 20)) will not find w even with .list
   sparkw <- as.formula(paste0("' ' ~ gt::px(", sparkwidth + 20, ")"))
-  
+
   b <- gt::gt(a)                                             |>
     gt::tab_header(title=gt::md(title), subtitle=subtitle)   |>
     gt::tab_style(style=gt::cell_text(align='center'),
@@ -1495,14 +1540,14 @@ html_describe_cat <- function(x, w=200, freq=c('chart', 'table'),
   if(at$descript == '') title <- subtitle <- ''
   else {
     title <- paste0('**`', at$descript, '` Descriptives**')
-  
+
     subtitle <- paste(sum(! con), 'Categorical Variables of',
                       at$dimensions[2], 'Variables,',
                       at$dimensions[1], 'Observations')
     }
 
   x <- x[! con]
-  
+
   g <- function(u) {
     h <- function(z) if(length(z)) z else ''
     a <- function(m) if(m %in% names(k)) as.numeric(k[m]) else NA
@@ -1538,7 +1583,7 @@ html_describe_cat <- function(x, w=200, freq=c('chart', 'table'),
             tab <- paste(tab, collapse='\n')
           }
       }
-    
+
     b <- data.frame(
       Variable = first(u$descript),
       Label    = second(u$descript),
@@ -1570,7 +1615,7 @@ html_describe_cat <- function(x, w=200, freq=c('chart', 'table'),
 
   center_cols <- intersect(names(a),
                   c('n', 'Missing', 'Distinct', 'Info', 'Sum', 'Mean', 'pMedian', 'Gmd'))
-  
+
   b <- gt::gt(a) |>
     gt::tab_header(title=gt::md(title), subtitle=subtitle) |>
     gt::tab_style(style=gt::cell_text(align='center'),
@@ -1640,3 +1685,298 @@ spikespark <- function(x, y, ttlow=NULL, ttupper=NULL, cumulative=FALSE,
 }
 
 utils::globalVariables(c('Units', 'Quantiles', 'tab', 'Distinct', 'Gmd', 'Info', 'n'))
+
+## -----------------------------------------------------------------------
+## Typst rendering support for describe()/print.describe().
+##
+## Depends on (assumed already present elsewhere in Hmisc):
+##   - markupSpecs$typst          (bold, center, smallskip, lspace,
+##                                  hrulethin, br, code, color, space,
+##                                  smaller, varlabel, hfill)
+##   - typstTranslate()
+##   - typstAsis()
+##   - typstFunctions             (list of Typst function-definition
+##                                  strings; typstFunctions$spikehist used
+##                                  here)
+##
+## Contains, in order:
+##   MODIFIED  print.describe            (one new branch, mirroring the
+##                                         existing html.describe one)
+##   MODIFIED  formatdescribeSingle       (lang gains 'typst'; vbtm and
+##                                         the extremes-condense block
+##                                         each gain a typst branch)
+##   NEW       typst_verbatim             (Typst analog of htmlVerbatim)
+##   NEW       typst_counts_table         (shared native #table() helper,
+##                                         used by typst_describe_single;
+##                                         no tinytable dependency)
+##   NEW       typst_describe_single      (per-variable renderer -- I/O
+##                                         shape modeled on
+##                                         html.describe.single, content
+##                                         modeled on
+##                                         latex.describe.single: real
+##                                         spikehist() histogram and real
+##                                         typstTranslate()'d math/greek,
+##                                         not PNG rasters or Unicode
+##                                         substitution)
+##   NEW       typst_describe             (top-level renderer -- loops
+##                                         over variables, emits
+##                                         typstFunctions$spikehist
+##                                         exactly once per document,
+##                                         returns via typstAsis())
+##
+## New functions are named with underscores (typst_describe_single, not
+## typst.describe.single) specifically so they read unambiguously as
+## plain functions, not S3 methods -- print.describe calls them directly
+## by name, the same way it already calls html.describe by name; no new
+## generic (e.g. a `typst()` generic analogous to `latex()`/`html()`) is
+## introduced.
+## -----------------------------------------------------------------------
+
+## =========================================================================
+## NEW: typst_verbatim
+## Typst analog of htmlVerbatim -- wraps captured console-style print()
+## output in a Typst raw block so it displays literally (monospace,
+## preformatted), safe from markup interpretation of any special
+## characters the printed content happens to contain.
+## =========================================================================
+typst_verbatim <- function(x, size = NULL, omit1b = FALSE, prlabel = NULL, ...) {
+  cout <- capture.output(print(x, quote = FALSE, prlabel = prlabel, ...))
+  if(omit1b && length(cout) > 1) cout <- cout[-1]
+  content <- paste(cout, collapse = '\n')
+
+  ## Escape for safe embedding as a Typst STRING literal (raw()'s
+  ## content is a string argument here, not backtick markup syntax) --
+  ## order matters: double existing backslashes FIRST, before the
+  ## quote/newline escaping below introduces any new ones.
+  content <- gsub("\\", "\\\\", content, fixed = TRUE)
+  content <- gsub('"', '\\"', content, fixed = TRUE)
+  content <- gsub('\n', '\\n', content, fixed = TRUE)
+
+  ## block: false is the actual fix -- it skips Quarto's default
+  ## #show raw.where(block: true): set block(fill: luma(230), ...)
+  ## show-rule (visible in the pandoc-generated .typ preamble), which
+  ## was applying an unwanted gray background to these numeric summary
+  ## tables. Still using raw() itself (not plain #text()) so exact
+  ## whitespace/column alignment in the captured print() output is
+  ## preserved -- ordinary markup text would collapse repeated spaces.
+  paste0('#raw("', content, '", block: false)')
+}
+
+
+## =========================================================================
+## NEW: typst_counts_table
+## Native Typst #table() built directly from a named vector (e.g.
+## object$counts) -- no tinytable dependency, per instruction. Shared by
+## typst_describe_single and formatdescribeSingle's typst extremes
+## branch, rather than each independently reimplementing this the way
+## latex.describe.single's \begin{tabular} block and
+## html.describe.single's Hmisc::html() call currently do.
+## =========================================================================
+typst_counts_table <- function(counts) {
+  nms  <- typstTranslate(names(counts))
+  vals <- typstTranslate(as.character(counts))
+  k    <- length(counts)
+  cols <- paste(rep('auto', k), collapse = ', ')
+  header <- paste(paste0('[*', nms, '*]'),  collapse = ', ')
+  body   <- paste(paste0('[', vals, ']'),   collapse = ', ')
+  ## breakable is a #block() parameter, not a #table() one (confirmed by
+  ## compile error: "unexpected argument: breakable") -- wrap the table
+  ## in a non-breakable block instead of passing it directly to table().
+  ##
+  ## inset reduced from 4pt to 2.4pt: row-gutter at 0pt confirmed inset
+  ## (cell top/bottom padding) was the real source of the header-to-data
+  ## gap -- reported as 40% too large at inset:4pt, so cut by ~40%.
+  paste0(
+    '#block(breakable: false)[\n',
+    '#table(\n  columns: (', cols, '),\n',
+    '  column-gutter: 4pt,\n',
+    '  row-gutter: 0pt,\n',
+    '  inset: 2.4pt,\n',
+    '  align: center,\n  ',
+    header, ',\n  ', body, '\n)\n',
+    ']'
+  )
+}
+
+
+## =========================================================================
+## NEW: typst_describe_single
+## Per-variable renderer. I/O shape (accumulate a character vector,
+## return one collapsed string) modeled on html.describe.single, NOT on
+## latex.describe.single's sink()/file-writing model, since only the
+## return-value shape is compatible with typstAsis()'s no-registration
+## rendering mechanism.
+##
+## Content modeled on latex.describe.single, NOT html.describe.single:
+## a real spikehist() vector histogram (not a PNG raster via pngNeedle),
+## and real typstTranslate()'d math/Greek (not Unicode substitution).
+##
+## Does NOT emit the spikehist function *definition* -- that happens
+## exactly once per document, in typst_describe(), since a describe()
+## call over many variables must not redefine #let spikehist(...) once
+## per variable.
+## =========================================================================
+typst_describe_single <- function(object, size = 85, tabular = TRUE,
+                                  greek = TRUE, ...) {
+  m <- markupSpecs$typst
+
+  oldw <- options('width')
+  options(width = if(size < 90) 95 else 85)
+  on.exit(options(oldw))
+
+  wide <- if(size >= 90) 73 else if(size >= 75) 95 else 110
+
+  z   <- typstTranslate(object$descript, greek = greek)
+  des <- if(! length(grep(':', z))) m$bold(z)
+         else {
+           ## Get text before : (variable name)
+           sp  <- strsplit(z, ' : ')[[1]]
+           vnm <- sp[1]
+           rem <- paste(sp[-1], collapse = ':')
+           paste0(m$bold(vnm), ': ', rem)
+         }
+
+  ## NOTE: units are appended directly here, NOT via m$varlabel(des, ...),
+  ## because des at this point is ALREADY-BUILT Typst markup (containing
+  ## a real #strong[...] call) -- varlabel() runs typstTranslate() on its
+  ## label argument internally, which would re-escape that literal '#'
+  ## into '\#' and show the bold/label portion as dead text. varlabel()
+  ## is designed for raw, untranslated label strings; this call site
+  ## needs to append a units suffix to markup that's already finished.
+  if(length(object$units))
+    des <- paste0(des, ' #h(0.3em) #text(size:0.75em)[',
+                  typstTranslate(object$units), ']')
+
+  if(length(object$format))
+    des <- paste0(des, m$lspace,
+                  m$smaller(paste0('Format:',
+                                   typstTranslate(object$format))))
+
+  ## Spike histogram, right-justified against the label the same way
+  ## html.describe.single right-justifies its PNG needle plot -- reuses
+  ## the already-compile-tested markupSpecs$typst$hfill dual-justification
+  ## technique rather than a new one-off mechanism.
+  Values <- object$values
+  lco <- if(length(Values)) length(Values$frequency) else 0
+  if(lco > 2) {
+    heights <- Values$frequency
+    des <- paste0(des, ' ', m$hfill, ' ',
+                  '#spikehist((', paste(heights, collapse = ', '), '))')
+  }
+
+  R <- des
+
+  ## CORRECTION to the comment that used to be here: native #table()
+  ## does NOT automatically avoid width problems the way I'd assumed --
+  ## with enough columns (the full quantile set pushes a continuous
+  ## variable's counts to ~14 items), Typst's auto-sizing compresses
+  ## columns enough to force hyphenated header wrapping ("missing" ->
+  ## "miss-ing") and values that visually touch. The real fix is
+  ## splitting into two narrower tables rather than one wide one, with
+  ## quantiles isolated into their own table -- this keeps any one
+  ## table's column count (and therefore its per-column compression)
+  ## bounded. column-gutter in typst_counts_table() is a secondary,
+  ## belt-and-suspenders spacing safeguard, not a substitute for this.
+  ##
+  ## 80 nudged down slightly from 90 -- 90 was very slightly too
+  ## conservative, still not a fully verified value.
+  sz <- size
+  if(tabular) {
+    counts <- object$counts
+    ml     <- nchar(paste(counts, collapse = '  '))
+    isq    <- grepl('^\\.', names(counts))   # quantile columns: '.05' etc.
+    if(ml > 80 && any(isq) && ! all(isq))
+      R <- c(R, typst_counts_table(counts[! isq]),
+                typst_counts_table(counts[isq]))
+    else
+      R <- c(R, typst_counts_table(counts))
+  } else
+    R <- c(R, typst_verbatim(object$counts, size = sz))
+
+  R <- c(R, formatdescribeSingle(object, lang = 'typst', ...))
+
+  paste(R, collapse = '\n')
+}
+
+
+## =========================================================================
+## NEW: typst_describe
+## Top-level renderer, called directly (by name) from print.describe's
+## new typst branch -- not registered under any generic. Structure
+## mirrors html.describe: emits the spikehist function definition
+## exactly once per document (regardless of single- or multi-variable
+## describe() objects), loops over variables calling
+## typst_describe_single(), and returns the whole accumulated result
+## through typstAsis() at the end.
+## =========================================================================
+typst_describe <- function(object, size = 85, tabular = TRUE,
+                           greek = TRUE, ...) {
+  at <- attributes(object)
+  m  <- markupSpecs$typst
+
+  ## Small gap + rule + small gap as ONE combined string, mirroring
+  ## latex.describe's \smallskip\hrule\smallskip -- kept as one unit
+  ## (not separate R vector elements) so the tight internal spacing
+  ## isn't itself diluted by the paragraph-break join below.
+  hr <- paste0(m$smallskip, m$hrulethin, m$smallskip)
+
+  ## Define spikehist exactly once per document
+  R <- typstFunctions$spikehist
+
+  if(length(at$dimensions)) {
+    R <- c(R,
+           m$center(m$bold(paste0(typstTranslate(at$descript), m$smallskip,
+                                  at$dimensions[2], ' Variables', m$lspace,
+                                  at$dimensions[1], ' Observations'))))
+
+    if(length(at$naprint)) R <- c(R, '', at$naprint)
+
+    R <- c(R, hr)
+
+    vnames <- at$names
+    i <- 0
+    for(z in object) {
+      i <- i + 1
+      if(! length(z))
+        next
+
+      r <- typst_describe_single(z, tabular = tabular, greek = greek,
+                                 size = size, ...)
+      R <- c(R, r, hr)
+    }
+
+    if(length(mv <- at$missing.vars)) {
+      R <- c(R, m$smallskip, 'Variables with all observations missing:',
+             m$br, m$smallskip)
+      mv <- paste(m$code(typstTranslate(mv)), collapse = ', ')
+      R <- c(R, mv)
+    }
+  }
+  else
+    R <- c(R, typst_describe_single(object, tabular = tabular,
+                                    greek = greek, size = size, ...))
+
+  content <- paste(R, collapse = '\n\n')
+
+  ## Scope tightened paragraph/block spacing to just this describe()
+  ## output -- Typst's document-default spacing is tuned for ordinary
+  ## prose, not dense tabular describe() output, and this was the
+  ## source of the excess vertical space complaint throughout (around
+  ## hrules, within a single variable's block, and for the
+  ## single-variable rendering path, since it goes through this same
+  ## function). #set rules here are scoped to this #block only and
+  ## don't affect the rest of the document.
+  ##
+  ## NOTE: 0.5em/0.5em/0.4em below are starting guesses, not verified
+  ## values -- worth the same empirical narrowing against real compiled
+  ## output that every other spacing value in this project needed.
+  wrapped <- paste0(
+    '#block[\n',
+    '#set par(leading: 0.5em, spacing: 0.5em)\n',
+    '#set block(spacing: 0.4em)\n',
+    content, '\n',
+    ']'
+  )
+
+  typstAsis(wrapped)
+}

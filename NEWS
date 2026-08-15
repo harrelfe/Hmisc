@@ -1,9 +1,9 @@
-Changes in version 5.2-7 (2026-08-13)
+Changes in version 5.3-0 (2026-08-15)
    * Added markupSpecs$typst to begin formal Typst support
    * Added typst.r to hold internal Typst utility functions typstTranslate and typstAsis used by print.describe
    * Added typstFunctions internal object, which is a list containing character strings with Typst function definitions such as spikehist
-   * Added typst support for describe, triggered by options(prType='typst')
    * Added typst support for print.summary.mChoice
+   * Added typst support for describe, triggered by options(prType='typst')
 
 Changes in version 5.2-6 (2026-06-18)
    * Changed all length= to length.out= in seq() calls to avoid warnings

@@ -28,4 +28,4 @@ License: GPL (>= 2)
 LazyLoad: Yes
 URL: https://hbiostat.org/R/Hmisc/
 Encoding: UTF-8
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.0

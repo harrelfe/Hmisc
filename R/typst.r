@@ -269,6 +269,18 @@ typstFunctions <- list(
     }
   ]
 }
+',
+justifiedText = '
+#let justified-text(x, y, body, justify: "l") = {
+  context {
+    let sz = measure(body)
+    let dx = if justify == "r" { x - sz.width }
+             else if justify == "c" { x - sz.width / 2 }
+             else { x }
+    let dy = y - sz.height / 2
+    place(dx: dx, dy: dy, body)
+  }
+}
 '
 
   ## Additional typstFunctions elements go here as they're written, one

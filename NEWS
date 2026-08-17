@@ -6,7 +6,7 @@ Changes in version 5.3-0 (2026-08-15)
    * Added typst support for describe, triggered by options(prType='typst')
    * latexSN: removed thin space to be compatible with Typst with pandoc's texmath processing
    * rcspline.restate generated LaTeX markup: changed default value of after to 4 backslashes; avoid problem with double backslash at the end of a line gobbling [] in next line by including empty group {} with double backslash
-   * latex.lrm: removed sep="" from 2 places inside c()
+   * typstDotchart: new function, parallels latexDotchart
 
 Changes in version 5.2-6 (2026-06-18)
    * Changed all length= to length.out= in seq() calls to avoid warnings

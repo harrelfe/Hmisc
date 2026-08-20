@@ -18,7 +18,7 @@
 rcspline.restate(knots, coef,
                  type=c("ordinary","integral"),
                  x="X", lx=nchar(x),
-                 norm=2, columns=65, before="& &", after="\\\\",
+                 norm=2, columns=65, before="& &", after="\\\\\\\\",
                  begin="", nbegin=0, digits=max(8, .Options$digits))
 
 rcsplineFunction(knots, coef, norm=2, type=c('ordinary', 'integral'))
@@ -92,7 +92,7 @@ rcsplineFunction(knots, coef, norm=2, type=c('ordinary', 'integral'))
   string format as the \code{text} attribute.  \code{rcsplineFunction}
   returns an \R function with arguments \code{x} (a user-supplied
   numeric vector at which to evaluate the function), and some
-  automatically-supplied other arguments. 
+  automatically-supplied other arguments.
 }
 \author{
   Frank Harrell
@@ -103,7 +103,7 @@ rcsplineFunction(knots, coef, norm=2, type=c('ordinary', 'integral'))
 }
 \seealso{
   \code{\link{rcspline.eval}}, \code{\link{ns}}, \code{\link[rms]{rcs}},
-  \code{\link{latex}}, \code{\link{Function.transcan}} 
+  \code{\link{latex}}, \code{\link{Function.transcan}}
 }
 \examples{
 set.seed(1)

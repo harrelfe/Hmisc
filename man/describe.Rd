@@ -148,7 +148,7 @@ intended to be called by the user.
 \method{html}{describe.single}(object, size=85,
       tabular=TRUE, greek=TRUE, \dots)
 formatdescribeSingle(x, condense=c('extremes', 'frequencies', 'both', 'none'),
-           lang=c('plain', 'latex', 'html'), verb=0, lspace=c(0, 0),
+           lang=c('plain', 'latex', 'html', 'typst'), verb=0, lspace=c(0, 0),
            size=85, \dots)
 \method{plot}{describe}(x, which=c('both', 'continuous', 'categorical'),
                           what=NULL,

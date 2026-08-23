@@ -11,13 +11,13 @@ if(!exists("NCOL", mode='function')) {
 prn <- function(x, txt, file='', head=deparse(substitute(x), width.cutoff=500)[1])
 {
   if(file != '') sink(file, append=TRUE)
-  
+
   if(!missing(txt)) {
     if(nchar(txt) + nchar(head) +3 > .Options$width)
       head <- paste('\n\n  ', head, sep='')
     else
       txt <- paste(txt, '   ', sep='')
-    cat('\n', txt, head, '\n\n', sep='') 
+    cat('\n', txt, head, '\n\n', sep='')
   }
   else cat('\n', head, '\n\n',sep='')
   print(x)
@@ -59,7 +59,7 @@ spearman <- function(x, y)
 {
   x <- as.numeric(x)
   y <- as.numeric(y)  ## 17Jul97
-  
+
   notna <- !is.na(x+y)	##exclude NAs
   if(sum(notna) < 3)
     c(rho=NA)
@@ -169,17 +169,17 @@ mgp.axis.labels <- function(value, type=c('xy','x','y','x and y'))
     pr <- par(c('mgp', 'las'))
     mgp <- pr$mgp
     if(! length(value)) value <- c(.7, .7)
-    return(switch(type, 
-                  xy = value, 
+    return(switch(type,
+                  xy = value,
                   x = c(mgp[1], value[1], mgp[3]),
                   y = c(mgp[1], value[2], mgp[3]),
                   'x and y' = list(x = c(mgp[1], value[1], mgp[3]),
                                    y = c(mgp[1], value[2], mgp[3]))))
   }
-  
+
   if(value[1]=='default')
     value <- c(.7,.7)
-  
+
   ##c(.6, if(par('las')==1) 1.3 else .6)
   options(mgp.axis.labels=value, TEMPORARY=FALSE)
   invisible()
@@ -229,7 +229,7 @@ trellis.strip.blank <- function()
   invisible()
 }
 
-lm.fit.qr.bare <- function(x, y, 
+lm.fit.qr.bare <- function(x, y,
                            tolerance = NULL,
                            intercept=TRUE, xpxi=FALSE,
                            singzero=FALSE)
@@ -241,12 +241,12 @@ lm.fit.qr.bare <- function(x, y,
   z    <- lm.fit(x, y, tol=tolerance)
   coef <- z$coefficients
   if(singzero && any(isna <- is.na(coef))) coef[isna] <- 0.
-    
+
   res <- z$residuals
   sse <- sum(res^2)
   sst <- sum((y - mean(y))^2)
 
-  res <- list(coefficients = coef,    residuals = res, 
+  res <- list(coefficients = coef,    residuals = res,
               rsquared     = 1 - sse / sst,
               fitted.values = z$fitted.values)
   if(xpxi) {
@@ -281,11 +281,11 @@ Lag <- function(x, shift=1)
 
   xLen <- length(x)
   if(shift == 0) return(x)
-  
+
   # Create base vector use character to generate "" for mode "character"
   # Coerce base vector to be type of x
   ret <- as.vector(character(xLen), mode=storage.mode(x))
-  
+
   # set resp attributes equal to x attributes
   attrib <- attributes(x)
 
@@ -297,7 +297,7 @@ Lag <- function(x, shift=1)
       if(shift > 0) ret[-(1:shift)] <- x[1:(xLen - shift)]
       else ret[1:(xLen+shift)] <- x[(1-shift):xLen]
     }
-  
+
   attributes(ret) <- attrib
   return(ret)
 }
@@ -307,12 +307,12 @@ xySortNoDupNoNA <- function(x, y)
   if(is.list(x)) {
     y <- x[[2]]; x <- x[[1]]
   }
-  
+
   s <- !is.na(x + y)
   if(any(s)) {
     x <- x[s]; y <- y[s]
   }
-  
+
   i <- order(x)
   x <- x[i]
   y <- y[i]
@@ -341,7 +341,7 @@ outerText <-
 #    x <- if(side==4) grconvertX(1, from='nfc', to='user') else
 #     par('usr')[1]
 #    text(x, y, paste(string,''), cex=cex, adj=adj, xpd=NA)
-#}    
+#}
 
 ## Old method [dropped because does not scale upon resizing device]
   ## Use text() to put test strings in left or right margins
@@ -350,7 +350,7 @@ outerText <-
   ## the space to set aside for all strings
   ## space is the number of extra characters to leave to the left of
   ## the string(s) (adj=0) or to the right (adj=1)
-  
+
 if(FALSE) outerText <- function(string, y, setAside=string[1], side=4, space=1,
                       adj=1, cex=par('cex'))
 {
@@ -360,11 +360,11 @@ if(FALSE) outerText <- function(string, y, setAside=string[1], side=4, space=1,
     on.exit(par(xpd=xpd))
     par(xpd=NA)
   }
-  
+
   ie <- is.expression(string)  ## 1sep02
   if(ie)
     adj <- 0  ## adj=1 not work well for expressions in R
-  
+
   if(side!=4)
     stop('only side=4 implemented')
   if(adj==0)
@@ -403,16 +403,16 @@ if(FALSE) {
 
 print.char.matrix <-
   function (x, file = "",
-            col.name.align = "cen", col.txt.align = "right", 
+            col.name.align = "cen", col.txt.align = "right",
             cell.align = "cen", hsep = "|", vsep = "-", csep = "+",
             row.names = TRUE, col.names = FALSE,
-            append = FALSE, top.border = TRUE, left.border = TRUE, ...) 
+            append = FALSE, top.border = TRUE, left.border = TRUE, ...)
 {
 ### To print a data frame or matrix to a text file or screen
 ###   and having names line up with stacked cells
 ###
 ### First, add row names as first column (might be removed later)
-  
+
   ndimn <- names(dimnames(x))  ## FEH
   rownames <- dimnames(x)[[1]]
   x <- cbind(rownames, x)
@@ -431,7 +431,7 @@ print.char.matrix <-
     padding <- paste(rep(" ", pads), collapse = "")
     paste(padding, z, sep = "")
   }
-  
+
   pad.mid <- function(z, pads)
   {
     ## Centres text in available space
@@ -439,20 +439,20 @@ print.char.matrix <-
     padding.left <- paste(rep(" ", pads - pads%/%2), collapse = "")
     paste(padding.left, z, padding.right, sep = "")
   }
-  
+
   pad.right <- function(z, pads) {
     ## Pads spaces to right of text
     padding <- paste(rep(" ", pads), collapse = "")
     paste(z, padding, sep = "")
   }
-  
+
   ##  (Padding happens on the opposite side to alignment)
   pad.types <- c("left", "mid", "right")
   names(pad.types) <- c("right", "cen", "left")
   pad.name <- pad.types[col.name.align]
   pad.txt <- pad.types[col.txt.align]
   pad.cell <- pad.types[cell.align]
-  
+
   ## Padding character columns
   ##    Need columns with uniform number of characters
   pad.char.col.right <- function(y)
@@ -467,7 +467,7 @@ print.char.matrix <-
       out[i] <- pad.right(y[i], pads = padding[i])
     out
   }
-  
+
   pad.char.col.left <- function(y)
   {
     ## For aligning text to RHS of column
@@ -480,7 +480,7 @@ print.char.matrix <-
       out[i] <- pad.left(y[i], pads = padding[i])
     out
   }
-  
+
   pad.char.col.mid <- function(y) {
     ## For aligning text to centre of column
     col.width <- nchar(y)
@@ -492,12 +492,12 @@ print.char.matrix <-
       out[i] <- pad.mid(y[i], pads = padding[i])
     out
   }
-  
+
   ## which functions to use this time.
   pad.name.fn <- get(paste("pad.", pad.name, sep = ""))
   pad.txt.fn <- get(paste("pad.char.col.", pad.txt, sep = ""))
   pad.cell.fn <- get(paste("pad.", pad.cell, sep = ""))
-  
+
   ## Remove troublesome factors
   x <- as.data.frame(x)
   fac.col <- names(x)[sapply(x, is.factor)]
@@ -535,10 +535,10 @@ print.char.matrix <-
       }
       else xx <- rbind(xx, x.k)
     }
-    row.names(xx) <- paste(rep(row.names(x), sapply(reprow, 
+    row.names(xx) <- paste(rep(row.names(x), sapply(reprow,
                                                     max)),
                            unlist(reprow), sep = ".")
-    
+
     ## Make an index for the rows to be printed
     rn <- row.names(xx)
     rnb <- strsplit(rn, "\\.")
@@ -548,36 +548,36 @@ print.char.matrix <-
   else
     rpref <- seq(nrow(x))
   x <- as.data.frame(xx)
-  
+
   ## Character columns need different treatment from numeric columns
   char.cols <- sapply(x, is.character)
-  if (any(char.cols)) 
+  if (any(char.cols))
     x[char.cols] <- sapply(x[char.cols], pad.txt.fn)
-  
+
   ## Change numeric columns into character
-  if (any(!char.cols)) 
+  if (any(!char.cols))
     x[!char.cols] <- sapply(x[!char.cols], format)
-  
+
   ## now all character columns each of which is uniform element width
   ##
   ## Lining up names with their columns
-  ## Sometimes the names of columns are wider than the columns they name, 
+  ## Sometimes the names of columns are wider than the columns they name,
   ##  sometimes vice versa.
 
   names.width <- nchar(names(x))
-  if (!col.names) 
+  if (!col.names)
     names.width <- rep(0, length(names.width))
   cell.width <- sapply(x, function(y) max(nchar(as.character(y))))
 
   ## (the width of the characters in the cells as distinct
-  ##  from their names)  
+  ##  from their names)
   name.pads <- cell.width - names.width
   cell.pads <- -name.pads
   name.pads[name.pads < 0] <- 0
   cell.pads[cell.pads < 0] <- 0
   pad.names <- name.pads > 0
   pad.cells <- cell.pads > 0
-  
+
   ## Pad out the column names if necessary:
   if (any(pad.names)) {
     stretch.names <- names(x)[pad.names]
@@ -585,53 +585,53 @@ print.char.matrix <-
       names(x)[names(x) == i] <- pad.name.fn(i, name.pads[i])
     }
   }
-  
+
   ## likewise for the cells and columns
   if (any(pad.cells)) {
     stretch.cells <- names(x)[pad.cells]
-    for (j in stretch.cells) x[, j] <- pad.cell.fn(x[, j], 
+    for (j in stretch.cells) x[, j] <- pad.cell.fn(x[, j],
                                                    cell.pads[j])
   }
-  
+
   ## Remove row names if not required
-  if (!row.names) 
+  if (!row.names)
     x <- x[-1]
   ## Put the column names on top of matrix
-  if (col.names) 
+  if (col.names)
     mat2 <- rbind(names(x), as.matrix(x))
   else
     mat2 <- as.matrix(x)
-  
+
   mat.names.width <- nchar(mat2[1, ])
   ## character string to separate rows
   space.h <- ""
   for (k in seq(along=mat.names.width)) {  ## added along= FEH 26Mar02
     space.h <- c(space.h, rep(vsep, mat.names.width[k]), csep)
   }
-  
-  line.sep <- paste(c(ifelse(left.border, csep, ""), space.h), 
+
+  line.sep <- paste(c(ifelse(left.border, csep, ""), space.h),
                     collapse = "")
-  if (col.names) 
+  if (col.names)
     rpref <- c(0, rpref, 0)
   else
     rpref <- c(rpref, 0)
-  
+
   ## print to screen or file
   if(top.border && line.sep !='') {
     write(line.sep, file = file, append = append)
     append <- TRUE
   }
   for (i in 1:nrow(mat2)) {
-    if (left.border) 
-      write(paste(paste(c("", mat2[i, ]), collapse = hsep), 
+    if (left.border)
+      write(paste(paste(c("", mat2[i, ]), collapse = hsep),
                   hsep, sep = ""), file = file, append = append)
     else
-      write(paste(paste(mat2[i, ], collapse = hsep), hsep, 
+      write(paste(paste(mat2[i, ], collapse = hsep), hsep,
                   sep = ""), file = file, append = append)
     append <- TRUE
 
     ## print separator if row prefix is not same as next one
-    if (rpref[i] != rpref[i + 1] && line.sep != '') 
+    if (rpref[i] != rpref[i + 1] && line.sep != '')
       write(line.sep, file = file, append = TRUE)
   }
 }
@@ -747,7 +747,7 @@ ordGridFun <- function(grid)
            grid.segments(x0, y0, x1, y1, default.units='native',
                          gp=gpar(...))
          },
-       
+
          arrows = function(...) lattice::larrows(...),
 
          rect = function(xleft, ybottom, xright, ytop, density, angle,
@@ -776,7 +776,7 @@ ordGridFun <- function(grid)
               },
          abline=function(...) lattice::panel.abline(...),
          unit = function(x, units='native', ...) unit(x, units=units, ...),
-       
+
          axis = function(side=1, at=NULL, labels, ticks=TRUE,
                          distn, line, pos, outer, ...)
          {
@@ -801,14 +801,14 @@ parGrid <- function(grid=FALSE)
     usr <- c(convertX(unit(0:1, "npc"), "native", valueOnly=TRUE),
              convertY(unit(0:1, "npc"), "native", valueOnly=TRUE))
 
-    pin <- 
+    pin <-
       c(convertWidth(unit(1, "npc"), "inches", valueOnly=TRUE),
         convertHeight(unit(1, "npc"), "inches", valueOnly=TRUE))
 
-    uin <- 
+    uin <-
       c(convertWidth(unit(1, "native"), "inches", valueOnly=TRUE),
         convertHeight(unit(1, "native"), "inches", valueOnly=TRUE))
-    
+
   }
   else {
     usr <- pr$usr
@@ -861,8 +861,8 @@ if(FALSE) {
     br <- c(-1e30, x[-n]+diff(x)/2,1e30)
     m <- length(w)
     i[.C("bincode", as.double(w), m, as.double(br),
-         length(br), code = integer(m), right = TRUE, 
-         include = FALSE, NAOK = TRUE, DUP = FALSE, 
+         length(br), code = integer(m), right = TRUE,
+         include = FALSE, NAOK = TRUE, DUP = FALSE,
          PACKAGE = "base")$code]
   }
   NULL
@@ -896,7 +896,7 @@ whichClosePW <- function(x, w, f=0.2) {
   .Fortran(F_wclosepw,as.double(w),as.double(x),
            as.double(runif(lw)),as.double(f),
            lw, lx, double(lx), j=integer(lw))$j
-}              
+}
 
 whichClosek <- function(x, w, k) {
   ## x: vector of reference values
@@ -913,7 +913,7 @@ whichClosek <- function(x, w, k) {
   if(k == 1) return(s)
   apply(s, 2, function(u) sample(u, 1))
 }
-                        
+
 if(FALSE) {
   sampWtdDist <- function(x, w)
   {
@@ -938,7 +938,7 @@ if(FALSE) {
     ## z <- (1 - (z/rep(s,length.out=lx*lw))^3)^3   # Thanks: Tim Hesterberg
     z <- tricube(z/s)   # Thanks: Tim Hesterberg
     sums <- rowSums(z)
-    z <- z/sums 
+    z <- z/sums
     as.vector(rMultinom(z, 1))
   }
   NULL
@@ -961,30 +961,30 @@ approxExtrap <- function(x, y, xout, method='linear', n=50, rule=2,
 
   x <- as.numeric(x)  # handles dates etc.
   y <- as.numeric(y)
-  
+
   d <- ! duplicated(x)
   x <- x[d]
   y <- y[d]
   d <- order(x)
   x <- x[d]
   y <- y[d]
-  
+
   w <- approx(x, y, xout=xout, method=method, n=n,
               rule=2, f=f, ties=ties)$y
-  
+
   r <- range(x)
   d <- xout < r[1]
   if(any(is.na(d)))
     stop('NAs not allowed in xout')
-  
+
   if(any(d))
     w[d] <- (y[2]-y[1])/(x[2]-x[1])*(xout[d]-x[1])+y[1]
-  
+
   d <- xout > r[2]
   n <- length(y)
   if(any(d))
     w[d] <- (y[n]-y[n-1])/(x[n]-x[n-1])*(xout[d]-x[n-1])+y[n-1]
-  
+
   list(x=xout, y=w)
 }
 
@@ -1148,14 +1148,14 @@ testDateTime <- function(x, what=c('either','both','timeVaries'))
     return(FALSE)
 
   dc <- c('Date', 'POSIXt','POSIXct','dates','times','chron')
-  
+
   dtc <- c('POSIXt','POSIXct','chron')
-  
+
   switch(what,
          either = any(cl %in% dc),
          both   = any(cl %in% dtc),
          timeVaries = {
-           if('chron' %in% cl || 'Date' %in% cl) { 
+           if('chron' %in% cl || 'Date' %in% cl) {
              ## chron or S+ timeDate
              y <- as.numeric(x)
              length(unique(round(y - floor(y),13))) > 1
@@ -1184,7 +1184,7 @@ formatDateTime <- function(x, at, roundDay=FALSE)
          else x
        } else {
          attributes(x) <- at
-         if(roundDay && 'Date' %nin% at$class) 
+         if(roundDay && 'Date' %nin% at$class)
            as.POSIXct(round(x, 'days'))
          else x
        }
@@ -1250,11 +1250,11 @@ getHdata <-
     localrepo <- .Options$localHfiles
     localrepo <- length(localrepo) && is.logical(localrepo) && localrepo
     if(localrepo) where <- '~/web/data/repo'
-    
+
     ads <- readLines(paste0(where, '/Rcontents.txt'))
     a <- unlist(strsplit(ads,'.sav|.rda'))
     if(missing(file)) return(a)
-    
+
     wds <- paste(substitute(file), c('rda','sav'), sep='.')
     if(!any(wds %in% ads))
       stop(paste(paste(wds, collapse=','),
@@ -1265,7 +1265,7 @@ getHdata <-
       w <- paste(if(fn=='nhgh')'' else 'C',fn,'.html',sep='')
       browseURL(paste(where, w, sep='/'))
     }
-    
+
     if(what %in% c('description','all')) {
       ades <- scan(paste(where,'Dcontents.txt',sep='/'),list(''),
                    quiet=TRUE)[[1]]
@@ -1277,10 +1277,10 @@ getHdata <-
         browseURL(paste(where, w, sep='/'))
       }
     }
-    
+
     if(what %nin% c('data','all'))
       return(invisible())
-    
+
     f <- paste(where, wds, sep='/')
     if(length(f) > 1)
       warning(paste('More than one file matched; using the first:',
@@ -1300,12 +1300,12 @@ hdquantile <- function(x, probs=seq(0, 1, 0.25), se=FALSE,
     if(any(na))
       x <- x[!na]
   }
-  
+
   x <- sort(x, na.last=TRUE)
   n <- length(x)
   if(n < 2)
     return(rep(NA, length(probs)))
-  
+
   m  <- n + 1
 
   ps <- probs[probs > 0 & probs < 1]
@@ -1325,7 +1325,7 @@ hdquantile <- function(x, probs=seq(0, 1, 0.25), se=FALSE,
   if(rp[2]==1) {
     r <- c(r, x[n]); pp <- c(pp,1)
   }
-  
+
   r <- r[match(pp, probs)]
 
   if(names) names(r) <- format(probs)
@@ -1355,29 +1355,29 @@ if(weights)
 
   if(rp[1]==0)
     se <- c(NA, se)
-  
+
   if(rp[2]==1)
     se <- c(se, NA)
-  
+
   se <- se[match(pp,probs)]
   if(names)
     names(se) <- names(r)
-  
+
   attr(r, 'se') <- se
   r
 }
 
-sepUnitsTrans <- function(x, 
+sepUnitsTrans <- function(x,
                           conversion=c(day=1, month=365.25/12, year=365.25, week=7),
                           round=FALSE, digits=0)
 {
   if(!any(is.present(x)))
     return(x)
-  
+
   target <- names(conversion[conversion==1])
   if(!length(target))
     stop('must specify a target unit with conversion factor=1')
-  
+
   lab <- attr(x,'label')
   x <- ifelse(is.present(x),casefold(as.character(x)),'')
 
@@ -1393,11 +1393,11 @@ sepUnitsTrans <- function(x,
     warning(paste('variable contains units of measurement not in',
                   paste(names(conversion), collapse=','),':',
                   paste(unique(x[i]),collapse=' ')))
-  
+
   x <- as.numeric(x)
   if(round)
     x <- round(x, digits)
-  
+
   units(x) <- target
   if(length(lab))
     label(x) <- lab
@@ -1430,7 +1430,7 @@ Save <- function(object, name=deparse(substitute(object)), compress=TRUE)
   path <- .Options$LoadPath
   if(length(path))
     path <- paste(path, '/', sep='')
-  
+
   .FileName <- paste(path, name, '.rda', sep='')
   assign(name, object)
   if(is.logical(compress) && compress) compress <- 'gzip'
@@ -1459,7 +1459,7 @@ getLatestSource <- function(x=NULL, package='Hmisc',
   fs    <- scan(urlf, what=list('', ''), sep=' ', quiet=TRUE)
   dates <- fs[[1]]
   files <- fs[[2]]
-  
+
   url <- if(length(recent))
            paste0('https://github.com/harrelfe/', package, '/commits/master/R')
            else
@@ -1478,7 +1478,7 @@ getLatestSource <- function(x=NULL, package='Hmisc',
     source(url)
   }
 }
-  
+
 clowess <- function(x, y=NULL, iter=3, ...) {
   ## to get around bug in lowess with occasional wild values with iter>0
   r <- range(if(length(y)) y else x$y)
@@ -1594,7 +1594,7 @@ getRs <- function(file=NULL,
                   gdir='raw/master', dir=NULL,
                   browse=c('local', 'browser'), cats=FALSE,
                   put=c('source', 'rstudio')) {
-  
+
   browse <- match.arg(browse)
   put    <- match.arg(put)
 
@@ -1605,7 +1605,7 @@ getRs <- function(file=NULL,
     where  <- paste('https://github.com', guser, grepo, gdir, sep='/')
     if(length(dir)) where <- paste(where, dir, sep='/')
     }
-  
+
   trim <- function(x) sub('^[[:space:]]+','',sub('[[:space:]]+$','', x))
 
   pc <- function(s) {
@@ -1625,7 +1625,7 @@ getRs <- function(file=NULL,
 
   read.table.HTTPS <- function(url) {
     res <- tryCatch(read.table(url,
-                               sep='|', quote='', header=TRUE, as.is=TRUE), 
+                               sep='|', quote='', header=TRUE, as.is=TRUE),
                     error=function(e) e)
     if(inherits(res, "simpleError")) {
       if(res$message == "https:// URLs are not supported") {
@@ -1636,9 +1636,9 @@ getRs <- function(file=NULL,
     res
   }
 
-  download.file.HTTPS <- function(url, file, method='libcurl', 
+  download.file.HTTPS <- function(url, file, method='libcurl',
                                   quiet=TRUE, extra='--no-check-certificate') {
-    res <- tryCatch(download.file(url, file, method, quiet=quiet, extra=extra), 
+    res <- tryCatch(download.file(url, file, method, quiet=quiet, extra=extra),
                     error=function(e) e)
     if(inherits(res, "simpleError")) {
       if(res$message == "download.file(method = \"libcurl\") is not supported on this platform") {
@@ -1652,7 +1652,7 @@ getRs <- function(file=NULL,
     }
     invisible(res)
   }
-  
+
   if(! length(file)) {
     s <- read.table.HTTPS(paste(where, 'contents.md', sep='/'))
     s <- s[-1,]
@@ -1702,163 +1702,6 @@ getRs <- function(file=NULL,
   invisible()
 }
 
-knitrSet <-
-  function(basename  = NULL,
-           w=if(! bd) 4,
-           h=if(! bd) 3,
-           wo=NULL, ho=NULL,
-           fig.path  = if(length(basename)) basename else '',
-           fig.align = if(! bd) 'center',
-           fig.show  = 'hold',
-           fig.pos   = if(! bd) 'htbp',
-           fig.lp    = if(! bd) paste('fig', basename, sep=':'),
-           dev       = switch(lang,
-                              latex='pdf', markdown='png',
-                              blogdown=NULL, quarto=NULL),
-           tidy=FALSE, error=FALSE,
-           messages=c('messages.txt', 'console'),
-           width=61, decinline=5, size=NULL, cache=FALSE,
-           echo=TRUE, results='markup', capfile=NULL,
-           lang=c('latex','markdown','blogdown','quarto')) {
-
-  if(! requireNamespace('knitr')) stop('knitr package not available')
-  
-  messages <- match.arg(messages)
-  lang     <- match.arg(lang)
-  options(knitrSet.lang = lang)
-  bd       <- lang %in% c('blogdown', 'quarto')
-  
-  ## Specify e.g. dev=c('pdf','png') or dev=c('pdf','postscript')
-  ## to produce two graphics files for each plot
-  ## But: dev='CairoPNG' is preferred for png
-  if(length(basename)) basename <- paste(basename, '-', sep='')
-
-  ## Default width fills Sweavel boxes when font size is \small and svmono.cls
-  ## is in effect (use 65 without svmono)
-
-  if(lang == 'latex') knitr::render_listings()
-  
-  if(messages != 'console') {
-    unlink(messages) # Start fresh with each run
-    hook_log = function(x, options) cat(x, file=messages, append=TRUE)
-    knitr::knit_hooks$set(warning = hook_log, message = hook_log)
-  }
-  else
-    knitr::opts_chunk$set(message=FALSE, warning=FALSE)
-  
-  if(length(size)) knitr::opts_chunk$set(size = size)
-  ## For htmlcap see http://stackoverflow.com/questions/15010732
-  ## Causes collisions in html and plotly output; Original (no better)
-  ## enclosed in <p class="caption"> ... </p>
-#  if(lang == 'markdown')
-#    knitr::knit_hooks$set(htmlcap = function(before, options, envir) {
-#      if(! before) options$htmlcap
-#        htmltools::HTML(paste0('<br><div style="font-size: 75%;">',
-#                               options$htmlcap, "</div><br>"))
-#    })
-  
-  if(length(decinline)) {
-    rnd <- function(x, dec) if(!is.numeric(x)) x else round(x, dec)
-    formals(rnd) <- list(x=NULL, dec=decinline)
-    knitr::knit_hooks$set(inline = rnd)
-  }
-  
-
-  knitr::knit_hooks$set(par=function(before, options, envir)
-    if(before && options$fig.show != 'none') {
-      p <- c('bty','mfrow','ps','bot','top','left','rt','lwd',
-             'mgp','las','tcl','axes','xpd')
-      pars <- knitr::opts_current$get(p)
-      pars <- pars[! is.na(names(pars))]
-      ## knitr 1.6 started returning NULLs for unspecified pars
-      i <- sapply(pars, function(x) length(x) > 0)
-      .spar. <-
-        function(mar=if(!axes)
-                       c(2.25+bot-.45*multi,2*(las==1)+2+left,.5+top+.25*multi,
-                         .5+rt) else
-                                  c(3.25+bot-.45*multi,2*(las==1)+3.5+left,.5+top+.25*multi,
-                                    .5+rt),
-                 lwd = if(multi)1 else 1.75,
-                 mgp = if(!axes) mgp=c(.75, .1, 0) else
-                       if(multi) c(1.5, .365, 0) else c(2.4-.4, 0.475, 0),
-                 tcl = if(multi)-0.25 else -0.4, xpd=FALSE, las=1,
-                 bot=0, left=0, top=0, rt=0, ps=if(multi) 14 else 12,
-                 mfrow=NULL, axes=TRUE, cex.lab=1.15, cex.axis=1,
-                 ...) {
-          multi <- length(mfrow) > 0
-          par(mar=mar, lwd=lwd, mgp=mgp, tcl=tcl, ps=ps, xpd=xpd,
-              cex.lab=cex.lab, cex.axis=cex.axis, las=las, ...)
-          if(multi) par(mfrow=mfrow)
-        }
-
-      if(any(i)) do.call(.spar., pars[i]) else .spar.()
-    })
-  
-    knitr::opts_knit$set(width=width)
-
-    if(length(capfile)) {
-      options(FigCapFile=capfile)
-      
-      cf <- function(before, options, envir) {
-        if(before) return()
-        lang <- getOption('knitrSet.lang')
-        label   <- knitr::opts_current$get('label')
-        prefx   <- if(lang == 'quarto') '' else options$fig.lp
-        figname <- paste0(prefx, label)
-        ## Quarto uses a chunk figure label convention fig-...
-        ## and figures are referenced by @fig-...
-        figref  <- if(grepl('^fig-', figname))
-                     paste0('@', figname) else paste0('\\@ref(', figname, ')')
-        cap     <- options$fig.cap
-        scap    <- options$fig.scap
-        if(length(cap) && is.call(cap))   cap <- eval(cap)
-        if(length(scap) && is.call(scap)) scap <- eval(scap)
-        if( ! length(scap) || scap == '') scap <- cap
-        if(length(scap) && scap != '')
-          cat(label, figref, paste0('"', scap, '"\n'), sep=',',
-              append=TRUE, file=getOption('FigCapFile'))
-      }
-      knitr::knit_hooks$set(capfileFun=cf)
-    }
-    ## May want to see https://stackoverflow.com/questions/37116632/r-markdown-html-number-figures
-
-  
-  ## aliases=c(h='fig.height', w='fig.width', cap='fig.cap', scap='fig.scap'))
-  ## eval.after = c('fig.cap','fig.scap'),
-  ## error=error)  #, keep.source=keep.source (TRUE))
-
-  ## See if need to remove dev=dev from below because of plotly graphics
-  w <- list(fig.path=fig.path, fig.align=fig.align,
-            fig.width=w, fig.height=h,
-            out.width=wo,out.height=ho,
-            fig.show=fig.show, fig.lp=fig.lp, fig.pos=fig.pos,
-            dev=dev, par=TRUE, capfileFun=length(capfile) > 0,
-            tidy=tidy, cache=cache,
-            echo=echo, error=error, comment='', results=results)
-  if(bd) w$fig.path <- NULL
-  w <- w[sapply(w, function(x) length(x) > 0)]
-  ## knitr doesn't like null fig.align etc.
-    do.call(knitr::opts_chunk$set, w)
-
-  if(lang %in% c('markdown', 'blogdown'))
-      knitr::knit_hooks$set(uncover=markupSpecs$html$uncover)
-
-  hook_chunk = knitr::knit_hooks$get('chunk')
-
-  ## centering will not allow too-wide figures to go into left margin
-  if(lang == 'latex') knitr::knit_hooks$set(chunk = function(x, options) { 
-    res = hook_chunk(x, options) 
-    if (options$fig.align != 'center') return(res) 
-    gsub('\\{\\\\centering (\\\\includegraphics.+)\n\n\\}', 
-         '\\\\centerline{\\1}', res) 
-  }) 
-  knitr::set_alias(w   = 'fig.width', h    = 'fig.height',
-                   wo  = 'out.width', ho   = 'out.height',
-                   cap = 'fig.cap',   scap ='fig.scap')
-}
-## see http://yihui.name/knitr/options#package_options
-
-## Use caption package options to control caption font size
 
 
 grType <- function() {
@@ -1882,10 +1725,10 @@ htmlSpecialType <- function() {
 ## http://stackoverflow.com/questions/33959635/exporting-png-files-from-plotly-in-r
 
 plotlySave <- function(x, ...) {
-  
+
   if (!requireNamespace("plotly"))
     stop("This function requires the 'plotly' package.")
-  
+
   chunkname <- knitr::opts_current$get("label")
   path      <- knitr::opts_chunk$get('fig.path')
   if(is.list(x) & ! inherits(x, 'plotly_hash')) {
@@ -1947,7 +1790,7 @@ plotlyParm = list(
     if(is.character(x)) x <- max(nchar(x))
     min(wmax, max(70, x * mult))
     }
- 
+
   )
 
 ## Function written by Dirk Eddelbuettel:
@@ -2064,10 +1907,10 @@ rendHTML <- function(x, html=TRUE) {
 ## See kableExtra:::print.kableExtra
 #   class(x) <- 'kableExtra'
 #   dep <- list(rmarkdown::html_dependency_jquery(),
-#               rmarkdown::html_dependency_bootstrap(theme = "cosmo"), 
+#               rmarkdown::html_dependency_bootstrap(theme = "cosmo"),
 #               kableExtra::html_dependency_kePrint(),
 #               kableExtra::html_dependency_lightable())
-#   ht <- htmltools::browsable(htmltools::HTML(as.character(x), 
+#   ht <- htmltools::browsable(htmltools::HTML(as.character(x),
 #         "<script type=\"text/x-mathjax-config\">MathJax.Hub.Config({tex2jax: {inlineMath: [[\"$\",\"$\"]]}})</script><script async src=\"https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML\"></script>"))
 #  htmltools::htmlDependencies(ht) <- dep
 #  htmltools::html_print(ht)

@@ -1,0 +1,319 @@
+#' knitr Setup and plotly Service Function
+#'
+#' `knitrSet` sets up knitr to use better default parameters for base
+#' graphics, better code formatting, and to allow several arguments to be
+#' passed from code chunk headers, such as `bty`, `mfrow`, `ps`, `bot`
+#' (extra bottom margin for base graphics), `top` (extra top margin),
+#' `left` (extra left margin), `rt` (extra right margin), `lwd`, `mgp`,
+#' `las`, `tcl`, `axes`, `xpd`, `h` (usually `fig.height` in knitr), `w`
+#' (usually `fig.width` in knitr), `wo` (`out.width` in knitr), `ho`
+#' (`out.height` in knitr), `cap` (character string containing figure
+#' caption), `scap` (character string containing short figure caption for
+#' the table of figures).
+#'
+#' As of this version, `knitrSet` also supports `lang='typst'`, targeting
+#' a direct `knitr` -> Typst -> PDF pipeline made possible by `knitr`'s
+#' preliminary native Typst support (files with extension `.Rtyp`; see
+#' `knitr::render_typst()` and `knitr::pat_typst()`). Because that support
+#' is still preliminary in `knitr`, `knitrSet` checks for the presence of
+#' `knitr::render_typst` before calling it and issues a `warning` (rather
+#' than an error) if it is not yet available in the installed version of
+#' `knitr`, so that scripts written against a `knitr` development build
+#' degrade gracefully rather than failing outright on a release build.
+#' `lang='typst'` is treated as a paginated, print-oriented target (like
+#' `'latex'`), so, unlike `'blogdown'` and `'quarto'`, the `par` and
+#' `knitr` graphics-related hooks documented below **are** run for it.
+#'
+#' The `capfile` argument facilitates auto-generating a table of figures
+#' for certain non-LaTeX report themes (R Markdown/blogdown/quarto/typst).
+#' This is done by the addition of a hook function that appends data to
+#' the `capfile` file each time a chunk runs that has a long or short
+#' caption in the chunk header. For `lang='quarto'` and `lang='typst'` the
+#' recorded cross-reference tag uses native `@label`-style reference
+#' syntax understood by those two systems; for `lang='latex'` and
+#' `lang='markdown'` (assumed to be processed by `bookdown`) a
+#' `\\@ref(...)` tag is recorded instead.
+#'
+#' `plotlySave` saves a plotly graphic with name `foo.png` where `foo` is
+#' the name of the current chunk. You must have a free `plotly` account
+#' from `plot.ly` to use this function, and you must have run
+#' `Sys.setenv(plotly_username="your_plotly_username")` and
+#' `Sys.setenv(plotly_api_key="your_api_key")`. The API key can be found
+#' in one's profile settings.
+#'
+#' @param basename base name to be added in front of graphics file names.
+#'   `basename` is followed by a minus sign.
+#' @param w,h default figure width and height in inches
+#' @param wo,ho default figure rendering width and height, in integer
+#'   pixels or percent as a character string, e.g. `'40\%'`
+#' @param fig.path path for figures. To put figures in a subdirectory
+#'   specify e.g. `fig.path='folder/'`. Ignored for `blogdown` and
+#'   `quarto`.
+#' @param fig.align,fig.show,fig.lp,tidy,cache,echo,results,error,size see
+#'   the `knitr` documentation
+#' @param fig.pos LaTeX float placement specification such as `'htbp'`.
+#'   Only meaningful, and only defaulted, when `lang='latex'`; left unset
+#'   for every other `lang` value including `'typst'`, none of which use
+#'   LaTeX-style float placement letters. (Previously this also defaulted
+#'   to `'htbp'` under `lang='markdown'`, where the value was inert; that
+#'   default has been narrowed to `lang=='latex'` only.)
+#' @param dev graphics device, with default figured from `lang`. Defaults
+#'   to `'pdf'` for both `latex` and the new `typst` value (Typst's
+#'   `image()` function natively embeds PDF figures as vector graphics, so
+#'   the same `.pdf` figure files already produced for the LaTeX build can
+#'   be reused as-is for `typst`), `'png'` for `markdown`, and the
+#'   `knitr`/rmarkdown default (`NULL`) for `blogdown` and `quarto`. If
+#'   the final Typst build must conform to an archival PDF standard such
+#'   as PDF/A, embedded PDF images are not supported by Typst and `dev`
+#'   should be overridden to `'svg'` (ideally produced via the `svglite`
+#'   package rather than base R's `svg()` device) instead.
+#' @param messages By default warning and other messages such as those
+#'   from loading packages are sent to file `'messages.txt'` in the
+#'   current working directory. You can specify `messages='console'` to
+#'   send them directly to the console.
+#' @param width text output width for R code and output
+#' @param decinline number of digits to the right of the decimal point to
+#'   round numeric values appearing inside `Sexpr`/inline R expressions
+#' @param capfile the name of a file in the current working directory
+#'   that is used to accumulate chunk labels, figure cross-reference
+#'   tags, and figure short captions (long captions if no short caption
+#'   is defined) for the purpose of inserting a table of figures in a
+#'   report (e.g. via `markupSpecs$markdown$tof()`, or an analogous
+#'   Typst-side builder for `lang='typst'`). The file is appended to,
+#'   which is useful if `cache=TRUE` is used since this will keep some
+#'   chunks from running. If not `cache`ing, the user should initialize
+#'   the file to empty at the top of the script.
+#' @param lang Default is `'latex'` to use LaTeX. Set to `'markdown'`
+#'   when using R Markdown, `'blogdown'`, `'quarto'`, or the new
+#'   `'typst'` value to target a direct `knitr` -> Typst -> PDF pipeline
+#'   (requires a `knitr` build providing `render_typst()`; see Details).
+#'   For `'blogdown'` and `'quarto'`, `par` and `knitr` graphics-related
+#'   hooks are not called, as this would prevent writing graphics files
+#'   to the correct directory for the blog system. `'typst'`, like
+#'   `'latex'`, is treated as a paginated, print-oriented target, so
+#'   those hooks *are* called for `'typst'`.
+#' @param x a `plotly` graphics object or a named list of such objects.
+#'   The resulting `png` file will go in the file path given by the
+#'   `knitr` `fig.path` value, and have a base name equal to the current
+#'   `knitr` chunk name. If `x` is a list, a minus sign followed by the
+#'   chunk name are inserted before `.png`.
+#' @param ... additional arguments passed to `plotly::plotly_IMAGE`
+#'
+#' @return `knitrSet` is called for its side effect of setting `knitr`
+#'   options and hooks; it returns `NULL` invisibly.
+#' @author Frank Harrell
+#' @seealso [knitr::knit()]
+#' @export
+#' @examples
+#' \dontrun{
+#' # Typical call, LaTeX target (without # comment symbols):
+#' # <<echo=FALSE>>=
+#' # require(Hmisc)
+#' # knitrSet()
+#' # @
+#'
+#' knitrSet()    # use all defaults and don't use a graphics file prefix
+#' knitrSet('modeling')   # use modeling- prefix for a major section or chapter
+#' knitrSet(cache=TRUE, echo=FALSE)  # global default to cache and not print code
+#' knitrSet(w=5, h=3.75)   # override default figure width, height
+#'
+#' # Typical call, Typst target, in a .Rtyp file:
+#' # ```{r setup, include=FALSE}
+#' # require(Hmisc)
+#' # knitrSet(lang='typst')
+#' # ```
+#'
+#' # ```{r chunkname}
+#' # p <- plotly::plot_ly(...)
+#' # plotlySave(p)   # creates fig.path/chunkname.png
+#' # ```
+#' }
+knitrSet <-
+  function(basename  = NULL,
+           w=if(! bd) 4,
+           h=if(! bd) 3,
+           wo=NULL, ho=NULL,
+           fig.path  = if(length(basename)) basename else '',
+           fig.align = if(! bd) 'center',
+           fig.show  = 'hold',
+           fig.pos   = if(lang == 'latex') 'htbp',
+           fig.lp    = if(! bd) paste('fig', basename, sep=':'),
+           dev       = switch(lang,
+                              latex    = 'pdf',
+                              markdown = 'png',
+                              blogdown = NULL,
+                              quarto   = NULL,
+                              typst    = 'pdf'),
+           tidy=FALSE, error=FALSE,
+           messages=c('messages.txt', 'console'),
+           width=61, decinline=5, size=NULL, cache=FALSE,
+           echo=TRUE, results='markup', capfile=NULL,
+           lang=c('latex','markdown','blogdown','quarto','typst')) {
+
+  if(! requireNamespace('knitr')) stop('knitr package not available')
+
+  messages <- match.arg(messages)
+  lang     <- match.arg(lang)
+  options(knitrSet.lang = lang)
+  bd       <- lang %in% c('blogdown', 'quarto')
+
+  ## Specify e.g. dev=c('pdf','png') or dev=c('pdf','postscript')
+  ## to produce two graphics files for each plot
+  ## But: dev='CairoPNG' is preferred for png
+  if(length(basename)) basename <- paste(basename, '-', sep='')
+
+  ## Default width fills Sweavel boxes when font size is \small and svmono.cls
+  ## is in effect (use 65 without svmono)
+
+  if(lang == 'latex') knitr::render_listings()
+
+  if(lang == 'typst') {
+    ## knitr's Typst support (render_typst(), pat_typst()) is preliminary
+    ## and may not be present in the installed (e.g. CRAN release) knitr.
+    ## Degrade gracefully with a warning rather than a hard failure.
+    if(exists('render_typst', where = asNamespace('knitr'), inherits = FALSE))
+      knitr::render_typst()
+    else
+      warning(
+        "lang='typst' was requested but the installed knitr package does ",
+        "not provide render_typst(). Typst support in knitr is still ",
+        "preliminary; install a development build, e.g.\n",
+        "  install.packages('knitr', repos = 'https://yihui.r-universe.dev')\n",
+        "Proceeding with knitr's currently active output hooks, which are ",
+        "not Typst-aware and will likely need manual adjustment.",
+        call. = FALSE)
+  }
+
+  if(messages != 'console') {
+    unlink(messages) # Start fresh with each run
+    hook_log = function(x, options) cat(x, file=messages, append=TRUE)
+    knitr::knit_hooks$set(warning = hook_log, message = hook_log)
+  }
+  else
+    knitr::opts_chunk$set(message=FALSE, warning=FALSE)
+
+  if(length(size)) knitr::opts_chunk$set(size = size)
+  ## For htmlcap see http://stackoverflow.com/questions/15010732
+  ## Causes collisions in html and plotly output; Original (no better)
+  ## enclosed in <p class="caption"> ... </p>
+#  if(lang == 'markdown')
+#    knitr::knit_hooks$set(htmlcap = function(before, options, envir) {
+#      if(! before) options$htmlcap
+#        htmltools::HTML(paste0('<br><div style="font-size: 75%;">',
+#                               options$htmlcap, "</div><br>"))
+#    })
+
+  if(length(decinline)) {
+    rnd <- function(x, dec) if(!is.numeric(x)) x else round(x, dec)
+    formals(rnd) <- list(x=NULL, dec=decinline)
+    knitr::knit_hooks$set(inline = rnd)
+  }
+
+
+  knitr::knit_hooks$set(par=function(before, options, envir)
+    if(before && options$fig.show != 'none') {
+      p <- c('bty','mfrow','ps','bot','top','left','rt','lwd',
+             'mgp','las','tcl','axes','xpd')
+      pars <- knitr::opts_current$get(p)
+      pars <- pars[! is.na(names(pars))]
+      ## knitr 1.6 started returning NULLs for unspecified pars
+      i <- sapply(pars, function(x) length(x) > 0)
+      .spar. <-
+        function(mar=if(!axes)
+                       c(2.25+bot-.45*multi,2*(las==1)+2+left,.5+top+.25*multi,
+                         .5+rt) else
+                                  c(3.25+bot-.45*multi,2*(las==1)+3.5+left,.5+top+.25*multi,
+                                    .5+rt),
+                 lwd = if(multi)1 else 1.75,
+                 mgp = if(!axes) mgp=c(.75, .1, 0) else
+                       if(multi) c(1.5, .365, 0) else c(2.4-.4, 0.475, 0),
+                 tcl = if(multi)-0.25 else -0.4, xpd=FALSE, las=1,
+                 bot=0, left=0, top=0, rt=0, ps=if(multi) 14 else 12,
+                 mfrow=NULL, axes=TRUE, cex.lab=1.15, cex.axis=1,
+                 ...) {
+          multi <- length(mfrow) > 0
+          par(mar=mar, lwd=lwd, mgp=mgp, tcl=tcl, ps=ps, xpd=xpd,
+              cex.lab=cex.lab, cex.axis=cex.axis, las=las, ...)
+          if(multi) par(mfrow=mfrow)
+        }
+
+      if(any(i)) do.call(.spar., pars[i]) else .spar.()
+    })
+
+    knitr::opts_knit$set(width=width)
+
+    if(length(capfile)) {
+      options(FigCapFile=capfile)
+
+      cf <- function(before, options, envir) {
+        if(before) return()
+        lang    <- getOption('knitrSet.lang')
+        label   <- knitr::opts_current$get('label')
+        prefx   <- if(lang %in% c('quarto', 'typst')) '' else options$fig.lp
+        figname <- paste0(prefx, label)
+        ## Quarto and Typst both use native @label reference syntax;
+        ## other targets (assumed processed via bookdown) use \@ref(label)
+        figref  <- if(lang %in% c('quarto', 'typst'))
+                     paste0('@', figname) else paste0('\\@ref(', figname, ')')
+        cap     <- options$fig.cap
+        scap    <- options$fig.scap
+        if(length(cap) && is.call(cap))   cap <- eval(cap)
+        if(length(scap) && is.call(scap)) scap <- eval(scap)
+        if( ! length(scap) || scap == '') scap <- cap
+        if(length(scap) && scap != '')
+          cat(label, figref, paste0('"', scap, '"\n'), sep=',',
+              append=TRUE, file=getOption('FigCapFile'))
+      }
+      knitr::knit_hooks$set(capfileFun=cf)
+    }
+    ## May want to see https://stackoverflow.com/questions/37116632/r-markdown-html-number-figures
+
+
+  ## aliases=c(h='fig.height', w='fig.width', cap='fig.cap', scap='fig.scap'))
+  ## eval.after = c('fig.cap','fig.scap'),
+  ## error=error)  #, keep.source=keep.source (TRUE))
+
+  ## See if need to remove dev=dev from below because of plotly graphics
+  w <- list(fig.path=fig.path, fig.align=fig.align,
+            fig.width=w, fig.height=h,
+            out.width=wo,out.height=ho,
+            fig.show=fig.show, fig.lp=fig.lp, fig.pos=fig.pos,
+            dev=dev, par=TRUE, capfileFun=length(capfile) > 0,
+            tidy=tidy, cache=cache,
+            echo=echo, error=error, comment='', results=results)
+  if(bd) w$fig.path <- NULL
+  w <- w[sapply(w, function(x) length(x) > 0)]
+  ## knitr doesn't like null fig.align etc.
+    do.call(knitr::opts_chunk$set, w)
+
+  if(lang %in% c('markdown', 'blogdown'))
+      knitr::knit_hooks$set(uncover=markupSpecs$html$uncover)
+
+  hook_chunk = knitr::knit_hooks$get('chunk')
+
+  ## centering will not allow too-wide figures to go into left margin
+  if(lang == 'latex') knitr::knit_hooks$set(chunk = function(x, options) {
+    res = hook_chunk(x, options)
+    if (options$fig.align != 'center') return(res)
+    gsub('\\{\\\\centering (\\\\includegraphics.+)\n\n\\}',
+         '\\\\centerline{\\1}', res)
+  })
+
+  ## NOTE for lang == 'typst': knitr's Typst chunk/figure hook output
+  ## format is not yet documented/stable (preliminary support). Once
+  ## knitr::hooks_typst()'s default figure markup is confirmed, add an
+  ## analogous branch here if fig.align != 'center' needs similar
+  ## post-processing. Deliberately left unimplemented rather than guessed,
+  ## since an incorrect regex here would silently corrupt Typst output.
+  ## Recommend validating this with a small prototype chapter before
+  ## relying on it for the full book (see accompanying discussion).
+
+  knitr::set_alias(w   = 'fig.width', h    = 'fig.height',
+                   wo  = 'out.width', ho   = 'out.height',
+                   cap = 'fig.cap',   scap ='fig.scap')
+
+  invisible(NULL)
+}
+## see http://yihui.name/knitr/options#package_options
+
+## Use caption package options to control caption font size

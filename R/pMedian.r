@@ -1,14 +1,14 @@
 #' Pseudomedian
-#' 
+#'
 #' Uses fast Fortran code to compute the pseudomedian of a numeric vector.  The pseudomedian is the median of all possible midpoints of two observations.  The pseudomedian is also called the Hodges-Lehmann one-sample estimator.  The Fortran code is was originally from JF Monahan, and was converted to C++ in the `DescTools` package.  It has been converted to Fortran 2018 here.  Bootstrap confidence intervals are optionally computed.
-#' 
+#'
 #' If n > 250,000 a random sample of 250,000 values of `x` is used to limit execution time.  For n > 1,000 only the percentile bootstrap confidence interval is computed.
-#' 
+#'
 #' Bootstrapping uses the Fortran subroutine directly, for efficiency.
-#' 
+#'
 #' @title pMedian
 #' @param x a numeric vector
-#' @param na.rm set to `TRUE` to exclude `NA`s before computing the pseudomedian
+#' @param na.rm set to `TRUE` to exclude `NA`s and other non-numbers before computing the pseudomedian
 #' @param conf.int confidence level, defaulting to 0 so that no confidence limits are computed.  Set to a number between 0 and 1 to compute bootstrap confidence limits
 #' @param B number of bootstrap samples if `conf.int > 0`
 #' @param type type of bootstrap interval, defaulting to `'percentile'` for n >= 150 or `'bca'` for n < 150
@@ -29,7 +29,7 @@
 pMedian <- function(x, na.rm = FALSE, conf.int=0, B=1000, type=c('percentile', 'bca')) {
   mtype <- missing(type)
   type  <- match.arg(type)
-  if(na.rm) x <- x[! is.na(x)]
+  if(na.rm) x <- x[is.finite(x)]
   n <- length(x)
   g <- function(z) if(conf.int == 0) z else c(estimate=z, lower=NA_real_, upper=NA_real_)
   if(n == 0) return(g(NA_real_))

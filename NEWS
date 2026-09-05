@@ -9,6 +9,7 @@ Changes in version 5.3-0 (2026-09-05)
    * typstDotchart: new function, parallels latexDotchart
    * typstFuntions: new object defining custom Typst functions used by certain methods
    * knitrSet: added typst support
+   * pMedian: take na.rm=TRUE to also indicate removal of other non-numbers
 
 Changes in version 5.2-6 (2026-06-18)
    * Changed all length= to length.out= in seq() calls to avoid warnings

@@ -15,7 +15,7 @@ pMedian(
 \arguments{
 \item{x}{a numeric vector}
 
-\item{na.rm}{set to \code{TRUE} to exclude \code{NA}s before computing the pseudomedian}
+\item{na.rm}{set to \code{TRUE} to exclude \code{NA}s and other non-numbers before computing the pseudomedian}
 
 \item{conf.int}{confidence level, defaulting to 0 so that no confidence limits are computed.  Set to a number between 0 and 1 to compute bootstrap confidence limits}
 

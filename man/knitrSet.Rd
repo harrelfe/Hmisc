@@ -93,14 +93,6 @@ hooks are not called, as this would prevent writing graphics files
 to the correct directory for the blog system. `'typst'`, like
 `'latex'`, is treated as a paginated, print-oriented target, so
 those hooks *are* called for `'typst'`.}
-
-\item{x}{a `plotly` graphics object or a named list of such objects.
-The resulting `png` file will go in the file path given by the
-`knitr` `fig.path` value, and have a base name equal to the current
-`knitr` chunk name. If `x` is a list, a minus sign followed by the
-chunk name are inserted before `.png`.}
-
-\item{...}{additional arguments passed to `plotly::plotly_IMAGE`}
 }
 \value{
 `knitrSet` is called for its side effect of setting `knitr`
@@ -159,11 +151,6 @@ knitrSet(w=5, h=3.75)   # override default figure width, height
 # ```{r setup, include=FALSE}
 # require(Hmisc)
 # knitrSet(lang='typst')
-# ```
-
-# ```{r chunkname}
-# p <- plotly::plot_ly(...)
-# plotlySave(p)   # creates fig.path/chunkname.png
 # ```
 }
 }

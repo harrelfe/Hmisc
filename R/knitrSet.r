@@ -85,12 +85,6 @@
 #'   to the correct directory for the blog system. `'typst'`, like
 #'   `'latex'`, is treated as a paginated, print-oriented target, so
 #'   those hooks *are* called for `'typst'`.
-#' @param x a `plotly` graphics object or a named list of such objects.
-#'   The resulting `png` file will go in the file path given by the
-#'   `knitr` `fig.path` value, and have a base name equal to the current
-#'   `knitr` chunk name. If `x` is a list, a minus sign followed by the
-#'   chunk name are inserted before `.png`.
-#' @param ... additional arguments passed to `plotly::plotly_IMAGE`
 #'
 #' @return `knitrSet` is called for its side effect of setting `knitr`
 #'   options and hooks; it returns `NULL` invisibly.
@@ -114,11 +108,6 @@
 #' # ```{r setup, include=FALSE}
 #' # require(Hmisc)
 #' # knitrSet(lang='typst')
-#' # ```
-#'
-#' # ```{r chunkname}
-#' # p <- plotly::plot_ly(...)
-#' # plotlySave(p)   # creates fig.path/chunkname.png
 #' # ```
 #' }
 knitrSet <-

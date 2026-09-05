@@ -7,8 +7,11 @@
 plotlySave(x, ...)
 }
 \arguments{
-\item{x}{a plotly object, or a named list of plotly objects (excluding
-objects of class \code{'plotly_hash'})}
+\item{x}{a \code{plotly} graphics object or a named list of such objects.
+The resulting \code{png} file will go in the file path given by the
+\code{knitr} \code{fig.path} value, and have a base name equal to the current
+\code{knitr} chunk name. If \code{x} is a list, a minus sign followed by the
+chunk name are inserted before \code{.png}.}
 
 \item{...}{additional arguments passed to \code{plotly::plotly_IMAGE}}
 }
@@ -25,11 +28,10 @@ from \code{plot.ly} to use this function, and you must have run
 in one's profile settings. See
 \url{http://stackoverflow.com/questions/33959635/exporting-png-files-from-plotly-in-r}.
 }
-\details{
-The output path and base file name are taken from
-\code{knitr::opts_chunk$get('fig.path')} and
-\code{knitr::opts_current$get("label")} respectively. If \code{x} is a
-named list (and not a \code{plotly_hash} object), one PNG file is written
-per list element, with the element name appended to the chunk name.
-Otherwise a single PNG file is written using just the chunk name.
+\examples{
+# ```{r chunkname}
+# p <- plotly::plot_ly(...)
+# plotlySave(p)   # creates fig.path/chunkname.png
+# ```
+
 }

@@ -8,20 +8,21 @@
 #' in one's profile settings. See
 #' <http://stackoverflow.com/questions/33959635/exporting-png-files-from-plotly-in-r>.
 #'
-#' @param x a plotly object, or a named list of plotly objects (excluding
-#'   objects of class `'plotly_hash'`)
+#' @param x a `plotly` graphics object or a named list of such objects.
+#'   The resulting `png` file will go in the file path given by the
+#'   `knitr` `fig.path` value, and have a base name equal to the current
+#'   `knitr` chunk name. If `x` is a list, a minus sign followed by the
+#'   chunk name are inserted before `.png`.
 #' @param ... additional arguments passed to `plotly::plotly_IMAGE`
 #'
 #' @return called for its side effect of writing one or more PNG files;
 #'   returns `invisible(NULL)`
 #'
-#' @details
-#' The output path and base file name are taken from
-#' `knitr::opts_chunk$get('fig.path')` and
-#' `knitr::opts_current$get("label")` respectively. If `x` is a
-#' named list (and not a `plotly_hash` object), one PNG file is written
-#' per list element, with the element name appended to the chunk name.
-#' Otherwise a single PNG file is written using just the chunk name.
+#' @examples
+#' # ```{r chunkname}
+#' # p <- plotly::plot_ly(...)
+#' # plotlySave(p)   # creates fig.path/chunkname.png
+#' # ```
 #'
 #' @md
 #' @export
@@ -45,7 +46,29 @@ plotlySave <- function(x, ...) {
   invisible()
 }
 
-## plotlyParm is a list of functions useful for specifying parameters to plotly graphics.
+#' Parameters for Plotly Graphics
+#'
+#' `plotlyParm` is a list of functions useful for specifying parameters
+#' to `plotly` graphics, such as chart heights, colors, and margins.
+#'
+#' @format A list of functions:
+#' - `heightDotchart(rows, per=25, low=200, high=800)`: computes the
+#'   needed height in pixels for a plotly dot chart given the number of
+#'   rows in the chart.
+#' - `heightDotchartb(x, per=40, low, high=1700)`: given a vector of row
+#'   labels that appear to the left on a dot chart, computes the needed
+#'   chart height, taking label line breaks into account. Since `plotly`
+#'   devotes the same vertical space to each category, this only needs
+#'   to find the maximum number of breaks present.
+#' - `colUnorder(n=5, col=colorspace::rainbow_hcl)`: colors for
+#'   unordered categories.
+#' - `colOrdered(n=5, col=viridisLite::viridis)`: colors for ordered
+#'   levels.
+#' - `lrmargin(x, wmax=190, mult=7)`: margin to leave enough room for
+#'   long labels on the left or right, as in dot charts.
+#'
+#' @md
+#' @export
 plotlyParm = list(
   ## Needed height in pixels for a plotly dot chart given the number of
   ## rows in the chart

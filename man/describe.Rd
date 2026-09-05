@@ -349,6 +349,8 @@ The user can modify the table by piping formatting changes, column
 removals, and other operations, before final rendering.
 }
 \details{
+Infinite values and \code{NaN}s are treated and counted the same as \code{NA}s.
+
 If \code{options(na.detail.response=TRUE)}
 has been set and \code{na.action} is \code{"na.delete"} or
 \code{"na.keep"}, summary  statistics on

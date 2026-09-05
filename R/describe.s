@@ -50,7 +50,7 @@ describe.vector <- function(x, descript, exclude.missing=TRUE, digits=4,
   present <- if(all(is.na(x))) rep(FALSE, length(x))
   else if(is.mChoice(x))  trimws(as.character(x)) != '' & ! is.na(x)
   else if(is.character(x)) x != "" & x != " " & ! is.na(x)
-  else ! is.na(x)
+  else is.finite(x)
 
   present <- present & ! is.na(weights)
 

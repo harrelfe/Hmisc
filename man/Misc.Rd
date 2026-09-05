@@ -15,8 +15,6 @@
 \alias{makeSteps}
 \alias{nomiss}
 \alias{outerText}
-\alias{plotlyParm}
-\alias{plotp}
 \alias{rendHTML}
 \alias{restoreHattrib}
 \alias{sepUnitsTrans}
@@ -37,7 +35,7 @@
   \code{clowess} runs \code{lowess} but if the \code{iter} argument
   exceeds zero, sometimes wild values can result, in which case
   \code{lowess} is re-run with \code{iter=0}.
-  
+
   \code{confbar} draws multi-level confidence bars using small rectangles
   that may be of different colors.
 
@@ -48,18 +46,18 @@
   forced to be \code{"base"} if the \code{plotly} package is not
   installed.
 
-	\code{prType} retrieves the system option \code{prType}, which is
+  \code{prType} retrieves the system option \code{prType}, which is
 	set to \code{"plain"} if the option is not set.  \code{print} methods
 	that allow for markdown/html/latex can be automatically invoked by
 	setting \code{options(prType="html")} or
 	\code{options(prType='latex')}.
 
-	\code{htmlSpecialType} retrieves the system option
+  \code{htmlSpecialType} retrieves the system option
 	\code{htmlSpecialType}, which is set to \code{"unicode"} if the option
 	is not set.  \code{htmlSpecialType='unicode'} cause html-generating
 	functions in \code{Hmisc} and \code{rms} to use unicode for special
 	characters, and \code{htmlSpecialType='&'} uses the older ampersand
-	3-digit format. 
+	3-digit format.
 
   \code{inverseFunction} generates a function to find all inverses of a
   monotonic or nonmonotonic function that is tabulated at vectors (x,y),
@@ -88,7 +86,7 @@
   get a vector of survival time quantiles (if \code{q} is given).  If neither is given,
   the whole curve is returned in a list with objects \code{time} and \code{surv}, and
   there is an option to consider an interval as pertaining to greater than or equal
-  to a specific time instead of the traditional greater than.  If the censoring is not 
+  to a specific time instead of the traditional greater than.  If the censoring is not
   right censoring, the more general \code{survfit} is called by \code{km.quick}.
 
 	\code{latexBuild} takes pairs of character strings and produces a
@@ -103,7 +101,7 @@
 
   \code{lm.fit.qr.bare} is a fast stripped-down function for computing
   regression coefficients, residuals, \eqn{R^2}, and fitted values.  It
-  uses \code{lm.fit}. 
+  uses \code{lm.fit}.
 
   \code{matxv} multiplies a matrix by a vector, handling automatic
   addition of intercepts if the matrix does not have a column of ones.
@@ -132,13 +130,7 @@
   strings in the right margin.  Placement depends on
   \code{par('mar')[4]}
 
-	\code{plotlyParm} is a list of functions useful for specifying
-	parameters to \code{plotly} graphics.
-
-	\code{plotp} is a generic to handle \code{plotp} methods to make
-	\code{plotly} graphics.
-
-	\code{rendHTML} renders HTML in a character vector, first converting
+  \code{rendHTML} renders HTML in a character vector, first converting
 	to one character string with newline delimeters.  If \code{knitr} is
 	currently running, runs this string through \code{knitr::asis_output}
 	so that the user need not include \code{results='asis'} in the chunk
@@ -155,12 +147,12 @@
 	\code{options(rawmarkup=TRUE)} is in effect, \code{rendHTML} will just
 	\code{cat()} its first argument.  This is useful when rendering is
 	happening inside a Quarto margin, for example.
-	
+
   \code{sepUnitsTrans} converts character vectors containing values such
   as \code{c("3 days","3day","4month","2 years","2weeks","7")} to
-  numeric vectors 
+  numeric vectors
   (here \code{c(3,3,122,730,14,7)}) in a flexible fashion.  The user can
-  specify a 
+  specify a
   vector of units of measurements and conversion factors.  The units
   with a conversion factor of \code{1} are taken as the target units,
   and if those units are present in the character strings they are
@@ -173,13 +165,13 @@
 	\code{tobase64image} is a function written by Dirk Eddelbuettel that
   uses the \code{base64enc} package to convert a png graphic file to
   base64 encoding to include as an inline image in an html file.
-	
+
   \code{trap.rule} computes the area under a curve using the trapezoidal
   rule, assuming \code{x} is sorted.
 
   \code{trellis.strip.blank} sets up Trellis or Lattice graphs to have a
   clear background on the strips for panel labels.
-  
+
   \code{unPaste} provides a version of the S-Plus \code{unpaste} that
   works for \R and S-Plus.
 
@@ -197,7 +189,7 @@
   \code{print}ing an object.  For MacOS \code{xless} uses the system \code{open} command to pop up a \code{TextEdit} window.
 }
 \usage{
-confbar(at, est, se, width, q = c(0.7, 0.8, 0.9, 0.95, 0.99), 
+confbar(at, est, se, width, q = c(0.7, 0.8, 0.9, 0.95, 0.99),
         col = gray(c(0, 0.25, 0.5, 0.75, 1)),
         type = c("v", "h"), labels = TRUE, ticks = FALSE,
         cex = 0.5, side = "l", lwd = 5, clip = c(-1e+30, 1e+30),
@@ -220,8 +212,6 @@ lm.fit.qr.bare(x, y, tolerance, intercept=TRUE, xpxi=FALSE, singzero=FALSE)
 matxv(a, b, kint=1, bmat=FALSE)
 nomiss(x)
 outerText(string, y, cex=par('cex'), \dots)
-plotlyParm
-plotp(data, ...)
 rendHTML(x, html=TRUE)
 restoreHattrib(obj, attribs)
 sepUnitsTrans(x, conversion=c(day=1, month=365.25/12, year=365.25, week=7),
@@ -252,7 +242,6 @@ xless(x, \dots, title)
   \item{clip}{interval to truncate limits}
   \item{col}{vector of colors}
   \item{conversion}{a named numeric vector}
-	\item{data}{an object having a \code{plotp} method}
   \item{digits}{number of digits used for \code{round}}
   \item{est}{vector of point estimates for confidence limits}
   \item{f}{a scaling constant}
@@ -299,11 +288,11 @@ xless(x, \dots, title)
   \item{times}{a numeric vector of times}
   \item{title}{a character string to title a window or plot.  Ignored for \code{xless} under MacOs.}
   \item{tolerance}{tolerance for judging singularity in matrix}
-  \item{type}{\code{"v"} for vertical, \code{"h"} for horizontal. 
+  \item{type}{\code{"v"} for vertical, \code{"h"} for horizontal.
   For \code{km.quick} specifies the type of survival estimator.}
   \item{w}{a numeric vector}
   \item{width}{width of confidence rectanges in user units, or see
-	\code{\link{strwrap}}} 
+	\code{\link{strwrap}}}
   \item{x}{a numeric vector (matrix for \code{lm.fit.qr.bare}) or data
 	frame.  For \code{xless} may be any object that is sensible to
 	\code{print}.  For \code{sepUnitsTrans} is a character or factor

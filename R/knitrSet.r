@@ -34,13 +34,6 @@
 #' `lang='markdown'` (assumed to be processed by `bookdown`) a
 #' `\\@ref(...)` tag is recorded instead.
 #'
-#' `plotlySave` saves a plotly graphic with name `foo.png` where `foo` is
-#' the name of the current chunk. You must have a free `plotly` account
-#' from `plot.ly` to use this function, and you must have run
-#' `Sys.setenv(plotly_username="your_plotly_username")` and
-#' `Sys.setenv(plotly_api_key="your_api_key")`. The API key can be found
-#' in one's profile settings.
-#'
 #' @param basename base name to be added in front of graphics file names.
 #'   `basename` is followed by a minus sign.
 #' @param w,h default figure width and height in inches

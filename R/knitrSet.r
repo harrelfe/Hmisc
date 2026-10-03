@@ -153,8 +153,9 @@ knitrSet <-
     ## knitr's Typst support (render_typst(), pat_typst()) is preliminary
     ## and may not be present in the installed (e.g. CRAN release) knitr.
     ## Degrade gracefully with a warning rather than a hard failure.
-    if(exists('render_typst', where = asNamespace('knitr'), inherits = FALSE))
-      knitr::render_typst()
+
+    if(exists('render_typst', where = asNamespace('knitr'), mode = 'function'))
+      getFromNamespace('render_typst', 'knitr')()
     else
       warning(
         "lang='typst' was requested but the installed knitr package does ",

@@ -87,7 +87,7 @@
   the whole curve is returned in a list with objects \code{time} and \code{surv}, and
   there is an option to consider an interval as pertaining to greater than or equal
   to a specific time instead of the traditional greater than.  If the censoring is not
-  right censoring, the more general \code{survfit} is called by \code{km.quick}.
+  right censoring, the more general \code{survfit} is called by \code{km.quick}.  When \code{times} is given, linear extrapolation may be used to estimate survival probabilities for outer times, but the extrapolated values are curtailed to be in (0,1).
 
 	\code{latexBuild} takes pairs of character strings and produces a
 	single character string containing concatenation of all of them, plus

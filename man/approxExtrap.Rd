@@ -8,7 +8,7 @@
 }
 \usage{
 approxExtrap(x, y, xout, method = "linear", n = 50, rule = 2, f = 0,
-             ties = "ordered", na.rm = FALSE)
+             ties = "ordered", curtain=NULL, na.rm = FALSE)
 }
 \arguments{
   \item{x,y,xout,method,n,rule,f}{
@@ -17,6 +17,7 @@ approxExtrap(x, y, xout, method = "linear", n = 50, rule = 2, f = 0,
   \item{ties}{
     applies only to R.  See \code{\link{approx}}
   }
+  \item{curtail}{an optional 2-vector of minimum and maximum extrapolated values.  Values beyond those are set to the \code{curtail} boundary.}
   \item{na.rm}{
     set to \code{TRUE} to remove \code{NA}s in \code{x} and
     \code{y} before proceeding

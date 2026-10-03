@@ -136,7 +136,8 @@ km.quick <- function(S, times, q, type=c('kaplan-meier', 'fleming-harrington', '
     if(missing(times)) res <- min(tt[ss <= q])
     else {
       if(interval == '>=') {tt <- f$time; ss <- ss[-length(ss)]}
-      res <- approxExtrap(tt, ss, xout=times, method=method, f=fapprox)$y
+      res <- approxExtrap(tt, ss, xout=times,
+                          method=method, f=fapprox, curtail=c(0,1))$y
     }
   }
 if(n.risk) attr(res, 'n.risk') <- nr
@@ -945,7 +946,7 @@ if(FALSE) {
 }
 
 approxExtrap <- function(x, y, xout, method='linear', n=50, rule=2,
-                         f=0, ties='ordered', na.rm=FALSE)
+                         f=0, ties='ordered', curtail=NULL, na.rm=FALSE)
 {
   ## Linear interpolation using approx, with linear extrapolation
   ## beyond the data
@@ -985,6 +986,8 @@ approxExtrap <- function(x, y, xout, method='linear', n=50, rule=2,
   if(any(d))
     w[d] <- (y[n]-y[n-1])/(x[n]-x[n-1])*(xout[d]-x[n-1])+y[n-1]
 
+  if(length(curtail) == 2)
+    w[d] <- pmax(curtail[1], pmin(w[d], curtail[2]))
   list(x=xout, y=w)
 }
 

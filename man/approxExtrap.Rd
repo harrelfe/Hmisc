@@ -8,7 +8,7 @@
 }
 \usage{
 approxExtrap(x, y, xout, method = "linear", n = 50, rule = 2, f = 0,
-             ties = "ordered", curtain=NULL, na.rm = FALSE)
+             ties = "ordered", curtail=NULL, na.rm = FALSE)
 }
 \arguments{
   \item{x,y,xout,method,n,rule,f}{

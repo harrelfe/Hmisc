@@ -22,11 +22,11 @@ shown in ordinary notation instead of scientific notation.}
 a character vector of the same length as `x`.
 }
 \description{
-Converts numbers to compact scientific notation such as `1.5×10⁻⁴`, using
-Unicode superscript characters for the exponent so that the result needs no
+Converts numbers to compact scientific notation such as `1.5x10^-4` using the unicode symbol for the multiplication sign and
+unicode superscript characters for the exponent so that the result needs no
 LaTeX or markdown math and occupies little space in a Quarto (or R Markdown)
-report.  Trailing zeros in the coefficient are removed (`2.00×10³` becomes
-`2×10³`).  Numbers of moderate magnitude are not put in scientific notation;
+report.  Trailing zeros in the coefficient are removed (`2.00x10^3` becomes
+`2x10^3`).  Numbers of moderate magnitude are not put in scientific notation;
 they are simply rounded and formatted.
 }
 \details{
@@ -44,7 +44,7 @@ as 0.0012 are not displayed as 0.
 \examples{
 unicodeSN(c(123456, 0.000123, 1500, 2e10, -0.00045, 3.14159, 0, 0.05, 42.678))
 unicodeSN(299792458, digits = 4)
-unicodeSN(9.999e5)        # rounds up to 1×10⁶
+unicodeSN(9.999e5)        # rounds up to 1x10^6
 unicodeSN(c(0.5, 50, 5000), bounds = c(1, 1000))
 # In Quarto, inline code such as `r unicodeSN(p)` needs no special chunk options
 }

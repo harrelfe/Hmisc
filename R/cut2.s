@@ -108,7 +108,7 @@ cut2 <- function(x, cuts, m=150, g, levels.mean=FALSE, digits, minmax=TRUE,
                  '\nUpper endpoints:',
                  paste(format(up,digits=12),collapse=' ')))
 
-    y <- structure(y, class='factor', levels=labs)
+    y <- structure(as.integer(y), class='factor', levels=labs)
   } else {
     if(minmax) {
       r <- range(x, na.rm=TRUE)

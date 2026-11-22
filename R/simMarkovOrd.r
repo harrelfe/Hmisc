@@ -36,7 +36,7 @@ simMarkovOrd <- function(n=1, y, times, initial, X=NULL, absorb=NULL,
     stop('when a matrix, X must have column names')
   if(length(X) && ! Xmat && ! length(names(X)))
     stop('when a vector, elements of X must have names')
-  
+
   nt     <- length(times)
   Y      <- Yp <- if(ychar) character(nt) else numeric(nt)
   gaps   <- numeric(nt)
@@ -44,7 +44,7 @@ simMarkovOrd <- function(n=1, y, times, initial, X=NULL, absorb=NULL,
   YYprev <- YY <- if(ychar) character(n * nt) else numeric(n * nt)
   is     <- 1
   times.saved <- 0
-  
+
   for(id in 1 : n) {
     tprev <- 0
     i     <- 0
@@ -119,7 +119,7 @@ simMarkovOrd <- function(n=1, y, times, initial, X=NULL, absorb=NULL,
   res <- data.frame(id=ID[1 : ie], time=Time[1 : ie], gap=Gap[1 : ie],
                     yprev=yyp, y=yy)
   attr(res, 'times.saved.per.subject') <- times.saved / n
-    
+
   ## Handle case where X is a constant vector to distribute to all obs
   if(length(X)) {
     if(Xmat) for(nam in colnames(X)) res[[nam]] <- X[res$id, nam]
@@ -127,7 +127,7 @@ simMarkovOrd <- function(n=1, y, times, initial, X=NULL, absorb=NULL,
       for(nam in names(X)) res[[nam]] <- X[nam]
     }
   res
-}    
+}
 
 
 #' State Occupancy Probabilities for First-Order Markov Ordinal Model
@@ -145,7 +145,7 @@ simMarkovOrd <- function(n=1, y, times, initial, X=NULL, absorb=NULL,
 #' @export
 #' @author Frank Harrell
 #' @seealso <https://hbiostat.org/R/Hmisc/markov/>
-#' @export 
+#' @export
 #' @md
 soprobMarkovOrd <- function(y, times, initial, absorb=NULL,
                             intercepts, g, ...) {
@@ -224,7 +224,7 @@ soprobMarkovOrd <- function(y, times, initial, absorb=NULL,
 ##' @param groupContrast omit this argument if `group` has only one regression coefficient in `formula`.  Otherwise if `ppo` is omitted, provide `groupContrast` as a list of two lists that are passed to `rms::contrast.rms()` to compute the contrast of interest and its standard error.  The first list corresponds to group 1, the second to group 2, to get a 2:1 contrast.  If `ppo` is given and the group effect is not just a simple regression coefficient, specify as `groupContrast` a function of a `vglm` fit that computes the contrast of interest and its standard error and returns a list with elements named `Contrast` and `SE`.  For the latter type you can optionally have formal arguments `n1`, `n2`, and `parameter` that are passed to `groupContrast` to compute the standard error of the group contrast, where `n1` and `n2` respectively are the sample sizes for the two groups and `parameter` is the true group effect parameter value.
 ##' @param cscov applies if `ppo` is not used.  Set to `TRUE` to use the cluster sandwich covariance estimator of the variance of the group comparison.
 ##' @param timecriterion a function of a time-ordered vector of simulated ordinal responses `y` that returns a vector `FALSE` or `TRUE` values denoting whether the current `y` level met the condition of interest.  For example `estSeqMarkovOrd` will compute the first time at which `y >= 5` if you specify `timecriterion=function(y) y >= 5`.  This function is only called at the last data look for each simulated study.  To have more control, instead of `timecriterion` returning a logical vector have it return a numeric 2-vector containing, in order, the event/censoring time and the 1/0 event/censoring indicator.
-##' @param sstat set to a function of the time vector and the corresponding vector of ordinal responses for a single group if you want to compute a Wilcoxon test on a derived quantity such as the number of days in a given state.  
+##' @param sstat set to a function of the time vector and the corresponding vector of ordinal responses for a single group if you want to compute a Wilcoxon test on a derived quantity such as the number of days in a given state.
 ##' @param coxzph set to `TRUE` if `timecriterion` is specified and you want to compute a statistic for testing proportional hazards at the last look of each simulated data
 ##' @param nsim number of simulations (default is 1)
 ##' @param maxest maximum acceptable absolute value of the contrast estimate, ignored if `NULL`.  Any values exceeding `maxest` will result in the estimate being set to `NA`.
@@ -259,10 +259,10 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
     ppo  <- formula(paste('FALSE ~', as.character(ppo)[-1]))
   } else if (!requireNamespace("rms", quietly = TRUE))
     stop('ppo not specified and rms package not available')
-  
+
 
   if(isppo && cscov) stop('may not specify cscov=TRUE with ppo')
-  
+
   nas <- setdiff(y, absorb)    # non-absorbing states
   if(length(initial) != length(nas))
     stop('length of initial must be number of non-absorbing values of y')
@@ -270,7 +270,7 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
     stop('names of elements in initial are incorrect')
   if(coxzph && ! length(timecriterion))
     stop('must specify timecriterion when coxzph=TRUE')
-  
+
   looks   <- sort(looks)
   nlook   <- length(looks)
   N       <- max(looks)
@@ -279,7 +279,7 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
   parm    <- est <- vest <- numeric(nc)
   look    <- sim <- integer(nc)
   ndy     <- length(y)
-  
+
   Etimefreq <- NULL
   if(length(timecriterion)) {
     Etimefreq <-
@@ -289,7 +289,7 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
                           c('1', '2'),
                           c('censored', 'event'),
                           as.character(times)))
-    loghr <-   lrchisq <- rep(NA, nc) 
+    loghr <-   lrchisq <- rep(NA, nc)
     if(coxzph) phchisq <- rep(NA, nc)
   }
   if(length(sstat))
@@ -324,7 +324,7 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
   coefprev <- list() # to hold first working fit at last look for each parameter
   ## coefprev speeds up vglm (last look = maximum sample size)
   failures <- character(0)
-  
+
   for(isim in 1 : nsim) {
     if(progress && (isim %% 10 == 0))
       cat('Simulation', isim, '\n', file=pfile)
@@ -340,7 +340,7 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
       sdata <- simMarkovOrd(n=N, y, times, initials, X=X, absorb=absorb,
                             intercepts=intercepts, g=g, parameter=param,
                             rdsample=rdsample)
-      
+
       tsps <- attr(sdata, 'time.saved.per.subject')
       if(length(tsps))
         cat('Average number of measurement times saved per subject by response-dependent sampling:', round(tsps, 1), '\n')
@@ -351,7 +351,7 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
         .dd. <- rms::datadist(sdata)
         options(datadist=.dd.)   # requires rms 6.1-1
       }
-      
+
       ## For each look compute the parameter estimate and its variance
       ## If a contrast is specified (say when treatment interacts with time)
       ## use that instead of a simple treatment effect
@@ -380,11 +380,11 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
               f <- try(rms::lrm(formula, data=dat, x=cscov, y=cscov), silent=TRUE)
             fail <- inherits(f, 'try-error')
           }
-        
+
         if(fail) failures <- c(failures, as.character(f))
         else {
           if(isppo && l == max(looks) && ! length(coefprev[[cparam]]))
-            coefprev[[cparam]] <- coef(f) 
+            coefprev[[cparam]] <- coef(f)
           if(! length(co.na)) {   # save template to insert for failures
             co.na <- coef(f)
             co.na[] <- NA
@@ -442,14 +442,14 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
         prn(co, file=wf)
         stop('non-conformable coefficients in estSeqMarkovOrd.  See file estSeqMarkovOrd.err in current working directory.')
         }
-      
+
       if(length(timecriterion)) {
         # Separately for each subject compute the time until the
         # criterion is satisfied.  Right censor at last observed time if it
         # doesn't occur
         setDT(sdata, key=c('group', 'id', 'time'))
         d <- sdata[, h(time, y), by=.(group, id)]
-        
+
         fit <- survival::coxph(Surv(etime, event) ~ group, data=d)
         loghr  [is] <- fit$coef
         lrchisq[is] <- 2. * diff(fit$loglik)
@@ -476,7 +476,7 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
       }  # end sstat
     }  # end param
   } # end sim
-  
+
   res <- data.frame(sim=sim, parameter=parm, look=look,
                     est=est, vest=vest)
   if(length(timecriterion)) {
@@ -515,90 +515,112 @@ estSeqMarkovOrd <- function(y, times, initial, absorb=NULL, intercepts,
 #' @export
 #' @md
 #' @seealso <https://hbiostat.org/R/Hmisc/markov/>
-intMarkovOrd <- function(y, times, initial, absorb=NULL,
-                         intercepts, extra=NULL, g, target, t, ftarget=NULL,
-                         onlycrit=FALSE, constraints=NULL,
-                         printsop=FALSE, ...) {
+intMarkovOrd <- function(y, times, initial, absorb = NULL,
+                         intercepts, extra = NULL, g, target, t, ftarget = NULL,
+                         onlycrit = FALSE, constraints = NULL,
+                         printsop = FALSE, ...) {
+  if (any(diff(intercepts) > 0)) stop("initial intercepts are out of order")
 
-  if(any(diff(intercepts) > 0)) stop('initial intercepts are out of order')
-  
   t <- as.character(t)
-  if(length(t) > 1 && (! is.matrix(target) || nrow(target) != length(t)))
-    stop('target must be a matrix with # rows = length of t')
-  if(length(t) == 1) target <- matrix(target, nrow=1, dimnames=list(t, NULL))
-  for(ti in t)
-    if(abs(sum(target[ti, ]) - 1.) > 1e-5)
-      stop('each row of target must sum to 1')
-  
+  if (length(t) > 1 && (!is.matrix(target) || nrow(target) != length(t))) {
+    stop("target must be a matrix with # rows = length of t")
+  }
+  if (length(t) == 1) target <- matrix(target, nrow = 1, dimnames = list(t, NULL))
+  for (ti in t) {
+    if (abs(sum(target[ti, ]) - 1.) > 1e-5) {
+      stop("each row of target must sum to 1")
+    }
+  }
+
   h <- function(a) {
     ## Compute state occupancy probabilities at time t for current
     ## vector of intercept values and extra
-    ints <- a[1 : (length(a) - length(extra))]
-    if(any(diff(ints) > 0.)) return(1000.)
-    if(length(extra)) extra <- a[-(1 : length(ints))]
-    if(length(constraints) && ! constraints(ints, extra)) return(1000.)
-    s <- soprobMarkovOrd(y, times, initial=initial, absorb=absorb,
-                         intercepts=ints, g=g, X=1, extra=extra)[t,, drop=FALSE ]
+    ints <- a[1:(length(a) - length(extra))]
+    if (any(diff(ints) > 0.)) {
+      return(1000.)
+    }
+    if (length(extra)) extra <- a[-(1:length(ints))]
+    if (length(constraints) && !constraints(ints, extra)) {
+      return(1000.)
+    }
+    s <- soprobMarkovOrd(y, times,
+      initial = initial, absorb = absorb,
+      intercepts = ints, g = g, X = 1, extra = extra
+    )[t, , drop = FALSE]
     # Objective function to minimize: sum of absolute differences with targets
     # with restriction that intercepts be in descending order
-    crit <- 0.  # if(any(diff(ints) > 0.)) 1000. else 0.
-    for(tim in rownames(s)) crit <- crit + sum(abs(s[tim, ] - target[tim, ]))
-    if(length(ftarget)) crit <- crit + ftarget(intercepts=ints, extra=extra)
+    crit <- 0. # if(any(diff(ints) > 0.)) 1000. else 0.
+    for (tim in rownames(s)) crit <- crit + sum(abs(s[tim, ] - target[tim, ]))
+    if (length(ftarget)) crit <- crit + ftarget(intercepts = ints, extra = extra)
     crit
   }
 
-  if(length(list(...)))
+  if (length(list(...))) {
     u <- nlm(h, c(intercepts, extra), ...)
-  else
-    u <- nlm(h, c(intercepts, extra), iterlim=300)
+  } else {
+    u <- nlm(h, c(intercepts, extra), iterlim = 300)
+  }
 
-  if(onlycrit) return(u$minimum)
-  
-  cat('\nIterations:', u$iterations, '\n')
-  cat('Sum of absolute errors:', u$minimum, '\n')
-  ints <- u$estimate[1 : (length(u$estimate) - length(extra))]
-  if(length(extra)) extra <- structure(u$estimate[-(1 : length(ints))],
-                                       names=names(extra))
-  
-  cat('Intercepts:', round(ints, 3), '\n')
-  if(length(extra)) {
-    cat('\nExtra parameters:\n\n')
+  if (onlycrit) {
+    return(u$minimum)
+  }
+
+  cat("\nIterations:", u$iterations, "\n")
+  cat("Sum of absolute errors:", u$minimum, "\n")
+  ints <- u$estimate[1:(length(u$estimate) - length(extra))]
+  if (length(extra)) {
+    extra <- structure(u$estimate[-(1:length(ints))],
+      names = names(extra)
+    )
+  }
+
+  cat("Intercepts:", round(ints, 3), "\n")
+  if (length(extra)) {
+    cat("\nExtra parameters:\n\n")
     print(round(extra, 4))
-    }
-  s1 <- soprobMarkovOrd(y, times, initial=initial, absorb=absorb,
-                        intercepts=ints, g=g, X=1, extra=extra)
-  if(printsop) {
-    cat('\nOccupancy probabilities for group 1:\n\n')
+  }
+  s1 <- soprobMarkovOrd(y, times,
+    initial = initial, absorb = absorb,
+    intercepts = ints, g = g, X = 1, extra = extra
+  )
+  if (printsop) {
+    cat("\nOccupancy probabilities for group 1:\n\n")
     print(round(s1, 3))
-    }
+  }
   # Show occupancy probabilities for group 2
-  s2 <- soprobMarkovOrd(y, times, initial=initial, absorb=absorb,
-                        intercepts=ints, g=g, X=2, extra=extra)
-  if(printsop) {
-    cat('\nOccupancy probabilities for group 2:\n\n')
+  s2 <- soprobMarkovOrd(y, times,
+    initial = initial, absorb = absorb,
+    intercepts = ints, g = g, X = 2, extra = extra
+  )
+  if (printsop) {
+    cat("\nOccupancy probabilities for group 2:\n\n")
     print(round(s2, 3))
-    }
+  }
 
   ## Compute log odds ratios at day t
 
-  if(printsop) for(ti in t) {
-    ## Get cumulative probabilities from right to left except for the first    
-    s1t <- rev(cumsum(rev(s1[ti, -1])))
-    s2t <- rev(cumsum(rev(s2[ti, -1])))
-    lor <- round(qlogis(s2t) - qlogis(s1t), 3)
-    cat('\nLog odds ratios at', paste0('t=', ti),
-        'from occupancy probabilities:' , lor, '\n')
+  if (printsop) {
+    for (ti in t) {
+      ## Get cumulative probabilities from right to left except for the first
+      s1t <- rev(cumsum(rev(s1[ti, -1])))
+      s2t <- rev(cumsum(rev(s2[ti, -1])))
+      lor <- round(qlogis(s2t) - qlogis(s1t), 3)
+      cat(
+        "\nLog odds ratios at", paste0("t=", ti),
+        "from occupancy probabilities:", lor, "\n"
+      )
     }
-  list(intercepts=ints, extra=extra)
+  }
+  list(intercepts = ints, extra = extra)
 }
 
 
 #' State Occupancy Probabilities for First-Order Markov Ordinal Model from a Model Fit
 #'
-#' Computes state occupancy probabilities for a single setting of baseline covariates.  If the model fit was from `rms::blrm()`, these probabilities are from all the posterior draws of the basic model parameters.  Otherwise they are maximum likelihood point estimates.
+#' Computes state occupancy probabilities for a single setting of baseline covariates.  If the model fit was from `rms::blrm()` or `rms::borm()`, these probabilities are from all the posterior draws of the basic model parameters.  Otherwise they are maximum likelihood point estimates.
 #'
 #' @title soprobMarkovOrdm
-#' @param object a fit object created by `blrm`, `lrm`, `orm`, `VGAM::vglm()`, or `VGAM::vgam()`
+#' @param object a fit object created by `blrm`, `borm`, `lrm`, `orm`, `VGAM::vglm()`, or `VGAM::vgam()`
 #' @param data a single observation list or data frame with covariate settings, including the initial state for Y
 #' @param times vector of measurement times
 #' @param ylevels a vector of ordered levels of the outcome variable (numeric or character)
@@ -607,7 +629,7 @@ intMarkovOrd <- function(y, times, initial, absorb=NULL,
 #' @param pvarname name of previous state variable, defaulting to `yprev`
 #' @param gap name of time gap variable, defaults assuming that gap time is not in the model
 #'
-#' @return if `object` was not a Bayesian model, a matrix with rows corresponding to times and columns corresponding to states, with values equal to exact state occupancy probabilities.  If `object` was created by `blrm`, the result is a 3-dimensional array with the posterior draws as the first dimension.
+#' @return if `object` was not a Bayesian model, a matrix with rows corresponding to times and columns corresponding to states, with values equal to exact state occupancy probabilities.  If `object` was created by `blrm`, or `borm`, the result is a 3-dimensional array with the posterior draws as the first dimension.
 #' @export
 #' @author Frank Harrell
 #' @seealso <https://hbiostat.org/R/Hmisc/markov/>
@@ -617,38 +639,38 @@ soprobMarkovOrdm <- function(object, data, times, ylevels, absorb=NULL,
                              gap=NULL) {
 
   cl <- class(object)[1]
-  ftypes <- c(lrm='rms', orm='rms', blrm='rmsb', vglm='vgam', vgam='vgam')
+  ftypes <- c(lrm='rms', orm='rms', blrm='rmsb', borm='rmsb', vglm='vgam', vgam='vgam')
   ftype  <- ftypes[cl]
   if(is.na(ftype)) stop(paste('object must be a fit from one of:',
                               paste(ftypes, collapse=' ')))
 
   ## For VGAM objects, predict() did not find the right function when
   ## inside the rms package
-  
+
   prd <-
     switch(ftype,
            rms =function(obj, data) predict(obj, data, type='fitted.ind'),
            vgam=function(obj, data) VGAM::predict(obj, data, type='response'),
            rmsb=function(obj, data) predict(obj, data, type='fitted.ind',
                                             posterior.summary='all'))
-  
+
   if(pvarname %nin% names(data))
     stop(paste(pvarname, 'is not in data'))
   if(length(absorb) && (pvarname %in% absorb))
     stop('initial state cannot be an absorbing state')
-  
+
   nd <- if(ftype == 'rmsb' && length(object$draws)) nrow(object$draws) else 0
   if((nd == 0) != (ftype != 'rmsb'))
     stop('model fit inconsistent with having posterior draws')
-  
+
   k  <- length(ylevels)
   s  <- length(times)
   P  <- if(nd == 0)
           array(NA, c(s, k),
-  						dimnames=list(as.character(times), 
+  						dimnames=list(as.character(times),
   													as.character(ylevels))) else
           array(NA, c(nd, s, k),
-  						dimnames=list(paste('draw', 1 : nd), as.character(times), 
+  						dimnames=list(paste('draw', 1 : nd), as.character(times),
   													as.character(ylevels)))
   # Never uncondition on initial state
   data[[tvarname]] <- times[1]
@@ -667,13 +689,13 @@ soprobMarkovOrdm <- function(object, data, times, ylevels, absorb=NULL,
     rnamepreva <- paste('t-1', absorb)
     cnamea     <- paste('t',   absorb)
     }
-  cp <- matrix(0., nrow=k, ncol=k, 
+  cp <- matrix(0., nrow=k, ncol=k,
                dimnames=list(rnameprev, paste('t', ylevels)))
   ## cp is initialized to zero, which will remain the values for
   ## probabilities of moving out of absorbing (row) states
   ## Set probabilities of staying in absorbing states to 1
   if(length(absorb)) cp[cbind(rnamepreva, cnamea)] <- 1.
-  
+
   data <- as.list(data)
   yna  <- setdiff(ylevels, absorb)  # non-absorbing states
   data[[pvarname]] <- yna   # don't request estimates for absorbing states
@@ -687,7 +709,7 @@ soprobMarkovOrdm <- function(object, data, times, ylevels, absorb=NULL,
       ## the cell probability matrix that includes them
       ## Rows representing absorbing states have P(stating in that state)=1
       cp[rnameprevna, ] <- pp
-      
+
       ## Compute unconditional probabilities of being in all possible states
       ## at current time t
       P[it, ] <- t(cp) %*% P[it - 1, ]

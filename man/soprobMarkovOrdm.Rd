@@ -16,7 +16,7 @@ soprobMarkovOrdm(
 )
 }
 \arguments{
-\item{object}{a fit object created by \code{blrm}, \code{lrm}, \code{orm}, \code{VGAM::vglm()}, or \code{VGAM::vgam()}}
+\item{object}{a fit object created by \code{blrm}, \code{borm}, \code{lrm}, \code{orm}, \code{VGAM::vglm()}, or \code{VGAM::vgam()}}
 
 \item{data}{a single observation list or data frame with covariate settings, including the initial state for Y}
 
@@ -33,13 +33,13 @@ soprobMarkovOrdm(
 \item{gap}{name of time gap variable, defaults assuming that gap time is not in the model}
 }
 \value{
-if \code{object} was not a Bayesian model, a matrix with rows corresponding to times and columns corresponding to states, with values equal to exact state occupancy probabilities.  If \code{object} was created by \code{blrm}, the result is a 3-dimensional array with the posterior draws as the first dimension.
+if \code{object} was not a Bayesian model, a matrix with rows corresponding to times and columns corresponding to states, with values equal to exact state occupancy probabilities.  If \code{object} was created by \code{blrm}, or \code{borm}, the result is a 3-dimensional array with the posterior draws as the first dimension.
 }
 \description{
 State Occupancy Probabilities for First-Order Markov Ordinal Model from a Model Fit
 }
 \details{
-Computes state occupancy probabilities for a single setting of baseline covariates.  If the model fit was from \code{rms::blrm()}, these probabilities are from all the posterior draws of the basic model parameters.  Otherwise they are maximum likelihood point estimates.
+Computes state occupancy probabilities for a single setting of baseline covariates.  If the model fit was from \code{rms::blrm()} or \code{rms::borm()}, these probabilities are from all the posterior draws of the basic model parameters.  Otherwise they are maximum likelihood point estimates.
 }
 \seealso{
 \url{https://hbiostat.org/R/Hmisc/markov/}

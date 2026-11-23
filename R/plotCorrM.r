@@ -41,20 +41,20 @@ plotCorrM <- function(r, what=c('plots', 'data'),
   d   <- subset(data.frame(x, y, delta=abs(vn[x] - vn[y]), r=R, txt), x < y)
   if(what == 'data') return(d)
   mx <- max(abs(d$r))
-  
+
   g1 <-
     switch(type,
            rectangle = ggplot(d,
                               aes(x=x, y=y,
                                   color=ifelse(r > 0, '+', '-'), label=txt)) +
              geom_segment(aes(x=x, y=y, xend=x, yend=y + 0.9 * abs(r) / mx),
-                          size=3),
+                          linewidth=3),
            circle    = ggplot(d,
                               aes(x=x, y=y,
                                   color=ifelse(r > 0, '+', '-'), label=txt,
                                   size=abs(r))) +
              geom_point() + scale_size(range = c(0, maxsize)) )
-           
+
     g1 <- g1 + scale_x_continuous(breaks = 1 : p, labels=v) +
       scale_y_continuous(breaks = 1 : p, labels=v) +
       guides(color = guide_legend(title=''),
@@ -64,7 +64,7 @@ plotCorrM <- function(r, what=c('plots', 'data'),
                                      hjust=if(xangle != 0) 1)) +
       labs(subtitle=paste0('max |r|:', round(mx, 3),
                            '  min |r|:', round(mn, 3)))
-  
+
   # Would not run loess if use text=txt
   # Need to run ggplotly with tooltip='label'
   g2 <- ggplot(d, aes(x=delta, y=r, label=txt)) +
